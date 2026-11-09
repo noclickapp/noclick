@@ -1,0 +1,631 @@
+{
+  "list_campaigns": {
+    "method": "GET",
+    "path": "/v1/analytics/campaign/list",
+    "response": {
+      "success": true,
+      "message": "Campaign list fetched successfully!",
+      "data": {
+        "campaigns": [
+          {
+            "id": 123,
+            "name": "Q1 Outreach Campaign",
+            "status": "ACTIVE",
+            "client_id": 456,
+            "created_at": "2024-01-15T10:30:00Z"
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "list_campaigns"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/fi2jmymc98myc0"
+  },
+  "list_clients": {
+    "method": "GET",
+    "path": "/v1/analytics/client/list",
+    "response": {
+      "success": true,
+      "message": "Client list fetched successfully!",
+      "data": {
+        "clients": [
+          {
+            "id": 456,
+            "name": "Acme Corporation",
+            "status": "ACTIVE",
+            "created_at": "2024-01-15T10:30:00Z"
+          },
+          {
+            "id": 789,
+            "name": "Tech Solutions Inc",
+            "status": "ACTIVE",
+            "created_at": "2024-02-20T14:45:00Z"
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "list_clients"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/fi2jmxmc98pv5u"
+  },
+  "get_campaign_status_stats": {
+    "method": "GET",
+    "path": "/v1/analytics/campaign/status-stats",
+    "response": {
+      "success": true,
+      "message": "Campaign status stats fetched successfully!",
+      "data": {
+        "status_stats": {
+          "total_campaigns": 100,
+          "active_campaigns": 45,
+          "paused_campaigns": 20,
+          "completed_campaigns": 30,
+          "draft_campaigns": 5,
+          "active_percentage": "45.00%",
+          "paused_percentage": "20.00%",
+          "completed_percentage": "30.00%",
+          "draft_percentage": "5.00%"
+        }
+      }
+    },
+    "config": {
+      "operation": "get_campaign_status_stats"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/fi2jmxmc9aj85u"
+  },
+  "get_overall_stats": {
+    "method": "GET",
+    "path": "/v1/analytics/overall-stats-v2",
+    "response": {
+      "success": true,
+      "message": "Overall stats fetched successfully!",
+      "data": {
+        "total_sent": 50000,
+        "total_opened": 15000,
+        "total_replied": 2500,
+        "total_bounced": 1000,
+        "open_rate": "30.00%",
+        "reply_rate": "5.00%",
+        "bounce_rate": "2.00%"
+      }
+    },
+    "config": {
+      "operation": "get_overall_stats",
+      "start_date": "2024-01-01",
+      "end_date": "2024-01-31",
+      "timezone": "America/New_York"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/fi2jmxmc98wgri"
+  },
+  "get_daily_stats": {
+    "method": "GET",
+    "path": "/v1/analytics/day-wise-overall-stats",
+    "response": {
+      "success": true,
+      "message": "Day-wise overall stats fetched successfully!",
+      "data": {
+        "daily_stats": [
+          {
+            "date": "2024-01-15",
+            "sent": 1000,
+            "opened": 300,
+            "replied": 50,
+            "bounced": 20,
+            "open_rate": "30.00%",
+            "reply_rate": "5.00%"
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "get_daily_stats",
+      "start_date": "2024-01-01",
+      "end_date": "2024-01-31",
+      "timezone": "America/New_York"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/fi2jfrmc99s1ln"
+  },
+  "get_campaign_performance": {
+    "method": "GET",
+    "path": "/v1/analytics/campaign/overall-stats",
+    "response": {
+      "success": true,
+      "message": "Campaign wise performance fetched successfully!",
+      "data": {
+        "campaign_wise_performance": [
+          {
+            "id": 123,
+            "campaign_name": "Q1 Outreach Campaign",
+            "sent": 1500,
+            "opened": 450,
+            "replied": 75,
+            "bounced": 30,
+            "open_rate": "30.00%",
+            "reply_rate": "5.00%",
+            "bounce_rate": "2.00%",
+            "positive_reply_rate": "80.00%",
+            "positive_replied": 60,
+            "unique_lead_count": 1500,
+            "unique_open_count": 420
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "get_campaign_performance",
+      "start_date": "2024-01-01",
+      "end_date": "2024-01-31",
+      "timezone": "America/New_York"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/fi2jfrmc99wuuj"
+  },
+  "get_campaign_response_stats": {
+    "method": "GET",
+    "path": "/v1/analytics/campaign/response-stats",
+    "response": {
+      "success": true,
+      "message": "Campaign response stats fetched successfully!",
+      "data": {
+        "response_stats": [
+          {
+            "campaign_id": 123,
+            "campaign_name": "Q1 Outreach",
+            "total_sent": 1000,
+            "total_replies": 75,
+            "reply_rate": "7.50%",
+            "positive_replies": 45,
+            "negative_replies": 20,
+            "neutral_replies": 10
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "get_campaign_response_stats",
+      "start_date": "2024-01-01",
+      "end_date": "2024-01-31",
+      "timezone": "America/New_York"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/fi2jfrmc9ai42y"
+  },
+  "get_followup_reply_rate": {
+    "method": "GET",
+    "path": "/v1/analytics/campaign/follow-up-reply-rate",
+    "response": {
+      "success": true,
+      "message": "Follow-up reply rate stats fetched successfully!",
+      "data": {
+        "followup_stats": {
+          "total_followups": 5000,
+          "followup_replies": 750,
+          "followup_reply_rate": "15.00%",
+          "avg_followups_per_campaign": 3.2
+        }
+      }
+    },
+    "config": {
+      "operation": "get_followup_reply_rate",
+      "start_date": "2024-01-01",
+      "end_date": "2024-01-31",
+      "timezone": "America/New_York"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/fi2jf9mc9aelqt"
+  },
+  "get_lead_stats": {
+    "method": "GET",
+    "path": "/v1/analytics/lead/overall-stats",
+    "response": {
+      "success": true,
+      "message": "Lead stats fetched successfully!",
+      "data": {
+        "lead_stats": {
+          "total_leads": 10000,
+          "new_leads": 2500,
+          "engaged_leads": 1500,
+          "converted_leads": 300,
+          "avg_engagement_rate": "15.00%"
+        }
+      }
+    },
+    "config": {
+      "operation": "get_lead_stats",
+      "start_date": "2024-01-01",
+      "end_date": "2024-01-31",
+      "timezone": "America/New_York"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/fi2jfrmc9a7a5h"
+  },
+  "get_inbox_lead": {
+    "method": "GET",
+    "path": "/v1/master-inbox/{id}",
+    "response": {
+      "ok": true,
+      "data": [
+        {
+          "lead_category_id": 1454,
+          "last_sent_time": "2025-07-31T04:01:22.422Z",
+          "last_reply_time": null,
+          "has_new_unread_email": true,
+          "email_account_id": 5352520,
+          "revenue": "500.50",
+          "is_pushed_to_sub_sequence": false,
+          "lead_first_name": "Team",
+          "lead_last_name": null,
+          "lead_email": "hello@gurusoftware.com",
+          "email_lead_id": "2428117568",
+          "email_lead_map_id": "1982614021",
+          "lead_status": "INPROGRESS",
+          "current_sequence_number": 2,
+          "sub_sequence_id": null,
+          "old_replaced_lead_data": null,
+          "lead_next_timestamp_to_send": "2025-08-02T04:01:22.422Z",
+          "email_campaign_seq_id": 2738054,
+          "is_important": false,
+          "is_archived": false,
+          "is_snoozed": false,
+          "team_member_id": null,
+          "is_ooo_automated_push_lead": null,
+          "email_campaign_id": 1456277,
+          "email_campaign_name": "Visha_Backlink Outreach",
+          "client_id": null,
+          "belongs_to_sub_sequence": false,
+          "campaign_sending_schedule": {
+            "tz": "Asia/Kolkata",
+            "days": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "endHour": "18:00",
+            "startHour": "09:00"
+          }
+        }
+      ]
+    },
+    "config": {
+      "operation": "get_inbox_lead",
+      "id": 1982614021
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/1vqkqbwmdsawygw"
+  },
+  "list_inbox_replies": {
+    "method": "POST",
+    "path": "/v1/master-inbox/inbox-replies",
+    "response": {
+      "ok": true,
+      "data": [
+        {
+          "lead_category_id": 1454,
+          "last_sent_time": "2025-07-08T13:01:33.131Z",
+          "last_reply_time": "2025-07-31T16:48:44.000Z",
+          "has_new_unread_email": true,
+          "email_account_id": 5352520,
+          "revenue": "0.00",
+          "is_pushed_to_sub_sequence": false,
+          "lead_first_name": "Team",
+          "lead_last_name": null,
+          "lead_email": "digitalgpoint.webmail@gmail.com",
+          "email_lead_id": "2326941038",
+          "email_lead_map_id": "1906151033",
+          "lead_status": "COMPLETED",
+          "current_sequence_number": 1,
+          "sub_sequence_id": null,
+          "old_replaced_lead_data": null,
+          "lead_next_timestamp_to_send": null,
+          "email_campaign_seq_id": null,
+          "is_important": false,
+          "is_archived": false,
+          "is_snoozed": false,
+          "team_member_id": null,
+          "is_ooo_automated_push_lead": null,
+          "email_campaign_id": 1456277,
+          "email_campaign_name": "Visha_Backlink Outreach",
+          "client_id": null,
+          "belongs_to_sub_sequence": false,
+          "campaign_sending_schedule": {
+            "tz": "Asia/Kolkata",
+            "days": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "endHour": "18:00",
+            "startHour": "09:00"
+          },
+          "email_history": [
+            {
+              "stats_id": "6d6ef88a-d0c9-4b7c-9522-922c05b37a35",
+              "from": "vgarg@smartlead-backlinking.com",
+              "to": "digitalgpoint.webmail@gmail.com",
+              "type": "SENT",
+              "message_id": "<6d6ef88a-d0c9-sl71-4b7c-9522-922c05b37a35@smartlead-backlinking.com>",
+              "time": "2025-07-07T11:13:06.744Z",
+              "email_body": "<div>Hey Team,</div><div><br></div><div>I hope you're doing well! I'm reaching out to explore potential collaboration opportunities with your site digitalgpoint.com</div>",
+              "subject": "Linking Up for Mutual Benefit \ud83d\ude80 - smartlead.ai",
+              "email_seq_number": "1",
+              "open_count": 9,
+              "click_count": 0,
+              "click_details": {}
+            },
+            {
+              "stats_id": "6d6ef88a-d0c9-4b7c-9522-922c05b37a35",
+              "from": "digitalgpoint.webmail@gmail.com",
+              "to": "vgarg@smartlead-backlinking.com",
+              "type": "REPLY",
+              "message_id": "<CALvt9-KpZo-aRSyEKqbcUkeB7P0FpJ5FY6aLEufiXTeEW_jLMA@mail.gmail.com>",
+              "time": "2025-07-07T11:18:14.000Z",
+              "email_body": "<div>Hi,</div><div>Thank you for reaching out. We only accept paid guest posts and link insertions in existing articles.</div>",
+              "email_seq_number": "1",
+              "cc": []
+            }
+          ]
+        }
+      ],
+      "offset": 0,
+      "limit": 2
+    },
+    "config": {
+      "operation": "list_inbox_replies",
+      "fetch_message_history": true,
+      "offset": 0,
+      "limit": 5,
+      "filters": {
+        "emailStatus": [
+          "Replied"
+        ],
+        "campaignId": [
+          400001
+        ]
+      },
+      "sortBy": "REPLY_TIME_DESC"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/1vqkqbwmdsawygw"
+  },
+  "update_lead_category": {
+    "method": "PATCH",
+    "path": "/v1/master-inbox/update-category",
+    "response": {
+      "ok": true,
+      "message": "Lead category updated successfully",
+      "data": {
+        "success": true,
+        "updated": 1
+      }
+    },
+    "config": {
+      "operation": "update_lead_category",
+      "email_lead_map_id": 1982614021,
+      "category_id": 1454
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/1vqkqbwmdsawygw"
+  },
+  "update_lead_revenue": {
+    "method": "PATCH",
+    "path": "/v1/master-inbox/update-revenue",
+    "response": {
+      "ok": true,
+      "message": "Lead revenue updated successfully",
+      "data": {
+        "success": true,
+        "updated": 1
+      }
+    },
+    "config": {
+      "operation": "update_lead_revenue",
+      "email_lead_map_id": 1982614021,
+      "revenue": 500.5
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/1vqkqbwmdsawygw"
+  },
+  "create_lead_task": {
+    "method": "POST",
+    "path": "/v1/master-inbox/create-task",
+    "response": {
+      "ok": true,
+      "message": "Task created successfully",
+      "data": {
+        "success": true,
+        "task": [
+          {
+            "id": "77721",
+            "created_at": "2025-08-01T03:47:18.577Z"
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "create_lead_task",
+      "email_lead_map_id": 1982614021,
+      "name": "Follow up with lead",
+      "description": "Send pricing information and schedule demo",
+      "priority": "HIGH",
+      "due_date": "2025-02-01T10:00:00.000Z"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/1vqkqbwmdsawygw"
+  },
+  "create_lead_note": {
+    "method": "POST",
+    "path": "/v1/master-inbox/create-note",
+    "response": {
+      "ok": true,
+      "message": "Note created successfully",
+      "data": {
+        "success": true,
+        "note": [
+          {
+            "id": "129523",
+            "created_at": "2025-08-01T03:47:19.577Z"
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "create_lead_note",
+      "email_lead_map_id": 1982614021,
+      "note_message": "Lead showed interest in enterprise features during our call"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/1vqkqbwmdsawygw"
+  },
+  "resume_lead": {
+    "method": "PATCH",
+    "path": "/v1/master-inbox/resume-lead",
+    "response": {
+      "ok": true,
+      "message": "Lead resumed successfully",
+      "data": {
+        "status": "success",
+        "nextSeqId": 200001
+      }
+    },
+    "config": {
+      "operation": "resume_lead",
+      "campaign_id": 400001,
+      "email_lead_map_id": 1982614021,
+      "resume_delay_days": 1
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/1vqkqbwmdsawygw"
+  },
+  "block_domains": {
+    "method": "POST",
+    "path": "/v1/master-inbox/block-domains",
+    "response": {
+      "ok": true,
+      "message": "Domains blocked successfully",
+      "data": {
+        "blocked_domains": 2
+      }
+    },
+    "config": {
+      "operation": "block_domains",
+      "domains": [
+        "example-spam.com",
+        "unwanted-domain.net"
+      ],
+      "source": "manual"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/1vqkqbwmdsawygw"
+  },
+  "mark_lead_unread": {
+    "method": "PATCH",
+    "path": "/v1/master-inbox/mark-unread",
+    "response": {
+      "ok": true,
+      "message": "Lead marked as unread successfully",
+      "data": {
+        "success": true,
+        "updated": 1
+      }
+    },
+    "config": {
+      "operation": "mark_lead_unread",
+      "email_lead_map_id": 1982614021
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/1vqkqbwmdsawygw"
+  },
+  "add_email_account_tags": {
+    "method": "POST",
+    "path": "/v1/email-accounts/tag-mapping",
+    "response": {
+      "success": true,
+      "message": "Tag mapping operation completed",
+      "data": {
+        "results": [
+          {
+            "email_account_id": 1,
+            "tag_id": 5,
+            "action": "added",
+            "mapping_id": 123
+          },
+          {
+            "email_account_id": 1,
+            "tag_id": 10,
+            "action": "skipped",
+            "reason": "Mapping already exists"
+          },
+          {
+            "email_account_id": 2,
+            "tag_id": 5,
+            "action": "added",
+            "mapping_id": 124
+          }
+        ],
+        "summary": {
+          "total_processed": 6,
+          "added": 4,
+          "skipped": 1,
+          "failed": 1
+        }
+      }
+    },
+    "config": {
+      "operation": "add_email_account_tags",
+      "email_account_ids": [
+        1,
+        2,
+        3
+      ],
+      "tag_ids": [
+        5,
+        10,
+        15
+      ]
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/fkbbswcimeh26mgv"
+  },
+  "remove_email_account_tags": {
+    "method": "DELETE",
+    "path": "/v1/email-accounts/tag-mapping",
+    "response": {
+      "success": true,
+      "message": "Tag removal operation completed",
+      "data": {
+        "results": [
+          {
+            "email_account_id": 1,
+            "tag_id": 5,
+            "action": "deleted",
+            "mapping_id": 123
+          },
+          {
+            "email_account_id": 1,
+            "tag_id": 10,
+            "action": "skipped",
+            "reason": "Mapping does not exist"
+          },
+          {
+            "email_account_id": 2,
+            "tag_id": 5,
+            "action": "deleted",
+            "mapping_id": 124
+          }
+        ],
+        "summary": {
+          "total_processed": 6,
+          "deleted": 4,
+          "skipped": 1,
+          "failed": 1
+        }
+      }
+    },
+    "config": {
+      "operation": "remove_email_account_tags",
+      "email_account_ids": [
+        1,
+        2,
+        3
+      ],
+      "tag_ids": [
+        5,
+        10,
+        15
+      ]
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/fkbbsw49meh292zk"
+  }
+}
