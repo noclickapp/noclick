@@ -75,6 +75,24 @@ export interface ChannelMessage {
     ephemeral?: boolean;
     /** Yours, on its way. */
     pending?: boolean;
+    /** Its thread, once anyone replied: how many, when the last came, who (newest first), and what you haven't read. */
+    thread?: ChannelThreadSummary;
+    /** A reply: the message whose thread it's in. */
+    threadId?: string | null;
+    /** A reply sent to the channel too. */
+    alsoInChannel?: boolean;
+    pinned?: { by: ChannelAuthor; at: string | null } | null;
+    /** NoClick's quiet line about the channel itself: someone pinned a message. */
+    event?: { type: 'pinned'; messageId: string };
+}
+
+export interface ChannelThreadSummary {
+    count: number;
+    lastAt: string | null;
+    authors: ChannelAuthor[];
+    /** Replies since you last read it, counted for threads you follow. */
+    unread: number;
+    following: boolean;
 }
 
 export type ChannelMode = 'mentions' | 'all';
@@ -91,6 +109,8 @@ export interface ChannelSchedule {
 
 export interface Channel {
     id: string;
+    /** A channel, or a DM between two people. */
+    kind?: 'channel' | 'dm';
     name: string;
     topic: string;
     /** Agents answer only when @-mentioned, or every message a person posts. */
