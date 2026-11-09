@@ -1,0 +1,2297 @@
+{
+  "$defs": {
+    "VocalVideoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "vocal_video_api_key",
+          "default": "vocal_video_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Vocal Video API Key",
+      "type": "object",
+      "x-credential-instructions": "Create a workspace API key in Vocal Video Settings \u2192 API keys. API access must be enabled for the account. Read scope supports get/list tools; write scope is required for mutations. Paste only the key, without Bearer.",
+      "x-credential-url": "https://vocalvideo.com/app/api_keys"
+    },
+    "VocalVideoAddStoryboardToGalleryConfig": {
+      "additionalProperties": false,
+      "description": "Add one or several published videos to a gallery in the supplied order.",
+      "properties": {
+        "operation": {
+          "const": "add_storyboard_to_gallery",
+          "default": "add_storyboard_to_gallery",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "gallery_id": {
+          "title": "Gallery Id",
+          "type": "integer"
+        },
+        "storyboard_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A single published video.",
+          "title": "Storyboard Id"
+        },
+        "storyboard_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Several published videos at once, added in array order. Preferred whenever there is more than one.",
+          "title": "Storyboard Ids"
+        }
+      },
+      "required": [
+        "gallery_id"
+      ],
+      "title": "VocalVideoAddStoryboardToGalleryConfig",
+      "type": "object"
+    },
+    "VocalVideoCreateCollectorConfig": {
+      "additionalProperties": false,
+      "description": "Create a video request campaign, optionally with AI-generated prompts. New collectors are active immediately; AI generation spends credits.",
+      "properties": {
+        "operation": {
+          "const": "create_collector",
+          "default": "create_collector",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ai_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Plain-language description of what you want to collect. The generator seeds prompts + copy from this.",
+          "title": "Ai Prompt"
+        },
+        "intended_usage": {
+          "anyOf": [
+            {
+              "enum": [
+                "testimonials",
+                "employee",
+                "hiring",
+                "communication",
+                "learning",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Picks which generator template to use. Defaults to the account's primary signup usage.",
+          "title": "Intended Usage",
+          "enum": [
+            "testimonials",
+            "employee",
+            "hiring",
+            "communication",
+            "learning",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "nickname": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace-only label for the collector.",
+          "title": "Nickname"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public-facing title shown to respondents.",
+          "title": "Title"
+        }
+      },
+      "title": "VocalVideoCreateCollectorConfig",
+      "type": "object"
+    },
+    "VocalVideoCreateGalleryConfig": {
+      "additionalProperties": false,
+      "description": "Create a gallery with optional published storyboards and uploaded clips. Unpublished storyboards and response clips are rejected by Vocal Video.",
+      "properties": {
+        "operation": {
+          "const": "create_gallery",
+          "default": "create_gallery",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Internal gallery title (workspace-only).",
+          "title": "Title"
+        },
+        "headline": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public-facing headline shown above the items.",
+          "title": "Headline"
+        },
+        "subhead": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public-facing subhead under the headline.",
+          "title": "Subhead"
+        },
+        "style": {
+          "anyOf": [
+            {
+              "enum": [
+                "carousel",
+                "slideshow",
+                "wall",
+                "grid",
+                "list"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Layout: `grid` (default), `carousel`, `slideshow`, `wall`, `list`.",
+          "title": "Style",
+          "enum": [
+            "carousel",
+            "slideshow",
+            "wall",
+            "grid",
+            "list"
+          ],
+          "x-enum-searchable": true
+        },
+        "storyboard_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Published videos to fill the gallery with, in display order. Anything not yet published is rejected \u2014 publish first or leave them out.",
+          "title": "Storyboard Ids"
+        },
+        "clip_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uploaded clips from `list_uploaded_clips` to fill the gallery with, in display order. Added after any `storyboard_ids`. A clip from a response is rejected.",
+          "title": "Clip Ids"
+        }
+      },
+      "title": "VocalVideoCreateGalleryConfig",
+      "type": "object"
+    },
+    "VocalVideoGetAccountUsageConfig": {
+      "additionalProperties": false,
+      "description": "Read workspace totals, usage meters and allowances. The publish, video-request and AI-credit meters are separate.",
+      "properties": {
+        "operation": {
+          "const": "get_account_usage",
+          "default": "get_account_usage",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "VocalVideoGetAccountUsageConfig",
+      "type": "object"
+    },
+    "VocalVideoGetCollectorConfig": {
+      "additionalProperties": false,
+      "description": "Read a collector, its ordered prompts, copy and settings.",
+      "properties": {
+        "operation": {
+          "const": "get_collector",
+          "default": "get_collector",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Collector id from list_collectors.",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "VocalVideoGetCollectorConfig",
+      "type": "object"
+    },
+    "VocalVideoGetGalleryConfig": {
+      "additionalProperties": false,
+      "description": "Read gallery details and item slot IDs.",
+      "properties": {
+        "operation": {
+          "const": "get_gallery",
+          "default": "get_gallery",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Gallery id from list_galleries.",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "VocalVideoGetGalleryConfig",
+      "type": "object"
+    },
+    "VocalVideoGetGalleryEmbedCodeConfig": {
+      "additionalProperties": false,
+      "description": "Get a gallery embed snippet without changing its visibility.",
+      "properties": {
+        "operation": {
+          "const": "get_gallery_embed_code",
+          "default": "get_gallery_embed_code",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "gallery_id": {
+          "title": "Gallery Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "gallery_id"
+      ],
+      "title": "VocalVideoGetGalleryEmbedCodeConfig",
+      "type": "object"
+    },
+    "VocalVideoGetGalleryShareUrlConfig": {
+      "additionalProperties": false,
+      "description": "Get a gallery sharing URL without changing its visibility.",
+      "properties": {
+        "operation": {
+          "const": "get_gallery_share_url",
+          "default": "get_gallery_share_url",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "gallery_id": {
+          "title": "Gallery Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "gallery_id"
+      ],
+      "title": "VocalVideoGetGalleryShareUrlConfig",
+      "type": "object"
+    },
+    "VocalVideoGetReplyConfig": {
+      "additionalProperties": false,
+      "description": "Read a selected video/audio response and its footage details.",
+      "properties": {
+        "operation": {
+          "const": "get_reply",
+          "default": "get_reply",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Reply id from list_replies.",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "VocalVideoGetReplyConfig",
+      "type": "object"
+    },
+    "VocalVideoGetStoryboardConfig": {
+      "additionalProperties": false,
+      "description": "Read a selected video and its scenes, or request the lighter summary.",
+      "properties": {
+        "operation": {
+          "const": "get_storyboard",
+          "default": "get_storyboard",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Storyboard id (e.g., from list_storyboards).",
+          "title": "Id",
+          "type": "integer"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, return the lighter get_storyboard_summary payload (no scene list, no polish flags). Useful when picking a video from a list and you only need its metadata + design summary.",
+          "title": "Summary"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "VocalVideoGetStoryboardConfig",
+      "type": "object"
+    },
+    "VocalVideoGetStoryboardEmbedCodeConfig": {
+      "additionalProperties": false,
+      "description": "Get video embed HTML with optional layout, playback and display settings.",
+      "properties": {
+        "operation": {
+          "const": "get_storyboard_embed_code",
+          "default": "get_storyboard_embed_code",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "storyboard_id": {
+          "title": "Storyboard Id",
+          "type": "integer"
+        },
+        "alignment": {
+          "anyOf": [
+            {
+              "enum": [
+                "Left",
+                "Center"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`Center` (default) or `Left`. Applies when the embed is narrower than its container.",
+          "title": "Alignment",
+          "enum": [
+            "Left",
+            "Center"
+          ],
+          "x-enum-searchable": true
+        },
+        "autoplay": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, the video starts muted on page load.",
+          "title": "Autoplay"
+        },
+        "corners": {
+          "anyOf": [
+            {
+              "enum": [
+                "square",
+                "small",
+                "large"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`square` (default), `small`, or `large` corner radius.",
+          "title": "Corners",
+          "enum": [
+            "square",
+            "small",
+            "large"
+          ],
+          "x-enum-searchable": true
+        },
+        "max_width": {
+          "anyOf": [
+            {
+              "enum": [
+                360,
+                540,
+                720,
+                1080,
+                1920
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cap the embed width in pixels. Omit to use the storyboard's aspect-ratio-derived default.",
+          "title": "Max Width"
+        },
+        "popover": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, the embed renders as a clickable thumbnail that opens the video in a popover.",
+          "title": "Popover"
+        },
+        "shadow": {
+          "anyOf": [
+            {
+              "enum": [
+                "None",
+                "Thin",
+                "Thick"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`None` (default), `Thin`, or `Thick` drop shadow.",
+          "title": "Shadow",
+          "enum": [
+            "None",
+            "Thin",
+            "Thick"
+          ],
+          "x-enum-searchable": true
+        },
+        "show_pull_quote": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, the video's featured pull quote renders alongside the embed.",
+          "title": "Show Pull Quote"
+        }
+      },
+      "required": [
+        "storyboard_id"
+      ],
+      "title": "VocalVideoGetStoryboardEmbedCodeConfig",
+      "type": "object"
+    },
+    "VocalVideoGetStoryboardShareUrlConfig": {
+      "additionalProperties": false,
+      "description": "Get a video sharing URL without changing its visibility.",
+      "properties": {
+        "operation": {
+          "const": "get_storyboard_share_url",
+          "default": "get_storyboard_share_url",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "storyboard_id": {
+          "title": "Storyboard Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "storyboard_id"
+      ],
+      "title": "VocalVideoGetStoryboardShareUrlConfig",
+      "type": "object"
+    },
+    "VocalVideoGetStoryboardSummaryConfig": {
+      "additionalProperties": false,
+      "description": "Read the lighter video metadata and design summary without the scene list.",
+      "properties": {
+        "operation": {
+          "const": "get_storyboard_summary",
+          "default": "get_storyboard_summary",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Storyboard id from list_storyboards.",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "VocalVideoGetStoryboardSummaryConfig",
+      "type": "object"
+    },
+    "VocalVideoListCollectorsConfig": {
+      "additionalProperties": false,
+      "description": "Find workspace video collectors. Results are a ranked shortlist; when truncated, narrow the filters rather than treating matched as a workspace total.",
+      "properties": {
+        "operation": {
+          "const": "list_collectors",
+          "default": "list_collectors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search across nickname and title.",
+          "title": "Query"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`active` covers collectors currently accepting responses (including freshly-initialized ones); `inactive` covers paused collectors. Omit for both. Archived collectors are never returned.",
+          "title": "Status",
+          "enum": [
+            "active",
+            "inactive"
+          ],
+          "x-enum-searchable": true
+        },
+        "starred": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, return only starred collectors.",
+          "title": "Starred"
+        },
+        "since_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to collectors created in the last N days.",
+          "title": "Since Days"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "newest",
+                "oldest",
+                "abc",
+                "most_replies"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`newest` (default) by creation recency, `oldest` reverses it, `abc` orders alphabetically by nickname, `most_replies` by response count descending.",
+          "title": "Sort",
+          "enum": [
+            "newest",
+            "oldest",
+            "abc",
+            "most_replies"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results to return.",
+          "maximum": 50,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "VocalVideoListCollectorsConfig",
+      "type": "object"
+    },
+    "VocalVideoListGalleriesConfig": {
+      "additionalProperties": false,
+      "description": "Find workspace galleries. Results are a shortlist; narrow filters when truncated.",
+      "properties": {
+        "operation": {
+          "const": "list_galleries",
+          "default": "list_galleries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search across title, headline, and subhead.",
+          "title": "Query"
+        },
+        "style": {
+          "anyOf": [
+            {
+              "enum": [
+                "carousel",
+                "slideshow",
+                "wall",
+                "grid",
+                "list"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by layout style (`carousel`, `slideshow`, `wall`, `grid`, `list`).",
+          "title": "Style",
+          "enum": [
+            "carousel",
+            "slideshow",
+            "wall",
+            "grid",
+            "list"
+          ],
+          "x-enum-searchable": true
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "enum": [
+                "publicly",
+                "unlisted",
+                "privately"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`publicly` = public + searchable; `unlisted` = public link only; `privately` = workspace-only.",
+          "title": "Visibility",
+          "enum": [
+            "publicly",
+            "unlisted",
+            "privately"
+          ],
+          "x-enum-searchable": true
+        },
+        "starred": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, return only starred (favorited) galleries.",
+          "title": "Starred"
+        },
+        "since_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to galleries created in the last N days.",
+          "title": "Since Days"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "newest",
+                "oldest",
+                "view"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`newest` (default) by creation recency, `oldest` reverses it, `view` by total view count.",
+          "title": "Sort",
+          "enum": [
+            "newest",
+            "oldest",
+            "view"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results to return.",
+          "maximum": 50,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "VocalVideoListGalleriesConfig",
+      "type": "object"
+    },
+    "VocalVideoListRepliesConfig": {
+      "additionalProperties": false,
+      "description": "Find video/audio responses using transcript and respondent filters. Retains locked and pending-indexing indicators; pending indexing does not mean the workspace is empty.",
+      "properties": {
+        "operation": {
+          "const": "list_replies",
+          "default": "list_replies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search across transcript content, respondent name, job title, and company. Pass when the user's request implies a topic, theme, or keyword (e.g., 'hiring', 'onboarding', 'team culture'). Omit for unfiltered browse by recency.",
+          "title": "Query"
+        },
+        "response_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "testimonial",
+                "personal_message",
+                "leadership_message",
+                "expert_content",
+                "hiring_screening",
+                "impact_story",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by response shape. `testimonial` is the default for customer/employee endorsements (~60% of corpus). `personal_message` is greetings/dedications addressed to specific people. `leadership_message` is exec/leadership outbound to a group. `expert_content` is educational/tutorial from an expert. `hiring_screening` is job/scholarship applications \u2014 exclude from marketing storyboards. `impact_story` is beneficiary/program narrative. For most storyboard-building, default to `testimonial` or omit to scan everything.",
+          "title": "Response Type",
+          "enum": [
+            "testimonial",
+            "personal_message",
+            "leadership_message",
+            "expert_content",
+            "hiring_screening",
+            "impact_story",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "sentiment": {
+          "anyOf": [
+            {
+              "enum": [
+                "positive",
+                "negative",
+                "neutral",
+                "mixed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by inferred sentiment. Useful for 'positive customer testimonials' or 'critical product feedback'. Corpus skews positive \u2014 `negative` / `mixed` filters meaningfully narrow.",
+          "title": "Sentiment",
+          "enum": [
+            "positive",
+            "negative",
+            "neutral",
+            "mixed"
+          ],
+          "x-enum-searchable": true
+        },
+        "specificity": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by how concrete the response is. `high` = specific outcomes, numbers, named details ('cut deployment time in half'). `low` = generic praise ('game changer', 'top-notch'). Storyboards usually benefit from `medium` or `high`. Pass `high` when the user wants impact-driven content.",
+          "title": "Specificity",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "x-enum-searchable": true
+        },
+        "topics": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to replies whose extracted topics overlap with these terms (any-match, case-insensitive). Example: ['team culture', 'onboarding'].",
+          "title": "Topics"
+        },
+        "job_title_contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Substring match on respondent job_title (case-insensitive).",
+          "title": "Job Title Contains"
+        },
+        "company_contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Substring match on respondent company_name (case-insensitive).",
+          "title": "Company Contains"
+        },
+        "collector_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to one specific collector (a particular ask or survey).",
+          "title": "Collector Id"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "enum": [
+                "video",
+                "audio"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format",
+          "enum": [
+            "video",
+            "audio"
+          ],
+          "x-enum-searchable": true
+        },
+        "starred": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, return only starred (favorited) responses.",
+          "title": "Starred"
+        },
+        "has_release": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, return only responses with a signed release \u2014 safe for public use.",
+          "title": "Has Release"
+        },
+        "since_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional narrowing window \u2014 restrict to responses from the last N days. Results are already returned in recency order by default; only pass this when the user has expressed an explicit time constraint (e.g. \"from this quarter\", \"last month\"). Do NOT pass it for vague phrasings like \"recent\" \u2014 the natural sort handles that.",
+          "title": "Since Days"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results to return.",
+          "maximum": 50,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "VocalVideoListRepliesConfig",
+      "type": "object"
+    },
+    "VocalVideoListStoryboardsConfig": {
+      "additionalProperties": false,
+      "description": "Find workspace videos by content, publication and visibility. Shortlist results are not workspace totals.",
+      "properties": {
+        "operation": {
+          "const": "list_storyboards",
+          "default": "list_storyboards",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search across title, internal title, description, and the full transcript. Pass when the user names a topic, theme, or keyword. Omit for unfiltered browse by recency.",
+          "title": "Query"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "published"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by lifecycle. `published` covers anything the user has shipped (including publishing-in-progress / errored renders); `draft` covers unfinished editor work. Omit for both. Archived videos are never returned.",
+          "title": "Status",
+          "enum": [
+            "draft",
+            "published"
+          ],
+          "x-enum-searchable": true
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "enum": [
+                "publicly",
+                "unlisted",
+                "privately"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by public visibility. `publicly` = public + searchable; `unlisted` = public link only; `privately` = workspace-only. Useful for \"show me public videos\" or \"find my private drafts\".",
+          "title": "Visibility",
+          "enum": [
+            "publicly",
+            "unlisted",
+            "privately"
+          ],
+          "x-enum-searchable": true
+        },
+        "aspect_ratio": {
+          "anyOf": [
+            {
+              "enum": [
+                "square",
+                "portrait",
+                "landscape"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by aspect ratio: `landscape`, `portrait`, or `square`.",
+          "title": "Aspect Ratio",
+          "enum": [
+            "square",
+            "portrait",
+            "landscape"
+          ],
+          "x-enum-searchable": true
+        },
+        "starred": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, return only starred videos (the user's favorites).",
+          "title": "Starred"
+        },
+        "since_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to videos created in the last N days (based on draft creation date). Only pass when the user named an explicit time window (\"this quarter\", \"last month\"). For \"videos I published this quarter\" use `since_published_days` instead. Results are recency-ordered by default \u2014 don't pass this for vague \"recent\".",
+          "title": "Since Days"
+        },
+        "since_published_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to videos published in the last N days (based on last_published_at). Use this for \"newly published\", \"shipped this quarter\", or gallery-refresh asks (\"rotate in my newest published videos\"). Drafts have no publish date and will not match.",
+          "title": "Since Published Days"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "newest",
+                "oldest",
+                "play",
+                "view",
+                "published"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`newest` (default) by creation recency, `oldest` reverses it, `play` orders by total play count, `view` by total view count, `published` orders by last publish date (drafts sort last). Pick `play` or `view` for \"most popular\" / \"best performing\" asks; pick `published` for \"most recently shipped\".",
+          "title": "Sort",
+          "enum": [
+            "newest",
+            "oldest",
+            "play",
+            "view",
+            "published"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results to return.",
+          "maximum": 50,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "VocalVideoListStoryboardsConfig",
+      "type": "object"
+    },
+    "VocalVideoRemoveFromGalleryConfig": {
+      "additionalProperties": false,
+      "description": "Remove an item from a gallery by slot ID, or by storyboard/clip ID. Slot ID from get_gallery is preferred.",
+      "properties": {
+        "operation": {
+          "const": "remove_from_gallery",
+          "default": "remove_from_gallery",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "gallery_id": {
+          "title": "Gallery Id",
+          "type": "integer"
+        },
+        "slot_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Slot id from get_gallery.items[].slot_id. Preferred.",
+          "title": "Slot Id"
+        },
+        "storyboard_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Storyboard id \u2014 used to look up the slot if slot_id isn't passed.",
+          "title": "Storyboard Id"
+        },
+        "clip_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Clip id \u2014 used to look up the slot if slot_id isn't passed.",
+          "title": "Clip Id"
+        }
+      },
+      "required": [
+        "gallery_id"
+      ],
+      "title": "VocalVideoRemoveFromGalleryConfig",
+      "type": "object"
+    },
+    "VocalVideoSendCollectorInvitationConfig": {
+      "additionalProperties": false,
+      "description": "Preview invitation recipients with confirm=false. After confirming the preview, run again with the same recipients/message, confirm=true and the returned confirmation_token. Sending emails spends one video-request credit per recipient.",
+      "properties": {
+        "operation": {
+          "const": "send_collector_invitation",
+          "default": "send_collector_invitation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collector_id": {
+          "title": "Collector Id",
+          "type": "integer"
+        },
+        "emails": {
+          "description": "Recipient email addresses. Skipped reasons surface in the preview.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Emails",
+          "type": "array"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional override for the invitation email body. Defaults to the collector's template copy.",
+          "title": "Message"
+        },
+        "confirm": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set true only after the user has explicitly confirmed the preview. Defaults to false.",
+          "title": "Confirm"
+        },
+        "confirmation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External API/MCP only: the token returned by the confirm:false preview. Required alongside confirm:true on that surface.",
+          "title": "Confirmation Token"
+        }
+      },
+      "required": [
+        "collector_id",
+        "emails"
+      ],
+      "title": "VocalVideoSendCollectorInvitationConfig",
+      "type": "object"
+    },
+    "VocalVideoSetCollectorStatusConfig": {
+      "additionalProperties": false,
+      "description": "Activate a collector or pause it so its link stops accepting submissions.",
+      "properties": {
+        "operation": {
+          "const": "set_collector_status",
+          "default": "set_collector_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collector_id": {
+          "title": "Collector Id",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "inactive"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collector_id",
+        "status"
+      ],
+      "title": "VocalVideoSetCollectorStatusConfig",
+      "type": "object"
+    },
+    "VocalVideoSetStoryboardMetadataConfig": {
+      "additionalProperties": false,
+      "description": "Change public video title/description and the internal workspace title.",
+      "properties": {
+        "operation": {
+          "const": "set_storyboard_metadata",
+          "default": "set_storyboard_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "storyboard_id": {
+          "title": "Storyboard Id",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public-facing title (share page, embed). Keep under ~80 characters.",
+          "title": "Title"
+        },
+        "internal_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace-only disambiguation label. Never shown publicly.",
+          "title": "Internal Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public-facing description (share / embed). Under ~200 characters.",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "storyboard_id"
+      ],
+      "title": "VocalVideoSetStoryboardMetadataConfig",
+      "type": "object"
+    },
+    "VocalVideoSetStoryboardVisibilityConfig": {
+      "additionalProperties": false,
+      "description": "Set video visibility to public and searchable, unlisted link access, or private workspace access.",
+      "properties": {
+        "operation": {
+          "const": "set_storyboard_visibility",
+          "default": "set_storyboard_visibility",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "storyboard_id": {
+          "title": "Storyboard Id",
+          "type": "integer"
+        },
+        "visibility": {
+          "description": "`publicly` (public + searchable), `unlisted` (public link only), or `privately` (workspace-only).",
+          "enum": [
+            "publicly",
+            "unlisted",
+            "privately"
+          ],
+          "title": "Visibility",
+          "type": "string"
+        }
+      },
+      "required": [
+        "storyboard_id",
+        "visibility"
+      ],
+      "title": "VocalVideoSetStoryboardVisibilityConfig",
+      "type": "object"
+    },
+    "VocalVideoStarReplyConfig": {
+      "additionalProperties": false,
+      "description": "Mark a response as a workspace favorite.",
+      "properties": {
+        "operation": {
+          "const": "star_reply",
+          "default": "star_reply",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Reply id from list_replies.",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "VocalVideoStarReplyConfig",
+      "type": "object"
+    },
+    "VocalVideoUnstarReplyConfig": {
+      "additionalProperties": false,
+      "description": "Remove a response from workspace favorites.",
+      "properties": {
+        "operation": {
+          "const": "unstar_reply",
+          "default": "unstar_reply",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Reply id from list_replies.",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "VocalVideoUnstarReplyConfig",
+      "type": "object"
+    },
+    "VocalVideoUpdateCollectorConfig": {
+      "additionalProperties": false,
+      "description": "Change selected collector copy and settings. Only supplied fields are sent; explicit null clears release, reward or template overrides.",
+      "properties": {
+        "operation": {
+          "const": "update_collector",
+          "default": "update_collector",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collector_id": {
+          "title": "Collector Id",
+          "type": "integer"
+        },
+        "intended_usage": {
+          "anyOf": [
+            {
+              "enum": [
+                "testimonials",
+                "employee",
+                "hiring",
+                "communication",
+                "learning",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Re-point the collector's purpose (testimonials / employee / hiring / communication / learning / other).",
+          "title": "Intended Usage",
+          "enum": [
+            "testimonials",
+            "employee",
+            "hiring",
+            "communication",
+            "learning",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "nickname": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nickname"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "video_label": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What kind of video its responses become, for viewers (\"Customer Story\", \"Therapist Profile\"): the line over the name on each video's title card and thumbnail. Never an ask, a name or a date; empty for job applications.",
+          "title": "Video Label"
+        },
+        "intro": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public-facing welcome blurb shown to respondents.",
+          "title": "Intro"
+        },
+        "finish_headline": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thank-you screen headline shown after recording.",
+          "title": "Finish Headline"
+        },
+        "finish_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Thank-you screen body shown after recording.",
+          "title": "Finish Body"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace contact name (the person fronting the request).",
+          "title": "Contact Name"
+        },
+        "contact_title": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace contact title.",
+          "title": "Contact Title"
+        },
+        "sender_name": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name used as the From-name on invitation emails.",
+          "title": "Sender Name"
+        },
+        "invitation_subject": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Subject line of the invitation email.",
+          "title": "Invitation Subject"
+        },
+        "accept_audio": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Let a respondent answer with audio only, instead of video.",
+          "title": "Accept Audio"
+        },
+        "ask_company_name": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ask the respondent for their company name on the attribution step.",
+          "title": "Ask Company Name"
+        },
+        "ask_job_title": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ask the respondent for their job title on the attribution step.",
+          "title": "Ask Job Title"
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reply-to address for the invitation and reminder emails.",
+          "title": "Contact Email"
+        },
+        "enable_effects": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offer background blur to respondents while they record.",
+          "title": "Enable Effects"
+        },
+        "force_landscape_video": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Make phone respondents record horizontally.",
+          "title": "Force Landscape Video"
+        },
+        "prize_drawing": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enter respondents in the Vocal Video prize drawing.",
+          "title": "Prize Drawing"
+        },
+        "release_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A custom release from this workspace for respondents to agree to; null uses the workspace default. Only reaches respondents while include_custom_release is on, and a wrong id comes back with the workspace's releases listed.",
+          "title": "Release Id"
+        },
+        "reward": {
+          "anyOf": [
+            {
+              "enum": [
+                "donation",
+                "contest",
+                "giveaway"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom incentive type the customer fulfils themselves; null means none. Describe it in reward_blurb.",
+          "title": "Reward",
+          "enum": [
+            "donation",
+            "contest",
+            "giveaway"
+          ],
+          "x-enum-searchable": true
+        },
+        "reward_blurb": {
+          "anyOf": [
+            {
+              "maxLength": 140,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Describes the custom incentive to respondents. The editor caps it at 140 characters and nothing else does.",
+          "title": "Reward Blurb"
+        },
+        "show_help": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show Help & FAQ links to respondents.",
+          "title": "Show Help"
+        },
+        "show_how_it_works": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show the \"How it Works\" explainer to respondents.",
+          "title": "Show How It Works"
+        },
+        "show_spokesperson": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show the contact as a spokesperson on the collector pages.",
+          "title": "Show Spokesperson"
+        },
+        "show_step_numbers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number the steps a respondent walks through.",
+          "title": "Show Step Numbers"
+        },
+        "include_custom_release": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use the workspace's custom release rather than the standard one. Needs a plan with custom releases.",
+          "title": "Include Custom Release"
+        },
+        "kiosk_mode": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Run the collector as a kiosk: it returns to the start after each response. Overrides the custom thank-you call-to-action. Needs a plan with kiosk mode.",
+          "title": "Kiosk Mode"
+        },
+        "show_custom_finish_cta": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Show a custom call-to-action on the thank-you screen instead of the Vocal Video one. Kiosk mode overrides it. Needs a plan without the Vocal Video CTA.",
+          "title": "Show Custom Finish Cta"
+        },
+        "custom_finish_cta_label": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Button text for the custom thank-you call-to-action.",
+          "title": "Custom Finish Cta Label"
+        },
+        "custom_finish_cta_message": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Message above the custom thank-you call-to-action.",
+          "title": "Custom Finish Cta Message"
+        },
+        "custom_finish_cta_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where the custom thank-you call-to-action links.",
+          "title": "Custom Finish Cta Url"
+        },
+        "invitation_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Body copy of the invitation email.",
+          "title": "Invitation Body"
+        },
+        "invitation_cta": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Call-to-action button label on the invitation email.",
+          "title": "Invitation Cta"
+        },
+        "reminder_subject": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Subject line of the reminder email.",
+          "title": "Reminder Subject"
+        },
+        "reminder_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Body copy of the reminder email.",
+          "title": "Reminder Body"
+        },
+        "reminder_cta": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Call-to-action button label on the reminder email.",
+          "title": "Reminder Cta"
+        },
+        "show_logo": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the workspace logo appears on the collector's public pages. Set false to hide it.",
+          "title": "Show Logo"
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace template id (from list_templates) this collector's drafts assemble with \u2014 used by auto-assembly and as the reply page's default. Overrides the workspace default template. Pass null \u2014 or the current default's id \u2014 to clear the override so the collector follows the workspace default, tracking future default changes; the payload then reports template_id: null.",
+          "title": "Template Id"
+        },
+        "auto_assemble_drafts": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, every new finalized response automatically assembles a draft video using the collector's template (or the workspace default).",
+          "title": "Auto Assemble Drafts"
+        }
+      },
+      "required": [
+        "collector_id"
+      ],
+      "title": "VocalVideoUpdateCollectorConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_storyboard_to_gallery": "#/$defs/VocalVideoAddStoryboardToGalleryConfig",
+          "create_collector": "#/$defs/VocalVideoCreateCollectorConfig",
+          "create_gallery": "#/$defs/VocalVideoCreateGalleryConfig",
+          "get_account_usage": "#/$defs/VocalVideoGetAccountUsageConfig",
+          "get_collector": "#/$defs/VocalVideoGetCollectorConfig",
+          "get_gallery": "#/$defs/VocalVideoGetGalleryConfig",
+          "get_gallery_embed_code": "#/$defs/VocalVideoGetGalleryEmbedCodeConfig",
+          "get_gallery_share_url": "#/$defs/VocalVideoGetGalleryShareUrlConfig",
+          "get_reply": "#/$defs/VocalVideoGetReplyConfig",
+          "get_storyboard": "#/$defs/VocalVideoGetStoryboardConfig",
+          "get_storyboard_embed_code": "#/$defs/VocalVideoGetStoryboardEmbedCodeConfig",
+          "get_storyboard_share_url": "#/$defs/VocalVideoGetStoryboardShareUrlConfig",
+          "get_storyboard_summary": "#/$defs/VocalVideoGetStoryboardSummaryConfig",
+          "list_collectors": "#/$defs/VocalVideoListCollectorsConfig",
+          "list_galleries": "#/$defs/VocalVideoListGalleriesConfig",
+          "list_replies": "#/$defs/VocalVideoListRepliesConfig",
+          "list_storyboards": "#/$defs/VocalVideoListStoryboardsConfig",
+          "remove_from_gallery": "#/$defs/VocalVideoRemoveFromGalleryConfig",
+          "send_collector_invitation": "#/$defs/VocalVideoSendCollectorInvitationConfig",
+          "set_collector_status": "#/$defs/VocalVideoSetCollectorStatusConfig",
+          "set_storyboard_metadata": "#/$defs/VocalVideoSetStoryboardMetadataConfig",
+          "set_storyboard_visibility": "#/$defs/VocalVideoSetStoryboardVisibilityConfig",
+          "star_reply": "#/$defs/VocalVideoStarReplyConfig",
+          "unstar_reply": "#/$defs/VocalVideoUnstarReplyConfig",
+          "update_collector": "#/$defs/VocalVideoUpdateCollectorConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VocalVideoGetAccountUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoListCollectorsConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoGetCollectorConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoCreateCollectorConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoUpdateCollectorConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoSetCollectorStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoSendCollectorInvitationConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoListRepliesConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoGetReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoStarReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoUnstarReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoListGalleriesConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoGetGalleryConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoCreateGalleryConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoAddStoryboardToGalleryConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoRemoveFromGalleryConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoGetGalleryShareUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoGetGalleryEmbedCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoListStoryboardsConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoGetStoryboardSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoGetStoryboardConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoSetStoryboardMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoSetStoryboardVisibilityConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoGetStoryboardShareUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/VocalVideoGetStoryboardEmbedCodeConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VocalVideoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Vocal-video Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
