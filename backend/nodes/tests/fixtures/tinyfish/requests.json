@@ -1,0 +1,271 @@
+[
+  {
+    "config": {
+      "operation": "run",
+      "url": "https://example.com",
+      "goal": "Extract the page title"
+    },
+    "method": "POST",
+    "url": "https://agent.tinyfish.ai/v1/automation/run",
+    "body": {
+      "url": "https://example.com",
+      "goal": "Extract the page title"
+    }
+  },
+  {
+    "config": {
+      "operation": "start_run",
+      "url": "https://example.com",
+      "goal": "Extract the page title"
+    },
+    "method": "POST",
+    "url": "https://agent.tinyfish.ai/v1/automation/run-async",
+    "body": {
+      "url": "https://example.com",
+      "goal": "Extract the page title"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_runs"
+    },
+    "method": "GET",
+    "url": "https://agent.tinyfish.ai/v1/runs",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_run",
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    "method": "GET",
+    "url": "https://agent.tinyfish.ai/v1/runs/a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "cancel_run",
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    "method": "POST",
+    "url": "https://agent.tinyfish.ai/v1/runs/a1b2c3d4-e5f6-7890-abcd-ef1234567890/cancel",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_profiles"
+    },
+    "method": "GET",
+    "url": "https://agent.tinyfish.ai/v1/profiles",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "create_profile",
+      "name": "Work",
+      "set_as_default": false
+    },
+    "method": "POST",
+    "url": "https://agent.tinyfish.ai/v1/profiles",
+    "body": {
+      "name": "Work",
+      "set_as_default": false
+    }
+  },
+  {
+    "config": {
+      "operation": "get_profile",
+      "profile_id": "prof_abc123def4567890"
+    },
+    "method": "GET",
+    "url": "https://agent.tinyfish.ai/v1/profiles/prof_abc123def4567890",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "update_profile",
+      "profile_id": "prof_abc123def4567890",
+      "name": "Work"
+    },
+    "method": "PATCH",
+    "url": "https://agent.tinyfish.ai/v1/profiles/prof_abc123def4567890",
+    "body": {
+      "name": "Work"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_profile",
+      "profile_id": "prof_abc123def4567890"
+    },
+    "method": "DELETE",
+    "url": "https://agent.tinyfish.ai/v1/profiles/prof_abc123def4567890",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "create_dataset",
+      "prompt": "Specialty coffee shops in Oakland with their website and rating",
+      "populate": false
+    },
+    "method": "POST",
+    "url": "https://agent.tinyfish.ai/v1/datasets",
+    "body": {
+      "prompt": "Specialty coffee shops in Oakland with their website and rating",
+      "populate": false
+    }
+  },
+  {
+    "config": {
+      "operation": "list_datasets"
+    },
+    "method": "GET",
+    "url": "https://agent.tinyfish.ai/v1/datasets",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_dataset",
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    "method": "GET",
+    "url": "https://agent.tinyfish.ai/v1/datasets/a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_dataset_rows",
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    "method": "GET",
+    "url": "https://agent.tinyfish.ai/v1/datasets/a1b2c3d4-e5f6-7890-abcd-ef1234567890/rows",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "populate_dataset",
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "reset": false,
+      "target_rows": 100
+    },
+    "method": "POST",
+    "url": "https://agent.tinyfish.ai/v1/datasets/a1b2c3d4-e5f6-7890-abcd-ef1234567890/populate",
+    "body": {
+      "reset": false,
+      "target_rows": 100
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_dataset",
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    "method": "DELETE",
+    "url": "https://agent.tinyfish.ai/v1/datasets/a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "create_monitor",
+      "name": "Competitor pricing",
+      "schedule_cron": "0 9 * * *",
+      "url": "https://example.com/pricing"
+    },
+    "method": "POST",
+    "url": "https://agent.tinyfish.ai/v1/monitors",
+    "body": {
+      "name": "Competitor pricing",
+      "schedule_cron": "0 9 * * *",
+      "type": "fetch",
+      "config": {
+        "url": "https://example.com/pricing"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_monitors"
+    },
+    "method": "GET",
+    "url": "https://agent.tinyfish.ai/v1/monitors",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_monitor",
+      "id": "e047c12d-5e82-43db-a826-cd45bc3ca4b7"
+    },
+    "method": "GET",
+    "url": "https://agent.tinyfish.ai/v1/monitors/e047c12d-5e82-43db-a826-cd45bc3ca4b7",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "update_monitor",
+      "id": "e047c12d-5e82-43db-a826-cd45bc3ca4b7",
+      "status": "paused"
+    },
+    "method": "PATCH",
+    "url": "https://agent.tinyfish.ai/v1/monitors/e047c12d-5e82-43db-a826-cd45bc3ca4b7",
+    "body": {
+      "status": "paused"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_monitor",
+      "id": "e047c12d-5e82-43db-a826-cd45bc3ca4b7"
+    },
+    "method": "DELETE",
+    "url": "https://agent.tinyfish.ai/v1/monitors/e047c12d-5e82-43db-a826-cd45bc3ca4b7",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "search",
+      "query": "web automation tools"
+    },
+    "method": "GET",
+    "url": "https://api.search.tinyfish.ai/",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "fetch_urls",
+      "urls": [
+        "https://example.com",
+        "https://example.org"
+      ]
+    },
+    "method": "POST",
+    "url": "https://api.fetch.tinyfish.ai/",
+    "body": {
+      "urls": [
+        "https://example.com",
+        "https://example.org"
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "start_research",
+      "query": "Compare long-duration energy storage approaches",
+      "mode": "deep"
+    },
+    "method": "POST",
+    "url": "https://agent.tinyfish.ai/v1/automation/run-research-async",
+    "body": {
+      "query": "Compare long-duration energy storage approaches",
+      "mode": "deep"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_research",
+      "research_run_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    "method": "GET",
+    "url": "https://agent.tinyfish.ai/v1/research-run/a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "body": null
+  }
+]
