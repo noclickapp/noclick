@@ -1,0 +1,102 @@
+{
+  "chat": {
+    "method": "POST",
+    "path": "/v1/chat"
+  },
+  "generate_text": {
+    "method": "POST",
+    "path": "/v1/completions"
+  },
+  "list_models": {
+    "method": "GET",
+    "path": "/v1/models"
+  },
+  "list_graphs": {
+    "method": "GET",
+    "path": "/v1/graphs"
+  },
+  "create_graph": {
+    "method": "POST",
+    "path": "/v1/graphs"
+  },
+  "get_graph": {
+    "method": "GET",
+    "path": "/v1/graphs/{graph_id}"
+  },
+  "update_graph": {
+    "method": "PUT",
+    "path": "/v1/graphs/{graph_id}"
+  },
+  "delete_graph": {
+    "method": "DELETE",
+    "path": "/v1/graphs/{graph_id}"
+  },
+  "ask_graph": {
+    "method": "POST",
+    "path": "/v1/graphs/question"
+  },
+  "add_file_to_graph": {
+    "method": "POST",
+    "path": "/v1/graphs/{graph_id}/file"
+  },
+  "remove_file_from_graph": {
+    "method": "DELETE",
+    "path": "/v1/graphs/{graph_id}/file/{file_id}"
+  },
+  "list_files": {
+    "method": "GET",
+    "path": "/v1/files"
+  },
+  "get_file": {
+    "method": "GET",
+    "path": "/v1/files/{file_id}"
+  },
+  "delete_file": {
+    "method": "DELETE",
+    "path": "/v1/files/{file_id}"
+  },
+  "retry_files": {
+    "method": "POST",
+    "path": "/v1/files/retry"
+  },
+  "list_applications": {
+    "method": "GET",
+    "path": "/v1/applications"
+  },
+  "get_application": {
+    "method": "GET",
+    "path": "/v1/applications/{application_id}"
+  },
+  "generate_application": {
+    "method": "POST",
+    "path": "/v1/applications/{application_id}"
+  },
+  "list_jobs": {
+    "method": "GET",
+    "path": "/v1/applications/{application_id}/jobs"
+  },
+  "create_job": {
+    "method": "POST",
+    "path": "/v1/applications/{application_id}/jobs"
+  },
+  "get_job": {
+    "method": "GET",
+    "path": "/v1/applications/jobs/{job_id}"
+  },
+  "retry_job": {
+    "method": "POST",
+    "path": "/v1/applications/jobs/{job_id}/retry"
+  },
+  "list_application_graphs": {
+    "method": "GET",
+    "path": "/v1/applications/{application_id}/graphs"
+  },
+  "associate_application_graphs": {
+    "method": "PUT",
+    "path": "/v1/applications/{application_id}/graphs"
+  },
+  "parse_pdf": {
+    "method": "POST",
+    "path": "/v1/tools/pdf-parser/{file_id}"
+  }
+}
