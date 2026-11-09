@@ -1,0 +1,1728 @@
+{
+  "$defs": {
+    "AddGroupMemberConfig": {
+      "additionalProperties": false,
+      "description": "Add a user to a group.",
+      "properties": {
+        "operation": {
+          "const": "add_group_member",
+          "default": "add_group_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "enroll_to_courses": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to force synchronous enrollment in the group's active courses",
+          "title": "Enroll To Courses"
+        }
+      },
+      "required": [
+        "group_id",
+        "user_id"
+      ],
+      "title": "AddGroupMemberConfig",
+      "type": "object"
+    },
+    "CreateCourseConfig": {
+      "additionalProperties": false,
+      "description": "Create course.",
+      "properties": {
+        "operation": {
+          "const": "create_course",
+          "default": "create_course",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category Id"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        },
+        "capacity": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capacity"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level"
+        },
+        "time_limit": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Limit"
+        },
+        "start_datetime": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp; must be in the future",
+          "title": "Start Datetime"
+        },
+        "expiration_datetime": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp; must be after start_datetime when both set",
+          "title": "Expiration Datetime"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCourseConfig",
+      "type": "object"
+    },
+    "CreateGroupConfig": {
+      "additionalProperties": false,
+      "description": "Create a group.",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 79,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 6,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key"
+        },
+        "max_key_redemptions": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Key Redemptions"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        },
+        "auto_sync": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Sync"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateGroupConfig",
+      "type": "object"
+    },
+    "CreateUserConfig": {
+      "additionalProperties": false,
+      "description": "Create a user.",
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "surname": {
+          "minLength": 1,
+          "title": "Surname",
+          "type": "string"
+        },
+        "login": {
+          "description": "Must be unique",
+          "minLength": 1,
+          "title": "Login",
+          "type": "string"
+        },
+        "email": {
+          "description": "Must be unique",
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "password": {
+          "description": "At least 8 characters with upper, lower, and digit",
+          "minLength": 8,
+          "title": "Password",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "inactive"
+          ],
+          "x-enum-searchable": true
+        },
+        "user_type_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Type Id"
+        },
+        "email_notifications": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Notifications"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "credits": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Credits"
+        },
+        "deactivation_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deactivation Date"
+        },
+        "branch_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional branch to assign after create",
+          "title": "Branch Id"
+        }
+      },
+      "required": [
+        "name",
+        "surname",
+        "login",
+        "email",
+        "password"
+      ],
+      "title": "CreateUserConfig",
+      "type": "object"
+    },
+    "DeleteCourseConfig": {
+      "additionalProperties": false,
+      "description": "Delete a course.",
+      "properties": {
+        "operation": {
+          "const": "delete_course",
+          "default": "delete_course",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "description": "The ID of the course",
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "DeleteCourseConfig",
+      "type": "object"
+    },
+    "DeleteGroupConfig": {
+      "additionalProperties": false,
+      "description": "Delete a group.",
+      "properties": {
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "description": "The ID of the group",
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "DeleteGroupConfig",
+      "type": "object"
+    },
+    "DeleteUserConfig": {
+      "additionalProperties": false,
+      "description": "Delete a user.",
+      "properties": {
+        "operation": {
+          "const": "delete_user",
+          "default": "delete_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "The ID of the user",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "permanent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to permanently delete the user instead of archiving them",
+          "title": "Permanent"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "DeleteUserConfig",
+      "type": "object"
+    },
+    "EnrollUserConfig": {
+      "additionalProperties": false,
+      "description": "Enroll user to course.",
+      "properties": {
+        "operation": {
+          "const": "enroll_user",
+          "default": "enroll_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "description": "The ID of the course",
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the user. Required unless `user_email` is provided. Takes precedence over `user_email`. A `null` value is treated as not provided.",
+          "title": "User Id"
+        },
+        "user_email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email address of the user. Required unless `user_id` is provided. Ignored when `user_id` is provided.",
+          "title": "User Email"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "learner",
+                "instructor"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The course role to enroll the user with. Optional. When omitted or null, the default role of the user type is used.",
+          "title": "Role",
+          "enum": [
+            "learner",
+            "instructor"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "EnrollUserConfig",
+      "type": "object"
+    },
+    "GetBranchConfig": {
+      "additionalProperties": false,
+      "description": "Get a branch.",
+      "properties": {
+        "operation": {
+          "const": "get_branch",
+          "default": "get_branch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "branch_id": {
+          "description": "The ID of the branch",
+          "minimum": 1,
+          "title": "Branch Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "branch_id"
+      ],
+      "title": "GetBranchConfig",
+      "type": "object"
+    },
+    "GetCategoryConfig": {
+      "additionalProperties": false,
+      "description": "Get a category.",
+      "properties": {
+        "operation": {
+          "const": "get_category",
+          "default": "get_category",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "category_id": {
+          "description": "The ID of the category",
+          "minimum": 1,
+          "title": "Category Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "GetCategoryConfig",
+      "type": "object"
+    },
+    "GetCourseConfig": {
+      "additionalProperties": false,
+      "description": "Get a course.",
+      "properties": {
+        "operation": {
+          "const": "get_course",
+          "default": "get_course",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "description": "The ID of the course",
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "GetCourseConfig",
+      "type": "object"
+    },
+    "GetCourseProgressConfig": {
+      "additionalProperties": false,
+      "description": "Get user's course progress.",
+      "properties": {
+        "operation": {
+          "const": "get_course_progress",
+          "default": "get_course_progress",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "course_id": {
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id",
+        "course_id"
+      ],
+      "title": "GetCourseProgressConfig",
+      "type": "object"
+    },
+    "GetGroupConfig": {
+      "additionalProperties": false,
+      "description": "Get a group.",
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "description": "The ID of the group",
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "GetGroupConfig",
+      "type": "object"
+    },
+    "GetUserConfig": {
+      "additionalProperties": false,
+      "description": "Get a user.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "The ID of the user",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "resources": {
+          "anyOf": [
+            {
+              "pattern": "^(all|branches|groups|courses|certificates)(,(branches|groups|courses|certificates))*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional related resources to include in the response. Accepts a single value or a comma-separated list. Allowed values: branches, groups, courses, certificates, all (expands to all four).",
+          "title": "Resources"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUserConfig",
+      "type": "object"
+    },
+    "ListBranchesConfig": {
+      "additionalProperties": false,
+      "description": "List all branches.",
+      "properties": {
+        "operation": {
+          "const": "list_branches",
+          "default": "list_branches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListBranchesConfig",
+      "type": "object"
+    },
+    "ListCategoriesConfig": {
+      "additionalProperties": false,
+      "description": "List all categories.",
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCategoriesConfig",
+      "type": "object"
+    },
+    "ListCourseUsersConfig": {
+      "additionalProperties": false,
+      "description": "Get course users.",
+      "properties": {
+        "operation": {
+          "const": "list_course_users",
+          "default": "list_course_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "description": "The ID of the course",
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "ListCourseUsersConfig",
+      "type": "object"
+    },
+    "ListCoursesConfig": {
+      "additionalProperties": false,
+      "description": "List all courses.",
+      "properties": {
+        "operation": {
+          "const": "list_courses",
+          "default": "list_courses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The page number",
+          "title": "Page Number"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The page size",
+          "title": "Page Size"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields to sort by. Prefix a field with `-` for descending order. Allowed fields: `code`, `name`, `category`, `price`, `last_updated_on`.",
+          "title": "Sort"
+        },
+        "keyword_like": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search across course name, category name, code, description, and price",
+          "title": "Keyword Like"
+        },
+        "name_like": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search by course name",
+          "title": "Name Like"
+        },
+        "code_like": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search by course code",
+          "title": "Code Like"
+        },
+        "category_like": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search by category name",
+          "title": "Category Like"
+        },
+        "description_like": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search by course description",
+          "title": "Description Like"
+        },
+        "status_eq": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by course status",
+          "title": "Status Eq",
+          "enum": [
+            "active",
+            "inactive"
+          ],
+          "x-enum-searchable": true
+        },
+        "branch_id_eq": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter courses that belong to a specific branch",
+          "title": "Branch Id Eq"
+        },
+        "group_id_eq": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter courses that belong to a specific group",
+          "title": "Group Id Eq"
+        },
+        "custom_field_value_eq": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter courses that have a custom field with this exact value",
+          "title": "Custom Field Value Eq"
+        }
+      },
+      "title": "ListCoursesConfig",
+      "type": "object"
+    },
+    "ListGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List all groups.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListGroupsConfig",
+      "type": "object"
+    },
+    "ListUserCoursesConfig": {
+      "additionalProperties": false,
+      "description": "Get user courses.",
+      "properties": {
+        "operation": {
+          "const": "list_user_courses",
+          "default": "list_user_courses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "The ID of the user",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "ListUserCoursesConfig",
+      "type": "object"
+    },
+    "ListUsersConfig": {
+      "additionalProperties": false,
+      "description": "Get users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status_eq": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by user status",
+          "title": "Status Eq",
+          "enum": [
+            "active",
+            "inactive"
+          ],
+          "x-enum-searchable": true
+        },
+        "login_eq": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact login match",
+          "title": "Login Eq"
+        },
+        "email_eq": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact email match",
+          "title": "Email Eq"
+        },
+        "keyword_like": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search across name, surname, login, and email",
+          "title": "Keyword Like"
+        },
+        "last_updated_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter users updated on or after this date (ISO 8601)",
+          "title": "Last Updated Gte"
+        },
+        "last_updated_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter users updated on or before this date (ISO 8601)",
+          "title": "Last Updated Lte"
+        },
+        "branch_id_eq": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter users belonging to a specific branch",
+          "title": "Branch Id Eq"
+        },
+        "group_id_eq": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter users belonging to a specific group",
+          "title": "Group Id Eq"
+        },
+        "integration_eq": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter users linked to a specific integration",
+          "title": "Integration Eq"
+        },
+        "custom_field_value_eq": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter users by a custom field value",
+          "title": "Custom Field Value Eq"
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number (1-based)",
+          "title": "Page Number"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page size (maximum 100)",
+          "title": "Page Size"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort field. Allowed: name, surname, login, email, type, registration, last_login, status, last_updated. Prefix with - for descending.",
+          "title": "Sort"
+        }
+      },
+      "title": "ListUsersConfig",
+      "type": "object"
+    },
+    "RemoveGroupMemberConfig": {
+      "additionalProperties": false,
+      "description": "Remove user from a group.",
+      "properties": {
+        "operation": {
+          "const": "remove_group_member",
+          "default": "remove_group_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "The ID of the user to remove",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "group_id": {
+          "description": "The ID of the group",
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id",
+        "group_id"
+      ],
+      "title": "RemoveGroupMemberConfig",
+      "type": "object"
+    },
+    "ResetCourseProgressConfig": {
+      "additionalProperties": false,
+      "description": "Reset user's course progress.",
+      "properties": {
+        "operation": {
+          "const": "reset_course_progress",
+          "default": "reset_course_progress",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "The ID of the user",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "course_id": {
+          "description": "The ID of the course",
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "remove_certificate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to also remove the course certificate",
+          "title": "Remove Certificate"
+        }
+      },
+      "required": [
+        "user_id",
+        "course_id"
+      ],
+      "title": "ResetCourseProgressConfig",
+      "type": "object"
+    },
+    "TalentLMSAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "talentlms_api_key",
+          "default": "talentlms_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "Your portal subdomain or https://example.talentlms.com.",
+          "title": "Portal address",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "domain",
+        "api_key"
+      ],
+      "title": "TalentLMS API Key",
+      "type": "object",
+      "x-credential-instructions": "In TalentLMS, open Account & Settings > Integrations > API. Enable API access and paste your API key. Enter your TalentLMS portal subdomain or its HTTPS address, such as https://example.talentlms.com. The key inherits the API user's permissions; writes require permission to change the selected resources.",
+      "x-credential-url": "https://help.talentlms.com/hc/en-us/articles/9651527213468-Can-I-integrate-my-site-with-TalentLMS-Do-you-offer-an-API"
+    },
+    "UnenrollUserConfig": {
+      "additionalProperties": false,
+      "description": "Delete a user from a course.",
+      "properties": {
+        "operation": {
+          "const": "unenroll_user",
+          "default": "unenroll_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "The ID of the user to unenroll",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "course_id": {
+          "description": "The ID of the course",
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id",
+        "course_id"
+      ],
+      "title": "UnenrollUserConfig",
+      "type": "object"
+    },
+    "UpdateUserConfig": {
+      "additionalProperties": false,
+      "description": "Update a user.",
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "The ID of the user",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "surname": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Surname"
+        },
+        "login": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Must be unique",
+          "title": "Login"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Must be unique",
+          "title": "Email"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Password",
+          "ui:widget": "password"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A supported timezone name",
+          "title": "Timezone"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "email_notifications": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Notifications"
+        },
+        "user_type_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Type Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to keep the current status",
+          "title": "Status",
+          "enum": [
+            "active",
+            "inactive"
+          ],
+          "x-enum-searchable": true
+        },
+        "deactivation_date": {
+          "anyOf": [
+            {
+              "pattern": "^([0-9]{4}-[0-9]{2}-[0-9]{2})?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format YYYY-MM-DD. Cannot be in the past. Send an empty string to clear it",
+          "title": "Deactivation Date"
+        },
+        "credits": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Credits"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "UpdateUserConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_group_member": "#/$defs/AddGroupMemberConfig",
+          "create_course": "#/$defs/CreateCourseConfig",
+          "create_group": "#/$defs/CreateGroupConfig",
+          "create_user": "#/$defs/CreateUserConfig",
+          "delete_course": "#/$defs/DeleteCourseConfig",
+          "delete_group": "#/$defs/DeleteGroupConfig",
+          "delete_user": "#/$defs/DeleteUserConfig",
+          "enroll_user": "#/$defs/EnrollUserConfig",
+          "get_branch": "#/$defs/GetBranchConfig",
+          "get_category": "#/$defs/GetCategoryConfig",
+          "get_course": "#/$defs/GetCourseConfig",
+          "get_course_progress": "#/$defs/GetCourseProgressConfig",
+          "get_group": "#/$defs/GetGroupConfig",
+          "get_user": "#/$defs/GetUserConfig",
+          "list_branches": "#/$defs/ListBranchesConfig",
+          "list_categories": "#/$defs/ListCategoriesConfig",
+          "list_course_users": "#/$defs/ListCourseUsersConfig",
+          "list_courses": "#/$defs/ListCoursesConfig",
+          "list_groups": "#/$defs/ListGroupsConfig",
+          "list_user_courses": "#/$defs/ListUserCoursesConfig",
+          "list_users": "#/$defs/ListUsersConfig",
+          "remove_group_member": "#/$defs/RemoveGroupMemberConfig",
+          "reset_course_progress": "#/$defs/ResetCourseProgressConfig",
+          "unenroll_user": "#/$defs/UnenrollUserConfig",
+          "update_user": "#/$defs/UpdateUserConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCoursesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCourseConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateCourseConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteCourseConfig"
+        },
+        {
+          "$ref": "#/$defs/EnrollUserConfig"
+        },
+        {
+          "$ref": "#/$defs/UnenrollUserConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCourseProgressConfig"
+        },
+        {
+          "$ref": "#/$defs/ResetCourseProgressConfig"
+        },
+        {
+          "$ref": "#/$defs/ListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/AddGroupMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/RemoveGroupMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/ListBranchesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCourseUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/ListUserCoursesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TalentLMSAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Talentlms Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

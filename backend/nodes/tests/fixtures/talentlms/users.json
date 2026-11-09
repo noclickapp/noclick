@@ -1,0 +1,24 @@
+{
+  "_data": [
+    {
+      "id": 12,
+      "name": "John",
+      "surname": "Doe",
+      "login": "johndoe",
+      "email": "john@example.com",
+      "status": "active"
+    }
+  ],
+  "_meta": {
+    "pagination": {
+      "page": 2,
+      "page_size": 10,
+      "total_items": 21,
+      "total_pages": 3
+    }
+  },
+  "_links": {
+    "self": "https://example.talentlms.com/api/v2/users?page[number]=2&page[size]=10",
+    "next": "https://example.talentlms.com/api/v2/users?page[number]=3&page[size]=10"
+  }
+}
