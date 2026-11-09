@@ -1,0 +1,3404 @@
+{
+  "$defs": {
+    "UrableAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "urable_api_key",
+          "default": "urable_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Urable API Key",
+      "type": "object",
+      "x-credential-instructions": "As an Urable admin, open Settings \u2192 Developer \u2192 API Keys, create a key and copy it here. Enable customers:read for the connection check, plus the read scopes for resources you use and customers:write, items:write, jobs:write or events:write for your writes. The full key is shown only once.",
+      "x-credential-url": "https://app.urable.com"
+    },
+    "UrableAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "line1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line1"
+        },
+        "line2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "postalCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postalcode"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO country code (US, CA, AU, GB, NZ, IE).",
+          "title": "Country"
+        }
+      },
+      "title": "UrableAddress",
+      "type": "object"
+    },
+    "UrableAdjustmentInput": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "tax",
+            "fee",
+            "discount",
+            "subscription",
+            "eGiftCard",
+            "coupon",
+            "credit",
+            "referral"
+          ],
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "value": {
+          "description": "Cents, or a percentage when percent=true.",
+          "title": "Value",
+          "type": "number"
+        },
+        "percent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Percent"
+        },
+        "taxable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For fees: whether the fee is itself taxed.",
+          "title": "Taxable"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Coupon / gift-card code.",
+          "title": "Code"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference to the coupon / gift card / referral document.",
+          "title": "Ref"
+        },
+        "productServiceIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict the adjustment to these product/service ids.",
+          "title": "Productserviceids"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "title": "UrableAdjustmentInput",
+      "type": "object"
+    },
+    "UrableCreateCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Create a customer. Requires scope `customers:write`. `firstName` is required (and cannot be blank).",
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "person",
+                "business"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "person",
+            "business"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "new",
+                "contacted",
+                "existing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "new",
+            "contacted",
+            "existing"
+          ],
+          "x-enum-searchable": true
+        },
+        "firstName": {
+          "description": "Required and non-blank.",
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/UrableLabeledValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "phoneNumbers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/UrableLabeledValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phonenumbers"
+        },
+        "locations": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/UrableLocation"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locations"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Origin"
+        },
+        "taxExempt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Taxexempt"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableCustomerInputColor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "customData": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customdata"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "firstName"
+      ],
+      "title": "UrableCreateCustomerConfig",
+      "type": "object"
+    },
+    "UrableCreateEventConfig": {
+      "additionalProperties": false,
+      "description": "Create an event. Requires scope `events:write`. `name`, `start`, and `end` are required.",
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "meeting",
+                "consultation",
+                "reminder",
+                "time off",
+                "closed",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "meeting",
+            "consultation",
+            "reminder",
+            "time off",
+            "closed",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "jobType": {
+          "anyOf": [
+            {
+              "enum": [
+                "shop",
+                "field"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Jobtype",
+          "enum": [
+            "shop",
+            "field"
+          ],
+          "x-enum-searchable": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "customerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional customer associated with the event.",
+          "title": "Customerid"
+        },
+        "userIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assigned team members. Required when private=true.",
+          "title": "Userids"
+        },
+        "start": {
+          "description": "Unix ms.",
+          "title": "Start",
+          "type": "integer"
+        },
+        "end": {
+          "description": "Unix ms; must be greater than or equal to start.",
+          "title": "End",
+          "type": "integer"
+        },
+        "allDay": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allday"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableEventInputColor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calendar color for the event. `name` is the label shown for the color. Send `null` to clear it."
+        },
+        "private": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "customData": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customdata"
+        },
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "start",
+        "end"
+      ],
+      "title": "UrableCreateEventConfig",
+      "type": "object"
+    },
+    "UrableCreateItemConfig": {
+      "additionalProperties": false,
+      "description": "Create an item. Requires scope `items:write`. `customerId` (must exist) and `name` are required. For `lawnCare`, `location` is also required.",
+      "properties": {
+        "customerId": {
+          "minLength": 1,
+          "title": "Customerid",
+          "type": "string"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industry"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "automotive",
+                "marine",
+                "aviation",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "automotive",
+            "marine",
+            "aviation",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableLocation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "photoURL": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Photourl"
+        },
+        "vins": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vins"
+        },
+        "licensePlates": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Licenseplates"
+        },
+        "stockNumbers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stocknumbers"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableItemInputDimensions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lawn care only. Values are in the business's display units, named by unitSystem: sq ft / ft / in for imperial, m\u00b2 / m / cm for metric (volume is cu yd or m\u00b3). A business can switch systems, so read unitSystem rather than assuming. Send unitSystem on a write to be rejected if it no longer matches; volume is read-only and derived from area x depth."
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "customData": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customdata"
+        },
+        "operation": {
+          "const": "create_item",
+          "default": "create_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "customerId",
+        "name"
+      ],
+      "title": "UrableCreateItemConfig",
+      "type": "object"
+    },
+    "UrableCreateJobConfig": {
+      "additionalProperties": false,
+      "description": "Create a job. Requires scope `jobs:write`. Send line items as product/service references + quantities; the server looks up prices, embeds the products, and computes the invoice subtotal/tax/total. A sequential `num` is assigned. Requires a customer, an `industry`, at least one `itemId`, and at least one line item. A job's work is always tracked per item, so the invoice comes back with the line items grouped under `invoice.items` \u2014 keyed by item ref \u2014 rather than as a flat `invoice.lineItems` array. On a job with one item every line item belongs to it; on a job with several, each line item must name its `itemId`, and every item needs at least one line item. A `field` job is performed on site, so it also needs a `location`: send one, or omit it and the customer's location is copied onto the job. It is rejected only when neither exists. A `location` sent on a `shop` job is ignored. If `name` is omitted it defaults to the joined names of the referenced items (e.g. the vehicle names). Jobs are always created `unpaid`. To record an invoice that was already collected, create the job and then record the money with `POST /v1/payments`, which settles the invoice and derives the payment status. When importing history, set `completedAt` to the original completion date along with `status: completed` so the job reports in the right period. The earnings and profit reports only count completed jobs, so `completedAt` without that status is rejected rather than silently leaving the revenue out of every figure. Likewise `canceledAt` requires `status: canceled` in the same request. New jobs pick up the account's default reminders, but the immediate 'job scheduled' confirmation message is suppressed by default so imports can't mass-message customers \u2014 pass `deployScheduledMessage: true` to send it (future-dated jobs only, and only when the account's scheduled-message auto-deploy preference is on).",
+      "properties": {
+        "customerId": {
+          "minLength": 1,
+          "title": "Customerid",
+          "type": "string"
+        },
+        "industry": {
+          "description": "The industry the job belongs to.",
+          "enum": [
+            "vehicleCare",
+            "lawnCare",
+            "flatGlass",
+            "other"
+          ],
+          "minLength": 1,
+          "title": "Industry",
+          "type": "string"
+        },
+        "itemIds": {
+          "description": "The items/vehicles the job is for.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Itemids",
+          "type": "array"
+        },
+        "userIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assigned team members.",
+          "title": "Userids"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "shop",
+                "field"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "shop",
+            "field"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "quote",
+                "scheduled",
+                "in progress",
+                "completed",
+                "archived",
+                "canceled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "quote",
+            "scheduled",
+            "in progress",
+            "completed",
+            "archived",
+            "canceled"
+          ],
+          "x-enum-searchable": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the joined item names if omitted.",
+          "title": "Name"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableLocation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where the work is performed. Applies to `field` jobs; ignored on `shop` jobs. Defaults to the customer's location when omitted, so a field job is rejected only if neither is present. `formattedAddress`, `geoPoint` and `timeZone` are derived from the address server-side.\n"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms.",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms.",
+          "title": "End"
+        },
+        "dropOff": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms.",
+          "title": "Dropoff"
+        },
+        "completedAt": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms the work was finished. Set this when importing history: it is the date the earnings, profit, and product/service reports bucket a job on. Requires `status: completed` in the same request, since those reports only count completed jobs.",
+          "title": "Completedat"
+        },
+        "canceledAt": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms the job was canceled. Set this when importing history so the canceled jobs list sorts on the original cancellation date. Requires `status: canceled` in the same request.",
+          "title": "Canceledat"
+        },
+        "allDay": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allday"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableJobInputColor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calendar color for the job. `name` is the label shown for the color. Send `null` to clear it."
+        },
+        "lineItems": {
+          "items": {
+            "$ref": "#/$defs/UrableLineItemInput"
+          },
+          "minItems": 1,
+          "title": "Lineitems",
+          "type": "array"
+        },
+        "adjustments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/UrableAdjustmentInput"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adjustments"
+        },
+        "taxExempt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Taxexempt"
+        },
+        "autoTax": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch the tax rate from TaxJar.",
+          "title": "Autotax"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "deployScheduledMessage": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set true to send the customer the immediate 'job scheduled' confirmation message for this job; by default API-created jobs suppress it, so imports can't mass-message customers. The job's other reminders (appointment reminders, follow-ups) deploy normally either way. Even when true, the confirmation only sends when the account's scheduled-message auto-deploy preference is on and the job's `start` is in the future.",
+          "title": "Deployscheduledmessage"
+        },
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "customerId",
+        "industry",
+        "itemIds",
+        "lineItems"
+      ],
+      "title": "UrableCreateJobConfig",
+      "type": "object"
+    },
+    "UrableCustomerInputColor": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "hex": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hex"
+        }
+      },
+      "title": "UrableCustomerInputColor",
+      "type": "object"
+    },
+    "UrableCustomerUpdateInputColor": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "hex": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hex"
+        }
+      },
+      "title": "UrableCustomerUpdateInputColor",
+      "type": "object"
+    },
+    "UrableEventInputColor": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Label for the color, e.g. \"Team meeting\".",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "hex": {
+          "description": "Hex code, e.g. \"#2fd2a8\".",
+          "minLength": 1,
+          "title": "Hex",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "hex"
+      ],
+      "title": "UrableEventInputColor",
+      "type": "object"
+    },
+    "UrableGetCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a customer. Requires scope `customers:read`.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Customer ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UrableGetCustomerConfig",
+      "type": "object"
+    },
+    "UrableGetEventConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve an event. Requires scope `events:read`.",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UrableGetEventConfig",
+      "type": "object"
+    },
+    "UrableGetItemConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve an item. Requires scope `items:read`.",
+      "properties": {
+        "operation": {
+          "const": "get_item",
+          "default": "get_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UrableGetItemConfig",
+      "type": "object"
+    },
+    "UrableGetJobConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a job. Requires scope `jobs:read`.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UrableGetJobConfig",
+      "type": "object"
+    },
+    "UrableGetOrderConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve an order. Requires scope `orders:read`.",
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Order ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UrableGetOrderConfig",
+      "type": "object"
+    },
+    "UrableGetPaymentConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a payment. Requires scope `payments:read`.",
+      "properties": {
+        "operation": {
+          "const": "get_payment",
+          "default": "get_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Payment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UrableGetPaymentConfig",
+      "type": "object"
+    },
+    "UrableGetProductConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a product/service. Requires scope `products:read`.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Product ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UrableGetProductConfig",
+      "type": "object"
+    },
+    "UrableGetProposalConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a proposal. Requires scope `proposals:read`.",
+      "properties": {
+        "operation": {
+          "const": "get_proposal",
+          "default": "get_proposal",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Proposal ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UrableGetProposalConfig",
+      "type": "object"
+    },
+    "UrableItemInputDimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "area": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area"
+        },
+        "length": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Length"
+        },
+        "depth": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Depth"
+        },
+        "unitSystem": {
+          "anyOf": [
+            {
+              "enum": [
+                "imperial",
+                "metric"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unitsystem",
+          "enum": [
+            "imperial",
+            "metric"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "UrableItemInputDimensions",
+      "type": "object"
+    },
+    "UrableItemUpdateInputDimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "area": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area"
+        },
+        "length": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Length"
+        },
+        "depth": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Depth"
+        },
+        "unitSystem": {
+          "anyOf": [
+            {
+              "enum": [
+                "imperial",
+                "metric"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unitsystem",
+          "enum": [
+            "imperial",
+            "metric"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "UrableItemUpdateInputDimensions",
+      "type": "object"
+    },
+    "UrableJobInputColor": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Label for the color, e.g. \"Ceramic coating\".",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "hex": {
+          "description": "Hex code, e.g. \"#2fd2a8\".",
+          "minLength": 1,
+          "title": "Hex",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "hex"
+      ],
+      "title": "UrableJobInputColor",
+      "type": "object"
+    },
+    "UrableJobUpdateInputColor": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Label for the color, e.g. \"Ceramic coating\".",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "hex": {
+          "description": "Hex code, e.g. \"#2fd2a8\".",
+          "minLength": 1,
+          "title": "Hex",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "hex"
+      ],
+      "title": "UrableJobUpdateInputColor",
+      "type": "object"
+    },
+    "UrableLabeledValue": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "title": "UrableLabeledValue",
+      "type": "object"
+    },
+    "UrableLineItemInput": {
+      "additionalProperties": false,
+      "properties": {
+        "productServiceId": {
+          "minLength": 1,
+          "title": "Productserviceid",
+          "type": "string"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quantity"
+        },
+        "priceSku": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which price variant to use; defaults to the first.",
+          "title": "Pricesku"
+        },
+        "itemId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Jobs only: which of the job's items (the property/vehicle) this line item is for. It must be one of the job's `itemIds`. Optional on a single-item job (the line item goes to that item); required on a job with more than one item. Ignored on orders.",
+          "title": "Itemid"
+        }
+      },
+      "required": [
+        "productServiceId"
+      ],
+      "title": "UrableLineItemInput",
+      "type": "object"
+    },
+    "UrableListCategoriesConfig": {
+      "additionalProperties": false,
+      "description": "List categories. Requires scope `products:read`. Ordered the way the app lists them (by `num`), not newest-first.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size; no total count is provided.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "startAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last ID from the preceding page.",
+          "title": "Startafter"
+        },
+        "endBefore": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First ID for backward pagination.",
+          "title": "Endbefore"
+        },
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "UrableListCategoriesConfig",
+      "type": "object"
+    },
+    "UrableListCustomersConfig": {
+      "additionalProperties": false,
+      "description": "List customers. Requires scope `customers:read`.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size; no total count is provided.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "startAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last ID from the preceding page.",
+          "title": "Startafter"
+        },
+        "endBefore": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First ID for backward pagination.",
+          "title": "Endbefore"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return customers matching this email (ignores pagination).",
+          "title": "Email"
+        }
+      },
+      "title": "UrableListCustomersConfig",
+      "type": "object"
+    },
+    "UrableListEventsConfig": {
+      "additionalProperties": false,
+      "description": "List events. Requires scope `events:read`.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size; no total count is provided.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "startAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last ID from the preceding page.",
+          "title": "Startafter"
+        },
+        "endBefore": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First ID for backward pagination.",
+          "title": "Endbefore"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "meeting",
+                "consultation",
+                "reminder",
+                "time off",
+                "closed",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "meeting",
+            "consultation",
+            "reminder",
+            "time off",
+            "closed",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "customerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customerid"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Events assigned to this user.",
+          "title": "Userid"
+        },
+        "orderBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "modified",
+                "start",
+                "end"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderby",
+          "enum": [
+            "created",
+            "modified",
+            "start",
+            "end"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "UrableListEventsConfig",
+      "type": "object"
+    },
+    "UrableListItemsConfig": {
+      "additionalProperties": false,
+      "description": "List items. Requires scope `items:read`.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size; no total count is provided.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "startAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last ID from the preceding page.",
+          "title": "Startafter"
+        },
+        "endBefore": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First ID for backward pagination.",
+          "title": "Endbefore"
+        },
+        "operation": {
+          "const": "list_items",
+          "default": "list_items",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "vin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return items whose metadata.vins contains this VIN (ignores pagination).",
+          "title": "Vin"
+        },
+        "customerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only items belonging to this customer.",
+          "title": "Customerid"
+        }
+      },
+      "title": "UrableListItemsConfig",
+      "type": "object"
+    },
+    "UrableListJobsConfig": {
+      "additionalProperties": false,
+      "description": "List jobs. Requires scope `jobs:read`. Note: ordering by `start`/`end` only returns jobs that have that field set (i.e. scheduled jobs).",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size; no total count is provided.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "startAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last ID from the preceding page.",
+          "title": "Startafter"
+        },
+        "endBefore": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First ID for backward pagination.",
+          "title": "Endbefore"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "quote",
+                "scheduled",
+                "in progress",
+                "completed",
+                "archived",
+                "canceled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "quote",
+            "scheduled",
+            "in progress",
+            "completed",
+            "archived",
+            "canceled"
+          ],
+          "x-enum-searchable": true
+        },
+        "customerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customerid"
+        },
+        "orderBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "modified",
+                "completedAt",
+                "paidAt",
+                "start",
+                "end"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderby",
+          "enum": [
+            "created",
+            "modified",
+            "completedAt",
+            "paidAt",
+            "start",
+            "end"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "UrableListJobsConfig",
+      "type": "object"
+    },
+    "UrableListOrdersConfig": {
+      "additionalProperties": false,
+      "description": "List orders. Requires scope `orders:read`.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size; no total count is provided.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "startAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last ID from the preceding page.",
+          "title": "Startafter"
+        },
+        "endBefore": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First ID for backward pagination.",
+          "title": "Endbefore"
+        },
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "placed",
+                "paid",
+                "fulfilled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "placed",
+            "paid",
+            "fulfilled"
+          ],
+          "x-enum-searchable": true
+        },
+        "customerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customerid"
+        },
+        "orderBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "modified",
+                "fulfilledAt",
+                "paidAt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderby",
+          "enum": [
+            "created",
+            "modified",
+            "fulfilledAt",
+            "paidAt"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "UrableListOrdersConfig",
+      "type": "object"
+    },
+    "UrableListPaymentsConfig": {
+      "additionalProperties": false,
+      "description": "List payments. Requires scope `payments:read`. Filter by `jobId`, `orderId`, or `subscriptionId` to find the payments applied to a specific record.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size; no total count is provided.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "startAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last ID from the preceding page.",
+          "title": "Startafter"
+        },
+        "endBefore": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First ID for backward pagination.",
+          "title": "Endbefore"
+        },
+        "operation": {
+          "const": "list_payments",
+          "default": "list_payments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "paid",
+                "pending",
+                "processing",
+                "failed",
+                "refunded",
+                "partial refund",
+                "voided",
+                "past due"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "paid",
+            "pending",
+            "processing",
+            "failed",
+            "refunded",
+            "partial refund",
+            "voided",
+            "past due"
+          ],
+          "x-enum-searchable": true
+        },
+        "customerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customerid"
+        },
+        "jobId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payments applied to this job.",
+          "title": "Jobid"
+        },
+        "orderId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payments applied to this order.",
+          "title": "Orderid"
+        },
+        "subscriptionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payments applied to this subscription.",
+          "title": "Subscriptionid"
+        }
+      },
+      "title": "UrableListPaymentsConfig",
+      "type": "object"
+    },
+    "UrableListProductsConfig": {
+      "additionalProperties": false,
+      "description": "List products/services. Requires scope `products:read`.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size; no total count is provided.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "startAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last ID from the preceding page.",
+          "title": "Startafter"
+        },
+        "endBefore": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First ID for backward pagination.",
+          "title": "Endbefore"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "product",
+                "service"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "product",
+            "service"
+          ],
+          "x-enum-searchable": true
+        },
+        "categoryRef": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full document path of a category.",
+          "title": "Categoryref"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industry"
+        }
+      },
+      "title": "UrableListProductsConfig",
+      "type": "object"
+    },
+    "UrableListProposalsConfig": {
+      "additionalProperties": false,
+      "description": "List proposals. Requires scope `proposals:read`. Proposals are read-only via the API. Use `createdAfter` or `updatedAfter` (Unix ms) to poll for new/changed proposals cheaply instead of paging through the full history; supplying either overrides `orderBy` to match the filtered field.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size; no total count is provided.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "startAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last ID from the preceding page.",
+          "title": "Startafter"
+        },
+        "endBefore": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First ID for backward pagination.",
+          "title": "Endbefore"
+        },
+        "operation": {
+          "const": "list_proposals",
+          "default": "list_proposals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "pending",
+                "finalized",
+                "converted",
+                "declined",
+                "voided"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "draft",
+            "pending",
+            "finalized",
+            "converted",
+            "declined",
+            "voided"
+          ],
+          "x-enum-searchable": true
+        },
+        "customerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customerid"
+        },
+        "createdAfter": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms. Only proposals created at or after this time.",
+          "title": "Createdafter"
+        },
+        "updatedAfter": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms. Only proposals modified at or after this time.",
+          "title": "Updatedafter"
+        },
+        "orderBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "modified"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderby",
+          "enum": [
+            "created",
+            "modified"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "UrableListProposalsConfig",
+      "type": "object"
+    },
+    "UrableListUsersConfig": {
+      "additionalProperties": false,
+      "description": "List users. Requires scope `users:read`. Returns every team member on the account (not paginated). Users are read-only via the API.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "UrableListUsersConfig",
+      "type": "object"
+    },
+    "UrableLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableLocationValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "UrableLocation",
+      "type": "object"
+    },
+    "UrableLocationValue": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "UrableLocationValue",
+      "type": "object"
+    },
+    "UrableUpdateCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Update a customer. Requires scope `customers:write`. Only supplied fields are changed.",
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "person",
+                "business"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "person",
+            "business"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "new",
+                "contacted",
+                "existing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "new",
+            "contacted",
+            "existing"
+          ],
+          "x-enum-searchable": true
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Non-blank if supplied.",
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/UrableLabeledValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "phoneNumbers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/UrableLabeledValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phonenumbers"
+        },
+        "locations": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/UrableLocation"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locations"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Origin"
+        },
+        "taxExempt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Taxexempt"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableCustomerUpdateInputColor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "customData": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customdata"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Customer ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UrableUpdateCustomerConfig",
+      "type": "object"
+    },
+    "UrableUpdateItemConfig": {
+      "additionalProperties": false,
+      "description": "Update an item. Requires scope `items:write`. Only supplied fields are changed. Supply `customerId` to move the item to a different customer.",
+      "properties": {
+        "customerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customerid"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industry"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "automotive",
+                "marine",
+                "aviation",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "automotive",
+            "marine",
+            "aviation",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableLocation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "photoURL": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Photourl"
+        },
+        "vins": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vins"
+        },
+        "licensePlates": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Licenseplates"
+        },
+        "stockNumbers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stocknumbers"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableItemUpdateInputDimensions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lawn care only. Values are in the business's display units, named by unitSystem: sq ft / ft / in for imperial, m\u00b2 / m / cm for metric (volume is cu yd or m\u00b3). A business can switch systems, so read unitSystem rather than assuming. Send unitSystem on a write to be rejected if it no longer matches; volume is read-only and derived from area x depth."
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "customData": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customdata"
+        },
+        "operation": {
+          "const": "update_item",
+          "default": "update_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UrableUpdateItemConfig",
+      "type": "object"
+    },
+    "UrableUpdateJobConfig": {
+      "additionalProperties": false,
+      "description": "Update a job. Requires scope `jobs:write`. Only supplied fields are changed. If `lineItems` is supplied the invoice is recomputed; otherwise the existing invoice is preserved. Because a job's line items are grouped under the item they are for, `itemIds` and `lineItems` move together: send the line items alongside any change to `itemIds` (they are rebuilt against the new set, and items dropped from the job lose their line items). Payment status is derived from the invoice and cannot be set here; record money with `POST /v1/payments`. A supplied `location` replaces the job's address outright (the derived `formattedAddress`, `geoPoint` and `timeZone` are all recomputed). On a job that is or becomes `field` and has no location yet, the customer's is copied onto it; the request is rejected only when neither exists. Changing `type` to `shop` clears the job's location.",
+      "properties": {
+        "customerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customerid"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "enum": [
+                "vehicleCare",
+                "lawnCare",
+                "flatGlass",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The industry the job belongs to.",
+          "title": "Industry",
+          "enum": [
+            "vehicleCare",
+            "lawnCare",
+            "flatGlass",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "itemIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The items/vehicles the job is for. Replaces the job's items, so `lineItems` must be sent with it.",
+          "title": "Itemids"
+        },
+        "userIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assigned team members.",
+          "title": "Userids"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "shop",
+                "field"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "shop",
+            "field"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "quote",
+                "scheduled",
+                "in progress",
+                "completed",
+                "archived",
+                "canceled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "quote",
+            "scheduled",
+            "in progress",
+            "completed",
+            "archived",
+            "canceled"
+          ],
+          "x-enum-searchable": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableLocation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where the work is performed. Replaces the job's address outright, recomputing `formattedAddress`, `geoPoint` and `timeZone`. Ignored on `shop` jobs, and cleared when `type` changes to `shop`.\n"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms.",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms.",
+          "title": "End"
+        },
+        "dropOff": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms.",
+          "title": "Dropoff"
+        },
+        "completedAt": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms the work was finished. Set this when importing history: it is the date the earnings, profit, and product/service reports bucket a job on. Requires the job to end up `completed`, either by sending `status: completed` here or because it already is.",
+          "title": "Completedat"
+        },
+        "canceledAt": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix ms the job was canceled. Requires the job to end up `canceled`, either by sending `status: canceled` here or because it already is.",
+          "title": "Canceledat"
+        },
+        "allDay": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allday"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UrableJobUpdateInputColor"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calendar color for the job. `name` is the label shown for the color. Send `null` to clear it."
+        },
+        "lineItems": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/UrableLineItemInput"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lineitems"
+        },
+        "adjustments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/UrableAdjustmentInput"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Adjustments"
+        },
+        "taxExempt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Taxexempt"
+        },
+        "autoTax": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch the tax rate from TaxJar.",
+          "title": "Autotax"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "operation": {
+          "const": "update_job",
+          "default": "update_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UrableUpdateJobConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_customer": "#/$defs/UrableCreateCustomerConfig",
+          "create_event": "#/$defs/UrableCreateEventConfig",
+          "create_item": "#/$defs/UrableCreateItemConfig",
+          "create_job": "#/$defs/UrableCreateJobConfig",
+          "get_customer": "#/$defs/UrableGetCustomerConfig",
+          "get_event": "#/$defs/UrableGetEventConfig",
+          "get_item": "#/$defs/UrableGetItemConfig",
+          "get_job": "#/$defs/UrableGetJobConfig",
+          "get_order": "#/$defs/UrableGetOrderConfig",
+          "get_payment": "#/$defs/UrableGetPaymentConfig",
+          "get_product": "#/$defs/UrableGetProductConfig",
+          "get_proposal": "#/$defs/UrableGetProposalConfig",
+          "list_categories": "#/$defs/UrableListCategoriesConfig",
+          "list_customers": "#/$defs/UrableListCustomersConfig",
+          "list_events": "#/$defs/UrableListEventsConfig",
+          "list_items": "#/$defs/UrableListItemsConfig",
+          "list_jobs": "#/$defs/UrableListJobsConfig",
+          "list_orders": "#/$defs/UrableListOrdersConfig",
+          "list_payments": "#/$defs/UrableListPaymentsConfig",
+          "list_products": "#/$defs/UrableListProductsConfig",
+          "list_proposals": "#/$defs/UrableListProposalsConfig",
+          "list_users": "#/$defs/UrableListUsersConfig",
+          "update_customer": "#/$defs/UrableUpdateCustomerConfig",
+          "update_item": "#/$defs/UrableUpdateItemConfig",
+          "update_job": "#/$defs/UrableUpdateJobConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/UrableListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableListItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableGetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableCreateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableUpdateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableListCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableCreateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableUpdateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableCreateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableListOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableListPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableGetPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableListProposalsConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableGetProposalConfig"
+        },
+        {
+          "$ref": "#/$defs/UrableListUsersConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/UrableAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Urable Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
