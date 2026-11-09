@@ -1,0 +1,310 @@
+{
+  "create_session": {
+    "method": "POST",
+    "path": "/sessions",
+    "source": "https://phone-harness.com/api-reference/sessions/create-session",
+    "body": {
+      "id": "abc123def456",
+      "state": "provisioning",
+      "provider": "shlut",
+      "device": null,
+      "close_requested": null,
+      "cleanup_pending": false,
+      "cleanup_status": null,
+      "billing_mode": "metered",
+      "phone": null,
+      "watch_url": "https://viewer.example.com/opaque-read-only-link",
+      "screen": null,
+      "age_s": 0,
+      "ready_age_s": 0,
+      "idle_s": 0,
+      "expires_at": 1800000900,
+      "timeout_seconds": 900,
+      "request_key": "example-request-key-0001"
+    }
+  },
+  "list_sessions": {
+    "method": "GET",
+    "path": "/sessions",
+    "source": "https://phone-harness.com/api-reference/sessions/list-sessions",
+    "body": [
+      {
+        "id": "abc123def456",
+        "state": "ready",
+        "provider": "shlut",
+        "device": "Android",
+        "close_requested": null,
+        "cleanup_pending": false,
+        "cleanup_status": null,
+        "billing_mode": "metered",
+        "phone": null,
+        "watch_url": "https://viewer.example.com/opaque-read-only-link",
+        "screen": {
+          "w": 720,
+          "h": 1280
+        },
+        "age_s": 150,
+        "ready_age_s": 10,
+        "idle_s": 0,
+        "ops": [
+          "screen.capture",
+          "screen.bounds",
+          "nav.home",
+          "input.tap",
+          "apps.list"
+        ],
+        "expires_at": 1800000900,
+        "timeout_seconds": 900
+      }
+    ]
+  },
+  "get_session": {
+    "method": "GET",
+    "path": "/sessions/{sid}",
+    "source": "https://phone-harness.com/api-reference/sessions/get-session",
+    "body": {
+      "id": "abc123def456",
+      "state": "ready",
+      "provider": "shlut",
+      "device": "Android",
+      "close_requested": null,
+      "cleanup_pending": false,
+      "cleanup_status": null,
+      "billing_mode": "metered",
+      "phone": null,
+      "watch_url": "https://viewer.example.com/opaque-read-only-link",
+      "screen": {
+        "w": 720,
+        "h": 1280
+      },
+      "age_s": 150,
+      "ready_age_s": 10,
+      "idle_s": 0,
+      "expires_at": 1800000900,
+      "timeout_seconds": 900,
+      "adb": {
+        "host": "live.phone-harness.com",
+        "port": 22220,
+        "code": "ph_mfwcc5nknqaod034nwojzw0lzq",
+        "expires_at": 1800000900
+      }
+    }
+  },
+  "end_session": {
+    "method": "DELETE",
+    "path": "/sessions/{sid}",
+    "source": "https://phone-harness.com/api-reference/sessions/end-session",
+    "body": {
+      "released": true,
+      "cleanup_pending": false
+    }
+  },
+  "recover_create_request": {
+    "method": "GET",
+    "path": "/sessions/requests/{request_key}",
+    "source": "https://phone-harness.com/api-reference/sessions/recover-create-request",
+    "body": {
+      "id": "abc123def456",
+      "request_key": "example-request-key-0001",
+      "provider": "shlut",
+      "state": "provisioning",
+      "cleanup_complete": false,
+      "cleanup_pending": false
+    }
+  },
+  "get_owner_viewer": {
+    "method": "GET",
+    "path": "/sessions/{sid}/owner-viewer",
+    "source": "https://phone-harness.com/api-reference/phone/get-owner-viewer",
+    "body": {
+      "url": "https://viewer.example.com/opaque-owner-capability",
+      "expires_at": 1800000900
+    }
+  },
+  "get_viewer": {
+    "method": "GET",
+    "path": "/sessions/{sid}/viewer",
+    "source": "https://phone-harness.com/api-reference/phone/get-viewer",
+    "body": {
+      "url": "https://viewer.example.com/opaque-view-capability?mode=view",
+      "expires_at": 1800000900
+    }
+  },
+  "get_account": {
+    "method": "GET",
+    "path": "/me",
+    "source": "https://phone-harness.com/api-reference/account/get-account",
+    "body": {
+      "uid": "exampleuser1",
+      "email": "developer@example.com",
+      "name": "Example developer",
+      "created": 1800000000,
+      "balance_cents": 1000,
+      "price_cents_per_minute": 5,
+      "environment": "production",
+      "billing_mode": "metered",
+      "active_session_billing_mode": null,
+      "session_create_idempotency": "v1",
+      "unnamed": {
+        "platform": "android",
+        "kind": "emulator",
+        "temporary": true
+      },
+      "session_limit": 2,
+      "active_session_count": 0,
+      "available_session_slots": 2,
+      "can_rent": true,
+      "profile": {
+        "id": "prof-3f9c2a1b7d5e4c6a8b0f1e2d",
+        "state": "stored",
+        "session": null,
+        "exact": true,
+        "saved_at": 1800000600
+      }
+    }
+  },
+  "reset_profile": {
+    "method": "POST",
+    "path": "/me/profile/reset",
+    "source": "https://phone-harness.com/api-reference/account/reset-profile",
+    "body": {
+      "id": "prof-3f9c2a1b7d5e4c6a8b0f1e2d",
+      "reset": true
+    }
+  },
+  "reset_device": {
+    "method": "POST",
+    "path": "/me/devices/{id}/reset",
+    "source": "https://phone-harness.com/api-reference/account/reset-device",
+    "body": {
+      "id": "iph-622c376ba7",
+      "state": "resetting"
+    }
+  },
+  "list_api_keys": {
+    "method": "GET",
+    "path": "/me/keys",
+    "source": "https://phone-harness.com/api-reference/account/list-api-keys",
+    "body": [
+      {
+        "key_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "label": "QA automation",
+        "hint": "pck_examp\u20260000",
+        "created": 1800000000,
+        "revoked": null
+      }
+    ]
+  },
+  "create_api_key": {
+    "method": "POST",
+    "path": "/me/keys",
+    "source": "https://phone-harness.com/api-reference/account/create-api-key",
+    "body": {
+      "key": "pck_REPLACE_WITH_YOUR_NEW_KEY"
+    }
+  },
+  "revoke_api_key": {
+    "method": "POST",
+    "path": "/me/keys/revoke",
+    "source": "https://phone-harness.com/api-reference/account/revoke-api-key",
+    "body": {
+      "revoked": true
+    }
+  },
+  "list_history_page": {
+    "method": "GET",
+    "path": "/history/page",
+    "source": "https://phone-harness.com/api-reference/history/list-history-page",
+    "body": {
+      "items": [
+        {
+          "sid": "abc123def456",
+          "uid": "exampleuser1",
+          "provider": "shlut",
+          "device": "Android",
+          "phone": null,
+          "created": 1800000000,
+          "ready": 1800000140,
+          "last": 1800000200,
+          "ended": 1800000230,
+          "end_reason": "released",
+          "billing_mode": "metered",
+          "cost_cents": 10,
+          "usage_minutes": 2,
+          "billable_minutes": 2
+        }
+      ],
+      "next_cursor": null
+    }
+  },
+  "get_recent_history": {
+    "method": "GET",
+    "path": "/history",
+    "source": "https://phone-harness.com/api-reference/history/get-recent-history",
+    "body": [
+      {
+        "sid": "abc123def456",
+        "uid": "exampleuser1",
+        "provider": "shlut",
+        "device": "Android",
+        "phone": null,
+        "created": 1800000000,
+        "ready": 1800000140,
+        "last": 1800000200,
+        "ended": 1800000230,
+        "end_reason": "released",
+        "billing_mode": "metered",
+        "cost_cents": 10,
+        "usage_minutes": 2,
+        "billable_minutes": 2
+      }
+    ]
+  },
+  "enable_adb": {
+    "method": "POST",
+    "path": "/sessions/{sid}/adb",
+    "source": "https://phone-harness.com/api-reference/adb/enable-adb",
+    "body": {
+      "enabled": true,
+      "transport": "adb",
+      "host": "live.phone-harness.com",
+      "port": 22220,
+      "code": "ph_mfwcc5nknqaod034nwojzw0lzq",
+      "expires_at": 1800000900
+    }
+  },
+  "get_adb": {
+    "method": "GET",
+    "path": "/sessions/{sid}/adb",
+    "source": "https://phone-harness.com/api-reference/adb/get-adb",
+    "body": {
+      "enabled": true,
+      "transport": "adb",
+      "host": "live.phone-harness.com",
+      "port": 22220,
+      "code": "ph_mfwcc5nknqaod034nwojzw0lzq",
+      "expires_at": 1800000900
+    }
+  },
+  "revoke_adb": {
+    "method": "DELETE",
+    "path": "/sessions/{sid}/adb",
+    "source": "https://phone-harness.com/api-reference/adb/revoke-adb",
+    "body": {
+      "revoked": true
+    }
+  },
+  "reset_adb": {
+    "method": "POST",
+    "path": "/sessions/{sid}/adb/reset",
+    "source": "https://phone-harness.com/api-reference/adb/reset-adb",
+    "body": {
+      "enabled": true,
+      "transport": "adb",
+      "host": "live.phone-harness.com",
+      "port": 22220,
+      "code": "ph_mfwcc5nknqaod034nwojzw0lzq",
+      "expires_at": 1800000900
+    }
+  }
+}
