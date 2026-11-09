@@ -1,0 +1,8 @@
+{
+  "path": "frontend/public/icons/luxury-presence.png",
+  "source": "https://www.luxurypresence.com/favicon.ico",
+  "license": "Luxury Presence trademark; official favicon used to identify the Luxury Presence integration.",
+  "sha256": "67e5ed29384c6a0a711ee95673452d027140c6ccb46a0b61b0d94d1f0e15472e",
+  "source_sha256": "81077be355e4aeaaf2d267005ec4708bcabcadd57157cfe98349b5c01c18ac79",
+  "transform": "Lossless PNG export of the largest (48x48) official ICO frame; no visual changes."
+}

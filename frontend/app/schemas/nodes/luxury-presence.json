@@ -1,0 +1,1625 @@
+{
+  "$defs": {
+    "AddOfficeAgents": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "agent_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Agent IDs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "add_office_agents",
+          "default": "add_office_agents",
+          "title": "Add Office Agents",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id",
+        "agent_ids"
+      ],
+      "title": "AddOfficeAgents",
+      "type": "object"
+    },
+    "AddTeamAgents": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "agent_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Agent IDs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "add_team_agents",
+          "default": "add_team_agents",
+          "title": "Add Team Agents",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id",
+        "agent_ids"
+      ],
+      "title": "AddTeamAgents",
+      "type": "object"
+    },
+    "CreateAgent": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "bio_short_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bio Short Description"
+        },
+        "website_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website Url"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "offices": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offices"
+        },
+        "do_not_allow_duplicates": {
+          "default": true,
+          "title": "Reject Duplicate Emails",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_agent",
+          "default": "create_agent",
+          "title": "Create Agent",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "external_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Source"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        }
+      },
+      "required": [
+        "email",
+        "first_name",
+        "last_name"
+      ],
+      "title": "CreateAgent",
+      "type": "object"
+    },
+    "CreateOffice": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "short_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Short Description"
+        },
+        "full_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full Description"
+        },
+        "media_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Url"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "operation": {
+          "const": "create_office",
+          "default": "create_office",
+          "title": "Create Office",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "external_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Source"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateOffice",
+      "type": "object"
+    },
+    "CreateTeam": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "bio_short_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bio Short Description"
+        },
+        "website_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website Url"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "do_not_allow_duplicates": {
+          "default": true,
+          "title": "Reject Duplicate Emails",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_team",
+          "default": "create_team",
+          "title": "Create Team",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "external_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Source"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        }
+      },
+      "required": [
+        "name",
+        "email"
+      ],
+      "title": "CreateTeam",
+      "type": "object"
+    },
+    "CreateWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Webhook Name",
+          "type": "string"
+        },
+        "url": {
+          "pattern": "^https://[^\\s]+$",
+          "title": "Webhook URL",
+          "type": "string"
+        },
+        "secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set a secret to enable HMAC-SHA256 delivery signatures. Without it, deliveries are unsigned.",
+          "title": "Signing Secret",
+          "ui:widget": "password"
+        },
+        "is_active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "url"
+      ],
+      "title": "CreateWebhook",
+      "type": "object"
+    },
+    "DeleteAgent": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_agent",
+          "default": "delete_agent",
+          "title": "Delete Agent",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "action": {
+          "anyOf": [
+            {
+              "enum": [
+                "archive",
+                "unassign"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Controls handling of the agent listings.",
+          "title": "Action",
+          "enum": [
+            "archive",
+            "unassign"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "DeleteAgent",
+      "type": "object"
+    },
+    "DeleteOffice": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_office",
+          "default": "delete_office",
+          "title": "Delete Office",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "DeleteOffice",
+      "type": "object"
+    },
+    "DeleteTeam": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_team",
+          "default": "delete_team",
+          "title": "Delete Team",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "DeleteTeam",
+      "type": "object"
+    },
+    "DeleteWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "DeleteWebhook",
+      "type": "object"
+    },
+    "GetAgent": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_agent",
+          "default": "get_agent",
+          "title": "Get Agent",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetAgent",
+      "type": "object"
+    },
+    "GetMedia": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_media",
+          "default": "get_media",
+          "title": "Get Media",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetMedia",
+      "type": "object"
+    },
+    "GetOffice": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_office",
+          "default": "get_office",
+          "title": "Get Office",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetOffice",
+      "type": "object"
+    },
+    "GetTeam": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Get Team",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetTeam",
+      "type": "object"
+    },
+    "ListAgents": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Number of records to skip; request another page explicitly.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "external_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Source"
+        },
+        "external_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External IDs"
+        },
+        "operation": {
+          "const": "list_agents",
+          "default": "list_agents",
+          "title": "List Agents",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "tags_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "ANY",
+                "ALL",
+                "NOT",
+                "NOT_ALL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags Mode",
+          "enum": [
+            "ANY",
+            "ALL",
+            "NOT",
+            "NOT_ALL"
+          ],
+          "x-enum-searchable": true
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        }
+      },
+      "title": "ListAgents",
+      "type": "object"
+    },
+    "ListOfficeAgents": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Number of records to skip; request another page explicitly.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_office_agents",
+          "default": "list_office_agents",
+          "title": "List Office Agents",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "ListOfficeAgents",
+      "type": "object"
+    },
+    "ListOffices": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Number of records to skip; request another page explicitly.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "external_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Source"
+        },
+        "external_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External IDs"
+        },
+        "operation": {
+          "const": "list_offices",
+          "default": "list_offices",
+          "title": "List Offices",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOffices",
+      "type": "object"
+    },
+    "ListTeamAgents": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Number of records to skip; request another page explicitly.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_team_agents",
+          "default": "list_team_agents",
+          "title": "List Team Agents",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "ListTeamAgents",
+      "type": "object"
+    },
+    "ListTeams": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Number of records to skip; request another page explicitly.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "external_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Source"
+        },
+        "external_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External IDs"
+        },
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTeams",
+      "type": "object"
+    },
+    "ListWebhooks": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListWebhooks",
+      "type": "object"
+    },
+    "LuxuryPresenceApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "luxury_presence_api_key",
+          "default": "luxury_presence_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Luxury Presence API Key",
+      "type": "object",
+      "x-credential-instructions": "An account admin can generate an API key in Settings \u2192 API Keys \u2192 Generate Key. Paste the key here. NoClick sends it as x-api-key to api.luxurypresence.com. Connection verification reads your agents.",
+      "x-credential-url": "https://app.luxurypresence.com/"
+    },
+    "RemoveOfficeAgents": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "agent_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Agent IDs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "remove_office_agents",
+          "default": "remove_office_agents",
+          "title": "Remove Office Agents",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id",
+        "agent_ids"
+      ],
+      "title": "RemoveOfficeAgents",
+      "type": "object"
+    },
+    "RemoveTeamAgents": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "agent_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Agent IDs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "remove_team_agents",
+          "default": "remove_team_agents",
+          "title": "Remove Team Agents",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id",
+        "agent_ids"
+      ],
+      "title": "RemoveTeamAgents",
+      "type": "object"
+    },
+    "UpdateAgent": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "bio_short_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bio Short Description"
+        },
+        "website_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website Url"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "offices": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offices"
+        },
+        "do_not_allow_duplicates": {
+          "default": true,
+          "title": "Reject Duplicate Emails",
+          "type": "boolean"
+        },
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_agent",
+          "default": "update_agent",
+          "title": "Update Agent",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "UpdateAgent",
+      "type": "object"
+    },
+    "UpdateOffice": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "short_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Short Description"
+        },
+        "full_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full Description"
+        },
+        "media_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Url"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_office",
+          "default": "update_office",
+          "title": "Update Office",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "UpdateOffice",
+      "type": "object"
+    },
+    "UpdateTeam": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "bio_short_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bio Short Description"
+        },
+        "website_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website Url"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "do_not_allow_duplicates": {
+          "default": true,
+          "title": "Reject Duplicate Emails",
+          "type": "boolean"
+        },
+        "resource_id": {
+          "description": "The existing agent, office, team, media or webhook ID for this operation.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_team",
+          "default": "update_team",
+          "title": "Update Team",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "UpdateTeam",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_office_agents": "#/$defs/AddOfficeAgents",
+          "add_team_agents": "#/$defs/AddTeamAgents",
+          "create_agent": "#/$defs/CreateAgent",
+          "create_office": "#/$defs/CreateOffice",
+          "create_team": "#/$defs/CreateTeam",
+          "create_webhook": "#/$defs/CreateWebhook",
+          "delete_agent": "#/$defs/DeleteAgent",
+          "delete_office": "#/$defs/DeleteOffice",
+          "delete_team": "#/$defs/DeleteTeam",
+          "delete_webhook": "#/$defs/DeleteWebhook",
+          "get_agent": "#/$defs/GetAgent",
+          "get_media": "#/$defs/GetMedia",
+          "get_office": "#/$defs/GetOffice",
+          "get_team": "#/$defs/GetTeam",
+          "list_agents": "#/$defs/ListAgents",
+          "list_office_agents": "#/$defs/ListOfficeAgents",
+          "list_offices": "#/$defs/ListOffices",
+          "list_team_agents": "#/$defs/ListTeamAgents",
+          "list_teams": "#/$defs/ListTeams",
+          "list_webhooks": "#/$defs/ListWebhooks",
+          "remove_office_agents": "#/$defs/RemoveOfficeAgents",
+          "remove_team_agents": "#/$defs/RemoveTeamAgents",
+          "update_agent": "#/$defs/UpdateAgent",
+          "update_office": "#/$defs/UpdateOffice",
+          "update_team": "#/$defs/UpdateTeam"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListAgents"
+        },
+        {
+          "$ref": "#/$defs/GetAgent"
+        },
+        {
+          "$ref": "#/$defs/CreateAgent"
+        },
+        {
+          "$ref": "#/$defs/UpdateAgent"
+        },
+        {
+          "$ref": "#/$defs/DeleteAgent"
+        },
+        {
+          "$ref": "#/$defs/ListOffices"
+        },
+        {
+          "$ref": "#/$defs/GetOffice"
+        },
+        {
+          "$ref": "#/$defs/CreateOffice"
+        },
+        {
+          "$ref": "#/$defs/UpdateOffice"
+        },
+        {
+          "$ref": "#/$defs/DeleteOffice"
+        },
+        {
+          "$ref": "#/$defs/ListTeams"
+        },
+        {
+          "$ref": "#/$defs/GetTeam"
+        },
+        {
+          "$ref": "#/$defs/CreateTeam"
+        },
+        {
+          "$ref": "#/$defs/UpdateTeam"
+        },
+        {
+          "$ref": "#/$defs/DeleteTeam"
+        },
+        {
+          "$ref": "#/$defs/ListOfficeAgents"
+        },
+        {
+          "$ref": "#/$defs/AddOfficeAgents"
+        },
+        {
+          "$ref": "#/$defs/RemoveOfficeAgents"
+        },
+        {
+          "$ref": "#/$defs/ListTeamAgents"
+        },
+        {
+          "$ref": "#/$defs/AddTeamAgents"
+        },
+        {
+          "$ref": "#/$defs/RemoveTeamAgents"
+        },
+        {
+          "$ref": "#/$defs/GetMedia"
+        },
+        {
+          "$ref": "#/$defs/ListWebhooks"
+        },
+        {
+          "$ref": "#/$defs/CreateWebhook"
+        },
+        {
+          "$ref": "#/$defs/DeleteWebhook"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LuxuryPresenceApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Luxury-presence Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
