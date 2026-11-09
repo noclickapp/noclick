@@ -1,0 +1,78 @@
+{
+  "source": "https://api.onkernel.com/openapi.json",
+  "note": "Synthetic values with the pinned contract's documented field names; no live account or credentials.",
+  "auth": {
+    "authentication": {
+      "method": "api_key",
+      "source": "api_key",
+      "credential_id": "key-fixture"
+    },
+    "principal": {
+      "type": "api_key",
+      "id": "key-fixture"
+    },
+    "organization": {
+      "id": "org-fixture"
+    },
+    "authorization": {
+      "credential_scope": {
+        "project_id": null
+      },
+      "effective_scope": {
+        "project_id": null
+      }
+    }
+  },
+  "browser": {
+    "session_id": "htzv5orfit78e1m2biiifpbv",
+    "created_at": "2026-11-09T00:00:00Z",
+    "cdp_ws_url": "wss://example.test/cdp",
+    "webdriver_ws_url": "wss://example.test/webdriver",
+    "region": "us-east",
+    "stealth": false,
+    "headless": false,
+    "memory": "8GiB",
+    "timeout_seconds": 60,
+    "name": "checkout-flow-1"
+  },
+  "profile": {
+    "id": "profile-fixture",
+    "name": "fixture-profile",
+    "created_at": "2026-11-09T00:00:00Z"
+  },
+  "proxy": {
+    "id": "proxy-fixture",
+    "type": "isp",
+    "name": "fixture-proxy"
+  },
+  "app": {
+    "app_name": "my-app",
+    "version": "1.0.0",
+    "id": "app-fixture",
+    "region": "aws.us-east-1a",
+    "deployment": "deployment-fixture",
+    "actions": [],
+    "env_vars": {}
+  },
+  "invocation": {
+    "id": "rr33xuugxj9h0bkf1rdt2bet",
+    "app_name": "my-app",
+    "version": "1.0.0",
+    "action_name": "analyze",
+    "started_at": "2026-11-09T00:00:00Z",
+    "status": "running"
+  },
+  "invoke": {
+    "id": "rr33xuugxj9h0bkf1rdt2bet",
+    "action_name": "analyze",
+    "status": "queued"
+  },
+  "playwright": {
+    "success": true,
+    "result": {
+      "title": "Example Domain"
+    },
+    "stdout": "",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,1024 @@
+{
+  "$defs": {
+    "CreateBrowser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_browser",
+          "default": "create_browser",
+          "title": "Create Browser Session",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[a-zA-Z0-9._-]{1,255}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "start_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to open. Navigation is best effort; session creation does not prove the page loaded.",
+          "title": "Start Url"
+        },
+        "timeout_seconds": {
+          "default": 60,
+          "description": "Inactivity timeout in seconds.",
+          "maximum": 259200,
+          "minimum": 10,
+          "title": "Timeout Seconds",
+          "type": "integer"
+        },
+        "headless": {
+          "default": false,
+          "title": "Headless",
+          "type": "boolean"
+        },
+        "stealth": {
+          "default": false,
+          "title": "Stealth",
+          "type": "boolean"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "enum": [
+                "us-east",
+                "us-west",
+                "eu-west",
+                "ap-southeast"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Region selection requires a Start-Up or Enterprise plan.",
+          "title": "Region",
+          "enum": [
+            "us-east",
+            "us-west",
+            "eu-west",
+            "ap-southeast"
+          ],
+          "x-enum-searchable": true
+        },
+        "profile_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing profile ID to load.",
+          "title": "Profile Id"
+        },
+        "save_changes": {
+          "default": false,
+          "description": "Save session changes back to the selected profile when it ends.",
+          "title": "Save Changes",
+          "type": "boolean"
+        },
+        "proxy_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing proxy ID in the same project.",
+          "title": "Proxy Id"
+        }
+      },
+      "title": "CreateBrowser",
+      "type": "object"
+    },
+    "CreateProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_profile",
+          "default": "create_profile",
+          "title": "Create Browser Profile",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional profile name, unique within the logical project.",
+          "title": "Name"
+        }
+      },
+      "title": "CreateProfile",
+      "type": "object"
+    },
+    "DeleteBrowser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_browser",
+          "default": "delete_browser",
+          "title": "Delete Browser Session",
+          "type": "string"
+        },
+        "browser_id": {
+          "description": "Terminates this session.",
+          "minLength": 1,
+          "title": "Browser ID or Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "browser_id"
+      ],
+      "title": "DeleteBrowser",
+      "type": "object"
+    },
+    "DeleteProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_profile",
+          "default": "delete_profile",
+          "title": "Delete Browser Profile",
+          "type": "string"
+        },
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile ID or Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "DeleteProfile",
+      "type": "object"
+    },
+    "DeleteProxy": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_proxy",
+          "default": "delete_proxy",
+          "title": "Delete Proxy",
+          "type": "string"
+        },
+        "proxy_id": {
+          "description": "Deletion requires the ID; name addressing is retrieval only.",
+          "minLength": 1,
+          "title": "Proxy ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "proxy_id"
+      ],
+      "title": "DeleteProxy",
+      "type": "object"
+    },
+    "ExecutePlaywright": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "execute_playwright",
+          "default": "execute_playwright",
+          "title": "Execute Playwright Code",
+          "type": "string"
+        },
+        "browser_id": {
+          "minLength": 1,
+          "title": "Browser ID or Name",
+          "type": "string"
+        },
+        "code": {
+          "description": "JavaScript or TypeScript with page, context and browser available. Return a value to expose it as result.",
+          "minLength": 1,
+          "title": "Code",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "typescript"
+        },
+        "timeout_sec": {
+          "default": 60,
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Timeout Sec",
+          "type": "integer"
+        },
+        "executor": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]{1,64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calls with the same executor name share state and run sequentially.",
+          "title": "Executor"
+        }
+      },
+      "required": [
+        "browser_id",
+        "code"
+      ],
+      "title": "ExecutePlaywright",
+      "type": "object"
+    },
+    "GetAuthContext": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_auth_context",
+          "default": "get_auth_context",
+          "title": "Get Authentication Context",
+          "type": "string"
+        }
+      },
+      "title": "GetAuthContext",
+      "type": "object"
+    },
+    "GetBrowser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_browser",
+          "default": "get_browser",
+          "title": "Get Browser Session",
+          "type": "string"
+        },
+        "browser_id": {
+          "minLength": 1,
+          "title": "Browser ID or Name",
+          "type": "string"
+        },
+        "include_deleted": {
+          "default": false,
+          "title": "Include Deleted",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "browser_id"
+      ],
+      "title": "GetBrowser",
+      "type": "object"
+    },
+    "GetInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_invocation",
+          "default": "get_invocation",
+          "title": "Get Action Invocation",
+          "type": "string"
+        },
+        "invocation_id": {
+          "minLength": 1,
+          "title": "Invocation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invocation_id"
+      ],
+      "title": "GetInvocation",
+      "type": "object"
+    },
+    "GetProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Get Browser Profile",
+          "type": "string"
+        },
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile ID or Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "GetProfile",
+      "type": "object"
+    },
+    "GetProxy": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_proxy",
+          "default": "get_proxy",
+          "title": "Get Proxy",
+          "type": "string"
+        },
+        "proxy_id": {
+          "minLength": 1,
+          "title": "Proxy ID or Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "proxy_id"
+      ],
+      "title": "GetProxy",
+      "type": "object"
+    },
+    "InvokeAction": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "invoke_action",
+          "default": "invoke_action",
+          "title": "Invoke App Action",
+          "type": "string"
+        },
+        "app_name": {
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "version": {
+          "default": "latest",
+          "title": "Version",
+          "type": "string"
+        },
+        "action_name": {
+          "minLength": 1,
+          "title": "Action Name",
+          "type": "string"
+        },
+        "payload": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Input data as a JSON string, as required by Kernel.",
+          "title": "Payload",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "asynchronous": {
+          "default": true,
+          "description": "Queue the invocation and return its ID; use Get Action Invocation to inspect completion.",
+          "title": "Asynchronous",
+          "type": "boolean"
+        },
+        "async_timeout_seconds": {
+          "default": 900,
+          "maximum": 3600,
+          "minimum": 10,
+          "title": "Async Timeout Seconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "app_name",
+        "action_name"
+      ],
+      "title": "InvokeAction",
+      "type": "object"
+    },
+    "KernelApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kernel_api_key",
+          "default": "kernel_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Kernel API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the Kernel dashboard and paste it here without the Bearer prefix. NoClick sends it only to api.onkernel.com. Access is limited by the key's organization or project scope.",
+      "x-credential-url": "https://dashboard.onkernel.com"
+    },
+    "ListApps": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding page with the same filters.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider-side search; this operation returns one page.",
+          "title": "Query"
+        },
+        "operation": {
+          "const": "list_apps",
+          "default": "list_apps",
+          "title": "List Apps",
+          "type": "string"
+        },
+        "app_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "App Name"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        }
+      },
+      "title": "ListApps",
+      "type": "object"
+    },
+    "ListBrowsers": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding page with the same filters.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider-side search; this operation returns one page.",
+          "title": "Query"
+        },
+        "operation": {
+          "const": "list_browsers",
+          "default": "list_browsers",
+          "title": "List Browser Sessions",
+          "type": "string"
+        },
+        "status": {
+          "default": "active",
+          "enum": [
+            "active",
+            "deleted",
+            "all"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "enum": [
+                "us-east",
+                "us-west",
+                "eu-west",
+                "ap-southeast"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region",
+          "enum": [
+            "us-east",
+            "us-west",
+            "eu-west",
+            "ap-southeast"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListBrowsers",
+      "type": "object"
+    },
+    "ListInvocations": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding page with the same filters.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider-side search; this operation returns one page.",
+          "title": "Query"
+        },
+        "operation": {
+          "const": "list_invocations",
+          "default": "list_invocations",
+          "title": "List Action Invocations",
+          "type": "string"
+        },
+        "app_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "App Name"
+        },
+        "action_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action Name"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "deployment_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deployment Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "queued",
+                "running",
+                "succeeded",
+                "failed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "queued",
+            "running",
+            "succeeded",
+            "failed"
+          ],
+          "x-enum-searchable": true
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC timestamp or duration such as 5m.",
+          "title": "Since"
+        }
+      },
+      "title": "ListInvocations",
+      "type": "object"
+    },
+    "ListProfiles": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding page with the same filters.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider-side search; this operation returns one page.",
+          "title": "Query"
+        },
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "List Browser Profiles",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact profile name filter.",
+          "title": "Name"
+        }
+      },
+      "title": "ListProfiles",
+      "type": "object"
+    },
+    "ListProxies": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding page with the same filters.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider-side search; this operation returns one page.",
+          "title": "Query"
+        },
+        "operation": {
+          "const": "list_proxies",
+          "default": "list_proxies",
+          "title": "List Proxies",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "ip_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact primary exit IPv4 address of an ISP proxy.",
+          "title": "Ip Address"
+        }
+      },
+      "title": "ListProxies",
+      "type": "object"
+    },
+    "RenameProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rename_profile",
+          "default": "rename_profile",
+          "title": "Rename Browser Profile",
+          "type": "string"
+        },
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile ID or Name",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id",
+        "name"
+      ],
+      "title": "RenameProfile",
+      "type": "object"
+    },
+    "UpdateBrowser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_browser",
+          "default": "update_browser",
+          "title": "Update Browser Session",
+          "type": "string"
+        },
+        "browser_id": {
+          "minLength": 1,
+          "title": "Browser ID or Name",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[a-zA-Z0-9._-]{1,255}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "start_url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Navigate after updating. Navigation is best effort.",
+          "title": "Start Url"
+        }
+      },
+      "required": [
+        "browser_id"
+      ],
+      "title": "UpdateBrowser",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_browser": "#/$defs/CreateBrowser",
+          "create_profile": "#/$defs/CreateProfile",
+          "delete_browser": "#/$defs/DeleteBrowser",
+          "delete_profile": "#/$defs/DeleteProfile",
+          "delete_proxy": "#/$defs/DeleteProxy",
+          "execute_playwright": "#/$defs/ExecutePlaywright",
+          "get_auth_context": "#/$defs/GetAuthContext",
+          "get_browser": "#/$defs/GetBrowser",
+          "get_invocation": "#/$defs/GetInvocation",
+          "get_profile": "#/$defs/GetProfile",
+          "get_proxy": "#/$defs/GetProxy",
+          "invoke_action": "#/$defs/InvokeAction",
+          "list_apps": "#/$defs/ListApps",
+          "list_browsers": "#/$defs/ListBrowsers",
+          "list_invocations": "#/$defs/ListInvocations",
+          "list_profiles": "#/$defs/ListProfiles",
+          "list_proxies": "#/$defs/ListProxies",
+          "rename_profile": "#/$defs/RenameProfile",
+          "update_browser": "#/$defs/UpdateBrowser"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAuthContext"
+        },
+        {
+          "$ref": "#/$defs/ListBrowsers"
+        },
+        {
+          "$ref": "#/$defs/GetBrowser"
+        },
+        {
+          "$ref": "#/$defs/CreateBrowser"
+        },
+        {
+          "$ref": "#/$defs/UpdateBrowser"
+        },
+        {
+          "$ref": "#/$defs/DeleteBrowser"
+        },
+        {
+          "$ref": "#/$defs/ExecutePlaywright"
+        },
+        {
+          "$ref": "#/$defs/ListProfiles"
+        },
+        {
+          "$ref": "#/$defs/GetProfile"
+        },
+        {
+          "$ref": "#/$defs/CreateProfile"
+        },
+        {
+          "$ref": "#/$defs/RenameProfile"
+        },
+        {
+          "$ref": "#/$defs/DeleteProfile"
+        },
+        {
+          "$ref": "#/$defs/ListProxies"
+        },
+        {
+          "$ref": "#/$defs/GetProxy"
+        },
+        {
+          "$ref": "#/$defs/DeleteProxy"
+        },
+        {
+          "$ref": "#/$defs/ListApps"
+        },
+        {
+          "$ref": "#/$defs/ListInvocations"
+        },
+        {
+          "$ref": "#/$defs/InvokeAction"
+        },
+        {
+          "$ref": "#/$defs/GetInvocation"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KernelApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kernel Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
