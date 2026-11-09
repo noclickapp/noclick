@@ -1,0 +1,4 @@
+{
+  "metadata": {"pagination": {"totalItems": 21, "paginated": true, "itemsPerPage": 10, "currentPage": 2, "lastPage": 3}},
+  "data": [{"id": "relationtype:1234567890abcdef", "name": "Klant", "color": "#ff5500ff", "isSystemDefined": false}]
+}
