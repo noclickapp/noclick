@@ -1,4 +1,4 @@
-"""vcita request wiring and parsing against unmodified provider-published examples."""
+"""vcita request wiring against provider examples with credential values redacted."""
 import json
 from pathlib import Path
 
@@ -142,3 +142,20 @@ async def test_vcita_explicit_clear_and_omitted_fields(monkeypatch):
 def test_vcita_invalid_email_is_rejected(email):
     with pytest.raises(ValidationError):
         native.VcitaCreateClientConfig(first_name="John", email=email)
+
+
+def test_vcita_fixtures_do_not_publish_provider_shaped_credentials():
+    import importlib.util
+
+    root = Path(__file__).resolve().parents[3]
+    scanner_path = root / "oss/scan_real_secrets.py"
+    if not scanner_path.exists():
+        scanner_path = root / "scripts/scan_real_secrets.py"
+    spec = importlib.util.spec_from_file_location("vcita_secret_scan", scanner_path)
+    scanner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(scanner)
+    fixture = Path(__file__).parent / "fixtures/vcita/contract_examples.json"
+    findings = scanner.find_secrets(fixture.read_bytes())
+    # Report counts only, so a future regression cannot print a credential.
+    assert not {kind: len(values) for kind, values in findings.items()}
+    assert EXAMPLES["create_client"]["body"]["data"]["token"] == "example-vcita-client-token"

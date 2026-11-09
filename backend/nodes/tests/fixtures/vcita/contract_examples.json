@@ -101,13 +101,16 @@
           ],
           "updated_at": "2025-08-05T06:56:28Z"
         },
-        "token": "REDACTED.SAMPLE.JWT"
+        "token": "example-vcita-client-token"
       },
       "status": "OK"
     },
     "method": "POST",
     "path": "/platform/v1/clients",
-    "source": "https://vcita.github.io/developers-hub/mcp_swagger/clients.json"
+    "source": "https://vcita.github.io/developers-hub/mcp_swagger/clients.json",
+    "redactions": [
+      "body.data.token: provider-published signed JWT replaced with a visibly synthetic placeholder; response structure retained."
+    ]
   },
   "update_client": {
     "status": 200,
