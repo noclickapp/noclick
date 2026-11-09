@@ -1,0 +1,717 @@
+{
+  "GET /v2.0/whois/live": {
+    "body": {
+      "status": true,
+      "domain_name": "example.com",
+      "query_time": "2026-04-14T10:30:00Z",
+      "whois_server": "whois.example-registrar.com",
+      "domain_registered": "yes",
+      "secure_dns": true,
+      "domain_handle": "D123456789",
+      "create_date": "2010-05-10",
+      "update_date": "2025-03-01",
+      "expiry_date": "2030-05-10",
+      "domain_registrar": {
+        "id": "123",
+        "id_type": "IANA",
+        "iana_id": "9999",
+        "registry_id": "reg-123",
+        "handle": "REG-HANDLE-1",
+        "status": "active",
+        "registrar_name": "Example Registrar Inc.",
+        "normalized_name": "example registrar",
+        "whois_server": "whois.example-registrar.com",
+        "rdap_server": "https://rdap.example-registrar.com",
+        "website_url": "https://www.example-registrar.com",
+        "email_address": "support@example-registrar.com",
+        "phone_number": "+1-800-123-4567",
+        "authoritative_registry_name": "Example Registry",
+        "organization_number": "ORG-001",
+        "is_sponsor": true
+      },
+      "reseller_contact": {
+        "name": "Example Reseller",
+        "email_address": "reseller@example.com",
+        "phone": "+1-800-765-4321"
+      },
+      "registrant_contact": {
+        "id": "C001",
+        "id_type": "contact",
+        "handle": "REG-USER-1",
+        "name": "John Doe",
+        "company": "Example Corp",
+        "street": "123 Main Street",
+        "city": "New York",
+        "state": "NY",
+        "zip_code": "10001",
+        "country_name": "United States",
+        "country_code": "US",
+        "email_address": "john.doe@example.com",
+        "phone": "+1-555-1234",
+        "fax": "+1-555-5678",
+        "mailing_address": "123 Main Street, New York, NY 10001, USA"
+      },
+      "administrative_contact": {
+        "id": "C002",
+        "id_type": "contact",
+        "handle": "ADMIN-1",
+        "name": "Jane Smith",
+        "company": "Example Corp",
+        "street": "123 Main Street",
+        "city": "New York",
+        "state": "NY",
+        "zip_code": "10001",
+        "country_name": "United States",
+        "country_code": "US",
+        "email_address": "admin@example.com",
+        "phone": "+1-555-2222",
+        "fax": "+1-555-2222",
+        "mailing_address": "123 Main Street, New York, NY 10001, USA"
+      },
+      "technical_contact": {
+        "id": "C003",
+        "id_type": "contact",
+        "handle": "TECH-1",
+        "name": "Tech Support",
+        "company": "Example Corp",
+        "street": "456 Tech Park",
+        "city": "San Francisco",
+        "state": "CA",
+        "zip_code": "94105",
+        "country_name": "United States",
+        "country_code": "US",
+        "email_address": "tech@example.com",
+        "phone": "+1-555-3333",
+        "fax": "+1-555-2222",
+        "mailing_address": "456 Tech Park, San Francisco, CA 94105, USA"
+      },
+      "billing_contact": {
+        "id": "C004",
+        "id_type": "contact",
+        "handle": "BILL-1",
+        "name": "Billing Dept",
+        "company": "Example Corp",
+        "street": "789 Finance Ave",
+        "city": "Chicago",
+        "state": "IL",
+        "zip_code": "60601",
+        "country_name": "United States",
+        "country_code": "US",
+        "email_address": "billing@example.com",
+        "phone": "+1-555-4444",
+        "fax": "+1-555-2222",
+        "mailing_address": "789 Finance Ave, Chicago, IL 60601, USA"
+      },
+      "eligibility_info": {
+        "id": "ELIG-001",
+        "name": "Standard Eligibility",
+        "type": "business"
+      },
+      "abuse_contact": {
+        "id": "999",
+        "id_type": "IANA",
+        "iana_id": "9999",
+        "registry_id": "abuse-123",
+        "handle": "ABUSE-1",
+        "status": "active",
+        "registrar_name": "Example Registrar Inc.",
+        "normalized_name": "example registrar",
+        "whois_server": "whois.example-registrar.com",
+        "rdap_server": "https://rdap.example-registrar.com",
+        "website_url": "https://www.example-registrar.com",
+        "email_address": "abuse@example-registrar.com",
+        "phone_number": "+1-800-999-9999",
+        "authoritative_registry_name": "Example Registry",
+        "organization_number": "ORG-001",
+        "is_sponsor": false
+      },
+      "name_servers": [
+        "ns1.example.com",
+        "ns2.example.com"
+      ],
+      "domain_status": [
+        "active",
+        "clientTransferProhibited"
+      ],
+      "whois_raw_domain": "RAW WHOIS DATA HERE",
+      "registry_data": {
+        "domain_name": "example.com",
+        "query_time": "2026-04-14T10:30:00Z",
+        "whois_server": "whois.registry-example.com",
+        "domain_registered": "yes",
+        "create_date": "2010-05-10",
+        "update_date": "2025-03-01",
+        "expiry_date": "2030-05-10",
+        "domain_registrar": {
+          "id": "123",
+          "id_type": "IANA",
+          "iana_id": "9999",
+          "registry_id": "reg-123",
+          "handle": "REG-HANDLE-1",
+          "status": "active",
+          "registrar_name": "Example Registrar Inc.",
+          "normalized_name": "example registrar",
+          "whois_server": "whois.example-registrar.com",
+          "rdap_server": "https://rdap.example-registrar.com",
+          "website_url": "https://www.example-registrar.com",
+          "email_address": "support@example-registrar.com",
+          "phone_number": "+1-800-123-4567",
+          "authoritative_registry_name": "Example Registry",
+          "organization_number": "ORG-001",
+          "is_sponsor": true
+        },
+        "name_servers": [
+          "ns1.example.com",
+          "ns2.example.com"
+        ],
+        "domain_status": [
+          "active"
+        ],
+        "whois_raw_registery": "RAW REGISTRY WHOIS DATA HERE"
+      }
+    },
+    "source": "https://whoisfreaks.com/_next/static/chunks/5627-6eab265e1edbd4ca.js",
+    "docs_page": "https://whoisfreaks.com/documentation/whois-api"
+  },
+  "GET /v2.0/whois/history": {
+    "body": {
+      "status": true,
+      "whois": "historical",
+      "total_records": "2",
+      "whois_domains_historical": [
+        {
+          "num": 1,
+          "status": true,
+          "domain_name": "example.com",
+          "query_time": "2022-01-01 00:00:00",
+          "whois_server": "whois.verisign-grs.com",
+          "domain_registered": "yes",
+          "secure_dns": true,
+          "domain_handle": "D12345-LRMS",
+          "create_date": "1995-08-14",
+          "update_date": "2022-01-01",
+          "expiry_date": "2023-08-13",
+          "domain_registrar": {
+            "id": "R123",
+            "id_type": "IANA",
+            "iana_id": "292",
+            "registry_id": "RID789",
+            "handle": "H456",
+            "status": "active",
+            "registrar_name": "Example Registrar Inc.",
+            "normalized_name": "example registrar inc",
+            "whois_server": "whois.registrar.com",
+            "rdap_server": "https://rdap.registrar.com",
+            "website_url": "https://www.registrar.com",
+            "email_address": "support@registrar.com",
+            "phone_number": "+1.5555555555",
+            "authoritative_registry_name": "VeriSign Global Registry Services",
+            "organization_number": "ORG-12345",
+            "is_sponsor": true
+          },
+          "reseller_contact": {
+            "id": "RES-123",
+            "id_type": "IANA",
+            "handle": "RH-123",
+            "name": "Reseller Name",
+            "company": "Reseller Company",
+            "street": "123 Reseller St",
+            "city": "Reseller City",
+            "state": "CA",
+            "zip_code": "90001",
+            "country_name": "United States",
+            "country_code": "US",
+            "email_address": "reseller@example.com",
+            "phone": "+1.5555555555",
+            "fax": "+1.5555555556",
+            "mailing_address": "123 Reseller St, Reseller City, CA 90001"
+          },
+          "registrant_contact": {
+            "id": "REG-123",
+            "id_type": "IANA",
+            "handle": "C1234-LRMS",
+            "name": "John Doe",
+            "company": "Example Company Inc.",
+            "street": "123 Example St",
+            "city": "Example City",
+            "state": "CA",
+            "zip_code": "90001",
+            "country_name": "United States",
+            "country_code": "US",
+            "email_address": "john@example.com",
+            "phone": "+1.5555555555",
+            "fax": "+1.5555555556",
+            "mailing_address": "123 Example St, Example City, CA 90001"
+          },
+          "administrative_contact": {
+            "id": "ADM-123",
+            "id_type": "IANA",
+            "handle": "A1234-LRMS",
+            "name": "Admin Name",
+            "company": "Admin Company",
+            "street": "123 Admin St",
+            "city": "Admin City",
+            "state": "CA",
+            "zip_code": "90001",
+            "country_name": "United States",
+            "country_code": "US",
+            "email_address": "admin@example.com",
+            "phone": "+1.5555555555",
+            "fax": "+1.5555555556",
+            "mailing_address": "123 Admin St, Admin City, CA 90001"
+          },
+          "technical_contact": {
+            "id": "TECH-123",
+            "id_type": "IANA",
+            "handle": "T1234-LRMS",
+            "name": "Tech Name",
+            "company": "Tech Company",
+            "street": "123 Tech St",
+            "city": "Tech City",
+            "state": "CA",
+            "zip_code": "90001",
+            "country_name": "United States",
+            "country_code": "US",
+            "email_address": "tech@example.com",
+            "phone": "+1.5555555555",
+            "fax": "+1.5555555556",
+            "mailing_address": "123 Tech St, Tech City, CA 90001"
+          },
+          "billing_contact": {
+            "id": "BILL-123",
+            "id_type": "IANA",
+            "handle": "B1234-LRMS",
+            "name": "Billing Name",
+            "company": "Billing Company",
+            "street": "123 Billing St",
+            "city": "Billing City",
+            "state": "CA",
+            "zip_code": "90001",
+            "country_name": "United States",
+            "country_code": "US",
+            "email_address": "billing@example.com",
+            "phone": "+1.5555555555",
+            "fax": "+1.5555555556",
+            "mailing_address": "123 Billing St, Billing City, CA 90001"
+          },
+          "eligibility_info": {
+            "id": "ELG-123",
+            "name": "Eligibility Name",
+            "type": "ABN"
+          },
+          "abuse_contact": {
+            "id": "ABUSE-123",
+            "id_type": "IANA",
+            "iana_id": "292",
+            "registry_id": "RID789",
+            "handle": "AH-456",
+            "status": "active",
+            "registrar_name": "Abuse Registrar",
+            "normalized_name": "abuse registrar",
+            "whois_server": "whois.abuse.com",
+            "rdap_server": "https://rdap.abuse.com",
+            "website_url": "https://www.abuse.com",
+            "email_address": "abuse@registrar.com",
+            "phone_number": "+1.5555555555",
+            "authoritative_registry_name": "VeriSign Global Registry Services",
+            "organization_number": "ORG-ABUSE",
+            "is_sponsor": false
+          },
+          "name_servers": [
+            "ns1.example.com",
+            "ns2.example.com"
+          ],
+          "domain_status": [
+            "clientTransferProhibited",
+            "clientUpdateProhibited"
+          ],
+          "whois_raw_domain": "Domain Name: EXAMPLE.COM\nRegistry Domain ID: ...",
+          "registry_data": {
+            "domain_name": "example.com",
+            "query_time": "2022-01-01 00:00:00",
+            "whois_server": "whois.iana.org",
+            "create_date": "1995-08-14",
+            "update_date": "2022-01-01",
+            "expiry_date": "2023-08-13",
+            "domain_registrar": {
+              "id": "R123",
+              "id_type": "IANA",
+              "iana_id": "292",
+              "registry_id": "RID789",
+              "handle": "H456",
+              "status": "active",
+              "registrar_name": "Example Registrar Inc.",
+              "normalized_name": "example registrar inc",
+              "whois_server": "whois.registrar.com",
+              "rdap_server": "https://rdap.registrar.com",
+              "website_url": "https://www.registrar.com",
+              "email_address": "support@registrar.com",
+              "phone_number": "+1.5555555555",
+              "authoritative_registry_name": "VeriSign Global Registry Services",
+              "organization_number": "ORG-12345",
+              "is_sponsor": true
+            },
+            "name_servers": [
+              "ns1.example.com",
+              "ns2.example.com"
+            ],
+            "domain_status": [
+              "clientTransferProhibited"
+            ],
+            "whois_raw_registry": "Domain Name: EXAMPLE.COM\nRegistry Domain ID: ..."
+          }
+        }
+      ]
+    },
+    "source": "https://whoisfreaks.com/_next/static/chunks/5627-6eab265e1edbd4ca.js",
+    "docs_page": "https://whoisfreaks.com/documentation/whois-history-api"
+  },
+  "GET /v1.0/ip-whois": {
+    "body": {
+      "status": true,
+      "ip_address": "8.8.8.8",
+      "query_time": "2024-02-01 07:50:47",
+      "whois_server": "whois.arin.net",
+      "inet_nums": [
+        {
+          "start_ip": "8.8.8.0",
+          "end_ip": "8.8.8.255",
+          "cidr": [
+            "8.8.8.0/24"
+          ],
+          "net_name": "GOGL",
+          "net_handle": "NET-8-8-8-0-2",
+          "status": "Direct Allocation",
+          "organization": "Google LLC (GOGL)",
+          "date_created": "2023-12-28",
+          "date_updated": "2023-12-28",
+          "source": "https://rdap.arin.net/registry/ip/8.8.8.0",
+          "parents": [
+            "NET8 (NET-8-0-0-0-0)"
+          ]
+        }
+      ],
+      "organization": {
+        "handle": "GOGL",
+        "name": "Google LLC",
+        "address": [
+          "1600 Amphitheatre Parkway",
+          "Mountain View",
+          "CA",
+          "94043",
+          "US"
+        ],
+        "street": "Amphitheatre Parkway",
+        "city": "Mountain View",
+        "state": "CA",
+        "zip_code": "94043",
+        "country": [
+          "US"
+        ],
+        "date_created": "2000-03-30",
+        "date_updated": "2019-10-31",
+        "source": "https://rdap.arin.net/registry/entity/GOGL"
+      },
+      "technical_contacts": [
+        {
+          "handle": "ZG39-ARIN",
+          "name": "Google LLC",
+          "email": [
+            "arin-contact@google.com"
+          ],
+          "phone": [
+            "+1-650-253-0000"
+          ],
+          "source": "https://rdap.arin.net/registry/entity/ZG39-ARIN"
+        }
+      ],
+      "abuse_contacts": [
+        {
+          "handle": "ABUSE5250-ARIN",
+          "name": "Abuse",
+          "email": [
+            "network-abuse@google.com"
+          ],
+          "phone": [
+            "+1-650-253-0000"
+          ],
+          "source": "https://rdap.arin.net/registry/entity/ABUSE5250-ARIN"
+        }
+      ],
+      "whois_raw_response": "###############################################"
+    },
+    "source": "https://whoisfreaks.com/_next/static/chunks/5627-6eab265e1edbd4ca.js",
+    "docs_page": "https://whoisfreaks.com/documentation/ip-whois-api"
+  },
+  "GET /v1.0/subdomains": {
+    "body": {
+      "domain": "google.com",
+      "status": true,
+      "query_time": "2025-05-22T16:00:50.978835309",
+      "current_page": 3,
+      "total_pages": 182,
+      "total_records": 18128,
+      "subdomains": [
+        {
+          "subdomain": "liqckdx.sites.google.com",
+          "first_seen": "2022-05-17",
+          "last_seen": "N/A",
+          "inactive_from": "N/A"
+        },
+        {
+          "subdomain": "gkwpvg8.sites.google.com",
+          "first_seen": "2023-06-09",
+          "last_seen": "2025-05-01",
+          "inactive_from": "N/A"
+        },
+        {
+          "subdomain": "igc0b4i.sites.google.com",
+          "first_seen": "2023-12-02",
+          "last_seen": "2025-05-01",
+          "inactive_from": "N/A"
+        },
+        {
+          "subdomain": "ediscovery.google.com",
+          "first_seen": "2016-09-01",
+          "last_seen": "2025-05-20",
+          "inactive_from": "N/A"
+        },
+        {
+          "subdomain": "lnivsn4.sites.google.com",
+          "first_seen": "2022-05-24",
+          "last_seen": "N/A",
+          "inactive_from": "N/A"
+        },
+        {
+          "subdomain": "m6yg874.sites.google.com",
+          "first_seen": "2023-12-06",
+          "last_seen": "N/A",
+          "inactive_from": "N/A"
+        },
+        {
+          "subdomain": "12w2grv.sites.google.com",
+          "first_seen": "2023-06-10",
+          "last_seen": "N/A",
+          "inactive_from": "N/A"
+        },
+        {
+          "subdomain": "134s1fm.sites.google.com",
+          "first_seen": "2023-06-07",
+          "last_seen": "N/A",
+          "inactive_from": "N/A"
+        }
+      ]
+    },
+    "source": "https://whoisfreaks.com/_next/static/chunks/5627-6eab265e1edbd4ca.js",
+    "docs_page": "https://whoisfreaks.com/documentation/subdomains-api"
+  },
+  "GET /v2.0/dns/live": {
+    "body": {
+      "queryTime": "2024-10-03 13:24:09",
+      "domainName": "whoisfreaks.com",
+      "ipAddress": "8.8.8.8",
+      "dnsTypes": {
+        "PTR": 12,
+        "A": 1,
+        "MX": 15,
+        "NS": 2,
+        "SOA": 6,
+        "SPF": 99,
+        "TXT": 16
+      },
+      "dnsRecords": [
+        {
+          "name": "8.8.8.8.in-addr.arpa",
+          "type": 12,
+          "dnsType": "PTR",
+          "ttl": 14999,
+          "rawText": "8.8.8.8.in-addr.arpa.\t14999\tIN\tPTR\tdns.google.",
+          "rRsetType": 12,
+          "singleName": "dns.google."
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 1,
+          "dnsType": "A",
+          "ttl": 3600,
+          "rawText": "whoisfreaks.com.\t3600\tIN\tA\t172.233.38.245",
+          "rRsetType": 1,
+          "address": "172.233.38.245"
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 15,
+          "dnsType": "MX",
+          "ttl": 3600,
+          "rawText": "whoisfreaks.com.\t3600\tIN\tMX\t50 mx3.zoho.com.",
+          "rRsetType": 15,
+          "target": "mx3.zoho.com.",
+          "priority": 50
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 15,
+          "dnsType": "MX",
+          "ttl": 3600,
+          "rawText": "whoisfreaks.com.\t3600\tIN\tMX\t10 mx.zoho.com.",
+          "rRsetType": 15,
+          "target": "mx.zoho.com.",
+          "priority": 10
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 15,
+          "dnsType": "MX",
+          "ttl": 3600,
+          "rawText": "whoisfreaks.com.\t3600\tIN\tMX\t20 mx2.zoho.com.",
+          "rRsetType": 15,
+          "target": "mx2.zoho.com.",
+          "priority": 20
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 2,
+          "dnsType": "NS",
+          "ttl": 3600,
+          "rawText": "whoisfreaks.com.\t3600\tIN\tNS\tdns7.cloudns.net.",
+          "rRsetType": 2,
+          "singleName": "dns7.cloudns.net."
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 2,
+          "dnsType": "NS",
+          "ttl": 3600,
+          "rawText": "whoisfreaks.com.\t3600\tIN\tNS\tdns8.cloudns.net.",
+          "rRsetType": 2,
+          "singleName": "dns8.cloudns.net."
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 2,
+          "dnsType": "NS",
+          "ttl": 3600,
+          "rawText": "whoisfreaks.com.\t3600\tIN\tNS\tdns3.cloudns.net.",
+          "rRsetType": 2,
+          "singleName": "dns3.cloudns.net."
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 2,
+          "dnsType": "NS",
+          "ttl": 3600,
+          "rawText": "whoisfreaks.com.\t3600\tIN\tNS\tdns4.cloudns.net.",
+          "rRsetType": 2,
+          "singleName": "dns4.cloudns.net."
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 6,
+          "dnsType": "SOA",
+          "ttl": 2209,
+          "rawText": "whoisfreaks.com.\t2209\tIN\tSOA\tdns3.cloudns.net. support.cloudns.net. 2024091202 7200 1800 1209600 3600",
+          "rRsetType": 6,
+          "admin": "support.cloudns.net.",
+          "host": "dns3.cloudns.net.",
+          "expire": 1209600,
+          "minimum": 3600,
+          "refresh": 7200,
+          "retry": 1800,
+          "serial": 2024091202
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 99,
+          "dnsType": "SPF",
+          "ttl": 2209,
+          "rawText": "whoisfreaks.com.\t2209\tIN\tSPF\tv=spf1 mx include:spf.mtasv.net -all.",
+          "rRsetType": 99,
+          "strings": [
+            "v=spf1 mx include:spf.mtasv.net -all."
+          ]
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 16,
+          "dnsType": "TXT",
+          "ttl": 2988,
+          "rawText": "whoisfreaks.com.\t2988\tIN\tTXT\tpaddle-verification=ba8cd073",
+          "rRsetType": 16,
+          "strings": [
+            "paddle-verification=ba8cd073"
+          ]
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 16,
+          "dnsType": "TXT",
+          "ttl": 2988,
+          "rawText": "whoisfreaks.com.\t2988\tIN\tTXT\tgoogle-site-verification=ArWP3KvRFCLXdW6rnUfCYNBmI4LMNQjx9_XoCM0It1w",
+          "rRsetType": 16,
+          "strings": [
+            "google-site-verification=ArWP3KvRFCLXdW6rnUfCYNBmI4LMNQjx9_XoCM0It1w"
+          ]
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 16,
+          "dnsType": "TXT",
+          "ttl": 2988,
+          "rawText": "whoisfreaks.com.\t2988\tIN\tTXT\tgoogle-site-verification=s0lTTBfSePwOO7LWlSND2ulZUfz7h-BE15H2llWem2A",
+          "rRsetType": 16,
+          "strings": [
+            "google-site-verification=s0lTTBfSePwOO7LWlSND2ulZUfz7h-BE15H2llWem2A"
+          ]
+        },
+        {
+          "name": "whoisfreaks.com",
+          "type": 16,
+          "dnsType": "TXT",
+          "ttl": 2988,
+          "rawText": "whoisfreaks.com.\t2988\tIN\tTXT\tzoho-verification=zb15766004.zmverify.zoho.com",
+          "rRsetType": 16,
+          "strings": [
+            "zoho-verification=zb15766004.zmverify.zoho.com"
+          ]
+        }
+      ]
+    },
+    "source": "https://whoisfreaks.com/_next/static/chunks/5627-6eab265e1edbd4ca.js",
+    "docs_page": "https://whoisfreaks.com/documentation/dns-checker-api"
+  },
+  "GET /v3.0/domain/typos": {
+    "body": {
+      "status": true,
+      "totalRecords": 741,
+      "currentPage": 1,
+      "totalPages": 8,
+      "hasNextPage": true,
+      "nextPageToken": "eyJkb21haW5OYW1lIjoidG9kZGxlLnJ1IiwiY3VycmVudFBhZ2UiOjF9",
+      "domains": [
+        {
+          "domainName": "t-doodle.co.za",
+          "createDate": "2024-02-27",
+          "expiryDate": "2026-02-27",
+          "lastSeen": "2025-12-27",
+          "isDropped": false
+        },
+        {
+          "domainName": "t-doodle.com",
+          "createDate": "2023-10-27",
+          "expiryDate": "2025-10-27",
+          "lastSeen": "2025-07-03",
+          "isDropped": false
+        },
+        {
+          "domainName": "t-idle.org",
+          "createDate": "2024-10-24",
+          "expiryDate": "2026-10-24",
+          "lastSeen": "2026-01-16",
+          "isDropped": false
+        }
+      ]
+    },
+    "source": "https://whoisfreaks.com/_next/static/chunks/5627-6eab265e1edbd4ca.js",
+    "docs_page": "https://whoisfreaks.com/documentation/domain-typosquats-api"
+  }
+}

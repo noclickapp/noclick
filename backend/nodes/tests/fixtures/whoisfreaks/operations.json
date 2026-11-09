@@ -1,0 +1,201 @@
+{
+  "get_live_whois": {
+    "config": {
+      "operation": "get_live_whois",
+      "domainName": "whoisfreaks.com"
+    },
+    "method": "GET",
+    "path": "/v2.0/whois/live"
+  },
+  "bulk_whois": {
+    "config": {
+      "operation": "bulk_whois",
+      "domainNames": [
+        "whoisfreaks.com",
+        "jfreaks.com"
+      ]
+    },
+    "method": "POST",
+    "path": "/v2.0/bulkwhois/live"
+  },
+  "get_live_dns": {
+    "config": {
+      "operation": "get_live_dns",
+      "domainName": "whoisfreaks.com",
+      "type": "A,MX,TXT"
+    },
+    "method": "GET",
+    "path": "/v2.0/dns/live"
+  },
+  "get_historical_dns": {
+    "config": {
+      "operation": "get_historical_dns",
+      "domainName": "whoisfreaks.com",
+      "type": "A,MX,TXT",
+      "page": 1
+    },
+    "method": "GET",
+    "path": "/v2.0/dns/historical"
+  },
+  "get_reverse_dns": {
+    "config": {
+      "operation": "get_reverse_dns",
+      "value": "8.8.8.8",
+      "page": 1,
+      "type": "a"
+    },
+    "method": "GET",
+    "path": "/v2.1/dns/reverse"
+  },
+  "bulk_dns": {
+    "config": {
+      "operation": "bulk_dns",
+      "type": "A,MX,TXT",
+      "domainNames": [
+        "whoisfreaks.com",
+        "jfreaks.com"
+      ]
+    },
+    "method": "POST",
+    "path": "/v2.0/dns/bulk/live"
+  },
+  "get_domain_availability": {
+    "config": {
+      "operation": "get_domain_availability",
+      "domain": "google.com"
+    },
+    "method": "GET",
+    "path": "/v2.0/domain/availability"
+  },
+  "bulk_domain_availability": {
+    "config": {
+      "operation": "bulk_domain_availability",
+      "domainNames": [
+        "whoisfreaks.com",
+        "jfreaks.com"
+      ]
+    },
+    "method": "POST",
+    "path": "/v2.0/domain/availability"
+  },
+  "get_domain_typos": {
+    "config": {
+      "operation": "get_domain_typos",
+      "keyword": "whoisfreaks"
+    },
+    "method": "GET",
+    "path": "/v3.0/domain/typos"
+  },
+  "get_ssl_certificate": {
+    "config": {
+      "operation": "get_ssl_certificate",
+      "domainName": "whoisfreaks.com"
+    },
+    "method": "GET",
+    "path": "/v1.0/ssl/live"
+  },
+  "get_ip_geolocation": {
+    "config": {
+      "operation": "get_ip_geolocation",
+      "ip": "8.8.8.8"
+    },
+    "method": "GET",
+    "path": "/v1.0/geolocation"
+  },
+  "bulk_ip_geolocation": {
+    "config": {
+      "operation": "bulk_ip_geolocation",
+      "ips": [
+        "8.8.8.8",
+        "1.1.1.1"
+      ]
+    },
+    "method": "POST",
+    "path": "/v1.0/geolocation"
+  },
+  "get_subdomains": {
+    "config": {
+      "operation": "get_subdomains",
+      "domain": "whoisfreaks.com",
+      "after": "2026-01-01",
+      "before": "2026-10-01",
+      "page": 1
+    },
+    "method": "GET",
+    "path": "/v1.0/subdomains"
+  },
+  "get_ip_reputation": {
+    "config": {
+      "operation": "get_ip_reputation",
+      "ip": "8.8.8.8"
+    },
+    "method": "GET",
+    "path": "/v1.0/security"
+  },
+  "bulk_ip_reputation": {
+    "config": {
+      "operation": "bulk_ip_reputation",
+      "ips": [
+        "8.8.8.8",
+        "1.1.1.1"
+      ]
+    },
+    "method": "POST",
+    "path": "/v1.0/security"
+  },
+  "get_domain_reputation": {
+    "config": {
+      "operation": "get_domain_reputation",
+      "domainName": "amazon.com"
+    },
+    "method": "GET",
+    "path": "/v1/domain/security"
+  },
+  "get_asn_whois": {
+    "config": {
+      "operation": "get_asn_whois",
+      "asn": "as15169"
+    },
+    "method": "GET",
+    "path": "/v2.0/asn-whois"
+  },
+  "get_ip_whois": {
+    "config": {
+      "operation": "get_ip_whois",
+      "ip": "8.8.8.8"
+    },
+    "method": "GET",
+    "path": "/v1.0/ip-whois"
+  },
+  "rotate_api_key": {
+    "config": {
+      "operation": "rotate_api_key"
+    },
+    "method": "GET",
+    "path": "/v1.0/api-key/rotate"
+  },
+  "get_account_usage": {
+    "config": {
+      "operation": "get_account_usage"
+    },
+    "method": "GET",
+    "path": "/v1.0/whoisapi/usage"
+  },
+  "get_historical_whois": {
+    "config": {
+      "operation": "get_historical_whois",
+      "domainName": "whoisfreaks.com"
+    },
+    "method": "GET",
+    "path": "/v2.0/whois/history"
+  },
+  "get_reverse_whois": {
+    "config": {
+      "operation": "get_reverse_whois",
+      "keyword": "whoisfreaks",
+      "page": 1
+    },
+    "method": "GET",
+    "path": "/v2.0/whois/reverse"
+  }
+}
