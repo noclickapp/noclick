@@ -1,0 +1,913 @@
+{
+  "get_project": {
+    "method": "GET",
+    "path": "/console/v1/project",
+    "response": {
+      "message": "Project Info Retrieved Successfully",
+      "data": {
+        "id": "company_id"
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "list_gates": {
+    "method": "GET",
+    "path": "/console/v1/gates",
+    "response": {
+      "message": "Gates listed successfully.",
+      "data": [
+        {
+          "id": "a_gate",
+          "name": "A Gate",
+          "description": "description",
+          "idType": "userID",
+          "lastModifierID": "4R5PV7mvYdW6NLCwK8ocoz",
+          "lastModifiedTime": 1705439406750,
+          "lastModifierName": "CONSOLE API",
+          "lastModifierEmail": null,
+          "creatorID": "4R5PV7mvYdW6NLCwK8ocoz",
+          "createdTime": 1705439406615,
+          "creatorName": "CONSOLE API",
+          "creatorEmail": null,
+          "targetApps": [],
+          "holdoutIDs": [],
+          "tags": [],
+          "isEnabled": true,
+          "status": "In Progress",
+          "rules": [],
+          "checksPerHour": 0,
+          "type": "PERMANENT",
+          "typeReason": "NONE",
+          "team": null,
+          "reviewSettings": {
+            "requiredReview": false,
+            "allowedReviewers": []
+          },
+          "measureMetricLifts": true,
+          "store0100Exposures": false,
+          "owner": {
+            "ownerID": "user123",
+            "ownerName": "CONSOLE API",
+            "ownerType": "SDK_KEY",
+            "ownerEmail": ""
+          },
+          "monitoringMetrics": [],
+          "version": 1,
+          "permalink": "https://console.statsig.com/company_id/gates/a_gate"
+        }
+      ],
+      "pagination": {
+        "all": "",
+        "itemsPerPage": 100,
+        "nextPage": null,
+        "pageNumber": 1,
+        "previousPage": null,
+        "totalItems": 1
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "get_gate": {
+    "method": "GET",
+    "path": "/console/v1/gates/{id}",
+    "response": {
+      "message": "Gate read successfully.",
+      "data": {
+        "id": "a_gate",
+        "name": "A Gate",
+        "description": "description",
+        "idType": "userID",
+        "lastModifierID": "1vaQaBoLlkauH9iiuOSBP2",
+        "lastModifiedTime": 1704929983827,
+        "lastModifierName": "CONSOLE API",
+        "lastModifierEmail": null,
+        "creatorID": "1vaQaBoLlkauH9iiuOSBP2",
+        "createdTime": 1704929979761,
+        "creatorName": "CONSOLE API",
+        "creatorEmail": null,
+        "targetApps": [],
+        "holdoutIDs": [],
+        "tags": [],
+        "isEnabled": true,
+        "status": "In Progress",
+        "rules": [],
+        "checksPerHour": 0,
+        "type": "PERMANENT",
+        "typeReason": "NONE",
+        "team": null,
+        "reviewSettings": {
+          "requiredReview": false,
+          "allowedReviewers": []
+        },
+        "measureMetricLifts": true,
+        "store0100Exposures": false,
+        "owner": {
+          "ownerID": "user123",
+          "ownerName": "CONSOLE API",
+          "ownerType": "SDK_KEY",
+          "ownerEmail": ""
+        },
+        "monitoringMetrics": [],
+        "version": 1,
+        "permalink": "https://console.statsig.com/company_id/gates/a_gate"
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "create_gate": {
+    "method": "POST",
+    "path": "/console/v1/gates",
+    "response": {
+      "message": "Gate created successfully.",
+      "data": {
+        "id": "a_gate",
+        "permalink": "https://console.statsig.com/company_id/gates/a_gate",
+        "name": "A Gate",
+        "description": "description",
+        "idType": "userID",
+        "lastModifierID": "1vaQaBoLlkauH9iiuOSBP2",
+        "lastModifiedTime": 1704929983827,
+        "lastModifierName": "CONSOLE API",
+        "lastModifierEmail": null,
+        "creatorID": "1vaQaBoLlkauH9iiuOSBP2",
+        "createdTime": 1704929979761,
+        "creatorName": "CONSOLE API",
+        "creatorEmail": null,
+        "targetApps": [],
+        "holdoutIDs": [],
+        "tags": [],
+        "isEnabled": true,
+        "status": "In Progress",
+        "rules": [],
+        "checksPerHour": 0,
+        "type": "PERMANENT",
+        "typeReason": "NONE",
+        "team": null,
+        "reviewSettings": {
+          "requiredReview": false,
+          "allowedReviewers": []
+        },
+        "measureMetricLifts": true,
+        "owner": {
+          "ownerID": "user123",
+          "ownerName": "CONSOLE API",
+          "ownerType": "SDK_KEY",
+          "ownerEmail": ""
+        },
+        "monitoringMetrics": [],
+        "version": 1
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "update_gate": {
+    "method": "PATCH",
+    "path": "/console/v1/gates/{id}",
+    "response": {
+      "data": {
+        "checksPerHour": 0,
+        "createdTime": 1705439406750,
+        "creatorEmail": null,
+        "creatorID": "4R5PV7mvYdW6NLCwK8ocoz",
+        "creatorName": "CONSOLE API",
+        "description": "Updated the description of the gate",
+        "holdoutIDs": [],
+        "id": "a_gate",
+        "idType": "userID",
+        "isEnabled": true,
+        "lastModifiedTime": 1705439498468,
+        "lastModifierEmail": null,
+        "lastModifierID": "4R5PV7mvYdW6NLCwK8ocoz",
+        "lastModifierName": "CONSOLE API",
+        "name": "A Gate",
+        "rules": [],
+        "status": "In Progress",
+        "tags": [],
+        "targetApps": [],
+        "type": "PERMANENT",
+        "typeReason": "NONE",
+        "team": null,
+        "reviewSettings": {
+          "requiredReview": false,
+          "allowedReviewers": []
+        },
+        "measureMetricLifts": true,
+        "store0100Exposures": false,
+        "owner": {
+          "ownerID": "user123",
+          "ownerName": "CONSOLE API",
+          "ownerType": "SDK_KEY",
+          "ownerEmail": ""
+        },
+        "monitoringMetrics": [],
+        "version": 2,
+        "permalink": "https://console.statsig.com/company_id/gates/a_gate"
+      },
+      "message": "Gate updated successfully."
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "delete_gate": {
+    "method": "DELETE",
+    "path": "/console/v1/gates/{id}",
+    "response": {
+      "message": "Gate deleted successfully."
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "list_dynamic_configs": {
+    "method": "GET",
+    "path": "/console/v1/dynamic_configs",
+    "response": {
+      "message": "Dynamic Configs listed successfully.",
+      "data": [
+        {
+          "id": "example_config",
+          "permalink": "https://console.statsig.com/company_id/dynamic_configs/example_config",
+          "name": "Example Config",
+          "description": "An example dynamic configuration",
+          "idType": "userID",
+          "lastModifierID": "abc123",
+          "lastModifiedTime": 1600000000000,
+          "lastModifierName": "Jane Doe",
+          "lastModifierEmail": "jane@example.com",
+          "creatorID": "def456",
+          "createdTime": 1500000000000,
+          "creatorName": "John Smith",
+          "creatorEmail": "john@example.com",
+          "targetApps": [
+            "myapp"
+          ],
+          "holdoutIDs": [],
+          "tags": [
+            "example_tag"
+          ],
+          "type": "TEMPORARY",
+          "typeReason": "NONE",
+          "isPermanent": false,
+          "team": "Product",
+          "isEnabled": true,
+          "rules": [],
+          "defaultValue": {},
+          "defaultValueJson5": "{}",
+          "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"properties\":{}}",
+          "schemaJson5": "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"properties\": {}\n}",
+          "version": 1
+        }
+      ]
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "get_dynamic_config": {
+    "method": "GET",
+    "path": "/console/v1/dynamic_configs/{id}",
+    "response": {
+      "message": "Dynamic config read successfully.",
+      "data": {
+        "id": "a_dynamic_config",
+        "permalink": "https://console.statsig.com/company_id/dynamic_configs/a_dynamic_config",
+        "description": "helpful summary of what this dynamic config does",
+        "idType": "userID",
+        "creatorEmail": "johnsmith@mydomain.com",
+        "creatorName": "John Smith",
+        "createdTime": 1674769467002,
+        "lastModifierID": "1vaQaBoLlkauH9iiuOSBP2",
+        "lastModifierName": "CONSOLE API",
+        "lastModifiedTime": 1707344887865,
+        "lastModifierEmail": null,
+        "holdoutIDs": [],
+        "isEnabled": true,
+        "rules": [
+          {
+            "name": "All Conditions",
+            "id": "38ttpCpzrQFTMKcqFKk02l:10.00:1",
+            "baseID": "38ttpCpzrQFTMKcqFKk02l",
+            "passPercentage": 10,
+            "conditions": [
+              {
+                "type": "public",
+                "operator": "any",
+                "targetValue": 0,
+                "field": "string",
+                "customID": "string"
+              }
+            ],
+            "returnValue": {
+              "key": true
+            },
+            "completedAutomatedRollouts": [],
+            "pendingAutomatedRollouts": []
+          }
+        ],
+        "defaultValue": {
+          "key": "the default value"
+        },
+        "tags": [
+          "a tag"
+        ],
+        "type": "TEMPORARY",
+        "typeReason": "NONE",
+        "isPermanent": false
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "create_dynamic_config": {
+    "method": "POST",
+    "path": "/console/v1/dynamic_configs",
+    "response": {
+      "message": "Dynamic Config created successfully.",
+      "data": {
+        "id": "a_dynamic_config",
+        "permalink": "https://console.statsig.com/company_id/dynamic_configs/a_dynamic_config",
+        "name": "a dynamic config",
+        "description": "helpful summary of what this dynamic config does",
+        "idType": "userID",
+        "lastModifierID": "1vaQaBoLlkauH9iiuOSBP2",
+        "lastModifiedTime": 1707344887865,
+        "lastModifierName": "CONSOLE API",
+        "lastModifierEmail": null,
+        "creatorID": "1vaQaBoLlkauH9iiuOSBP2",
+        "createdTime": 1707344887764,
+        "creatorName": "CONSOLE API",
+        "creatorEmail": null,
+        "targetApps": [],
+        "holdoutIDs": [],
+        "tags": [],
+        "type": "TEMPORARY",
+        "typeReason": "NONE",
+        "isPermanent": false,
+        "isEnabled": true,
+        "rules": [],
+        "defaultValue": {}
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "update_dynamic_config": {
+    "method": "PATCH",
+    "path": "/console/v1/dynamic_configs/{id}",
+    "response": {
+      "message": "Dynamic config updated successfully.",
+      "data": {
+        "id": "a_dynamic_config",
+        "permalink": "https://console.statsig.com/company_id/dynamic_configs/a_dynamic_config",
+        "description": "helpful summary of what this dynamic config does",
+        "idType": "userID",
+        "creatorEmail": "johnsmith@mydomain.com",
+        "creatorName": "John Smith",
+        "createdTime": 1674769467002,
+        "lastModifierID": "1vaQaBoLlkauH9iiuOSBP2",
+        "lastModifierName": "CONSOLE API",
+        "lastModifiedTime": 1707344887865,
+        "lastModifierEmail": null,
+        "holdoutIDs": [],
+        "isEnabled": true,
+        "rules": [
+          {
+            "name": "All Conditions",
+            "id": "38ttpCpzrQFTMKcqFKk02l:10.00:1",
+            "baseID": "38ttpCpzrQFTMKcqFKk02l",
+            "passPercentage": 10,
+            "conditions": [
+              {
+                "type": "public",
+                "operator": "any",
+                "targetValue": 0,
+                "field": "string",
+                "customID": "string"
+              }
+            ],
+            "returnValue": {
+              "key": true
+            },
+            "completedAutomatedRollouts": [],
+            "pendingAutomatedRollouts": []
+          }
+        ],
+        "defaultValue": {
+          "key": "the default value"
+        },
+        "tags": [
+          "a tag"
+        ],
+        "type": "TEMPORARY",
+        "typeReason": "NONE",
+        "isPermanent": false
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "delete_dynamic_config": {
+    "method": "DELETE",
+    "path": "/console/v1/dynamic_configs/{id}",
+    "response": {
+      "message": "Dynamic Config deleted successfully."
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "list_experiments": {
+    "method": "GET",
+    "path": "/console/v1/experiments",
+    "response": {
+      "message": "Experiments listed successfully.",
+      "data": [
+        {
+          "id": "a_experiment",
+          "permalink": "https://console.statsig.com/company_id/experiments/a_experiment",
+          "name": "a_experiment",
+          "description": "description",
+          "idType": "userID",
+          "lastModifierID": "1vaQaBoLlkauH9iiuOSBP2",
+          "lastModifiedTime": 1707427635442,
+          "lastModifierName": "CONSOLE API",
+          "lastModifierEmail": null,
+          "creatorID": "1vaQaBoLlkauH9iiuOSBP2",
+          "createdTime": 1707427634717,
+          "creatorName": "CONSOLE API",
+          "creatorEmail": null,
+          "targetApps": [],
+          "holdoutIDs": [],
+          "tags": [],
+          "status": "setup",
+          "experimentType": "BASE",
+          "launchedGroupID": null,
+          "startTime": null,
+          "endTime": null,
+          "layerID": null,
+          "hypothesis": "This will be a good feature :)",
+          "primaryMetrics": [
+            {
+              "name": "d1_retention_rate",
+              "type": "user"
+            }
+          ],
+          "primaryMetricTags": [],
+          "secondaryMetrics": [],
+          "secondaryMetricTags": [],
+          "groups": [
+            {
+              "name": "Control",
+              "id": "6sEQvUd4c6E55V6ljBYMeJ",
+              "size": 50,
+              "parameterValues": {
+                "assigned_group": "control"
+              },
+              "description": "",
+              "isControl": true
+            },
+            {
+              "name": "Test",
+              "id": "6sEQvVS6EoNzpkEgUJUpxL",
+              "size": 50,
+              "parameterValues": {
+                "assigned_group": "test"
+              },
+              "description": "",
+              "isControl": false
+            }
+          ],
+          "allocation": 100,
+          "duration": 14,
+          "targetingGateID": "",
+          "defaultConfidenceInterval": "95",
+          "bonferroniCorrection": false,
+          "decisionReason": null,
+          "decisionTime": null,
+          "healthChecks": [],
+          "owner": {
+            "ownerType": "USER",
+            "ownerName": "Test User"
+          },
+          "inlineTargetingRulesJSON": "{}",
+          "healthCheckStatus": "PASSED",
+          "isStale": false,
+          "powerAnalyses": []
+        },
+        {
+          "id": "b_experiment",
+          "permalink": "https://console.statsig.com/company_id/experiments/b_experiment",
+          "name": "b experiment",
+          "description": "",
+          "idType": "userID",
+          "inlineTargetingRulesJSON": "{}",
+          "lastModifierID": "68ztZp2v2nFc81RAsvuvj4",
+          "lastModifiedTime": 1706744900374,
+          "lastModifierName": "jacob O'Quinn",
+          "lastModifierEmail": "jacob@statsig.com",
+          "creatorID": "68ztZp2v2nFc81RAsvuvj4",
+          "createdTime": 1678394676162,
+          "creatorName": "jacob O'Quinn",
+          "creatorEmail": "jacob@statsig.com",
+          "targetApps": [],
+          "holdoutIDs": [],
+          "tags": [
+            "customTag",
+            "asdf"
+          ],
+          "status": "archived",
+          "experimentType": "BASE",
+          "launchedGroupID": null,
+          "startTime": null,
+          "endTime": null,
+          "layerID": null,
+          "hypothesis": "",
+          "primaryMetrics": [],
+          "primaryMetricTags": [],
+          "secondaryMetrics": [],
+          "secondaryMetricTags": [
+            "\u2605 Core"
+          ],
+          "groups": [
+            {
+              "name": "Control",
+              "id": "7dCnwm0by2laSOcBNKIL8r",
+              "size": 50,
+              "parameterValues": {
+                "control": "control value"
+              },
+              "description": "",
+              "isControl": true
+            },
+            {
+              "name": "Test",
+              "id": "7dCnwnFe0kuFcdKxoSEort",
+              "size": 50,
+              "parameterValues": {
+                "control": "test value"
+              },
+              "description": "",
+              "isControl": false
+            }
+          ],
+          "allocation": 100,
+          "duration": 14,
+          "targetingGateID": "targeting_gate_to_select_users",
+          "defaultConfidenceInterval": "95",
+          "bonferroniCorrection": false,
+          "decisionReason": null,
+          "decisionTime": null,
+          "healthCheckStatus": "WAITING",
+          "healthChecks": [
+            {
+              "name": "Checks not yet detected",
+              "status": "WAITING",
+              "description": "This experiment has not recorded any exposure checks in production yet."
+            },
+            {
+              "name": "Valid unit type not yet verified",
+              "status": "WAITING",
+              "description": "Exposure checks for this experiment are pending evaluation. This experiment requires exposure checks with unit IDs of type userID"
+            },
+            {
+              "name": "Event metric data not yet verified",
+              "status": "WAITING",
+              "description": "This experiment has recorded no event metric with a valid unit ID yet, or these event metrics are pending evaluation. If you are importing events, this may take up to a day to reflect. This experiment requires metrics with unit IDs of type userID"
+            },
+            {
+              "name": "Pulse metrics not yet available",
+              "status": "WAITING",
+              "description": "Expect to see your Pulse Results within 24 hours. Statsig computes Pulse results on a daily basis."
+            },
+            {
+              "name": "Exposure balance not yet verified",
+              "status": "WAITING",
+              "description": "Exposure balance for this experiment is pending evaluation. As the experiment records more exposures, Statsig will continue to evaluate experiment exposure balance."
+            }
+          ],
+          "isStale": false,
+          "powerAnalyses": []
+        }
+      ]
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "get_experiment": {
+    "method": "GET",
+    "path": "/console/v1/experiments/{id}",
+    "response": {
+      "message": "Experiments listed successfully.",
+      "data": {
+        "id": "a_experiment",
+        "permalink": "https://console.statsig.com/company_id/experiments/a_experiment",
+        "description": "",
+        "lastModifiedTime": 1707427635442,
+        "lastModifierEmail": null,
+        "createdTime": 1707427634717,
+        "creatorName": "CONSOLE API",
+        "lastModifierName": "CONSOLE API",
+        "lastModifierID": "4FKF0sUbi1D7xZFW5vcHWB",
+        "idType": "userID",
+        "status": "setup",
+        "experimentType": "BASE",
+        "launchedGroupID": null,
+        "layerID": "statsig::a_experiment_layer",
+        "hypothesis": "",
+        "primaryMetrics": [],
+        "primaryMetricTags": [],
+        "secondaryMetrics": [],
+        "secondaryMetricTags": [],
+        "startTime": null,
+        "endTime": null,
+        "decisionTime": null,
+        "groups": [
+          {
+            "name": "Control",
+            "id": "4HbgLdfqlIeN3sHkyMG1qC",
+            "size": 50,
+            "parameterValues": {},
+            "isControl": true
+          },
+          {
+            "name": "Test",
+            "size": 50,
+            "parameterValues": {},
+            "isControl": false
+          }
+        ],
+        "allocation": 100,
+        "duration": 14,
+        "targetingGateID": "",
+        "defaultConfidenceInterval": "95",
+        "bonferroniCorrection": false,
+        "tags": [
+          "* Core"
+        ],
+        "decisionReason": "",
+        "owner": {
+          "ownerType": "USER",
+          "ownerName": "Test User"
+        },
+        "healthCheckStatus": "PASSED",
+        "isStale": false,
+        "inlineTargetingRulesJSON": "{}",
+        "powerAnalyses": [
+          {
+            "id": "experiment_data_report_id",
+            "name": "My Power Analysis",
+            "status": "ready",
+            "isPrimary": true
+          }
+        ]
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "list_segments": {
+    "method": "GET",
+    "path": "/console/v1/segments",
+    "response": {
+      "message": "Segments listed successfully.",
+      "data": [
+        {
+          "id": "an_id_list",
+          "isEnabled": true,
+          "description": "helpful summary of what this segment is",
+          "lastModifierName": "CONSOLE API",
+          "lastModifierID": "ahKwUoaNauHu9AmJPc2",
+          "type": "id_list",
+          "count": 0,
+          "tags": [
+            "a tag"
+          ]
+        },
+        {
+          "id": "a_rule_based_segment",
+          "isEnabled": true,
+          "description": "helpful summary of what this segment is",
+          "lastModifierName": "CONSOLE API",
+          "lastModifierID": "ahKwUoaNauHu9AmJPc2",
+          "type": "rule_based",
+          "count": 0,
+          "rules": {
+            "name": "All Conditions",
+            "passPercentage": 10,
+            "conditions": [
+              {
+                "type": "public",
+                "operator": "string",
+                "targetValue": 0,
+                "field": "string",
+                "customID": "string"
+              }
+            ],
+            "returnValue": {
+              "key": true
+            }
+          },
+          "tags": [
+            "a tag"
+          ]
+        }
+      ]
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "get_segment": {
+    "method": "GET",
+    "path": "/console/v1/segments/{id}",
+    "response": {
+      "message": "Segment read successfully.",
+      "data": {
+        "id": "an_id_list",
+        "isEnabled": true,
+        "description": "helpful summary of what this segment is",
+        "lastModifierName": "CONSOLE API",
+        "lastModifierID": "ahKwUoaNauHu9AmJPc2",
+        "type": "id_list",
+        "count": 0,
+        "tags": [
+          "a tag"
+        ]
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "list_tags": {
+    "method": "GET",
+    "path": "/console/v1/tags",
+    "response": {
+      "message": "Tags listed successfully",
+      "data": [
+        {
+          "id": "string",
+          "name": "a tag",
+          "description": "a description",
+          "isCore": false
+        }
+      ]
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "get_tag": {
+    "method": "GET",
+    "path": "/console/v1/tags/{id}",
+    "response": {
+      "message": "Tag read successfully",
+      "data": {
+        "id": "string",
+        "name": "a tag",
+        "description": "a description",
+        "isCore": false
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "create_tag": {
+    "method": "POST",
+    "path": "/console/v1/tags",
+    "response": {
+      "message": "Tag created successfully",
+      "data": {
+        "id": "string",
+        "name": "a tag",
+        "description": "a description",
+        "isCore": false
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "update_tag": {
+    "method": "PATCH",
+    "path": "/console/v1/tags/{id}",
+    "response": {
+      "message": "Tag updated successfully",
+      "data": {
+        "id": "string",
+        "name": "a tag",
+        "description": "a description",
+        "isCore": false
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "delete_tag": {
+    "method": "DELETE",
+    "path": "/console/v1/tags/{id}",
+    "response": {
+      "message": "Tag deleted successfully"
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "enable_gate": {
+    "method": "PUT",
+    "path": "/console/v1/gates/{id}/enable",
+    "response": {
+      "message": "Gate updated successfully.",
+      "data": {
+        "id": "a_gate",
+        "name": "A Gate",
+        "description": "description",
+        "idType": "userID",
+        "lastModifierID": "1vaQaBoLlkauH9iiuOSBP2",
+        "lastModifiedTime": 1705626260086,
+        "lastModifierName": "CONSOLE API",
+        "lastModifierEmail": null,
+        "creatorID": "1vaQaBoLlkauH9iiuOSBP2",
+        "createdTime": 1705450774719,
+        "creatorName": "CONSOLE API",
+        "creatorEmail": null,
+        "targetApps": [],
+        "holdoutIDs": [],
+        "tags": [],
+        "isEnabled": false,
+        "status": "Launched",
+        "rules": [],
+        "checksPerHour": 0,
+        "type": "PERMANENT",
+        "typeReason": "NONE",
+        "team": null,
+        "reviewSettings": {
+          "requiredReview": false,
+          "allowedReviewers": []
+        },
+        "measureMetricLifts": true,
+        "store0100Exposures": false,
+        "owner": {
+          "ownerID": "user123",
+          "ownerName": "CONSOLE API",
+          "ownerType": "SDK_KEY",
+          "ownerEmail": ""
+        },
+        "monitoringMetrics": [],
+        "version": 2,
+        "permalink": "https://console.statsig.com/company_id/gates/a_gate"
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "disable_gate": {
+    "method": "PUT",
+    "path": "/console/v1/gates/{id}/disable",
+    "response": {
+      "message": "Gate updated successfully.",
+      "data": {
+        "id": "a_gate",
+        "name": "A Gate",
+        "description": "description",
+        "idType": "userID",
+        "lastModifierID": "1vaQaBoLlkauH9iiuOSBP2",
+        "lastModifiedTime": 1705626260086,
+        "lastModifierName": "CONSOLE API",
+        "lastModifierEmail": null,
+        "creatorID": "1vaQaBoLlkauH9iiuOSBP2",
+        "createdTime": 1705450774719,
+        "creatorName": "CONSOLE API",
+        "creatorEmail": null,
+        "targetApps": [],
+        "holdoutIDs": [],
+        "tags": [],
+        "isEnabled": false,
+        "status": "Launched",
+        "rules": [],
+        "checksPerHour": 0,
+        "type": "PERMANENT",
+        "typeReason": "NONE",
+        "team": null,
+        "reviewSettings": {
+          "requiredReview": false,
+          "allowedReviewers": []
+        },
+        "measureMetricLifts": true,
+        "store0100Exposures": false,
+        "owner": {
+          "ownerID": "user123",
+          "ownerName": "CONSOLE API",
+          "ownerType": "SDK_KEY",
+          "ownerEmail": ""
+        },
+        "monitoringMetrics": [],
+        "version": 2,
+        "permalink": "https://console.statsig.com/company_id/gates/a_gate"
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  },
+  "get_gate_rules": {
+    "method": "GET",
+    "path": "/console/v1/gates/{id}/rules",
+    "response": {
+      "message": "Gate rules read successfully.",
+      "data": {
+        "rules": [
+          {
+            "name": "NA",
+            "passPercentage": 90,
+            "conditions": [
+              {
+                "type": "country",
+                "operator": "any",
+                "targetValue": [
+                  "CA"
+                ]
+              }
+            ],
+            "environment": "production",
+            "id": "LcDWo6mFrWaS3DtoKtEAfg1"
+          }
+        ]
+      }
+    },
+    "source": "https://api.statsig.com/openapi/20240601.json"
+  }
+}
