@@ -1,0 +1,319 @@
+{
+  "visit.create": {
+    "body": {
+      "userid": "116436942393746249544",
+      "time": "2026-02-26T10:57:58.850Z",
+      "type": "visit",
+      "event": "create",
+      "data": {
+        "id": "id.880260661",
+        "VisitTime": 1772103478464,
+        "Profile": "https://www.linkedin.com/in/heidi-kirstie",
+        "Picture": "https://media.licdn.com/dms/image/v2/D4D03AQFWmE8lYY4BLQ/profile-displayphoto-scale_400_400/B4DZkzeHYaJcAg-/0/1757505158022",
+        "FirstName": "Heidi",
+        "LastName": "Kirstie",
+        "Connections": 5946,
+        "Title": "Sales and Marketing Executive",
+        "Company": "Dux-Soup",
+        "Location": "Hertford, England, United Kingdom",
+        "Summary": "Energetic and results-oriented Marketing Assistant with a passion for promoting products and enhancing brand awareness. Strong interest in media, marketing, LinkedIn automation, and lead generation.",
+        "Experience": [
+          {
+            "Company": "Dux-Soup",
+            "Title": "Sales and Marketing Executive",
+            "Location": "Hybrid",
+            "From": "Sep 2024",
+            "To": "Present"
+          },
+          {
+            "Company": "Dux-Soup",
+            "Title": "Marketing Assistant",
+            "Location": "Remote",
+            "From": "Jan 2022",
+            "To": "Sep 2024"
+          },
+          {
+            "Company": "AMedia Co",
+            "Title": "Content and Media Lead",
+            "Location": "On-site",
+            "From": "Jun 2023",
+            "To": "Present"
+          }
+        ],
+        "Skills": [
+          "LinkedIn",
+          "Canva"
+        ],
+        "Education": [
+          {
+            "School": "Richard Hale School",
+            "From": "Sep 2019",
+            "To": "Jun 2022"
+          }
+        ]
+      }
+    },
+    "source": "https://www.postman.com/collections/51439365-615513e8-60f7-4c8e-8ac9-0b40aea9dc83"
+  },
+  "visit.update": {
+    "body": {
+      "userid": "116436942393746249544",
+      "time": "2026-02-26T10:58:05.368Z",
+      "type": "visit",
+      "event": "update",
+      "data": {
+        "id": "id.880260661",
+        "VisitTime": 1772103478464,
+        "Profile": "https://www.linkedin.com/in/heidi-kirstie",
+        "SalesProfile": "",
+        "RecruiterProfile": "",
+        "Picture": "https://media.licdn.com/dms/image/v2/D4D03AQFWmE8lYY4BLQ/profile-displayphoto-scale_400_400/B4DZkzeHYaJcAg-/0/1757505158022?e=1773878400&v=beta&t=E4k9HwNW6rmk71xg1yOogT0-YJeuU9BAMJ2bXYtpd2Y",
+        "Degree": "1",
+        "First Name": "Heidi",
+        "Middle Name": "",
+        "Last Name": "Kirstie",
+        "Connections": "5946",
+        "Summary": "Energetic and results-oriented Marketing Assistant with a passion for promoting products and enhancing brand awareness. With a strong interest in media and marketing, I\u2019m fascinated to explore all things related to LinkedIn Automation and lead generation. Automation tools like Dux-Soup allow me to express creativity and build experience in a dynamic and growing area of marketing.",
+        "Title": "Sales and Marketing Executive",
+        "From": "",
+        "Company": "Dux-Soup",
+        "CompanyProfile": "",
+        "CompanyWebsite": "",
+        "PersonalWebsite": "",
+        "Email": "Heidi@dux-soup.com",
+        "Phone": "",
+        "IM": "",
+        "Twitter": "",
+        "Location": "Hertford, England, United Kingdom",
+        "Industry": "",
+        "My Tags": [],
+        "extended": {
+          "positions": [
+            {
+              "Company": "Dux-Soup",
+              "Location": "Hybrid",
+              "Title": "Sales and Marketing Executive",
+              "Description": "",
+              "From": "Sep 2024",
+              "To": "Present"
+            },
+            {
+              "Company": "Dux-Soup",
+              "Location": "Hertfordshire, England, United Kingdom \u00b7 Remote",
+              "Title": "Marketing Assistant",
+              "Description": "",
+              "From": "Jan 2022",
+              "To": "Sep 2024"
+            },
+            {
+              "Company": "AMedia Co",
+              "Location": "On-site",
+              "Title": "Content and Media lead",
+              "Description": "Marketing strategy",
+              "From": "Jun 2023",
+              "To": "Present"
+            }
+          ],
+          "skills": [
+            "LinkedIn",
+            "Canva"
+          ],
+          "schools": [
+            {
+              "Name": "Richard Hale School",
+              "Degree": "",
+              "Field": "",
+              "From": "Sep 2019",
+              "To": "Jun 2022"
+            }
+          ]
+        }
+      },
+      "My Notes": ""
+    },
+    "source": "https://www.postman.com/collections/51439365-615513e8-60f7-4c8e-8ac9-0b40aea9dc83"
+  },
+  "action.completed.connectProfile": {
+    "body": {
+      "userid": "116436942393746249544",
+      "time": "2026-02-26T11:25:51.630Z",
+      "type": "action",
+      "event": "completed",
+      "data": {
+        "name": "connectProfile",
+        "targeturl": "https://www.linkedin.com/in/elena-gecheva",
+        "profileid": "id.1488677123",
+        "params": {
+          "messagetext": "Hi _FN_, let's connect!",
+          "campaignid": "default"
+        },
+        "successflag": true
+      }
+    },
+    "source": "https://www.postman.com/collections/51439365-615513e8-60f7-4c8e-8ac9-0b40aea9dc83"
+  },
+  "action.completed.messageProfile": {
+    "body": {
+      "userid": "116436942393746249544",
+      "time": "2026-02-26T11:45:41.395Z",
+      "type": "action",
+      "event": "completed",
+      "data": {
+        "name": "messageProfile",
+        "targeturl": "https://www.linkedin.com/in/laviniareiss/",
+        "profileid": "id.305509264",
+        "params": {
+          "messagetext": "Hi _FN_,  thanks for connecting!",
+          "campaignid": "default"
+        },
+        "successflag": true
+      }
+    },
+    "source": "https://www.postman.com/collections/51439365-615513e8-60f7-4c8e-8ac9-0b40aea9dc83"
+  },
+  "action.completed.followProfile": {
+    "body": {
+      "userid": "116436942393746249544",
+      "time": "2026-02-26T11:52:46.065Z",
+      "type": "action",
+      "event": "completed",
+      "data": {
+        "name": "followProfile",
+        "targeturl": "https://www.linkedin.com/in/elena-gecheva",
+        "profileid": "id.1488677123",
+        "params": {},
+        "successflag": true
+      }
+    },
+    "source": "https://www.postman.com/collections/51439365-615513e8-60f7-4c8e-8ac9-0b40aea9dc83"
+  },
+  "action.completed.endorseProfile": {
+    "body": {
+      "userid": "116436942393746249544",
+      "time": "2026-02-26T11:44:39.435Z",
+      "type": "action",
+      "event": "completed",
+      "data": {
+        "name": "endorseProfile",
+        "targeturl": "https://www.linkedin.com/in/laviniareiss/",
+        "profileid": "id.305509264",
+        "params": {
+          "autoendorsetarget": 3
+        },
+        "successflag": true
+      }
+    },
+    "source": "https://www.postman.com/collections/51439365-615513e8-60f7-4c8e-8ac9-0b40aea9dc83"
+  },
+  "action.completed.pdfProfile": {
+    "body": {
+      "userid": "116436942393746249544",
+      "time": "2026-02-26T11:41:25.044Z",
+      "type": "action",
+      "event": "completed",
+      "data": {
+        "name": "pdfProfile",
+        "targeturl": "https://www.linkedin.com/in/laviniareiss/",
+        "profileid": "id.305509264",
+        "params": {},
+        "successflag": true
+      }
+    },
+    "source": "https://www.postman.com/collections/51439365-615513e8-60f7-4c8e-8ac9-0b40aea9dc83"
+  },
+  "action.completed.likepostProfile": {
+    "body": {
+      "userid": "116436942393746249544",
+      "time": "2026-02-26T11:41:54.714Z",
+      "type": "action",
+      "event": "completed",
+      "data": {
+        "name": "likepostProfile",
+        "targeturl": "https://www.linkedin.com/in/laviniareiss/",
+        "profileid": "id.305509264",
+        "params": {},
+        "successflag": true
+      }
+    },
+    "source": "https://www.postman.com/collections/51439365-615513e8-60f7-4c8e-8ac9-0b40aea9dc83"
+  },
+  "action.completed.disconnectProfile": {
+    "body": {
+      "userid": "116436942393746249544",
+      "time": "2026-02-26T11:48:41.026Z",
+      "type": "action",
+      "event": "completed",
+      "data": {
+        "name": "disconnectProfile",
+        "targeturl": "https://www.linkedin.com/in/rebecca",
+        "profileid": "id.496764093",
+        "params": {},
+        "successflag": true
+      }
+    },
+    "source": "https://www.postman.com/collections/51439365-615513e8-60f7-4c8e-8ac9-0b40aea9dc83"
+  },
+  "message.received": {
+    "body": {
+      "userid": "117917536760586753354",
+      "time": "2019-03-21T16:51:25.899Z",
+      "type": "message",
+      "event": "received",
+      "data": {
+        "url": "https://www.linkedin.com/messaging/thread/64525225672721408/",
+        "timestamp": "2019-02-15T15:28:20.980Z",
+        "from": "https://www.linkedin.com/in/rodrigo-ramos-a0ab9327",
+        "fromId": "id.26429462492",
+        "fromFirstName": "Rodrigo",
+        "fromLastName": "Ramos",
+        "type": "MEMBER_TO_MEMBER",
+        "tags": [
+          "\ud83e\udd86-default-invited",
+          "\ud83e\udd86-default-accepted",
+          "\ud83e\udd86-default-responded"
+        ],
+        "text": "Hi man. You\u2019re Welcome. Nice to have you in my contacts"
+      }
+    },
+    "source": "https://www.postman.com/collections/51439365-615513e8-60f7-4c8e-8ac9-0b40aea9dc83"
+  },
+  "message.sent": {
+    "body": {
+      "userid": "117917536760586753354",
+      "time": "2019-03-21T16:51:25.899Z",
+      "type": "message",
+      "event": "sent",
+      "data": {
+        "url": "https://www.linkedin.com/messaging/thread/64525225672721408/",
+        "timestamp": "2019-02-15T15:28:20.980Z",
+        "to": "https://www.linkedin.com/in/rodrigo-ramos-a0ab9327",
+        "toId": "id.26429462492",
+        "toFirstName": "Rodrigo",
+        "toLastName": "Ramos",
+        "type": "MEMBER_TO_MEMBER",
+        "tags": [
+          "\ud83e\udd86-default-invited",
+          "\ud83e\udd86-default-accepted"
+        ],
+        "text": "Hi Rodrigo, what are you up to these days?"
+      }
+    },
+    "source": "https://www.postman.com/collections/51439365-615513e8-60f7-4c8e-8ac9-0b40aea9dc83"
+  },
+  "action.create.pdfProfile": {
+    "body": {
+      "userid": "117917536760586753354",
+      "time": "2019-01-06T08:45:17.477Z",
+      "type": "action",
+      "event": "create",
+      "data": {
+        "name": "pdfProfile",
+        "targeturl": "https://www.linkedin.com/in/jamesbrooks3/",
+        "profileid": "id.11964767",
+        "successflag": true,
+        "returnvalue": null
+      }
+    },
+    "source": "https://support.dux-soup.com/article/114-webhook-by-example"
+  }
+}

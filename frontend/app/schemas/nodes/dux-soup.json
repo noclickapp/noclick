@@ -1,0 +1,1164 @@
+{
+  "$defs": {
+    "DuxSoupAddProspectTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        },
+        "profileid": {
+          "description": "Dux-Soup internal ID, for example id.123456789.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Internal Profile ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_prospect_tags",
+          "default": "add_prospect_tags",
+          "description": "Add Prospect Tags Directly",
+          "title": "Add Prospect Tags Directly",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Add Prospect Tags Directly",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "tags",
+        "profileid"
+      ],
+      "title": "DuxSoupAddProspectTagsConfig",
+      "type": "object"
+    },
+    "DuxSoupClearQueueConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "clear_queue",
+          "default": "clear_queue",
+          "description": "Clear Activity Queue",
+          "title": "Clear Activity Queue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Clear Activity Queue",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "title": "DuxSoupClearQueueConfig",
+      "type": "object"
+    },
+    "DuxSoupConnectProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "description": "LinkedIn profile URL. InMail also accepts Sales Navigator lead URLs.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "LinkedIn Profile URL",
+          "type": "string"
+        },
+        "messagetext": {
+          "default": "",
+          "maxLength": 300,
+          "title": "Connection Note",
+          "type": "string"
+        },
+        "operation": {
+          "const": "connect_profile",
+          "default": "connect_profile",
+          "description": "Queues a LinkedIn activity; messageid confirms scheduling only.",
+          "title": "Send Connection Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send Connection Request",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "profile"
+      ],
+      "title": "DuxSoupConnectProfileConfig",
+      "type": "object"
+    },
+    "DuxSoupCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "dux_soup_api_key",
+          "default": "dux_soup_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "userid": {
+          "description": "The Dux-Soup account User ID shown in Settings \u2192 Connect.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "User ID",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Authentication Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "userid",
+        "api_key"
+      ],
+      "title": "Dux-Soup API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your User ID and Authentication Key from Settings \u2192 Connect. Enable Remote Control there to execute queued LinkedIn activities. NoClick signs requests with your key; no OAuth app is needed.",
+      "x-credential-url": "https://support.dux-soup.com/article/836-how-to-get-your-stacked-api-key"
+    },
+    "DuxSoupDisconnectProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "description": "LinkedIn profile URL. InMail also accepts Sales Navigator lead URLs.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "LinkedIn Profile URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "disconnect_profile",
+          "default": "disconnect_profile",
+          "description": "Queues a LinkedIn activity; messageid confirms scheduling only.",
+          "title": "Disconnect Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Disconnect Profile",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "profile"
+      ],
+      "title": "DuxSoupDisconnectProfileConfig",
+      "type": "object"
+    },
+    "DuxSoupEnrollProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "campaignid": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Campaign",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "campaignid",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "profile": {
+          "$ref": "#/$defs/_EnrollProfile",
+          "title": "Prospect"
+        },
+        "operation": {
+          "const": "enroll_profile",
+          "default": "enroll_profile",
+          "description": "Enroll Profile in Campaign",
+          "title": "Enroll Profile in Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Enroll Profile in Campaign",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "campaignid",
+        "profile"
+      ],
+      "title": "DuxSoupEnrollProfileConfig",
+      "type": "object"
+    },
+    "DuxSoupFollowProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "description": "LinkedIn profile URL. InMail also accepts Sales Navigator lead URLs.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "LinkedIn Profile URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "follow_profile",
+          "default": "follow_profile",
+          "description": "Queues a LinkedIn activity; messageid confirms scheduling only.",
+          "title": "Follow Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Follow Profile",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "profile"
+      ],
+      "title": "DuxSoupFollowProfileConfig",
+      "type": "object"
+    },
+    "DuxSoupGetCampaignConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "campaignid": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Campaign",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "campaignid",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "description": "Get Campaign",
+          "title": "Get Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Campaign",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "campaignid"
+      ],
+      "title": "DuxSoupGetCampaignConfig",
+      "type": "object"
+    },
+    "DuxSoupGetConversationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profileid": {
+          "description": "Dux-Soup internal ID, for example id.123456789.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Internal Profile ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "description": "Get Conversation",
+          "title": "Get Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Conversation",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        }
+      },
+      "required": [
+        "profileid"
+      ],
+      "title": "DuxSoupGetConversationConfig",
+      "type": "object"
+    },
+    "DuxSoupGetQueueSizeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_queue_size",
+          "default": "get_queue_size",
+          "description": "Get Queue Size",
+          "title": "Get Queue Size",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Queue Size",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "DuxSoupGetQueueSizeConfig",
+      "type": "object"
+    },
+    "DuxSoupGetQueuedItemsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_queued_items",
+          "default": "get_queued_items",
+          "description": "Get Queued Items",
+          "title": "Get Queued Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Queued Items",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "DuxSoupGetQueuedItemsConfig",
+      "type": "object"
+    },
+    "DuxSoupGetRecentActionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "days": {
+          "default": 30,
+          "maximum": 365,
+          "minimum": 1,
+          "title": "Days Back",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Returns this many recent activities at most; this endpoint provides no pagination cursor.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_recent_actions",
+          "default": "get_recent_actions",
+          "description": "Get Recent Activities",
+          "title": "Get Recent Activities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Recent Activities",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "DuxSoupGetRecentActionsConfig",
+      "type": "object"
+    },
+    "DuxSoupGetUserProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user_profile",
+          "default": "get_user_profile",
+          "description": "Get Account Profile",
+          "title": "Get Account Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Account Profile",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "DuxSoupGetUserProfileConfig",
+      "type": "object"
+    },
+    "DuxSoupInmailProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "description": "LinkedIn profile URL. InMail also accepts Sales Navigator lead URLs.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "LinkedIn Profile URL",
+          "type": "string"
+        },
+        "messagetext": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Message Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "messagesubject": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "operation": {
+          "const": "inmail_profile",
+          "default": "inmail_profile",
+          "description": "Queues a LinkedIn activity; messageid confirms scheduling only.",
+          "title": "Send InMail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send InMail",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "profile",
+        "messagetext",
+        "messagesubject"
+      ],
+      "title": "DuxSoupInmailProfileConfig",
+      "type": "object"
+    },
+    "DuxSoupListCampaignsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "description": "List Campaigns",
+          "title": "List Campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Campaigns",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "DuxSoupListCampaignsConfig",
+      "type": "object"
+    },
+    "DuxSoupListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "description": "List Recorded Contacts",
+          "title": "List Recorded Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Recorded Contacts",
+          "x-is-trigger": false,
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "DuxSoupListContactsConfig",
+      "type": "object"
+    },
+    "DuxSoupMessageProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "description": "LinkedIn profile URL. InMail also accepts Sales Navigator lead URLs.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "LinkedIn Profile URL",
+          "type": "string"
+        },
+        "messagetext": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Message Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "message_profile",
+          "default": "message_profile",
+          "description": "Queues a LinkedIn activity; messageid confirms scheduling only.",
+          "title": "Send LinkedIn Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send LinkedIn Message",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "profile",
+        "messagetext"
+      ],
+      "title": "DuxSoupMessageProfileConfig",
+      "type": "object"
+    },
+    "DuxSoupOnActionCompletedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically in Dux-Soup Settings. Deliveries use the provider's documented unauthenticated webhook setup.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_action_completed",
+          "default": "on_action_completed",
+          "title": "On Completed LinkedIn Action",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Completed LinkedIn Action",
+          "x-is-trigger": true
+        }
+      },
+      "title": "DuxSoupOnActionCompletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "DuxSoupOnLinkedInMessageConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically in Dux-Soup Settings. Deliveries use the provider's documented unauthenticated webhook setup.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_linkedin_message",
+          "default": "on_linkedin_message",
+          "title": "On LinkedIn Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On LinkedIn Message",
+          "x-is-trigger": true
+        }
+      },
+      "title": "DuxSoupOnLinkedInMessageConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "DuxSoupOnProfileVisitConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically in Dux-Soup Settings. Deliveries use the provider's documented unauthenticated webhook setup.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_profile_visit",
+          "default": "on_profile_visit",
+          "title": "On Profile Visit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Profile Visit",
+          "x-is-trigger": true
+        }
+      },
+      "title": "DuxSoupOnProfileVisitConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "DuxSoupTagProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        },
+        "profile": {
+          "description": "LinkedIn profile URL. InMail also accepts Sales Navigator lead URLs.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "LinkedIn Profile URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "tag_profile",
+          "default": "tag_profile",
+          "description": "Queues a LinkedIn activity; messageid confirms scheduling only.",
+          "title": "Queue Profile Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Queue Profile Tags",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "tags",
+        "profile"
+      ],
+      "title": "DuxSoupTagProfileConfig",
+      "type": "object"
+    },
+    "DuxSoupUnenrollProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "campaignid": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Campaign",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "campaignid",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "profileid": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "LinkedIn Profile URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "unenroll_profile",
+          "default": "unenroll_profile",
+          "description": "Unenroll Profile from Campaign",
+          "title": "Unenroll Profile from Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Unenroll Profile from Campaign",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "campaignid",
+        "profileid"
+      ],
+      "title": "DuxSoupUnenrollProfileConfig",
+      "type": "object"
+    },
+    "DuxSoupUntagProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        },
+        "profile": {
+          "description": "LinkedIn profile URL. InMail also accepts Sales Navigator lead URLs.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "LinkedIn Profile URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "untag_profile",
+          "default": "untag_profile",
+          "description": "Queues a LinkedIn activity; messageid confirms scheduling only.",
+          "title": "Queue Remove Profile Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Queue Remove Profile Tags",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "tags",
+        "profile"
+      ],
+      "title": "DuxSoupUntagProfileConfig",
+      "type": "object"
+    },
+    "DuxSoupVisitProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "description": "LinkedIn profile URL. InMail also accepts Sales Navigator lead URLs.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "LinkedIn Profile URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "visit_profile",
+          "default": "visit_profile",
+          "description": "Queues a LinkedIn activity; messageid confirms scheduling only.",
+          "title": "Visit Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Visit Profile",
+          "x-is-trigger": false,
+          "x-operation-kind": "write"
+        }
+      },
+      "required": [
+        "profile"
+      ],
+      "title": "DuxSoupVisitProfileConfig",
+      "type": "object"
+    },
+    "_EnrollProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Internal Profile ID",
+          "type": "string"
+        },
+        "Profile": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "LinkedIn Profile URL",
+          "type": "string"
+        },
+        "Degree": {
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Connection Degree",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "Profile",
+        "Degree"
+      ],
+      "title": "_EnrollProfile",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_prospect_tags": "#/$defs/DuxSoupAddProspectTagsConfig",
+          "clear_queue": "#/$defs/DuxSoupClearQueueConfig",
+          "connect_profile": "#/$defs/DuxSoupConnectProfileConfig",
+          "disconnect_profile": "#/$defs/DuxSoupDisconnectProfileConfig",
+          "enroll_profile": "#/$defs/DuxSoupEnrollProfileConfig",
+          "follow_profile": "#/$defs/DuxSoupFollowProfileConfig",
+          "get_campaign": "#/$defs/DuxSoupGetCampaignConfig",
+          "get_conversation": "#/$defs/DuxSoupGetConversationConfig",
+          "get_queue_size": "#/$defs/DuxSoupGetQueueSizeConfig",
+          "get_queued_items": "#/$defs/DuxSoupGetQueuedItemsConfig",
+          "get_recent_actions": "#/$defs/DuxSoupGetRecentActionsConfig",
+          "get_user_profile": "#/$defs/DuxSoupGetUserProfileConfig",
+          "inmail_profile": "#/$defs/DuxSoupInmailProfileConfig",
+          "list_campaigns": "#/$defs/DuxSoupListCampaignsConfig",
+          "list_contacts": "#/$defs/DuxSoupListContactsConfig",
+          "message_profile": "#/$defs/DuxSoupMessageProfileConfig",
+          "on_action_completed": "#/$defs/DuxSoupOnActionCompletedConfig",
+          "on_linkedin_message": "#/$defs/DuxSoupOnLinkedInMessageConfig",
+          "on_profile_visit": "#/$defs/DuxSoupOnProfileVisitConfig",
+          "tag_profile": "#/$defs/DuxSoupTagProfileConfig",
+          "unenroll_profile": "#/$defs/DuxSoupUnenrollProfileConfig",
+          "untag_profile": "#/$defs/DuxSoupUntagProfileConfig",
+          "visit_profile": "#/$defs/DuxSoupVisitProfileConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DuxSoupVisitProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupConnectProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupMessageProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupInmailProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupTagProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupUntagProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupFollowProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupDisconnectProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupEnrollProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupUnenrollProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupGetRecentActionsConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupAddProspectTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupGetQueuedItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupGetQueueSizeConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupClearQueueConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupGetUserProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupOnProfileVisitConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupOnActionCompletedConfig"
+        },
+        {
+          "$ref": "#/$defs/DuxSoupOnLinkedInMessageConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DuxSoupCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dux-soup Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
