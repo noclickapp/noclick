@@ -1,0 +1,928 @@
+{
+  "$defs": {
+    "ApproveInquiry": {
+      "additionalProperties": false,
+      "properties": {
+        "inquiry_id": {
+          "maxLength": 256,
+          "pattern": "^inq_[A-Za-z0-9]+$",
+          "title": "Inquiry ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "approve_inquiry",
+          "default": "approve_inquiry",
+          "title": "Approve Inquiry",
+          "type": "string"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audit Comment"
+        }
+      },
+      "required": [
+        "inquiry_id"
+      ],
+      "title": "ApproveInquiry",
+      "type": "object"
+    },
+    "CreateAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_account",
+          "default": "create_account",
+          "title": "Create Account",
+          "type": "string"
+        },
+        "reference_id": {
+          "minLength": 1,
+          "title": "Reference ID",
+          "type": "string"
+        },
+        "account_type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Type ID"
+        },
+        "name_first": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "name_last": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Address"
+        }
+      },
+      "required": [
+        "reference_id"
+      ],
+      "title": "CreateAccount",
+      "type": "object"
+    },
+    "CreateCase": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_case",
+          "default": "create_case",
+          "title": "Create Case",
+          "type": "string"
+        },
+        "case_template_id": {
+          "maxLength": 256,
+          "pattern": "^ctmpl_[A-Za-z0-9]+$",
+          "title": "Case Template ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Fields"
+        }
+      },
+      "required": [
+        "case_template_id"
+      ],
+      "title": "CreateCase",
+      "type": "object"
+    },
+    "CreateInquiry": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_inquiry",
+          "default": "create_inquiry",
+          "title": "Create Inquiry",
+          "type": "string"
+        },
+        "inquiry_template_id": {
+          "maxLength": 256,
+          "pattern": "^itmpl_[A-Za-z0-9]+$",
+          "title": "Inquiry Template ID",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account ID"
+        },
+        "reference_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference used to automatically create or associate an account.",
+          "title": "Account Reference ID"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field name/value pairs defined by your inquiry template.",
+          "title": "Template Fields"
+        }
+      },
+      "required": [
+        "inquiry_template_id"
+      ],
+      "title": "CreateInquiry",
+      "type": "object"
+    },
+    "DeclineInquiry": {
+      "additionalProperties": false,
+      "properties": {
+        "inquiry_id": {
+          "maxLength": 256,
+          "pattern": "^inq_[A-Za-z0-9]+$",
+          "title": "Inquiry ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "decline_inquiry",
+          "default": "decline_inquiry",
+          "title": "Decline Inquiry",
+          "type": "string"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audit Comment"
+        }
+      },
+      "required": [
+        "inquiry_id"
+      ],
+      "title": "DeclineInquiry",
+      "type": "object"
+    },
+    "ExpireInquiry": {
+      "additionalProperties": false,
+      "properties": {
+        "inquiry_id": {
+          "maxLength": 256,
+          "pattern": "^inq_[A-Za-z0-9]+$",
+          "title": "Inquiry ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "expire_inquiry",
+          "default": "expire_inquiry",
+          "title": "Expire Inquiry",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inquiry_id"
+      ],
+      "title": "ExpireInquiry",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 256,
+          "pattern": "^act_[A-Za-z0-9]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetCase": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "maxLength": 256,
+          "pattern": "^case_[A-Za-z0-9]+$",
+          "title": "Case ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_case",
+          "default": "get_case",
+          "title": "Get Case",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id"
+      ],
+      "title": "GetCase",
+      "type": "object"
+    },
+    "GetInquiry": {
+      "additionalProperties": false,
+      "properties": {
+        "inquiry_id": {
+          "maxLength": 256,
+          "pattern": "^inq_[A-Za-z0-9]+$",
+          "title": "Inquiry ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_inquiry",
+          "default": "get_inquiry",
+          "title": "Get Inquiry",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inquiry_id"
+      ],
+      "title": "GetInquiry",
+      "type": "object"
+    },
+    "GetInquiryTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_inquiry_template",
+          "default": "get_inquiry_template",
+          "title": "Get Inquiry Template",
+          "type": "string"
+        },
+        "inquiry_template_id": {
+          "maxLength": 256,
+          "pattern": "^itmpl_[A-Za-z0-9]+$",
+          "title": "Inquiry Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inquiry_template_id"
+      ],
+      "title": "GetInquiryTemplate",
+      "type": "object"
+    },
+    "GetReport": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_report",
+          "default": "get_report",
+          "title": "Get Report",
+          "type": "string"
+        },
+        "report_id": {
+          "maxLength": 256,
+          "pattern": "^rep_[A-Za-z0-9]+$",
+          "title": "Report ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_id"
+      ],
+      "title": "GetReport",
+      "type": "object"
+    },
+    "ListAccounts": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last resource ID from the preceding page; leave empty for the first page.",
+          "title": "After ID"
+        },
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List Accounts",
+          "type": "string"
+        },
+        "reference_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference ID"
+        }
+      },
+      "title": "ListAccounts",
+      "type": "object"
+    },
+    "ListCases": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last resource ID from the preceding page; leave empty for the first page.",
+          "title": "After ID"
+        },
+        "operation": {
+          "const": "list_cases",
+          "default": "list_cases",
+          "title": "List Cases",
+          "type": "string"
+        },
+        "case_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Case Status"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account ID"
+        }
+      },
+      "title": "ListCases",
+      "type": "object"
+    },
+    "ListInquiries": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last resource ID from the preceding page; leave empty for the first page.",
+          "title": "After ID"
+        },
+        "operation": {
+          "const": "list_inquiries",
+          "default": "list_inquiries",
+          "title": "List Inquiries",
+          "type": "string"
+        },
+        "reference_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference ID"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account ID"
+        },
+        "inquiry_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One status or comma-separated statuses, e.g. completed,approved.",
+          "title": "Inquiry Status"
+        }
+      },
+      "title": "ListInquiries",
+      "type": "object"
+    },
+    "ListInquiryTemplates": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last resource ID from the preceding page; leave empty for the first page.",
+          "title": "After ID"
+        },
+        "operation": {
+          "const": "list_inquiry_templates",
+          "default": "list_inquiry_templates",
+          "title": "List Inquiry Templates",
+          "type": "string"
+        }
+      },
+      "title": "ListInquiryTemplates",
+      "type": "object"
+    },
+    "ListReports": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_after": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last resource ID from the preceding page; leave empty for the first page.",
+          "title": "After ID"
+        },
+        "operation": {
+          "const": "list_reports",
+          "default": "list_reports",
+          "title": "List Reports",
+          "type": "string"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account ID"
+        },
+        "reference_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference ID"
+        }
+      },
+      "title": "ListReports",
+      "type": "object"
+    },
+    "PersonaAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "persona_api_key",
+          "default": "persona_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Persona API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in Persona's API Keys dashboard with permissions for the operations you need. Paste the key without the Bearer prefix. Sandbox and production keys access their respective environments. Connection reads your inquiries and needs inquiry read permission.",
+      "x-credential-url": "https://app.withpersona.com/dashboard/api-keys"
+    },
+    "ReviewInquiry": {
+      "additionalProperties": false,
+      "properties": {
+        "inquiry_id": {
+          "maxLength": 256,
+          "pattern": "^inq_[A-Za-z0-9]+$",
+          "title": "Inquiry ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mark_inquiry_for_review",
+          "default": "mark_inquiry_for_review",
+          "title": "Mark Inquiry for Review",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inquiry_id"
+      ],
+      "title": "ReviewInquiry",
+      "type": "object"
+    },
+    "SetCaseStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "maxLength": 256,
+          "pattern": "^case_[A-Za-z0-9]+$",
+          "title": "Case ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_case_status",
+          "default": "set_case_status",
+          "title": "Set Case Status",
+          "type": "string"
+        },
+        "case_status": {
+          "description": "A status configured on your case template.",
+          "minLength": 1,
+          "title": "Case Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id",
+        "case_status"
+      ],
+      "title": "SetCaseStatus",
+      "type": "object"
+    },
+    "SetInquiryTags": {
+      "additionalProperties": false,
+      "properties": {
+        "inquiry_id": {
+          "maxLength": 256,
+          "pattern": "^inq_[A-Za-z0-9]+$",
+          "title": "Inquiry ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_inquiry_tags",
+          "default": "set_inquiry_tags",
+          "title": "Set Inquiry Tags",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Replace all tags. An empty list removes all tags.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Tag Names",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "inquiry_id",
+        "tags"
+      ],
+      "title": "SetInquiryTags",
+      "type": "object"
+    },
+    "UpdateAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "maxLength": 256,
+          "pattern": "^act_[A-Za-z0-9]+$",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_account",
+          "default": "update_account",
+          "title": "Update Account",
+          "type": "string"
+        },
+        "reference_id": {
+          "minLength": 1,
+          "title": "Reference ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "reference_id"
+      ],
+      "title": "UpdateAccount",
+      "type": "object"
+    },
+    "UpdateInquiry": {
+      "additionalProperties": false,
+      "properties": {
+        "inquiry_id": {
+          "maxLength": 256,
+          "pattern": "^inq_[A-Za-z0-9]+$",
+          "title": "Inquiry ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_inquiry",
+          "default": "update_inquiry",
+          "title": "Update Inquiry",
+          "type": "string"
+        },
+        "note": {
+          "description": "Replace the inquiry's unstructured note.",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inquiry_id",
+        "note"
+      ],
+      "title": "UpdateInquiry",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "approve_inquiry": "#/$defs/ApproveInquiry",
+          "create_account": "#/$defs/CreateAccount",
+          "create_case": "#/$defs/CreateCase",
+          "create_inquiry": "#/$defs/CreateInquiry",
+          "decline_inquiry": "#/$defs/DeclineInquiry",
+          "expire_inquiry": "#/$defs/ExpireInquiry",
+          "get_account": "#/$defs/GetAccount",
+          "get_case": "#/$defs/GetCase",
+          "get_inquiry": "#/$defs/GetInquiry",
+          "get_inquiry_template": "#/$defs/GetInquiryTemplate",
+          "get_report": "#/$defs/GetReport",
+          "list_accounts": "#/$defs/ListAccounts",
+          "list_cases": "#/$defs/ListCases",
+          "list_inquiries": "#/$defs/ListInquiries",
+          "list_inquiry_templates": "#/$defs/ListInquiryTemplates",
+          "list_reports": "#/$defs/ListReports",
+          "mark_inquiry_for_review": "#/$defs/ReviewInquiry",
+          "set_case_status": "#/$defs/SetCaseStatus",
+          "set_inquiry_tags": "#/$defs/SetInquiryTags",
+          "update_account": "#/$defs/UpdateAccount",
+          "update_inquiry": "#/$defs/UpdateInquiry"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListInquiries"
+        },
+        {
+          "$ref": "#/$defs/GetInquiry"
+        },
+        {
+          "$ref": "#/$defs/CreateInquiry"
+        },
+        {
+          "$ref": "#/$defs/UpdateInquiry"
+        },
+        {
+          "$ref": "#/$defs/ApproveInquiry"
+        },
+        {
+          "$ref": "#/$defs/DeclineInquiry"
+        },
+        {
+          "$ref": "#/$defs/ReviewInquiry"
+        },
+        {
+          "$ref": "#/$defs/ExpireInquiry"
+        },
+        {
+          "$ref": "#/$defs/SetInquiryTags"
+        },
+        {
+          "$ref": "#/$defs/ListAccounts"
+        },
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/CreateAccount"
+        },
+        {
+          "$ref": "#/$defs/UpdateAccount"
+        },
+        {
+          "$ref": "#/$defs/ListCases"
+        },
+        {
+          "$ref": "#/$defs/GetCase"
+        },
+        {
+          "$ref": "#/$defs/CreateCase"
+        },
+        {
+          "$ref": "#/$defs/SetCaseStatus"
+        },
+        {
+          "$ref": "#/$defs/ListReports"
+        },
+        {
+          "$ref": "#/$defs/GetReport"
+        },
+        {
+          "$ref": "#/$defs/ListInquiryTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetInquiryTemplate"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PersonaAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Persona Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
