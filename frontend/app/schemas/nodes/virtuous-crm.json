@@ -1,0 +1,1079 @@
+{
+  "$defs": {
+    "AddTag": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "description": "Virtuous contact ID.",
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "add_tag",
+          "default": "add_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_id": {
+          "description": "Existing Virtuous tag ID.",
+          "exclusiveMinimum": 0,
+          "title": "Tag Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_id"
+      ],
+      "title": "AddTag",
+      "type": "object"
+    },
+    "ArchiveContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "description": "Virtuous contact ID.",
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "archive_contact",
+          "default": "archive_contact",
+          "description": "Archive the selected contact.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "archive_reason": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archive Reason"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ArchiveContact",
+      "type": "object"
+    },
+    "CreateNote": {
+      "additionalProperties": false,
+      "properties": {
+        "note_type": {
+          "description": "A contact note type configured in Virtuous.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Note Type",
+          "type": "string"
+        },
+        "note": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "note_date_time": {
+          "description": "ISO 8601 date and time for this note.",
+          "format": "date-time",
+          "title": "Note Date Time",
+          "type": "string"
+        },
+        "important": {
+          "description": "Whether the note is important.",
+          "title": "Important",
+          "type": "boolean"
+        },
+        "private": {
+          "description": "Whether the note is private.",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "time_spent": {
+          "description": "Time spent, in the units configured by Virtuous.",
+          "minimum": 0,
+          "title": "Time Spent",
+          "type": "integer"
+        },
+        "contact_id": {
+          "description": "Virtuous contact ID.",
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "note_type",
+        "note",
+        "note_date_time",
+        "important",
+        "private",
+        "time_spent",
+        "contact_id"
+      ],
+      "title": "CreateNote",
+      "type": "object"
+    },
+    "DeleteNote": {
+      "additionalProperties": false,
+      "properties": {
+        "note_id": {
+          "description": "Virtuous contact note ID.",
+          "exclusiveMinimum": 0,
+          "title": "Note Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "description": "Delete the selected contact note.",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "DeleteNote",
+      "type": "object"
+    },
+    "FindContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "find_contact",
+          "default": "find_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "Find a contact by email address.",
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "FindContact",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "description": "Virtuous contact ID.",
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetCurrentOrganization": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_organization",
+          "default": "get_current_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCurrentOrganization",
+      "type": "object"
+    },
+    "GetEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetGift": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_gift",
+          "default": "get_gift",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "gift_id": {
+          "exclusiveMinimum": 0,
+          "title": "Gift Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "gift_id"
+      ],
+      "title": "GetGift",
+      "type": "object"
+    },
+    "GetIndividual": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_individual",
+          "default": "get_individual",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "individual_id": {
+          "exclusiveMinimum": 0,
+          "title": "Individual Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "individual_id"
+      ],
+      "title": "GetIndividual",
+      "type": "object"
+    },
+    "GetNote": {
+      "additionalProperties": false,
+      "properties": {
+        "note_id": {
+          "description": "Virtuous contact note ID.",
+          "exclusiveMinimum": 0,
+          "title": "Note Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "GetNote",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "title": "Project Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "ImportContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "import_contact",
+          "default": "import_contact",
+          "description": "Queues a contact transaction for matching, duplicate checks, and organization review. Does not immediately create a contact.",
+          "title": "Submit Contact Import",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_type": {
+          "description": "A configured contact type, such as Household, Organization or Foundation.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Contact Type",
+          "type": "string"
+        },
+        "name": {
+          "description": "Contact or household name.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "reference_source": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference Source"
+        },
+        "reference_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference Id"
+        },
+        "address1": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address1"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "postal": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact tags in the provider's string format.",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "contact_type",
+        "name"
+      ],
+      "title": "ImportContact",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip; each execution reads one page.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "take": {
+          "default": 10,
+          "description": "Number of records to request on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListGifts": {
+      "additionalProperties": false,
+      "properties": {
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip; each execution reads one page.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "take": {
+          "default": 10,
+          "description": "Number of records to request on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "contact_id": {
+          "description": "Virtuous contact ID.",
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_gifts",
+          "default": "list_gifts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ListGifts",
+      "type": "object"
+    },
+    "ListIndividuals": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "description": "Virtuous contact ID.",
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_individuals",
+          "default": "list_individuals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ListIndividuals",
+      "type": "object"
+    },
+    "ListNotes": {
+      "additionalProperties": false,
+      "properties": {
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip; each execution reads one page.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "take": {
+          "default": 10,
+          "description": "Number of records to request on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "contact_id": {
+          "description": "Virtuous contact ID.",
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "Id",
+                "NoteDate",
+                "CreatedDateTime"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "Id",
+            "NoteDate",
+            "CreatedDateTime"
+          ],
+          "x-enum-searchable": true
+        },
+        "descending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Descending"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ListNotes",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "properties": {
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip; each execution reads one page.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "take": {
+          "default": 10,
+          "description": "Number of records to request on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "contact_id": {
+          "description": "Virtuous contact ID.",
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ListTags",
+      "type": "object"
+    },
+    "RemoveTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "remove_tag",
+          "default": "remove_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_tag_id": {
+          "description": "Contact-tag association ID, not the tag ID.",
+          "exclusiveMinimum": 0,
+          "title": "Contact Tag Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_tag_id"
+      ],
+      "title": "RemoveTag",
+      "type": "object"
+    },
+    "SearchContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip; each execution reads one page.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "take": {
+          "default": 10,
+          "description": "Number of records to request on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Search",
+          "type": "string"
+        }
+      },
+      "required": [
+        "search"
+      ],
+      "title": "SearchContacts",
+      "type": "object"
+    },
+    "SearchProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "skip": {
+          "default": 0,
+          "description": "Number of records to skip; each execution reads one page.",
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "take": {
+          "default": 10,
+          "description": "Number of records to request on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_projects",
+          "default": "search_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Search",
+          "type": "string"
+        }
+      },
+      "required": [
+        "search"
+      ],
+      "title": "SearchProjects",
+      "type": "object"
+    },
+    "UnarchiveContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "description": "Virtuous contact ID.",
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "unarchive_contact",
+          "default": "unarchive_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UnarchiveContact",
+      "type": "object"
+    },
+    "UpdateNote": {
+      "additionalProperties": false,
+      "properties": {
+        "note_type": {
+          "description": "A contact note type configured in Virtuous.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Note Type",
+          "type": "string"
+        },
+        "note": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "note_date_time": {
+          "description": "ISO 8601 date and time for this note.",
+          "format": "date-time",
+          "title": "Note Date Time",
+          "type": "string"
+        },
+        "important": {
+          "description": "Whether the note is important.",
+          "title": "Important",
+          "type": "boolean"
+        },
+        "private": {
+          "description": "Whether the note is private.",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "time_spent": {
+          "description": "Time spent, in the units configured by Virtuous.",
+          "minimum": 0,
+          "title": "Time Spent",
+          "type": "integer"
+        },
+        "note_id": {
+          "description": "Virtuous contact note ID.",
+          "exclusiveMinimum": 0,
+          "title": "Note Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "description": "Sends the entire editable note model. Virtuous removes omitted properties on update, so every editable field is required.",
+          "title": "Replace Contact Note",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "note_type",
+        "note",
+        "note_date_time",
+        "important",
+        "private",
+        "time_spent",
+        "note_id"
+      ],
+      "title": "UpdateNote",
+      "type": "object"
+    },
+    "VirtuousCRMAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "virtuous_crm_api_key",
+          "default": "virtuous_crm_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Virtuous CRM API Key",
+      "type": "object",
+      "x-credential-instructions": "In Virtuous, open API Keys, create a key with a permission group for the actions you need, and paste the key here without the Bearer prefix. NoClick verifies it by reading your current organization. The key's permissions control which records you can read and change.",
+      "x-credential-url": "https://app.virtuoussoftware.com/"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_tag": "#/$defs/AddTag",
+          "archive_contact": "#/$defs/ArchiveContact",
+          "create_note": "#/$defs/CreateNote",
+          "delete_note": "#/$defs/DeleteNote",
+          "find_contact": "#/$defs/FindContact",
+          "get_contact": "#/$defs/GetContact",
+          "get_current_organization": "#/$defs/GetCurrentOrganization",
+          "get_event": "#/$defs/GetEvent",
+          "get_gift": "#/$defs/GetGift",
+          "get_individual": "#/$defs/GetIndividual",
+          "get_note": "#/$defs/GetNote",
+          "get_project": "#/$defs/GetProject",
+          "import_contact": "#/$defs/ImportContact",
+          "list_events": "#/$defs/ListEvents",
+          "list_gifts": "#/$defs/ListGifts",
+          "list_individuals": "#/$defs/ListIndividuals",
+          "list_notes": "#/$defs/ListNotes",
+          "list_tags": "#/$defs/ListTags",
+          "remove_tag": "#/$defs/RemoveTag",
+          "search_contacts": "#/$defs/SearchContacts",
+          "search_projects": "#/$defs/SearchProjects",
+          "unarchive_contact": "#/$defs/UnarchiveContact",
+          "update_note": "#/$defs/UpdateNote"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentOrganization"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/FindContact"
+        },
+        {
+          "$ref": "#/$defs/SearchContacts"
+        },
+        {
+          "$ref": "#/$defs/ImportContact"
+        },
+        {
+          "$ref": "#/$defs/ArchiveContact"
+        },
+        {
+          "$ref": "#/$defs/UnarchiveContact"
+        },
+        {
+          "$ref": "#/$defs/ListIndividuals"
+        },
+        {
+          "$ref": "#/$defs/GetIndividual"
+        },
+        {
+          "$ref": "#/$defs/ListNotes"
+        },
+        {
+          "$ref": "#/$defs/GetNote"
+        },
+        {
+          "$ref": "#/$defs/CreateNote"
+        },
+        {
+          "$ref": "#/$defs/UpdateNote"
+        },
+        {
+          "$ref": "#/$defs/DeleteNote"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/AddTag"
+        },
+        {
+          "$ref": "#/$defs/RemoveTag"
+        },
+        {
+          "$ref": "#/$defs/GetGift"
+        },
+        {
+          "$ref": "#/$defs/ListGifts"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/SearchProjects"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VirtuousCRMAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Virtuous-crm Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
