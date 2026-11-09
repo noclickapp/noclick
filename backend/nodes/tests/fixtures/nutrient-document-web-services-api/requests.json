@@ -1,0 +1,592 @@
+[
+  {
+    "config": {
+      "operation": "get_account_info"
+    },
+    "method": "GET",
+    "path": "/account/info",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_account_product_usage",
+      "product": "processor"
+    },
+    "method": "GET",
+    "path": "/account/processor/usage",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_parse",
+      "body": {
+        "url": "https://storage.example.com/invoice.pdf",
+        "mode": "understand",
+        "output": {
+          "format": "spatial"
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/extraction/parse",
+    "status": 200,
+    "response": {
+      "status": 200,
+      "requestId": "req_e5f6g7h8",
+      "output": {
+        "elements": [
+          {
+            "id": "a1b2c3d4-1111-4000-8000-000000000001",
+            "type": "paragraph",
+            "role": "Title",
+            "text": "Quarterly Report",
+            "confidence": 0.95,
+            "readingOrder": 0,
+            "bounds": {
+              "x": 200,
+              "y": 139,
+              "width": 1111,
+              "height": 97
+            },
+            "page": {
+              "pageIndex": 0,
+              "pageNumber": 1,
+              "width": 1700,
+              "height": 2200
+            }
+          },
+          {
+            "id": "a1b2c3d4-2222-4000-8000-000000000002",
+            "type": "paragraph",
+            "role": "Text",
+            "text": "Revenue grew 15% year-over-year.",
+            "confidence": 0.97,
+            "readingOrder": 1,
+            "bounds": {
+              "x": 200,
+              "y": 278,
+              "width": 1300,
+              "height": 69
+            },
+            "page": {
+              "pageIndex": 0,
+              "pageNumber": 1,
+              "width": 1700,
+              "height": 2200
+            }
+          },
+          {
+            "id": "a1b2c3d4-3333-4000-8000-000000000003",
+            "type": "machineReadable",
+            "format": "QrCode",
+            "value": "https://example.com/invoice/8412?verify=1",
+            "confidence": 0.87,
+            "readingOrder": 2,
+            "bounds": {
+              "x": 200,
+              "y": 400,
+              "width": 217,
+              "height": 221
+            },
+            "page": {
+              "pageIndex": 0,
+              "pageNumber": 1,
+              "width": 1700,
+              "height": 2200
+            }
+          }
+        ]
+      },
+      "metrics": {
+        "processingTimeMs": 4200,
+        "pagesProcessed": 1
+      },
+      "usage": {
+        "data_extraction_credits": {
+          "cost": 1.5,
+          "remainingCredits": 850
+        }
+      },
+      "configuration": {
+        "mode": "structure",
+        "outputFormat": "spatial"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_parse_async",
+      "body": {
+        "url": "https://storage.example.com/invoice.pdf",
+        "mode": "understand",
+        "output": {
+          "format": "spatial"
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/extraction/parse/async",
+    "status": 202,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_extract",
+      "body": {
+        "url": "https://storage.example.com/invoice.pdf",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "invoice_number": {
+              "type": "string",
+              "description": "Invoice identifier"
+            },
+            "total_amount": {
+              "type": "number",
+              "description": "Total amount including tax"
+            }
+          },
+          "required": [
+            "invoice_number",
+            "total_amount"
+          ]
+        },
+        "parseConfig": {
+          "mode": "understand"
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/extraction/extract",
+    "status": 200,
+    "response": {
+      "status": 200,
+      "requestId": "req_x1y2z3w4",
+      "output": {
+        "data": {
+          "invoice_number": "INV-2024-0042",
+          "vendor_name": "Acme Industrial Supplies Ltd.",
+          "total_amount": 1547.5,
+          "currency": "EUR"
+        },
+        "metadata": {},
+        "pages": [
+          {
+            "page": 1,
+            "width": 1200,
+            "height": 1697
+          }
+        ]
+      },
+      "metrics": {
+        "processingTimeMs": 4800,
+        "pagesProcessed": 1
+      },
+      "usage": {
+        "data_extraction_credits": {
+          "cost": 27,
+          "remainingCredits": 832
+        },
+        "price_composition": {
+          "parse": {
+            "units": 1,
+            "unit_cost": 9,
+            "cost": 9,
+            "currency": "data_extraction_credits"
+          },
+          "extract": {
+            "units": 1,
+            "unit_cost": 18,
+            "cost": 18,
+            "currency": "data_extraction_credits"
+          }
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_extract_async",
+      "body": {
+        "url": "https://storage.example.com/invoice.pdf",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "invoice_number": {
+              "type": "string",
+              "description": "Invoice identifier"
+            },
+            "total_amount": {
+              "type": "number",
+              "description": "Total amount including tax"
+            }
+          },
+          "required": [
+            "invoice_number",
+            "total_amount"
+          ]
+        },
+        "parseConfig": {
+          "mode": "understand"
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/extraction/extract/async",
+    "status": 202,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_runs_get",
+      "runId": "1"
+    },
+    "method": "GET",
+    "path": "/extraction/runs/1",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_runs_delete",
+      "runId": "1"
+    },
+    "method": "DELETE",
+    "path": "/extraction/runs/1",
+    "status": 204,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_runs_cancel",
+      "runId": "1"
+    },
+    "method": "POST",
+    "path": "/extraction/runs/1/cancel",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_split",
+      "body": {
+        "url": "https://storage.example.com/merged.pdf",
+        "options": {
+          "boundaryThreshold": 0.8
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/extraction/split",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_split_async",
+      "body": {
+        "url": "https://storage.example.com/merged.pdf",
+        "options": {
+          "output": "both"
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/extraction/split/async",
+    "status": 202,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_classify",
+      "body": {
+        "url": "https://storage.example.com/contract.pdf",
+        "labels": [
+          {
+            "label": "invoice",
+            "description": "A commercial invoice or bill."
+          },
+          {
+            "label": "contract",
+            "description": "A legal agreement between parties."
+          },
+          {
+            "label": "resume"
+          }
+        ]
+      }
+    },
+    "method": "POST",
+    "path": "/extraction/classify",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_classify_async",
+      "body": {
+        "url": "https://storage.example.com/contract.pdf",
+        "labels": [
+          {
+            "label": "invoice",
+            "description": "A commercial invoice or bill."
+          },
+          {
+            "label": "contract",
+            "description": "A legal agreement between parties."
+          },
+          {
+            "label": "resume"
+          }
+        ]
+      }
+    },
+    "method": "POST",
+    "path": "/extraction/classify/async",
+    "status": 202,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_batches_list",
+      "page_size": 1,
+      "cursor": "1"
+    },
+    "method": "GET",
+    "path": "/extraction/batches",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_batches_get",
+      "batchId": "1"
+    },
+    "method": "GET",
+    "path": "/extraction/batches/1",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_batches_cancel",
+      "batchId": "1"
+    },
+    "method": "POST",
+    "path": "/extraction/batches/1/cancel",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_processors_list",
+      "kind": "parse"
+    },
+    "method": "GET",
+    "path": "/extraction/processors",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_processors_create",
+      "body": {
+        "name": "Invoice Parser",
+        "kind": "extract",
+        "publish": true,
+        "config": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "invoice_number": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/extraction/processors",
+    "status": 201,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_processor_get",
+      "processorId": "1"
+    },
+    "method": "GET",
+    "path": "/extraction/processors/1",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_processor_rename",
+      "body": {
+        "name": "Invoice Parser v2"
+      },
+      "processorId": "proc_01J8ZP9X2YQF3K4R5T6V7W8X9Y"
+    },
+    "method": "PATCH",
+    "path": "/extraction/processors/proc_01J8ZP9X2YQF3K4R5T6V7W8X9Y",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_processor_delete",
+      "processorId": "1"
+    },
+    "method": "DELETE",
+    "path": "/extraction/processors/1",
+    "status": 204,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_processor_create_version",
+      "processorId": "1",
+      "body": {}
+    },
+    "method": "POST",
+    "path": "/extraction/processors/1/versions",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_processor_get_version",
+      "processorId": "1",
+      "version": 1
+    },
+    "method": "GET",
+    "path": "/extraction/processors/1/versions/1",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  },
+  {
+    "config": {
+      "operation": "extraction_processor_publish_version",
+      "processorId": "1",
+      "version": 1
+    },
+    "method": "POST",
+    "path": "/extraction/processors/1/versions/1/publish",
+    "status": 200,
+    "response": {
+      "pagination": {
+        "next_cursor": "cursor-next"
+      },
+      "items": []
+    }
+  }
+]

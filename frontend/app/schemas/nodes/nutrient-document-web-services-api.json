@@ -1,0 +1,800 @@
+{
+  "$defs": {
+    "ExtractionBatchesCancelConfig": {
+      "additionalProperties": false,
+      "description": "Cancel a batch.",
+      "properties": {
+        "operation": {
+          "const": "extraction_batches_cancel",
+          "default": "extraction_batches_cancel",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "batchId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Batchid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batchId"
+      ],
+      "title": "ExtractionBatchesCancelConfig",
+      "type": "object"
+    },
+    "ExtractionBatchesGetConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a batch.",
+      "properties": {
+        "operation": {
+          "const": "extraction_batches_get",
+          "default": "extraction_batches_get",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "batchId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Batchid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batchId"
+      ],
+      "title": "ExtractionBatchesGetConfig",
+      "type": "object"
+    },
+    "ExtractionBatchesListConfig": {
+      "additionalProperties": false,
+      "description": "List batches.",
+      "properties": {
+        "operation": {
+          "const": "extraction_batches_list",
+          "default": "extraction_batches_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "title": "ExtractionBatchesListConfig",
+      "type": "object"
+    },
+    "ExtractionClassifyAsyncConfig": {
+      "additionalProperties": false,
+      "description": "Classify a document asynchronously.",
+      "properties": {
+        "operation": {
+          "const": "extraction_classify_async",
+          "default": "extraction_classify_async",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "title": "Request Body",
+          "type": "object",
+          "ui:widget": "json"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "ExtractionClassifyAsyncConfig",
+      "type": "object"
+    },
+    "ExtractionClassifyConfig": {
+      "additionalProperties": false,
+      "description": "Classify a document.",
+      "properties": {
+        "operation": {
+          "const": "extraction_classify",
+          "default": "extraction_classify",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "title": "Request Body",
+          "type": "object",
+          "ui:widget": "json"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "ExtractionClassifyConfig",
+      "type": "object"
+    },
+    "ExtractionExtractAsyncConfig": {
+      "additionalProperties": false,
+      "description": "Extract structured data from documents asynchronously.",
+      "properties": {
+        "operation": {
+          "const": "extraction_extract_async",
+          "default": "extraction_extract_async",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "title": "Request Body",
+          "type": "object",
+          "ui:widget": "json"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "ExtractionExtractAsyncConfig",
+      "type": "object"
+    },
+    "ExtractionExtractConfig": {
+      "additionalProperties": false,
+      "description": "Extract structured data from documents.",
+      "properties": {
+        "operation": {
+          "const": "extraction_extract",
+          "default": "extraction_extract",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "title": "Request Body",
+          "type": "object",
+          "ui:widget": "json"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "ExtractionExtractConfig",
+      "type": "object"
+    },
+    "ExtractionParseAsyncConfig": {
+      "additionalProperties": false,
+      "description": "Parse document structure asynchronously.",
+      "properties": {
+        "operation": {
+          "const": "extraction_parse_async",
+          "default": "extraction_parse_async",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "title": "Request Body",
+          "type": "object",
+          "ui:widget": "json"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "ExtractionParseAsyncConfig",
+      "type": "object"
+    },
+    "ExtractionParseConfig": {
+      "additionalProperties": false,
+      "description": "Parse document structure.",
+      "properties": {
+        "operation": {
+          "const": "extraction_parse",
+          "default": "extraction_parse",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "title": "Request Body",
+          "type": "object",
+          "ui:widget": "json"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "ExtractionParseConfig",
+      "type": "object"
+    },
+    "ExtractionProcessorCreateVersionConfig": {
+      "additionalProperties": false,
+      "description": "Create a processor version.",
+      "properties": {
+        "operation": {
+          "const": "extraction_processor_create_version",
+          "default": "extraction_processor_create_version",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "processorId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Processorid",
+          "type": "string"
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "title": "Request Body",
+          "type": "object",
+          "ui:widget": "json"
+        }
+      },
+      "required": [
+        "processorId",
+        "body"
+      ],
+      "title": "ExtractionProcessorCreateVersionConfig",
+      "type": "object"
+    },
+    "ExtractionProcessorDeleteConfig": {
+      "additionalProperties": false,
+      "description": "Delete a processor.",
+      "properties": {
+        "operation": {
+          "const": "extraction_processor_delete",
+          "default": "extraction_processor_delete",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "processorId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Processorid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "processorId"
+      ],
+      "title": "ExtractionProcessorDeleteConfig",
+      "type": "object"
+    },
+    "ExtractionProcessorGetConfig": {
+      "additionalProperties": false,
+      "description": "Get a processor.",
+      "properties": {
+        "operation": {
+          "const": "extraction_processor_get",
+          "default": "extraction_processor_get",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "processorId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Processorid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "processorId"
+      ],
+      "title": "ExtractionProcessorGetConfig",
+      "type": "object"
+    },
+    "ExtractionProcessorGetVersionConfig": {
+      "additionalProperties": false,
+      "description": "Get a processor version.",
+      "properties": {
+        "operation": {
+          "const": "extraction_processor_get_version",
+          "default": "extraction_processor_get_version",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "processorId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Processorid",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "processorId",
+        "version"
+      ],
+      "title": "ExtractionProcessorGetVersionConfig",
+      "type": "object"
+    },
+    "ExtractionProcessorPublishVersionConfig": {
+      "additionalProperties": false,
+      "description": "Publish a processor version.",
+      "properties": {
+        "operation": {
+          "const": "extraction_processor_publish_version",
+          "default": "extraction_processor_publish_version",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "processorId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Processorid",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "processorId",
+        "version"
+      ],
+      "title": "ExtractionProcessorPublishVersionConfig",
+      "type": "object"
+    },
+    "ExtractionProcessorRenameConfig": {
+      "additionalProperties": false,
+      "description": "Rename a processor.",
+      "properties": {
+        "operation": {
+          "const": "extraction_processor_rename",
+          "default": "extraction_processor_rename",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "processorId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Processorid",
+          "type": "string"
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "title": "Request Body",
+          "type": "object",
+          "ui:widget": "json"
+        }
+      },
+      "required": [
+        "processorId",
+        "body"
+      ],
+      "title": "ExtractionProcessorRenameConfig",
+      "type": "object"
+    },
+    "ExtractionProcessorsCreateConfig": {
+      "additionalProperties": false,
+      "description": "Create a processor.",
+      "properties": {
+        "operation": {
+          "const": "extraction_processors_create",
+          "default": "extraction_processors_create",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "title": "Request Body",
+          "type": "object",
+          "ui:widget": "json"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "ExtractionProcessorsCreateConfig",
+      "type": "object"
+    },
+    "ExtractionProcessorsListConfig": {
+      "additionalProperties": false,
+      "description": "List processors.",
+      "properties": {
+        "operation": {
+          "const": "extraction_processors_list",
+          "default": "extraction_processors_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "parse",
+                "extract",
+                "classify",
+                "split"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind",
+          "enum": [
+            "parse",
+            "extract",
+            "classify",
+            "split"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ExtractionProcessorsListConfig",
+      "type": "object"
+    },
+    "ExtractionRunsCancelConfig": {
+      "additionalProperties": false,
+      "description": "Cancel a queued or running processing run.",
+      "properties": {
+        "operation": {
+          "const": "extraction_runs_cancel",
+          "default": "extraction_runs_cancel",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "runId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Runid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "runId"
+      ],
+      "title": "ExtractionRunsCancelConfig",
+      "type": "object"
+    },
+    "ExtractionRunsDeleteConfig": {
+      "additionalProperties": false,
+      "description": "Delete a stored processing run.",
+      "properties": {
+        "operation": {
+          "const": "extraction_runs_delete",
+          "default": "extraction_runs_delete",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "runId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Runid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "runId"
+      ],
+      "title": "ExtractionRunsDeleteConfig",
+      "type": "object"
+    },
+    "ExtractionRunsGetConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a stored processing run.",
+      "properties": {
+        "operation": {
+          "const": "extraction_runs_get",
+          "default": "extraction_runs_get",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "runId": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Runid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "runId"
+      ],
+      "title": "ExtractionRunsGetConfig",
+      "type": "object"
+    },
+    "ExtractionSplitAsyncConfig": {
+      "additionalProperties": false,
+      "description": "Split a document asynchronously.",
+      "properties": {
+        "operation": {
+          "const": "extraction_split_async",
+          "default": "extraction_split_async",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "title": "Request Body",
+          "type": "object",
+          "ui:widget": "json"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "ExtractionSplitAsyncConfig",
+      "type": "object"
+    },
+    "ExtractionSplitConfig": {
+      "additionalProperties": false,
+      "description": "Split a merged document into sub-documents.",
+      "properties": {
+        "operation": {
+          "const": "extraction_split",
+          "default": "extraction_split",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "JSON request body from the Nutrient API reference, including the public document url and processing settings where applicable.",
+          "title": "Request Body",
+          "type": "object",
+          "ui:widget": "json"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "ExtractionSplitConfig",
+      "type": "object"
+    },
+    "GetAccountInfoConfig": {
+      "additionalProperties": false,
+      "description": "Get account information.",
+      "properties": {
+        "operation": {
+          "const": "get_account_info",
+          "default": "get_account_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccountInfoConfig",
+      "type": "object"
+    },
+    "GetAccountProductUsageConfig": {
+      "additionalProperties": false,
+      "description": "Get usage for a product.",
+      "properties": {
+        "operation": {
+          "const": "get_account_product_usage",
+          "default": "get_account_product_usage",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product": {
+          "enum": [
+            "processor",
+            "viewer",
+            "signing_workflow",
+            "accessibility",
+            "data_extraction",
+            "ai_gateway"
+          ],
+          "title": "Product",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product"
+      ],
+      "title": "GetAccountProductUsageConfig",
+      "type": "object"
+    },
+    "NutrientCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "nutrient_document_web_services_api_key",
+          "default": "nutrient_document_web_services_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Paste your Nutrient API key without the Bearer prefix.",
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Nutrient API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in your Nutrient dashboard and paste it here.",
+      "x-credential-url": "https://dashboard.nutrient.io/api-keys"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "extraction_batches_cancel": "#/$defs/ExtractionBatchesCancelConfig",
+          "extraction_batches_get": "#/$defs/ExtractionBatchesGetConfig",
+          "extraction_batches_list": "#/$defs/ExtractionBatchesListConfig",
+          "extraction_classify": "#/$defs/ExtractionClassifyConfig",
+          "extraction_classify_async": "#/$defs/ExtractionClassifyAsyncConfig",
+          "extraction_extract": "#/$defs/ExtractionExtractConfig",
+          "extraction_extract_async": "#/$defs/ExtractionExtractAsyncConfig",
+          "extraction_parse": "#/$defs/ExtractionParseConfig",
+          "extraction_parse_async": "#/$defs/ExtractionParseAsyncConfig",
+          "extraction_processor_create_version": "#/$defs/ExtractionProcessorCreateVersionConfig",
+          "extraction_processor_delete": "#/$defs/ExtractionProcessorDeleteConfig",
+          "extraction_processor_get": "#/$defs/ExtractionProcessorGetConfig",
+          "extraction_processor_get_version": "#/$defs/ExtractionProcessorGetVersionConfig",
+          "extraction_processor_publish_version": "#/$defs/ExtractionProcessorPublishVersionConfig",
+          "extraction_processor_rename": "#/$defs/ExtractionProcessorRenameConfig",
+          "extraction_processors_create": "#/$defs/ExtractionProcessorsCreateConfig",
+          "extraction_processors_list": "#/$defs/ExtractionProcessorsListConfig",
+          "extraction_runs_cancel": "#/$defs/ExtractionRunsCancelConfig",
+          "extraction_runs_delete": "#/$defs/ExtractionRunsDeleteConfig",
+          "extraction_runs_get": "#/$defs/ExtractionRunsGetConfig",
+          "extraction_split": "#/$defs/ExtractionSplitConfig",
+          "extraction_split_async": "#/$defs/ExtractionSplitAsyncConfig",
+          "get_account_info": "#/$defs/GetAccountInfoConfig",
+          "get_account_product_usage": "#/$defs/GetAccountProductUsageConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccountInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/GetAccountProductUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionParseConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionParseAsyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionExtractConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionExtractAsyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionRunsGetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionRunsDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionRunsCancelConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionSplitConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionSplitAsyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionClassifyConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionClassifyAsyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionBatchesListConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionBatchesGetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionBatchesCancelConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionProcessorsListConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionProcessorsCreateConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionProcessorGetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionProcessorRenameConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionProcessorDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionProcessorCreateVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionProcessorGetVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractionProcessorPublishVersionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NutrientCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Nutrient-document-web-services-api Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
