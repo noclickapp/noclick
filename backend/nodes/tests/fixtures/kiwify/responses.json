@@ -1,0 +1,1024 @@
+{
+  "source": "https://docs.kiwify.com.br/api-reference/openapi.json",
+  "version": "1.0.0",
+  "operations": {
+    "get_account_details": {
+      "http_status": 200,
+      "body": {
+        "id": "XvS0qfkdzCZTg8z",
+        "company_name": "Teste LTDA",
+        "director_cpf": "99999999999",
+        "company_cnpj": "99999999999999",
+        "legal_entities": [
+          {
+            "id": "d644de3d-9a02-46b1-aed4-72785fe8828f",
+            "active": true,
+            "company_name": "Teste LTDA",
+            "director_cpf": "99999999999",
+            "company_cnpj": "",
+            "pix_key": "99999999999",
+            "created_at": "2023-05-31T12:23:59.746Z",
+            "updated_at": "2023-09-27T18:10:37.697Z"
+          }
+        ]
+      },
+      "config": {
+        "operation": "get_account_details"
+      },
+      "method": "GET",
+      "path": "/v1/account-details",
+      "query": {},
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/account/account-details"
+    },
+    "list_products": {
+      "http_status": 200,
+      "body": {
+        "pagination": {
+          "count": 10,
+          "page_number": 1,
+          "page_size": 10
+        },
+        "data": [
+          {
+            "id": "1286a0c0-d492-11ed-9709-c3c5046ec174",
+            "name": "Produto teste",
+            "type": "membership",
+            "created_at": "2023-04-06T15:45:36.013Z",
+            "currency": "BRL",
+            "price": null,
+            "affiliate_enabled": false,
+            "status": "active",
+            "payment_type": "recurring"
+          }
+        ]
+      },
+      "config": {
+        "operation": "list_products",
+        "page_size": 10,
+        "page_number": 2
+      },
+      "method": "GET",
+      "path": "/v1/products",
+      "query": {
+        "page_size": [
+          "10"
+        ],
+        "page_number": [
+          "2"
+        ]
+      },
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/products/list"
+    },
+    "get_product": {
+      "http_status": 200,
+      "body": {
+        "id": "20072760-3699-11ee-b627-87e13b212de8",
+        "store_id": "XvS0qfkdzCZTg8z",
+        "name": "pix test",
+        "type": "membership",
+        "created_at": "2023-08-09T09:42:59.074Z",
+        "currency": "BRL",
+        "price": 500,
+        "affiliate_enabled": false,
+        "status": "active",
+        "payment_type": "charge",
+        "shipping_options": [
+          {
+            "id": "928b5935-a3d9-4f21-879d-f46c1b30d9f0",
+            "name": "Frete Gratis",
+            "price": 0
+          }
+        ],
+        "links": [
+          {
+            "id": "KMgND1r",
+            "custom_name": null,
+            "status": "active",
+            "is_sales_page": false
+          }
+        ],
+        "bumps": [
+          {
+            "id": "9811cdd9-45e9-456d-8c3b-114a7cf6fa33",
+            "color": "#f7f7f7",
+            "link": {
+              "id": "AbDFGi0",
+              "custom_name": null,
+              "product_id": "828b5935-a2d9-3f21-279d-146c1b30d9f0",
+              "status": "active",
+              "is_sales_page": false
+            }
+          }
+        ],
+        "offers": [],
+        "event_settings": null,
+        "event_batches": [],
+        "subscriptions": [],
+        "revenue_partners": []
+      },
+      "config": {
+        "operation": "get_product",
+        "product_id": "20072760-3699-11ee-b627-87e13b212de8"
+      },
+      "method": "GET",
+      "path": "/v1/products/20072760-3699-11ee-b627-87e13b212de8",
+      "query": {},
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/products/single"
+    },
+    "list_sales": {
+      "http_status": 200,
+      "body": {
+        "pagination": {
+          "count": 10,
+          "page_number": 1,
+          "page_size": 10
+        },
+        "data": [
+          {
+            "id": "5cbb3832-7b5f-4cf2-b04e-ca6a4289d896",
+            "reference": "9dAQA5a",
+            "type": "product",
+            "created_at": "2023-10-31T16:53:05.119Z",
+            "updated_at": "2023-10-31T16:57:01.810Z",
+            "product": {
+              "id": "aaa86f40-d7ae-11ed-acc6-e1c45591a30e",
+              "name": "my product"
+            },
+            "shipping": {
+              "id": "255f7ae0-8694-40f9-b905-7507fe6bc58f",
+              "name": "Entrega Grátis",
+              "price": 0
+            },
+            "status": "paid",
+            "payment_method": "boleto",
+            "net_amount": 0,
+            "currency": "BRL",
+            "customer": {
+              "id": "29eb9963-8f4f-4c03-9897-63bdba0d5eb2",
+              "name": "my customer",
+              "email": "mycustomer@mail.com",
+              "cpf": "99999999999",
+              "mobile": "+5599999999999",
+              "instagram": "y_instagram",
+              "country": "BR",
+              "address": {
+                "street": "Rua Danilo",
+                "number": "407",
+                "complement": "Apt. 123",
+                "neighborhood": "Jardim dos Jardineiros",
+                "city": "Paulista",
+                "state": "SE",
+                "zipcode": "46121-175"
+              }
+            }
+          }
+        ]
+      },
+      "config": {
+        "operation": "list_sales",
+        "start_date": "2023-10-01",
+        "end_date": "2023-10-31",
+        "status": "paid",
+        "view_full_sale_details": true,
+        "payment_method": "boleto",
+        "product_id": "aaa86f40-d7ae-11ed-acc6-e1c45591a30e"
+      },
+      "method": "GET",
+      "path": "/v1/sales",
+      "query": {
+        "status": [
+          "paid"
+        ],
+        "view_full_sale_details": [
+          "true"
+        ],
+        "payment_method": [
+          "boleto"
+        ],
+        "product_id": [
+          "aaa86f40-d7ae-11ed-acc6-e1c45591a30e"
+        ],
+        "page_size": [
+          "10"
+        ],
+        "page_number": [
+          "1"
+        ],
+        "start_date": [
+          "2023-10-01"
+        ],
+        "end_date": [
+          "2023-10-31"
+        ]
+      },
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/sales/list"
+    },
+    "get_sale": {
+      "http_status": 200,
+      "body": {
+        "id": "fc96cec5-1ff1-49b3-aa22-0e131f353b62",
+        "reference": "iYJwhMP",
+        "type": "product",
+        "created_at": "2023-10-31T16:34:35.491Z",
+        "updated_at": "2023-10-31T16:36:02.005Z",
+        "product": {
+          "id": "aaa86f40-d7ae-11ed-acc6-e1c45591a30e",
+          "name": "My Product"
+        },
+        "shipping": {
+          "id": "255f7ae0-8694-40f9-b905-7507fe6bc58f",
+          "name": "Entrega Grátis",
+          "price": 0
+        },
+        "status": "paid",
+        "payment_method": "credit_card",
+        "net_amount": 8853,
+        "currency": "USD",
+        "customer": {
+          "id": "b17dd04e-5acc-41ae-a4b2-cba0d2436406",
+          "name": "my customer",
+          "email": "mycustomer@mail.com",
+          "cpf": "99999999999",
+          "mobile": "+5599999999999",
+          "instagram": "y_instagram",
+          "country": "BR",
+          "address": {
+            "street": "Rua Danilo",
+            "number": "407",
+            "complement": "Apt. 123",
+            "neighborhood": "Jardim dos Jardineiros",
+            "city": "Paulista",
+            "state": "SE",
+            "zipcode": "46121-175"
+          }
+        },
+        "approved_date": "2023-10-31T16:34:35.491Z",
+        "boleto_url": null,
+        "card_last_digits": "1115",
+        "card_rejection_reason": null,
+        "card_type": "mastercard",
+        "installments": 12,
+        "is_one_click": true,
+        "parent_order_id": null,
+        "payment": {
+          "charge_amount": 10388,
+          "charge_currency": "BRL",
+          "net_amount": 8853,
+          "product_base_price": 60037,
+          "product_base_currency": "BRL",
+          "settlement_amount": 8853,
+          "settlement_currency": "USD",
+          "fee": 984,
+          "fee_currency": "USD",
+          "sale_tax_rate": 5.6,
+          "sale_tax_amount": 551
+        },
+        "refunded_at": null,
+        "sale_type": "producer",
+        "tracking": {
+          "sck": null,
+          "src": null,
+          "utm_campaign": null,
+          "utm_content": null,
+          "utm_medium": null,
+          "utm_source": null,
+          "utm_term": null,
+          "s1": null,
+          "s2": null,
+          "s3": null
+        },
+        "two_cards": false,
+        "revenue_partners": [
+          {
+            "account_id": "RpL2PsVt7gEN50Q",
+            "legal_name": "My Coproducer",
+            "document_id": "12345678910",
+            "percentage": 50,
+            "net_amount_split": 4426,
+            "charge_amount_split": 5000
+          }
+        ],
+        "affiliate_commission": {
+          "name": "My affiliate",
+          "document": "123456789",
+          "email": "myaffiliate@email.com",
+          "amount": 2849
+        },
+        "scheduled_installment": {
+          "id": "b8f0c2b4-2f1e-4a2c-9d3a-1f2e3d4c5b6a",
+          "status": "active",
+          "installment_number": 2,
+          "installment_quantity": 12,
+          "due_date": "2026-02-10",
+          "next_charge_date": "2026-03-10",
+          "installment_amount": 10000,
+          "total_amount": 120000,
+          "customer_access": {
+            "has_access": true
+          },
+          "charges": {
+            "completed": [
+              {
+                "installment_number": 1,
+                "due_date": "2026-01-10",
+                "amount": 10000,
+                "status": "paid"
+              },
+              {
+                "installment_number": 2,
+                "due_date": "2026-02-10",
+                "amount": 10000,
+                "status": "paid"
+              }
+            ],
+            "future": [
+              {
+                "installment_number": 3,
+                "due_date": "2026-03-10",
+                "amount": 10000,
+                "status": "open"
+              }
+            ]
+          }
+        }
+      },
+      "config": {
+        "operation": "get_sale",
+        "sale_id": "fc96cec5-1ff1-49b3-aa22-0e131f353b62"
+      },
+      "method": "GET",
+      "path": "/v1/sales/fc96cec5-1ff1-49b3-aa22-0e131f353b62",
+      "query": {},
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/sales/single"
+    },
+    "refund_sale": {
+      "http_status": 200,
+      "body": {
+        "refunded": true
+      },
+      "config": {
+        "operation": "refund_sale",
+        "sale_id": "fc96cec5-1ff1-49b3-aa22-0e131f353b62",
+        "pixKey": "99999999999"
+      },
+      "method": "POST",
+      "path": "/v1/sales/fc96cec5-1ff1-49b3-aa22-0e131f353b62/refund",
+      "query": {},
+      "request_body": {
+        "pixKey": "99999999999"
+      },
+      "source": "https://docs.kiwify.com.br/api-reference/sales/refund"
+    },
+    "get_sales_stats": {
+      "http_status": 200,
+      "body": {
+        "credit_card_approval_rate": 50,
+        "total_sales": 3,
+        "total_net_amount": 25956,
+        "refund_rate": 25,
+        "chargeback_rate": 0,
+        "total_boleto_generated": 2,
+        "total_boleto_paid": 1,
+        "boleto_rate": 50
+      },
+      "config": {
+        "operation": "get_sales_stats",
+        "start_date": "2023-10-01",
+        "end_date": "2023-10-31"
+      },
+      "method": "GET",
+      "path": "/v1/stats",
+      "query": {
+        "start_date": [
+          "2023-10-01"
+        ],
+        "end_date": [
+          "2023-10-31"
+        ]
+      },
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/sales/stats"
+    },
+    "get_balance": {
+      "http_status": 200,
+      "body": {
+        "available": 236961,
+        "pending": 4621,
+        "legal_entity_id": "8dcb67d3-9217-4a0e-8f7c-916cf58f415c"
+      },
+      "config": {
+        "operation": "get_balance"
+      },
+      "method": "GET",
+      "path": "/v1/balance",
+      "query": {},
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/finance/balance/list"
+    },
+    "get_legal_entity_balance": {
+      "http_status": 200,
+      "body": {
+        "available": 236961,
+        "pending": 4621,
+        "legal_entity_id": "8dcb67d3-9217-4a0e-8f7c-916cf58f415c"
+      },
+      "config": {
+        "operation": "get_legal_entity_balance",
+        "legal_entity_id": "8dcb67d3-9217-4a0e-8f7c-916cf58f415c"
+      },
+      "method": "GET",
+      "path": "/v1/balance/8dcb67d3-9217-4a0e-8f7c-916cf58f415c",
+      "query": {},
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/finance/balance/single"
+    },
+    "list_payouts": {
+      "http_status": 200,
+      "body": {
+        "pagination": {
+          "count": 10,
+          "page_number": 1,
+          "page_size": 10
+        },
+        "data": [
+          {
+            "id": "4d569345-2002-4620-9e73-8d1a255af5c0",
+            "amount": 99633,
+            "status": "pending_review",
+            "legal_entity_id": "d644de3d-9a02-46b1-aed4-72785fe8828f",
+            "created_at": "2023-06-26T15:47:23.489Z",
+            "updated_at": "2023-07-13T14:15:24.570Z"
+          }
+        ]
+      },
+      "config": {
+        "operation": "list_payouts",
+        "legal_entity_id": "d644de3d-9a02-46b1-aed4-72785fe8828f"
+      },
+      "method": "GET",
+      "path": "/v1/payouts",
+      "query": {
+        "legal_entity_id": [
+          "d644de3d-9a02-46b1-aed4-72785fe8828f"
+        ],
+        "page_size": [
+          "10"
+        ],
+        "page_number": [
+          "1"
+        ]
+      },
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/finance/payouts/list"
+    },
+    "get_payout": {
+      "http_status": 200,
+      "body": {
+        "id": "8606aae0-e036-4e55-998a-e0a8de7bf54f",
+        "amount": 49633,
+        "status": "pending_review",
+        "legal_entity_id": "d644de3d-9a02-46b1-aed4-72785fe8828f",
+        "created_at": "2023-11-29T14:38:08.740Z",
+        "updated_at": "2023-11-29T14:38:08.740Z"
+      },
+      "config": {
+        "operation": "get_payout",
+        "payout_id": "8606aae0-e036-4e55-998a-e0a8de7bf54f"
+      },
+      "method": "GET",
+      "path": "/v1/payouts/8606aae0-e036-4e55-998a-e0a8de7bf54f",
+      "query": {},
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/finance/payouts/single"
+    },
+    "list_affiliates": {
+      "http_status": 200,
+      "body": {
+        "pagination": {
+          "count": 10,
+          "page_number": 1,
+          "page_size": 10
+        },
+        "data": [
+          {
+            "affiliate_id": "c52ccea4-2b5a-4d03-b53a-d9dc96756fc0",
+            "name": "MY Affiliate",
+            "email": "myaffiliate@mail.com",
+            "company_name": "MY Affiliate",
+            "director_cpf": "99999999999",
+            "company_cnpj": "",
+            "product": {
+              "id": "aaa86f40-d7ae-11ed-acc6-e1c45591a30e",
+              "name": "My Product"
+            },
+            "commission": 4600,
+            "status": "active",
+            "created_at": "2023-07-24T15:56:26.189Z"
+          }
+        ]
+      },
+      "config": {
+        "operation": "list_affiliates",
+        "search": "MY Affiliate",
+        "status": "active"
+      },
+      "method": "GET",
+      "path": "/v1/affiliates",
+      "query": {
+        "page_size": [
+          "10"
+        ],
+        "page_number": [
+          "1"
+        ],
+        "status": [
+          "active"
+        ],
+        "search": [
+          "MY Affiliate"
+        ]
+      },
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/affiliates/list"
+    },
+    "get_affiliate": {
+      "http_status": 200,
+      "body": {
+        "affiliate_id": "c52ccea4-2b5a-4d03-b53a-d9dc96756fc0",
+        "name": "MY Affiliate",
+        "email": "myaffiliate@mail.com",
+        "company_name": "MY Affiliate",
+        "director_cpf": "99999999999",
+        "company_cnpj": "",
+        "product": {
+          "id": "aaa86f40-d7ae-11ed-acc6-e1c45591a30e",
+          "name": "My Product"
+        },
+        "commission": 4600,
+        "status": "active",
+        "created_at": "2023-07-24T15:56:26.189Z"
+      },
+      "config": {
+        "operation": "get_affiliate",
+        "affiliate_id": "c52ccea4-2b5a-4d03-b53a-d9dc96756fc0"
+      },
+      "method": "GET",
+      "path": "/v1/affiliates/c52ccea4-2b5a-4d03-b53a-d9dc96756fc0",
+      "query": {},
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/affiliates/single"
+    },
+    "update_affiliate": {
+      "http_status": 200,
+      "body": {
+        "affiliate_id": "c52ccea4-2b5a-4d03-b53a-d9dc96756fc0",
+        "name": "MY Affiliate",
+        "email": "myaffiliate@mail.com",
+        "company_name": "MY Affiliate",
+        "director_cpf": "99999999999",
+        "company_cnpj": "",
+        "product": {
+          "id": "aaa86f40-d7ae-11ed-acc6-e1c45591a30e",
+          "name": "My Product"
+        },
+        "commission": 4600,
+        "status": "active",
+        "created_at": "2023-07-24T15:56:26.189Z"
+      },
+      "config": {
+        "operation": "update_affiliate",
+        "affiliate_id": "c52ccea4-2b5a-4d03-b53a-d9dc96756fc0",
+        "commission": 4600,
+        "status": "active"
+      },
+      "method": "PUT",
+      "path": "/v1/affiliates/c52ccea4-2b5a-4d03-b53a-d9dc96756fc0",
+      "query": {},
+      "request_body": {
+        "commission": 4600,
+        "status": "active"
+      },
+      "source": "https://docs.kiwify.com.br/api-reference/affiliates/edit"
+    },
+    "list_webhooks": {
+      "http_status": 200,
+      "body": {
+        "pagination": {
+          "count": 10,
+          "page_number": 1,
+          "page_size": 10
+        },
+        "data": [
+          {
+            "id": "c2be7f8e-b373-4eb7-b623-16ce98d5ed44",
+            "name": "meu webhook",
+            "url": "https://webhook.site/73d28a2b-6c48-41e0-a8ad-0d5ef748ce41",
+            "products": "all",
+            "triggers": [
+              "boleto_gerado",
+              "pix_gerado",
+              "carrinho_abandonado",
+              "compra_recusada",
+              "compra_aprovada",
+              "compra_reembolsada",
+              "chargeback",
+              "subscription_canceled",
+              "subscription_late",
+              "subscription_renewed"
+            ],
+            "token": "rxue90njjv1",
+            "created_at": "2023-11-24T10:06:47.540Z",
+            "updated_at": "2023-11-24T10:06:47.540Z"
+          }
+        ]
+      },
+      "config": {
+        "operation": "list_webhooks",
+        "search": "meu webhook"
+      },
+      "method": "GET",
+      "path": "/v1/webhooks",
+      "query": {
+        "page_size": [
+          "10"
+        ],
+        "page_number": [
+          "1"
+        ],
+        "search": [
+          "meu webhook"
+        ]
+      },
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/webhooks/list"
+    },
+    "create_webhook": {
+      "http_status": 200,
+      "body": {
+        "id": "c2be7f8e-b373-4eb7-b623-16ce98d5ed44",
+        "name": "meu webhook",
+        "url": "https://webhook.site/73d28a2b-6c48-41e0-a8ad-0d5ef748ce41",
+        "products": "ba22c4a0-5c94-11ee-9c2d-8d32d7a17894",
+        "triggers": [
+          "boleto_gerado",
+          "pix_gerado",
+          "carrinho_abandonado",
+          "compra_recusada",
+          "compra_aprovada",
+          "compra_reembolsada",
+          "chargeback",
+          "subscription_canceled",
+          "subscription_late",
+          "subscription_renewed"
+        ],
+        "token": "rxue90njjv1",
+        "created_at": "2023-11-24T10:06:47.540Z",
+        "updated_at": "2023-11-24T10:06:47.540Z"
+      },
+      "config": {
+        "operation": "create_webhook",
+        "name": "meu webhook",
+        "url": "https://webhook.site/73d28a2b-6c48-41e0-a8ad-0d5ef748ce41",
+        "products": "all",
+        "triggers": [
+          "compra_aprovada"
+        ],
+        "webhook_token": "w9i3pvutvxe"
+      },
+      "method": "POST",
+      "path": "/v1/webhooks",
+      "query": {},
+      "request_body": {
+        "name": "meu webhook",
+        "url": "https://webhook.site/73d28a2b-6c48-41e0-a8ad-0d5ef748ce41",
+        "products": "all",
+        "triggers": [
+          "compra_aprovada"
+        ],
+        "token": "w9i3pvutvxe"
+      },
+      "source": "https://docs.kiwify.com.br/api-reference/webhooks/create"
+    },
+    "get_webhook": {
+      "http_status": 200,
+      "body": {
+        "id": "c2be7f8e-b373-4eb7-b623-16ce98d5ed44",
+        "name": "meu webhook",
+        "url": "https://webhook.site/73d28a2b-6c48-41e0-a8ad-0d5ef748ce41",
+        "products": "ba22c4a0-5c94-11ee-9c2d-8d32d7a17894",
+        "triggers": [
+          "boleto_gerado",
+          "pix_gerado",
+          "carrinho_abandonado",
+          "compra_recusada",
+          "compra_aprovada",
+          "compra_reembolsada",
+          "chargeback",
+          "subscription_canceled",
+          "subscription_late",
+          "subscription_renewed"
+        ],
+        "token": "rxue90njjv1",
+        "created_at": "2023-11-24T10:06:47.540Z",
+        "updated_at": "2023-11-24T10:06:47.540Z"
+      },
+      "config": {
+        "operation": "get_webhook",
+        "webhook_id": "c2be7f8e-b373-4eb7-b623-16ce98d5ed44"
+      },
+      "method": "GET",
+      "path": "/v1/webhooks/c2be7f8e-b373-4eb7-b623-16ce98d5ed44",
+      "query": {},
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/webhooks/single"
+    },
+    "update_webhook": {
+      "http_status": 200,
+      "body": {
+        "id": "c2be7f8e-b373-4eb7-b623-16ce98d5ed44",
+        "name": "meu webhook",
+        "url": "https://webhook.site/73d28a2b-6c48-41e0-a8ad-0d5ef748ce41",
+        "products": "ba22c4a0-5c94-11ee-9c2d-8d32d7a17894",
+        "triggers": [
+          "boleto_gerado",
+          "pix_gerado",
+          "carrinho_abandonado",
+          "compra_recusada",
+          "compra_aprovada",
+          "compra_reembolsada",
+          "chargeback",
+          "subscription_canceled",
+          "subscription_late",
+          "subscription_renewed"
+        ],
+        "token": "rxue90njjv1",
+        "created_at": "2023-11-24T10:06:47.540Z",
+        "updated_at": "2023-11-24T10:06:47.540Z"
+      },
+      "config": {
+        "operation": "update_webhook",
+        "webhook_id": "c2be7f8e-b373-4eb7-b623-16ce98d5ed44",
+        "name": "meu webhook",
+        "url": "https://webhook.site/73d28a2b-6c48-41e0-a8ad-0d5ef748ce41",
+        "products": "all",
+        "triggers": [
+          "compra_aprovada"
+        ],
+        "webhook_token": "w9i3pvutvxe"
+      },
+      "method": "PUT",
+      "path": "/v1/webhooks/c2be7f8e-b373-4eb7-b623-16ce98d5ed44",
+      "query": {},
+      "request_body": {
+        "name": "meu webhook",
+        "url": "https://webhook.site/73d28a2b-6c48-41e0-a8ad-0d5ef748ce41",
+        "products": "all",
+        "triggers": [
+          "compra_aprovada"
+        ],
+        "token": "w9i3pvutvxe"
+      },
+      "source": "https://docs.kiwify.com.br/api-reference/webhooks/edit"
+    },
+    "delete_webhook": {
+      "http_status": 204,
+      "body": null,
+      "config": {
+        "operation": "delete_webhook",
+        "webhook_id": "c2be7f8e-b373-4eb7-b623-16ce98d5ed44"
+      },
+      "method": "DELETE",
+      "path": "/v1/webhooks/c2be7f8e-b373-4eb7-b623-16ce98d5ed44",
+      "query": {},
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/webhooks/delete"
+    },
+    "list_event_participants": {
+      "http_status": 200,
+      "body": {
+        "pagination": {
+          "count": 10,
+          "page_number": 1,
+          "page_size": 10
+        },
+        "data": {
+          "max_tickets": 10,
+          "available": 7,
+          "issued_tickets": 3,
+          "sold_tickets": 2,
+          "total_checkin": 0,
+          "participants": [
+            {
+              "id": "ae1603c9-eeda-41c5-84a2-6bffb7c4b333",
+              "external_id": "YRC3IQGCR24TWKT",
+              "batch_id": "c880067d-5fc1-43ea-91fe-8eba9b70b2dc",
+              "batch_name": "lote 1",
+              "name": "Manual",
+              "email": "mycustomer@mail.com",
+              "cpf": "64365501194",
+              "phone": "8229453509",
+              "order_id": "44db0fe3-ac96-4895-8a72-8f128e9664a9",
+              "checkin_at": null,
+              "created_at": "2023-11-24T10:30:04.855Z",
+              "updated_at": "2023-11-24T10:30:04.855Z"
+            },
+            {
+              "id": "a3d6af9a-6b5f-4915-87ea-83033a893833",
+              "external_id": "ZQAU4F3U2E73Z2N",
+              "batch_id": "c880067d-5fc1-43ea-91fe-8eba9b70b2dc",
+              "batch_name": "lote 1",
+              "name": "My Customer",
+              "email": "mycustomer@mail.com",
+              "cpf": "64365501194",
+              "phone": "8229453509",
+              "order_id": "44db0fe3-ac96-4895-8a72-8f128e9664a9",
+              "checkin_at": null,
+              "created_at": "2023-11-24T10:58:11.057Z",
+              "updated_at": "2023-11-24T10:58:11.057Z"
+            },
+            {
+              "id": "0434160b-4ba2-4b0a-ba13-ff2d3427155d",
+              "external_id": "N7HHNQCFJH0HK57",
+              "batch_id": "c880067d-5fc1-43ea-91fe-8eba9b70b2dc",
+              "batch_name": "lote 1",
+              "name": "My Customer",
+              "email": "mycustomer@mail.com",
+              "cpf": "64365501194",
+              "phone": "8229453509",
+              "order_id": "44db0fe3-ac96-4895-8a72-8f128e9664a9",
+              "checkin_at": null,
+              "created_at": "2023-11-24T10:59:02.538Z",
+              "updated_at": "2023-11-24T10:59:02.538Z"
+            }
+          ]
+        }
+      },
+      "config": {
+        "operation": "list_event_participants",
+        "product_id": "ba22c4a0-5c94-11ee-9c2d-8d32d7a17894",
+        "checked_in": false
+      },
+      "method": "GET",
+      "path": "/v1/events/ba22c4a0-5c94-11ee-9c2d-8d32d7a17894/participants",
+      "query": {
+        "checked_in": [
+          "false"
+        ],
+        "page_size": [
+          "10"
+        ],
+        "page_number": [
+          "1"
+        ]
+      },
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/events/list"
+    },
+    "list_scheduled_installments": {
+      "http_status": 200,
+      "body": {
+        "pagination": {
+          "count": 1,
+          "page_number": 1,
+          "page_size": 10
+        },
+        "data": [
+          {
+            "id": "b8f0c2b4-2f1e-4a2c-9d3a-1f2e3d4c5b6a",
+            "created_at": "2026-01-10T13:00:00.000Z",
+            "status": "active",
+            "payment_method": "credit_card",
+            "installment_quantity": 12,
+            "installments": {
+              "paid": 3,
+              "total": 12
+            },
+            "next_charge_date": "2026-04-10",
+            "customer_access": {
+              "has_access": true
+            },
+            "product": {
+              "id": "c05a1348-059d-43d5-9856-06958f50db8a",
+              "name": "Meu Produto"
+            },
+            "customer": {
+              "name": "cliente 1",
+              "email": "cliente1@mail.com"
+            }
+          }
+        ]
+      },
+      "config": {
+        "operation": "list_scheduled_installments",
+        "created_start": "2026-02-01",
+        "created_end": "2026-02-10",
+        "payment_method": [
+          "pix",
+          "boleto"
+        ],
+        "status": [
+          "active",
+          "overdue"
+        ]
+      },
+      "method": "GET",
+      "path": "/v1/scheduled-installments",
+      "query": {
+        "page_size": [
+          "10"
+        ],
+        "page_number": [
+          "1"
+        ],
+        "created_start": [
+          "2026-02-01"
+        ],
+        "created_end": [
+          "2026-02-10"
+        ],
+        "payment_method": [
+          "pix",
+          "boleto"
+        ],
+        "status": [
+          "active",
+          "overdue"
+        ]
+      },
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/scheduled-installments/list"
+    },
+    "get_scheduled_installment": {
+      "http_status": 200,
+      "body": {
+        "id": "b8f0c2b4-2f1e-4a2c-9d3a-1f2e3d4c5b6a",
+        "created_at": "2026-01-10T13:00:00.000Z",
+        "status": "active",
+        "payment_method": "credit_card",
+        "installment_quantity": 12,
+        "total_amount": 120000,
+        "interest_total": 20000,
+        "next_charge_date": "2026-04-10",
+        "customer_access": {
+          "has_access": true
+        },
+        "charges": {
+          "completed": [
+            {
+              "installment_number": 1,
+              "due_date": "2026-01-10",
+              "amount": 10000,
+              "status": "paid"
+            },
+            {
+              "installment_number": 2,
+              "due_date": "2026-02-10",
+              "amount": 10000,
+              "status": "paid"
+            },
+            {
+              "installment_number": 3,
+              "due_date": "2026-03-10",
+              "amount": 10000,
+              "status": "paid"
+            }
+          ],
+          "future": [
+            {
+              "installment_number": 4,
+              "due_date": "2026-04-10",
+              "amount": 10000,
+              "status": "open"
+            }
+          ]
+        },
+        "product": {
+          "id": "c05a1348-059d-43d5-9856-06958f50db8a",
+          "name": "Meu Produto"
+        },
+        "customer": {
+          "name": "cliente 1",
+          "email": "cliente1@mail.com"
+        },
+        "purchase_order": {
+          "id": "928e2ff2-ef23-4147-ba46-b5e1b3a844db",
+          "ref_id": "EV9pCMk"
+        }
+      },
+      "config": {
+        "operation": "get_scheduled_installment",
+        "scheduled_installment_id": "b8f0c2b4-2f1e-4a2c-9d3a-1f2e3d4c5b6a"
+      },
+      "method": "GET",
+      "path": "/v1/scheduled-installments/b8f0c2b4-2f1e-4a2c-9d3a-1f2e3d4c5b6a",
+      "query": {},
+      "request_body": null,
+      "source": "https://docs.kiwify.com.br/api-reference/scheduled-installments/single"
+    }
+  }
+}
