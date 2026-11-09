@@ -1,0 +1,960 @@
+{
+  "contract": {
+    "file": "openapi.json",
+    "sha256": "51d8d9fe03df7cdcd765ccb4ef28b63b70d60f75a3ab849567803962d8e140c0",
+    "version": "1.0.0",
+    "source_url": "https://docs.markup.ai/openapi.json",
+    "node_type": "automation-markup-ai",
+    "credential": {
+      "credential_type": "markup_ai_api_key",
+      "api_key": "<token>"
+    }
+  },
+  "verdict": {
+    "provider": "markup-ai",
+    "ready": true,
+    "blocking": [],
+    "advisory": [],
+    "stats": {
+      "operations": 25,
+      "skipped": 0,
+      "request_ok": 25,
+      "authored_parser_ok": 2,
+      "generated_only": 23,
+      "local_ok": 0
+    }
+  },
+  "report": {
+    "provider": "markup-ai",
+    "node_type": "automation-markup-ai",
+    "checked": 25,
+    "passed": 25,
+    "failed": 0,
+    "fixture_errors": 0,
+    "response_checked": 25,
+    "auth_checked": 25,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 25,
+      "total": 86
+    },
+    "operations": [
+      {
+        "operation": "get_style_config",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/style-agent/config",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /style-agent/config",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0e7dc85466ece8d44fdc942cea6c65a67f907cbe8ecf9b5468239486890516f1"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_style_config"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_style_guides",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/style-agent/style-guides",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /style-agent/style-guides",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "caa096ed311eb44adc398c5b52b51ee8f9c824948fce89d4ecc779667aa234ac"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_style_guides"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_style_guide",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/style-agent/style-guides/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /style-agent/style-guides/{style_guide_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "dc6bb46b40c6e5c5e62ce8cf1289f46dc6a19c46412e77037bcabed3af9aa654"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_style_guide",
+          "style_guide_id": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_content_profiles",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/style-agent/content-profiles",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /style-agent/content-profiles",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "3ce56a45fbddc9178ee5a5a63df899b7af3de32f1e97ff0f22824d5faaa54b06"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_content_profiles"
+        },
+        "passed": true
+      },
+      {
+        "operation": "run_style_check",
+        "scenario": "run_style_check",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.markup.ai/style-agent/run?wait=false",
+            "content_type": "application/json",
+            "body": "{\"text\":\"string\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "17",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /style-agent/run",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "POST /style-agent/run",
+            "response_source_url": "https://docs.markup.ai/developer-reference/api-reference/style-agent/run-style-agent.md",
+            "response_status": 200,
+            "response_sha256": "b1e93ce28e09b486008317855ec005ecb63fa2a108392719cb749b8d3c5301fa"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "text": "string",
+          "operation": "run_style_check"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_style_workflow",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/style-agent/workflows/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /style-agent/workflows/{workflow_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "e19ed8e32e7577620d91b9c61293411f8c572931036c1b1952d2157a79506524"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_style_workflow",
+          "workflow_id": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_agents",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/agents?page=1&page_size=20&category=1&include_unavailable=false",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /agents",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "2ddc1b550b610c606bc795461402421a5bf6efa4038f4d30a27f6b3ce7480086"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_agents",
+          "page": 1,
+          "page_size": 20,
+          "category": "1",
+          "include_unavailable": false
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_agent",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/agents/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /agents/{agent_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "1cbafcb5313dc68b8dd950d936b21bcbeb7d2154b4a55a485dbc7f295d9e4428"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_agent",
+          "agent_id": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "run_agent",
+        "scenario": "run_agent",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.markup.ai/agents/agent_id/run?wait=false",
+            "content_type": "application/json",
+            "body": "{\"no_personas\":false,\"text\":\"string\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "37",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /agents/{agent_id}/run",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "POST /agents/{agent_id}/run",
+            "response_source_url": "https://docs.markup.ai/developer-reference/api-reference/agents/run-agent.md",
+            "response_status": 200,
+            "response_sha256": "7ac369841f46e08bbf86ff67b0bfe978b68aecb2215fac34c09753e9bfbc1f0a"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "agent_id": "agent_id",
+          "text": "string",
+          "operation": "run_agent"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_persona",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/personas/00000000-0000-4000-8000-000000000001",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /personas/{persona_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "9bf7d7d14423eed0445c354e2f72e4427ff1eb1a66cc3c25505b477d028b8664"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_persona",
+          "persona_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_workflow",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/agents/workflows/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /agents/workflows/{workflow_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "7a62dbd9b4f01b8a8e463be9ad98942e25b038d140fd406f4fc69dd894874d7c"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_workflow",
+          "workflow_id": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "cancel_workflow",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api.markup.ai/agents/workflows/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /agents/workflows/{workflow_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "72be9d3f6ba1eb72926187e5dd26b5b7f55f288912a3b11c040faa45565495ab"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "cancel_workflow",
+          "workflow_id": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "search_terminology",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/brand-terms/search?query=1&domain_ids=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /brand-terms/search",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "9f9e47903255ec0addee1b30386da7d5cd2a0b5ad1ac6cd2373d975189c26663"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "search_terminology",
+          "query": "1",
+          "domain_ids": "[\"1\"]"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_term_sets",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/brand-terms/term-sets?page=1&page_size=20&search_term=1&domain_ids=00000000-0000-4000-8000-000000000001&has_context=false",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /brand-terms/term-sets",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "e0b0d89aaf0a1a294f979c7cd41b1b3946d5a813b540dc234344e171f2009800"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_term_sets",
+          "page": 1,
+          "page_size": 20,
+          "search_term": "1",
+          "domain_ids": "[\"00000000-0000-4000-8000-000000000001\"]",
+          "has_context": false
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_term_set",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.markup.ai/brand-terms/term-sets",
+            "content_type": "application/json",
+            "body": "{\"context\":\"1\",\"term_type\":\"preferred\",\"context_polarity\":\"include\",\"terms\":[{\"term\":\"1\",\"type\":\"preferred\",\"case_sensitive\":false}],\"domain_ids\":[\"00000000-0000-4000-8000-000000000001\"]}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "187",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /brand-terms/term-sets",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 201,
+            "response_sha256": "9d7a9d817c786a09f07fda4906837838652412bdd765d8d450e3b41bc92768f9"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_term_set",
+          "context": "1",
+          "term_type": "preferred",
+          "context_polarity": "include",
+          "terms": "[{\"term\": \"1\", \"type\": \"preferred\", \"case_sensitive\": false}]",
+          "domain_ids": "[\"00000000-0000-4000-8000-000000000001\"]"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_term_set",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/brand-terms/term-sets/00000000-0000-4000-8000-000000000001",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /brand-terms/term-sets/{term_set_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "36db6b9ba061f00e5d5a5f695da167d5fe3fc50d27edc4af1d06194bf1ecd075"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_term_set",
+          "term_set_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "passed": true
+      },
+      {
+        "operation": "update_term_set",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PATCH",
+            "url": "https://api.markup.ai/brand-terms/term-sets/00000000-0000-4000-8000-000000000001",
+            "content_type": "application/json",
+            "body": "{\"context\":\"1\",\"term_type\":\"preferred\",\"context_polarity\":\"include\",\"domain_ids\":[\"00000000-0000-4000-8000-000000000001\"]}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "122",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PATCH /brand-terms/term-sets/{term_set_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "9d7a9d817c786a09f07fda4906837838652412bdd765d8d450e3b41bc92768f9"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_term_set",
+          "term_set_id": "00000000-0000-4000-8000-000000000001",
+          "context": "1",
+          "term_type": "preferred",
+          "context_polarity": "include",
+          "domain_ids": "[\"00000000-0000-4000-8000-000000000001\"]",
+          "clear_context": false
+        },
+        "passed": true
+      },
+      {
+        "operation": "delete_term_set",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api.markup.ai/brand-terms/term-sets/00000000-0000-4000-8000-000000000001",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /brand-terms/term-sets/{term_set_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 204,
+            "response_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_term_set",
+          "term_set_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_term",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.markup.ai/brand-terms/term-sets/00000000-0000-4000-8000-000000000001/terms",
+            "content_type": "application/json",
+            "body": "{\"term\":\"1\",\"type\":\"preferred\",\"case_sensitive\":false}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "54",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /brand-terms/term-sets/{term_set_id}/terms",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 201,
+            "response_sha256": "f1672a48d503b58b8c6ad523c378373a2b7ee3f5fc9ae40445614ea61fa1da22"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_term",
+          "term_set_id": "00000000-0000-4000-8000-000000000001",
+          "term": "1",
+          "type": "preferred",
+          "case_sensitive": false
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_term",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/brand-terms/term-sets/00000000-0000-4000-8000-000000000001/terms/00000000-0000-4000-8000-000000000001",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /brand-terms/term-sets/{term_set_id}/terms/{term_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f1672a48d503b58b8c6ad523c378373a2b7ee3f5fc9ae40445614ea61fa1da22"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_term",
+          "term_set_id": "00000000-0000-4000-8000-000000000001",
+          "term_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "passed": true
+      },
+      {
+        "operation": "update_term",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PUT",
+            "url": "https://api.markup.ai/brand-terms/term-sets/00000000-0000-4000-8000-000000000001/terms/00000000-0000-4000-8000-000000000001",
+            "content_type": "application/json",
+            "body": "{\"term\":\"1\",\"type\":\"preferred\",\"case_sensitive\":false}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "54",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PUT /brand-terms/term-sets/{term_set_id}/terms/{term_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f1672a48d503b58b8c6ad523c378373a2b7ee3f5fc9ae40445614ea61fa1da22"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_term",
+          "term_set_id": "00000000-0000-4000-8000-000000000001",
+          "term_id": "00000000-0000-4000-8000-000000000001",
+          "term": "1",
+          "type": "preferred",
+          "case_sensitive": false
+        },
+        "passed": true
+      },
+      {
+        "operation": "delete_term",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api.markup.ai/brand-terms/term-sets/00000000-0000-4000-8000-000000000001/terms/00000000-0000-4000-8000-000000000001",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /brand-terms/term-sets/{term_set_id}/terms/{term_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 204,
+            "response_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_term",
+          "term_set_id": "00000000-0000-4000-8000-000000000001",
+          "term_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_domains",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/brand-terms/domains?page=1&page_size=20&search=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /brand-terms/domains",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "5def83fb4743fd3c2125302f0da9a2c4df3915b5109705770231bc9de3912746"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_domains",
+          "page": 1,
+          "page_size": 20,
+          "search": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_personas",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/personas",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /personas",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "5d706243e1e2a1975764af2e475c1086beaaf1a44b1c9939931a99cb47e3cf19"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_personas"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_voice_profiles",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.markup.ai/brand-voice-profiles",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.markup.ai",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /brand-voice-profiles",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "7ded4c20890ce26090c082a6e51aa7df93ac4427e5e833c3086a39cda7e9f0d0"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_voice_profiles"
+        },
+        "passed": true
+      }
+    ]
+  }
+}

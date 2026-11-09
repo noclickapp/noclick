@@ -1,0 +1,1424 @@
+{
+  "$defs": {
+    "MarkupAiAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "markup_ai_api_key",
+          "default": "markup_ai_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Markup AI API Key",
+      "type": "object",
+      "x-credential-instructions": "In the Markup AI console, open API Keys and create an API key, then paste it here without the Bearer prefix. NoClick sends it only to api.markup.ai. Connecting reads your terminology domains. Your organization must have the Style Agent enabled to run style checks.",
+      "x-credential-url": "https://console.markup.ai"
+    },
+    "MarkupAiCancelWorkflowConfig": {
+      "additionalProperties": false,
+      "description": "Cancel Workflow.",
+      "properties": {
+        "operation": {
+          "const": "cancel_workflow",
+          "default": "cancel_workflow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workflow_id": {
+          "title": "Workflow Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "MarkupAiCancelWorkflowConfig",
+      "type": "object"
+    },
+    "MarkupAiCreateTermConfig": {
+      "additionalProperties": false,
+      "description": "Create Term.",
+      "properties": {
+        "operation": {
+          "const": "create_term",
+          "default": "create_term",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "term_set_id": {
+          "format": "uuid",
+          "title": "Term Set Id",
+          "type": "string"
+        },
+        "term": {
+          "title": "Term",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "preferred",
+            "prohibited"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "case_sensitive": {
+          "default": false,
+          "title": "Case Sensitive",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "term_set_id",
+        "term",
+        "type"
+      ],
+      "title": "MarkupAiCreateTermConfig",
+      "type": "object"
+    },
+    "MarkupAiCreateTermSetConfig": {
+      "additionalProperties": false,
+      "description": "Create Term Set.",
+      "properties": {
+        "operation": {
+          "const": "create_term_set",
+          "default": "create_term_set",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "context": {
+          "title": "Context",
+          "type": "string"
+        },
+        "term_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "preferred",
+                "prohibited"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term Type",
+          "enum": [
+            "preferred",
+            "prohibited"
+          ],
+          "x-enum-searchable": true
+        },
+        "context_polarity": {
+          "anyOf": [
+            {
+              "enum": [
+                "include",
+                "exclude"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Polarity",
+          "enum": [
+            "include",
+            "exclude"
+          ],
+          "x-enum-searchable": true
+        },
+        "terms": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/$defs/TermInput"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "title": "Terms",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "domain_ids": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "title": "Domain Ids",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "context"
+      ],
+      "title": "MarkupAiCreateTermSetConfig",
+      "type": "object"
+    },
+    "MarkupAiDeleteTermConfig": {
+      "additionalProperties": false,
+      "description": "Delete Term.",
+      "properties": {
+        "operation": {
+          "const": "delete_term",
+          "default": "delete_term",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "term_set_id": {
+          "format": "uuid",
+          "title": "Term Set Id",
+          "type": "string"
+        },
+        "term_id": {
+          "format": "uuid",
+          "title": "Term Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "term_set_id",
+        "term_id"
+      ],
+      "title": "MarkupAiDeleteTermConfig",
+      "type": "object"
+    },
+    "MarkupAiDeleteTermSetConfig": {
+      "additionalProperties": false,
+      "description": "Delete Term Set.",
+      "properties": {
+        "operation": {
+          "const": "delete_term_set",
+          "default": "delete_term_set",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "term_set_id": {
+          "format": "uuid",
+          "title": "Term Set Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "term_set_id"
+      ],
+      "title": "MarkupAiDeleteTermSetConfig",
+      "type": "object"
+    },
+    "MarkupAiGetAgentConfig": {
+      "additionalProperties": false,
+      "description": "Get Agent.",
+      "properties": {
+        "operation": {
+          "const": "get_agent",
+          "default": "get_agent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "title": "Agent Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "MarkupAiGetAgentConfig",
+      "type": "object"
+    },
+    "MarkupAiGetPersonaConfig": {
+      "additionalProperties": false,
+      "description": "Get Persona.",
+      "properties": {
+        "operation": {
+          "const": "get_persona",
+          "default": "get_persona",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "persona_id": {
+          "format": "uuid",
+          "title": "Persona Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "persona_id"
+      ],
+      "title": "MarkupAiGetPersonaConfig",
+      "type": "object"
+    },
+    "MarkupAiGetStyleConfigConfig": {
+      "additionalProperties": false,
+      "description": "Get Style Agent Config.",
+      "properties": {
+        "operation": {
+          "const": "get_style_config",
+          "default": "get_style_config",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MarkupAiGetStyleConfigConfig",
+      "type": "object"
+    },
+    "MarkupAiGetStyleGuideConfig": {
+      "additionalProperties": false,
+      "description": "Get Style Guide.",
+      "properties": {
+        "operation": {
+          "const": "get_style_guide",
+          "default": "get_style_guide",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "style_guide_id": {
+          "title": "Style Guide Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "style_guide_id"
+      ],
+      "title": "MarkupAiGetStyleGuideConfig",
+      "type": "object"
+    },
+    "MarkupAiGetStyleWorkflowConfig": {
+      "additionalProperties": false,
+      "description": "Get Style Agent Workflow.",
+      "properties": {
+        "operation": {
+          "const": "get_style_workflow",
+          "default": "get_style_workflow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workflow_id": {
+          "title": "Workflow Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "MarkupAiGetStyleWorkflowConfig",
+      "type": "object"
+    },
+    "MarkupAiGetTermConfig": {
+      "additionalProperties": false,
+      "description": "Get Term.",
+      "properties": {
+        "operation": {
+          "const": "get_term",
+          "default": "get_term",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "term_set_id": {
+          "format": "uuid",
+          "title": "Term Set Id",
+          "type": "string"
+        },
+        "term_id": {
+          "format": "uuid",
+          "title": "Term Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "term_set_id",
+        "term_id"
+      ],
+      "title": "MarkupAiGetTermConfig",
+      "type": "object"
+    },
+    "MarkupAiGetTermSetConfig": {
+      "additionalProperties": false,
+      "description": "Get Term Set.",
+      "properties": {
+        "operation": {
+          "const": "get_term_set",
+          "default": "get_term_set",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "term_set_id": {
+          "format": "uuid",
+          "title": "Term Set Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "term_set_id"
+      ],
+      "title": "MarkupAiGetTermSetConfig",
+      "type": "object"
+    },
+    "MarkupAiGetWorkflowConfig": {
+      "additionalProperties": false,
+      "description": "Get Workflow Status.",
+      "properties": {
+        "operation": {
+          "const": "get_workflow",
+          "default": "get_workflow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workflow_id": {
+          "title": "Workflow Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "MarkupAiGetWorkflowConfig",
+      "type": "object"
+    },
+    "MarkupAiListAgentsConfig": {
+      "additionalProperties": false,
+      "description": "List Agents.",
+      "properties": {
+        "operation": {
+          "const": "list_agents",
+          "default": "list_agents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "include_unavailable": {
+          "default": false,
+          "title": "Include Unavailable",
+          "type": "boolean"
+        }
+      },
+      "title": "MarkupAiListAgentsConfig",
+      "type": "object"
+    },
+    "MarkupAiListContentProfilesConfig": {
+      "additionalProperties": false,
+      "description": "List Style Agent Content Profiles.",
+      "properties": {
+        "operation": {
+          "const": "list_content_profiles",
+          "default": "list_content_profiles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MarkupAiListContentProfilesConfig",
+      "type": "object"
+    },
+    "MarkupAiListDomainsConfig": {
+      "additionalProperties": false,
+      "description": "List Domains.",
+      "properties": {
+        "operation": {
+          "const": "list_domains",
+          "default": "list_domains",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "MarkupAiListDomainsConfig",
+      "type": "object"
+    },
+    "MarkupAiListPersonasConfig": {
+      "additionalProperties": false,
+      "description": "List Personas.",
+      "properties": {
+        "operation": {
+          "const": "list_personas",
+          "default": "list_personas",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MarkupAiListPersonasConfig",
+      "type": "object"
+    },
+    "MarkupAiListStyleGuidesConfig": {
+      "additionalProperties": false,
+      "description": "List Style Guides.",
+      "properties": {
+        "operation": {
+          "const": "list_style_guides",
+          "default": "list_style_guides",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MarkupAiListStyleGuidesConfig",
+      "type": "object"
+    },
+    "MarkupAiListTermSetsConfig": {
+      "additionalProperties": false,
+      "description": "List Term Sets.",
+      "properties": {
+        "operation": {
+          "const": "list_term_sets",
+          "default": "list_term_sets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search_term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Term"
+        },
+        "domain_ids": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "title": "Domain Ids",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "has_context": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Has Context"
+        }
+      },
+      "title": "MarkupAiListTermSetsConfig",
+      "type": "object"
+    },
+    "MarkupAiListVoiceProfilesConfig": {
+      "additionalProperties": false,
+      "description": "List Profiles.",
+      "properties": {
+        "operation": {
+          "const": "list_voice_profiles",
+          "default": "list_voice_profiles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MarkupAiListVoiceProfilesConfig",
+      "type": "object"
+    },
+    "MarkupAiRunAgentConfig": {
+      "additionalProperties": false,
+      "description": "Run Agent.",
+      "properties": {
+        "operation": {
+          "const": "run_agent",
+          "default": "run_agent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "title": "Agent Id",
+          "type": "string"
+        },
+        "wait": {
+          "default": false,
+          "title": "Wait",
+          "type": "boolean"
+        },
+        "agents": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "description": "Agent IDs to execute. Resolved to agent names server-side.",
+          "title": "Agents",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "domain_ids": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "description": "Terminology domain IDs.",
+          "title": "Domain Ids",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "document_ref": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Caller-provided document identifier for tracking across scans.",
+          "title": "Document Ref"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document URL.",
+          "title": "Url"
+        },
+        "document_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document name or title.",
+          "title": "Document Name"
+        },
+        "style_guide_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Style guide ID to check the document against. ``target_id`` is a deprecated alias for this field; send exactly one of the two names.",
+          "title": "Style Guide Id"
+        },
+        "content_profile_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language-service content profile ID for style checking.",
+          "title": "Content Profile Id"
+        },
+        "goal": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document goal for agent recommendation.",
+          "title": "Goal"
+        },
+        "persona_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Agent configuration UUID for persona selection. Used by: persona. Retrieve valid IDs from GET /personas.",
+          "title": "Persona Id"
+        },
+        "persona_ids": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "description": "Persona UUIDs to analyze against, max 3. Used by: persona. Send this or persona_id, not both. Retrieve valid IDs from GET /personas.",
+          "title": "Persona Ids",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "no_personas": {
+          "default": false,
+          "description": "Review the document without any reader's perspective. Set this when no persona was chosen on purpose; leave it unset to let the review pick the readers a document is written for. Cannot be sent with persona_ids.",
+          "title": "No Personas",
+          "type": "boolean"
+        },
+        "voice_profile_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Agent configuration UUID for brand voice profile selection. Used by: brand_voice. Retrieve valid IDs from GET /brand-voice-profiles.",
+          "title": "Voice Profile Id"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional webhook URL for async result delivery.",
+          "title": "Webhook Url"
+        },
+        "text": {
+          "description": "Document text to analyze.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "issues": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "description": "Issues from a previous run to act on, each exactly as returned in that run's result. Supported by agents that apply or rework existing findings; when provided, such an agent works from these instead of re-detecting. Positions must refer to the ``text`` in this request. Other agents ignore this field.",
+          "title": "Issues",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "generate_fixes": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, agents that apply existing findings also draft a fix for findings that carry no suggested replacement. Every drafted fix is verified in context before it is applied; a finding whose draft fails that verification is returned unapplied and its text is left unchanged. Off by default. Other agents ignore this field.",
+          "title": "Generate Fixes"
+        }
+      },
+      "required": [
+        "agent_id",
+        "text"
+      ],
+      "title": "MarkupAiRunAgentConfig",
+      "type": "object"
+    },
+    "MarkupAiRunStyleCheckConfig": {
+      "additionalProperties": false,
+      "description": "Run Style Agent.",
+      "properties": {
+        "operation": {
+          "const": "run_style_check",
+          "default": "run_style_check",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "wait": {
+          "default": false,
+          "title": "Wait",
+          "type": "boolean"
+        },
+        "style_guide_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Style guide ID to check the document against. ``target_id`` is a deprecated alias for this field; send exactly one of the two names.",
+          "title": "Style Guide Id"
+        },
+        "content_profile_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language-service content profile ID for style checking.",
+          "title": "Content Profile Id"
+        },
+        "domain_ids": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "description": "Terminology domain IDs.",
+          "title": "Domain Ids",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "document_ref": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Caller-provided document identifier for tracking across scans.",
+          "title": "Document Ref"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document URL.",
+          "title": "Url"
+        },
+        "document_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document name or title.",
+          "title": "Document Name"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional webhook URL for async result delivery.",
+          "title": "Webhook Url"
+        },
+        "text": {
+          "description": "Document text to analyze.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "MarkupAiRunStyleCheckConfig",
+      "type": "object"
+    },
+    "MarkupAiSearchTerminologyConfig": {
+      "additionalProperties": false,
+      "description": "Search Terminology.",
+      "properties": {
+        "operation": {
+          "const": "search_terminology",
+          "default": "search_terminology",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "title": "Query",
+          "type": "string"
+        },
+        "domain_ids": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "title": "Domain Ids",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "MarkupAiSearchTerminologyConfig",
+      "type": "object"
+    },
+    "MarkupAiUpdateTermConfig": {
+      "additionalProperties": false,
+      "description": "Update Term.",
+      "properties": {
+        "operation": {
+          "const": "update_term",
+          "default": "update_term",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "term_set_id": {
+          "format": "uuid",
+          "title": "Term Set Id",
+          "type": "string"
+        },
+        "term_id": {
+          "format": "uuid",
+          "title": "Term Id",
+          "type": "string"
+        },
+        "term": {
+          "title": "Term",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "preferred",
+            "prohibited"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "case_sensitive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Case Sensitive"
+        }
+      },
+      "required": [
+        "term_set_id",
+        "term_id",
+        "term",
+        "type"
+      ],
+      "title": "MarkupAiUpdateTermConfig",
+      "type": "object"
+    },
+    "MarkupAiUpdateTermSetConfig": {
+      "additionalProperties": false,
+      "description": "Update Term Set.",
+      "properties": {
+        "operation": {
+          "const": "update_term_set",
+          "default": "update_term_set",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "term_set_id": {
+          "format": "uuid",
+          "title": "Term Set Id",
+          "type": "string"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context"
+        },
+        "term_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "preferred",
+                "prohibited"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term Type",
+          "enum": [
+            "preferred",
+            "prohibited"
+          ],
+          "x-enum-searchable": true
+        },
+        "context_polarity": {
+          "anyOf": [
+            {
+              "enum": [
+                "include",
+                "exclude"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Polarity",
+          "enum": [
+            "include",
+            "exclude"
+          ],
+          "x-enum-searchable": true
+        },
+        "domain_ids": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "title": "Domain Ids",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "clear_context": {
+          "default": false,
+          "description": "Clear the term set context by sending JSON null. Leave context unset when using this option.",
+          "title": "Clear Context",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "term_set_id"
+      ],
+      "title": "MarkupAiUpdateTermSetConfig",
+      "type": "object"
+    },
+    "TermInput": {
+      "additionalProperties": false,
+      "properties": {
+        "term": {
+          "title": "Term",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "preferred",
+            "prohibited"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "case_sensitive": {
+          "default": false,
+          "title": "Case Sensitive",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "term",
+        "type"
+      ],
+      "title": "TermInput",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_workflow": "#/$defs/MarkupAiCancelWorkflowConfig",
+          "create_term": "#/$defs/MarkupAiCreateTermConfig",
+          "create_term_set": "#/$defs/MarkupAiCreateTermSetConfig",
+          "delete_term": "#/$defs/MarkupAiDeleteTermConfig",
+          "delete_term_set": "#/$defs/MarkupAiDeleteTermSetConfig",
+          "get_agent": "#/$defs/MarkupAiGetAgentConfig",
+          "get_persona": "#/$defs/MarkupAiGetPersonaConfig",
+          "get_style_config": "#/$defs/MarkupAiGetStyleConfigConfig",
+          "get_style_guide": "#/$defs/MarkupAiGetStyleGuideConfig",
+          "get_style_workflow": "#/$defs/MarkupAiGetStyleWorkflowConfig",
+          "get_term": "#/$defs/MarkupAiGetTermConfig",
+          "get_term_set": "#/$defs/MarkupAiGetTermSetConfig",
+          "get_workflow": "#/$defs/MarkupAiGetWorkflowConfig",
+          "list_agents": "#/$defs/MarkupAiListAgentsConfig",
+          "list_content_profiles": "#/$defs/MarkupAiListContentProfilesConfig",
+          "list_domains": "#/$defs/MarkupAiListDomainsConfig",
+          "list_personas": "#/$defs/MarkupAiListPersonasConfig",
+          "list_style_guides": "#/$defs/MarkupAiListStyleGuidesConfig",
+          "list_term_sets": "#/$defs/MarkupAiListTermSetsConfig",
+          "list_voice_profiles": "#/$defs/MarkupAiListVoiceProfilesConfig",
+          "run_agent": "#/$defs/MarkupAiRunAgentConfig",
+          "run_style_check": "#/$defs/MarkupAiRunStyleCheckConfig",
+          "search_terminology": "#/$defs/MarkupAiSearchTerminologyConfig",
+          "update_term": "#/$defs/MarkupAiUpdateTermConfig",
+          "update_term_set": "#/$defs/MarkupAiUpdateTermSetConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MarkupAiGetStyleConfigConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiListStyleGuidesConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiGetStyleGuideConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiListContentProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiRunStyleCheckConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiGetStyleWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiListAgentsConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiGetAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiRunAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiGetPersonaConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiGetWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiCancelWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiSearchTerminologyConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiListTermSetsConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiCreateTermSetConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiGetTermSetConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiUpdateTermSetConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiDeleteTermSetConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiCreateTermConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiGetTermConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiUpdateTermConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiDeleteTermConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiListDomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiListPersonasConfig"
+        },
+        {
+          "$ref": "#/$defs/MarkupAiListVoiceProfilesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MarkupAiAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Markup-ai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
