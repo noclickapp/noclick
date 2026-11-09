@@ -160,3 +160,120 @@ def test_manual_credential_default_and_all_user_fields():
     cred = native.CoinbaseExchangeCredential.model_validate(credential())
     assert cred.credential_type == 'coinbase_exchange_api_key'
     assert set(cred.model_dump()) == {'credential_type', 'api_key', 'api_secret', 'passphrase'}
+
+
+POLL_CASES = [
+    ('on_new_order', {'product_id': 'BTC-USD'}, 'apiOrder', '/orders'),
+    ('on_new_fill', {'product_id': 'BTC-USD'}, 'apiOrderFill', '/fills'),
+    ('on_new_ledger_entry', {'account_id': EXAMPLES['apiAccount']['id']},
+     'apiAccountLedgerEntry', '/accounts/' + EXAMPLES['apiAccount']['id'] + '/ledger'),
+]
+
+
+def poll_node(operation, config):
+    return NodeFactory.create_node(node_id='coinbase-poll', node_type='automation-coinbase',
+        node_data={'config': {'operation': operation, **config}, 'credentials': credential()})
+
+
+def poll_state(instance, state):
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+    instance._update_node_state = update
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('operation,config,schema,path', POLL_CASES)
+async def test_documented_activity_baselines_then_fires_once(monkeypatch, operation, config, schema, path):
+    # The fixture is copied from the official Exchange OpenAPI response example.
+    payload = [EXAMPLES[schema]]
+    requests = transport(monkeypatch, lambda req: httpx.Response(200, json=payload))
+    instance = poll_node(operation, config)
+    state = {}
+    poll_state(instance, state)
+    baseline = await instance.execute({})
+    assert baseline['data'] == [] and instance.trigger_produced_no_event(baseline)
+    assert instance.resolve_agent_event(baseline) is None
+    state['seen_ids'] = []  # established empty baseline before this documented item arrived
+    result = await instance.execute({})
+    assert result['data'] == payload and result['new_item_count'] == 1
+    assert instance.trigger_emitted_event(result)
+    event = instance.resolve_agent_event(result)
+    assert 'Coinbase Exchange' in event['text'] and payload[0]['created_at'] in event['text']
+    if operation == 'on_new_fill':
+        assert payload[0]['order_id'] in event['text'] and str(payload[0]['trade_id']) in event['text']
+    else:
+        assert payload[0]['id'] in event['text']
+    duplicate = await instance.execute({})
+    assert duplicate['data'] == [] and instance.trigger_produced_no_event(duplicate)
+    request = requests[1]
+    assert request.method == 'GET' and request.url.path == path
+    params = dict(request.url.params)
+    assert params['limit'] == '100' and 'start_date' in params
+    assert set(params) == ({'limit', 'start_date', 'status', 'sortedBy', 'sorting', 'product_id'}
+                           if operation == 'on_new_order' else
+                           {'limit', 'start_date', 'product_id'} if operation == 'on_new_fill' else
+                           {'limit', 'start_date'})
+    message = request.headers['cb-access-timestamp'] + 'GET' + request.url.raw_path.decode()
+    expected = base64.b64encode(hmac.new(base64.b64decode(SECRET), message.encode(), hashlib.sha256).digest()).decode()
+    assert request.headers['cb-access-sign'] == expected
+
+
+@pytest.mark.asyncio
+async def test_activity_walks_pages_before_dedup_and_rebaselines_repoint(monkeypatch):
+    body = EXAMPLES['apiOrderFill']
+    requests = transport(monkeypatch, lambda req: httpx.Response(
+        200, json=[body], headers={'CB-AFTER': 'page-two'} if 'after' not in req.url.params else {}))
+    instance = poll_node('on_new_fill', {'product_id': 'BTC-USD', 'webhook_id': 'private-schedule-id'})
+    state = {'seen_ids': []}
+    poll_state(instance, state)
+    result = await instance.execute({})
+    assert result['new_item_count'] == 1 and len(requests) == 2
+    assert requests[1].url.params['after'] == 'page-two'
+    assert 'webhook_id' not in requests[0].url.params
+    changed = poll_node('on_new_fill', {'product_id': 'ETH-USD'})
+    poll_state(changed, state)
+    assert (await changed.execute({}))['new_item_count'] == 0
+    scope = instance.schedule_poll_scope({'operation': 'on_new_fill', 'product_id': 'ETH-USD'})
+    assert scope is not None
+    assert scope == instance.schedule_poll_scope(
+        {'operation': 'on_new_fill', 'product_id': 'ETH-USD', 'goal': 'cosmetic builder edit',
+         'schedule': {'frequency': 'minutes', 'interval': 10}})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('failure', ['cursor', 'overflow', 'bad-shape', 'missing-id', 'http-error'])
+async def test_activity_failure_never_advances_seen_state(monkeypatch, failure):
+    def reply(req):
+        if failure == 'bad-shape':
+            return httpx.Response(200, json={})
+        if failure == 'missing-id':
+            return httpx.Response(200, json=[{}])
+        if failure == 'http-error':
+            return httpx.Response(429, json={'message': 'too many requests'})
+        cursor = 'stuck' if failure == 'cursor' else str(int(req.url.params.get('after', '0')) + 1)
+        return httpx.Response(200, json=[EXAMPLES['apiOrder']], headers={'CB-AFTER': cursor})
+    requests = transport(monkeypatch, reply)
+    instance = poll_node('on_new_order', {})
+    state = {'seen_ids': []}
+    poll_state(instance, state)
+    with pytest.raises(ValueError):
+        await instance.execute({})
+    assert state == {'seen_ids': []}
+    assert len(requests) <= 20
+
+
+@pytest.mark.asyncio
+async def test_empty_activity_and_baseline_only_do_not_fire(monkeypatch):
+    transport(monkeypatch, lambda req: httpx.Response(200, json=[]))
+    instance = poll_node('on_new_order', {})
+    state = {'seen_ids': []}
+    poll_state(instance, state)
+    assert (await instance.execute({}))['new_item_count'] == 0
+    transport(monkeypatch, lambda req: httpx.Response(200, json=[EXAMPLES['apiOrder']]))
+    instance._poll_baseline_only = True
+    assert (await instance.execute({}))['new_item_count'] == 0
+    assert state['seen_ids'] == []

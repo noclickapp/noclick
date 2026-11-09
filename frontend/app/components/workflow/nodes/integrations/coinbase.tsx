@@ -13,7 +13,7 @@ const CoinbaseIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const CoinbaseNode: NodeDefinition = {
     type: 'automation-coinbase', category: 'finance-accounting', label: 'Coinbase',
-    description: 'Automate Coinbase Exchange accounts, orders, fills and market data',
+    description: 'Start workflows on new Coinbase Exchange orders, fills or account activity, and automate trading and market data',
     Icon: CoinbaseIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={CoinbaseIcon} iconColor="" />),
