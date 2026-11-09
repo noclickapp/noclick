@@ -22,6 +22,8 @@ export type DashboardTab = 'vite' | 'databases' | 'flow' | 'debug' | 'analytics'
 // account's resources and its connections. Each is `?tab=<id>` in the URL.
 export const SHELL_PAGE_TABS = ['chat', 'channels', 'resources', 'connections'] as const;
 export type ShellPageTab = (typeof SHELL_PAGE_TABS)[number];
+// Work's own params: the space, which of its views, and what's open there.
+export const WORK_PARAMS = ['space', 'show', 'channel', 'thread', 'agent', 'conversation', 'panel', 'machine', 'res', 'item'] as const;
 // Drill-down sections of the Activity page (?focus=). Kept here, next to the tab
 // vocabulary, so URL encoding and the tab component agree on the names.
 export const DASHBOARD_FOCUS_IDS = ['attention', 'runs', 'agents', 'triggers', 'upcoming', 'notifications'] as const;
