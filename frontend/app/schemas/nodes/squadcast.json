@@ -1,0 +1,768 @@
+{
+  "$defs": {
+    "AcknowledgeIncident": {
+      "additionalProperties": false,
+      "description": "Acknowledge an incident and stop its pending escalation.",
+      "properties": {
+        "operation": {
+          "const": "acknowledge_incident",
+          "default": "acknowledge_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "incident_id": {
+          "title": "Incident ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "AcknowledgeIncident",
+      "type": "object"
+    },
+    "CreateNote": {
+      "additionalProperties": false,
+      "description": "Add a note to an incident war room.",
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "incident_id": {
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 50000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "attachments": {
+          "description": "Existing SquadCast attachment references; this operation does not upload files.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Attachment References",
+          "type": "array"
+        }
+      },
+      "required": [
+        "incident_id",
+        "message"
+      ],
+      "title": "CreateNote",
+      "type": "object"
+    },
+    "CreateService": {
+      "additionalProperties": false,
+      "description": "Create a service for an owner and escalation policy.",
+      "properties": {
+        "operation": {
+          "const": "create_service",
+          "default": "create_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "owner_id": {
+          "title": "Owner ID",
+          "type": "string"
+        },
+        "escalation_policy_id": {
+          "title": "Escalation Policy ID",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name",
+        "owner_id",
+        "escalation_policy_id"
+      ],
+      "title": "CreateService",
+      "type": "object"
+    },
+    "GetIncident": {
+      "additionalProperties": false,
+      "description": "Read an incident by ID or number.",
+      "properties": {
+        "operation": {
+          "const": "get_incident",
+          "default": "get_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "incident_id": {
+          "title": "Incident ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "GetIncident",
+      "type": "object"
+    },
+    "GetSchedule": {
+      "additionalProperties": false,
+      "description": "Read an on-call schedule.",
+      "properties": {
+        "operation": {
+          "const": "get_schedule",
+          "default": "get_schedule",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "schedule_id": {
+          "title": "Schedule ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "GetSchedule",
+      "type": "object"
+    },
+    "GetService": {
+      "additionalProperties": false,
+      "description": "Read one service.",
+      "properties": {
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_id": {
+          "title": "Service ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_id"
+      ],
+      "title": "GetService",
+      "type": "object"
+    },
+    "GetTeam": {
+      "additionalProperties": false,
+      "description": "Read a team.",
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "title": "Team ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "GetTeam",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Read a user.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListIncidentEvents": {
+      "additionalProperties": false,
+      "description": "Read one page of incident events. Preserve meta.next for the next offset.",
+      "properties": {
+        "operation": {
+          "const": "list_incident_events",
+          "default": "list_incident_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "incident_id": {
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "offset": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "deduped": {
+          "default": "true",
+          "description": "True returns deduplicated events; false returns the original event.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Deduplicated Events",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "ListIncidentEvents",
+      "type": "object"
+    },
+    "ListNotes": {
+      "additionalProperties": false,
+      "description": "Read the notes in an incident war room.",
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "incident_id": {
+          "title": "Incident ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "ListNotes",
+      "type": "object"
+    },
+    "ListRunbooks": {
+      "additionalProperties": false,
+      "description": "Read the runbooks visible to this API token.",
+      "properties": {
+        "operation": {
+          "const": "list_runbooks",
+          "default": "list_runbooks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListRunbooks",
+      "type": "object"
+    },
+    "ListSchedules": {
+      "additionalProperties": false,
+      "description": "Read one page of team schedules. Use pageInfo.nextCursor to continue.",
+      "properties": {
+        "operation": {
+          "const": "list_schedules",
+          "default": "list_schedules",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "title": "Team ID",
+          "type": "string"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "my_on_call": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "My On Call"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "ListSchedules",
+      "type": "object"
+    },
+    "ListServices": {
+      "additionalProperties": false,
+      "description": "List services belonging to an explicit owner.",
+      "properties": {
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "owner_id": {
+          "title": "Owner ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service Name"
+        }
+      },
+      "required": [
+        "owner_id"
+      ],
+      "title": "ListServices",
+      "type": "object"
+    },
+    "ListTeamMembers": {
+      "additionalProperties": false,
+      "description": "Read the members of a team.",
+      "properties": {
+        "operation": {
+          "const": "list_team_members",
+          "default": "list_team_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "title": "Team ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "ListTeamMembers",
+      "type": "object"
+    },
+    "ListTeams": {
+      "additionalProperties": false,
+      "description": "List the account teams; also used to prove the connection.",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTeams",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "description": "List account users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "ReassignIncident": {
+      "additionalProperties": false,
+      "description": "Reassign an unresolved incident to a user, squad or escalation policy.",
+      "properties": {
+        "operation": {
+          "const": "reassign_incident",
+          "default": "reassign_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "incident_id": {
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "assignee_id": {
+          "title": "Assignee ID",
+          "type": "string"
+        },
+        "assignee_type": {
+          "enum": [
+            "user",
+            "escalationpolicy",
+            "squad"
+          ],
+          "title": "Assignee Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id",
+        "assignee_id",
+        "assignee_type"
+      ],
+      "title": "ReassignIncident",
+      "type": "object"
+    },
+    "ResolveIncident": {
+      "additionalProperties": false,
+      "description": "Resolve an incident with a resolution reason.",
+      "properties": {
+        "operation": {
+          "const": "resolve_incident",
+          "default": "resolve_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "incident_id": {
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "resolution_message": {
+          "maxLength": 50000,
+          "minLength": 1,
+          "title": "Resolution Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id",
+        "resolution_message"
+      ],
+      "title": "ResolveIncident",
+      "type": "object"
+    },
+    "SquadCastAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "squadcast_api_token",
+          "default": "squadcast_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "description": "Paste the API refresh token from My Profile, without a header prefix.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Refresh Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "us",
+          "description": "Choose the region where your SquadCast account is hosted.",
+          "enum": [
+            "us",
+            "eu"
+          ],
+          "title": "Account Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Squadcast API Token",
+      "type": "object",
+      "x-credential-instructions": "In SquadCast, open My Profile and generate an API refresh token. Paste that token and select your account region. Your role controls which reads and changes are allowed.",
+      "x-credential-url": "https://developers.squadcast.com/api/"
+    },
+    "UpdateIncidentPriority": {
+      "additionalProperties": false,
+      "description": "Change incident priority.",
+      "properties": {
+        "operation": {
+          "const": "update_incident_priority",
+          "default": "update_incident_priority",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "incident_id": {
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "priority": {
+          "enum": [
+            "P1",
+            "P2",
+            "P3",
+            "P4",
+            "P5"
+          ],
+          "title": "Priority",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id",
+        "priority"
+      ],
+      "title": "UpdateIncidentPriority",
+      "type": "object"
+    },
+    "UpdateService": {
+      "additionalProperties": false,
+      "description": "Update the selected service name, description or escalation policy.",
+      "properties": {
+        "operation": {
+          "const": "update_service",
+          "default": "update_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_id": {
+          "title": "Service ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "escalation_policy_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Escalation Policy ID"
+        }
+      },
+      "required": [
+        "service_id"
+      ],
+      "title": "UpdateService",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "acknowledge_incident": "#/$defs/AcknowledgeIncident",
+          "create_note": "#/$defs/CreateNote",
+          "create_service": "#/$defs/CreateService",
+          "get_incident": "#/$defs/GetIncident",
+          "get_schedule": "#/$defs/GetSchedule",
+          "get_service": "#/$defs/GetService",
+          "get_team": "#/$defs/GetTeam",
+          "get_user": "#/$defs/GetUser",
+          "list_incident_events": "#/$defs/ListIncidentEvents",
+          "list_notes": "#/$defs/ListNotes",
+          "list_runbooks": "#/$defs/ListRunbooks",
+          "list_schedules": "#/$defs/ListSchedules",
+          "list_services": "#/$defs/ListServices",
+          "list_team_members": "#/$defs/ListTeamMembers",
+          "list_teams": "#/$defs/ListTeams",
+          "list_users": "#/$defs/ListUsers",
+          "reassign_incident": "#/$defs/ReassignIncident",
+          "resolve_incident": "#/$defs/ResolveIncident",
+          "update_incident_priority": "#/$defs/UpdateIncidentPriority",
+          "update_service": "#/$defs/UpdateService"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetIncident"
+        },
+        {
+          "$ref": "#/$defs/AcknowledgeIncident"
+        },
+        {
+          "$ref": "#/$defs/ResolveIncident"
+        },
+        {
+          "$ref": "#/$defs/ReassignIncident"
+        },
+        {
+          "$ref": "#/$defs/UpdateIncidentPriority"
+        },
+        {
+          "$ref": "#/$defs/CreateNote"
+        },
+        {
+          "$ref": "#/$defs/ListNotes"
+        },
+        {
+          "$ref": "#/$defs/ListIncidentEvents"
+        },
+        {
+          "$ref": "#/$defs/ListServices"
+        },
+        {
+          "$ref": "#/$defs/GetService"
+        },
+        {
+          "$ref": "#/$defs/CreateService"
+        },
+        {
+          "$ref": "#/$defs/UpdateService"
+        },
+        {
+          "$ref": "#/$defs/ListTeams"
+        },
+        {
+          "$ref": "#/$defs/GetTeam"
+        },
+        {
+          "$ref": "#/$defs/ListTeamMembers"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/ListSchedules"
+        },
+        {
+          "$ref": "#/$defs/GetSchedule"
+        },
+        {
+          "$ref": "#/$defs/ListRunbooks"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SquadCastAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Squadcast Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

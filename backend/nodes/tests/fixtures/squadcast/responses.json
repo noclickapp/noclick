@@ -1,0 +1,7 @@
+{
+  "auth": {"data": {"access_token": "fixture-access-token", "refresh_token": "fixture-refresh-token", "expires_at": 1900000000, "issued_at": 1800000000, "type": "bearer"}},
+  "record": {"data": {"id": "i1", "name": "API"}},
+  "list": {"data": [{"id": "t1", "name": "Operations"}]},
+  "events": {"data": {"events": [{"id": "e1"}]}, "meta": {"total": 11, "count": 10, "current": "1", "next": "11"}},
+  "schedules": {"data": [{"id": 123, "name": "Primary"}], "pageInfo": {"hasNext": true, "hasPrev": false, "pageSize": 20, "nextCursor": "opaque-next"}}
+}
