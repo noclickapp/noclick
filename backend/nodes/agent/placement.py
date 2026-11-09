@@ -9,9 +9,7 @@ names): both runtimes mount each one read-write beside the workspace.
 ``execute_bash``. ``_sandboxNetwork`` is the hosts its sandboxes' code may
 reach (``*.d`` covers ``d`` and the names under it; none: no network beyond
 what the agent itself needs, which the runtime adds); unset, anywhere. A
-runtime that can't enforce it never takes it. ``_sessionGeneration`` is which of
-its conversation's harness session stores a coding harness resumes (a revert
-starts the next one); unset, the first. ``_sandboxSkills`` is the
+runtime that can't enforce it never takes it. ``_sandboxSkills`` is the
 skills a coding harness finds where it reads skills (``[{skill_id,
 account_user_id, version, name, digest, files}]``, ``files`` each version's
 ``[{path, size, sha256}]``), written at its sandbox's cold start.
@@ -27,7 +25,6 @@ SANDBOX_REGION_KEY = "_sandboxRegion"
 SANDBOX_VOLUMES_KEY = "_sandboxVolumes"
 NO_SHELL_KEY = "_noShell"
 SANDBOX_NETWORK_KEY = "_sandboxNetwork"
-SESSION_GENERATION_KEY = "_sessionGeneration"
 SANDBOX_SKILLS_KEY = "_sandboxSkills"
 SESSION_GENERATION_KEY = "_sessionGeneration"
 SANDBOX_SKILLS_KEY = "_sandboxSkills"
