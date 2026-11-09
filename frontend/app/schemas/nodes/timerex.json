@@ -1,0 +1,431 @@
+{
+  "$defs": {
+    "CancelEvent": {
+      "additionalProperties": false,
+      "description": "Cancel a real event. This can notify attendees; inspect before retrying.",
+      "properties": {
+        "operation": {
+          "const": "cancel_event",
+          "default": "cancel_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "cancellation_reason": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancellation Reason"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "CancelEvent",
+      "type": "object"
+    },
+    "CreateOneTimeURL": {
+      "additionalProperties": false,
+      "description": "Create a new single-use scheduling URL for a calendar.",
+      "properties": {
+        "operation": {
+          "const": "create_one_time_url",
+          "default": "create_one_time_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "calendar_id": {
+          "title": "Calendar Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "CreateOneTimeURL",
+      "type": "object"
+    },
+    "GetCalendar": {
+      "additionalProperties": false,
+      "description": "Get one scheduling calendar.",
+      "properties": {
+        "operation": {
+          "const": "get_calendar",
+          "default": "get_calendar",
+          "title": "Operation",
+          "type": "string"
+        },
+        "calendar_id": {
+          "title": "Calendar Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "GetCalendar",
+      "type": "object"
+    },
+    "GetEvent": {
+      "additionalProperties": false,
+      "description": "Get event details, including guest form and meeting information.",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetOneTimeURL": {
+      "additionalProperties": false,
+      "description": "Get a single-use scheduling URL and its booking status.",
+      "properties": {
+        "operation": {
+          "const": "get_one_time_url",
+          "default": "get_one_time_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "one_time_url_id": {
+          "title": "One Time Url Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "one_time_url_id"
+      ],
+      "title": "GetOneTimeURL",
+      "type": "object"
+    },
+    "GetPrimaryTeam": {
+      "additionalProperties": false,
+      "description": "Get the team that issued the API key; also proves the connection.",
+      "properties": {
+        "operation": {
+          "const": "get_primary_team",
+          "default": "get_primary_team",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetPrimaryTeam",
+      "type": "object"
+    },
+    "GetTeam": {
+      "additionalProperties": false,
+      "description": "Get a team by its internal TimeRex ID.",
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Operation",
+          "type": "string"
+        },
+        "team_id": {
+          "title": "Team Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "GetTeam",
+      "type": "object"
+    },
+    "ListCalendars": {
+      "additionalProperties": false,
+      "description": "List a team's calendars, excluding restricted folders.",
+      "properties": {
+        "nextPageToken": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextPageToken from the previous response. Returns one page only.",
+          "title": "Nextpagetoken"
+        },
+        "operation": {
+          "const": "list_calendars",
+          "default": "list_calendars",
+          "title": "Operation",
+          "type": "string"
+        },
+        "team_id": {
+          "description": "Team ID, or primary for the issuing team's personal space.",
+          "title": "Team Id",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "ListCalendars",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "description": "List one page of calendar events within optional UTC bounds.",
+      "properties": {
+        "nextPageToken": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextPageToken from the previous response. Returns one page only.",
+          "title": "Nextpagetoken"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string"
+        },
+        "calendar_id": {
+          "title": "Calendar Id",
+          "type": "string"
+        },
+        "startTime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UTC start datetime, e.g. 2023-12-19 15:00:00.",
+          "title": "Starttime"
+        },
+        "endTime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UTC end datetime, e.g. 2023-12-19 16:00:00.",
+          "title": "Endtime"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListTeams": {
+      "additionalProperties": false,
+      "description": "List the team available to this API key, one page at a time.",
+      "properties": {
+        "nextPageToken": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextPageToken from the previous response. Returns one page only.",
+          "title": "Nextpagetoken"
+        },
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTeams",
+      "type": "object"
+    },
+    "TimeRexAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "timerex_api_key",
+          "default": "timerex_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "TimeRex API Key",
+      "type": "object",
+      "x-credential-instructions": "In TimeRex, open Dashboard \u2192 Team Settings \u2192 Developer Tools \u2192 TimeRex API. Create and copy the 64-character API key. Paste it here; it grants access only to the team that issued it. Enable API integration in that team's Security settings.",
+      "x-credential-url": "https://timerex.stoplight.io/docs/timerex-reference-api/86cyex2iwt9fj-authorization-with-api-key"
+    },
+    "WatchOneTimeURL": {
+      "additionalProperties": false,
+      "description": "Register an HTTPS endpoint for single-use URL updates.",
+      "properties": {
+        "operation": {
+          "const": "watch_one_time_url",
+          "default": "watch_one_time_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "one_time_url_id": {
+          "title": "One Time Url Id",
+          "type": "string"
+        },
+        "token": {
+          "description": "Your notification correlation token, echoed by TimeRex.",
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Token",
+          "type": "string"
+        },
+        "notification_url": {
+          "description": "Public HTTPS endpoint receiving TimeRex push notifications.",
+          "maxLength": 2048,
+          "title": "Notification Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "one_time_url_id",
+        "token",
+        "notification_url"
+      ],
+      "title": "WatchOneTimeURL",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_event": "#/$defs/CancelEvent",
+          "create_one_time_url": "#/$defs/CreateOneTimeURL",
+          "get_calendar": "#/$defs/GetCalendar",
+          "get_event": "#/$defs/GetEvent",
+          "get_one_time_url": "#/$defs/GetOneTimeURL",
+          "get_primary_team": "#/$defs/GetPrimaryTeam",
+          "get_team": "#/$defs/GetTeam",
+          "list_calendars": "#/$defs/ListCalendars",
+          "list_events": "#/$defs/ListEvents",
+          "list_teams": "#/$defs/ListTeams",
+          "watch_one_time_url": "#/$defs/WatchOneTimeURL"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetPrimaryTeam"
+        },
+        {
+          "$ref": "#/$defs/ListTeams"
+        },
+        {
+          "$ref": "#/$defs/GetTeam"
+        },
+        {
+          "$ref": "#/$defs/ListCalendars"
+        },
+        {
+          "$ref": "#/$defs/GetCalendar"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        },
+        {
+          "$ref": "#/$defs/CancelEvent"
+        },
+        {
+          "$ref": "#/$defs/GetOneTimeURL"
+        },
+        {
+          "$ref": "#/$defs/CreateOneTimeURL"
+        },
+        {
+          "$ref": "#/$defs/WatchOneTimeURL"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimeRexAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Timerex Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
