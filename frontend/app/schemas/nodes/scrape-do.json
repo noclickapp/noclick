@@ -1,0 +1,717 @@
+{
+  "$defs": {
+    "CancelJob": {
+      "additionalProperties": false,
+      "description": "Cancel a running job. Completed or canceled jobs can return HTTP 406.",
+      "properties": {
+        "job_id": {
+          "description": "UUID returned by Create Job",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_job",
+          "default": "cancel_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "CancelJob",
+      "type": "object"
+    },
+    "CreateJob": {
+      "additionalProperties": false,
+      "description": "Submit a batch of URLs for asynchronous scraping; does not wait for completion.",
+      "properties": {
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "targets": {
+          "description": "URLs to scrape, for example https://httpbin.co/anything.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Target URLs",
+          "type": "array"
+        },
+        "method": {
+          "default": "GET",
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "HEAD",
+            "DELETE"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "geo_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Geo Code"
+        },
+        "regional_geo_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Regional Geo Code"
+        },
+        "super_proxy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Residential proxies"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headers"
+        },
+        "forward_headers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Forward Headers"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        },
+        "device": {
+          "anyOf": [
+            {
+              "enum": [
+                "desktop",
+                "mobile",
+                "tablet"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device",
+          "enum": [
+            "desktop",
+            "mobile",
+            "tablet"
+          ],
+          "x-enum-searchable": true
+        },
+        "set_cookies": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Set Cookies"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeout (milliseconds)"
+        },
+        "retry_timeout": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retry timeout (milliseconds)"
+        },
+        "disable_retry": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Disable Retry"
+        },
+        "transparent_response": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transparent Response"
+        },
+        "disable_redirection": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Disable Redirection"
+        },
+        "output": {
+          "anyOf": [
+            {
+              "enum": [
+                "raw",
+                "markdown"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output",
+          "enum": [
+            "raw",
+            "markdown"
+          ],
+          "x-enum-searchable": true
+        },
+        "render": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RenderOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url"
+        },
+        "webhook_headers": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Headers"
+        }
+      },
+      "required": [
+        "targets"
+      ],
+      "title": "CreateJob",
+      "type": "object"
+    },
+    "GetJob": {
+      "additionalProperties": false,
+      "description": "Get job status and its task list.",
+      "properties": {
+        "job_id": {
+          "description": "UUID returned by Create Job",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJob",
+      "type": "object"
+    },
+    "GetMe": {
+      "additionalProperties": false,
+      "description": "Read account concurrency, active jobs and available credits.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetMe",
+      "type": "object"
+    },
+    "GetTask": {
+      "additionalProperties": false,
+      "description": "Retrieve a task's scraped content and metadata before it expires.",
+      "properties": {
+        "job_id": {
+          "description": "UUID returned by Create Job",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "minLength": 1,
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "task_id"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "ListJobs": {
+      "additionalProperties": false,
+      "description": "List one page of the connected account's jobs, with optional filters.",
+      "properties": {
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "queuing",
+                "queued",
+                "pending",
+                "rotating",
+                "success",
+                "error",
+                "canceled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "queuing",
+            "queued",
+            "pending",
+            "rotating",
+            "success",
+            "error",
+            "canceled"
+          ],
+          "x-enum-searchable": true
+        },
+        "start_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC3339 timestamp, e.g. 2025-01-01T00:00:00Z",
+          "title": "Start From"
+        },
+        "start_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC3339 timestamp, e.g. 2025-01-31T23:59:59Z",
+          "title": "Start To"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "start_time_asc",
+                "start_time_desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "start_time_asc",
+            "start_time_desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListJobs",
+      "type": "object"
+    },
+    "RenderOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "BlockResources": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blockresources"
+        },
+        "WaitUntil": {
+          "anyOf": [
+            {
+              "enum": [
+                "domcontentloaded",
+                "networkidle0",
+                "networkidle2"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Waituntil",
+          "enum": [
+            "domcontentloaded",
+            "networkidle0",
+            "networkidle2"
+          ],
+          "x-enum-searchable": true
+        },
+        "CustomWait": {
+          "anyOf": [
+            {
+              "maximum": 35000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customwait"
+        },
+        "WaitSelector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Waitselector"
+        },
+        "PlayWithBrowser": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Playwithbrowser"
+        },
+        "ReturnJSON": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Returnjson"
+        },
+        "ShowWebsocketRequests": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Showwebsocketrequests"
+        },
+        "ShowFrames": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Showframes"
+        },
+        "Screenshot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Screenshot"
+        },
+        "FullScreenshot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fullscreenshot"
+        },
+        "ParticularScreenshot": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Particularscreenshot"
+        }
+      },
+      "title": "RenderOptions",
+      "type": "object"
+    },
+    "ScrapeDoTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "scrape_do_api_token",
+          "default": "scrape_do_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Scrape Do API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste the API token from your Scrape.do dashboard. NoClick sends it in the X-Token header to the Async API.",
+      "x-credential-url": "https://dashboard.scrape.do/"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_job": "#/$defs/CancelJob",
+          "create_job": "#/$defs/CreateJob",
+          "get_job": "#/$defs/GetJob",
+          "get_me": "#/$defs/GetMe",
+          "get_task": "#/$defs/GetTask",
+          "list_jobs": "#/$defs/ListJobs"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreateJob"
+        },
+        {
+          "$ref": "#/$defs/ListJobs"
+        },
+        {
+          "$ref": "#/$defs/GetJob"
+        },
+        {
+          "$ref": "#/$defs/CancelJob"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/GetMe"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ScrapeDoTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Scrape-do Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
