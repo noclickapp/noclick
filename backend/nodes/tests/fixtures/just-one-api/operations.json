@@ -1,0 +1,327 @@
+{
+  "get_weibo_hot_search": {
+    "method": "GET",
+    "path": "/api/weibo/hot-search/v1",
+    "mode": "query",
+    "fields": {},
+    "config": {
+      "operation": "get_weibo_hot_search"
+    },
+    "contract_operation_id": "getApiWeiboHotSearchV1"
+  },
+  "search_douyin_videos": {
+    "method": "GET",
+    "path": "/api/douyin/search-video/v4",
+    "mode": "query",
+    "fields": {
+      "keyword": "keyword",
+      "sort_type": "sortType",
+      "publish_time": "publishTime",
+      "duration": "duration",
+      "page": "page",
+      "search_id": "searchId"
+    },
+    "config": {
+      "operation": "search_douyin_videos",
+      "keyword": "coffee",
+      "sort_type": "_0",
+      "publish_time": "_0",
+      "duration": "_0",
+      "page": 1,
+      "search_id": null
+    },
+    "contract_operation_id": "getApiDouyinSearchVideoV4"
+  },
+  "get_douyin_video": {
+    "method": "GET",
+    "path": "/api/douyin/get-video-detail/v2",
+    "mode": "query",
+    "fields": {
+      "video_id": "videoId"
+    },
+    "config": {
+      "operation": "get_douyin_video",
+      "video_id": "dQw4w9WgXcQ"
+    },
+    "contract_operation_id": "getApiDouyinGetVideoDetailV2"
+  },
+  "get_douyin_user": {
+    "method": "GET",
+    "path": "/api/douyin/get-user-detail/v3",
+    "mode": "query",
+    "fields": {
+      "sec_uid": "secUid"
+    },
+    "config": {
+      "operation": "get_douyin_user",
+      "sec_uid": "123456789"
+    },
+    "contract_operation_id": "getApiDouyinGetUserDetailV3"
+  },
+  "search_rednote_notes": {
+    "method": "GET",
+    "path": "/api/xiaohongshu/search-note/v4",
+    "mode": "query",
+    "fields": {
+      "keyword": "keyword",
+      "page": "page",
+      "sort_type": "sortType",
+      "note_type": "noteType",
+      "time_filter": "timeFilter"
+    },
+    "config": {
+      "operation": "search_rednote_notes",
+      "keyword": "coffee",
+      "page": 1,
+      "sort_type": "general",
+      "note_type": "ALL",
+      "time_filter": "ALL"
+    },
+    "contract_operation_id": "getApiXiaohongshuSearchNoteV4"
+  },
+  "get_rednote_note": {
+    "method": "GET",
+    "path": "/api/xiaohongshu/get-note-detail/v6",
+    "mode": "query",
+    "fields": {
+      "note_id": "noteId"
+    },
+    "config": {
+      "operation": "get_rednote_note",
+      "note_id": "123456789"
+    },
+    "contract_operation_id": "getApiXiaohongshuGetNoteDetailV6"
+  },
+  "get_weibo_post": {
+    "method": "GET",
+    "path": "/api/weibo/get-weibo-detail/v1",
+    "mode": "query",
+    "fields": {
+      "id": "id"
+    },
+    "config": {
+      "operation": "get_weibo_post",
+      "id": "123456789"
+    },
+    "contract_operation_id": "getApiWeiboGetWeiboDetailV1"
+  },
+  "search_taobao_products": {
+    "method": "GET",
+    "path": "/api/taobao/search-item-list/v2",
+    "mode": "query",
+    "fields": {
+      "keyword": "keyword",
+      "page": "page"
+    },
+    "config": {
+      "operation": "search_taobao_products",
+      "keyword": "coffee",
+      "page": 1
+    },
+    "contract_operation_id": "getApiTaobaoSearchItemListV2"
+  },
+  "get_taobao_product": {
+    "method": "GET",
+    "path": "/api/taobao/get-item-detail/v9",
+    "mode": "query",
+    "fields": {
+      "item_id": "itemId"
+    },
+    "config": {
+      "operation": "get_taobao_product",
+      "item_id": "123456789"
+    },
+    "contract_operation_id": "getApiTaobaoGetItemDetailV9"
+  },
+  "get_jd_product": {
+    "method": "GET",
+    "path": "/api/jd/get-item-detail/v4",
+    "mode": "query",
+    "fields": {
+      "item_id": "itemId"
+    },
+    "config": {
+      "operation": "get_jd_product",
+      "item_id": "123456789"
+    },
+    "contract_operation_id": "getApiJdGetItemDetailV4"
+  },
+  "search_1688_products": {
+    "method": "GET",
+    "path": "/api/1688/search-item-list/v2",
+    "mode": "query",
+    "fields": {
+      "keyword": "keyword",
+      "page": "page",
+      "page_size": "pageSize",
+      "sort": "sort",
+      "moq": "moq",
+      "price_start": "priceStart",
+      "price_end": "priceEnd",
+      "new_arrival": "newArrival",
+      "support_dropshipping": "supportDropshipping",
+      "free_shipping": "freeShipping",
+      "is_super_factory": "isSuperFactory"
+    },
+    "config": {
+      "operation": "search_1688_products",
+      "keyword": "coffee",
+      "page": 1,
+      "page_size": 20,
+      "sort": "default",
+      "moq": null,
+      "price_start": null,
+      "price_end": null,
+      "new_arrival": null,
+      "support_dropshipping": null,
+      "free_shipping": null,
+      "is_super_factory": null
+    },
+    "contract_operation_id": "getApi1688SearchItemListV2"
+  },
+  "convert_1688_image": {
+    "method": "POST",
+    "path": "/api/1688/convert-image/v1",
+    "mode": "json",
+    "fields": {
+      "url": "url",
+      "search_api_endpoint": "searchApiEndpoint"
+    },
+    "config": {
+      "operation": "convert_1688_image",
+      "url": "https://example.com/image.jpg",
+      "search_api_endpoint": "standard"
+    },
+    "contract_operation_id": "postApi1688ConvertImageV1"
+  },
+  "search_wechat_articles": {
+    "method": "POST",
+    "path": "/api/weixin/search-article/v2",
+    "mode": "form",
+    "fields": {
+      "keyword": "keyword",
+      "sub_search_type": "subSearchType",
+      "current_page": "currentPage",
+      "offset": "offset",
+      "cookies_buffer": "cookies_buffer"
+    },
+    "config": {
+      "operation": "search_wechat_articles",
+      "keyword": "coffee",
+      "sub_search_type": "ALL",
+      "current_page": 1,
+      "offset": 0,
+      "cookies_buffer": ""
+    },
+    "contract_operation_id": "postApiWeixinSearchArticleV2"
+  },
+  "get_wechat_article": {
+    "method": "GET",
+    "path": "/api/weixin/get-article-detail/v5",
+    "mode": "query",
+    "fields": {
+      "article_url": "articleUrl"
+    },
+    "config": {
+      "operation": "get_wechat_article",
+      "article_url": "https://mp.weixin.qq.com/s/example"
+    },
+    "contract_operation_id": "getApiWeixinGetArticleDetailV5"
+  },
+  "search_youtube": {
+    "method": "GET",
+    "path": "/api/youtube/search/v1",
+    "mode": "query",
+    "fields": {
+      "keyword": "keyword",
+      "lang": "lang",
+      "upload_date": "uploadDate",
+      "duration": "duration",
+      "sort_by": "sortBy",
+      "next_token": "nextToken"
+    },
+    "config": {
+      "operation": "search_youtube",
+      "keyword": "coffee",
+      "lang": null,
+      "upload_date": "all",
+      "duration": "all",
+      "sort_by": "relevance",
+      "next_token": null
+    },
+    "contract_operation_id": "getApiYoutubeSearchV1"
+  },
+  "get_youtube_video": {
+    "method": "GET",
+    "path": "/api/youtube/get-video-detail/v1",
+    "mode": "query",
+    "fields": {
+      "video_id": "videoId",
+      "lang": "lang"
+    },
+    "config": {
+      "operation": "get_youtube_video",
+      "video_id": "dQw4w9WgXcQ",
+      "lang": null
+    },
+    "contract_operation_id": "getApiYoutubeGetVideoDetailV1"
+  },
+  "get_youtube_captions": {
+    "method": "GET",
+    "path": "/api/youtube/get-video-captions/v1",
+    "mode": "query",
+    "fields": {
+      "video_id": "videoId",
+      "language_code": "languageCode",
+      "format": "format"
+    },
+    "config": {
+      "operation": "get_youtube_captions",
+      "video_id": "dQw4w9WgXcQ",
+      "language_code": "",
+      "format": "srt"
+    },
+    "contract_operation_id": "getApiYoutubeGetVideoCaptionsV1"
+  },
+  "get_instagram_user": {
+    "method": "GET",
+    "path": "/api/instagram/get-user-detail/v2",
+    "mode": "query",
+    "fields": {
+      "username": "username"
+    },
+    "config": {
+      "operation": "get_instagram_user",
+      "username": "instagram"
+    },
+    "contract_operation_id": "getApiInstagramGetUserDetailV2"
+  },
+  "get_instagram_post": {
+    "method": "GET",
+    "path": "/api/instagram/get-post-detail/v1",
+    "mode": "query",
+    "fields": {
+      "code": "code"
+    },
+    "config": {
+      "operation": "get_instagram_post",
+      "code": "123456789"
+    },
+    "contract_operation_id": "getApiInstagramGetPostDetailV1"
+  },
+  "search_reddit": {
+    "method": "GET",
+    "path": "/api/reddit/search/v1",
+    "mode": "query",
+    "fields": {
+      "keyword": "keyword",
+      "after": "after"
+    },
+    "config": {
+      "operation": "search_reddit",
+      "keyword": "coffee",
+      "after": ""
+    },
+    "contract_operation_id": "getApiRedditSearchV1"
+  }
+}
