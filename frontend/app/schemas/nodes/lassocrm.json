@@ -1,0 +1,1129 @@
+{
+  "$defs": {
+    "LassoCRMAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "lassocrm_api_key",
+          "default": "lassocrm_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "LassoCRM API Key",
+      "type": "object",
+      "x-credential-instructions": "Ask your Lasso Data Systems business contact for a project/location API key. Paste the JWT token alone, without Bearer. NoClick sends it only to api.lassocrm.com. Reading registrants verifies access to that project's data.",
+      "x-credential-url": "https://platform.lassocrm.com/api/"
+    },
+    "LassoCRMAddEmailConfig": {
+      "additionalProperties": false,
+      "description": "Add one email to a registrant.",
+      "properties": {
+        "operation": {
+          "const": "add_email",
+          "default": "add_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "contact_type": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Type"
+        },
+        "primary": {
+          "default": false,
+          "title": "Primary",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "registrant_id",
+        "email"
+      ],
+      "title": "LassoCRMAddEmailConfig",
+      "type": "object"
+    },
+    "LassoCRMAddPhoneConfig": {
+      "additionalProperties": false,
+      "description": "Add one phone to a registrant.",
+      "properties": {
+        "operation": {
+          "const": "add_phone",
+          "default": "add_phone",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        },
+        "phone": {
+          "maxLength": 20,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "contact_type": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Type"
+        },
+        "primary": {
+          "default": false,
+          "title": "Primary",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "registrant_id",
+        "phone"
+      ],
+      "title": "LassoCRMAddPhoneConfig",
+      "type": "object"
+    },
+    "LassoCRMCreateActivityConfig": {
+      "additionalProperties": false,
+      "description": "Book a follow-up activity. Completed activities without completedBy are attributed to Lasso Autobot.",
+      "properties": {
+        "operation": {
+          "const": "create_activity",
+          "default": "create_activity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        },
+        "activity_type": {
+          "description": "Use a type from list_activity_types.",
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Activity Type",
+          "type": "string"
+        },
+        "details": {
+          "maxLength": 255,
+          "title": "Details",
+          "type": "string"
+        },
+        "activity_date": {
+          "format": "date",
+          "title": "Activity Date",
+          "type": "string"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "registrant_id",
+        "activity_type",
+        "details",
+        "activity_date",
+        "complete"
+      ],
+      "title": "LassoCRMCreateActivityConfig",
+      "type": "object"
+    },
+    "LassoCRMCreateAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Create an appointment using UTC-offset times. Does not request email confirmations or SMS reminders.",
+      "properties": {
+        "operation": {
+          "const": "create_appointment",
+          "default": "create_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "start_time": {
+          "format": "date-time",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "format": "date-time",
+          "title": "End Time",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "appointment_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "Open",
+                "Tentative",
+                "Confirmed",
+                "Cancelled",
+                "Completed",
+                "No Show"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Appointment Status",
+          "enum": [
+            "Open",
+            "Tentative",
+            "Confirmed",
+            "Cancelled",
+            "Completed",
+            "No Show"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "registrant_id",
+        "name",
+        "start_time",
+        "end_time"
+      ],
+      "title": "LassoCRMCreateAppointmentConfig",
+      "type": "object"
+    },
+    "LassoCRMCreateNoteConfig": {
+      "additionalProperties": false,
+      "description": "Append a free-form note to a registrant.",
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        },
+        "note": {
+          "description": "Lasso strips four-byte UTF-8 characters from notes.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registrant_id",
+        "note"
+      ],
+      "title": "LassoCRMCreateNoteConfig",
+      "type": "object"
+    },
+    "LassoCRMCreateRegistrantConfig": {
+      "additionalProperties": false,
+      "description": "Submit a new registrant; HTTP 202 acknowledges acceptance, not completed processing.",
+      "properties": {
+        "operation": {
+          "const": "create_registrant",
+          "default": "create_registrant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "contact_preference": {
+          "anyOf": [
+            {
+              "enum": [
+                "noPreference",
+                "any",
+                "email",
+                "mail",
+                "phone",
+                "text",
+                "noEmail",
+                "noContact"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Preference",
+          "enum": [
+            "noPreference",
+            "any",
+            "email",
+            "mail",
+            "phone",
+            "text",
+            "noEmail",
+            "noContact"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "automatically_merge": {
+          "default": true,
+          "description": "Lasso defaults to merging matching emails/phones. Set false to request a separate lead.",
+          "title": "Automatically Merge",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "LassoCRMCreateRegistrantConfig",
+      "type": "object"
+    },
+    "LassoCRMGetActivityConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve one registrant activity.",
+      "properties": {
+        "operation": {
+          "const": "get_activity",
+          "default": "get_activity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        },
+        "activity_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Activity Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registrant_id",
+        "activity_id"
+      ],
+      "title": "LassoCRMGetActivityConfig",
+      "type": "object"
+    },
+    "LassoCRMGetAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve one registrant appointment.",
+      "properties": {
+        "operation": {
+          "const": "get_appointment",
+          "default": "get_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        },
+        "appointment_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Appointment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registrant_id",
+        "appointment_id"
+      ],
+      "title": "LassoCRMGetAppointmentConfig",
+      "type": "object"
+    },
+    "LassoCRMGetContactInformationConfig": {
+      "additionalProperties": false,
+      "description": "Read email, phone and address collections.",
+      "properties": {
+        "operation": {
+          "const": "get_contact_information",
+          "default": "get_contact_information",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registrant_id"
+      ],
+      "title": "LassoCRMGetContactInformationConfig",
+      "type": "object"
+    },
+    "LassoCRMGetInventoryConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve full details for one inventory item.",
+      "properties": {
+        "operation": {
+          "const": "get_inventory",
+          "default": "get_inventory",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "inventory_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Inventory Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inventory_id"
+      ],
+      "title": "LassoCRMGetInventoryConfig",
+      "type": "object"
+    },
+    "LassoCRMGetProjectSettingsConfig": {
+      "additionalProperties": false,
+      "description": "Read settings, sales reps, ratings, source types and follow-up processes for this API key project.",
+      "properties": {
+        "operation": {
+          "const": "get_project_settings",
+          "default": "get_project_settings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "LassoCRMGetProjectSettingsConfig",
+      "type": "object"
+    },
+    "LassoCRMGetRegistrantConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve full registrant data; history bodies require their separate API.",
+      "properties": {
+        "operation": {
+          "const": "get_registrant",
+          "default": "get_registrant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registrant_id"
+      ],
+      "title": "LassoCRMGetRegistrantConfig",
+      "type": "object"
+    },
+    "LassoCRMListActivitiesConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve up to 150 activities, newest first; Lasso caps this endpoint at 150.",
+      "properties": {
+        "operation": {
+          "const": "list_activities",
+          "default": "list_activities",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registrant_id"
+      ],
+      "title": "LassoCRMListActivitiesConfig",
+      "type": "object"
+    },
+    "LassoCRMListActivityTypesConfig": {
+      "additionalProperties": false,
+      "description": "List available activity types for creating follow-up activities.",
+      "properties": {
+        "operation": {
+          "const": "list_activity_types",
+          "default": "list_activity_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "LassoCRMListActivityTypesConfig",
+      "type": "object"
+    },
+    "LassoCRMListAppointmentsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a registrant appointment list.",
+      "properties": {
+        "operation": {
+          "const": "list_appointments",
+          "default": "list_appointments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registrant_id"
+      ],
+      "title": "LassoCRMListAppointmentsConfig",
+      "type": "object"
+    },
+    "LassoCRMListInventoryConfig": {
+      "additionalProperties": false,
+      "description": "List project inventory.",
+      "properties": {
+        "operation": {
+          "const": "list_inventory",
+          "default": "list_inventory",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "LassoCRMListInventoryConfig",
+      "type": "object"
+    },
+    "LassoCRMListProjectAppointmentsConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of appointments for the project.",
+      "properties": {
+        "operation": {
+          "const": "list_project_appointments",
+          "default": "list_project_appointments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "title": "LassoCRMListProjectAppointmentsConfig",
+      "type": "object"
+    },
+    "LassoCRMListRegistrantsConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of registrants; use next_cursor for the next page.",
+      "properties": {
+        "operation": {
+          "const": "list_registrants",
+          "default": "list_registrants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "rating": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rating"
+        },
+        "last_modified_after": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Modified After"
+        },
+        "last_modified_before": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Modified Before"
+        },
+        "registered_after": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Registered After"
+        },
+        "registered_before": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Registered Before"
+        }
+      },
+      "title": "LassoCRMListRegistrantsConfig",
+      "type": "object"
+    },
+    "LassoCRMSearchRegistrantsConfig": {
+      "additionalProperties": false,
+      "description": "Search one page of registrants by name, email, phone or external ID.",
+      "properties": {
+        "operation": {
+          "const": "search_registrants",
+          "default": "search_registrants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "smart_search": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Smart Search"
+        },
+        "fuzzy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fuzzy"
+        }
+      },
+      "title": "LassoCRMSearchRegistrantsConfig",
+      "type": "object"
+    },
+    "LassoCRMSetRatingConfig": {
+      "additionalProperties": false,
+      "description": "Set a registrant rating, creating that rating if absent.",
+      "properties": {
+        "operation": {
+          "const": "set_rating",
+          "default": "set_rating",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        },
+        "rating": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Rating",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registrant_id",
+        "rating"
+      ],
+      "title": "LassoCRMSetRatingConfig",
+      "type": "object"
+    },
+    "LassoCRMUpdateRegistrantConfig": {
+      "additionalProperties": false,
+      "description": "Update registrant personal data; first and last names are required by Lasso.",
+      "properties": {
+        "operation": {
+          "const": "update_registrant",
+          "default": "update_registrant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registrant_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Registrant Id",
+          "type": "string"
+        },
+        "first_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "contact_preference": {
+          "anyOf": [
+            {
+              "enum": [
+                "noPreference",
+                "any",
+                "email",
+                "mail",
+                "phone",
+                "text",
+                "noEmail",
+                "noContact"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Preference",
+          "enum": [
+            "noPreference",
+            "any",
+            "email",
+            "mail",
+            "phone",
+            "text",
+            "noEmail",
+            "noContact"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "registrant_id",
+        "first_name",
+        "last_name"
+      ],
+      "title": "LassoCRMUpdateRegistrantConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_email": "#/$defs/LassoCRMAddEmailConfig",
+          "add_phone": "#/$defs/LassoCRMAddPhoneConfig",
+          "create_activity": "#/$defs/LassoCRMCreateActivityConfig",
+          "create_appointment": "#/$defs/LassoCRMCreateAppointmentConfig",
+          "create_note": "#/$defs/LassoCRMCreateNoteConfig",
+          "create_registrant": "#/$defs/LassoCRMCreateRegistrantConfig",
+          "get_activity": "#/$defs/LassoCRMGetActivityConfig",
+          "get_appointment": "#/$defs/LassoCRMGetAppointmentConfig",
+          "get_contact_information": "#/$defs/LassoCRMGetContactInformationConfig",
+          "get_inventory": "#/$defs/LassoCRMGetInventoryConfig",
+          "get_project_settings": "#/$defs/LassoCRMGetProjectSettingsConfig",
+          "get_registrant": "#/$defs/LassoCRMGetRegistrantConfig",
+          "list_activities": "#/$defs/LassoCRMListActivitiesConfig",
+          "list_activity_types": "#/$defs/LassoCRMListActivityTypesConfig",
+          "list_appointments": "#/$defs/LassoCRMListAppointmentsConfig",
+          "list_inventory": "#/$defs/LassoCRMListInventoryConfig",
+          "list_project_appointments": "#/$defs/LassoCRMListProjectAppointmentsConfig",
+          "list_registrants": "#/$defs/LassoCRMListRegistrantsConfig",
+          "search_registrants": "#/$defs/LassoCRMSearchRegistrantsConfig",
+          "set_rating": "#/$defs/LassoCRMSetRatingConfig",
+          "update_registrant": "#/$defs/LassoCRMUpdateRegistrantConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LassoCRMListRegistrantsConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMSearchRegistrantsConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMGetRegistrantConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMCreateRegistrantConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMUpdateRegistrantConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMGetContactInformationConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMSetRatingConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMAddEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMAddPhoneConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMListActivitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMCreateActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMGetActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMListAppointmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMCreateAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMGetAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMGetProjectSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMListActivityTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMListInventoryConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMGetInventoryConfig"
+        },
+        {
+          "$ref": "#/$defs/LassoCRMListProjectAppointmentsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LassoCRMAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Lassocrm Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
