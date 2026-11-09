@@ -28,7 +28,7 @@
             {
               "filename": "10250.pdf",
               "id": 3202,
-              "link": "https://com-recruiterflow-document-store-eu.s3.amazonaws.com/db_b18c893c749e320e66fbb2f7fef6b1be/documents/3202/10250.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20210118%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210118T120927Z&X-Amz-Expires=604700&X-Amz-SignedHeaders=host&X-Amz-Signature=b2f5c36db2ea531754e94ce7cf821740effbbf58dca0e7c383880d716b3b8674",
+              "link": "https://files.example.test/recruiterflow/document.pdf",
               "permission": 1,
               "upload_time": "2021-01-18T11:34:16+05:30"
             }
@@ -100,7 +100,8 @@
       ],
       "total_items": 1
     },
-    "source": "https://recruiterflow.com/swagger.yml"
+    "source": "https://recruiterflow.com/swagger.yml",
+    "sanitization": "Signed document URLs replaced with synthetic URLs; response structure is unchanged."
   },
   "get_candidate": {
     "method": "GET",
@@ -130,7 +131,7 @@
           {
             "filename": "10250.pdf",
             "id": 3202,
-            "link": "https://com-recruiterflow-document-store-eu.s3.amazonaws.com/db_b18c893c749e320e66fbb2f7fef6b1be/documents/3202/10250.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20210118%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210118T120927Z&X-Amz-Expires=604700&X-Amz-SignedHeaders=host&X-Amz-Signature=b2f5c36db2ea531754e94ce7cf821740effbbf58dca0e7c383880d716b3b8674",
+            "link": "https://files.example.test/recruiterflow/document.pdf",
             "permission": 1,
             "upload_time": "2021-01-18T11:34:16+05:30"
           }
@@ -219,7 +220,8 @@
         "xing_profile": null
       }
     ],
-    "source": "https://recruiterflow.com/swagger.yml"
+    "source": "https://recruiterflow.com/swagger.yml",
+    "sanitization": "Signed document URLs replaced with synthetic URLs; response structure is unchanged."
   },
   "create_candidate": {
     "method": "POST",
@@ -1376,7 +1378,7 @@
         {
           "file_id": 48,
           "filename": "8202:88.docx",
-          "link": "https://com-recruiterflow-document-store-eu.s3.amazonaws.com/db_b18c893c749e320e66fbb2f7fef6b1be/documents/48/8202%3A88.docx?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20210119%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210119T084101Z&X-Amz-Expires=604700&X-Amz-SignedHeaders=host&X-Amz-Signature=260d9d5078b196fd494d0442524a34599072fbc3b5b293c99898c5e311a458d3",
+          "link": "https://files.example.test/recruiterflow/document.pdf",
           "permission": 1,
           "source": "document store",
           "upload_time": null
@@ -1504,7 +1506,8 @@
       "ziprecruiter_enabled": false,
       "zoek_enabled": false
     },
-    "source": "https://recruiterflow.com/swagger.yml"
+    "source": "https://recruiterflow.com/swagger.yml",
+    "sanitization": "Signed document URLs replaced with synthetic URLs; response structure is unchanged."
   },
   "get_job_pipeline": {
     "method": "GET",

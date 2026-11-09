@@ -1,4 +1,4 @@
-"""Exercise the real request builder against the publisher's response examples."""
+"""Exercise published response structures with signed document URLs sanitized."""
 import json
 from pathlib import Path
 
@@ -161,3 +161,25 @@ async def test_write_needs_documented_confirmation(monkeypatch, operation):
     with pytest.raises(ValueError, match="documented result"):
         await node(operation).execute({})
     assert len(requests) == 1
+
+
+def test_response_fixtures_never_publish_signed_document_credentials():
+    """Public API examples can contain signed URLs; those are not safe fixtures."""
+    from urllib.parse import parse_qs, urlsplit
+    import re
+
+    serialized = json.dumps(FIXTURES)
+    forbidden = {"awsaccesskeyid", "signature", "x-amz-credential", "x-amz-signature", "x-amz-security-token"}
+
+    def check(value):
+        if isinstance(value, dict):
+            for child in value.values():
+                check(child)
+        elif isinstance(value, list):
+            for child in value:
+                check(child)
+        elif isinstance(value, str) and value.startswith(("https://", "http://")):
+            assert not forbidden.intersection(k.lower() for k in parse_qs(urlsplit(value).query))
+
+    check(FIXTURES)
+    assert not re.search("AK" + "IA" + r"[A-Z0-9]{16}", serialized)
