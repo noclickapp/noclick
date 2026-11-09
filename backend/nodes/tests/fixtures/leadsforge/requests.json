@@ -1,0 +1,506 @@
+{
+  "source": "https://api.leadsforge.ai/public/swagger/doc.json",
+  "version": "1.0",
+  "cases": [
+    {
+      "config": {
+        "operation": "get_balance"
+      },
+      "method": "GET",
+      "path": "/public/v1/balance",
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "search_people",
+        "cursor": "fixture",
+        "request": {}
+      },
+      "method": "POST",
+      "path": "/public/v1/search",
+      "query": {
+        "cursor": "fixture"
+      },
+      "body": {}
+    },
+    {
+      "config": {
+        "operation": "count_people",
+        "request": {}
+      },
+      "method": "POST",
+      "path": "/public/v1/search/count",
+      "query": {},
+      "body": {}
+    },
+    {
+      "config": {
+        "operation": "find_email",
+        "request": {
+          "company": "Salesforge",
+          "companyDomain": "salesforge.ai",
+          "externalID": "crm-contact-42",
+          "firstName": "John",
+          "lastName": "Doe",
+          "linkedinURL": "https://www.linkedin.com/in/john-doe",
+          "personID": "p_abc123"
+        }
+      },
+      "method": "POST",
+      "path": "/public/v1/enrichment/email",
+      "query": {},
+      "body": {
+        "company": "Salesforge",
+        "companyDomain": "salesforge.ai",
+        "externalID": "crm-contact-42",
+        "firstName": "John",
+        "lastName": "Doe",
+        "linkedinURL": "https://www.linkedin.com/in/john-doe",
+        "personID": "p_abc123"
+      }
+    },
+    {
+      "config": {
+        "operation": "find_phone",
+        "request": {
+          "company": "Salesforge",
+          "companyDomain": "salesforge.ai",
+          "externalID": "crm-contact-42",
+          "firstName": "John",
+          "lastName": "Doe",
+          "linkedinURL": "https://www.linkedin.com/in/john-doe",
+          "personID": "p_abc123"
+        }
+      },
+      "method": "POST",
+      "path": "/public/v1/enrichment/phone",
+      "query": {},
+      "body": {
+        "company": "Salesforge",
+        "companyDomain": "salesforge.ai",
+        "externalID": "crm-contact-42",
+        "firstName": "John",
+        "lastName": "Doe",
+        "linkedinURL": "https://www.linkedin.com/in/john-doe",
+        "personID": "p_abc123"
+      }
+    },
+    {
+      "config": {
+        "operation": "find_emails",
+        "idempotency_key": "fixture-request-123",
+        "request": {
+          "clientRequestID": "my-request-123",
+          "personIDs": [
+            "p_abc123",
+            "p_def456"
+          ],
+          "saveToList": false,
+          "webhookURL": "https://example.com/webhook"
+        }
+      },
+      "method": "POST",
+      "path": "/public/v1/enrichment/emails",
+      "query": {},
+      "body": {
+        "clientRequestID": "my-request-123",
+        "personIDs": [
+          "p_abc123",
+          "p_def456"
+        ],
+        "saveToList": false,
+        "webhookURL": "https://example.com/webhook"
+      }
+    },
+    {
+      "config": {
+        "operation": "find_phones",
+        "idempotency_key": "fixture-request-123",
+        "request": {
+          "clientRequestID": "my-request-123",
+          "personIDs": [
+            "p_abc123",
+            "p_def456"
+          ],
+          "saveToList": false,
+          "webhookURL": "https://example.com/webhook"
+        }
+      },
+      "method": "POST",
+      "path": "/public/v1/enrichment/phones",
+      "query": {},
+      "body": {
+        "clientRequestID": "my-request-123",
+        "personIDs": [
+          "p_abc123",
+          "p_def456"
+        ],
+        "saveToList": false,
+        "webhookURL": "https://example.com/webhook"
+      }
+    },
+    {
+      "config": {
+        "operation": "find_linkedin_profiles",
+        "idempotency_key": "fixture-request-123",
+        "request": {
+          "clientRequestID": "my-request-123",
+          "personIDs": [
+            "p_abc123",
+            "p_def456"
+          ],
+          "saveToList": false,
+          "webhookURL": "https://example.com/webhook"
+        }
+      },
+      "method": "POST",
+      "path": "/public/v1/enrichment/linkedin",
+      "query": {},
+      "body": {
+        "clientRequestID": "my-request-123",
+        "personIDs": [
+          "p_abc123",
+          "p_def456"
+        ],
+        "saveToList": false,
+        "webhookURL": "https://example.com/webhook"
+      }
+    },
+    {
+      "config": {
+        "operation": "list_enrichment_jobs",
+        "offset": 2,
+        "limit": 50,
+        "status": "in_progress",
+        "channel": "email",
+        "clientRequestID": "fixture",
+        "from_time": "2026-10-01T00:00:00Z",
+        "to_time": "2026-10-01T00:00:00Z"
+      },
+      "method": "GET",
+      "path": "/public/v1/enrichment/jobs",
+      "query": {
+        "offset": "2",
+        "limit": "50",
+        "status": "in_progress",
+        "channel": "email",
+        "clientRequestID": "fixture",
+        "from": "2026-10-01T00:00:00Z",
+        "to": "2026-10-01T00:00:00Z"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_enrichment_job",
+        "jobID": "job_abc123"
+      },
+      "method": "GET",
+      "path": "/public/v1/enrichment/jobs/job_abc123",
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_enrichment_results",
+        "jobID": "job_abc123",
+        "offset": 2,
+        "limit": 50
+      },
+      "method": "GET",
+      "path": "/public/v1/enrichment/jobs/job_abc123/results",
+      "query": {
+        "offset": "2",
+        "limit": "50"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "search_company_followers",
+        "idempotency_key": "fixture-request-123",
+        "request": {
+          "clientRequestID": "req_12345",
+          "countries": [
+            "United States",
+            "Germany"
+          ],
+          "departments": [
+            "Engineering",
+            "Marketing"
+          ],
+          "jobTitles": [
+            "Software Engineer",
+            "Product Manager"
+          ],
+          "levels": [
+            "Senior",
+            "Director"
+          ],
+          "limit": 500,
+          "linkedinUrl": "https://www.linkedin.com/company/salesforgeai",
+          "metros": [
+            "San Francisco Bay Area",
+            "London Area",
+            " United Kingdom"
+          ],
+          "states": [
+            "California",
+            "Bavaria"
+          ],
+          "webhookURL": "https://example.com/webhooks/followers"
+        }
+      },
+      "method": "POST",
+      "path": "/public/v1/company-followers/search",
+      "query": {},
+      "body": {
+        "clientRequestID": "req_12345",
+        "countries": [
+          "United States",
+          "Germany"
+        ],
+        "departments": [
+          "Engineering",
+          "Marketing"
+        ],
+        "jobTitles": [
+          "Software Engineer",
+          "Product Manager"
+        ],
+        "levels": [
+          "Senior",
+          "Director"
+        ],
+        "limit": 500,
+        "linkedinUrl": "https://www.linkedin.com/company/salesforgeai",
+        "metros": [
+          "San Francisco Bay Area",
+          "London Area",
+          " United Kingdom"
+        ],
+        "states": [
+          "California",
+          "Bavaria"
+        ],
+        "webhookURL": "https://example.com/webhooks/followers"
+      }
+    },
+    {
+      "config": {
+        "operation": "list_company_follower_jobs",
+        "offset": 2,
+        "limit": 50,
+        "status": "in_progress",
+        "clientRequestID": "fixture",
+        "from_time": "2026-10-01T00:00:00Z",
+        "to_time": "2026-10-01T00:00:00Z"
+      },
+      "method": "GET",
+      "path": "/public/v1/company-followers/jobs",
+      "query": {
+        "offset": "2",
+        "limit": "50",
+        "status": "in_progress",
+        "clientRequestID": "fixture",
+        "from": "2026-10-01T00:00:00Z",
+        "to": "2026-10-01T00:00:00Z"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_company_follower_job",
+        "jobID": "job_abc123"
+      },
+      "method": "GET",
+      "path": "/public/v1/company-followers/jobs/job_abc123",
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_company_followers",
+        "jobID": "job_abc123",
+        "offset": 2,
+        "limit": 50
+      },
+      "method": "GET",
+      "path": "/public/v1/company-followers/jobs/job_abc123/results",
+      "query": {
+        "offset": "2",
+        "limit": "50"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "preview_lookalikes",
+        "request": {
+          "domains": [
+            "salesforge.ai"
+          ]
+        }
+      },
+      "method": "POST",
+      "path": "/public/v1/lookalikes/preview",
+      "query": {},
+      "body": {
+        "domains": [
+          "salesforge.ai"
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "search_lookalikes",
+        "request": {
+          "domains": [
+            "salesforge.ai"
+          ]
+        },
+        "idempotency_key": "fixture-request-123"
+      },
+      "method": "POST",
+      "path": "/public/v1/lookalikes/search",
+      "query": {},
+      "body": {
+        "domains": [
+          "salesforge.ai"
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "search_maps",
+        "idempotency_key": "fixture-request-123",
+        "request": {
+          "categories": [
+            "Dentist",
+            "Dental Clinic"
+          ],
+          "clientRequestID": "req_12345",
+          "language": "en",
+          "lat": 40.758,
+          "limit": 200,
+          "lng": -73.9855,
+          "radiusKm": 5,
+          "webhookURL": "https://example.com/webhooks/maps-search"
+        }
+      },
+      "method": "POST",
+      "path": "/public/v1/maps-discovery/search",
+      "query": {},
+      "body": {
+        "categories": [
+          "Dentist",
+          "Dental Clinic"
+        ],
+        "clientRequestID": "req_12345",
+        "language": "en",
+        "lat": 40.758,
+        "limit": 200,
+        "lng": -73.9855,
+        "radiusKm": 5,
+        "webhookURL": "https://example.com/webhooks/maps-search"
+      }
+    },
+    {
+      "config": {
+        "operation": "list_maps_jobs",
+        "offset": 2,
+        "limit": 50,
+        "status": "in_progress",
+        "clientRequestID": "fixture",
+        "from_time": "2026-10-01T00:00:00Z",
+        "to_time": "2026-10-01T00:00:00Z"
+      },
+      "method": "GET",
+      "path": "/public/v1/maps-discovery/jobs",
+      "query": {
+        "offset": "2",
+        "limit": "50",
+        "status": "in_progress",
+        "clientRequestID": "fixture",
+        "from": "2026-10-01T00:00:00Z",
+        "to": "2026-10-01T00:00:00Z"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_maps_job",
+        "jobID": "job_abc123"
+      },
+      "method": "GET",
+      "path": "/public/v1/maps-discovery/jobs/job_abc123",
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_maps_results",
+        "jobID": "job_abc123",
+        "offset": 2,
+        "limit": 50
+      },
+      "method": "GET",
+      "path": "/public/v1/maps-discovery/jobs/job_abc123/results",
+      "query": {
+        "offset": "2",
+        "limit": "50"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "start_salesnav_job",
+        "idempotency_key": "fixture-request-123",
+        "request": {
+          "enrichEmail": true,
+          "enrichFirstN": 50,
+          "enrichPhone": false,
+          "limit": 500,
+          "salesnavUrl": "https://www.linkedin.com/sales/search/people?keywords=cto",
+          "webhookURL": "https://example.com/webhooks/salesnav"
+        }
+      },
+      "method": "POST",
+      "path": "/public/v1/salesnav/jobs",
+      "query": {},
+      "body": {
+        "enrichEmail": true,
+        "enrichFirstN": 50,
+        "enrichPhone": false,
+        "limit": 500,
+        "salesnavUrl": "https://www.linkedin.com/sales/search/people?keywords=cto",
+        "webhookURL": "https://example.com/webhooks/salesnav"
+      }
+    },
+    {
+      "config": {
+        "operation": "get_salesnav_job",
+        "jobID": "job_abc123"
+      },
+      "method": "GET",
+      "path": "/public/v1/salesnav/jobs/job_abc123",
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "count_salesnav_results",
+        "request": {
+          "salesnavUrl": "https://www.linkedin.com/sales/search/people?keywords=cto"
+        }
+      },
+      "method": "POST",
+      "path": "/public/v1/salesnav/total-count",
+      "query": {},
+      "body": {
+        "salesnavUrl": "https://www.linkedin.com/sales/search/people?keywords=cto"
+      }
+    }
+  ]
+}
