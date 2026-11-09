@@ -1,0 +1,4144 @@
+{
+  "$defs": {
+    "PennylaneAPIToken": {
+      "properties": {
+        "credential_type": {
+          "const": "pennylane_api_token",
+          "default": "pennylane_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required only for a Firm token; sent as X-Company-Id. Leave empty for a Company token.",
+          "title": "Company ID"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Pennylane API Token",
+      "type": "object",
+      "x-credential-instructions": "In Pennylane, go to Settings > Connectivity > Developers and generate a Company API V2 token (Essential plan or higher, company admin access). Select read and write permissions for the resources you automate: customers, suppliers, products, customer invoices, supplier invoices, bank accounts and transactions. Paste the token here. NoClick sends it as a Bearer token to app.pennylane.com and verifies the company with /me. Replace the token here when it expires or is revoked. A Firm token also needs the company ID below.",
+      "x-credential-url": "https://pennylane.readme.io/docs/generating-my-api-token"
+    },
+    "PennylaneAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "title": "Address",
+          "type": "string"
+        },
+        "postal_code": {
+          "title": "Postal Code",
+          "type": "string"
+        },
+        "city": {
+          "title": "City",
+          "type": "string"
+        },
+        "country_alpha2": {
+          "description": "Two-letter country code, for example FR",
+          "title": "Country Alpha2",
+          "type": "string"
+        }
+      },
+      "required": [
+        "address",
+        "postal_code",
+        "city",
+        "country_alpha2"
+      ],
+      "title": "PennylaneAddress",
+      "type": "object"
+    },
+    "PennylaneCreateCompanyCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Create a company customer",
+      "properties": {
+        "operation": {
+          "const": "create_company_customer",
+          "default": "create_company_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Name",
+          "title": "Name",
+          "type": "string"
+        },
+        "vat_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vat number",
+          "title": "Vat Number"
+        },
+        "reg_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reg no",
+          "title": "Reg No"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone",
+          "title": "Phone"
+        },
+        "billing_address": {
+          "$ref": "#/$defs/PennylaneAddress",
+          "description": "Billing address"
+        },
+        "delivery_address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PennylaneAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delivery address"
+        },
+        "payment_conditions": {
+          "anyOf": [
+            {
+              "enum": [
+                "upon_receipt",
+                "custom",
+                "7_days",
+                "15_days",
+                "30_days",
+                "30_days_end_of_month",
+                "45_days",
+                "45_days_end_of_month",
+                "60_days"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Note that the `custom` option is only used on Pennylane's web app to avoid pre-filling the deadline when creating an invoice. On the API it has no effect and you will still have to provide a deadline when creating an invoice.",
+          "title": "Payment Conditions",
+          "enum": [
+            "upon_receipt",
+            "custom",
+            "7_days",
+            "15_days",
+            "30_days",
+            "30_days_end_of_month",
+            "45_days",
+            "45_days_end_of_month",
+            "60_days"
+          ],
+          "x-enum-searchable": true
+        },
+        "billing_iban": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Billing iban",
+          "title": "Billing Iban"
+        },
+        "recipient": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the person to whom the invoice is addressed",
+          "title": "Recipient"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference",
+          "title": "Reference"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes",
+          "title": "Notes"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Emails",
+          "title": "Emails"
+        },
+        "external_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can use your own unique value when creating the customer. If not provided, Pennylane will pick one for you. Value must be unique",
+          "title": "External Reference"
+        },
+        "billing_language": {
+          "anyOf": [
+            {
+              "enum": [
+                "fr_FR",
+                "en_GB",
+                "de_DE",
+                "es_ES"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The language in which the customer will receive invoices. Default is `fr_FR`",
+          "title": "Billing Language",
+          "enum": [
+            "fr_FR",
+            "en_GB",
+            "de_DE",
+            "es_ES"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "billing_address"
+      ],
+      "title": "PennylaneCreateCompanyCustomerConfig",
+      "type": "object"
+    },
+    "PennylaneCreateCustomerInvoiceConfig": {
+      "additionalProperties": false,
+      "description": "Create a customer invoice",
+      "properties": {
+        "operation": {
+          "const": "create_customer_invoice",
+          "default": "create_customer_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "date": {
+          "description": "Invoice date (ISO 8601)",
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "deadline": {
+          "description": "Invoice payment deadline (ISO 8601)",
+          "format": "date",
+          "title": "Deadline",
+          "type": "string"
+        },
+        "customer_id": {
+          "description": "Customer identifier",
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "draft": {
+          "const": true,
+          "default": true,
+          "description": "Indicates if the invoice is in draft status (has not been finalized)",
+          "title": "Draft",
+          "type": "boolean"
+        },
+        "invoice_lines": {
+          "description": "Invoice lines",
+          "items": {
+            "$ref": "#/$defs/PennylaneProductLine"
+          },
+          "minItems": 1,
+          "title": "Invoice Lines",
+          "type": "array"
+        },
+        "pdf_invoice_subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Invoice title",
+          "title": "Pdf Invoice Subject"
+        },
+        "pdf_invoice_free_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For example, the contact details of the person to contact",
+          "title": "Pdf Invoice Free Text"
+        },
+        "pdf_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Invoice description. Maximum 5,000 characters.",
+          "title": "Pdf Description"
+        },
+        "external_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A unique external reference you can provide to track this customer invoice. If not provided, Pennylane will generate an identifier for you.",
+          "title": "External Reference"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "enum": [
+                "fr_FR",
+                "en_GB",
+                "de_DE",
+                "es_ES"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The local default is based on the thirdparty (customer / supplier ) billing_language . In case the customer is not present, we will default to the company locale.",
+          "title": "Language",
+          "enum": [
+            "fr_FR",
+            "en_GB",
+            "de_DE",
+            "es_ES"
+          ],
+          "x-enum-searchable": true
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "enum": [
+                "EUR",
+                "USD",
+                "GBP",
+                "AED",
+                "AFN",
+                "ALL",
+                "AMD",
+                "ANG",
+                "AOA",
+                "ARS",
+                "AUD",
+                "AWG",
+                "AZN",
+                "BAM",
+                "BBD",
+                "BDT",
+                "BGN",
+                "BHD",
+                "BIF",
+                "BMD",
+                "BND",
+                "BOB",
+                "BRL",
+                "BSD",
+                "BTN",
+                "BWP",
+                "BYN",
+                "BYR",
+                "BZD",
+                "CAD",
+                "CDF",
+                "CHE",
+                "CHF",
+                "CLF",
+                "CLP",
+                "CNY",
+                "COP",
+                "CRC",
+                "CUC",
+                "CUP",
+                "CVE",
+                "CZK",
+                "DJF",
+                "DKK",
+                "DOP",
+                "DZD",
+                "EGP",
+                "ERN",
+                "ETB",
+                "FJD",
+                "FKP",
+                "GEL",
+                "GGP",
+                "GHS",
+                "GIP",
+                "GMD",
+                "GNF",
+                "GTQ",
+                "GYD",
+                "HKD",
+                "HNL",
+                "HRK",
+                "HTG",
+                "HUF",
+                "IDR",
+                "ILS",
+                "IMP",
+                "INR",
+                "IQD",
+                "IRR",
+                "ISK",
+                "JEP",
+                "JMD",
+                "JOD",
+                "JPY",
+                "KES",
+                "KGS",
+                "KHR",
+                "KMF",
+                "KPW",
+                "KRW",
+                "KWD",
+                "KYD",
+                "KZT",
+                "LAK",
+                "LBP",
+                "LKR",
+                "LRD",
+                "LSL",
+                "LTL",
+                "LVL",
+                "LYD",
+                "MAD",
+                "MDL",
+                "MGA",
+                "MKD",
+                "MMK",
+                "MNT",
+                "MOP",
+                "MRO",
+                "MRU",
+                "MUR",
+                "MVR",
+                "MWK",
+                "MXN",
+                "MYR",
+                "MZN",
+                "NAD",
+                "NGN",
+                "NIO",
+                "NOK",
+                "NPR",
+                "NZD",
+                "OMR",
+                "PAB",
+                "PEN",
+                "PGK",
+                "PHP",
+                "PKR",
+                "PLN",
+                "PYG",
+                "QAR",
+                "RON",
+                "RSD",
+                "RUB",
+                "RWF",
+                "SAR",
+                "SBD",
+                "SCR",
+                "SDG",
+                "SEK",
+                "SGD",
+                "SHP",
+                "SLL",
+                "SLE",
+                "SOS",
+                "SRD",
+                "STD",
+                "SVC",
+                "SYP",
+                "SZL",
+                "THB",
+                "TJS",
+                "TMT",
+                "TND",
+                "TOP",
+                "TRY",
+                "TTD",
+                "TWD",
+                "TZS",
+                "UAH",
+                "UGX",
+                "UYU",
+                "UZS",
+                "VEF",
+                "VES",
+                "VND",
+                "VUV",
+                "WST",
+                "XAF",
+                "XCD",
+                "XDR",
+                "XOF",
+                "XPF",
+                "YER",
+                "ZAR",
+                "ZMK",
+                "ZMW",
+                "ZWL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Currency",
+          "title": "Currency",
+          "enum": [
+            "EUR",
+            "USD",
+            "GBP",
+            "AED",
+            "AFN",
+            "ALL",
+            "AMD",
+            "ANG",
+            "AOA",
+            "ARS",
+            "AUD",
+            "AWG",
+            "AZN",
+            "BAM",
+            "BBD",
+            "BDT",
+            "BGN",
+            "BHD",
+            "BIF",
+            "BMD",
+            "BND",
+            "BOB",
+            "BRL",
+            "BSD",
+            "BTN",
+            "BWP",
+            "BYN",
+            "BYR",
+            "BZD",
+            "CAD",
+            "CDF",
+            "CHE",
+            "CHF",
+            "CLF",
+            "CLP",
+            "CNY",
+            "COP",
+            "CRC",
+            "CUC",
+            "CUP",
+            "CVE",
+            "CZK",
+            "DJF",
+            "DKK",
+            "DOP",
+            "DZD",
+            "EGP",
+            "ERN",
+            "ETB",
+            "FJD",
+            "FKP",
+            "GEL",
+            "GGP",
+            "GHS",
+            "GIP",
+            "GMD",
+            "GNF",
+            "GTQ",
+            "GYD",
+            "HKD",
+            "HNL",
+            "HRK",
+            "HTG",
+            "HUF",
+            "IDR",
+            "ILS",
+            "IMP",
+            "INR",
+            "IQD",
+            "IRR",
+            "ISK",
+            "JEP",
+            "JMD",
+            "JOD",
+            "JPY",
+            "KES",
+            "KGS",
+            "KHR",
+            "KMF",
+            "KPW",
+            "KRW",
+            "KWD",
+            "KYD",
+            "KZT",
+            "LAK",
+            "LBP",
+            "LKR",
+            "LRD",
+            "LSL",
+            "LTL",
+            "LVL",
+            "LYD",
+            "MAD",
+            "MDL",
+            "MGA",
+            "MKD",
+            "MMK",
+            "MNT",
+            "MOP",
+            "MRO",
+            "MRU",
+            "MUR",
+            "MVR",
+            "MWK",
+            "MXN",
+            "MYR",
+            "MZN",
+            "NAD",
+            "NGN",
+            "NIO",
+            "NOK",
+            "NPR",
+            "NZD",
+            "OMR",
+            "PAB",
+            "PEN",
+            "PGK",
+            "PHP",
+            "PKR",
+            "PLN",
+            "PYG",
+            "QAR",
+            "RON",
+            "RSD",
+            "RUB",
+            "RWF",
+            "SAR",
+            "SBD",
+            "SCR",
+            "SDG",
+            "SEK",
+            "SGD",
+            "SHP",
+            "SLL",
+            "SLE",
+            "SOS",
+            "SRD",
+            "STD",
+            "SVC",
+            "SYP",
+            "SZL",
+            "THB",
+            "TJS",
+            "TMT",
+            "TND",
+            "TOP",
+            "TRY",
+            "TTD",
+            "TWD",
+            "TZS",
+            "UAH",
+            "UGX",
+            "UYU",
+            "UZS",
+            "VEF",
+            "VES",
+            "VND",
+            "VUV",
+            "WST",
+            "XAF",
+            "XCD",
+            "XDR",
+            "XOF",
+            "XPF",
+            "YER",
+            "ZAR",
+            "ZMK",
+            "ZMW",
+            "ZWL"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "date",
+        "deadline",
+        "customer_id",
+        "invoice_lines"
+      ],
+      "title": "PennylaneCreateCustomerInvoiceConfig",
+      "type": "object"
+    },
+    "PennylaneCreateIndividualCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Create an individual customer",
+      "properties": {
+        "operation": {
+          "const": "create_individual_customer",
+          "default": "create_individual_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "description": "First name",
+          "maxLength": 1000,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "Last name",
+          "maxLength": 1000,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone",
+          "title": "Phone"
+        },
+        "billing_address": {
+          "$ref": "#/$defs/PennylaneAddress",
+          "description": "Billing address"
+        },
+        "delivery_address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PennylaneAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delivery address"
+        },
+        "payment_conditions": {
+          "anyOf": [
+            {
+              "enum": [
+                "upon_receipt",
+                "custom",
+                "7_days",
+                "15_days",
+                "30_days",
+                "30_days_end_of_month",
+                "45_days",
+                "45_days_end_of_month",
+                "60_days"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Note that the `custom` option is only used on Pennylane's web app to avoid pre-filling the deadline when creating an invoice. On the API it has no effect and you will still have to provide a deadline when creating an invoice.",
+          "title": "Payment Conditions",
+          "enum": [
+            "upon_receipt",
+            "custom",
+            "7_days",
+            "15_days",
+            "30_days",
+            "30_days_end_of_month",
+            "45_days",
+            "45_days_end_of_month",
+            "60_days"
+          ],
+          "x-enum-searchable": true
+        },
+        "billing_iban": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Billing iban",
+          "title": "Billing Iban"
+        },
+        "recipient": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Recipient",
+          "title": "Recipient"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference",
+          "title": "Reference"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes",
+          "title": "Notes"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Emails",
+          "title": "Emails"
+        },
+        "external_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can use your own unique value when creating the product. If not provided, Pennylane will pick one for you. Value must be unique",
+          "title": "External Reference"
+        },
+        "billing_language": {
+          "anyOf": [
+            {
+              "enum": [
+                "fr_FR",
+                "en_GB",
+                "de_DE",
+                "es_ES"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The language in which the customer will receive invoices. Default is `fr_FR`",
+          "title": "Billing Language",
+          "enum": [
+            "fr_FR",
+            "en_GB",
+            "de_DE",
+            "es_ES"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "billing_address"
+      ],
+      "title": "PennylaneCreateIndividualCustomerConfig",
+      "type": "object"
+    },
+    "PennylaneCreateProductConfig": {
+      "additionalProperties": false,
+      "description": "Create a product",
+      "properties": {
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "label": {
+          "description": "Product label",
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product description. Maximum 5,000 characters.",
+          "title": "Description"
+        },
+        "price_before_tax": {
+          "description": "Price before tax",
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Price Before Tax",
+          "type": "string"
+        },
+        "vat_rate": {
+          "description": "Product VAT rate. A 20% VAT in France is FR_200.",
+          "enum": [
+            "FR_1_05",
+            "FR_1_75",
+            "FR_09",
+            "FR_21",
+            "FR_40",
+            "FR_50",
+            "FR_55",
+            "FR_60",
+            "FR_65",
+            "FR_85",
+            "FR_92",
+            "FR_100",
+            "FR_130",
+            "FR_15_385",
+            "FR_160",
+            "FR_196",
+            "FR_200",
+            "AD_10",
+            "AD_45",
+            "AD_95",
+            "AT_100",
+            "AT_130",
+            "AT_190",
+            "AT_200",
+            "BE_60",
+            "BE_120",
+            "BE_210",
+            "BG_90",
+            "BG_200",
+            "CH_25",
+            "CH_37",
+            "CH_77",
+            "CH_26",
+            "CH_38",
+            "CH_81",
+            "CY_30",
+            "CY_50",
+            "CY_80",
+            "CY_90",
+            "CY_190",
+            "CZ_100",
+            "CZ_120",
+            "CZ_150",
+            "CZ_210",
+            "DE_70",
+            "DE_190",
+            "DK_250",
+            "EE_90",
+            "EE_200",
+            "EE_220",
+            "EE_240",
+            "ES_40",
+            "ES_70",
+            "ES_100",
+            "ES_210",
+            "FI_100",
+            "FI_135",
+            "FI_140",
+            "FI_240",
+            "FI_255",
+            "GB_50",
+            "GB_200",
+            "GR_60",
+            "GR_130",
+            "GR_170",
+            "GR_240",
+            "GR_40",
+            "HR_50",
+            "HR_130",
+            "HR_250",
+            "HU_50",
+            "HU_180",
+            "HU_270",
+            "IE_48",
+            "IE_90",
+            "IE_135",
+            "IE_210",
+            "IE_230",
+            "IT_40",
+            "IT_50",
+            "IT_100",
+            "IT_220",
+            "LT_50",
+            "LT_90",
+            "LT_120",
+            "LT_210",
+            "LU_30",
+            "LU_70",
+            "LU_80",
+            "LU_120",
+            "LU_130",
+            "LU_140",
+            "LU_160",
+            "LU_170",
+            "LV_50",
+            "LV_120",
+            "LV_210",
+            "MC_09",
+            "MC_21",
+            "MC_55",
+            "MC_85",
+            "MC_100",
+            "MC_200",
+            "MT_50",
+            "MT_70",
+            "MT_120",
+            "MT_180",
+            "MU_150",
+            "NL_90",
+            "NL_210",
+            "PL_50",
+            "PL_80",
+            "PL_230",
+            "PT_60",
+            "PT_130",
+            "PT_160",
+            "PT_180",
+            "PT_220",
+            "PT_230",
+            "RO_50",
+            "RO_90",
+            "RO_110",
+            "RO_190",
+            "RO_210",
+            "SE_60",
+            "SE_120",
+            "SE_250",
+            "SI_50",
+            "SI_95",
+            "SI_220",
+            "SK_50",
+            "SK_100",
+            "SK_190",
+            "SK_200",
+            "SK_230",
+            "NO_120",
+            "NO_150",
+            "NO_250",
+            "DE_70_BU0002",
+            "DE_190_BU0003",
+            "DE_70_BU0008",
+            "DE_190_BU0009",
+            "DE_intracom_70_BU0012",
+            "DE_intracom_190_BU0013",
+            "DE_190_electronic_BU0226",
+            "exempt",
+            "DE_intracom_exempt_BU0011",
+            "DE_intracom_exempt_BU0047",
+            "DE_intracom_exempt_BU0233",
+            "DE_exempt_BU0001",
+            "DE_exempt_BU0181",
+            "DE_exempt_BU0490",
+            "intracom_21",
+            "intracom_55",
+            "intracom_85",
+            "intracom_100",
+            "crossborder",
+            "ES_intracom_sales_goods",
+            "ES_intracom_sales_services",
+            "DE_intracom_70_BU0018",
+            "DE_intracom_190_BU0019",
+            "DE_intracom_190_BU0506",
+            "extracom",
+            "DE_extracom_BU0173",
+            "DE_extracom_BU0191",
+            "DE_extracom_190_BU0511",
+            "ES_isp_sales",
+            "ES_suplido",
+            "FR_85_construction",
+            "FR_100_construction",
+            "FR_200_construction",
+            "DE_exempt_construction_BU0046",
+            "DE_70_construction_BU0091",
+            "DE_190_construction_BU0094",
+            "DE_190_construction_BU0526",
+            "DE_190_construction_BU0546",
+            "ES_isp_purchases_210",
+            "ES_isp_purchases_100"
+          ],
+          "title": "Vat Rate",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product unit",
+          "title": "Unit"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "enum": [
+                "EUR",
+                "USD",
+                "GBP",
+                "AED",
+                "AFN",
+                "ALL",
+                "AMD",
+                "ANG",
+                "AOA",
+                "ARS",
+                "AUD",
+                "AWG",
+                "AZN",
+                "BAM",
+                "BBD",
+                "BDT",
+                "BGN",
+                "BHD",
+                "BIF",
+                "BMD",
+                "BND",
+                "BOB",
+                "BRL",
+                "BSD",
+                "BTN",
+                "BWP",
+                "BYN",
+                "BYR",
+                "BZD",
+                "CAD",
+                "CDF",
+                "CHE",
+                "CHF",
+                "CLF",
+                "CLP",
+                "CNY",
+                "COP",
+                "CRC",
+                "CUC",
+                "CUP",
+                "CVE",
+                "CZK",
+                "DJF",
+                "DKK",
+                "DOP",
+                "DZD",
+                "EGP",
+                "ERN",
+                "ETB",
+                "FJD",
+                "FKP",
+                "GEL",
+                "GGP",
+                "GHS",
+                "GIP",
+                "GMD",
+                "GNF",
+                "GTQ",
+                "GYD",
+                "HKD",
+                "HNL",
+                "HRK",
+                "HTG",
+                "HUF",
+                "IDR",
+                "ILS",
+                "IMP",
+                "INR",
+                "IQD",
+                "IRR",
+                "ISK",
+                "JEP",
+                "JMD",
+                "JOD",
+                "JPY",
+                "KES",
+                "KGS",
+                "KHR",
+                "KMF",
+                "KPW",
+                "KRW",
+                "KWD",
+                "KYD",
+                "KZT",
+                "LAK",
+                "LBP",
+                "LKR",
+                "LRD",
+                "LSL",
+                "LTL",
+                "LVL",
+                "LYD",
+                "MAD",
+                "MDL",
+                "MGA",
+                "MKD",
+                "MMK",
+                "MNT",
+                "MOP",
+                "MRO",
+                "MRU",
+                "MUR",
+                "MVR",
+                "MWK",
+                "MXN",
+                "MYR",
+                "MZN",
+                "NAD",
+                "NGN",
+                "NIO",
+                "NOK",
+                "NPR",
+                "NZD",
+                "OMR",
+                "PAB",
+                "PEN",
+                "PGK",
+                "PHP",
+                "PKR",
+                "PLN",
+                "PYG",
+                "QAR",
+                "RON",
+                "RSD",
+                "RUB",
+                "RWF",
+                "SAR",
+                "SBD",
+                "SCR",
+                "SDG",
+                "SEK",
+                "SGD",
+                "SHP",
+                "SLL",
+                "SLE",
+                "SOS",
+                "SRD",
+                "STD",
+                "SVC",
+                "SYP",
+                "SZL",
+                "THB",
+                "TJS",
+                "TMT",
+                "TND",
+                "TOP",
+                "TRY",
+                "TTD",
+                "TWD",
+                "TZS",
+                "UAH",
+                "UGX",
+                "UYU",
+                "UZS",
+                "VEF",
+                "VES",
+                "VND",
+                "VUV",
+                "WST",
+                "XAF",
+                "XCD",
+                "XDR",
+                "XOF",
+                "XPF",
+                "YER",
+                "ZAR",
+                "ZMK",
+                "ZMW",
+                "ZWL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Currency",
+          "title": "Currency",
+          "enum": [
+            "EUR",
+            "USD",
+            "GBP",
+            "AED",
+            "AFN",
+            "ALL",
+            "AMD",
+            "ANG",
+            "AOA",
+            "ARS",
+            "AUD",
+            "AWG",
+            "AZN",
+            "BAM",
+            "BBD",
+            "BDT",
+            "BGN",
+            "BHD",
+            "BIF",
+            "BMD",
+            "BND",
+            "BOB",
+            "BRL",
+            "BSD",
+            "BTN",
+            "BWP",
+            "BYN",
+            "BYR",
+            "BZD",
+            "CAD",
+            "CDF",
+            "CHE",
+            "CHF",
+            "CLF",
+            "CLP",
+            "CNY",
+            "COP",
+            "CRC",
+            "CUC",
+            "CUP",
+            "CVE",
+            "CZK",
+            "DJF",
+            "DKK",
+            "DOP",
+            "DZD",
+            "EGP",
+            "ERN",
+            "ETB",
+            "FJD",
+            "FKP",
+            "GEL",
+            "GGP",
+            "GHS",
+            "GIP",
+            "GMD",
+            "GNF",
+            "GTQ",
+            "GYD",
+            "HKD",
+            "HNL",
+            "HRK",
+            "HTG",
+            "HUF",
+            "IDR",
+            "ILS",
+            "IMP",
+            "INR",
+            "IQD",
+            "IRR",
+            "ISK",
+            "JEP",
+            "JMD",
+            "JOD",
+            "JPY",
+            "KES",
+            "KGS",
+            "KHR",
+            "KMF",
+            "KPW",
+            "KRW",
+            "KWD",
+            "KYD",
+            "KZT",
+            "LAK",
+            "LBP",
+            "LKR",
+            "LRD",
+            "LSL",
+            "LTL",
+            "LVL",
+            "LYD",
+            "MAD",
+            "MDL",
+            "MGA",
+            "MKD",
+            "MMK",
+            "MNT",
+            "MOP",
+            "MRO",
+            "MRU",
+            "MUR",
+            "MVR",
+            "MWK",
+            "MXN",
+            "MYR",
+            "MZN",
+            "NAD",
+            "NGN",
+            "NIO",
+            "NOK",
+            "NPR",
+            "NZD",
+            "OMR",
+            "PAB",
+            "PEN",
+            "PGK",
+            "PHP",
+            "PKR",
+            "PLN",
+            "PYG",
+            "QAR",
+            "RON",
+            "RSD",
+            "RUB",
+            "RWF",
+            "SAR",
+            "SBD",
+            "SCR",
+            "SDG",
+            "SEK",
+            "SGD",
+            "SHP",
+            "SLL",
+            "SLE",
+            "SOS",
+            "SRD",
+            "STD",
+            "SVC",
+            "SYP",
+            "SZL",
+            "THB",
+            "TJS",
+            "TMT",
+            "TND",
+            "TOP",
+            "TRY",
+            "TTD",
+            "TWD",
+            "TZS",
+            "UAH",
+            "UGX",
+            "UYU",
+            "UZS",
+            "VEF",
+            "VES",
+            "VND",
+            "VUV",
+            "WST",
+            "XAF",
+            "XCD",
+            "XDR",
+            "XOF",
+            "XPF",
+            "YER",
+            "ZAR",
+            "ZMK",
+            "ZMW",
+            "ZWL"
+          ],
+          "x-enum-searchable": true
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product reference",
+          "title": "Reference"
+        },
+        "external_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can use your own unique value when creating the product. If not provided, Pennylane will pick one for you. Value must be unique",
+          "title": "External Reference"
+        },
+        "ledger_account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ledger account id",
+          "title": "Ledger Account Id"
+        }
+      },
+      "required": [
+        "label",
+        "price_before_tax",
+        "vat_rate"
+      ],
+      "title": "PennylaneCreateProductConfig",
+      "type": "object"
+    },
+    "PennylaneCreateSupplierConfig": {
+      "additionalProperties": false,
+      "description": "Create a Supplier",
+      "properties": {
+        "operation": {
+          "const": "create_supplier",
+          "default": "create_supplier",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Name",
+          "title": "Name",
+          "type": "string"
+        },
+        "reg_no": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{9}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier registration number (SIREN).\n- 9-digit number\n- Only applicable for French companies\n",
+          "title": "Reg No"
+        },
+        "establishment_no": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier identification number (SIRET).\n- 14-digit number combining SIREN (9 digits) and NIC (5 digits)\n- Only applicable for French companies\n",
+          "title": "Establishment No"
+        },
+        "postal_address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PennylaneAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal address"
+        },
+        "vat_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vat number",
+          "title": "Vat Number"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Emails",
+          "title": "Emails"
+        },
+        "iban": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Iban",
+          "title": "Iban"
+        },
+        "supplier_payment_method": {
+          "anyOf": [
+            {
+              "enum": [
+                "automatic_transfer",
+                "manual_transfer",
+                "automatic_debiting",
+                "bill_of_exchange",
+                "check",
+                "cash",
+                "card",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier payment method",
+          "title": "Supplier Payment Method",
+          "enum": [
+            "automatic_transfer",
+            "manual_transfer",
+            "automatic_debiting",
+            "bill_of_exchange",
+            "check",
+            "cash",
+            "card",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "supplier_due_date_delay": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier due date delay",
+          "title": "Supplier Due Date Delay"
+        },
+        "supplier_due_date_rule": {
+          "anyOf": [
+            {
+              "enum": [
+                "days",
+                "days_or_end_of_month"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier due date rule",
+          "title": "Supplier Due Date Rule",
+          "enum": [
+            "days",
+            "days_or_end_of_month"
+          ],
+          "x-enum-searchable": true
+        },
+        "external_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A unique external reference you can provide to track this supplier. If not provided, Pennylane will generate an identifier for you.",
+          "title": "External Reference"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PennylaneCreateSupplierConfig",
+      "type": "object"
+    },
+    "PennylaneGetCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a customer",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Customer identifier",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PennylaneGetCustomerConfig",
+      "type": "object"
+    },
+    "PennylaneGetCustomerInvoiceConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a customer invoice",
+      "properties": {
+        "operation": {
+          "const": "get_customer_invoice",
+          "default": "get_customer_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique identifier of the customer invoice",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PennylaneGetCustomerInvoiceConfig",
+      "type": "object"
+    },
+    "PennylaneGetMeConfig": {
+      "additionalProperties": false,
+      "description": "User Profile",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "PennylaneGetMeConfig",
+      "type": "object"
+    },
+    "PennylaneGetProductConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a product",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Pennylane ID",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PennylaneGetProductConfig",
+      "type": "object"
+    },
+    "PennylaneGetSupplierConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a supplier",
+      "properties": {
+        "operation": {
+          "const": "get_supplier",
+          "default": "get_supplier",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Supplier identifier",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PennylaneGetSupplierConfig",
+      "type": "object"
+    },
+    "PennylaneGetSupplierInvoiceConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a supplier invoice",
+      "properties": {
+        "operation": {
+          "const": "get_supplier_invoice",
+          "default": "get_supplier_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Supplier invoice identifier",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PennylaneGetSupplierInvoiceConfig",
+      "type": "object"
+    },
+    "PennylaneGetTransactionConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a transaction",
+      "properties": {
+        "operation": {
+          "const": "get_transaction",
+          "default": "get_transaction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Pennylane ID",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PennylaneGetTransactionConfig",
+      "type": "object"
+    },
+    "PennylaneListBankAccountsConfig": {
+      "additionalProperties": false,
+      "description": "List bank accounts",
+      "properties": {
+        "operation": {
+          "const": "list_bank_accounts",
+          "default": "list_bank_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination. Use this to fetch the next set of results.\nThe cursor is an opaque string returned in the previous response's metadata.\nLeave empty for the first request.\n",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Number of items to return per request.\nDefaults to 20 if not specified.\nMust be between 1 and 100.\n",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to sort items on specific attributes\nSort field may be prefixed with `-` for descending order.\nExample : `id` will sort by ascending order, `-id` will sort by descending order.\nAvailable fields : `id`\n",
+          "title": "Sort"
+        }
+      },
+      "title": "PennylaneListBankAccountsConfig",
+      "type": "object"
+    },
+    "PennylaneListCustomerInvoicesConfig": {
+      "additionalProperties": false,
+      "description": "List customer invoices",
+      "properties": {
+        "operation": {
+          "const": "list_customer_invoices",
+          "default": "list_customer_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination. Use this to fetch the next set of results.\nThe cursor is an opaque string returned in the previous response's metadata.\nLeave empty for the first request.\n",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Number of items to return per request.\nDefaults to 20 if not specified.\nMust be between 1 and 100.\n",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to filter items on specific fields.\nAvailable fields and values:\n- `id`, `date`, `customer_id`, `billing_subscription_id`, `quote_id`: `lt`, `lteq`, `gt`, `gteq`, `eq`, `not_eq`, `in`, `not_in`\n- `invoice_number`: `eq`, `not_eq`, `in`, `not_in`\n- `draft`: `eq` (boolean)\n- `credit_note`: `eq` (boolean)\n- `external_reference`: `eq`\n- `flow_id`: `eq`, `not_eq`, `in`, `not_in`\n- `category_id`: `in`\n",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to sort items on specific attributes\nSort field may be prefixed with `-` for descending order.\nExample : `id` will sort by ascending order, `-id` will sort by descending order.\nAvailable fields : `id`, `date`\n",
+          "title": "Sort"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to include additional related resources in the response.\nWhen specified, related resources will be returned in a separate `included` section.\nAvailable includes: `invoice_lines`\n\n\u26a0\ufe0f **Warning**: This feature is currently experimental and may change or be removed in future releases.\nWe recommend using it with caution in production environments.\n",
+          "title": "Include"
+        }
+      },
+      "title": "PennylaneListCustomerInvoicesConfig",
+      "type": "object"
+    },
+    "PennylaneListCustomersConfig": {
+      "additionalProperties": false,
+      "description": "List customers (company and individual)",
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination. Use this to fetch the next set of results.\nThe cursor is an opaque string returned in the previous response's metadata.\nLeave empty for the first request.\n",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Number of items to return per request.\nDefaults to 20 if not specified.\nMust be between 1 and 100.\n",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to filter items on specific fields.\nAvailable fields and values:\n- `id`: `lt`, `lteq`, `gt`, `gteq`, `eq`, `not_eq`, `in`, `not_in`\n- `customer_type`: `eq`, `not_eq`\n- `ledger_account_id`: `eq`, `not_eq`\n- `name`: `start_with`, `eq`\n- `external_reference`: `start_with`, `eq`, `not_eq`, `in`, `not_in`\n- `reg_no`: `eq`, `not_eq`, `in`, `not_in`\n- `emails`: `in`\n",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to sort items on specific attributes\nSort field may be prefixed with `-` for descending order.\nExample : `id` will sort by ascending order, `-id` will sort by descending order.\nAvailable fields : `id`\n",
+          "title": "Sort"
+        }
+      },
+      "title": "PennylaneListCustomersConfig",
+      "type": "object"
+    },
+    "PennylaneListProductsConfig": {
+      "additionalProperties": false,
+      "description": "List products",
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination. Use this to fetch the next set of results.\nThe cursor is an opaque string returned in the previous response's metadata.\nLeave empty for the first request.\n",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Number of items to return per request.\nDefaults to 20 if not specified.\nMust be between 1 and 100.\n",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to filter items on specific fields.\nAvailable fields and values:\n- `id` : `lt`, `lteq`, `gt`, `gteq`, `eq`, `not_eq`, `in`, `not_in`\n- `label` : `eq`, `in`\n- `reference` : `eq`, `in`\n- `external_reference` : `eq`, `not_eq`, `in`, `not_in`\n",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to sort items on specific attributes\nSort field may be prefixed with `-` for descending order.\nExample : `id` will sort by ascending order, `-id` will sort by descending order.\nAvailable fields : `id`\n",
+          "title": "Sort"
+        }
+      },
+      "title": "PennylaneListProductsConfig",
+      "type": "object"
+    },
+    "PennylaneListSupplierInvoicesConfig": {
+      "additionalProperties": false,
+      "description": "List supplier invoices",
+      "properties": {
+        "operation": {
+          "const": "list_supplier_invoices",
+          "default": "list_supplier_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination. Use this to fetch the next set of results.\nThe cursor is an opaque string returned in the previous response's metadata.\nLeave empty for the first request.\n",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Number of items to return per request.\nDefaults to 20 if not specified.\nMust be between 1 and 100.\n",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to filter items on specific fields.\nAvailable fields and values:\n- `id`: `lt`, `lteq`, `gt`, `gteq`, `eq`, `not_eq`, `in`, `not_in`\n- `supplier_id`: `lt`, `lteq`, `gt`, `gteq`, `eq`, `not_eq`, `in`, `not_in`\n- `invoice_number`: `eq`, `not_eq`, `in`, `not_in`\n- `date`: `lt`, `lteq`, `gt`, `gteq`, `eq`, `not_eq`, `in`, `not_in`\n- `category_id`: `in`\n- `external_reference`: `eq`, `not_eq`, `in`, `not_in`\n- `payment_status`: `eq`, `not_eq`, `in`, `not_in`\n- `flow_id`: `eq`, `not_eq`, `in`, `not_in`\n- `electronic_billing_address`: `eq`, `not_eq`, `in`, `not_in`\n",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to sort items on specific attributes\nSort field may be prefixed with `-` for descending order.\nExample : `id` will sort by ascending order, `-id` will sort by descending order.\nAvailable fields : `id`, `date`\n",
+          "title": "Sort"
+        }
+      },
+      "title": "PennylaneListSupplierInvoicesConfig",
+      "type": "object"
+    },
+    "PennylaneListSuppliersConfig": {
+      "additionalProperties": false,
+      "description": "List suppliers",
+      "properties": {
+        "operation": {
+          "const": "list_suppliers",
+          "default": "list_suppliers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination. Use this to fetch the next set of results.\nThe cursor is an opaque string returned in the previous response's metadata.\nLeave empty for the first request.\n",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Number of items to return per request.\nDefaults to 20 if not specified.\nMust be between 1 and 100.\n",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to filter items on specific fields.\nAvailable fields and values:\n- `id`: `lt`, `lteq`, `gt`, `gteq`, `eq`, `not_eq`, `in`, `not_in`\n- `ledger_account_id`: `eq`, `not_eq`\n- `name`: `start_with`\n- `external_reference`: `eq`, `not_eq`, `in`, `not_in`\n- `emails`: `in`\n",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to sort items on specific attributes\nSort field may be prefixed with `-` for descending order.\nExample : `id` will sort by ascending order, `-id` will sort by descending order.\nAvailable fields : `id`\n",
+          "title": "Sort"
+        }
+      },
+      "title": "PennylaneListSuppliersConfig",
+      "type": "object"
+    },
+    "PennylaneListTransactionsConfig": {
+      "additionalProperties": false,
+      "description": "List transactions",
+      "properties": {
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination. Use this to fetch the next set of results.\nThe cursor is an opaque string returned in the previous response's metadata.\nLeave empty for the first request.\n",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Number of items to return per request.\nDefaults to 20 if not specified.\nMust be between 1 and 100.\n",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to filter items on specific fields.\nAvailable fields and values:\n- `id`: `eq`, `not_eq`, `in`, `not_in`\n- `bank_account_id`: `eq`, `not_eq`, `in`, `not_in`\n- `journal_id`: `eq`, `not_eq`, `in`, `not_in`\n- `date`: `eq`, `not_eq`, `gt`, `lt`, `lteq`, `gteq`\n",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can choose to sort items on specific attributes\nSort field may be prefixed with `-` for descending order.\nExample : `id` will sort by ascending order, `-id` will sort by descending order.\nAvailable fields : `id`\n",
+          "title": "Sort"
+        }
+      },
+      "title": "PennylaneListTransactionsConfig",
+      "type": "object"
+    },
+    "PennylaneMarkCustomerInvoicePaidConfig": {
+      "additionalProperties": false,
+      "description": "Mark a customer invoice as paid",
+      "properties": {
+        "operation": {
+          "const": "mark_customer_invoice_paid",
+          "default": "mark_customer_invoice_paid",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique identifier of the customer invoice",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PennylaneMarkCustomerInvoicePaidConfig",
+      "type": "object"
+    },
+    "PennylaneProductLine": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "description": "Existing Pennylane product ID",
+          "title": "Product Id",
+          "type": "integer"
+        },
+        "quantity": {
+          "description": "Number of items; product supplies price, unit and VAT",
+          "title": "Quantity",
+          "type": "number"
+        }
+      },
+      "required": [
+        "product_id",
+        "quantity"
+      ],
+      "title": "PennylaneProductLine",
+      "type": "object"
+    },
+    "PennylaneUpdateCompanyCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Update a company customer",
+      "properties": {
+        "operation": {
+          "const": "update_company_customer",
+          "default": "update_company_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Company customer identifier",
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name",
+          "title": "Name"
+        },
+        "vat_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vat number",
+          "title": "Vat Number"
+        },
+        "reg_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reg no",
+          "title": "Reg No"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone",
+          "title": "Phone"
+        },
+        "billing_address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PennylaneAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Billing address"
+        },
+        "delivery_address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PennylaneAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delivery address"
+        },
+        "payment_conditions": {
+          "anyOf": [
+            {
+              "enum": [
+                "upon_receipt",
+                "custom",
+                "7_days",
+                "15_days",
+                "30_days",
+                "30_days_end_of_month",
+                "45_days",
+                "45_days_end_of_month",
+                "60_days"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Note that the `custom` option is only used on Pennylane's web app to avoid pre-filling the deadline when creating an invoice. On the API it has no effect and you will still have to provide a deadline when creating an invoice.",
+          "title": "Payment Conditions",
+          "enum": [
+            "upon_receipt",
+            "custom",
+            "7_days",
+            "15_days",
+            "30_days",
+            "30_days_end_of_month",
+            "45_days",
+            "45_days_end_of_month",
+            "60_days"
+          ],
+          "x-enum-searchable": true
+        },
+        "billing_iban": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Billing iban",
+          "title": "Billing Iban"
+        },
+        "recipient": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the person to whom the invoice is addressed",
+          "title": "Recipient"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference",
+          "title": "Reference"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes",
+          "title": "Notes"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Emails",
+          "title": "Emails"
+        },
+        "external_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "You can use your own unique value when creating the customer. If not provided, Pennylane will pick one for you. Value must be unique",
+          "title": "External Reference"
+        },
+        "billing_language": {
+          "anyOf": [
+            {
+              "enum": [
+                "fr_FR",
+                "en_GB",
+                "de_DE",
+                "es_ES"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The language in which the customer will receive invoices. Default is `fr_FR`",
+          "title": "Billing Language",
+          "enum": [
+            "fr_FR",
+            "en_GB",
+            "de_DE",
+            "es_ES"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PennylaneUpdateCompanyCustomerConfig",
+      "type": "object"
+    },
+    "PennylaneUpdateIndividualCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Update an individual customer",
+      "properties": {
+        "operation": {
+          "const": "update_individual_customer",
+          "default": "update_individual_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Individual customer identifier",
+          "title": "Id",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name",
+          "title": "Last Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone",
+          "title": "Phone"
+        },
+        "billing_address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PennylaneAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Billing address"
+        },
+        "delivery_address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PennylaneAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delivery address"
+        },
+        "payment_conditions": {
+          "anyOf": [
+            {
+              "enum": [
+                "upon_receipt",
+                "custom",
+                "7_days",
+                "15_days",
+                "30_days",
+                "30_days_end_of_month",
+                "45_days",
+                "45_days_end_of_month",
+                "60_days"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Note that the `custom` option is only used on Pennylane's web app to avoid pre-filling the deadline when creating an invoice. On the API it has no effect and you will still have to provide a deadline when creating an invoice.",
+          "title": "Payment Conditions",
+          "enum": [
+            "upon_receipt",
+            "custom",
+            "7_days",
+            "15_days",
+            "30_days",
+            "30_days_end_of_month",
+            "45_days",
+            "45_days_end_of_month",
+            "60_days"
+          ],
+          "x-enum-searchable": true
+        },
+        "billing_iban": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Billing iban",
+          "title": "Billing Iban"
+        },
+        "recipient": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Recipient",
+          "title": "Recipient"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference",
+          "title": "Reference"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes",
+          "title": "Notes"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Emails",
+          "title": "Emails"
+        },
+        "external_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The unique external reference assigned to this customer, assigned on creation either by you or Pennylane.",
+          "title": "External Reference"
+        },
+        "billing_language": {
+          "anyOf": [
+            {
+              "enum": [
+                "fr_FR",
+                "en_GB",
+                "de_DE",
+                "es_ES"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The language in which the customer will receive invoices. Default is `fr_FR`",
+          "title": "Billing Language",
+          "enum": [
+            "fr_FR",
+            "en_GB",
+            "de_DE",
+            "es_ES"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PennylaneUpdateIndividualCustomerConfig",
+      "type": "object"
+    },
+    "PennylaneUpdateProductConfig": {
+      "additionalProperties": false,
+      "description": "Update a product",
+      "properties": {
+        "operation": {
+          "const": "update_product",
+          "default": "update_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Pennylane ID",
+          "title": "Id",
+          "type": "integer"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label",
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product description. Maximum 5,000 characters.",
+          "title": "Description"
+        },
+        "price_before_tax": {
+          "anyOf": [
+            {
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Price before tax",
+          "title": "Price Before Tax"
+        },
+        "vat_rate": {
+          "anyOf": [
+            {
+              "enum": [
+                "FR_1_05",
+                "FR_1_75",
+                "FR_09",
+                "FR_21",
+                "FR_40",
+                "FR_50",
+                "FR_55",
+                "FR_60",
+                "FR_65",
+                "FR_85",
+                "FR_92",
+                "FR_100",
+                "FR_130",
+                "FR_15_385",
+                "FR_160",
+                "FR_196",
+                "FR_200",
+                "AD_10",
+                "AD_45",
+                "AD_95",
+                "AT_100",
+                "AT_130",
+                "AT_190",
+                "AT_200",
+                "BE_60",
+                "BE_120",
+                "BE_210",
+                "BG_90",
+                "BG_200",
+                "CH_25",
+                "CH_37",
+                "CH_77",
+                "CH_26",
+                "CH_38",
+                "CH_81",
+                "CY_30",
+                "CY_50",
+                "CY_80",
+                "CY_90",
+                "CY_190",
+                "CZ_100",
+                "CZ_120",
+                "CZ_150",
+                "CZ_210",
+                "DE_70",
+                "DE_190",
+                "DK_250",
+                "EE_90",
+                "EE_200",
+                "EE_220",
+                "EE_240",
+                "ES_40",
+                "ES_70",
+                "ES_100",
+                "ES_210",
+                "FI_100",
+                "FI_135",
+                "FI_140",
+                "FI_240",
+                "FI_255",
+                "GB_50",
+                "GB_200",
+                "GR_60",
+                "GR_130",
+                "GR_170",
+                "GR_240",
+                "GR_40",
+                "HR_50",
+                "HR_130",
+                "HR_250",
+                "HU_50",
+                "HU_180",
+                "HU_270",
+                "IE_48",
+                "IE_90",
+                "IE_135",
+                "IE_210",
+                "IE_230",
+                "IT_40",
+                "IT_50",
+                "IT_100",
+                "IT_220",
+                "LT_50",
+                "LT_90",
+                "LT_120",
+                "LT_210",
+                "LU_30",
+                "LU_70",
+                "LU_80",
+                "LU_120",
+                "LU_130",
+                "LU_140",
+                "LU_160",
+                "LU_170",
+                "LV_50",
+                "LV_120",
+                "LV_210",
+                "MC_09",
+                "MC_21",
+                "MC_55",
+                "MC_85",
+                "MC_100",
+                "MC_200",
+                "MT_50",
+                "MT_70",
+                "MT_120",
+                "MT_180",
+                "MU_150",
+                "NL_90",
+                "NL_210",
+                "PL_50",
+                "PL_80",
+                "PL_230",
+                "PT_60",
+                "PT_130",
+                "PT_160",
+                "PT_180",
+                "PT_220",
+                "PT_230",
+                "RO_50",
+                "RO_90",
+                "RO_110",
+                "RO_190",
+                "RO_210",
+                "SE_60",
+                "SE_120",
+                "SE_250",
+                "SI_50",
+                "SI_95",
+                "SI_220",
+                "SK_50",
+                "SK_100",
+                "SK_190",
+                "SK_200",
+                "SK_230",
+                "NO_120",
+                "NO_150",
+                "NO_250",
+                "DE_70_BU0002",
+                "DE_190_BU0003",
+                "DE_70_BU0008",
+                "DE_190_BU0009",
+                "DE_intracom_70_BU0012",
+                "DE_intracom_190_BU0013",
+                "DE_190_electronic_BU0226",
+                "exempt",
+                "DE_intracom_exempt_BU0011",
+                "DE_intracom_exempt_BU0047",
+                "DE_intracom_exempt_BU0233",
+                "DE_exempt_BU0001",
+                "DE_exempt_BU0181",
+                "DE_exempt_BU0490",
+                "intracom_21",
+                "intracom_55",
+                "intracom_85",
+                "intracom_100",
+                "crossborder",
+                "ES_intracom_sales_goods",
+                "ES_intracom_sales_services",
+                "DE_intracom_70_BU0018",
+                "DE_intracom_190_BU0019",
+                "DE_intracom_190_BU0506",
+                "extracom",
+                "DE_extracom_BU0173",
+                "DE_extracom_BU0191",
+                "DE_extracom_190_BU0511",
+                "ES_isp_sales",
+                "ES_suplido",
+                "FR_85_construction",
+                "FR_100_construction",
+                "FR_200_construction",
+                "DE_exempt_construction_BU0046",
+                "DE_70_construction_BU0091",
+                "DE_190_construction_BU0094",
+                "DE_190_construction_BU0526",
+                "DE_190_construction_BU0546",
+                "ES_isp_purchases_210",
+                "ES_isp_purchases_100"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product VAT rate. A 20% VAT in France is FR_200.",
+          "title": "Vat Rate",
+          "enum": [
+            "FR_1_05",
+            "FR_1_75",
+            "FR_09",
+            "FR_21",
+            "FR_40",
+            "FR_50",
+            "FR_55",
+            "FR_60",
+            "FR_65",
+            "FR_85",
+            "FR_92",
+            "FR_100",
+            "FR_130",
+            "FR_15_385",
+            "FR_160",
+            "FR_196",
+            "FR_200",
+            "AD_10",
+            "AD_45",
+            "AD_95",
+            "AT_100",
+            "AT_130",
+            "AT_190",
+            "AT_200",
+            "BE_60",
+            "BE_120",
+            "BE_210",
+            "BG_90",
+            "BG_200",
+            "CH_25",
+            "CH_37",
+            "CH_77",
+            "CH_26",
+            "CH_38",
+            "CH_81",
+            "CY_30",
+            "CY_50",
+            "CY_80",
+            "CY_90",
+            "CY_190",
+            "CZ_100",
+            "CZ_120",
+            "CZ_150",
+            "CZ_210",
+            "DE_70",
+            "DE_190",
+            "DK_250",
+            "EE_90",
+            "EE_200",
+            "EE_220",
+            "EE_240",
+            "ES_40",
+            "ES_70",
+            "ES_100",
+            "ES_210",
+            "FI_100",
+            "FI_135",
+            "FI_140",
+            "FI_240",
+            "FI_255",
+            "GB_50",
+            "GB_200",
+            "GR_60",
+            "GR_130",
+            "GR_170",
+            "GR_240",
+            "GR_40",
+            "HR_50",
+            "HR_130",
+            "HR_250",
+            "HU_50",
+            "HU_180",
+            "HU_270",
+            "IE_48",
+            "IE_90",
+            "IE_135",
+            "IE_210",
+            "IE_230",
+            "IT_40",
+            "IT_50",
+            "IT_100",
+            "IT_220",
+            "LT_50",
+            "LT_90",
+            "LT_120",
+            "LT_210",
+            "LU_30",
+            "LU_70",
+            "LU_80",
+            "LU_120",
+            "LU_130",
+            "LU_140",
+            "LU_160",
+            "LU_170",
+            "LV_50",
+            "LV_120",
+            "LV_210",
+            "MC_09",
+            "MC_21",
+            "MC_55",
+            "MC_85",
+            "MC_100",
+            "MC_200",
+            "MT_50",
+            "MT_70",
+            "MT_120",
+            "MT_180",
+            "MU_150",
+            "NL_90",
+            "NL_210",
+            "PL_50",
+            "PL_80",
+            "PL_230",
+            "PT_60",
+            "PT_130",
+            "PT_160",
+            "PT_180",
+            "PT_220",
+            "PT_230",
+            "RO_50",
+            "RO_90",
+            "RO_110",
+            "RO_190",
+            "RO_210",
+            "SE_60",
+            "SE_120",
+            "SE_250",
+            "SI_50",
+            "SI_95",
+            "SI_220",
+            "SK_50",
+            "SK_100",
+            "SK_190",
+            "SK_200",
+            "SK_230",
+            "NO_120",
+            "NO_150",
+            "NO_250",
+            "DE_70_BU0002",
+            "DE_190_BU0003",
+            "DE_70_BU0008",
+            "DE_190_BU0009",
+            "DE_intracom_70_BU0012",
+            "DE_intracom_190_BU0013",
+            "DE_190_electronic_BU0226",
+            "exempt",
+            "DE_intracom_exempt_BU0011",
+            "DE_intracom_exempt_BU0047",
+            "DE_intracom_exempt_BU0233",
+            "DE_exempt_BU0001",
+            "DE_exempt_BU0181",
+            "DE_exempt_BU0490",
+            "intracom_21",
+            "intracom_55",
+            "intracom_85",
+            "intracom_100",
+            "crossborder",
+            "ES_intracom_sales_goods",
+            "ES_intracom_sales_services",
+            "DE_intracom_70_BU0018",
+            "DE_intracom_190_BU0019",
+            "DE_intracom_190_BU0506",
+            "extracom",
+            "DE_extracom_BU0173",
+            "DE_extracom_BU0191",
+            "DE_extracom_190_BU0511",
+            "ES_isp_sales",
+            "ES_suplido",
+            "FR_85_construction",
+            "FR_100_construction",
+            "FR_200_construction",
+            "DE_exempt_construction_BU0046",
+            "DE_70_construction_BU0091",
+            "DE_190_construction_BU0094",
+            "DE_190_construction_BU0526",
+            "DE_190_construction_BU0546",
+            "ES_isp_purchases_210",
+            "ES_isp_purchases_100"
+          ],
+          "x-enum-searchable": true
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product unit",
+          "title": "Unit"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "enum": [
+                "EUR",
+                "USD",
+                "GBP",
+                "AED",
+                "AFN",
+                "ALL",
+                "AMD",
+                "ANG",
+                "AOA",
+                "ARS",
+                "AUD",
+                "AWG",
+                "AZN",
+                "BAM",
+                "BBD",
+                "BDT",
+                "BGN",
+                "BHD",
+                "BIF",
+                "BMD",
+                "BND",
+                "BOB",
+                "BRL",
+                "BSD",
+                "BTN",
+                "BWP",
+                "BYN",
+                "BYR",
+                "BZD",
+                "CAD",
+                "CDF",
+                "CHE",
+                "CHF",
+                "CLF",
+                "CLP",
+                "CNY",
+                "COP",
+                "CRC",
+                "CUC",
+                "CUP",
+                "CVE",
+                "CZK",
+                "DJF",
+                "DKK",
+                "DOP",
+                "DZD",
+                "EGP",
+                "ERN",
+                "ETB",
+                "FJD",
+                "FKP",
+                "GEL",
+                "GGP",
+                "GHS",
+                "GIP",
+                "GMD",
+                "GNF",
+                "GTQ",
+                "GYD",
+                "HKD",
+                "HNL",
+                "HRK",
+                "HTG",
+                "HUF",
+                "IDR",
+                "ILS",
+                "IMP",
+                "INR",
+                "IQD",
+                "IRR",
+                "ISK",
+                "JEP",
+                "JMD",
+                "JOD",
+                "JPY",
+                "KES",
+                "KGS",
+                "KHR",
+                "KMF",
+                "KPW",
+                "KRW",
+                "KWD",
+                "KYD",
+                "KZT",
+                "LAK",
+                "LBP",
+                "LKR",
+                "LRD",
+                "LSL",
+                "LTL",
+                "LVL",
+                "LYD",
+                "MAD",
+                "MDL",
+                "MGA",
+                "MKD",
+                "MMK",
+                "MNT",
+                "MOP",
+                "MRO",
+                "MRU",
+                "MUR",
+                "MVR",
+                "MWK",
+                "MXN",
+                "MYR",
+                "MZN",
+                "NAD",
+                "NGN",
+                "NIO",
+                "NOK",
+                "NPR",
+                "NZD",
+                "OMR",
+                "PAB",
+                "PEN",
+                "PGK",
+                "PHP",
+                "PKR",
+                "PLN",
+                "PYG",
+                "QAR",
+                "RON",
+                "RSD",
+                "RUB",
+                "RWF",
+                "SAR",
+                "SBD",
+                "SCR",
+                "SDG",
+                "SEK",
+                "SGD",
+                "SHP",
+                "SLL",
+                "SLE",
+                "SOS",
+                "SRD",
+                "STD",
+                "SVC",
+                "SYP",
+                "SZL",
+                "THB",
+                "TJS",
+                "TMT",
+                "TND",
+                "TOP",
+                "TRY",
+                "TTD",
+                "TWD",
+                "TZS",
+                "UAH",
+                "UGX",
+                "UYU",
+                "UZS",
+                "VEF",
+                "VES",
+                "VND",
+                "VUV",
+                "WST",
+                "XAF",
+                "XCD",
+                "XDR",
+                "XOF",
+                "XPF",
+                "YER",
+                "ZAR",
+                "ZMK",
+                "ZMW",
+                "ZWL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Currency",
+          "title": "Currency",
+          "enum": [
+            "EUR",
+            "USD",
+            "GBP",
+            "AED",
+            "AFN",
+            "ALL",
+            "AMD",
+            "ANG",
+            "AOA",
+            "ARS",
+            "AUD",
+            "AWG",
+            "AZN",
+            "BAM",
+            "BBD",
+            "BDT",
+            "BGN",
+            "BHD",
+            "BIF",
+            "BMD",
+            "BND",
+            "BOB",
+            "BRL",
+            "BSD",
+            "BTN",
+            "BWP",
+            "BYN",
+            "BYR",
+            "BZD",
+            "CAD",
+            "CDF",
+            "CHE",
+            "CHF",
+            "CLF",
+            "CLP",
+            "CNY",
+            "COP",
+            "CRC",
+            "CUC",
+            "CUP",
+            "CVE",
+            "CZK",
+            "DJF",
+            "DKK",
+            "DOP",
+            "DZD",
+            "EGP",
+            "ERN",
+            "ETB",
+            "FJD",
+            "FKP",
+            "GEL",
+            "GGP",
+            "GHS",
+            "GIP",
+            "GMD",
+            "GNF",
+            "GTQ",
+            "GYD",
+            "HKD",
+            "HNL",
+            "HRK",
+            "HTG",
+            "HUF",
+            "IDR",
+            "ILS",
+            "IMP",
+            "INR",
+            "IQD",
+            "IRR",
+            "ISK",
+            "JEP",
+            "JMD",
+            "JOD",
+            "JPY",
+            "KES",
+            "KGS",
+            "KHR",
+            "KMF",
+            "KPW",
+            "KRW",
+            "KWD",
+            "KYD",
+            "KZT",
+            "LAK",
+            "LBP",
+            "LKR",
+            "LRD",
+            "LSL",
+            "LTL",
+            "LVL",
+            "LYD",
+            "MAD",
+            "MDL",
+            "MGA",
+            "MKD",
+            "MMK",
+            "MNT",
+            "MOP",
+            "MRO",
+            "MRU",
+            "MUR",
+            "MVR",
+            "MWK",
+            "MXN",
+            "MYR",
+            "MZN",
+            "NAD",
+            "NGN",
+            "NIO",
+            "NOK",
+            "NPR",
+            "NZD",
+            "OMR",
+            "PAB",
+            "PEN",
+            "PGK",
+            "PHP",
+            "PKR",
+            "PLN",
+            "PYG",
+            "QAR",
+            "RON",
+            "RSD",
+            "RUB",
+            "RWF",
+            "SAR",
+            "SBD",
+            "SCR",
+            "SDG",
+            "SEK",
+            "SGD",
+            "SHP",
+            "SLL",
+            "SLE",
+            "SOS",
+            "SRD",
+            "STD",
+            "SVC",
+            "SYP",
+            "SZL",
+            "THB",
+            "TJS",
+            "TMT",
+            "TND",
+            "TOP",
+            "TRY",
+            "TTD",
+            "TWD",
+            "TZS",
+            "UAH",
+            "UGX",
+            "UYU",
+            "UZS",
+            "VEF",
+            "VES",
+            "VND",
+            "VUV",
+            "WST",
+            "XAF",
+            "XCD",
+            "XDR",
+            "XOF",
+            "XPF",
+            "YER",
+            "ZAR",
+            "ZMK",
+            "ZMW",
+            "ZWL"
+          ],
+          "x-enum-searchable": true
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference",
+          "title": "Reference"
+        },
+        "external_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The unique external reference assigned to this Product, assigned on creation either by you or Pennylane.",
+          "title": "External Reference"
+        },
+        "ledger_account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ledger account id",
+          "title": "Ledger Account Id"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PennylaneUpdateProductConfig",
+      "type": "object"
+    },
+    "PennylaneUpdateSupplierConfig": {
+      "additionalProperties": false,
+      "description": "Update a supplier",
+      "properties": {
+        "operation": {
+          "const": "update_supplier",
+          "default": "update_supplier",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Pennylane ID",
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name",
+          "title": "Name"
+        },
+        "reg_no": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{9}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier registration number (SIREN).\n- 9-digit number\n- Only applicable for French companies\n",
+          "title": "Reg No"
+        },
+        "establishment_no": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier identification number (SIRET).\n- 14-digit number combining SIREN (9 digits) and NIC (5 digits)\n- Only applicable for French companies\n",
+          "title": "Establishment No"
+        },
+        "postal_address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PennylaneAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal address"
+        },
+        "vat_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vat number",
+          "title": "Vat Number"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Emails",
+          "title": "Emails"
+        },
+        "iban": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Iban",
+          "title": "Iban"
+        },
+        "supplier_payment_method": {
+          "anyOf": [
+            {
+              "enum": [
+                "automatic_transfer",
+                "manual_transfer",
+                "automatic_debiting",
+                "bill_of_exchange",
+                "check",
+                "cash",
+                "card",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier payment method",
+          "title": "Supplier Payment Method",
+          "enum": [
+            "automatic_transfer",
+            "manual_transfer",
+            "automatic_debiting",
+            "bill_of_exchange",
+            "check",
+            "cash",
+            "card",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "supplier_due_date_delay": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier due date delay",
+          "title": "Supplier Due Date Delay"
+        },
+        "supplier_due_date_rule": {
+          "anyOf": [
+            {
+              "enum": [
+                "days",
+                "days_or_end_of_month"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplier due date rule",
+          "title": "Supplier Due Date Rule",
+          "enum": [
+            "days",
+            "days_or_end_of_month"
+          ],
+          "x-enum-searchable": true
+        },
+        "external_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The unique external reference that was assigned during creation either by you or Pennylane.",
+          "title": "External Reference"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PennylaneUpdateSupplierConfig",
+      "type": "object"
+    },
+    "PennylaneUpdateSupplierInvoicePaymentStatusConfig": {
+      "additionalProperties": false,
+      "description": "Update a supplier invoice payment status",
+      "properties": {
+        "operation": {
+          "const": "update_supplier_invoice_payment_status",
+          "default": "update_supplier_invoice_payment_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "supplier_invoice_id": {
+          "description": "Supplier invoice identifier",
+          "title": "Supplier Invoice Id",
+          "type": "integer"
+        },
+        "payment_status": {
+          "description": "Payment status",
+          "enum": [
+            "paid",
+            "to_be_paid"
+          ],
+          "title": "Payment Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "supplier_invoice_id",
+        "payment_status"
+      ],
+      "title": "PennylaneUpdateSupplierInvoicePaymentStatusConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_company_customer": "#/$defs/PennylaneCreateCompanyCustomerConfig",
+          "create_customer_invoice": "#/$defs/PennylaneCreateCustomerInvoiceConfig",
+          "create_individual_customer": "#/$defs/PennylaneCreateIndividualCustomerConfig",
+          "create_product": "#/$defs/PennylaneCreateProductConfig",
+          "create_supplier": "#/$defs/PennylaneCreateSupplierConfig",
+          "get_customer": "#/$defs/PennylaneGetCustomerConfig",
+          "get_customer_invoice": "#/$defs/PennylaneGetCustomerInvoiceConfig",
+          "get_me": "#/$defs/PennylaneGetMeConfig",
+          "get_product": "#/$defs/PennylaneGetProductConfig",
+          "get_supplier": "#/$defs/PennylaneGetSupplierConfig",
+          "get_supplier_invoice": "#/$defs/PennylaneGetSupplierInvoiceConfig",
+          "get_transaction": "#/$defs/PennylaneGetTransactionConfig",
+          "list_bank_accounts": "#/$defs/PennylaneListBankAccountsConfig",
+          "list_customer_invoices": "#/$defs/PennylaneListCustomerInvoicesConfig",
+          "list_customers": "#/$defs/PennylaneListCustomersConfig",
+          "list_products": "#/$defs/PennylaneListProductsConfig",
+          "list_supplier_invoices": "#/$defs/PennylaneListSupplierInvoicesConfig",
+          "list_suppliers": "#/$defs/PennylaneListSuppliersConfig",
+          "list_transactions": "#/$defs/PennylaneListTransactionsConfig",
+          "mark_customer_invoice_paid": "#/$defs/PennylaneMarkCustomerInvoicePaidConfig",
+          "update_company_customer": "#/$defs/PennylaneUpdateCompanyCustomerConfig",
+          "update_individual_customer": "#/$defs/PennylaneUpdateIndividualCustomerConfig",
+          "update_product": "#/$defs/PennylaneUpdateProductConfig",
+          "update_supplier": "#/$defs/PennylaneUpdateSupplierConfig",
+          "update_supplier_invoice_payment_status": "#/$defs/PennylaneUpdateSupplierInvoicePaymentStatusConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PennylaneGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneListSuppliersConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneGetSupplierConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneListCustomerInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneGetCustomerInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneListSupplierInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneGetSupplierInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneListTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneGetTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneListBankAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneCreateCompanyCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneUpdateCompanyCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneCreateIndividualCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneUpdateIndividualCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneCreateSupplierConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneUpdateSupplierConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneCreateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneUpdateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneCreateCustomerInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneMarkCustomerInvoicePaidConfig"
+        },
+        {
+          "$ref": "#/$defs/PennylaneUpdateSupplierInvoicePaymentStatusConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PennylaneAPIToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Pennylane Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

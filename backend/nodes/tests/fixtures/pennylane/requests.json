@@ -1,0 +1,423 @@
+{
+  "source": "https://pennylane.readme.io/openapi/accounting.json",
+  "cases": [
+    {
+      "operation": "get_me",
+      "method": "GET",
+      "path": "/api/external/v2/me",
+      "config": {},
+      "body": null,
+      "response": {
+        "user": null,
+        "company": {
+          "id": 172916,
+          "name": "My Company Name",
+          "reg_no": "sandbox-172916"
+        }
+      }
+    },
+    {
+      "operation": "list_customers",
+      "method": "GET",
+      "path": "/api/external/v2/customers",
+      "config": {
+        "limit": 20,
+        "cursor": "dXBkYXRlZF9hdDoxNjc0MTIzNDU2"
+      },
+      "body": null,
+      "response": {
+        "items": [
+          {
+            "id": 42
+          }
+        ],
+        "has_more": true,
+        "next_cursor": "next-page"
+      }
+    },
+    {
+      "operation": "get_customer",
+      "method": "GET",
+      "path": "/api/external/v2/customers/42",
+      "config": {
+        "id": 42
+      },
+      "body": null,
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "list_suppliers",
+      "method": "GET",
+      "path": "/api/external/v2/suppliers",
+      "config": {
+        "limit": 20,
+        "cursor": "dXBkYXRlZF9hdDoxNjc0MTIzNDU2"
+      },
+      "body": null,
+      "response": {
+        "items": [
+          {
+            "id": 42
+          }
+        ],
+        "has_more": true,
+        "next_cursor": "next-page"
+      }
+    },
+    {
+      "operation": "get_supplier",
+      "method": "GET",
+      "path": "/api/external/v2/suppliers/42",
+      "config": {
+        "id": 42
+      },
+      "body": null,
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "list_products",
+      "method": "GET",
+      "path": "/api/external/v2/products",
+      "config": {
+        "limit": 20,
+        "cursor": "dXBkYXRlZF9hdDoxNjc0MTIzNDU2"
+      },
+      "body": null,
+      "response": {
+        "items": [
+          {
+            "id": 42
+          }
+        ],
+        "has_more": true,
+        "next_cursor": "next-page"
+      }
+    },
+    {
+      "operation": "get_product",
+      "method": "GET",
+      "path": "/api/external/v2/products/42",
+      "config": {
+        "id": 42
+      },
+      "body": null,
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "list_customer_invoices",
+      "method": "GET",
+      "path": "/api/external/v2/customer_invoices",
+      "config": {
+        "limit": 20,
+        "cursor": "dXBkYXRlZF9hdDoxNjc0MTIzNDU2"
+      },
+      "body": null,
+      "response": {
+        "items": [
+          {
+            "id": 42
+          }
+        ],
+        "has_more": true,
+        "next_cursor": "next-page"
+      }
+    },
+    {
+      "operation": "get_customer_invoice",
+      "method": "GET",
+      "path": "/api/external/v2/customer_invoices/42",
+      "config": {
+        "id": 42
+      },
+      "body": null,
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "list_supplier_invoices",
+      "method": "GET",
+      "path": "/api/external/v2/supplier_invoices",
+      "config": {
+        "limit": 20,
+        "cursor": "dXBkYXRlZF9hdDoxNjc0MTIzNDU2"
+      },
+      "body": null,
+      "response": {
+        "items": [
+          {
+            "id": 42
+          }
+        ],
+        "has_more": true,
+        "next_cursor": "next-page"
+      }
+    },
+    {
+      "operation": "get_supplier_invoice",
+      "method": "GET",
+      "path": "/api/external/v2/supplier_invoices/42",
+      "config": {
+        "id": 42
+      },
+      "body": null,
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "list_transactions",
+      "method": "GET",
+      "path": "/api/external/v2/transactions",
+      "config": {
+        "limit": 20,
+        "cursor": "dXBkYXRlZF9hdDoxNjc0MTIzNDU2"
+      },
+      "body": null,
+      "response": {
+        "items": [
+          {
+            "id": 42
+          }
+        ],
+        "has_more": true,
+        "next_cursor": "next-page"
+      }
+    },
+    {
+      "operation": "get_transaction",
+      "method": "GET",
+      "path": "/api/external/v2/transactions/42",
+      "config": {
+        "id": 42
+      },
+      "body": null,
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "list_bank_accounts",
+      "method": "GET",
+      "path": "/api/external/v2/bank_accounts",
+      "config": {},
+      "body": null,
+      "response": {
+        "items": [],
+        "has_more": false,
+        "next_cursor": null
+      }
+    },
+    {
+      "operation": "create_company_customer",
+      "method": "POST",
+      "path": "/api/external/v2/company_customers",
+      "config": {
+        "name": "My company",
+        "billing_address": {
+          "address": "8 rue de la paix",
+          "postal_code": "75002",
+          "city": "Paris",
+          "country_alpha2": "FR"
+        }
+      },
+      "body": {
+        "name": "My company",
+        "billing_address": {
+          "address": "8 rue de la paix",
+          "postal_code": "75002",
+          "city": "Paris",
+          "country_alpha2": "FR"
+        }
+      },
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "update_company_customer",
+      "method": "PUT",
+      "path": "/api/external/v2/company_customers/42",
+      "config": {
+        "id": 42,
+        "name": "My company"
+      },
+      "body": {
+        "name": "My company"
+      },
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "create_individual_customer",
+      "method": "POST",
+      "path": "/api/external/v2/individual_customers",
+      "config": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "billing_address": {
+          "address": "8 rue de la paix",
+          "postal_code": "75002",
+          "city": "Paris",
+          "country_alpha2": "FR"
+        }
+      },
+      "body": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "billing_address": {
+          "address": "8 rue de la paix",
+          "postal_code": "75002",
+          "city": "Paris",
+          "country_alpha2": "FR"
+        }
+      },
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "update_individual_customer",
+      "method": "PUT",
+      "path": "/api/external/v2/individual_customers/42",
+      "config": {
+        "id": 42,
+        "first_name": "John"
+      },
+      "body": {
+        "first_name": "John"
+      },
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "create_supplier",
+      "method": "POST",
+      "path": "/api/external/v2/suppliers",
+      "config": {
+        "name": "Pennylane"
+      },
+      "body": {
+        "name": "Pennylane"
+      },
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "update_supplier",
+      "method": "PUT",
+      "path": "/api/external/v2/suppliers/42",
+      "config": {
+        "id": 42,
+        "name": "Pennylane"
+      },
+      "body": {
+        "name": "Pennylane"
+      },
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "create_product",
+      "method": "POST",
+      "path": "/api/external/v2/products",
+      "config": {
+        "label": "Product 1",
+        "price_before_tax": "100.00",
+        "vat_rate": "FR_200"
+      },
+      "body": {
+        "label": "Product 1",
+        "price_before_tax": "100.00",
+        "vat_rate": "FR_200"
+      },
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "update_product",
+      "method": "PUT",
+      "path": "/api/external/v2/products/42",
+      "config": {
+        "id": 42,
+        "price_before_tax": "100.00"
+      },
+      "body": {
+        "price_before_tax": "100.00"
+      },
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "create_customer_invoice",
+      "method": "POST",
+      "path": "/api/external/v2/customer_invoices",
+      "config": {
+        "date": "2023-08-30",
+        "deadline": "2023-08-30",
+        "customer_id": 42,
+        "draft": true,
+        "invoice_lines": [
+          {
+            "product_id": 42,
+            "quantity": 12
+          }
+        ]
+      },
+      "body": {
+        "date": "2023-08-30",
+        "deadline": "2023-08-30",
+        "customer_id": 42,
+        "draft": true,
+        "invoice_lines": [
+          {
+            "product_id": 42,
+            "quantity": 12
+          }
+        ]
+      },
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "mark_customer_invoice_paid",
+      "method": "PUT",
+      "path": "/api/external/v2/customer_invoices/42/mark_as_paid",
+      "config": {
+        "id": 42
+      },
+      "body": null,
+      "response": {
+        "id": 42
+      }
+    },
+    {
+      "operation": "update_supplier_invoice_payment_status",
+      "method": "PUT",
+      "path": "/api/external/v2/supplier_invoices/123/payment_status",
+      "config": {
+        "supplier_invoice_id": 123,
+        "payment_status": "paid"
+      },
+      "body": {
+        "payment_status": "paid"
+      },
+      "response": {
+        "id": 42
+      }
+    }
+  ]
+}
