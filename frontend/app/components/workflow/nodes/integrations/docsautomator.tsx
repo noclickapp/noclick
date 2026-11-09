@@ -15,6 +15,7 @@ DocsautomatorIcon.displayName = 'DocsautomatorIcon';
 export const DocsautomatorNode: NodeDefinition = {
     type: 'automation-docsautomator',
     label: 'DocsAutomator',
+    category: 'documents',
     description: 'Generate documents, manage automations and track signing',
     Icon: DocsautomatorIcon,
     keywords: ['Docsautomator', 'PDF', 'document generation', 'e-signature'],
