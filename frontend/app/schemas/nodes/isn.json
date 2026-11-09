@@ -1,0 +1,1215 @@
+{
+  "$defs": {
+    "ISNAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "isn_api_key",
+          "default": "isn_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_base_url": {
+          "description": "Your account URL ending in /json, for example https://goisn.net/greenway/json",
+          "title": "ISN JSON API URL",
+          "type": "string"
+        },
+        "access_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API access key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "secret_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API secret key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_base_url",
+        "access_key",
+        "secret_key"
+      ],
+      "title": "ISN API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your account's JSON API URL and the API access key and secret key used as the Basic-auth username and password. Use API keys with the permissions your workflow needs. The connection check reads the current user; it does not verify write permissions.",
+      "x-credential-url": "https://json.inspectionsupport.net/"
+    },
+    "ISNCancelOrderConfig": {
+      "additionalProperties": false,
+      "description": "Cancel an inspection order; account cancellation automations may run.",
+      "properties": {
+        "operation": {
+          "const": "cancel_order",
+          "default": "cancel_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "title": "Order Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "ISNCancelOrderConfig",
+      "type": "object"
+    },
+    "ISNClientInput": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ISNClientInput",
+      "type": "object"
+    },
+    "ISNCreateOrderConfig": {
+      "additionalProperties": false,
+      "description": "Create an inspection order; scheduling and configured account automations may run.",
+      "properties": {
+        "operation": {
+          "const": "create_order",
+          "default": "create_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "datetime": {
+          "description": "Scheduled ISO 8601 datetime",
+          "format": "date-time",
+          "title": "Datetime",
+          "type": "string"
+        },
+        "address": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Address",
+          "type": "string"
+        },
+        "city": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "State",
+          "type": "string"
+        },
+        "postal": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Postal",
+          "type": "string"
+        },
+        "client": {
+          "$ref": "#/$defs/ISNClientInput"
+        },
+        "clientid": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clientid"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "orderType": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ordertype"
+        },
+        "inspector_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inspector Id"
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ISNClientInput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "buyersAgentId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Buyersagentid"
+        },
+        "sellersAgentId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sellersagentid"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "fee": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fee"
+        },
+        "area": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area"
+        },
+        "built": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Built"
+        }
+      },
+      "required": [
+        "datetime",
+        "address",
+        "city",
+        "state",
+        "postal",
+        "client"
+      ],
+      "title": "ISNCreateOrderConfig",
+      "type": "object"
+    },
+    "ISNCreateServiceConfig": {
+      "additionalProperties": false,
+      "description": "Create an inspection service.",
+      "properties": {
+        "operation": {
+          "const": "create_service",
+          "default": "create_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "privatename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Privatename"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "ancillary": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ancillary"
+        },
+        "inspectiontypeid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inspectiontypeid"
+        },
+        "sequence": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sequence"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ISNCreateServiceConfig",
+      "type": "object"
+    },
+    "ISNDeleteServiceConfig": {
+      "additionalProperties": false,
+      "description": "Delete a service; provider acknowledgment does not independently verify absence.",
+      "properties": {
+        "operation": {
+          "const": "delete_service",
+          "default": "delete_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_id": {
+          "title": "Service Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_id"
+      ],
+      "title": "ISNDeleteServiceConfig",
+      "type": "object"
+    },
+    "ISNGetAgentConfig": {
+      "additionalProperties": false,
+      "description": "Read a real estate agent.",
+      "properties": {
+        "operation": {
+          "const": "get_agent",
+          "default": "get_agent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "title": "Agent Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "ISNGetAgentConfig",
+      "type": "object"
+    },
+    "ISNGetClientConfig": {
+      "additionalProperties": false,
+      "description": "Read a client.",
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "ISNGetClientConfig",
+      "type": "object"
+    },
+    "ISNGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Read a contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ISNGetContactConfig",
+      "type": "object"
+    },
+    "ISNGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "description": "Read the current user for this ISN account.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ISNGetCurrentUserConfig",
+      "type": "object"
+    },
+    "ISNGetOrderConfig": {
+      "additionalProperties": false,
+      "description": "Read one inspection order.",
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "title": "Order Id",
+          "type": "string"
+        },
+        "all_controls": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "All Controls"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "ISNGetOrderConfig",
+      "type": "object"
+    },
+    "ISNGetServiceConfig": {
+      "additionalProperties": false,
+      "description": "Read an inspection service.",
+      "properties": {
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_id": {
+          "title": "Service Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_id"
+      ],
+      "title": "ISNGetServiceConfig",
+      "type": "object"
+    },
+    "ISNListAgentsConfig": {
+      "additionalProperties": false,
+      "description": "List real estate agents.",
+      "properties": {
+        "operation": {
+          "const": "list_agents",
+          "default": "list_agents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ISNListAgentsConfig",
+      "type": "object"
+    },
+    "ISNListCalendarEventsConfig": {
+      "additionalProperties": false,
+      "description": "List calendar events within a date range.",
+      "properties": {
+        "start": {
+          "description": "Start datetime in ISO 8601 format",
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "End datetime in ISO 8601 format",
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_calendar_events",
+          "default": "list_calendar_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Id"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "ISNListCalendarEventsConfig",
+      "type": "object"
+    },
+    "ISNListClientsConfig": {
+      "additionalProperties": false,
+      "description": "List account clients.",
+      "properties": {
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ISNListClientsConfig",
+      "type": "object"
+    },
+    "ISNListContactsConfig": {
+      "additionalProperties": false,
+      "description": "List account contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ISNListContactsConfig",
+      "type": "object"
+    },
+    "ISNListOrderNotesConfig": {
+      "additionalProperties": false,
+      "description": "List notes for an inspection order.",
+      "properties": {
+        "operation": {
+          "const": "list_order_notes",
+          "default": "list_order_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "title": "Order Id",
+          "type": "string"
+        },
+        "note_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note Id"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "ISNListOrderNotesConfig",
+      "type": "object"
+    },
+    "ISNListOrderTypesConfig": {
+      "additionalProperties": false,
+      "description": "List inspection types.",
+      "properties": {
+        "operation": {
+          "const": "list_order_types",
+          "default": "list_order_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "includedeleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includedeleted"
+        }
+      },
+      "title": "ISNListOrderTypesConfig",
+      "type": "object"
+    },
+    "ISNListOrdersConfig": {
+      "additionalProperties": false,
+      "description": "List inspection orders within the requested date range.",
+      "properties": {
+        "start": {
+          "description": "Start datetime in ISO 8601 format",
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "End datetime in ISO 8601 format",
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "criteria": {
+          "anyOf": [
+            {
+              "enum": [
+                "date",
+                "created",
+                "scheduled",
+                "updated",
+                "created_scheduled",
+                "date_created_scheduled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Criteria",
+          "enum": [
+            "date",
+            "created",
+            "scheduled",
+            "updated",
+            "created_scheduled",
+            "date_created_scheduled"
+          ],
+          "x-enum-searchable": true
+        },
+        "mini": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mini"
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agent Id"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "ISNListOrdersConfig",
+      "type": "object"
+    },
+    "ISNListPackagesConfig": {
+      "additionalProperties": false,
+      "description": "List service packages.",
+      "properties": {
+        "operation": {
+          "const": "list_packages",
+          "default": "list_packages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "alloffices": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alloffices"
+        },
+        "includedeleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includedeleted"
+        },
+        "view": {
+          "anyOf": [
+            {
+              "const": "slim",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "View"
+        }
+      },
+      "title": "ISNListPackagesConfig",
+      "type": "object"
+    },
+    "ISNListServicesConfig": {
+      "additionalProperties": false,
+      "description": "List inspection services.",
+      "properties": {
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "alloffices": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alloffices"
+        },
+        "includedeleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includedeleted"
+        }
+      },
+      "title": "ISNListServicesConfig",
+      "type": "object"
+    },
+    "ISNListUsersConfig": {
+      "additionalProperties": false,
+      "description": "List users in the office.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ISNListUsersConfig",
+      "type": "object"
+    },
+    "ISNUpdateOrderConfig": {
+      "additionalProperties": false,
+      "description": "Update selected order fields; omitted fields are not sent.",
+      "properties": {
+        "operation": {
+          "const": "update_order",
+          "default": "update_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "title": "Order Id",
+          "type": "string"
+        },
+        "datetime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date-time",
+          "title": "Datetime"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "postal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "ISNUpdateOrderConfig",
+      "type": "object"
+    },
+    "ISNUpdateServiceConfig": {
+      "additionalProperties": false,
+      "description": "Update selected service fields.",
+      "properties": {
+        "operation": {
+          "const": "update_service",
+          "default": "update_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_id": {
+          "title": "Service Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "privatename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Privatename"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "ancillary": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ancillary"
+        },
+        "inspectiontypeid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inspectiontypeid"
+        },
+        "sequence": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sequence"
+        }
+      },
+      "required": [
+        "service_id"
+      ],
+      "title": "ISNUpdateServiceConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_order": "#/$defs/ISNCancelOrderConfig",
+          "create_order": "#/$defs/ISNCreateOrderConfig",
+          "create_service": "#/$defs/ISNCreateServiceConfig",
+          "delete_service": "#/$defs/ISNDeleteServiceConfig",
+          "get_agent": "#/$defs/ISNGetAgentConfig",
+          "get_client": "#/$defs/ISNGetClientConfig",
+          "get_contact": "#/$defs/ISNGetContactConfig",
+          "get_current_user": "#/$defs/ISNGetCurrentUserConfig",
+          "get_order": "#/$defs/ISNGetOrderConfig",
+          "get_service": "#/$defs/ISNGetServiceConfig",
+          "list_agents": "#/$defs/ISNListAgentsConfig",
+          "list_calendar_events": "#/$defs/ISNListCalendarEventsConfig",
+          "list_clients": "#/$defs/ISNListClientsConfig",
+          "list_contacts": "#/$defs/ISNListContactsConfig",
+          "list_order_notes": "#/$defs/ISNListOrderNotesConfig",
+          "list_order_types": "#/$defs/ISNListOrderTypesConfig",
+          "list_orders": "#/$defs/ISNListOrdersConfig",
+          "list_packages": "#/$defs/ISNListPackagesConfig",
+          "list_services": "#/$defs/ISNListServicesConfig",
+          "list_users": "#/$defs/ISNListUsersConfig",
+          "update_order": "#/$defs/ISNUpdateOrderConfig",
+          "update_service": "#/$defs/ISNUpdateServiceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ISNGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNListOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNCreateOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNUpdateOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNCancelOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNListOrderNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNListOrderTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNGetClientConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNListAgentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNGetAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNListServicesConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNGetServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNCreateServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNUpdateServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNDeleteServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNListCalendarEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNListPackagesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ISNAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Isn Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

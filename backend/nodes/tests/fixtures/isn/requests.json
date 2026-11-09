@@ -1,0 +1,382 @@
+[
+  {
+    "config": {
+      "operation": "get_current_user"
+    },
+    "method": "GET",
+    "path": "/me",
+    "response": {
+      "me": {
+        "id": "user-42",
+        "display": "Pat Inspector"
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_orders",
+      "start": "2026-11-01T00:00:00Z",
+      "end": "2026-11-30T23:59:59Z",
+      "criteria": "created",
+      "mini": false,
+      "agent_id": "agent-42",
+      "client_id": "client-42"
+    },
+    "method": "GET",
+    "path": "/orders",
+    "response": [
+      {
+        "id": "order-42"
+      }
+    ],
+    "status": 200,
+    "query": {
+      "start": "2026-11-01T00:00:00Z",
+      "end": "2026-11-30T23:59:59Z",
+      "criteria": "created",
+      "mini": "false",
+      "agentId": "agent-42",
+      "clientId": "client-42"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_order",
+      "order_id": "order-42",
+      "all_controls": false
+    },
+    "method": "GET",
+    "path": "/order/order-42",
+    "response": {
+      "id": "record-42"
+    },
+    "status": 200,
+    "query": {
+      "all_controls": "false"
+    }
+  },
+  {
+    "config": {
+      "operation": "create_order",
+      "datetime": "2026-11-10T09:00:00Z",
+      "address": "1 Main St",
+      "city": "Mesa",
+      "state": "AZ",
+      "postal": "85201",
+      "client": {
+        "name": "Pat Client",
+        "email": "pat@example.test"
+      },
+      "inspector_id": "user-42",
+      "fee": 250.0,
+      "duration": 60
+    },
+    "method": "POST",
+    "path": "/order",
+    "response": {
+      "status": "success",
+      "orderId": "order-42",
+      "oid": 42
+    },
+    "status": 201,
+    "body": {
+      "datetime": "2026-11-10T09:00:00Z",
+      "address": "1 Main St",
+      "city": "Mesa",
+      "state": "AZ",
+      "postal": "85201",
+      "client": {
+        "name": "Pat Client",
+        "email": "pat@example.test"
+      },
+      "fee": 250.0,
+      "duration": 60,
+      "inspectorId": "user-42"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_order",
+      "order_id": "order-42",
+      "city": "Tempe"
+    },
+    "method": "POST",
+    "path": "/order/order-42",
+    "response": {
+      "status": "success",
+      "modified": true
+    },
+    "status": 200,
+    "body": {
+      "city": "Tempe"
+    }
+  },
+  {
+    "config": {
+      "operation": "cancel_order",
+      "order_id": "order-42"
+    },
+    "method": "POST",
+    "path": "/order/order-42/cancel",
+    "response": {
+      "status": "success",
+      "canceled": true,
+      "orderId": "order-42"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_order_notes",
+      "order_id": "order-42",
+      "note_id": "4"
+    },
+    "method": "GET",
+    "path": "/order_notes",
+    "response": [
+      {
+        "id": 4,
+        "content": "Follow up"
+      }
+    ],
+    "status": 200,
+    "query": {
+      "oid": "order-42",
+      "id": "4"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_order_types",
+      "includedeleted": false
+    },
+    "method": "GET",
+    "path": "/order_types",
+    "response": [
+      {
+        "id": "type-42"
+      }
+    ],
+    "status": 200,
+    "query": {
+      "includedeleted": "false"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_clients"
+    },
+    "method": "GET",
+    "path": "/clients",
+    "response": [
+      {
+        "id": "client-42",
+        "display": "Pat"
+      }
+    ],
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_client",
+      "client_id": "client-42"
+    },
+    "method": "GET",
+    "path": "/client/client-42",
+    "response": {
+      "id": "record-42"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_agents"
+    },
+    "method": "GET",
+    "path": "/agents",
+    "response": [
+      {
+        "id": "agent-42",
+        "display": "Pat"
+      }
+    ],
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_agent",
+      "agent_id": "agent-42"
+    },
+    "method": "GET",
+    "path": "/agent/agent-42",
+    "response": {
+      "id": "record-42"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_contacts"
+    },
+    "method": "GET",
+    "path": "/contacts",
+    "response": [
+      {
+        "id": "contact-42",
+        "display": "Pat"
+      }
+    ],
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_contact",
+      "contact_id": "contact-42"
+    },
+    "method": "GET",
+    "path": "/contact/contact-42",
+    "response": {
+      "id": "record-42"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_services",
+      "alloffices": false,
+      "includedeleted": true
+    },
+    "method": "GET",
+    "path": "/services",
+    "response": [
+      {
+        "id": "service-42"
+      }
+    ],
+    "status": 200,
+    "query": {
+      "alloffices": "false",
+      "includedeleted": "true"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_service",
+      "service_id": "service-42"
+    },
+    "method": "GET",
+    "path": "/service/service-42",
+    "response": {
+      "id": "record-42"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "create_service",
+      "name": "Home Inspection",
+      "description": "Standard service",
+      "ancillary": false,
+      "sequence": 0
+    },
+    "method": "POST",
+    "path": "/service",
+    "response": {
+      "id": "record-42"
+    },
+    "status": 201,
+    "body": {
+      "name": "Home Inspection",
+      "description": "Standard service",
+      "ancillary": false,
+      "sequence": 0
+    }
+  },
+  {
+    "config": {
+      "operation": "update_service",
+      "service_id": "service-42",
+      "name": "Home Inspection",
+      "description": "Standard service",
+      "ancillary": false,
+      "sequence": 0
+    },
+    "method": "POST",
+    "path": "/service/service-42",
+    "response": {
+      "id": "record-42"
+    },
+    "status": 200,
+    "body": {
+      "name": "Home Inspection",
+      "description": "Standard service",
+      "ancillary": false,
+      "sequence": 0
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_service",
+      "service_id": "service-42"
+    },
+    "method": "DELETE",
+    "path": "/service/service-42",
+    "response": {
+      "id": "record-42"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_calendar_events",
+      "start": "2026-11-01T00:00:00Z",
+      "end": "2026-11-30T23:59:59Z",
+      "owner_id": "user-42"
+    },
+    "method": "GET",
+    "path": "/calendar_events",
+    "response": [
+      {
+        "id": "event-42"
+      }
+    ],
+    "status": 200,
+    "query": {
+      "start": "2026-11-01T00:00:00Z",
+      "end": "2026-11-30T23:59:59Z",
+      "owner_id": "user-42"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_users"
+    },
+    "method": "GET",
+    "path": "/users",
+    "response": [
+      {
+        "id": "user-42",
+        "display": "Pat Inspector"
+      }
+    ],
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_packages",
+      "view": "slim"
+    },
+    "method": "GET",
+    "path": "/packages",
+    "response": [
+      {
+        "id": "package-42"
+      }
+    ],
+    "status": 200,
+    "query": {
+      "view": "slim"
+    }
+  }
+]
