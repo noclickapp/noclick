@@ -1,0 +1,443 @@
+{
+  "list_instances": {
+    "method": "GET",
+    "path": "/instances",
+    "replies": {
+      "200": {
+        "data": [
+          {
+            "id": "2f49c2b3",
+            "name": "Production",
+            "tenant_id": "YOUR_PROJECT_ID",
+            "cloud_provider": "gcp",
+            "created_at": "2023-01-20T13:44:42Z"
+          },
+          {
+            "id": "b51dc964",
+            "name": "Instance01",
+            "tenant_id": "YOUR_PROJECT_ID",
+            "cloud_provider": "aws",
+            "created_at": "2023-01-20T13:44:42Z"
+          },
+          {
+            "id": "432392ae",
+            "name": "Recommendations",
+            "tenant_id": "YOUR_PROJECT_ID",
+            "cloud_provider": "azure",
+            "created_at": "2023-01-20T13:44:42Z"
+          },
+          {
+            "id": "524b7d8d",
+            "name": "Northwind",
+            "tenant_id": "YOUR_PROJECT_ID",
+            "cloud_provider": "gcp",
+            "created_at": "2023-01-20T13:44:42Z"
+          }
+        ]
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "create_instance": {
+    "method": "POST",
+    "path": "/instances",
+    "replies": {
+      "202": {
+        "data": {
+          "id": "db1d1234",
+          "connection_url": "YOUR_CONNECTION_URL",
+          "username": "neo4j",
+          "password": "letMeIn123!",
+          "tenant_id": "YOUR_PROJECT_ID",
+          "cloud_provider": "gcp",
+          "region": "europe-west1",
+          "type": "enterprise-db",
+          "name": "Instance01",
+          "created_at": "2023-01-20T13:44:42Z",
+          "vector_optimized": false
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "estimate_instance_size": {
+    "method": "POST",
+    "path": "/instances/sizing",
+    "replies": {
+      "200": {
+        "data": {
+          "did_exceed_maximum": false,
+          "min_required_memory": "14GB",
+          "recommended_size": "16GB"
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "get_instance": {
+    "method": "GET",
+    "path": "/instances/{instanceId}",
+    "replies": {
+      "200": {
+        "data": {
+          "id": "2f49c2b3",
+          "name": "Production",
+          "status": "running",
+          "tenant_id": "YOUR_PROJECT_ID",
+          "cloud_provider": "gcp",
+          "connection_url": "YOUR_CONNECTION_URL",
+          "metrics_integration_url": "YOUR_METRICS_INTEGRATION_ENDPOINT",
+          "region": "europe-west1",
+          "type": "enterprise-db",
+          "memory": "8GB",
+          "storage": "16GB",
+          "created_at": "2023-01-20T13:44:42Z",
+          "vector_optimized": false
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "delete_instance": {
+    "method": "DELETE",
+    "path": "/instances/{instanceId}",
+    "replies": {
+      "202": {
+        "data": {
+          "id": "2f49c2b3",
+          "name": "Production",
+          "status": "destroying",
+          "connection_url": "YOUR_CONNECTION_URL",
+          "tenant_id": "YOUR_PROJECT_ID",
+          "cloud_provider": "gcp",
+          "memory": "8GB",
+          "storage": "16GB",
+          "region": "europe-west1",
+          "type": "enterprise-db",
+          "created_at": "2023-01-20T13:44:42Z",
+          "vector_optimized": false
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "update_instance": {
+    "method": "PATCH",
+    "path": "/instances/{instanceId}",
+    "replies": {
+      "200": {
+        "data": {
+          "id": "2f49c2b3",
+          "name": "Production",
+          "status": "updating",
+          "connection_url": "YOUR_CONNECTION_URL",
+          "tenant_id": "YOUR_PROJECT_ID",
+          "cloud_provider": "gcp",
+          "memory": "8GB",
+          "storage": "16GB",
+          "region": "europe-west1",
+          "type": "enterprise-db",
+          "created_at": "2023-01-20T13:44:42Z",
+          "vector_optimized": false
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "overwrite_instance": {
+    "method": "POST",
+    "path": "/instances/{instanceId}/overwrite",
+    "replies": {
+      "202": {
+        "data": {
+          "id": "2f49c2b3",
+          "name": "Production",
+          "status": "overwriting",
+          "connection_url": "YOUR_CONNECTION_URL",
+          "tenant_id": "YOUR_PROJECT_ID",
+          "cloud_provider": "gcp",
+          "memory": "8GB",
+          "storage": "16GB",
+          "region": "europe-west1",
+          "type": "enterprise-db",
+          "created_at": "2023-01-20T13:44:42Z"
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "pause_instance": {
+    "method": "POST",
+    "path": "/instances/{instanceId}/pause",
+    "replies": {
+      "202": {
+        "data": {
+          "id": "2f49c2b3",
+          "name": "Production",
+          "status": "pausing",
+          "connection_url": "YOUR_CONNECTION_URL",
+          "tenant_id": "YOUR_PROJECT_ID",
+          "cloud_provider": "gcp",
+          "memory": "8GB",
+          "storage": "16GB",
+          "region": "europe-west1",
+          "type": "enterprise-db",
+          "created_at": "2023-01-20T13:44:42Z"
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "resume_instance": {
+    "method": "POST",
+    "path": "/instances/{instanceId}/resume",
+    "replies": {
+      "202": {
+        "data": {
+          "id": "2f49c2b3",
+          "name": "Production",
+          "status": "resuming",
+          "connection_url": "YOUR_CONNECTION_URL",
+          "tenant_id": "YOUR_PROJECT_ID",
+          "cloud_provider": "gcp",
+          "memory": "8GB",
+          "storage": "16GB",
+          "region": "europe-west1",
+          "type": "enterprise-db",
+          "created_at": "2023-01-20T13:44:42Z"
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "get_snapshot": {
+    "method": "GET",
+    "path": "/instances/{instanceId}/snapshots/{snapshotId}",
+    "replies": {
+      "200": {
+        "data": {
+          "instance_id": "Instance01",
+          "profile": "Scheduled",
+          "snapshot_id": "2023-01-20T13:44:42Z",
+          "status": "Completed",
+          "timestamp": "2023-01-20T13:44:42Z",
+          "exportable": false
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "restore_snapshot": {
+    "method": "POST",
+    "path": "/instances/{instanceId}/snapshots/{snapshotId}/restore",
+    "replies": {
+      "202": {
+        "data": {
+          "id": "2f49c2b3",
+          "name": "Production",
+          "status": "restoring",
+          "connection_url": "YOUR_CONNECTION_URL",
+          "tenant_id": "YOUR_PROJECT_ID",
+          "cloud_provider": "gcp",
+          "memory": "8GB",
+          "storage": "16GB",
+          "region": "europe-west1",
+          "type": "enterprise-db",
+          "created_at": "2023-01-20T13:44:42Z"
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "list_snapshots": {
+    "method": "GET",
+    "path": "/instances/{instanceId}/snapshots",
+    "replies": {
+      "200": {
+        "data": [
+          {
+            "instance_id": "9o2he2a1",
+            "profile": "Scheduled",
+            "snapshot_id": "2023-01-20T13:44:42Z",
+            "status": "Completed",
+            "timestamp": "2023-01-20T13:44:42Z",
+            "exportable": false
+          },
+          {
+            "instance_id": "415ced99",
+            "profile": "AdHoc",
+            "snapshot_id": "2023-01-20T18:07:25Z-adhoc",
+            "status": "Completed",
+            "timestamp": "2023-01-20T18:07:25Z",
+            "exportable": true
+          }
+        ]
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "create_snapshot": {
+    "method": "POST",
+    "path": "/instances/{instanceId}/snapshots",
+    "replies": {},
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "upgrade_instance": {
+    "method": "POST",
+    "path": "/instances/{instanceId}/upgrade",
+    "replies": {
+      "200": {
+        "data": {
+          "id": "2f49c2b3",
+          "name": "Production",
+          "status": "running",
+          "connection_url": "YOUR_CONNECTION_URL",
+          "tenant_id": "YOUR_PROJECT_ID",
+          "cloud_provider": "gcp",
+          "memory": "8GB",
+          "region": "europe-west1",
+          "type": "business-critical",
+          "created_at": "2023-01-20T13:44:42Z"
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "list_projects": {
+    "method": "GET",
+    "path": "/tenants",
+    "replies": {
+      "200": {
+        "data": [
+          {
+            "id": "6981ace7-efe8-4f5c-b7c5-267b5162ce91",
+            "name": "Production"
+          },
+          {
+            "id": "YOUR_PROJECT_ID",
+            "name": "Staging"
+          },
+          {
+            "id": "da045ab3-3b89-4f45-8b96-528f2e47cd13",
+            "name": "Development"
+          }
+        ]
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "get_project": {
+    "method": "GET",
+    "path": "/tenants/{tenantId}",
+    "replies": {
+      "200": {
+        "data": {
+          "id": "6981ace7-efe8-4f5c-b7c5-267b5162ce91",
+          "name": "Production",
+          "instance_configurations": [
+            {
+              "region": "europe-west1",
+              "region_name": "Belgium (europe-west1)",
+              "type": "enterprise-db",
+              "memory": "4GB",
+              "storage": "8GB",
+              "version": "5",
+              "cloud_provider": "gcp"
+            },
+            {
+              "region": "europe-west1",
+              "region_name": "Belgium (europe-west1)",
+              "type": "enterprise-db",
+              "memory": "8GB",
+              "storage": "16GB",
+              "version": "5",
+              "cloud_provider": "gcp"
+            }
+          ]
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "list_customer_managed_keys": {
+    "method": "GET",
+    "path": "/customer-managed-keys",
+    "replies": {
+      "200": {
+        "data": [
+          {
+            "id": "f15cc45b-1c29-44e8-911f-3ba719f70ed7",
+            "name": "Production Key",
+            "tenant_id": "YOUR_PROJECT_ID"
+          },
+          {
+            "id": "0d971cc4-f703-40fd-8c5c-f5ec134f6c84",
+            "name": "Dev Key",
+            "tenant_id": "YOUR_PROJECT_ID"
+          }
+        ]
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "create_customer_managed_key": {
+    "method": "POST",
+    "path": "/customer-managed-keys",
+    "replies": {
+      "202": {
+        "data": {
+          "id": "8c764aed-8eb3-4a1c-92f6-e4ef0c7a6ed9",
+          "name": "Instance01",
+          "created": "2024-01-31T14:06:57Z",
+          "cloud_provider": "aws",
+          "key_id": "arn:aws:kms:us-east-1:123456789:key/11111-a222-1212-x789-1212f1212f",
+          "region": "us-east-1",
+          "type": "enterprise-db",
+          "tenant_id": "YOUR_PROJECT_ID",
+          "status": "pending",
+          "instance_type": "enterprise-db"
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "get_customer_managed_key": {
+    "method": "GET",
+    "path": "/customer-managed-keys/{customerManagedKeyId}",
+    "replies": {
+      "200": {
+        "data": {
+          "id": "8c764aed-8eb3-4a1c-92f6-e4ef0c7a6ed9",
+          "name": "Instance01",
+          "created": "2024-01-31T14:06:57Z",
+          "cloud_provider": "aws",
+          "key_id": "arn:aws:kms:us-east-1:123456789:key/11111-a222-1212-x789-1212f1212f",
+          "region": "us-east-1",
+          "type": "enterprise-db",
+          "tenant_id": "YOUR_PROJECT_ID",
+          "status": "ready",
+          "instance_type": "enterprise-db"
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "delete_customer_managed_key": {
+    "method": "DELETE",
+    "path": "/customer-managed-keys/{customerManagedKeyId}",
+    "replies": {},
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  },
+  "get_project_metrics": {
+    "method": "GET",
+    "path": "/tenants/{tenantId}/metrics-integration",
+    "replies": {
+      "200": {
+        "data": {
+          "endpoint": "https://customer-metrics-api.neo4j.io/api/v1/tenantId/metrics"
+        }
+      }
+    },
+    "source": "https://neo4j.com/docs/aura/platform/api/specification/aura_api_spec_v1.yaml"
+  }
+}

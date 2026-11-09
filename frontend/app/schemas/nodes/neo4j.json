@@ -1,0 +1,1062 @@
+{
+  "$defs": {
+    "CreateCustomerManagedKey": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_customer_managed_key",
+          "default": "create_customer_managed_key",
+          "description": "Creates a new customer managed key Asynchronous: poll the resource afterward.",
+          "title": "Create Customer Managed Key",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "region": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Region",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the key (any UTF-8 characters with no trailing or leading whitespace).",
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "instance_type": {
+          "enum": [
+            "enterprise-db",
+            "enterprise-ds"
+          ],
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Instance Type",
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "Project ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Tenant Id",
+          "type": "string"
+        },
+        "cloud_provider": {
+          "enum": [
+            "gcp",
+            "aws",
+            "azure"
+          ],
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Cloud Provider",
+          "type": "string"
+        },
+        "key_id": {
+          "description": "Cloud KMS key ID, such as an AWS key ARN",
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Key Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "region",
+        "name",
+        "instance_type",
+        "tenant_id",
+        "cloud_provider",
+        "key_id"
+      ],
+      "title": "CreateCustomerManagedKey",
+      "type": "object"
+    },
+    "CreateInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_instance",
+          "default": "create_instance",
+          "description": "Creates a new instance Asynchronous: poll the resource afterward.",
+          "title": "Create Instance",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "version": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "region": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Region",
+          "type": "string"
+        },
+        "memory": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Memory",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the instance (any UTF-8 characters with no trailing or leading whitespace).",
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "enterprise-db",
+            "enterprise-ds",
+            "business-critical",
+            "professional-db",
+            "professional-ds",
+            "free-db"
+          ],
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "Project ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Tenant Id",
+          "type": "string"
+        },
+        "source_instance_id": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the source instance when cloning.",
+          "title": "Source Instance Id"
+        },
+        "source_snapshot_id": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional snapshot ID to create an instance from a specific snapshot. `source_instance_id` must also be provided. Note that the snapshot must be exportable in order to create a new instance with it.",
+          "title": "Source Snapshot Id"
+        },
+        "cloud_provider": {
+          "enum": [
+            "gcp",
+            "aws",
+            "azure"
+          ],
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Cloud Provider",
+          "type": "string"
+        },
+        "customer_managed_key_id": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional customer managed key to be used for instance creation.",
+          "title": "Customer Managed Key Id"
+        },
+        "vector_optimized": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional vector optimization configuration to be set during instance creation.",
+          "title": "Vector Optimized"
+        },
+        "graph_analytics_plugin": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional graph analytics plugin configuration to be set during instance creation.",
+          "title": "Graph Analytics Plugin"
+        }
+      },
+      "required": [
+        "version",
+        "region",
+        "memory",
+        "name",
+        "type",
+        "tenant_id",
+        "cloud_provider"
+      ],
+      "title": "CreateInstance",
+      "type": "object"
+    },
+    "CreateSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_snapshot",
+          "default": "create_snapshot",
+          "description": "Takes an on-demand snapshot Asynchronous: poll the resource afterward.",
+          "title": "Create Snapshot",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_id": {
+          "description": "Instance ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instance_id"
+      ],
+      "title": "CreateSnapshot",
+      "type": "object"
+    },
+    "DeleteCustomerManagedKey": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_customer_managed_key",
+          "default": "delete_customer_managed_key",
+          "description": "Deletes a customer managed key",
+          "title": "Delete Customer Managed Key",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_managed_key_id": {
+          "description": "Customer Managed Key ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Customer Managed Key Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_managed_key_id"
+      ],
+      "title": "DeleteCustomerManagedKey",
+      "type": "object"
+    },
+    "DeleteInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_instance",
+          "default": "delete_instance",
+          "description": "Deletes an instance Asynchronous: poll the resource afterward.",
+          "title": "Delete Instance",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_id": {
+          "description": "Instance ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instance_id"
+      ],
+      "title": "DeleteInstance",
+      "type": "object"
+    },
+    "EstimateInstanceSize": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "estimate_instance_size",
+          "default": "estimate_instance_size",
+          "description": "Estimate the size of a new instance",
+          "title": "Estimate Instance Size",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "node_count": {
+          "description": "The number of nodes to be stored in the instance.",
+          "minimum": 0,
+          "title": "Node Count",
+          "type": "integer"
+        },
+        "relationship_count": {
+          "description": "The number of relationships to be stored in the instance.",
+          "minimum": 0,
+          "title": "Relationship Count",
+          "type": "integer"
+        },
+        "instance_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "professional-ds",
+                "enterprise-ds"
+              ],
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instance Type",
+          "enum": [
+            "professional-ds",
+            "enterprise-ds"
+          ],
+          "x-enum-searchable": true
+        },
+        "algorithm_categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The algorithm categories to be used in the instance.",
+          "title": "Algorithm Categories"
+        }
+      },
+      "required": [
+        "node_count",
+        "relationship_count"
+      ],
+      "title": "EstimateInstanceSize",
+      "type": "object"
+    },
+    "GetCustomerManagedKey": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer_managed_key",
+          "default": "get_customer_managed_key",
+          "description": "Returns customer managed key details",
+          "title": "Get Customer Managed Key",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_managed_key_id": {
+          "description": "Customer Managed Key ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Customer Managed Key Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_managed_key_id"
+      ],
+      "title": "GetCustomerManagedKey",
+      "type": "object"
+    },
+    "GetInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_instance",
+          "default": "get_instance",
+          "description": "Returns instance details",
+          "title": "Get Instance",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_id": {
+          "description": "Instance ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instance_id"
+      ],
+      "title": "GetInstance",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "description": "Returns project details",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tenant_id": {
+          "description": "Project ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Tenant Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetProjectMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project_metrics",
+          "default": "get_project_metrics",
+          "description": "Returns project metrics integration details",
+          "title": "Get Project Metrics",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tenant_id": {
+          "description": "Project ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Tenant Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "GetProjectMetrics",
+      "type": "object"
+    },
+    "GetSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_snapshot",
+          "default": "get_snapshot",
+          "description": "Get details of a snapshot.",
+          "title": "Get Snapshot",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_id": {
+          "description": "Instance ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "description": "Snapshot ID.",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instance_id",
+        "snapshot_id"
+      ],
+      "title": "GetSnapshot",
+      "type": "object"
+    },
+    "ListCustomerManagedKeys": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_customer_managed_keys",
+          "default": "list_customer_managed_keys",
+          "description": "Returns a list of customer managed keys",
+          "title": "List Customer Managed Keys",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tenant_id": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional project ID to filter customer managed keys in a project",
+          "title": "Tenant Id"
+        }
+      },
+      "title": "ListCustomerManagedKeys",
+      "type": "object"
+    },
+    "ListInstances": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_instances",
+          "default": "list_instances",
+          "description": "Returns a list of instances",
+          "title": "List Instances",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tenant_id": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional project ID to filter instances in a project",
+          "title": "Tenant Id"
+        }
+      },
+      "title": "ListInstances",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "description": "Returns a list of projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListSnapshots": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_snapshots",
+          "default": "list_snapshots",
+          "description": "Returns a list of snapshots",
+          "title": "List Snapshots",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_id": {
+          "description": "Instance ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional date parameter to list snapshots for a given day, defaults to today.",
+          "title": "Date"
+        }
+      },
+      "required": [
+        "instance_id"
+      ],
+      "title": "ListSnapshots",
+      "type": "object"
+    },
+    "Neo4jTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "neo4j_access_token",
+          "default": "neo4j_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Neo4j Aura Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing Aura API bearer access token, without the Bearer prefix. Obtain it from the documented token endpoint using your Aura Console client credentials. Access tokens expire after one hour: reconnect with a new token when expired. NoClick does not exchange or refresh client credentials. This manages Aura infrastructure; it does not run Cypher queries. Connection checks read your accessible Aura projects.",
+      "x-credential-url": "https://neo4j.com/docs/aura/api/authentication/"
+    },
+    "OverwriteInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "overwrite_instance",
+          "default": "overwrite_instance",
+          "description": "Overwrites an instance Asynchronous: poll the resource afterward.",
+          "title": "Overwrite Instance",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_id": {
+          "description": "Instance ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "source_instance_id": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Source Instance Id",
+          "type": "string"
+        },
+        "source_snapshot_id": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Snapshot Id"
+        }
+      },
+      "required": [
+        "instance_id",
+        "source_instance_id"
+      ],
+      "title": "OverwriteInstance",
+      "type": "object"
+    },
+    "PauseInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "pause_instance",
+          "default": "pause_instance",
+          "description": "Pauses an instance. Asynchronous: poll the resource afterward.",
+          "title": "Pause Instance",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_id": {
+          "description": "Instance ID.",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instance_id"
+      ],
+      "title": "PauseInstance",
+      "type": "object"
+    },
+    "RestoreSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "restore_snapshot",
+          "default": "restore_snapshot",
+          "description": "Restores an instance from a snapshot. Asynchronous: poll the resource afterward.",
+          "title": "Restore Snapshot",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_id": {
+          "description": "Instance ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "description": "Snapshot ID.",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Snapshot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instance_id",
+        "snapshot_id"
+      ],
+      "title": "RestoreSnapshot",
+      "type": "object"
+    },
+    "ResumeInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "resume_instance",
+          "default": "resume_instance",
+          "description": "Resumes an instance Asynchronous: poll the resource afterward.",
+          "title": "Resume Instance",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_id": {
+          "description": "Instance ID.",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instance_id"
+      ],
+      "title": "ResumeInstance",
+      "type": "object"
+    },
+    "UpdateInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_instance",
+          "default": "update_instance",
+          "description": "Edits the instance configuration Asynchronous: poll the resource afterward.",
+          "title": "Update Instance",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_id": {
+          "description": "Instance ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Edit the instance name in the Aura Console.\n\nThe name may include any UTF-8 characters with no trailing or leading whitespace.",
+          "title": "Name"
+        },
+        "memory": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memory"
+        },
+        "vector_optimized": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add or remove the instance vector optimization.",
+          "title": "Vector Optimized"
+        },
+        "graph_analytics_plugin": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add or remove the instance graph analytics plugin.",
+          "title": "Graph Analytics Plugin"
+        },
+        "storage": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Storage"
+        }
+      },
+      "required": [
+        "instance_id"
+      ],
+      "title": "UpdateInstance",
+      "type": "object"
+    },
+    "UpgradeInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "upgrade_instance",
+          "default": "upgrade_instance",
+          "description": "Upgrade an AuraDB Professional instance to an AuraDB Business Critical instance",
+          "title": "Upgrade Instance",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_id": {
+          "description": "Instance ID",
+          "maxLength": 1024,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "memory": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memory"
+        },
+        "storage": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Storage"
+        }
+      },
+      "required": [
+        "instance_id"
+      ],
+      "title": "UpgradeInstance",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_customer_managed_key": "#/$defs/CreateCustomerManagedKey",
+          "create_instance": "#/$defs/CreateInstance",
+          "create_snapshot": "#/$defs/CreateSnapshot",
+          "delete_customer_managed_key": "#/$defs/DeleteCustomerManagedKey",
+          "delete_instance": "#/$defs/DeleteInstance",
+          "estimate_instance_size": "#/$defs/EstimateInstanceSize",
+          "get_customer_managed_key": "#/$defs/GetCustomerManagedKey",
+          "get_instance": "#/$defs/GetInstance",
+          "get_project": "#/$defs/GetProject",
+          "get_project_metrics": "#/$defs/GetProjectMetrics",
+          "get_snapshot": "#/$defs/GetSnapshot",
+          "list_customer_managed_keys": "#/$defs/ListCustomerManagedKeys",
+          "list_instances": "#/$defs/ListInstances",
+          "list_projects": "#/$defs/ListProjects",
+          "list_snapshots": "#/$defs/ListSnapshots",
+          "overwrite_instance": "#/$defs/OverwriteInstance",
+          "pause_instance": "#/$defs/PauseInstance",
+          "restore_snapshot": "#/$defs/RestoreSnapshot",
+          "resume_instance": "#/$defs/ResumeInstance",
+          "update_instance": "#/$defs/UpdateInstance",
+          "upgrade_instance": "#/$defs/UpgradeInstance"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListInstances"
+        },
+        {
+          "$ref": "#/$defs/CreateInstance"
+        },
+        {
+          "$ref": "#/$defs/EstimateInstanceSize"
+        },
+        {
+          "$ref": "#/$defs/GetInstance"
+        },
+        {
+          "$ref": "#/$defs/DeleteInstance"
+        },
+        {
+          "$ref": "#/$defs/UpdateInstance"
+        },
+        {
+          "$ref": "#/$defs/OverwriteInstance"
+        },
+        {
+          "$ref": "#/$defs/PauseInstance"
+        },
+        {
+          "$ref": "#/$defs/ResumeInstance"
+        },
+        {
+          "$ref": "#/$defs/GetSnapshot"
+        },
+        {
+          "$ref": "#/$defs/RestoreSnapshot"
+        },
+        {
+          "$ref": "#/$defs/ListSnapshots"
+        },
+        {
+          "$ref": "#/$defs/CreateSnapshot"
+        },
+        {
+          "$ref": "#/$defs/UpgradeInstance"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/ListCustomerManagedKeys"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomerManagedKey"
+        },
+        {
+          "$ref": "#/$defs/GetCustomerManagedKey"
+        },
+        {
+          "$ref": "#/$defs/DeleteCustomerManagedKey"
+        },
+        {
+          "$ref": "#/$defs/GetProjectMetrics"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Neo4jTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Neo4j Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
