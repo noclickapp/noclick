@@ -1,0 +1,436 @@
+{
+  "GET /customers": {
+    "body": {
+      "data": [
+        {
+          "balance": -25840.85,
+          "company_name": "Stark Industries Inc",
+          "created_at": "2014-10-09T05:20:09+00:00",
+          "custom_field_1": "test",
+          "custom_field_2": "",
+          "custom_field_3": "",
+          "custom_field_4": "",
+          "customer_code": "Tony-N4ZJ",
+          "customer_group_id": "b1ca8902-f019-11e3-a0f5-b8ca3a64f8f4",
+          "date_of_birth": "1963-03-03",
+          "do_not_email": false,
+          "email": "tony@stark.com",
+          "enable_loyalty": true,
+          "enable_promotional_sms": false,
+          "fax": "+001 555 12345345",
+          "first_name": "Anthony",
+          "gender": "M",
+          "id": "b8ca3a65-0183-11e4-fbb5-4f73f02a9d1c",
+          "last_name": "Stark",
+          "loyalty_balance": 5809.64,
+          "mobile": "+001 485 23456789",
+          "name": "Anthony Stark",
+          "note": "",
+          "on_account_limit": 1000,
+          "phone": "+001 555 12345678",
+          "physical_address_1": "Street 1",
+          "physical_address_2": "Street 2",
+          "physical_city": "Los Angeles",
+          "physical_country_id": "NZ",
+          "physical_postcode": "23422",
+          "physical_state": "California",
+          "physical_suburb": "Suburb",
+          "postal_address_1": "Street 1",
+          "postal_address_2": "Street 2",
+          "postal_city": "Los Angeles",
+          "postal_country_id": "NZ",
+          "postal_postcode": "23422",
+          "postal_state": "California",
+          "postal_suburb": "Suburb",
+          "twitter": "@ironman",
+          "updated_at": "2017-01-19T16:49:35+00:00",
+          "version": 2691964626,
+          "website": "http://www.starkinc.com",
+          "year_to_date": 0
+        },
+        {
+          "balance": 0,
+          "created_at": "2017-02-13T17:33:25+00:00",
+          "customer_code": "UNNAMED-669D",
+          "customer_group_id": "b1ca8902-f019-11e3-a0f5-b8ca3a64f8f4",
+          "do_not_email": false,
+          "enable_loyalty": true,
+          "enable_promotional_sms": false,
+          "first_name": null,
+          "id": "06bf537b-c783-11e6-ff13-f21286299973",
+          "last_name": null,
+          "loyalty_balance": 0,
+          "on_account_limit": null,
+          "updated_at": "2017-02-13T17:33:25+00:00",
+          "version": 2847386277,
+          "year_to_date": 0
+        }
+      ]
+    },
+    "source": "https://x-series-api.lightspeedhq.com/openapi/api-2026-10.yaml"
+  },
+  "GET /customers/{id}": {
+    "body": {
+      "data": {
+        "balance": -25840.85,
+        "company_name": "Stark Industries Inc",
+        "created_at": "2014-10-09T05:20:09+00:00",
+        "custom_field_1": "test",
+        "custom_field_2": "",
+        "custom_field_3": "",
+        "custom_field_4": "",
+        "customer_code": "Tony-N4ZJ",
+        "customer_group_id": "b1ca8902-f019-11e3-a0f5-b8ca3a64f8f4",
+        "date_of_birth": "1963-03-03",
+        "do_not_email": false,
+        "email": "tony@stark.com",
+        "enable_loyalty": true,
+        "enable_promotional_sms": false,
+        "fax": "+001 555 12345345",
+        "first_name": "Anthony",
+        "gender": "M",
+        "id": "b8ca3a65-0183-11e4-fbb5-4f73f02a9d1c",
+        "last_name": "Stark",
+        "loyalty_balance": 5809.64,
+        "mobile": "+001 485 23456789",
+        "name": "Anthony Stark",
+        "note": "",
+        "phone": "+001 555 12345678",
+        "physical_address_1": "Street 1",
+        "physical_address_2": "Street 2",
+        "physical_city": "Los Angeles",
+        "physical_country_id": "NZ",
+        "physical_postcode": "23422",
+        "physical_state": "California",
+        "physical_suburb": "Suburb",
+        "postal_address_1": "Street 1",
+        "postal_address_2": "Street 2",
+        "postal_city": "Los Angeles",
+        "postal_country_id": "NZ",
+        "postal_postcode": "23422",
+        "postal_state": "California",
+        "postal_suburb": "Suburb",
+        "twitter": "@ironman",
+        "updated_at": "2017-01-19T16:49:35+00:00",
+        "version": 2691964626,
+        "website": "http://www.starkinc.com",
+        "year_to_date": 0
+      }
+    },
+    "source": "https://x-series-api.lightspeedhq.com/openapi/api-2026-10.yaml"
+  },
+  "PUT /customers/{id}": {
+    "body": {
+      "data": {
+        "balance": 0,
+        "company_name": "Stark Inc.",
+        "created_at": "2017-05-24T02:02:18+00:00",
+        "custom_field_1": "Custom value 1",
+        "custom_field_2": "Custom value 2",
+        "custom_field_3": "Custom value 3",
+        "custom_field_4": "Custom value 4",
+        "customer_code": "Tony-AB2W",
+        "customer_group_id": "b1ca8902-f019-11e3-a0f5-b8ca3a64f8f4",
+        "do_not_email": false,
+        "email": "tony@starkinc.com",
+        "enable_loyalty": true,
+        "enable_promotional_sms": false,
+        "first_name": "Tony",
+        "id": "0af7b240-ab83-11e7-eddc-4025043113d5",
+        "last_name": "Stark",
+        "loyalty_balance": 0,
+        "name": "Tony Stark",
+        "tax_id": null,
+        "updated_at": "2017-05-24T02:03:59+00:00",
+        "version": 3505431251,
+        "year_to_date": 0
+      }
+    },
+    "source": "https://x-series-api.lightspeedhq.com/openapi/api-2026-10.yaml"
+  },
+  "GET /outlets": {
+    "body": {
+      "data": [
+        {
+          "attributes": [],
+          "currency": "NZD",
+          "currency_symbol": "$",
+          "default_tax_id": "b1d192bc-f019-11e3-a0f5-b8ca3a64f8f4",
+          "display_prices": "inclusive",
+          "id": "b8ca3a65-0183-11e4-fbb5-2816d2677218",
+          "name": "Second Outlet",
+          "physical_address_1": "Nuffield Street",
+          "physical_address_2": "",
+          "physical_city": "Auckland",
+          "physical_country_id": "NZ",
+          "physical_postcode": "1023",
+          "physical_state": "Auckland",
+          "physical_suburb": "Newmarket",
+          "time_zone": "Pacific/Auckland",
+          "version": 816974914
+        },
+        {
+          "attributes": [],
+          "currency": "NZD",
+          "currency_symbol": "$",
+          "default_tax_id": "b1d192bc-f019-11e3-a0f5-b8ca3a64f8f4",
+          "display_prices": "inclusive",
+          "id": "b1e04bd8-f019-11e3-a0f5-b8ca3a64f8f4",
+          "name": "Main Outlet",
+          "physical_address_1": "Baker Street",
+          "physical_address_2": "",
+          "physical_city": "London",
+          "physical_country_id": "GB",
+          "physical_postcode": "",
+          "physical_state": "",
+          "physical_suburb": "",
+          "time_zone": "Pacific/Auckland",
+          "version": 909257071
+        },
+        {
+          "attributes": [
+            {
+              "key": "order_reference",
+              "value": "1"
+            },
+            {
+              "key": "order_reference_prefix",
+              "value": "SYD"
+            },
+            {
+              "key": "return_reference",
+              "value": "1"
+            },
+            {
+              "key": "return_reference_prefix",
+              "value": "SYD"
+            }
+          ],
+          "currency": "NZD",
+          "currency_symbol": "$",
+          "default_tax_id": "b1d192bc-f019-11e3-a0f5-b8ca3a64f8f4",
+          "display_prices": "inclusive",
+          "id": "06bf537b-c783-11e6-f6b9-53a81bd6b215",
+          "name": "Sydney",
+          "physical_address_1": "",
+          "physical_address_2": "",
+          "physical_city": "Sydney",
+          "physical_country_id": "AU",
+          "physical_postcode": "",
+          "physical_state": "NSW",
+          "physical_suburb": "",
+          "time_zone": "Australia/Sydney",
+          "version": 1690497245
+        }
+      ],
+      "version": {
+        "max": 1690497245,
+        "min": 816974914
+      }
+    },
+    "source": "https://x-series-api.lightspeedhq.com/openapi/api-2026-10.yaml"
+  },
+  "GET /brands": {
+    "body": {
+      "data": [
+        {
+          "id": "0adaafb3-6583-11e5-fb60-d5b67a17df2f",
+          "name": "Peak Performance"
+        },
+        {
+          "id": "0adaafb3-6583-11e5-fb60-ebae84675ae4",
+          "name": "Sennheiser"
+        },
+        {
+          "id": "b1e2624f-f019-11e3-a0f5-b8ca3a64f8f4",
+          "name": "Generic Brand"
+        }
+      ],
+      "version": {
+        "max": 100,
+        "min": 100
+      }
+    },
+    "source": "https://x-series-api.lightspeedhq.com/openapi/api-2026-10.yaml"
+  },
+  "GET /suppliers": {
+    "body": {
+      "data": [
+        {
+          "contact": null,
+          "id": "dc85058a-a683-11e5-ef46-05a1ba8c8c08",
+          "name": "Supplier post new test",
+          "source": "USER",
+          "version": 0
+        },
+        {
+          "contact": null,
+          "description": "",
+          "id": "dc85058a-a683-11e5-ef46-08f9a926615e",
+          "name": "Peak",
+          "source": "",
+          "version": 0
+        },
+        {
+          "contact": null,
+          "description": "API Supplier description",
+          "id": "dc85058a-a683-11e5-e112-5734f1f3a2ca",
+          "name": "API Supplier",
+          "source": "USER",
+          "version": 0
+        }
+      ],
+      "version": {
+        "max": 0,
+        "min": 0
+      }
+    },
+    "source": "https://x-series-api.lightspeedhq.com/openapi/api-2026-10.yaml"
+  },
+  "GET /suppliers/{supplier_id}": {
+    "body": {
+      "data": {
+        "contact": null,
+        "id": "06bf537b-c783-11e7-ff13-02d1589727d5",
+        "name": "Best supplies",
+        "source": "USER",
+        "version": 0
+      }
+    },
+    "source": "https://x-series-api.lightspeedhq.com/openapi/api-2026-10.yaml"
+  },
+  "GET /taxes": {
+    "body": {
+      "data": [
+        {
+          "deleted_at": null,
+          "display_name": "No Tax",
+          "id": "b1cecdf6-f019-11e3-a0f5-b8ca3a64f8f4",
+          "is_default": false,
+          "name": "No Tax",
+          "rates": [
+            {
+              "display_name": "No Tax",
+              "id": "b1cfbc85-f019-11e3-a0f5-b8ca3a64f8f4",
+              "name": "No Tax",
+              "rate": 0
+            }
+          ],
+          "version": 391487
+        },
+        {
+          "deleted_at": null,
+          "display_name": "GST",
+          "id": "b1d192bc-f019-11e3-a0f5-b8ca3a64f8f4",
+          "is_default": true,
+          "name": "GST",
+          "rates": [
+            {
+              "display_name": "GST",
+              "id": "b1dfed8b-f019-11e3-a0f5-b8ca3a64f8f4",
+              "name": "GST",
+              "rate": 0.15
+            }
+          ],
+          "version": 391490
+        },
+        {
+          "deleted_at": null,
+          "display_name": "VAT",
+          "id": "dc85058a-a683-11e5-e112-4600acd0096a",
+          "is_default": false,
+          "name": "VAT",
+          "rates": [
+            {
+              "display_name": "VAT",
+              "id": "accff2bf-4600-11e5-8112-dc85058aa69e",
+              "name": "VAT",
+              "rate": 0.2
+            }
+          ],
+          "version": 478922
+        }
+      ]
+    },
+    "source": "https://x-series-api.lightspeedhq.com/openapi/api-2026-10.yaml"
+  },
+  "GET /customer_groups": {
+    "body": {
+      "data": [
+        {
+          "created_at": "2014-06-09T21:04:49+00:00",
+          "group_id": "1111111111",
+          "id": "b1ca8902-f019-11e3-a0f5-b8ca3a64f8f4",
+          "name": "All Customers",
+          "updated_at": "2014-06-09T21:04:49+00:00",
+          "version": 29483
+        },
+        {
+          "created_at": "2015-08-19T21:32:06+00:00",
+          "group_id": "VIP-Y968",
+          "id": "dc85058a-a683-11e5-e112-46b9bd1f069e",
+          "name": "VIP",
+          "updated_at": "2015-08-19T21:32:06+00:00",
+          "version": 157810
+        },
+        {
+          "created_at": "2016-04-26T21:45:53+00:00",
+          "group_id": "Students-2SFG",
+          "id": "06e35f89-3783-11e6-ec7e-0bf840380a64",
+          "name": "Students",
+          "updated_at": "2016-04-26T21:45:53+00:00",
+          "version": 1205737356
+        }
+      ],
+      "version": {
+        "max": 1205737356,
+        "min": 29483
+      }
+    },
+    "source": "https://x-series-api.lightspeedhq.com/openapi/api-2026-10.yaml"
+  },
+  "GET /inventory/{product_id}": {
+    "body": [
+      {
+        "average_cost": 100,
+        "current_inventory_level": 21,
+        "id": "18e86393-ebdf-fbba-5455-4120bc6773fd",
+        "outlet_id": "b8ca3a65-0183-11e4-fbb5-2816d2677218",
+        "product_id": "b8ca3a65-0183-11e4-fbb5-7988a6ed80f8",
+        "quantity_to_procure": 0,
+        "reorder_amount": 20,
+        "reorder_method": "FIXED",
+        "reorder_point": 5,
+        "reorder_target": 25,
+        "version": 2398817047
+      },
+      {
+        "average_cost": 100,
+        "current_inventory_level": 42,
+        "id": "eb650394-9d49-8985-41f5-51507838d3b7",
+        "outlet_id": "06bf537b-c783-11e6-f6b9-53a81bd6b215",
+        "product_id": "b8ca3a65-0183-11e4-fbb5-7988a6ed80f8",
+        "quantity_to_procure": 3,
+        "reorder_amount": 18,
+        "reorder_method": "MIN_MAX",
+        "reorder_point": 5,
+        "reorder_target": 60,
+        "version": 2398817048
+      },
+      {
+        "average_cost": 0,
+        "current_inventory_level": 19,
+        "id": "a020eed7-7f96-3b50-e133-a435dfbc242b",
+        "outlet_id": "b1e04bd8-f019-11e3-a0f5-b8ca3a64f8f4",
+        "product_id": "b8ca3a65-0183-11e4-fbb5-7988a6ed80f8",
+        "quantity_to_procure": 0,
+        "reorder_amount": null,
+        "reorder_method": null,
+        "reorder_point": null,
+        "reorder_target": null,
+        "version": 3630064802
+      }
+    ],
+    "source": "https://x-series-api.lightspeedhq.com/openapi/api-2026-10.yaml"
+  }
+}
