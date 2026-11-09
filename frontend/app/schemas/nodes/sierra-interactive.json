@@ -1,0 +1,1803 @@
+{
+  "$defs": {
+    "AddNoteConfig": {
+      "additionalProperties": false,
+      "description": "POST /zapier/leads/{leadIdOrEmail}/note.",
+      "properties": {
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "shouldNotify": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shouldnotify"
+        },
+        "operation": {
+          "const": "add_note",
+          "default": "add_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "leadIdOrEmail": {
+          "description": "Exact lead ID or contact identifier; sent as one encoded path segment.",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Leadidoremail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message",
+        "leadIdOrEmail"
+      ],
+      "title": "AddNoteConfig",
+      "type": "object"
+    },
+    "AgentResolveAttributes": {
+      "additionalProperties": false,
+      "properties": {
+        "agentUserId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agentuserid"
+        },
+        "agentUserEmail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agentuseremail"
+        },
+        "agentUserPhone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agentuserphone"
+        },
+        "agentUserFirstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agentuserfirstname"
+        },
+        "agentUserLastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agentuserlastname"
+        },
+        "agentSiteId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agentsiteid"
+        }
+      },
+      "title": "AgentResolveAttributes",
+      "type": "object"
+    },
+    "ApplyAutomatedActionPlanConfig": {
+      "additionalProperties": false,
+      "description": "PUT /zapier/applyFullyAutomatedActionPlan.",
+      "properties": {
+        "actionPlanId": {
+          "minimum": 1,
+          "title": "Actionplanid",
+          "type": "integer"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "leadIdOrEmailOrPhone": {
+          "minLength": 1,
+          "title": "Leadidoremailorphone",
+          "type": "string"
+        },
+        "startNextDayIfAppliedAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Startnextdayifappliedafter"
+        },
+        "operation": {
+          "const": "apply_automated_action_plan",
+          "default": "apply_automated_action_plan",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "actionPlanId",
+        "leadIdOrEmailOrPhone"
+      ],
+      "title": "ApplyAutomatedActionPlanConfig",
+      "type": "object"
+    },
+    "ApplyTraditionalActionPlanConfig": {
+      "additionalProperties": false,
+      "description": "PUT /zapier/applyTraditionalActionPlan.",
+      "properties": {
+        "actionPlanId": {
+          "minimum": 1,
+          "title": "Actionplanid",
+          "type": "integer"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "leadIdOrEmailOrPhone": {
+          "minLength": 1,
+          "title": "Leadidoremailorphone",
+          "type": "string"
+        },
+        "startNextDayIfAppliedAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Startnextdayifappliedafter"
+        },
+        "operation": {
+          "const": "apply_traditional_action_plan",
+          "default": "apply_traditional_action_plan",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "actionPlanId",
+        "leadIdOrEmailOrPhone"
+      ],
+      "title": "ApplyTraditionalActionPlanConfig",
+      "type": "object"
+    },
+    "CheckConnectionConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/validateAPIKey.",
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CheckConnectionConfig",
+      "type": "object"
+    },
+    "CreateLeadConfig": {
+      "additionalProperties": false,
+      "description": "POST /zapier/leads.",
+      "properties": {
+        "firstName": {
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "leadStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leadstatus"
+        },
+        "lenderStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lenderstatus"
+        },
+        "listingAgentStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Listingagentstatus"
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "emailStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailstatus"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "phoneStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phonestatus"
+        },
+        "birthDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Birthdate"
+        },
+        "referralFee": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Referralfee"
+        },
+        "sendRegistrationEmail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sendregistrationemail"
+        },
+        "assignTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AgentResolveAttributes"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "lender": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AgentResolveAttributes"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "listingAgent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AgentResolveAttributes"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sourceType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sourcetype"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "siteId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Siteid"
+        },
+        "leadType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leadtype"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "removeTags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Removetags"
+        },
+        "partnerLink": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partnerlink"
+        },
+        "streetAddress": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Streetaddress"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip"
+        },
+        "shortSummary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shortsummary"
+        },
+        "homeAnniversaryDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Homeanniversarydate"
+        },
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName",
+        "email"
+      ],
+      "title": "CreateLeadConfig",
+      "type": "object"
+    },
+    "CreateTaskConfig": {
+      "additionalProperties": false,
+      "description": "POST /zapier/leads/{leadIdOrEmail}/createTask.",
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "dueDate": {
+          "minLength": 1,
+          "title": "Duedate",
+          "type": "string"
+        },
+        "type": {
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "leadIdOrEmail": {
+          "description": "Exact lead ID or contact identifier; sent as one encoded path segment.",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Leadidoremail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "description",
+        "dueDate",
+        "type",
+        "leadIdOrEmail"
+      ],
+      "title": "CreateTaskConfig",
+      "type": "object"
+    },
+    "FindLeadConfig": {
+      "additionalProperties": false,
+      "description": "PUT /zapier/findLead/{leadIdOrEmail}.",
+      "properties": {
+        "operation": {
+          "const": "find_lead",
+          "default": "find_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "leadIdOrEmail": {
+          "description": "Exact lead ID or contact identifier; sent as one encoded path segment.",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Leadidoremail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "leadIdOrEmail"
+      ],
+      "title": "FindLeadConfig",
+      "type": "object"
+    },
+    "ListAgentsConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/agents.",
+      "properties": {
+        "operation": {
+          "const": "list_agents",
+          "default": "list_agents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListAgentsConfig",
+      "type": "object"
+    },
+    "ListAutomatedActionPlansConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/fullyAutomatedActionPlans.",
+      "properties": {
+        "operation": {
+          "const": "list_automated_action_plans",
+          "default": "list_automated_action_plans",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListAutomatedActionPlansConfig",
+      "type": "object"
+    },
+    "ListEmailStatusesConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/emailStatus.",
+      "properties": {
+        "operation": {
+          "const": "list_email_statuses",
+          "default": "list_email_statuses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListEmailStatusesConfig",
+      "type": "object"
+    },
+    "ListLeadSourcesConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/leadSource.",
+      "properties": {
+        "operation": {
+          "const": "list_lead_sources",
+          "default": "list_lead_sources",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLeadSourcesConfig",
+      "type": "object"
+    },
+    "ListLeadStatusesConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/leadStatus.",
+      "properties": {
+        "operation": {
+          "const": "list_lead_statuses",
+          "default": "list_lead_statuses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLeadStatusesConfig",
+      "type": "object"
+    },
+    "ListLeadTypesConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/leadTypes.",
+      "properties": {
+        "operation": {
+          "const": "list_lead_types",
+          "default": "list_lead_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLeadTypesConfig",
+      "type": "object"
+    },
+    "ListMlsRegionsConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/mlsRegion.",
+      "properties": {
+        "operation": {
+          "const": "list_mls_regions",
+          "default": "list_mls_regions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListMlsRegionsConfig",
+      "type": "object"
+    },
+    "ListPhoneStatusesConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/phoneStatus.",
+      "properties": {
+        "operation": {
+          "const": "list_phone_statuses",
+          "default": "list_phone_statuses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListPhoneStatusesConfig",
+      "type": "object"
+    },
+    "ListSitesConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/sites.",
+      "properties": {
+        "operation": {
+          "const": "list_sites",
+          "default": "list_sites",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListSitesConfig",
+      "type": "object"
+    },
+    "ListTagsConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/tags.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTagsConfig",
+      "type": "object"
+    },
+    "ListTaskTypesConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/taskType.",
+      "properties": {
+        "operation": {
+          "const": "list_task_types",
+          "default": "list_task_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTaskTypesConfig",
+      "type": "object"
+    },
+    "ListTraditionalActionPlansConfig": {
+      "additionalProperties": false,
+      "description": "GET /zapier/traditionalActionPlans.",
+      "properties": {
+        "operation": {
+          "const": "list_traditional_action_plans",
+          "default": "list_traditional_action_plans",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTraditionalActionPlansConfig",
+      "type": "object"
+    },
+    "RequestInformationConfig": {
+      "additionalProperties": false,
+      "description": "POST /zapier/requestInfo.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mlsNumber": {
+          "minLength": 1,
+          "title": "Mlsnumber",
+          "type": "string"
+        },
+        "mlsRegion": {
+          "minLength": 1,
+          "title": "Mlsregion",
+          "type": "string"
+        },
+        "assignTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AgentResolveAttributes"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "leadId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leadid"
+        },
+        "contactPreference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contactpreference"
+        },
+        "preferredTimeToContact": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferredtimetocontact"
+        },
+        "preferredAppointmentDay": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferredappointmentday"
+        },
+        "preferredAppointmentTime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferredappointmenttime"
+        },
+        "comments": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comments"
+        },
+        "sendAutoResponder": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sendautoresponder"
+        },
+        "operation": {
+          "const": "request_information",
+          "default": "request_information",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "email",
+        "mlsNumber",
+        "mlsRegion"
+      ],
+      "title": "RequestInformationConfig",
+      "type": "object"
+    },
+    "SaveListingConfig": {
+      "additionalProperties": false,
+      "description": "POST /zapier/savedListings.",
+      "properties": {
+        "leadIdOrEmail": {
+          "minLength": 1,
+          "title": "Leadidoremail",
+          "type": "string"
+        },
+        "mlsNumber": {
+          "minLength": 1,
+          "title": "Mlsnumber",
+          "type": "string"
+        },
+        "mlsRegion": {
+          "minLength": 1,
+          "title": "Mlsregion",
+          "type": "string"
+        },
+        "operation": {
+          "const": "save_listing",
+          "default": "save_listing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "leadIdOrEmail",
+        "mlsNumber",
+        "mlsRegion"
+      ],
+      "title": "SaveListingConfig",
+      "type": "object"
+    },
+    "ScheduleShowingConfig": {
+      "additionalProperties": false,
+      "description": "POST /zapier/scheduleShowing.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mlsNumber": {
+          "minLength": 1,
+          "title": "Mlsnumber",
+          "type": "string"
+        },
+        "mlsRegion": {
+          "minLength": 1,
+          "title": "Mlsregion",
+          "type": "string"
+        },
+        "assignTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AgentResolveAttributes"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "leadId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leadid"
+        },
+        "contactPreference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contactpreference"
+        },
+        "preferredTimeToContact": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferredtimetocontact"
+        },
+        "preferredAppointmentDay": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferredappointmentday"
+        },
+        "preferredAppointmentTime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferredappointmenttime"
+        },
+        "comments": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comments"
+        },
+        "sendAutoResponder": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sendautoresponder"
+        },
+        "operation": {
+          "const": "schedule_showing",
+          "default": "schedule_showing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "email",
+        "mlsNumber",
+        "mlsRegion"
+      ],
+      "title": "ScheduleShowingConfig",
+      "type": "object"
+    },
+    "SierraInteractiveAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "sierra_interactive_api_key",
+          "default": "sierra_interactive_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Sierra Interactive API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Sierra Interactive user API key. NoClick sends it in the Sierra-User-ApiKey header to Sierra's API. The connection check reads your account's sites; it does not verify write permissions.",
+      "x-credential-url": "https://api.sierrainteractivedev.com/swagger/ui/index"
+    },
+    "StopAutomatedActionPlanConfig": {
+      "additionalProperties": false,
+      "description": "PUT /zapier/v2/stopFullyAutomatedActionPlan.",
+      "properties": {
+        "actionPlanId": {
+          "minimum": 1,
+          "title": "Actionplanid",
+          "type": "integer"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "leadIdOrEmailOrPhone": {
+          "minLength": 1,
+          "title": "Leadidoremailorphone",
+          "type": "string"
+        },
+        "actionPlanStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actionplanstatus"
+        },
+        "operation": {
+          "const": "stop_automated_action_plan",
+          "default": "stop_automated_action_plan",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "actionPlanId",
+        "leadIdOrEmailOrPhone"
+      ],
+      "title": "StopAutomatedActionPlanConfig",
+      "type": "object"
+    },
+    "StopTraditionalActionPlanConfig": {
+      "additionalProperties": false,
+      "description": "PUT /zapier/stopTraditionalActionPlan.",
+      "properties": {
+        "actionPlanId": {
+          "minimum": 1,
+          "title": "Actionplanid",
+          "type": "integer"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "leadIdOrEmailOrPhone": {
+          "minLength": 1,
+          "title": "Leadidoremailorphone",
+          "type": "string"
+        },
+        "operation": {
+          "const": "stop_traditional_action_plan",
+          "default": "stop_traditional_action_plan",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "actionPlanId",
+        "leadIdOrEmailOrPhone"
+      ],
+      "title": "StopTraditionalActionPlanConfig",
+      "type": "object"
+    },
+    "UpdateLeadConfig": {
+      "additionalProperties": false,
+      "description": "PUT /zapier/leads/{leadIdOrEmailOrPhone}.",
+      "properties": {
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "leadStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leadstatus"
+        },
+        "lenderStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lenderstatus"
+        },
+        "listingAgentStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Listingagentstatus"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "emailStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailstatus"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "phoneStatus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phonestatus"
+        },
+        "birthDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Birthdate"
+        },
+        "referralFee": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Referralfee"
+        },
+        "sendRegistrationEmail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sendregistrationemail"
+        },
+        "assignTo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AgentResolveAttributes"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "lender": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AgentResolveAttributes"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "listingAgent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AgentResolveAttributes"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sourceType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sourcetype"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "siteId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Siteid"
+        },
+        "leadType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leadtype"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "removeTags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Removetags"
+        },
+        "partnerLink": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partnerlink"
+        },
+        "streetAddress": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Streetaddress"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip"
+        },
+        "shortSummary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shortsummary"
+        },
+        "homeAnniversaryDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Homeanniversarydate"
+        },
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "leadIdOrEmailOrPhone": {
+          "description": "Exact lead ID or contact identifier; sent as one encoded path segment.",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Leadidoremailorphone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "leadIdOrEmailOrPhone"
+      ],
+      "title": "UpdateLeadConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_note": "#/$defs/AddNoteConfig",
+          "apply_automated_action_plan": "#/$defs/ApplyAutomatedActionPlanConfig",
+          "apply_traditional_action_plan": "#/$defs/ApplyTraditionalActionPlanConfig",
+          "check_connection": "#/$defs/CheckConnectionConfig",
+          "create_lead": "#/$defs/CreateLeadConfig",
+          "create_task": "#/$defs/CreateTaskConfig",
+          "find_lead": "#/$defs/FindLeadConfig",
+          "list_agents": "#/$defs/ListAgentsConfig",
+          "list_automated_action_plans": "#/$defs/ListAutomatedActionPlansConfig",
+          "list_email_statuses": "#/$defs/ListEmailStatusesConfig",
+          "list_lead_sources": "#/$defs/ListLeadSourcesConfig",
+          "list_lead_statuses": "#/$defs/ListLeadStatusesConfig",
+          "list_lead_types": "#/$defs/ListLeadTypesConfig",
+          "list_mls_regions": "#/$defs/ListMlsRegionsConfig",
+          "list_phone_statuses": "#/$defs/ListPhoneStatusesConfig",
+          "list_sites": "#/$defs/ListSitesConfig",
+          "list_tags": "#/$defs/ListTagsConfig",
+          "list_task_types": "#/$defs/ListTaskTypesConfig",
+          "list_traditional_action_plans": "#/$defs/ListTraditionalActionPlansConfig",
+          "request_information": "#/$defs/RequestInformationConfig",
+          "save_listing": "#/$defs/SaveListingConfig",
+          "schedule_showing": "#/$defs/ScheduleShowingConfig",
+          "stop_automated_action_plan": "#/$defs/StopAutomatedActionPlanConfig",
+          "stop_traditional_action_plan": "#/$defs/StopTraditionalActionPlanConfig",
+          "update_lead": "#/$defs/UpdateLeadConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/FindLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AddNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/SaveListingConfig"
+        },
+        {
+          "$ref": "#/$defs/RequestInformationConfig"
+        },
+        {
+          "$ref": "#/$defs/ScheduleShowingConfig"
+        },
+        {
+          "$ref": "#/$defs/ApplyTraditionalActionPlanConfig"
+        },
+        {
+          "$ref": "#/$defs/ApplyAutomatedActionPlanConfig"
+        },
+        {
+          "$ref": "#/$defs/StopTraditionalActionPlanConfig"
+        },
+        {
+          "$ref": "#/$defs/StopAutomatedActionPlanConfig"
+        },
+        {
+          "$ref": "#/$defs/ListAgentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSitesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLeadSourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLeadStatusesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListEmailStatusesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListPhoneStatusesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTaskTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListMlsRegionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLeadTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTraditionalActionPlansConfig"
+        },
+        {
+          "$ref": "#/$defs/ListAutomatedActionPlansConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SierraInteractiveAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Sierra-interactive Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
