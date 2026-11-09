@@ -1,0 +1,1374 @@
+{
+  "$defs": {
+    "MicrosoftBookingsCreateAppointmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_appointment",
+          "default": "create_appointment",
+          "title": "Create Appointment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Appointment",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "service_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Service ID",
+          "type": "string"
+        },
+        "start": {
+          "description": "ISO 8601 date and time, for example 2018-05-01T12:00:00.0000000+00:00.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Start date and time",
+          "type": "string"
+        },
+        "end": {
+          "description": "ISO 8601 date and time, for example 2018-05-01T12:00:00.0000000+00:00.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "End date and time",
+          "type": "string"
+        },
+        "time_zone": {
+          "default": "UTC",
+          "description": "Microsoft-supported time zone for start and end.",
+          "maxLength": 128,
+          "title": "Time zone",
+          "type": "string"
+        },
+        "customer_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Customer name",
+          "type": "string"
+        },
+        "customer_email": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Customer email",
+          "type": "string"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Existing customer ID"
+        },
+        "customer_time_zone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer time zone"
+        },
+        "staff_member_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staff member IDs",
+          "ui:widget": "list"
+        },
+        "maximum_attendees_count": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum attendees"
+        },
+        "service_notes": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service notes"
+        },
+        "opt_out_of_customer_email": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opt out of customer email"
+        }
+      },
+      "required": [
+        "business_id",
+        "service_id",
+        "start",
+        "end",
+        "customer_name",
+        "customer_email"
+      ],
+      "title": "MicrosoftBookingsCreateAppointmentConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsCreateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Create Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Customer",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "display_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Display name",
+          "type": "string"
+        },
+        "email_address": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Customer email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id",
+        "display_name",
+        "email_address"
+      ],
+      "title": "MicrosoftBookingsCreateCustomerConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsCreateServiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_service",
+          "default": "create_service",
+          "title": "Create Service",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Service",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "display_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Display name",
+          "type": "string"
+        },
+        "default_duration": {
+          "description": "ISO 8601 duration, for example PT1H30M.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "^P(?:\\d+D)?(?:T(?:\\d+H)?(?:\\d+M)?(?:\\d+(?:\\.\\d+)?S)?)?$",
+          "title": "Default duration",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service description"
+        },
+        "default_price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default price"
+        },
+        "default_price_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "undefined",
+                "fixedPrice",
+                "startingAt",
+                "hourly",
+                "free",
+                "priceVaries",
+                "callUs",
+                "notSet"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price type",
+          "enum": [
+            "undefined",
+            "fixedPrice",
+            "startingAt",
+            "hourly",
+            "free",
+            "priceVaries",
+            "callUs",
+            "notSet"
+          ],
+          "x-enum-searchable": true
+        },
+        "staff_member_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staff member IDs",
+          "ui:widget": "list"
+        },
+        "maximum_attendees_count": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum attendees"
+        },
+        "is_hidden_from_customers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is hidden from customers"
+        }
+      },
+      "required": [
+        "business_id",
+        "display_name",
+        "default_duration"
+      ],
+      "title": "MicrosoftBookingsCreateServiceConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsDeleteAppointmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_appointment",
+          "default": "delete_appointment",
+          "title": "Delete Appointment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Appointment",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "appointment_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Appointment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id",
+        "appointment_id"
+      ],
+      "title": "MicrosoftBookingsDeleteAppointmentConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsDeleteCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_customer",
+          "default": "delete_customer",
+          "title": "Delete Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Customer",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "customer_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Existing customer ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id",
+        "customer_id"
+      ],
+      "title": "MicrosoftBookingsDeleteCustomerConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsDeleteServiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_service",
+          "default": "delete_service",
+          "title": "Delete Service",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Service",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "service_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Service ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id",
+        "service_id"
+      ],
+      "title": "MicrosoftBookingsDeleteServiceConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsGetAppointmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_appointment",
+          "default": "get_appointment",
+          "title": "Get Appointment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Appointment",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "appointment_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Appointment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id",
+        "appointment_id"
+      ],
+      "title": "MicrosoftBookingsGetAppointmentConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsGetBusinessConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_business",
+          "default": "get_business",
+          "title": "Get Business",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Business",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id"
+      ],
+      "title": "MicrosoftBookingsGetBusinessConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsGetCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Get Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Customer",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "customer_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Existing customer ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id",
+        "customer_id"
+      ],
+      "title": "MicrosoftBookingsGetCustomerConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsGetServiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Get Service",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Service",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "service_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Service ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id",
+        "service_id"
+      ],
+      "title": "MicrosoftBookingsGetServiceConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsGetStaffMemberConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_staff_member",
+          "default": "get_staff_member",
+          "title": "Get Staff Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Staff Member",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "staff_member_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Staff Member Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id",
+        "staff_member_id"
+      ],
+      "title": "MicrosoftBookingsGetStaffMemberConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsListAppointmentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_appointments",
+          "default": "list_appointments",
+          "title": "List Appointments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Appointments",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id"
+      ],
+      "title": "MicrosoftBookingsListAppointmentsConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsListBusinessesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_businesses",
+          "default": "list_businesses",
+          "title": "List Businesses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Businesses",
+          "x-is-trigger": false
+        }
+      },
+      "title": "MicrosoftBookingsListBusinessesConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsListCustomersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "List Customers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Customers",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id"
+      ],
+      "title": "MicrosoftBookingsListCustomersConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsListServicesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "List Services",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Services",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id"
+      ],
+      "title": "MicrosoftBookingsListServicesConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsListStaffMembersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_staff_members",
+          "default": "list_staff_members",
+          "title": "List Staff Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Staff Members",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id"
+      ],
+      "title": "MicrosoftBookingsListStaffMembersConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "microsoft_oauth",
+          "default": "microsoft_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "default": "",
+          "title": "Refresh token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "default": "",
+          "description": "ISO 8601 expiry, when provided by Microsoft.",
+          "title": "Token expiry",
+          "type": "string"
+        },
+        "email": {
+          "default": "",
+          "title": "Account email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Microsoft Bookings OAuth",
+      "type": "object",
+      "x-credential-instructions": "Connect a Microsoft work or school account with Microsoft Bookings enabled. Bookings.ReadWrite.All requires tenant consent. Personal Microsoft accounts are unsupported. An existing delegated Graph access token can also be supplied; refresh token and expiry are optional for a manually supplied token.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://learn.microsoft.com/graph/bookings-concept-overview",
+      "x-oauth-provider": "microsoft",
+      "x-oauth-scopes": [
+        "https://graph.microsoft.com/Bookings.ReadWrite.All",
+        "https://graph.microsoft.com/User.Read",
+        "offline_access"
+      ]
+    },
+    "MicrosoftBookingsUpdateAppointmentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_appointment",
+          "default": "update_appointment",
+          "title": "Update Appointment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Appointment",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "appointment_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Appointment Id",
+          "type": "string"
+        },
+        "service_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service ID"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date and time, for example 2018-05-01T12:00:00.0000000+00:00.",
+          "title": "Start date and time"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date and time, for example 2018-05-01T12:00:00.0000000+00:00.",
+          "title": "End date and time"
+        },
+        "time_zone": {
+          "default": "UTC",
+          "description": "Microsoft-supported time zone for start and end.",
+          "maxLength": 128,
+          "title": "Time zone",
+          "type": "string"
+        },
+        "customer_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer name"
+        },
+        "customer_email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer email"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Existing customer ID"
+        },
+        "customer_time_zone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer time zone"
+        },
+        "staff_member_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staff member IDs",
+          "ui:widget": "list"
+        },
+        "maximum_attendees_count": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum attendees"
+        },
+        "service_notes": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service notes"
+        },
+        "opt_out_of_customer_email": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opt out of customer email"
+        }
+      },
+      "required": [
+        "business_id",
+        "appointment_id"
+      ],
+      "title": "MicrosoftBookingsUpdateAppointmentConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsUpdateBusinessConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_business",
+          "default": "update_business",
+          "title": "Update Business",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Business",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business phone"
+        },
+        "website_url": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business website URL"
+        }
+      },
+      "required": [
+        "business_id"
+      ],
+      "title": "MicrosoftBookingsUpdateBusinessConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsUpdateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Update Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Customer",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "customer_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Existing customer ID",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display name"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer email"
+        }
+      },
+      "required": [
+        "business_id",
+        "customer_id"
+      ],
+      "title": "MicrosoftBookingsUpdateCustomerConfig",
+      "type": "object"
+    },
+    "MicrosoftBookingsUpdateServiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_service",
+          "default": "update_service",
+          "title": "Update Service",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Service",
+          "x-is-trigger": false
+        },
+        "business_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Business Id",
+          "type": "string"
+        },
+        "service_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Service ID",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display name"
+        },
+        "default_duration": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "pattern": "^P(?:\\d+D)?(?:T(?:\\d+H)?(?:\\d+M)?(?:\\d+(?:\\.\\d+)?S)?)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 duration, for example PT1H30M.",
+          "title": "Default duration"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service description"
+        },
+        "default_price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default price"
+        },
+        "default_price_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "undefined",
+                "fixedPrice",
+                "startingAt",
+                "hourly",
+                "free",
+                "priceVaries",
+                "callUs",
+                "notSet"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price type",
+          "enum": [
+            "undefined",
+            "fixedPrice",
+            "startingAt",
+            "hourly",
+            "free",
+            "priceVaries",
+            "callUs",
+            "notSet"
+          ],
+          "x-enum-searchable": true
+        },
+        "staff_member_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staff member IDs",
+          "ui:widget": "list"
+        },
+        "maximum_attendees_count": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum attendees"
+        },
+        "is_hidden_from_customers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is hidden from customers"
+        }
+      },
+      "required": [
+        "business_id",
+        "service_id"
+      ],
+      "title": "MicrosoftBookingsUpdateServiceConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_appointment": "#/$defs/MicrosoftBookingsCreateAppointmentConfig",
+          "create_customer": "#/$defs/MicrosoftBookingsCreateCustomerConfig",
+          "create_service": "#/$defs/MicrosoftBookingsCreateServiceConfig",
+          "delete_appointment": "#/$defs/MicrosoftBookingsDeleteAppointmentConfig",
+          "delete_customer": "#/$defs/MicrosoftBookingsDeleteCustomerConfig",
+          "delete_service": "#/$defs/MicrosoftBookingsDeleteServiceConfig",
+          "get_appointment": "#/$defs/MicrosoftBookingsGetAppointmentConfig",
+          "get_business": "#/$defs/MicrosoftBookingsGetBusinessConfig",
+          "get_customer": "#/$defs/MicrosoftBookingsGetCustomerConfig",
+          "get_service": "#/$defs/MicrosoftBookingsGetServiceConfig",
+          "get_staff_member": "#/$defs/MicrosoftBookingsGetStaffMemberConfig",
+          "list_appointments": "#/$defs/MicrosoftBookingsListAppointmentsConfig",
+          "list_businesses": "#/$defs/MicrosoftBookingsListBusinessesConfig",
+          "list_customers": "#/$defs/MicrosoftBookingsListCustomersConfig",
+          "list_services": "#/$defs/MicrosoftBookingsListServicesConfig",
+          "list_staff_members": "#/$defs/MicrosoftBookingsListStaffMembersConfig",
+          "update_appointment": "#/$defs/MicrosoftBookingsUpdateAppointmentConfig",
+          "update_business": "#/$defs/MicrosoftBookingsUpdateBusinessConfig",
+          "update_customer": "#/$defs/MicrosoftBookingsUpdateCustomerConfig",
+          "update_service": "#/$defs/MicrosoftBookingsUpdateServiceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MicrosoftBookingsListBusinessesConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsGetBusinessConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsUpdateBusinessConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsListAppointmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsGetAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsCreateAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsUpdateAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsDeleteAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsDeleteCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsListServicesConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsGetServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsCreateServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsUpdateServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsDeleteServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsListStaffMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/MicrosoftBookingsGetStaffMemberConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MicrosoftBookingsOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Microsoft-bookings Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List my Bookings businesses",
+    "Create an appointment for a service",
+    "Update a customer email address",
+    "List staff and services"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
