@@ -1,0 +1,1519 @@
+{
+  "$defs": {
+    "CliengoAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "cliengo_api_token",
+          "default": "cliengo_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Cliengo API Token",
+      "type": "object",
+      "x-credential-instructions": "In Cliengo, open Integrations \u2192 API, generate a token with the permissions your operations need, and paste it here. Contacts need clients_read/clients_write; conversations, tags and phases need conversations_read/conversations_write; channels need websites_read; users need users_read. Account reads prove the connection. Production tokens use connect.cliengo.com; sk_test_ tokens use connect.stagecliengo.com.",
+      "x-credential-url": "https://dash.cliengo.com/integrations/connect_api"
+    },
+    "CliengoAddContactTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_contact_tag",
+          "default": "add_contact_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "tag": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag"
+      ],
+      "title": "CliengoAddContactTagConfig",
+      "type": "object"
+    },
+    "CliengoAssignConversationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "assign_conversation",
+          "default": "assign_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "assigned_to": {
+          "description": "ID del operador",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Assigned To",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "assigned_to"
+      ],
+      "title": "CliengoAssignConversationConfig",
+      "type": "object"
+    },
+    "CliengoAssignConversationPhaseConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "assign_conversation_phase",
+          "default": "assign_conversation_phase",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "phase_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Phase Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "phase_id"
+      ],
+      "title": "CliengoAssignConversationPhaseConfig",
+      "type": "object"
+    },
+    "CliengoCloseConversationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "close_conversation",
+          "default": "close_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "is_lead": {
+          "description": "Si la conversaci\u00f3n result\u00f3 en un lead",
+          "title": "Is Lead",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "is_lead"
+      ],
+      "title": "CliengoCloseConversationConfig",
+      "type": "object"
+    },
+    "CliengoCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "website_id": {
+          "description": "ID del canal donde se origina el contacto",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Website Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "international_phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "International Phone Number"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "new",
+                "active",
+                "client",
+                "long_term"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "new",
+            "active",
+            "client",
+            "long_term"
+          ],
+          "x-enum-searchable": true
+        },
+        "entry_method": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entry Method"
+        },
+        "assigned_to": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID del agente a asignar",
+          "title": "Assigned To"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Nota inicial del contacto",
+          "title": "Note"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Campos personalizados (key-value)",
+          "title": "Custom Fields"
+        }
+      },
+      "required": [
+        "website_id",
+        "name"
+      ],
+      "title": "CliengoCreateContactConfig",
+      "type": "object"
+    },
+    "CliengoCreateContactNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact_note",
+          "default": "create_contact_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "message"
+      ],
+      "title": "CliengoCreateContactNoteConfig",
+      "type": "object"
+    },
+    "CliengoCreateTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CliengoCreateTagConfig",
+      "type": "object"
+    },
+    "CliengoDeleteContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "CliengoDeleteContactConfig",
+      "type": "object"
+    },
+    "CliengoGetAccountConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CliengoGetAccountConfig",
+      "type": "object"
+    },
+    "CliengoGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "CliengoGetContactConfig",
+      "type": "object"
+    },
+    "CliengoGetContactHistoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact_history",
+          "default": "get_contact_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "CliengoGetContactHistoryConfig",
+      "type": "object"
+    },
+    "CliengoGetConversationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "CliengoGetConversationConfig",
+      "type": "object"
+    },
+    "CliengoListChannelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CliengoListChannelsConfig",
+      "type": "object"
+    },
+    "CliengoListContactNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contact_notes",
+          "default": "list_contact_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "CliengoListContactNotesConfig",
+      "type": "object"
+    },
+    "CliengoListConversationMessagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_conversation_messages",
+          "default": "list_conversation_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "include_commands": {
+          "default": false,
+          "description": "Si es `true`, incluye los mensajes de tipo **comando** (eventos internos del sistema: asignaciones, cambios de fase, notas de bot, etc.) adem\u00e1s de los mensajes de conversaci\u00f3n. Por defecto (`false`) solo se devuelven los mensajes de la charla.",
+          "title": "Include Commands",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "CliengoListConversationMessagesConfig",
+      "type": "object"
+    },
+    "CliengoListConversationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "opened",
+                "closed",
+                "inactive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estado de la conversaci\u00f3n",
+          "title": "Status",
+          "enum": [
+            "opened",
+            "closed",
+            "inactive"
+          ],
+          "x-enum-searchable": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por tags. Uno o varios valores en un **\u00fanico** par\u00e1metro, separados por coma (ej. `?tags=urgente,vip`), no como par\u00e1metros repetidos.",
+          "title": "Tags"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fecha de inicio (ISO 8601)",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fecha de fin (ISO 8601)",
+          "title": "To Date"
+        },
+        "channel": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por canal. Uno o varios valores (`WEB`, `WHATSAPP`, `FACEBOOK`, `INSTAGRAM`) en un **\u00fanico** par\u00e1metro, separados por coma (ej. `?channel=WEB,WHATSAPP`), no como par\u00e1metros repetidos.",
+          "title": "Channel"
+        },
+        "phase": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID de la fase (etapa de inbox)",
+          "title": "Phase"
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID del agente que **intervino** la conversaci\u00f3n (\u00faltimo operador que envi\u00f3 un mensaje). Devuelve las conversaciones intervenidas por ese agente. Us\u00e1 `robot` para traer solo las atendidas por el bot (sin intervenci\u00f3n humana).",
+          "title": "Agent"
+        },
+        "pre_assigned": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID del agente **asignado** (pre-asignaci\u00f3n autom\u00e1tica). Devuelve las conversaciones asignadas a ese agente.",
+          "title": "Pre Assigned"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtra por estado de intervenci\u00f3n. Uno o varios valores en un **\u00fanico** par\u00e1metro, separados por coma (ej. `?condition=intervened,lead`): `intervened` (intervenidas por un humano), `not_intervened` (atendidas solo por el bot), `lead` (marcadas como lead).",
+          "title": "Condition"
+        },
+        "utm_source": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por fuente de campa\u00f1a (UTM source). Ej. `google`, `facebook`.",
+          "title": "Utm Source"
+        },
+        "utm_medium": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por medio de campa\u00f1a (UTM medium). Ej. `cpc`, `organic`.",
+          "title": "Utm Medium"
+        },
+        "utm_campaign": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por nombre de campa\u00f1a (UTM campaign).",
+          "title": "Utm Campaign"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "B\u00fasqueda de texto libre",
+          "title": "Search"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Resultados por p\u00e1gina",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use an offset instead of a page number. When set, page is not sent.",
+          "title": "Offset"
+        },
+        "page": {
+          "default": 1,
+          "description": "N\u00famero de p\u00e1gina",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Campo y orden de ordenamiento (ej: createdAt:desc)",
+          "title": "Sort"
+        }
+      },
+      "title": "CliengoListConversationsConfig",
+      "type": "object"
+    },
+    "CliengoListPhasesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_phases",
+          "default": "list_phases",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CliengoListPhasesConfig",
+      "type": "object"
+    },
+    "CliengoListTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CliengoListTagsConfig",
+      "type": "object"
+    },
+    "CliengoListTeamsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CliengoListTeamsConfig",
+      "type": "object"
+    },
+    "CliengoListUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 20,
+          "description": "Resultados por p\u00e1gina",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset de paginaci\u00f3n",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "CliengoListUsersConfig",
+      "type": "object"
+    },
+    "CliengoListWhatsappTemplatesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_whatsapp_templates",
+          "default": "list_whatsapp_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_id": {
+          "description": "ID del canal de WhatsApp (websiteId)",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Channel Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "CliengoListWhatsappTemplatesConfig",
+      "type": "object"
+    },
+    "CliengoOpenConversationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "open_conversation",
+          "default": "open_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "CliengoOpenConversationConfig",
+      "type": "object"
+    },
+    "CliengoSearchContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "B\u00fasqueda fuzzy en nombre, email y tel\u00e9fono",
+          "title": "Search"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por email (b\u00fasqueda parcial)",
+          "title": "Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por nombre (b\u00fasqueda parcial)",
+          "title": "Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por tel\u00e9fono (b\u00fasqueda parcial)",
+          "title": "Phone"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "new",
+                "active",
+                "client",
+                "long_term"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por estado del contacto",
+          "title": "Status",
+          "enum": [
+            "new",
+            "active",
+            "client",
+            "long_term"
+          ],
+          "x-enum-searchable": true
+        },
+        "sub_status": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por sub-estado",
+          "title": "Sub Status"
+        },
+        "website_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por canal (IDs separados por coma)",
+          "title": "Website Id"
+        },
+        "assigned_to": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por agente asignado (IDs separados por coma, o UNASSIGNED)",
+          "title": "Assigned To"
+        },
+        "entry_method": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por m\u00e9todo de entrada (WEB, WHATSAPP, FACEBOOK, etc.)",
+          "title": "Entry Method"
+        },
+        "conversation_tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por tags de conversaci\u00f3n (separados por coma)",
+          "title": "Conversation Tags"
+        },
+        "rating": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filtrar por calificaci\u00f3n (valores separados por coma)",
+          "title": "Rating"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contactos creados despu\u00e9s de esta fecha (ISO 8601)",
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contactos creados antes de esta fecha (ISO 8601)",
+          "title": "Date To"
+        },
+        "last_update_date_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contactos actualizados despu\u00e9s de esta fecha (ISO 8601)",
+          "title": "Last Update Date From"
+        },
+        "last_update_date_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contactos actualizados antes de esta fecha (ISO 8601)",
+          "title": "Last Update Date To"
+        },
+        "order_by": {
+          "default": "_id",
+          "description": "Campo para ordenar (ej: creationDate, name, email)",
+          "maxLength": 1000,
+          "title": "Order By",
+          "type": "string"
+        },
+        "order": {
+          "default": "desc",
+          "description": "Direcci\u00f3n de ordenamiento",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "N\u00famero de p\u00e1gina",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Resultados por p\u00e1gina",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "CliengoSearchContactsConfig",
+      "type": "object"
+    },
+    "CliengoSendConversationMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_conversation_message",
+          "default": "send_conversation_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "from_type": {
+          "enum": [
+            "user",
+            "robot",
+            "visitor"
+          ],
+          "title": "From Type",
+          "type": "string"
+        },
+        "sender_id": {
+          "description": "ID del remitente",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Sender Id",
+          "type": "string"
+        },
+        "message_type": {
+          "enum": [
+            "image",
+            "text/plain",
+            "command",
+            "note"
+          ],
+          "title": "Message Type",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Para mensajes multimedia",
+          "title": "Message"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "from_type",
+        "sender_id",
+        "message_type"
+      ],
+      "title": "CliengoSendConversationMessageConfig",
+      "type": "object"
+    },
+    "CliengoUpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "assigned_to": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned To"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "CliengoUpdateContactConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_tag": "#/$defs/CliengoAddContactTagConfig",
+          "assign_conversation": "#/$defs/CliengoAssignConversationConfig",
+          "assign_conversation_phase": "#/$defs/CliengoAssignConversationPhaseConfig",
+          "close_conversation": "#/$defs/CliengoCloseConversationConfig",
+          "create_contact": "#/$defs/CliengoCreateContactConfig",
+          "create_contact_note": "#/$defs/CliengoCreateContactNoteConfig",
+          "create_tag": "#/$defs/CliengoCreateTagConfig",
+          "delete_contact": "#/$defs/CliengoDeleteContactConfig",
+          "get_account": "#/$defs/CliengoGetAccountConfig",
+          "get_contact": "#/$defs/CliengoGetContactConfig",
+          "get_contact_history": "#/$defs/CliengoGetContactHistoryConfig",
+          "get_conversation": "#/$defs/CliengoGetConversationConfig",
+          "list_channels": "#/$defs/CliengoListChannelsConfig",
+          "list_contact_notes": "#/$defs/CliengoListContactNotesConfig",
+          "list_conversation_messages": "#/$defs/CliengoListConversationMessagesConfig",
+          "list_conversations": "#/$defs/CliengoListConversationsConfig",
+          "list_phases": "#/$defs/CliengoListPhasesConfig",
+          "list_tags": "#/$defs/CliengoListTagsConfig",
+          "list_teams": "#/$defs/CliengoListTeamsConfig",
+          "list_users": "#/$defs/CliengoListUsersConfig",
+          "list_whatsapp_templates": "#/$defs/CliengoListWhatsappTemplatesConfig",
+          "open_conversation": "#/$defs/CliengoOpenConversationConfig",
+          "search_contacts": "#/$defs/CliengoSearchContactsConfig",
+          "send_conversation_message": "#/$defs/CliengoSendConversationMessageConfig",
+          "update_contact": "#/$defs/CliengoUpdateContactConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CliengoSearchContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoListContactNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoCreateContactNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoAddContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoGetContactHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoListConversationMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoSendConversationMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoAssignConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoCloseConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoOpenConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoListPhasesConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoAssignConversationPhaseConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoListChannelsConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoListWhatsappTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/CliengoListTeamsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CliengoAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cliengo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

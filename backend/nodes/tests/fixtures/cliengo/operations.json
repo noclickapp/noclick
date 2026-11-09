@@ -1,0 +1,127 @@
+{
+  "search_contacts": {
+    "method": "GET",
+    "path": "/v1/contacts",
+    "operation_id": "searchContacts"
+  },
+  "create_contact": {
+    "method": "POST",
+    "path": "/v1/contacts",
+    "operation_id": "createContact"
+  },
+  "get_contact": {
+    "method": "GET",
+    "path": "/v1/contacts/{contactId}",
+    "operation_id": "getContact"
+  },
+  "update_contact": {
+    "method": "PATCH",
+    "path": "/v1/contacts/{contactId}",
+    "operation_id": "patchContact"
+  },
+  "delete_contact": {
+    "method": "DELETE",
+    "path": "/v1/contacts/{contactId}",
+    "operation_id": "deleteContact"
+  },
+  "list_contact_notes": {
+    "method": "GET",
+    "path": "/v1/contacts/{contactId}/notes",
+    "operation_id": "listContactNotes"
+  },
+  "create_contact_note": {
+    "method": "POST",
+    "path": "/v1/contacts/{contactId}/notes",
+    "operation_id": "createContactNote"
+  },
+  "add_contact_tag": {
+    "method": "POST",
+    "path": "/v1/contacts/{contactId}/tags",
+    "operation_id": "addContactTag"
+  },
+  "get_contact_history": {
+    "method": "GET",
+    "path": "/v1/contacts/{contactId}/history",
+    "operation_id": "getContactHistory"
+  },
+  "list_conversations": {
+    "method": "GET",
+    "path": "/v1/conversations",
+    "operation_id": "listConversations"
+  },
+  "get_conversation": {
+    "method": "GET",
+    "path": "/v1/conversations/{conversationId}",
+    "operation_id": "getConversation"
+  },
+  "list_conversation_messages": {
+    "method": "GET",
+    "path": "/v1/conversations/{conversationId}/messages",
+    "operation_id": "listConversationMessages"
+  },
+  "send_conversation_message": {
+    "method": "POST",
+    "path": "/v1/conversations/{conversationId}/messages",
+    "operation_id": "addConversationMessage"
+  },
+  "assign_conversation": {
+    "method": "POST",
+    "path": "/v1/conversations/{conversationId}/assign",
+    "operation_id": "assignConversation"
+  },
+  "close_conversation": {
+    "method": "POST",
+    "path": "/v1/conversations/{conversationId}/close",
+    "operation_id": "closeConversation"
+  },
+  "open_conversation": {
+    "method": "POST",
+    "path": "/v1/conversations/{conversationId}/open",
+    "operation_id": "openConversation"
+  },
+  "list_tags": {
+    "method": "GET",
+    "path": "/v1/tags",
+    "operation_id": "listTags"
+  },
+  "create_tag": {
+    "method": "POST",
+    "path": "/v1/tags",
+    "operation_id": "createTag"
+  },
+  "list_phases": {
+    "method": "GET",
+    "path": "/v1/phases",
+    "operation_id": "listPhases"
+  },
+  "assign_conversation_phase": {
+    "method": "PATCH",
+    "path": "/v1/conversations/{conversationId}/phases/{phaseId}",
+    "operation_id": "assignPhaseToConversation"
+  },
+  "get_account": {
+    "method": "GET",
+    "path": "/v1/account",
+    "operation_id": "getAccount"
+  },
+  "list_channels": {
+    "method": "GET",
+    "path": "/v1/channels",
+    "operation_id": "listChannels"
+  },
+  "list_users": {
+    "method": "GET",
+    "path": "/v1/users",
+    "operation_id": "listUsers"
+  },
+  "list_whatsapp_templates": {
+    "method": "GET",
+    "path": "/v1/whatsapp/{channelId}/templates",
+    "operation_id": "listWhatsAppTemplates"
+  },
+  "list_teams": {
+    "method": "GET",
+    "path": "/v1/teams",
+    "operation_id": "listTeams"
+  }
+}
