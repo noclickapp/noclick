@@ -1,0 +1,836 @@
+[
+  {
+    "operation": "get_specs",
+    "method": "GET",
+    "path": "/specs",
+    "config": {
+      "operation": "get_specs",
+      "vin": "1HGBH41JXMN109186",
+      "deepdata": "1",
+      "disableIntVINDecoding": "1"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "input": {
+        "key": "API_KEY",
+        "vin": "WBAFR7C57CC811956"
+      },
+      "attributes": {
+        "year": "2012",
+        "make": "BMW",
+        "model": "5-Series",
+        "trim": "535i",
+        "style": "SEDAN 4-DR",
+        "type": "Sedan/Saloon",
+        "made_in": "GERMANY",
+        "doors": "4",
+        "fuel_type": "Gasoline",
+        "engine": "3.0L L6 DOHC 24V",
+        "engine_cylinders": "6",
+        "transmission": "6-Speed Manual | 8-Speed Automatic",
+        "drivetrain": "RWD"
+      },
+      "colors": [
+        {
+          "category": "Interior",
+          "name": "Black Dakota Leather Interior"
+        },
+        {
+          "category": "Exterior",
+          "name": "Alpine White"
+        }
+      ],
+      "equipment": {
+        "abs_brakes": "Std.",
+        "air_conditioning": "Std."
+      },
+      "warranties": [
+        {
+          "type": "Basic",
+          "miles": "50,000 mile",
+          "months": "48 month"
+        }
+      ],
+      "timestamp": "2025-10-01T22:40:36.374Z"
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "decode_international_vin",
+    "method": "GET",
+    "path": "/v1/international-vin-decoder",
+    "config": {
+      "operation": "decode_international_vin",
+      "vin": "1HGBH41JXMN109186"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "input": {
+        "vin": "WF0MXXGBWM8R43240"
+      },
+      "attributes": {
+        "vin": "WF0MXXGBWM8R43240",
+        "vid": "1623",
+        "make": "Ford",
+        "model": "Galaxy"
+      },
+      "timestamp": "2025-04-11T00:05:36.457Z"
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_recalls",
+    "method": "GET",
+    "path": "/v1/recalls",
+    "config": {
+      "operation": "get_recalls",
+      "vin": "1HGBH41JXMN109186"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "input": {
+        "key": "API_KEY",
+        "vin": "1C4JJXR64PW696340"
+      },
+      "data": {
+        "uuid": "d1269d6b-54a2-4bf3-8119-1c8fdb4f0563",
+        "vin": "1C4JJXR64PW696340",
+        "manufacturer": "FCA US LLC",
+        "model_year": "2023"
+      },
+      "timestamp": "2025-10-03T08:46:03.701Z"
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_recalls_by_ymm",
+    "method": "GET",
+    "path": "/v1/recalls-ymm",
+    "config": {
+      "operation": "get_recalls_by_ymm",
+      "year": "2019",
+      "make": "Toyota",
+      "model": "Camry"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "input": {
+        "year": "2026",
+        "make": "TOYOTA",
+        "model": "COROLLA"
+      },
+      "data": {
+        "make": "TOYOTA",
+        "model": "COROLLA",
+        "model_year": "2026",
+        "recall_count": 1,
+        "has_recalls": true,
+        "recalls": [
+          {
+            "nhtsa_campaign_number": "26V110000",
+            "manufacturer": "Toyota Motor Engineering & Manufacturing",
+            "park_it": false,
+            "park_outside": false,
+            "over_the_air_update": false,
+            "report_received_date": "25/02/2026",
+            "component": "EXTERIOR LIGHTING:HEADLIGHTS",
+            "summary": "Toyota is recalling certain 2026 Corolla vehicles.",
+            "consequence": "Incorrectly aimed headlights can reduce driver visibility.",
+            "remedy": "Dealers will replace both front headlight assemblies, free of charge.",
+            "notes": null
+          }
+        ]
+      },
+      "timestamp": "2026-06-29T12:00:45.786Z"
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_recall_campaign",
+    "method": "GET",
+    "path": "/v1/recalls-campaigns",
+    "config": {
+      "operation": "get_recall_campaign",
+      "make": "volkswagen",
+      "code": "37M2"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "input": {
+        "make": "volkswagen",
+        "code": "37M2"
+      },
+      "data": {
+        "campaign_code": "37M2",
+        "recall_class": "Safety / Compliance Recall",
+        "description": "Volkswagen is recalling certain 2011-2019 Beetle, Golf, GTI and Jetta vehicles. A build-up of silicate on the shift lever micro switch contacts may enable the key to be removed from the ignition when the shift lever is not in Park.",
+        "nhtsa_campaign_number": "19V615000",
+        "component": "ELECTRICAL SYSTEM:IGNITION:ANTI-THEFT:CONTROL MODULE",
+        "models": "BEETLE;BEETLE CONVERTIBLE;GOLF;GOLF SPORTWAGEN;GTI;JETTA",
+        "model_years": "2011;2012;2013;2014;2015;2016;2017;2018;2019",
+        "confidence": "high",
+        "matched": true,
+        "dictionary_version": 1
+      },
+      "timestamp": "2026-09-25T12:29:09.352Z"
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "submit_recalls_batch",
+    "method": "POST",
+    "path": "/v1/recalls-batch/submit",
+    "config": {
+      "operation": "submit_recalls_batch",
+      "vins": [
+        "1HGBH41JXMN109186",
+        "5YJSA1E26HF000001"
+      ],
+      "webhookUrl": "https://example.com/webhooks/carsxe-recalls"
+    },
+    "status": 202,
+    "response": {
+      "success": true,
+      "data": {
+        "batchId": "brb_mnablbn7_wvbaqv",
+        "status": "uploading",
+        "totalVins": 3,
+        "processedVins": 0
+      },
+      "message": "Batch submitted and queued for processing. Poll the status endpoint or wait for the webhook."
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_recalls_batch_status",
+    "method": "GET",
+    "path": "/v1/recalls-batch/status",
+    "config": {
+      "operation": "get_recalls_batch_status",
+      "batchId": "batch-123"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "data": {
+        "batchId": "brb_mnablbn7_wvbaqv",
+        "numericBatchId": 200426,
+        "status": "completed",
+        "totalVins": 3
+      }
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_recalls_batch_results",
+    "method": "GET",
+    "path": "/v1/recalls-batch/results",
+    "config": {
+      "operation": "get_recalls_batch_results",
+      "batchId": "batch-123"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "data": {
+        "job": {
+          "batchId": "brb_mnablbn7_wvbaqv",
+          "numericBatchId": 200426,
+          "status": "completed"
+        },
+        "results": [
+          {
+            "vin": "1HGBH41JXMN109186",
+            "hasRecalls": true,
+            "recallCount": 1
+          },
+          {
+            "vin": "5YJSA1E26HF000001",
+            "hasRecalls": false,
+            "recallCount": 0
+          }
+        ]
+      }
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "decode_plate",
+    "method": "GET",
+    "path": "/v2/platedecoder",
+    "config": {
+      "operation": "decode_plate",
+      "plate": "7XER187",
+      "country": "US",
+      "state": "CA"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "input": {
+        "plate": "7XER187",
+        "state": "CA",
+        "country": "US"
+      },
+      "description": "Kia Forte LX",
+      "make": "Kia",
+      "model": "Forte",
+      "trim": "LX",
+      "vin": "3KPFK4A78HE103497",
+      "style": "Sedan 4D",
+      "year": "2017",
+      "assembly": "Mexico",
+      "fuel_type": "Gasoline",
+      "color": "White",
+      "body_style": "Sedan",
+      "engine_size": "2.0L I4 MPI",
+      "drive_type": "FWD",
+      "transmission": "Automatic"
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "decode_us_plate",
+    "method": "GET",
+    "path": "/v1/us-platedecoder",
+    "config": {
+      "operation": "decode_us_plate",
+      "plate": "7XER187",
+      "state": "CA",
+      "decodeVIN": "true"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "input": {
+        "plate": "H37SFS",
+        "state": "NJ"
+      },
+      "vin": "1GNSCGKC0JR318026",
+      "year": "2018",
+      "make": "Chevrolet",
+      "model": "Suburban",
+      "trim": "LS",
+      "description": "2018 Chevrolet Suburban",
+      "engine_size": "5.3L V8 OHV 16V",
+      "body_style": "SUV",
+      "transmission": "Automatic",
+      "drive_type": "RWD",
+      "fuel_type": "Flexible-Fuel",
+      "color": "Black"
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_lien_theft",
+    "method": "GET",
+    "path": "/v1/lien-theft",
+    "config": {
+      "operation": "get_lien_theft",
+      "vin": "1HGBH41JXMN109186"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "input": {
+        "vin": "2C3CDXFG1FH762860"
+      },
+      "timestamp": "2025-12-07T20:32:11.027Z",
+      "year": 2015,
+      "make": "DODGE",
+      "model": "Charger",
+      "type": "CAR",
+      "events": [
+        {
+          "event": "Recovered Theft",
+          "location": "OH",
+          "details_list": [
+            "The vehicle is reported to be an Recovered Theft."
+          ]
+        }
+      ]
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_images",
+    "method": "GET",
+    "path": "/images",
+    "config": {
+      "operation": "get_images",
+      "year": "2019",
+      "make": "Toyota",
+      "model": "Camry",
+      "transparent": false,
+      "angle": "front",
+      "size": "Large"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "images": [
+        {
+          "mime": "image/png",
+          "link": "https://bit.ly/34tpueu",
+          "contextLink": "https://www.mariettatoyota.com/toyota-tacoma/",
+          "height": 272,
+          "width": 1000,
+          "byteSize": 56662,
+          "thumbnailLink": "https://bit.ly/34xewVr",
+          "accentColor": "B51617"
+        }
+      ],
+      "query": {
+        "year": "2018",
+        "make": "toyota",
+        "model": "tacoma",
+        "color": "blue",
+        "format": "json"
+      }
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_market_value",
+    "method": "GET",
+    "path": "/v2/marketvalue",
+    "config": {
+      "operation": "get_market_value",
+      "vin": "1HGBH41JXMN109186",
+      "mileage": 42000,
+      "condition": "clean",
+      "state": "CA"
+    },
+    "status": 200,
+    "response": {
+      "uid": "6AA32D4C",
+      "input": {
+        "vin": "3KPFK4A78HE103497",
+        "state": "CA",
+        "country": "US"
+      },
+      "publish_date": "8/29/2025",
+      "data_freq": "D",
+      "state": "CA",
+      "country": "US",
+      "uvc": "2017485075",
+      "group_num": "4163",
+      "model_year": "2017",
+      "make": "Kia",
+      "model": "Forte",
+      "series": "LX",
+      "style": "4D Sedan",
+      "mileage_cat": "B",
+      "class_code": "A",
+      "class_name": "Small Car",
+      "description_score": "",
+      "first_values_flag": false,
+      "risk_score": "",
+      "whole_xclean": {
+        "base_whole_xclean": 5925,
+        "mileage_whole_xclean": 0,
+        "add_deduct_whole_xclean": 0,
+        "regional_whole_xclean": 25,
+        "adjusted_whole_xclean": 5950
+      },
+      "whole_clean": {
+        "base_whole_clean": 4950,
+        "mileage_whole_clean": 0,
+        "add_deduct_whole_clean": 0,
+        "regional_whole_clean": 25,
+        "adjusted_whole_clean": 4975
+      },
+      "whole_avg": {
+        "base_whole_avg": 3600,
+        "mileage_whole_avg": 0,
+        "add_deduct_whole_avg": 0,
+        "regional_whole_avg": 25,
+        "adjusted_whole_avg": 3625
+      },
+      "whole_rough": {
+        "base_whole_rough": 2300,
+        "mileage_whole_rough": 0,
+        "add_deduct_whole_rough": 0,
+        "regional_whole_rough": 25,
+        "adjusted_whole_rough": 2325
+      },
+      "retail_xclean": {
+        "base_retail_xclean": 9750,
+        "mileage_retail_xclean": 0,
+        "add_deduct_retail_xclean": 0,
+        "regional_retail_xclean": 25,
+        "adjusted_retail_xclean": 9775
+      },
+      "retail_clean": {
+        "base_retail_clean": 8575,
+        "mileage_retail_clean": 0,
+        "add_deduct_retail_clean": 0,
+        "regional_retail_clean": 25,
+        "adjusted_retail_clean": 8600
+      },
+      "retail_avg": {
+        "base_retail_avg": 6550,
+        "mileage_retail_avg": 0,
+        "add_deduct_retail_avg": 0,
+        "regional_retail_avg": 25,
+        "adjusted_retail_avg": 6575
+      },
+      "retail_rough": {
+        "base_retail_rough": 5050,
+        "mileage_retail_rough": 0,
+        "add_deduct_retail_rough": 0,
+        "regional_retail_rough": 25,
+        "adjusted_retail_rough": 5075
+      },
+      "trade_in_clean": {
+        "base_trade_in_clean": 5055,
+        "mileage_trade_in_clean": 0,
+        "add_deduct_trade_in_clean": 0,
+        "regional_trade_in_clean": 25,
+        "adjusted_trade_in_clean": 5080
+      },
+      "trade_in_avg": {
+        "base_trade_in_avg": 3705,
+        "mileage_trade_in_avg": 0,
+        "add_deduct_trade_in_avg": 0,
+        "regional_trade_in_avg": 25,
+        "adjusted_trade_in_avg": 3730
+      },
+      "trade_in_rough": {
+        "base_trade_in_rough": 2205,
+        "mileage_trade_in_rough": 0,
+        "add_deduct_trade_in_rough": 0,
+        "regional_trade_in_rough": 25,
+        "adjusted_trade_in_rough": 2230
+      },
+      "region2": 50,
+      "region3": 25,
+      "region4": -25,
+      "region5": 0,
+      "region6": 0,
+      "msrp": 17600,
+      "retail_equipped": 18820,
+      "price_includes": "AC",
+      "wheel_base": 106.3,
+      "tire_size": "195/65R15",
+      "seat_cap": "5",
+      "fuel_type": "Gas",
+      "fuel_cap": "13.2",
+      "fuel_delivery": "MPI",
+      "hwy_mpg": "38",
+      "city_mpg": "29",
+      "engine_description": "2.0L I-4 MPI DOHC ",
+      "cylinders": "4",
+      "engine_displacement": "2.0L",
+      "base_hp": "147 @ 6200",
+      "taxable_hp": 16.7,
+      "torque": "132 @ 4500",
+      "drivetrain": "FWD",
+      "num_gears": "6",
+      "ext_doors": "4",
+      "airbags": "Side Curtain",
+      "anti_corrosion_warranty": "5-year/100,000-mile, Limited",
+      "basic_warranty": "5-year/60,000-mile, Limited",
+      "road_assist_warranty": "5-year/60,000-mile",
+      "add_deduct_list": [
+        {
+          "uoc": "05",
+          "name": "w/o Auto Trans",
+          "xclean": -550,
+          "clean": -550,
+          "avg": -550,
+          "rough": -550,
+          "auto": "N",
+          "resid12": 0,
+          "resid24": 0,
+          "resid30": 0,
+          "resid36": 0,
+          "resid42": 0,
+          "resid48": 0,
+          "resid60": 0,
+          "resid72": 0
+        }
+      ],
+      "model_number_list": [
+        "C3421",
+        "C3422"
+      ],
+      "mileage_list": [
+        {
+          "model_year": "2017",
+          "range_begin": 1,
+          "range_end": 8000,
+          "xclean": 2800,
+          "clean": 3000,
+          "avg": 3200,
+          "rough": 3200,
+          "finadv": 2900,
+          "mileage_cat": "B"
+        },
+        {
+          "model_year": "2017",
+          "range_begin": 110001,
+          "range_end": 113000,
+          "xclean": -250,
+          "clean": -125,
+          "avg": 0,
+          "rough": 125,
+          "finadv": -175,
+          "mileage_cat": "B"
+        },
+        {
+          "model_year": "2017",
+          "range_begin": 214001,
+          "range_end": 999999,
+          "xclean": -3325,
+          "clean": -3325,
+          "avg": -3325,
+          "rough": -3225,
+          "finadv": -3325,
+          "mileage_cat": "B"
+        }
+      ],
+      "retail": 6550,
+      "trade_in": 5055,
+      "rough_trade_in": 2205,
+      "average_trade_in": 3705,
+      "loan_value": 8575,
+      "trade_in_values": [],
+      "auction_values": {
+        "low_auction_value": 2300,
+        "average_auction_value": 3600,
+        "high_auction_value": 4950,
+        "date_range": "8/29/2025"
+      }
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_history",
+    "method": "GET",
+    "path": "/history",
+    "config": {
+      "operation": "get_history",
+      "vin": "1HGBH41JXMN109186",
+      "lienTheft": "true"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "fixture": "synthetic response"
+    },
+    "response_source": "synthetic test fixture"
+  },
+  {
+    "operation": "recognize_plate",
+    "method": "POST",
+    "path": "/platerecognition",
+    "config": {
+      "operation": "recognize_plate",
+      "image_url": "https://example.com/car-photo.jpg"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "message": "",
+      "results": [
+        {
+          "box": {
+            "xmin": 2045,
+            "ymin": 1400,
+            "xmax": 2732
+          },
+          "plate": "9djc652",
+          "region": {
+            "code": "us-ca",
+            "score": 0.849
+          }
+        }
+      ],
+      "processing_time": 117.822
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "recognize_vin",
+    "method": "POST",
+    "path": "/v1/vinocr",
+    "config": {
+      "operation": "recognize_vin",
+      "image_url": "https://example.com/vin-plate.jpg"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "vin": "JHLRD77874C026456",
+      "box": {
+        "xmin": 257,
+        "xmax": 1673,
+        "ymin": 635,
+        "ymax": 793
+      },
+      "confidence": 0.9834251403808594,
+      "candidates": [
+        {
+          "vin": "JHLRD77874C026456",
+          "confidence": 0.9834251403808594
+        }
+      ]
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_year_make_model",
+    "method": "GET",
+    "path": "/v1/ymm",
+    "config": {
+      "operation": "get_year_make_model",
+      "year": "2019",
+      "make": "Toyota",
+      "model": "Camry",
+      "exact_match": true,
+      "allTrimOptions": "1"
+    },
+    "status": 200,
+    "response": {
+      "bestMatch": {
+        "trim_id": "ymm_style_v1_31ec8f9ad439d778b2dcb4dc8c0cfdafdf4ddf869d03d377de63684a02ab2eab",
+        "make": "Toyota",
+        "model": "Camry",
+        "year": "2023",
+        "name": "XLE 4dr Sedan (3.5L 6cyl 8A)"
+      },
+      "trimOptions": [
+        {
+          "trim_id": "ymm_style_v1_31ec8f9ad439d778b2dcb4dc8c0cfdafdf4ddf869d03d377de63684a02ab2eab",
+          "make": "Toyota",
+          "model": "Camry",
+          "year": "2023",
+          "name": "XLE 4dr Sedan (3.5L 6cyl 8A)"
+        }
+      ],
+      "success": true,
+      "match_exact": true,
+      "input": {
+        "year": "2023",
+        "make": "Toyota",
+        "model": "Camry",
+        "trim": "XLE",
+        "exact_match": false,
+        "allTrimOptions": "1"
+      },
+      "timestamp": "2024-03-19T12:00:00.000Z"
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_ymm_options",
+    "method": "GET",
+    "path": "/v1/ymm-options",
+    "config": {
+      "operation": "get_ymm_options",
+      "dimension": "models",
+      "make": "Toyota"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "input": {
+        "year": 2026,
+        "make": "Toyota",
+        "model": "Tacoma"
+      },
+      "variants": [
+        "Tacoma Limited",
+        "Tacoma SR",
+        "Tacoma SR5",
+        "Tacoma TRD Off-Road",
+        "Tacoma TRD PreRunner",
+        "Tacoma TRD Pro",
+        "Tacoma TRD Sport",
+        "Tacoma Trailhunter"
+      ]
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "decode_obd_code",
+    "method": "GET",
+    "path": "/obdcodesdecoder",
+    "config": {
+      "operation": "decode_obd_code",
+      "code": "P0420"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "diagnosis": "Engine Coolant Temperature Circuit Malfunction",
+      "date": "2020-07-04T21:44:39.767Z",
+      "code": "P0115"
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_collateral_score",
+    "method": "POST",
+    "path": "/v1/vehicle/collateral-score",
+    "config": {
+      "operation": "get_collateral_score",
+      "vin": "3TMKB5FNXRM012539",
+      "mileage": 42000,
+      "zip": "20878",
+      "loan_term_months": 48
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "fixture": "synthetic response"
+    },
+    "response_source": "synthetic test fixture"
+  },
+  {
+    "operation": "submit_collateral_batch",
+    "method": "POST",
+    "path": "/v1/vehicle/collateral-score/batch",
+    "config": {
+      "operation": "submit_collateral_batch",
+      "vehicles": [
+        {
+          "vin": "3TMKB5FNXRM012539",
+          "mileage": 42000,
+          "zip": "20878",
+          "loan_term_months": 48
+        }
+      ],
+      "webhook_url": "https://example.com/webhook"
+    },
+    "status": 202,
+    "response": {
+      "success": true,
+      "batch_id": "8k2Yw1QeR4tTnVb7XcZa",
+      "status": "processing",
+      "total": 500
+    },
+    "response_source": "https://docs.carsxe.com/openapi.json"
+  },
+  {
+    "operation": "get_collateral_batch",
+    "method": "GET",
+    "path": "/v1/vehicle/collateral-score/batch",
+    "config": {
+      "operation": "get_collateral_batch",
+      "batch_id": "8k2Yw1QeR4tTnVb7XcZa"
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "fixture": "synthetic response"
+    },
+    "response_source": "synthetic test fixture"
+  }
+]
