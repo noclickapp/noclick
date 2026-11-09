@@ -1,0 +1,452 @@
+[
+  {
+    "config": {
+      "operation": "list_brand_templates"
+    },
+    "method": "GET",
+    "path": "/api/brand-templates",
+    "query": {
+      "q": "mine"
+    },
+    "body": null,
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "create_clip_project",
+      "videoUrl": "https://www.youtube.com/watch?v=LXvv6CbGg8A",
+      "curationPref": {
+        "enableAutoHook": false,
+        "topicKeywords": [
+          "OpusClip"
+        ]
+      },
+      "importPref": {
+        "sourceLang": "en"
+      }
+    },
+    "method": "POST",
+    "path": "/api/clip-projects",
+    "query": {},
+    "body": {
+      "videoUrl": "https://www.youtube.com/watch?v=LXvv6CbGg8A",
+      "curationPref": {
+        "enableAutoHook": false,
+        "topicKeywords": [
+          "OpusClip"
+        ]
+      },
+      "importPref": {
+        "sourceLang": "en"
+      }
+    },
+    "response": {
+      "id": "P0000000demo",
+      "status": "QUEUED"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_clip_project",
+      "projectId": "P0000000demo"
+    },
+    "method": "GET",
+    "path": "/api/clip-projects/P0000000demo",
+    "query": {},
+    "body": null,
+    "response": {
+      "id": "P0000000demo",
+      "status": "CONCLUDED"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_project_visibility",
+      "projectId": "P0000000demo",
+      "visibility": "PUBLIC"
+    },
+    "method": "POST",
+    "path": "/api/clip-projects/P0000000demo/update-visibility",
+    "query": {},
+    "body": {
+      "visibility": "PUBLIC"
+    },
+    "response": {
+      "id": "P0000000demo",
+      "visibility": "PUBLIC"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_exportable_clips",
+      "projectId": "P0000000demo",
+      "pageNum": 2,
+      "pageSize": 10,
+      "organization_id": "org_Example00000001"
+    },
+    "method": "GET",
+    "path": "/api/exportable-clips",
+    "query": {
+      "q": "findByProjectId",
+      "projectId": "P0000000demo",
+      "pageNum": "2.0",
+      "pageSize": "10.0"
+    },
+    "body": null,
+    "response": []
+  },
+  {
+    "config": {
+      "operation": "remove_collection_content",
+      "collectionId": "xmAwhhFi0IJt",
+      "contentId": "P0000000demo.CUexample2"
+    },
+    "method": "POST",
+    "path": "/api/collection-contents/delete-collection-contents",
+    "query": {},
+    "body": {
+      "q": "findByCollectionIdAndContentId",
+      "collectionId": "xmAwhhFi0IJt",
+      "contentId": "P0000000demo.CUexample2"
+    },
+    "response": {
+      "data": "success"
+    }
+  },
+  {
+    "config": {
+      "operation": "add_collection_content",
+      "collectionId": "xmAwhhFi0IJt",
+      "contentId": "P0000000demo.CUexample2"
+    },
+    "method": "POST",
+    "path": "/api/collection-contents",
+    "query": {},
+    "body": {
+      "collectionId": "xmAwhhFi0IJt",
+      "contentId": "P0000000demo.CUexample2"
+    },
+    "response": {
+      "data": {
+        "collectionId": "xmAwhhFi0IJt",
+        "contentId": "P0000000demo.CUexample2"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_collection",
+      "collectionId": "xmAwhhFi0IJt"
+    },
+    "method": "DELETE",
+    "path": "/api/collections/xmAwhhFi0IJt",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": "xmAwhhFi0IJt"
+    }
+  },
+  {
+    "config": {
+      "operation": "create_collection",
+      "collectionName": "Opus demo clips"
+    },
+    "method": "POST",
+    "path": "/api/collections",
+    "query": {},
+    "body": {
+      "collectionName": "Opus demo clips"
+    },
+    "response": {
+      "data": {
+        "collectionId": "xmAwhhFi0IJt",
+        "collectionName": "Opus demo clips"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_collections"
+    },
+    "method": "GET",
+    "path": "/api/collections",
+    "query": {
+      "q": "mine"
+    },
+    "body": null,
+    "response": {
+      "data": {
+        "list": [
+          {
+            "collectionId": "xmAwhhFi0IJt",
+            "collectionName": "Opus demo clips"
+          }
+        ],
+        "next": "next-token",
+        "total": 2,
+        "limit": 1
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "export_collection",
+      "collectionId": "xmAwhhFi0IJt"
+    },
+    "method": "POST",
+    "path": "/api/collections/xmAwhhFi0IJt/export",
+    "query": {},
+    "body": {},
+    "response": {
+      "data": {
+        "contentList": [
+          {
+            "contentId": "P0000000demo.CUexample2",
+            "uriForExport": "https://ext.cdn.opus.pro/video.mp4"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "create_censor_job",
+      "projectId": "P0000000demo",
+      "clipId": "lDIOHRzdac",
+      "options": {
+        "beepSound": false
+      }
+    },
+    "method": "POST",
+    "path": "/api/censor-jobs",
+    "query": {},
+    "body": {
+      "projectId": "P0000000demo",
+      "clipId": "lDIOHRzdac",
+      "options": {
+        "beepSound": false
+      }
+    },
+    "response": {
+      "jobId": "job-example"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_censor_job",
+      "jobId": "job-example"
+    },
+    "method": "GET",
+    "path": "/api/censor-jobs/job-example",
+    "query": {},
+    "body": null,
+    "response": {
+      "status": "FAILED",
+      "error": "No clip"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_social_accounts"
+    },
+    "method": "GET",
+    "path": "/api/social-accounts",
+    "query": {
+      "q": "mine"
+    },
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "postAccountId": "postAccountId_xxx1",
+          "extUserName": "Page Name",
+          "platform": "FACEBOOK_PAGE",
+          "extUserId": "extUserId_xxx"
+        }
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "create_social_copy_job",
+      "projectId": "P0000000demo",
+      "clipId": "CUexample1",
+      "postAccountId": "postAccountId_xxx1",
+      "subAccountId": "subAccountId_xxx1",
+      "forceRegenerate": false
+    },
+    "method": "POST",
+    "path": "/api/social-copy-jobs",
+    "query": {},
+    "body": {
+      "projectId": "P0000000demo",
+      "clipId": "CUexample1",
+      "postAccountId": "postAccountId_xxx1",
+      "subAccountId": "subAccountId_xxx1",
+      "forceRegenerate": false
+    },
+    "response": {
+      "data": {
+        "jobId": "social-copy-example"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "get_social_copy_job",
+      "jobId": "job-example"
+    },
+    "method": "GET",
+    "path": "/api/social-copy-jobs/job-example",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "status": "PROCESSING"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "publish_post",
+      "projectId": "P0000000demo",
+      "clipId": "qU3iVMSO77",
+      "postAccountId": "postAccountId_xxx1",
+      "postDetail": {
+        "title": "A video",
+        "custom": {
+          "privacy": "public"
+        },
+        "mediaType": "video"
+      }
+    },
+    "method": "POST",
+    "path": "/api/post-tasks",
+    "query": {},
+    "body": {
+      "projectId": "P0000000demo",
+      "clipId": "qU3iVMSO77",
+      "postAccountId": "postAccountId_xxx1",
+      "postDetail": {
+        "title": "A video",
+        "custom": {
+          "privacy": "public"
+        },
+        "mediaType": "video"
+      }
+    },
+    "response": {
+      "data": {
+        "postId": "17722461986440WKW-FACEBOOK_PAGE"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "schedule_post",
+      "projectId": "P0000000demo",
+      "clipId": "qU3iVMSO77",
+      "postAccountId": "postAccountId_xxx1",
+      "postDetail": {
+        "title": "A video",
+        "custom": {
+          "privacy": "public"
+        },
+        "mediaType": "video"
+      },
+      "publishAt": "2030-06-20T12:00:00Z"
+    },
+    "method": "POST",
+    "path": "/api/publish-schedules",
+    "query": {},
+    "body": {
+      "projectId": "P0000000demo",
+      "clipId": "qU3iVMSO77",
+      "postAccountId": "postAccountId_xxx1",
+      "postDetail": {
+        "title": "A video",
+        "custom": {
+          "privacy": "public"
+        },
+        "mediaType": "video"
+      },
+      "publishAt": "2030-06-20T12:00:00Z"
+    },
+    "response": {
+      "data": {
+        "scheduleId": "schedule-example"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "cancel_scheduled_post",
+      "scheduleId": "schedule-example"
+    },
+    "method": "DELETE",
+    "path": "/api/publish-schedules/schedule-example",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "scheduleId": "schedule-example",
+        "status": "CANCELED"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "create_thumbnail_job",
+      "sourceUri": "https://youtube.com/watch?v=LXvv6CbGg8A"
+    },
+    "method": "POST",
+    "path": "/api/generative-jobs",
+    "query": {},
+    "body": {
+      "sourceUri": "https://youtube.com/watch?v=LXvv6CbGg8A",
+      "jobType": "thumbnail"
+    },
+    "response": {
+      "jobId": "thumbnail-aB3xR7nQ8z"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_generative_job",
+      "jobId": "thumbnail-aB3xR7nQ8z"
+    },
+    "method": "GET",
+    "path": "/api/generative-jobs/thumbnail-aB3xR7nQ8z",
+    "query": {},
+    "body": null,
+    "response": {
+      "status": "CONCLUDED",
+      "result": {
+        "generatedThumbnailUris": [
+          "https://cdn.opus.pro/image.png"
+        ]
+      },
+      "progress": {
+        "percentage": 1
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "get_transcript",
+      "projectId": "P2120900kDmP"
+    },
+    "method": "GET",
+    "path": "/api/transcripts",
+    "query": {
+      "q": "findByProjectId",
+      "projectId": "P2120900kDmP"
+    },
+    "body": null,
+    "response": {
+      "data": [
+        null
+      ]
+    }
+  }
+]
