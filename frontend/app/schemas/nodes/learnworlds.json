@@ -1,0 +1,1253 @@
+{
+  "$defs": {
+    "LearnWorldsAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "learnworlds_access_token",
+          "default": "learnworlds_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "school_url": {
+          "description": "Original HTTPS school.learnworlds.com URL; /admin/api or /admin/api/v2 may be included.",
+          "title": "School API URL",
+          "type": "string"
+        },
+        "client_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Client ID",
+          "type": "string"
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "school_url",
+        "client_id",
+        "access_token"
+      ],
+      "title": "LearnWorlds Access Token",
+      "type": "object",
+      "x-credential-instructions": "In your LearnWorlds school, open Settings > Developers > API. Copy the API URL and Client ID, then copy an Access Token. API access requires a Learning Center or High Volume plan. Use the original school.learnworlds.com URL. Paste only the token, without Bearer. Replace it here when it expires or is revoked.",
+      "x-credential-url": "https://support.learnworlds.com/support/solutions/articles/12000080177-how-to-request-your-api-keys-and-access-tokens"
+    },
+    "LearnWorldsCreateCourseConfig": {
+      "description": "Create course.",
+      "properties": {
+        "operation": {
+          "const": "create_course",
+          "default": "create_course",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "titleId": {
+          "minLength": 1,
+          "title": "Titleid",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        },
+        "access": {
+          "enum": [
+            "paid",
+            "free",
+            "coming_soon",
+            "private",
+            "draft"
+          ],
+          "title": "Access",
+          "type": "string"
+        },
+        "dripFeed": {
+          "anyOf": [
+            {
+              "enum": [
+                "days",
+                "date",
+                "none"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dripfeed",
+          "enum": [
+            "days",
+            "date",
+            "none"
+          ],
+          "x-enum-searchable": true
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        }
+      },
+      "required": [
+        "titleId",
+        "title",
+        "access"
+      ],
+      "title": "LearnWorldsCreateCourseConfig",
+      "type": "object"
+    },
+    "LearnWorldsCreateUserConfig": {
+      "description": "Create user.",
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "username": {
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Profile fields, including school custom fields prefixed cf_.",
+          "title": "Fields"
+        },
+        "subscribed_for_marketing_emails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set only with the learner's consent.",
+          "title": "Subscribed For Marketing Emails"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "send_registration_email": {
+          "default": false,
+          "description": "Send the registration email only when explicitly enabled.",
+          "title": "Send Registration Email",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email",
+        "username"
+      ],
+      "title": "LearnWorldsCreateUserConfig",
+      "type": "object"
+    },
+    "LearnWorldsEnrollUserConfig": {
+      "description": "Enroll user.",
+      "properties": {
+        "operation": {
+          "const": "enroll_user",
+          "default": "enroll_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "LearnWorlds user ID or email.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "productId": {
+          "minLength": 1,
+          "title": "Productid",
+          "type": "string"
+        },
+        "productType": {
+          "enum": [
+            "course",
+            "bundle",
+            "subscription"
+          ],
+          "title": "Producttype",
+          "type": "string"
+        },
+        "price": {
+          "minimum": 0,
+          "title": "Price",
+          "type": "number"
+        },
+        "justification": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Justification"
+        },
+        "duration_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "months",
+                "weeks",
+                "days"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration Type",
+          "enum": [
+            "months",
+            "weeks",
+            "days"
+          ],
+          "x-enum-searchable": true
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "send_enrollment_email": {
+          "default": false,
+          "description": "Send an enrollment email only when explicitly enabled.",
+          "title": "Send Enrollment Email",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "user_id",
+        "productId",
+        "productType",
+        "price"
+      ],
+      "title": "LearnWorldsEnrollUserConfig",
+      "type": "object"
+    },
+    "LearnWorldsGetCourseAnalyticsConfig": {
+      "description": "Get course analytics.",
+      "properties": {
+        "operation": {
+          "const": "get_course_analytics",
+          "default": "get_course_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "description": "Course ID.",
+          "minLength": 1,
+          "title": "Course Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "LearnWorldsGetCourseAnalyticsConfig",
+      "type": "object"
+    },
+    "LearnWorldsGetCourseConfig": {
+      "description": "Get course.",
+      "properties": {
+        "operation": {
+          "const": "get_course",
+          "default": "get_course",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "description": "Course ID.",
+          "minLength": 1,
+          "title": "Course Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "LearnWorldsGetCourseConfig",
+      "type": "object"
+    },
+    "LearnWorldsGetCourseContentsConfig": {
+      "description": "Get course contents.",
+      "properties": {
+        "operation": {
+          "const": "get_course_contents",
+          "default": "get_course_contents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "description": "Course ID.",
+          "minLength": 1,
+          "title": "Course Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "LearnWorldsGetCourseContentsConfig",
+      "type": "object"
+    },
+    "LearnWorldsGetPaymentConfig": {
+      "description": "Get payment.",
+      "properties": {
+        "operation": {
+          "const": "get_payment",
+          "default": "get_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_id": {
+          "minLength": 1,
+          "title": "Payment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "LearnWorldsGetPaymentConfig",
+      "type": "object"
+    },
+    "LearnWorldsGetUserConfig": {
+      "description": "Get user.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "LearnWorlds user ID or email.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "LearnWorldsGetUserConfig",
+      "type": "object"
+    },
+    "LearnWorldsGetUserCourseProgressConfig": {
+      "description": "Get user course progress.",
+      "properties": {
+        "operation": {
+          "const": "get_user_course_progress",
+          "default": "get_user_course_progress",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "LearnWorlds user ID or email.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "course_id": {
+          "description": "Course ID.",
+          "minLength": 1,
+          "title": "Course Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id",
+        "course_id"
+      ],
+      "title": "LearnWorldsGetUserCourseProgressConfig",
+      "type": "object"
+    },
+    "LearnWorldsGetUserProductsConfig": {
+      "description": "Get user products.",
+      "properties": {
+        "operation": {
+          "const": "get_user_products",
+          "default": "get_user_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "LearnWorlds user ID or email.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "LearnWorldsGetUserProductsConfig",
+      "type": "object"
+    },
+    "LearnWorldsListCourseUsersConfig": {
+      "description": "List course users.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page only. Use next_page from the previous response; LearnWorlds repeats its last page for out-of-range page numbers.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_course_users",
+          "default": "list_course_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "description": "Course ID.",
+          "minLength": 1,
+          "title": "Course Id",
+          "type": "string"
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "LearnWorldsListCourseUsersConfig",
+      "type": "object"
+    },
+    "LearnWorldsListCoursesConfig": {
+      "description": "List courses.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page only. Use next_page from the previous response; LearnWorlds repeats its last page for out-of-range page numbers.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_courses",
+          "default": "list_courses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated course categories.",
+          "title": "Categories"
+        }
+      },
+      "title": "LearnWorldsListCoursesConfig",
+      "type": "object"
+    },
+    "LearnWorldsListLeadsConfig": {
+      "description": "List leads.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page only. Use next_page from the previous response; LearnWorlds repeats its last page for out-of-range page numbers.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "LearnWorldsListLeadsConfig",
+      "type": "object"
+    },
+    "LearnWorldsListPaymentsConfig": {
+      "description": "List payments.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page only. Use next_page from the previous response; LearnWorlds repeats its last page for out-of-range page numbers.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_payments",
+          "default": "list_payments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "product_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "course",
+                "bundle",
+                "subscription"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Type",
+          "enum": [
+            "course",
+            "bundle",
+            "subscription"
+          ],
+          "x-enum-searchable": true
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Id"
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created After"
+        },
+        "created_before": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Before"
+        }
+      },
+      "title": "LearnWorldsListPaymentsConfig",
+      "type": "object"
+    },
+    "LearnWorldsListUserCoursesConfig": {
+      "description": "List user courses.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page only. Use next_page from the previous response; LearnWorlds repeats its last page for out-of-range page numbers.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_user_courses",
+          "default": "list_user_courses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "LearnWorlds user ID or email.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "LearnWorldsListUserCoursesConfig",
+      "type": "object"
+    },
+    "LearnWorldsListUsersConfig": {
+      "description": "List users.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page only. Use next_page from the previous response; LearnWorlds repeats its last page for out-of-range page numbers.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "paying",
+                "non_paying",
+                "suspended",
+                "never_logged_in"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "paying",
+            "non_paying",
+            "suspended",
+            "never_logged_in"
+          ],
+          "x-enum-searchable": true
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "admin",
+                "instructor",
+                "reporter",
+                "license_reporter"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role",
+          "enum": [
+            "user",
+            "admin",
+            "instructor",
+            "reporter",
+            "license_reporter"
+          ],
+          "x-enum-searchable": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags.",
+          "title": "Tags"
+        },
+        "registration_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Registration After"
+        },
+        "registration_before": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Registration Before"
+        }
+      },
+      "title": "LearnWorldsListUsersConfig",
+      "type": "object"
+    },
+    "LearnWorldsUnenrollUserConfig": {
+      "description": "Unenroll user.",
+      "properties": {
+        "operation": {
+          "const": "unenroll_user",
+          "default": "unenroll_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "LearnWorlds user ID or email.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "productId": {
+          "minLength": 1,
+          "title": "Productid",
+          "type": "string"
+        },
+        "productType": {
+          "enum": [
+            "course",
+            "bundle",
+            "subscription"
+          ],
+          "title": "Producttype",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id",
+        "productId",
+        "productType"
+      ],
+      "title": "LearnWorldsUnenrollUserConfig",
+      "type": "object"
+    },
+    "LearnWorldsUpdateCourseConfig": {
+      "description": "Update course.",
+      "properties": {
+        "operation": {
+          "const": "update_course",
+          "default": "update_course",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "description": "Course ID.",
+          "minLength": 1,
+          "title": "Course Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        },
+        "access": {
+          "anyOf": [
+            {
+              "enum": [
+                "paid",
+                "free",
+                "coming_soon",
+                "private",
+                "draft",
+                "enrollment_closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access",
+          "enum": [
+            "paid",
+            "free",
+            "coming_soon",
+            "private",
+            "draft",
+            "enrollment_closed"
+          ],
+          "x-enum-searchable": true
+        },
+        "dripFeed": {
+          "anyOf": [
+            {
+              "enum": [
+                "days",
+                "date",
+                "none"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dripfeed",
+          "enum": [
+            "days",
+            "date",
+            "none"
+          ],
+          "x-enum-searchable": true
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Categories"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "LearnWorldsUpdateCourseConfig",
+      "type": "object"
+    },
+    "LearnWorldsUpdateUserConfig": {
+      "description": "Update user.",
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "LearnWorlds user ID or email.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Username"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Profile fields, including school custom fields prefixed cf_.",
+          "title": "Fields"
+        },
+        "subscribed_for_marketing_emails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set only with the learner's consent.",
+          "title": "Subscribed For Marketing Emails"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "LearnWorldsUpdateUserConfig",
+      "type": "object"
+    },
+    "LearnWorldsUpdateUserTagsConfig": {
+      "description": "Update user tags.",
+      "properties": {
+        "operation": {
+          "const": "update_user_tags",
+          "default": "update_user_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "LearnWorlds user ID or email.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        },
+        "action": {
+          "enum": [
+            "attach",
+            "detach"
+          ],
+          "title": "Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id",
+        "tags",
+        "action"
+      ],
+      "title": "LearnWorldsUpdateUserTagsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_course": "#/$defs/LearnWorldsCreateCourseConfig",
+          "create_user": "#/$defs/LearnWorldsCreateUserConfig",
+          "enroll_user": "#/$defs/LearnWorldsEnrollUserConfig",
+          "get_course": "#/$defs/LearnWorldsGetCourseConfig",
+          "get_course_analytics": "#/$defs/LearnWorldsGetCourseAnalyticsConfig",
+          "get_course_contents": "#/$defs/LearnWorldsGetCourseContentsConfig",
+          "get_payment": "#/$defs/LearnWorldsGetPaymentConfig",
+          "get_user": "#/$defs/LearnWorldsGetUserConfig",
+          "get_user_course_progress": "#/$defs/LearnWorldsGetUserCourseProgressConfig",
+          "get_user_products": "#/$defs/LearnWorldsGetUserProductsConfig",
+          "list_course_users": "#/$defs/LearnWorldsListCourseUsersConfig",
+          "list_courses": "#/$defs/LearnWorldsListCoursesConfig",
+          "list_leads": "#/$defs/LearnWorldsListLeadsConfig",
+          "list_payments": "#/$defs/LearnWorldsListPaymentsConfig",
+          "list_user_courses": "#/$defs/LearnWorldsListUserCoursesConfig",
+          "list_users": "#/$defs/LearnWorldsListUsersConfig",
+          "unenroll_user": "#/$defs/LearnWorldsUnenrollUserConfig",
+          "update_course": "#/$defs/LearnWorldsUpdateCourseConfig",
+          "update_user": "#/$defs/LearnWorldsUpdateUserConfig",
+          "update_user_tags": "#/$defs/LearnWorldsUpdateUserTagsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LearnWorldsListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsCreateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsUpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsUpdateUserTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsListCoursesConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsGetCourseConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsCreateCourseConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsUpdateCourseConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsEnrollUserConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsUnenrollUserConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsListUserCoursesConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsListCourseUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsGetUserProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsGetCourseContentsConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsGetCourseAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsGetUserCourseProgressConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsListPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/LearnWorldsGetPaymentConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LearnWorldsAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Learnworlds Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
