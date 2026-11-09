@@ -1,0 +1,465 @@
+{
+  "$defs": {
+    "GetActiveSubscription": {
+      "properties": {
+        "customer_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "resource_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional resource within this customer; passed to the exact entitlement/subscription input.",
+          "title": "Resource Id"
+        },
+        "operation": {
+          "const": "get_active_subscription",
+          "default": "get_active_subscription",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscription_id": {
+          "description": "Selected subscription must first appear in the bounded active subscriptions for this customer/resource.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+          "title": "Subscription Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "customer_id"
+            ],
+            "field_name": "subscription_id",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "customer_id",
+        "subscription_id"
+      ],
+      "title": "GetActiveSubscription",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to read the existing validation customer in the credential.",
+          "title": "Customer Id"
+        }
+      },
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetEntitlement": {
+      "properties": {
+        "customer_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "resource_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional resource within this customer; passed to the exact entitlement/subscription input.",
+          "title": "Resource Id"
+        },
+        "operation": {
+          "const": "get_entitlement",
+          "default": "get_entitlement",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "feature_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+          "title": "Feature Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "customer_id"
+            ],
+            "field_name": "feature_id",
+            "searchable": true
+          }
+        },
+        "requested_usage": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000.0,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional amount to check. This does not report, reserve or consume usage.",
+          "title": "Requested Usage"
+        }
+      },
+      "required": [
+        "customer_id",
+        "feature_id"
+      ],
+      "title": "GetEntitlement",
+      "type": "object"
+    },
+    "GetEntitlements": {
+      "properties": {
+        "customer_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "resource_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional resource within this customer; passed to the exact entitlement/subscription input.",
+          "title": "Resource Id"
+        },
+        "operation": {
+          "const": "get_entitlements",
+          "default": "get_entitlements",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetEntitlements",
+      "type": "object"
+    },
+    "GetPaywall": {
+      "properties": {
+        "operation": {
+          "const": "get_paywall",
+          "default": "get_paywall",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional product from the SDK's bounded first-20 product catalog. No country pricing, checkout or customer portal is requested.",
+          "title": "Product Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "product_id",
+            "searchable": true
+          }
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        }
+      },
+      "title": "GetPaywall",
+      "type": "object"
+    },
+    "ListActiveSubscriptions": {
+      "properties": {
+        "customer_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "resource_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional resource within this customer; passed to the exact entitlement/subscription input.",
+          "title": "Resource Id"
+        },
+        "operation": {
+          "const": "list_active_subscriptions",
+          "default": "list_active_subscriptions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ListActiveSubscriptions",
+      "type": "object"
+    },
+    "ListProducts": {
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProducts",
+      "type": "object"
+    },
+    "ProvisionCustomer": {
+      "properties": {
+        "operation": {
+          "const": "provision_customer",
+          "default": "provision_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Customer reference ID. Stigg provisioning can return an existing customer; this is not an exclusive create.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Ordinary customer metadata write. No email, billing, coupon, subscription or access-grant fields are sent.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Customer Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "name"
+      ],
+      "title": "ProvisionCustomer",
+      "type": "object"
+    },
+    "StiggServerCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "stigg_server_api_key",
+          "default": "stigg_server_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Existing server- full or scoped secret key. Permissions and environment are set by Stigg; no key is minted or rotated.",
+          "maxLength": 4096,
+          "minLength": 8,
+          "title": "Server API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "validation_customer_id": {
+          "description": "One existing customer in this key's environment, used for a protected metadata read on connect. This does not prove an account or environment name.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+          "title": "Existing Customer ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "validation_customer_id"
+      ],
+      "title": "Stigg Environment",
+      "type": "object",
+      "x-credential-instructions": "Use an issued server- secret key for one Stigg environment. Full and scoped server keys are supported; client publishable keys are excluded. Supply an existing customer ID for the read-only connection check.",
+      "x-credential-type": "api_key",
+      "x-credential-url": "https://docs.stigg.io/documentation/managing-your-account/environments/api-keys"
+    },
+    "UpdateCustomer": {
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Update only the customer's name. Other customer metadata and billing fields are not sent.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Customer Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "name"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_active_subscription": "#/$defs/GetActiveSubscription",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_entitlement": "#/$defs/GetEntitlement",
+          "get_entitlements": "#/$defs/GetEntitlements",
+          "get_paywall": "#/$defs/GetPaywall",
+          "list_active_subscriptions": "#/$defs/ListActiveSubscriptions",
+          "list_products": "#/$defs/ListProducts",
+          "provision_customer": "#/$defs/ProvisionCustomer",
+          "update_customer": "#/$defs/UpdateCustomer"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/ProvisionCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/ListProducts"
+        },
+        {
+          "$ref": "#/$defs/GetPaywall"
+        },
+        {
+          "$ref": "#/$defs/GetEntitlements"
+        },
+        {
+          "$ref": "#/$defs/GetEntitlement"
+        },
+        {
+          "$ref": "#/$defs/ListActiveSubscriptions"
+        },
+        {
+          "$ref": "#/$defs/GetActiveSubscription"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StiggServerCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Stigg Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
