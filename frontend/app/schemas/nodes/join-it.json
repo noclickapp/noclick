@@ -1,0 +1,553 @@
+{
+  "$defs": {
+    "CreateMembership": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_membership",
+          "default": "create_membership",
+          "title": "Operation",
+          "type": "string"
+        },
+        "membership_type_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Membership Type Id",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        }
+      },
+      "required": [
+        "membership_type_id",
+        "email"
+      ],
+      "title": "CreateMembership",
+      "type": "object"
+    },
+    "FindMembershipsByEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per execution. Keep filters unchanged when advancing the page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "count": {
+          "default": 50,
+          "description": "Page size; see Join It's Pagination guide.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated status codes: 50 prospective, 75 pending, 100 active, 300 expired, 350 canceled.",
+          "title": "Status"
+        },
+        "membership_type_ids": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated Membership Type IDs.",
+          "title": "Membership Type Ids"
+        },
+        "operation": {
+          "const": "find_memberships_by_email",
+          "default": "find_memberships_by_email",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "description": "Exact email match, not a partial search.",
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "FindMembershipsByEmail",
+      "type": "object"
+    },
+    "GetMembership": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_membership",
+          "default": "get_membership",
+          "title": "Operation",
+          "type": "string"
+        },
+        "membership_id": {
+          "description": "Exact internal membership _id. Returns the provider's filtered collection.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Membership Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "membership_id"
+      ],
+      "title": "GetMembership",
+      "type": "object"
+    },
+    "GetOrganization": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetOrganization",
+      "type": "object"
+    },
+    "JoinItOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "join_it_oauth",
+          "default": "join_it_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Join It OAuth",
+      "type": "object",
+      "x-credential-instructions": "Connect your Join It organization. The instance administrator must request an application key from Join It and configure the client ID, secret and redirect URI. An existing permanent OAuth access token can also be supplied by hand. Reconnect if revoked; Join It documents no expiry or refresh-token flow.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://docs.joinitapi.com/docs/authentication",
+      "x-oauth-provider": "join-it",
+      "x-oauth-scopes": []
+    },
+    "ListInternalMemberships": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_internal_memberships",
+          "default": "list_internal_memberships",
+          "title": "Operation",
+          "type": "string"
+        },
+        "membership_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact _id; returns admin-only membership fields.",
+          "title": "Membership Id"
+        }
+      },
+      "title": "ListInternalMemberships",
+      "type": "object"
+    },
+    "ListMembershipTypes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_membership_types",
+          "default": "list_membership_types",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListMembershipTypes",
+      "type": "object"
+    },
+    "ListMemberships": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per execution. Keep filters unchanged when advancing the page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "count": {
+          "default": 50,
+          "description": "Page size; see Join It's Pagination guide.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated status codes: 50 prospective, 75 pending, 100 active, 300 expired, 350 canceled.",
+          "title": "Status"
+        },
+        "membership_type_ids": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated Membership Type IDs.",
+          "title": "Membership Type Ids"
+        },
+        "operation": {
+          "const": "list_memberships",
+          "default": "list_memberships",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 3,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "membership_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact internal membership _id filter.",
+          "title": "Membership Id"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        }
+      },
+      "title": "ListMemberships",
+      "type": "object"
+    },
+    "ListPayments": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per execution. Keep filters unchanged when advancing the page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "count": {
+          "default": 50,
+          "description": "Page size; see Join It's Pagination guide.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_payments",
+          "default": "list_payments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "payment_date_start": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Date Start"
+        },
+        "payment_date_end": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Date End"
+        }
+      },
+      "title": "ListPayments",
+      "type": "object"
+    },
+    "RecordPayment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "record_payment",
+          "default": "record_payment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email of an existing membership.",
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Amount already collected, in the smallest currency unit (100 = $1.00 USD). Records an offline payment; does not collect money.",
+          "exclusiveMinimum": 0,
+          "title": "Amount",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "email",
+        "amount"
+      ],
+      "title": "RecordPayment",
+      "type": "object"
+    },
+    "VerifyMembership": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated status codes: 50 prospective, 75 pending, 100 active, 300 expired, 350 canceled.",
+          "title": "Status"
+        },
+        "membership_type_ids": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated Membership Type IDs.",
+          "title": "Membership Type Ids"
+        },
+        "operation": {
+          "const": "verify_membership",
+          "default": "verify_membership",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "send_internal_email_when_verification_failed": {
+          "default": false,
+          "description": "Explicitly opt in to emailing organization owners when verification fails. Disabled by default.",
+          "title": "Send Internal Email When Verification Failed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "VerifyMembership",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_membership": "#/$defs/CreateMembership",
+          "find_memberships_by_email": "#/$defs/FindMembershipsByEmail",
+          "get_membership": "#/$defs/GetMembership",
+          "get_organization": "#/$defs/GetOrganization",
+          "list_internal_memberships": "#/$defs/ListInternalMemberships",
+          "list_membership_types": "#/$defs/ListMembershipTypes",
+          "list_memberships": "#/$defs/ListMemberships",
+          "list_payments": "#/$defs/ListPayments",
+          "record_payment": "#/$defs/RecordPayment",
+          "verify_membership": "#/$defs/VerifyMembership"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListMemberships"
+        },
+        {
+          "$ref": "#/$defs/GetMembership"
+        },
+        {
+          "$ref": "#/$defs/FindMembershipsByEmail"
+        },
+        {
+          "$ref": "#/$defs/CreateMembership"
+        },
+        {
+          "$ref": "#/$defs/ListInternalMemberships"
+        },
+        {
+          "$ref": "#/$defs/ListPayments"
+        },
+        {
+          "$ref": "#/$defs/RecordPayment"
+        },
+        {
+          "$ref": "#/$defs/ListMembershipTypes"
+        },
+        {
+          "$ref": "#/$defs/GetOrganization"
+        },
+        {
+          "$ref": "#/$defs/VerifyMembership"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JoinItOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Join-it Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find a Join It membership by email",
+    "Create a Join It membership",
+    "Record an offline membership payment"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
