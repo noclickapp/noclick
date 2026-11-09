@@ -1,0 +1,708 @@
+{
+  "POST /batch": {
+    "body": {
+      "code": 200,
+      "status": "success",
+      "data": {
+        "req_1": {
+          "response": {
+            "meta": {
+              "currency": "USD",
+              "exchange": "NASDAQ",
+              "exchange_timezone": "America/New_York",
+              "interval": "1min",
+              "mic_code": "XNGS",
+              "symbol": "AAPL",
+              "type": "Common Stock"
+            },
+            "status": "ok",
+            "values": [
+              {
+                "close": "248.6",
+                "datetime": "2025-02-21 12:51:00",
+                "high": "248.6",
+                "low": "248.4",
+                "open": "248.5",
+                "volume": "22290"
+              },
+              {
+                "close": "248.52",
+                "datetime": "2025-02-21 12:50:00",
+                "high": "248.59",
+                "low": "248.43",
+                "open": "248.52",
+                "volume": "64085"
+              }
+            ]
+          },
+          "status": "success"
+        },
+        "req_2": {
+          "response": {
+            "rate": 149.25999,
+            "symbol": "USD/JPY",
+            "timestamp": 1740160260
+          },
+          "status": "success"
+        },
+        "req_3": {
+          "response": {
+            "amount": 18209.71933,
+            "rate": 149.25999,
+            "symbol": "USD/JPY",
+            "timestamp": 1740160260
+          },
+          "status": "success"
+        }
+      }
+    },
+    "source": "https://twelvedata.com/docs/advanced/batch-requests"
+  },
+  "GET /api_usage": {
+    "body": {
+      "timestamp": "2025-05-07 11:10:12",
+      "current_usage": 4003,
+      "plan_limit": 20000,
+      "daily_usage": 12500,
+      "plan_daily_limit": 100000,
+      "plan_category": "enterprise"
+    },
+    "source": "https://twelvedata.com/docs/advanced/api-usage"
+  },
+  "GET /time_series": {
+    "body": {
+      "meta": {
+        "symbol": "AAPL",
+        "interval": "1min",
+        "currency": "USD",
+        "exchange_timezone": "America/New_York",
+        "exchange": "NASDAQ",
+        "mic_code": "XNAS",
+        "type": "Common Stock"
+      },
+      "values": [
+        {
+          "datetime": "2021-09-16 15:59:00",
+          "open": "148.73500",
+          "high": "148.86000",
+          "low": "148.73000",
+          "close": "148.85001",
+          "volume": "624277"
+        }
+      ],
+      "status": "ok"
+    },
+    "source": "https://twelvedata.com/docs/market-data/time-series"
+  },
+  "GET /quote": {
+    "body": {
+      "symbol": "AAPL",
+      "name": "Apple Inc",
+      "exchange": "NASDAQ",
+      "mic_code": "XNAS",
+      "currency": "USD",
+      "datetime": "2021-09-16",
+      "timestamp": 1631772000,
+      "last_quote_at": 1631772000,
+      "open": "148.44000",
+      "high": "148.96840",
+      "low": "147.22099",
+      "close": "148.85001",
+      "volume": "67903927",
+      "previous_close": "149.09000",
+      "change": "-0.23999",
+      "percent_change": "-0.16097",
+      "average_volume": "83571571",
+      "rolling_1d_change": "123.123",
+      "rolling_7d_change": "123.123",
+      "rolling_change": "123.123",
+      "is_market_open": false,
+      "fifty_two_week": {
+        "low": "103.10000",
+        "high": "157.25999",
+        "low_change": "45.75001",
+        "high_change": "-8.40999",
+        "low_change_percent": "44.37440",
+        "high_change_percent": "-5.34782",
+        "range": "103.099998 - 157.259995"
+      },
+      "extended_change": "0.09",
+      "extended_percent_change": "0.05",
+      "extended_price": "125.22",
+      "extended_timestamp": 1649845281
+    },
+    "source": "https://twelvedata.com/docs/market-data/quote"
+  },
+  "GET /price": {
+    "body": {
+      "price": "200.99001"
+    },
+    "source": "https://twelvedata.com/docs/market-data/real-time-price"
+  },
+  "GET /stocks": {
+    "body": {
+      "count": 100,
+      "data": [
+        {
+          "symbol": "AAPL",
+          "name": "Apple Inc",
+          "currency": "USD",
+          "exchange": "NASDAQ",
+          "mic_code": "XNGS",
+          "country": "United States",
+          "type": "Common Stock",
+          "figi_code": "BBG000B9Y5X2",
+          "cfi_code": "ESVUFR",
+          "isin": "US0378331005",
+          "cusip": "037833100",
+          "access": {
+            "global": "Basic",
+            "plan": "Basic",
+            "plan_business": "Basic"
+          }
+        }
+      ],
+      "status": "ok"
+    },
+    "source": "https://twelvedata.com/docs/asset-catalogs/stocks-list"
+  },
+  "GET /forex_pairs": {
+    "body": {
+      "count": 100,
+      "data": [
+        {
+          "symbol": "EUR/USD",
+          "currency_group": "Major",
+          "currency_base": "EUR",
+          "currency_quote": "USD"
+        }
+      ],
+      "status": "ok"
+    },
+    "source": "https://twelvedata.com/docs/asset-catalogs/forex-pairs-list"
+  },
+  "GET /cryptocurrencies": {
+    "body": {
+      "count": 100,
+      "data": [
+        {
+          "symbol": "BTC/USD",
+          "available_exchanges": [
+            "ABCC",
+            "Allcoin",
+            "BTC-Alpha",
+            "BTCTurk",
+            "Bibox",
+            "n.exchange",
+            "p2pb2b",
+            "xBTCe"
+          ],
+          "currency_base": "Bitcoin",
+          "currency_quote": "US Dollar"
+        }
+      ],
+      "status": "ok"
+    },
+    "source": "https://twelvedata.com/docs/asset-catalogs/cryptocurrencies-list"
+  },
+  "GET /exchange_rate": {
+    "body": {
+      "symbol": "USD/JPY",
+      "rate": 105.12,
+      "timestamp": 1602714051
+    },
+    "source": "https://twelvedata.com/docs/currencies/exchange-rate"
+  },
+  "GET /currency_conversion": {
+    "body": {
+      "symbol": "USD/JPY",
+      "rate": 105.12,
+      "amount": 12824.64,
+      "timestamp": 1602714051
+    },
+    "source": "https://twelvedata.com/docs/currencies/currency-conversion"
+  },
+  "GET /profile": {
+    "body": {
+      "symbol": "AAPL",
+      "name": "Apple Inc",
+      "exchange": "NASDAQ",
+      "mic_code": "XNAS",
+      "sector": "Technology",
+      "industry": "Consumer Electronics",
+      "employees": 147000,
+      "website": "http://www.apple.com",
+      "description": "Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and...",
+      "type": "Common Stock",
+      "CEO": "Mr. Timothy D. Cook",
+      "address": "One Apple Park Way",
+      "address2": "Cupertino, CA 95014",
+      "city": "Cupertino",
+      "zip": "95014",
+      "state": "CA",
+      "country": "US",
+      "phone": "408-996-1010"
+    },
+    "source": "https://twelvedata.com/docs/fundamentals/profile"
+  },
+  "GET /dividends": {
+    "body": {
+      "meta": {
+        "symbol": "AAPL",
+        "name": "Apple Inc",
+        "currency": "USD",
+        "exchange": "NASDAQ",
+        "mic_code": "XNAS",
+        "exchange_timezone": "America/New_York"
+      },
+      "dividends": [
+        {
+          "ex_date": "2021-08-06",
+          "amount": 0.22
+        }
+      ]
+    },
+    "source": "https://twelvedata.com/docs/fundamentals/dividends"
+  },
+  "GET /splits": {
+    "body": {
+      "meta": {
+        "symbol": "AAPL",
+        "name": "Apple Inc",
+        "currency": "USD",
+        "exchange": "NASDAQ",
+        "mic_code": "XNAS",
+        "exchange_timezone": "America/New_York"
+      },
+      "splits": [
+        {
+          "date": "2020-08-31",
+          "description": "4-for-1 split",
+          "ratio": 0.25,
+          "from_factor": 4,
+          "to_factor": 1
+        }
+      ]
+    },
+    "source": "https://twelvedata.com/docs/fundamentals/splits"
+  },
+  "GET /earnings": {
+    "body": {
+      "meta": {
+        "symbol": "AAPL",
+        "name": "Apple Inc",
+        "currency": "USD",
+        "exchange": "NASDAQ",
+        "mic_code": "XNAS",
+        "exchange_timezone": "America/New_York"
+      },
+      "earnings": [
+        {
+          "date": "2020-04-30",
+          "time": "After Hours",
+          "eps_estimate": 2.09,
+          "eps_actual": 2.55,
+          "difference": 0.46,
+          "surprise_prc": 22.01
+        }
+      ],
+      "status": "ok"
+    },
+    "source": "https://twelvedata.com/docs/fundamentals/earnings"
+  },
+  "GET /statistics": {
+    "body": {
+      "meta": {
+        "symbol": "AAPL",
+        "name": "Apple Inc",
+        "currency": "USD",
+        "exchange": "NASDAQ",
+        "mic_code": "XNAS",
+        "exchange_timezone": "America/New_York"
+      },
+      "statistics": {
+        "valuations_metrics": {
+          "market_capitalization": 2546807865344,
+          "enterprise_value": 2620597731328,
+          "trailing_pe": 30.162493,
+          "forward_pe": 26.982489,
+          "peg_ratio": 1.4,
+          "price_to_sales_ttm": 7.336227,
+          "price_to_book_mrq": 39.68831,
+          "enterprise_to_revenue": 7.549,
+          "enterprise_to_ebitda": 23.623
+        },
+        "financials": {
+          "fiscal_year_ends": "2020-09-26",
+          "most_recent_quarter": "2021-06-26",
+          "gross_margin": 46.57807,
+          "profit_margin": 0.25004,
+          "operating_margin": 0.28788,
+          "return_on_assets_ttm": 0.19302,
+          "return_on_equity_ttm": 1.27125,
+          "income_statement": {
+            "revenue_ttm": 347155005440,
+            "revenue_per_share_ttm": 20.61,
+            "quarterly_revenue_growth": 0.364,
+            "gross_profit_ttm": 104956000000,
+            "ebitda": 110934999040,
+            "net_income_to_common_ttm": 86801997824,
+            "diluted_eps_ttm": 5.108,
+            "quarterly_earnings_growth_yoy": 0.932
+          },
+          "balance_sheet": {
+            "total_cash_mrq": 61696000000,
+            "total_cash_per_share_mrq": 3.732,
+            "total_debt_mrq": 135491002368,
+            "total_debt_to_equity_mrq": 210.782,
+            "current_ratio_mrq": 1.062,
+            "book_value_per_share_mrq": 3.882
+          },
+          "cash_flow": {
+            "operating_cash_flow_ttm": 104414003200,
+            "levered_free_cash_flow_ttm": 80625876992
+          }
+        },
+        "stock_statistics": {
+          "shares_outstanding": 16530199552,
+          "float_shares": 16513305231,
+          "avg_10_volume": 72804757,
+          "avg_90_volume": 77013078,
+          "shares_short": 93105968,
+          "short_ratio": 1.19,
+          "short_percent_of_shares_outstanding": 0.0056,
+          "percent_held_by_insiders": 0.00071000005,
+          "percent_held_by_institutions": 0.58474
+        },
+        "stock_price_summary": {
+          "fifty_two_week_low": 103.1,
+          "fifty_two_week_high": 157.26,
+          "fifty_two_week_change": 0.375625,
+          "beta": 1.201965,
+          "day_50_ma": 148.96686,
+          "day_200_ma": 134.42506
+        },
+        "dividends_and_splits": {
+          "forward_annual_dividend_rate": 0.88,
+          "forward_annual_dividend_yield": 0.0057,
+          "trailing_annual_dividend_rate": 0.835,
+          "trailing_annual_dividend_yield": 0.0053832764,
+          "5_year_average_dividend_yield": 1.27,
+          "payout_ratio": 0.16309999,
+          "dividend_frequency": "Quarterly",
+          "dividend_date": "2021-08-12",
+          "ex_dividend_date": "2021-08-06",
+          "last_split_factor": "4-for-1 split",
+          "last_split_date": "2020-08-31"
+        }
+      }
+    },
+    "source": "https://twelvedata.com/docs/fundamentals/statistics"
+  },
+  "GET /income_statement": {
+    "body": {
+      "meta": {
+        "symbol": "AAPL",
+        "name": "Apple Inc",
+        "currency": "USD",
+        "exchange": "NASDAQ",
+        "mic_code": "XNAS",
+        "exchange_timezone": "America/New_York",
+        "period": "Quarterly"
+      },
+      "income_statement": [
+        {
+          "fiscal_date": "2021-12-31",
+          "quarter": 1,
+          "year": 2022,
+          "sales": 123945000000,
+          "cost_of_goods": 69702000000,
+          "gross_profit": 54243000000,
+          "operating_expense": {
+            "research_and_development": 6306000000,
+            "selling_general_and_administrative": 6449000000,
+            "other_operating_expenses": 0
+          },
+          "operating_income": 41488000000,
+          "non_operating_interest": {
+            "income": 650000000,
+            "expense": 694000000
+          },
+          "other_income_expense": -203000000,
+          "pretax_income": 41241000000,
+          "income_tax": 6611000000,
+          "net_income": 34630000000,
+          "eps_basic": 2.11,
+          "eps_diluted": 2.1,
+          "basic_shares_outstanding": 16391724000,
+          "diluted_shares_outstanding": 16391724000,
+          "ebit": 41488000000,
+          "ebitda": 44632000000,
+          "net_income_continuous_operations": 0,
+          "minority_interests": 0,
+          "preferred_stock_dividends": 0
+        }
+      ]
+    },
+    "source": "https://twelvedata.com/docs/fundamentals/income-statement"
+  },
+  "GET /balance_sheet": {
+    "body": {
+      "meta": {
+        "symbol": "AAPL",
+        "name": "Apple Inc",
+        "currency": "USD",
+        "exchange": "NASDAQ",
+        "mic_code": "XNAS",
+        "exchange_timezone": "America/New_York",
+        "period": "Quarterly"
+      },
+      "balance_sheet": [
+        {
+          "fiscal_date": "2021-09-30",
+          "year": 2022,
+          "assets": {
+            "current_assets": {
+              "cash": 17305000000,
+              "cash_equivalents": 17635000000,
+              "cash_and_cash_equivalents": 34940000000,
+              "other_short_term_investments": 27699000000,
+              "accounts_receivable": 26278000000,
+              "other_receivables": 25228000000,
+              "inventory": 6580000000,
+              "prepaid_assets": 0,
+              "restricted_cash": 0,
+              "assets_held_for_sale": 0,
+              "hedging_assets": 0,
+              "other_current_assets": 14111000000,
+              "total_current_assets": 134836000000
+            },
+            "non_current_assets": {
+              "properties": 0,
+              "land_and_improvements": 20041000000,
+              "machinery_furniture_equipment": 78659000000,
+              "construction_in_progress": 0,
+              "leases": 11023000000,
+              "accumulated_depreciation": -70283000000,
+              "goodwill": 0,
+              "investment_properties": 0,
+              "financial_assets": 0,
+              "intangible_assets": 0,
+              "investments_and_advances": 127877000000,
+              "other_non_current_assets": 48849000000,
+              "total_non_current_assets": 216166000000
+            },
+            "total_assets": 351002000000
+          },
+          "liabilities": {
+            "current_liabilities": {
+              "accounts_payable": 54763000000,
+              "accrued_expenses": 0,
+              "short_term_debt": 15613000000,
+              "deferred_revenue": 7612000000,
+              "tax_payable": 0,
+              "pensions": 0,
+              "other_current_liabilities": 47493000000,
+              "total_current_liabilities": 125481000000
+            },
+            "non_current_liabilities": {
+              "long_term_provisions": 0,
+              "long_term_debt": 109106000000,
+              "provision_for_risks_and_charges": 24689000000,
+              "deferred_liabilities": 0,
+              "derivative_product_liabilities": 0,
+              "other_non_current_liabilities": 28636000000,
+              "total_non_current_liabilities": 162431000000
+            },
+            "total_liabilities": 287912000000
+          },
+          "shareholders_equity": {
+            "common_stock": 57365000000,
+            "retained_earnings": 5562000000,
+            "other_shareholders_equity": 163000000,
+            "total_shareholders_equity": 63090000000,
+            "additional_paid_in_capital": 0,
+            "treasury_stock": 0,
+            "minority_interest": 0
+          }
+        }
+      ]
+    },
+    "source": "https://twelvedata.com/docs/fundamentals/balance-sheet"
+  },
+  "GET /cash_flow": {
+    "body": {
+      "meta": {
+        "symbol": "AAPL",
+        "name": "Apple Inc",
+        "currency": "USD",
+        "exchange": "NASDAQ",
+        "mic_code": "XNAS",
+        "exchange_timezone": "America/New_York",
+        "period": "Quarterly"
+      },
+      "cash_flow": [
+        {
+          "fiscal_date": "2021-12-31",
+          "quarter": "1",
+          "year": 2022,
+          "operating_activities": {
+            "net_income": 34630000000,
+            "depreciation": 2697000000,
+            "deferred_taxes": 682000000,
+            "stock_based_compensation": 2265000000,
+            "other_non_cash_items": 167000000,
+            "accounts_receivable": -13746000000,
+            "accounts_payable": 19813000000,
+            "other_assets_liabilities": 458000000,
+            "operating_cash_flow": 46966000000
+          },
+          "investing_activities": {
+            "capital_expenditures": -2803000000,
+            "net_intangibles": 0,
+            "net_acquisitions": 0,
+            "purchase_of_investments": -34913000000,
+            "sale_of_investments": 21984000000,
+            "other_investing_activity": -374000000,
+            "investing_cash_flow": -16106000000
+          },
+          "financing_activities": {
+            "long_term_debt_issuance": 0,
+            "long_term_debt_payments": 0,
+            "short_term_debt_issuance": -1000000000,
+            "common_stock_issuance": 0,
+            "common_stock_repurchase": -20478000000,
+            "common_dividends": -3732000000,
+            "other_financing_charges": -2949000000,
+            "financing_cash_flow": -28159000000
+          },
+          "end_cash_position": 38630000000,
+          "income_tax_paid": 5235000000,
+          "interest_paid": 531000000,
+          "free_cash_flow": 49769000000
+        }
+      ]
+    },
+    "source": "https://twelvedata.com/docs/fundamentals/cash-flow"
+  },
+  "GET /macd": {
+    "body": {
+      "meta": {
+        "symbol": "AAPL",
+        "interval": "1min",
+        "currency": "USD",
+        "exchange_timezone": "America/New_York",
+        "exchange": "NASDAQ",
+        "mic_code": "XNAS",
+        "type": "Common Stock",
+        "indicator": {
+          "name": "MACD - Moving Average Convergence Divergence",
+          "series_type": "close",
+          "fast_period": 12,
+          "slow_period": 26,
+          "signal_period": 9
+        }
+      },
+      "values": [
+        {
+          "datetime": "2019-08-09 15:59:00",
+          "macd": "-0.3998",
+          "macd_signal": "-0.25279",
+          "macd_hist": "-0.147",
+          "open": "148.73500",
+          "high": "148.86000",
+          "low": "148.73000",
+          "close": "148.85001",
+          "volume": "624277"
+        }
+      ],
+      "status": "ok"
+    },
+    "source": "https://twelvedata.com/docs/momentum-indicators/macd"
+  },
+  "GET /rsi": {
+    "body": {
+      "meta": {
+        "symbol": "AAPL",
+        "interval": "1min",
+        "currency": "USD",
+        "exchange_timezone": "America/New_York",
+        "exchange": "NASDAQ",
+        "mic_code": "XNAS",
+        "type": "Common Stock",
+        "indicator": {
+          "name": "RSI - Relative Strength Index",
+          "series_type": "close",
+          "time_period": 14
+        }
+      },
+      "values": [
+        {
+          "datetime": "2019-08-09 15:59:00",
+          "rsi": "16.57887",
+          "open": "148.73500",
+          "high": "148.86000",
+          "low": "148.73000",
+          "close": "148.85001",
+          "volume": "624277"
+        }
+      ],
+      "status": "ok"
+    },
+    "source": "https://twelvedata.com/docs/momentum-indicators/rsi"
+  },
+  "GET /sma": {
+    "body": {
+      "meta": {
+        "symbol": "AAPL",
+        "interval": "1min",
+        "currency": "USD",
+        "exchange_timezone": "America/New_York",
+        "exchange": "NASDAQ",
+        "mic_code": "XNAS",
+        "type": "Common Stock",
+        "indicator": {
+          "name": "SMA - Simple Moving Average",
+          "series_type": "close",
+          "time_period": 9
+        }
+      },
+      "values": [
+        {
+          "datetime": "2019-08-09 15:59:00",
+          "sma": "201.41205",
+          "open": "148.73500",
+          "high": "148.86000",
+          "low": "148.73000",
+          "close": "148.85001",
+          "volume": "624277"
+        }
+      ],
+      "status": "ok"
+    },
+    "source": "https://twelvedata.com/docs/overlap-studies/sma"
+  },
+  "GET /symbol_search": {
+    "body": {
+      "data": [
+        {
+          "symbol": "AA",
+          "instrument_name": "Alcoa Corp",
+          "exchange": "NYSE",
+          "mic_code": "XNYS",
+          "exchange_timezone": "America/New_York",
+          "instrument_type": "Common Stock",
+          "country": "United States",
+          "currency": "USD",
+          "access": {
+            "global": "Basic",
+            "plan": "Basic",
+            "plan_business": "Basic"
+          }
+        }
+      ],
+      "status": "ok"
+    },
+    "source": "https://twelvedata.com/docs/discovery/symbol-search"
+  }
+}
