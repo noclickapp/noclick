@@ -1,0 +1,1553 @@
+{
+  "source": "https://developers.niftypm.com/docs/api/v3/0.154.0/nifty-v3-openapi.json",
+  "operations": {
+    "list_documents": {
+      "config": {
+        "operation": "list_documents",
+        "projectId": "iV6vIU8N",
+        "limit": 2
+      },
+      "method": "GET",
+      "path": "/documents",
+      "response": {
+        "data": [
+          {
+            "id": "ELe0nkum",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "purgeAt": "2026-06-30T12:00:00.000Z",
+            "deletedById": "Wfw0dIGm",
+            "name": "Example",
+            "description": "A concise description.",
+            "archived": false,
+            "accessType": "public",
+            "type": "nifty",
+            "subtype": "document",
+            "projectId": "iV6vIU8N",
+            "authorId": "EPmKiCaK",
+            "parentDocumentId": "429XYeO6",
+            "folderId": "dBGa8nam",
+            "locked": false,
+            "externalId": "kdGCOQ47",
+            "externalEmbedUrl": "https://example.com/resource",
+            "url": "https://example.com/resource"
+          },
+          {
+            "id": "Ub437xC2",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "purgeAt": "2026-06-30T12:00:00.000Z",
+            "deletedById": "Wfw0dIGm",
+            "name": "Second example",
+            "description": "A concise description.",
+            "archived": false,
+            "accessType": "public",
+            "type": "nifty",
+            "subtype": "document",
+            "projectId": "iV6vIU8N",
+            "authorId": "EPmKiCaK",
+            "parentDocumentId": "429XYeO6",
+            "folderId": "dBGa8nam",
+            "locked": false,
+            "externalId": "kdGCOQ47",
+            "externalEmbedUrl": "https://example.com/resource",
+            "url": "https://example.com/resource"
+          }
+        ],
+        "total": 5,
+        "limit": 2,
+        "hasMore": true,
+        "nextCursor": "b2NjdXJyZWRBdD0yMDI2LTA1LTMxVDEyOjAwOjAwWg"
+      },
+      "status": 200
+    },
+    "create_document": {
+      "config": {
+        "operation": "create_document",
+        "name": "Example",
+        "projectId": "iV6vIU8N",
+        "description": "A concise description.",
+        "content": "Looks good \u2014 shipping this today."
+      },
+      "method": "POST",
+      "path": "/documents",
+      "response": {
+        "id": "ELe0nkum",
+        "createdAt": "2026-05-31T12:00:00.000Z",
+        "updatedAt": "2026-05-31T14:00:00.000Z",
+        "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+        "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+        "createdByActorType": "human",
+        "updatedByActorType": "human",
+        "purgeAt": "2026-06-30T12:00:00.000Z",
+        "deletedById": "Wfw0dIGm",
+        "name": "Example",
+        "description": "A concise description.",
+        "archived": false,
+        "accessType": "public",
+        "type": "nifty",
+        "subtype": "document",
+        "projectId": "iV6vIU8N",
+        "authorId": "EPmKiCaK",
+        "parentDocumentId": "429XYeO6",
+        "folderId": "dBGa8nam",
+        "locked": false,
+        "externalId": "kdGCOQ47",
+        "externalEmbedUrl": "https://example.com/resource",
+        "url": "https://example.com/resource"
+      },
+      "status": 201
+    },
+    "list_labels": {
+      "config": {
+        "operation": "list_labels",
+        "limit": 2
+      },
+      "method": "GET",
+      "path": "/labels",
+      "response": {
+        "data": [
+          {
+            "id": "xbUMIqgS",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "purgeAt": "2026-06-30T12:00:00.000Z",
+            "deletedById": "7ESqMCCu",
+            "name": "Example",
+            "color": "#00A99B",
+            "default": false,
+            "type": "others"
+          },
+          {
+            "id": "dfwACsYG",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "purgeAt": "2026-06-30T12:00:00.000Z",
+            "deletedById": "7ESqMCCu",
+            "name": "Second example",
+            "color": "#00A99B",
+            "default": false,
+            "type": "others"
+          }
+        ],
+        "total": 5,
+        "limit": 2,
+        "hasMore": true,
+        "nextCursor": "b2NjdXJyZWRBdD0yMDI2LTA1LTMxVDEyOjAwOjAwWg"
+      },
+      "status": 200
+    },
+    "list_lists": {
+      "config": {
+        "operation": "list_lists",
+        "projectId": "iV6vIU8N",
+        "limit": 2
+      },
+      "method": "GET",
+      "path": "/lists",
+      "response": {
+        "data": [
+          {
+            "id": "lN6ZQycO",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "archived": false,
+            "name": "Example",
+            "description": "A concise description.",
+            "start": "2026-06-01T12:00:00.000Z",
+            "end": "2026-06-14T12:00:00.000Z",
+            "order": 100,
+            "color": "#00A99B",
+            "isMilestone": false,
+            "projectId": "iV6vIU8N",
+            "dependencyId": "i9TUmOWm",
+            "statusId": "5aM4ncwI"
+          },
+          {
+            "id": "96zA0TKS",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "archived": false,
+            "name": "Second example",
+            "description": "A concise description.",
+            "start": "2026-06-01T12:00:00.000Z",
+            "end": "2026-06-14T12:00:00.000Z",
+            "order": 101,
+            "color": "#00A99B",
+            "isMilestone": false,
+            "projectId": "iV6vIU8N",
+            "dependencyId": "i9TUmOWm",
+            "statusId": "5aM4ncwI"
+          }
+        ],
+        "total": 5,
+        "limit": 2,
+        "hasMore": true,
+        "nextCursor": "b2NjdXJyZWRBdD0yMDI2LTA1LTMxVDEyOjAwOjAwWg"
+      },
+      "status": 200
+    },
+    "create_list": {
+      "config": {
+        "operation": "create_list",
+        "name": "Example",
+        "projectId": "iV6vIU8N",
+        "description": "A concise description."
+      },
+      "method": "POST",
+      "path": "/lists",
+      "response": {
+        "id": "lN6ZQycO",
+        "createdAt": "2026-05-31T12:00:00.000Z",
+        "updatedAt": "2026-05-31T14:00:00.000Z",
+        "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+        "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+        "createdByActorType": "human",
+        "updatedByActorType": "human",
+        "archived": false,
+        "name": "Example",
+        "description": "A concise description.",
+        "start": "2026-06-01T12:00:00.000Z",
+        "end": "2026-06-14T12:00:00.000Z",
+        "order": 100,
+        "color": "#00A99B",
+        "isMilestone": false,
+        "projectId": "iV6vIU8N",
+        "dependencyId": "i9TUmOWm",
+        "statusId": "5aM4ncwI"
+      },
+      "status": 201
+    },
+    "list_members": {
+      "config": {
+        "operation": "list_members",
+        "limit": 2
+      },
+      "method": "GET",
+      "path": "/members",
+      "response": {
+        "data": [
+          {
+            "id": "P3hYIKqK",
+            "userId": "EF6LMc0F",
+            "name": "Example",
+            "email": "jane@acme.com",
+            "avatar": "https://cdn.nifty.pm/example.png",
+            "initials": "NB",
+            "color": "#00A99B",
+            "online": false,
+            "tzIana": "America/New_York",
+            "pending": false,
+            "removed": false,
+            "roleId": "zngY4nUy",
+            "theme": "light",
+            "storyPointsCapacity": 100,
+            "workingHours": {
+              "zone": "Europe/Sofia",
+              "days": {
+                "mon": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "tue": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "wed": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "thu": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "fri": [
+                  {
+                    "start": "09:00",
+                    "end": "13:00"
+                  }
+                ],
+                "sat": [],
+                "sun": []
+              }
+            }
+          },
+          {
+            "id": "V5pwKAam",
+            "userId": "EF6LMc0F",
+            "name": "Second example",
+            "email": "jane@acme.com",
+            "avatar": "https://cdn.nifty.pm/example.png",
+            "initials": "NB",
+            "color": "#00A99B",
+            "online": false,
+            "tzIana": "America/New_York",
+            "pending": false,
+            "removed": false,
+            "roleId": "zngY4nUy",
+            "theme": "light",
+            "storyPointsCapacity": 100,
+            "workingHours": {
+              "zone": "Europe/Sofia",
+              "days": {
+                "mon": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "tue": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "wed": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "thu": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "fri": [
+                  {
+                    "start": "09:00",
+                    "end": "13:00"
+                  }
+                ],
+                "sat": [],
+                "sun": []
+              }
+            }
+          }
+        ],
+        "total": 5,
+        "limit": 2,
+        "hasMore": true,
+        "nextCursor": "b2NjdXJyZWRBdD0yMDI2LTA1LTMxVDEyOjAwOjAwWg"
+      },
+      "status": 200
+    },
+    "get_current_member": {
+      "config": {
+        "operation": "get_current_member"
+      },
+      "method": "GET",
+      "path": "/members/me",
+      "response": {
+        "id": "XXKmAKg6",
+        "userId": "EF6LMc0F",
+        "name": "Example",
+        "email": "jane@acme.com",
+        "avatar": "https://cdn.nifty.pm/example.png",
+        "initials": "NB",
+        "color": "#00A99B",
+        "online": false,
+        "tzIana": "America/New_York",
+        "pending": false,
+        "removed": false,
+        "roleId": "zngY4nUy",
+        "theme": "light",
+        "state": {},
+        "storyPointsCapacity": 100,
+        "workingHours": {},
+        "team": {
+          "id": "XXKmAKg6",
+          "name": "Example"
+        }
+      },
+      "status": 200
+    },
+    "list_messages": {
+      "config": {
+        "operation": "list_messages",
+        "limit": 2
+      },
+      "method": "GET",
+      "path": "/messages",
+      "response": {
+        "data": [
+          {
+            "id": "4SsY67bC",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "purgeAt": "2026-06-30T12:00:00.000Z",
+            "deletedById": "2MuAM0jY",
+            "teamId": "cfC83TeS",
+            "text": "Looks good \u2014 shipping this today.",
+            "url": "https://example.com/resource",
+            "type": "text",
+            "subtype": "hello",
+            "isEdited": false,
+            "hideLinkPreview": false,
+            "botName": "Example",
+            "botAvatar": "https://cdn.nifty.pm/example.png",
+            "viaApp": "Example via app",
+            "audioDuration": 100,
+            "editHistory": [],
+            "authorId": "EPmKiCaK",
+            "chatId": "hTIeouEK",
+            "taskId": "KfS0ha8P",
+            "documentId": "ELe0nkum",
+            "fileId": "xvM2toUM",
+            "annotationId": "863BiyIc",
+            "parentMessageId": "gx21BskY",
+            "sharedDocumentId": "vjciEwQy",
+            "mentions": [
+              {
+                "glyph": "<@P3hYIKqK>",
+                "type": "member",
+                "id": "P3hYIKqK",
+                "name": "Ada Lovelace"
+              }
+            ],
+            "repliesCount": 3,
+            "repliers": [
+              "P3hYIKqK"
+            ]
+          },
+          {
+            "id": "yNKAKwWM",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "purgeAt": "2026-06-30T12:00:00.000Z",
+            "deletedById": "2MuAM0jY",
+            "teamId": "cfC83TeS",
+            "text": "Looks good \u2014 shipping this today.",
+            "url": "https://example.com/resource",
+            "type": "text",
+            "subtype": "hello",
+            "isEdited": false,
+            "hideLinkPreview": false,
+            "botName": "Example",
+            "botAvatar": "https://cdn.nifty.pm/example.png",
+            "viaApp": "Example via app",
+            "audioDuration": 100,
+            "editHistory": [],
+            "authorId": "EPmKiCaK",
+            "chatId": "hTIeouEK",
+            "taskId": "KfS0ha8P",
+            "documentId": "ELe0nkum",
+            "fileId": "xvM2toUM",
+            "annotationId": "863BiyIc",
+            "parentMessageId": "gx21BskY",
+            "sharedDocumentId": "vjciEwQy",
+            "mentions": [
+              {
+                "glyph": "<@P3hYIKqK>",
+                "type": "member",
+                "id": "P3hYIKqK",
+                "name": "Ada Lovelace"
+              }
+            ],
+            "repliesCount": 3,
+            "repliers": [
+              "P3hYIKqK"
+            ]
+          }
+        ],
+        "total": 5,
+        "limit": 2,
+        "hasMore": true,
+        "nextCursor": "b2NjdXJyZWRBdD0yMDI2LTA1LTMxVDEyOjAwOjAwWg"
+      },
+      "status": 200
+    },
+    "create_message": {
+      "config": {
+        "operation": "create_message",
+        "text": "Looks good \u2014 shipping this today.",
+        "taskId": "KfS0ha8P"
+      },
+      "method": "POST",
+      "path": "/messages",
+      "response": {
+        "id": "4SsY67bC",
+        "createdAt": "2026-05-31T12:00:00.000Z",
+        "updatedAt": "2026-05-31T14:00:00.000Z",
+        "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+        "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+        "createdByActorType": "human",
+        "updatedByActorType": "human",
+        "purgeAt": "2026-06-30T12:00:00.000Z",
+        "deletedById": "2MuAM0jY",
+        "teamId": "cfC83TeS",
+        "text": "Looks good \u2014 shipping this today.",
+        "url": "https://example.com/resource",
+        "type": "text",
+        "subtype": "hello",
+        "isEdited": false,
+        "hideLinkPreview": false,
+        "botName": "Example",
+        "botAvatar": "https://cdn.nifty.pm/example.png",
+        "viaApp": "Example via app",
+        "audioDuration": 100,
+        "editHistory": [],
+        "authorId": "EPmKiCaK",
+        "chatId": "hTIeouEK",
+        "taskId": "KfS0ha8P",
+        "documentId": "ELe0nkum",
+        "fileId": "xvM2toUM",
+        "annotationId": "863BiyIc",
+        "parentMessageId": "gx21BskY",
+        "sharedDocumentId": "vjciEwQy",
+        "mentions": [
+          {
+            "glyph": "<@P3hYIKqK>",
+            "type": "member",
+            "id": "P3hYIKqK",
+            "name": "Ada Lovelace"
+          }
+        ],
+        "repliesCount": 3,
+        "repliers": [
+          "P3hYIKqK"
+        ],
+        "created": false
+      },
+      "status": 201
+    },
+    "list_projects": {
+      "config": {
+        "operation": "list_projects",
+        "limit": 2
+      },
+      "method": "GET",
+      "path": "/projects",
+      "response": {
+        "data": [
+          {
+            "id": "iV6vIU8N",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "purgeAt": "2026-06-30T12:00:00.000Z",
+            "deletedById": "Enmkg49J",
+            "archived": false,
+            "niceId": "PRJ",
+            "name": "Example",
+            "description": "A concise description.",
+            "icon": "https://cdn.nifty.pm/example.png",
+            "initials": "NB",
+            "color": "#00A99B",
+            "secondaryColor": "#0E7C74",
+            "portfolioId": "1YEYsy2X",
+            "url": "https://example.com/resource",
+            "accessType": "public",
+            "modules": [
+              "home"
+            ],
+            "defaultTasksView": "table",
+            "hiddenListColumns": [
+              "estimate",
+              "labels"
+            ],
+            "listColumnsOrder": [
+              "name",
+              "assignee",
+              "dueDate"
+            ],
+            "customFieldsOrder": [
+              "cf_6GWCcskG",
+              "cf_qHsUISQS"
+            ],
+            "taskCustomFieldsOrder": [
+              "cf_6GWCcskG",
+              "cf_qHsUISQS"
+            ],
+            "listCustomFieldsOrder": [
+              "cf_6GWCcskG",
+              "cf_qHsUISQS"
+            ],
+            "autoMilestones": false,
+            "estimationUnit": "points",
+            "hideUsersFromGuests": false,
+            "subtaskStatusEnabled": false,
+            "queryAllFiles": false,
+            "projectFolderId": "0sSAIGwG",
+            "ownerId": "QpCuKyI2",
+            "discussionChatId": "lNAaW0F4",
+            "defaultStatusId": "O9nWOgic"
+          },
+          {
+            "id": "yZCY8Lac",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "purgeAt": "2026-06-30T12:00:00.000Z",
+            "deletedById": "Enmkg49J",
+            "archived": false,
+            "niceId": "Second pRJ",
+            "name": "Second example",
+            "description": "A concise description.",
+            "icon": "https://cdn.nifty.pm/example.png",
+            "initials": "NB",
+            "color": "#00A99B",
+            "secondaryColor": "#0E7C74",
+            "portfolioId": "1YEYsy2X",
+            "url": "https://example.com/resource",
+            "accessType": "public",
+            "modules": [
+              "home"
+            ],
+            "defaultTasksView": "table",
+            "hiddenListColumns": [
+              "estimate",
+              "labels"
+            ],
+            "listColumnsOrder": [
+              "name",
+              "assignee",
+              "dueDate"
+            ],
+            "customFieldsOrder": [
+              "cf_6GWCcskG",
+              "cf_qHsUISQS"
+            ],
+            "taskCustomFieldsOrder": [
+              "cf_6GWCcskG",
+              "cf_qHsUISQS"
+            ],
+            "listCustomFieldsOrder": [
+              "cf_6GWCcskG",
+              "cf_qHsUISQS"
+            ],
+            "autoMilestones": false,
+            "estimationUnit": "points",
+            "hideUsersFromGuests": false,
+            "subtaskStatusEnabled": false,
+            "queryAllFiles": false,
+            "projectFolderId": "0sSAIGwG",
+            "ownerId": "QpCuKyI2",
+            "discussionChatId": "lNAaW0F4",
+            "defaultStatusId": "O9nWOgic"
+          }
+        ],
+        "total": 5,
+        "limit": 2,
+        "hasMore": true,
+        "nextCursor": "b2NjdXJyZWRBdD0yMDI2LTA1LTMxVDEyOjAwOjAwWg"
+      },
+      "status": 200
+    },
+    "create_project": {
+      "config": {
+        "operation": "create_project",
+        "name": "Example",
+        "description": "A concise description.",
+        "portfolioId": "1YEYsy2X",
+        "accessType": "public"
+      },
+      "method": "POST",
+      "path": "/projects",
+      "response": {
+        "id": "iV6vIU8N",
+        "createdAt": "2026-05-31T12:00:00.000Z",
+        "updatedAt": "2026-05-31T14:00:00.000Z",
+        "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+        "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+        "createdByActorType": "human",
+        "updatedByActorType": "human",
+        "purgeAt": "2026-06-30T12:00:00.000Z",
+        "deletedById": "Enmkg49J",
+        "archived": false,
+        "niceId": "PRJ",
+        "name": "Example",
+        "description": "A concise description.",
+        "icon": "https://cdn.nifty.pm/example.png",
+        "initials": "NB",
+        "color": "#00A99B",
+        "secondaryColor": "#0E7C74",
+        "portfolioId": "1YEYsy2X",
+        "url": "https://example.com/resource",
+        "accessType": "public",
+        "modules": [
+          "home"
+        ],
+        "defaultTasksView": "table",
+        "hiddenListColumns": [
+          "estimate",
+          "labels"
+        ],
+        "listColumnsOrder": [
+          "name",
+          "assignee",
+          "dueDate"
+        ],
+        "customFieldsOrder": [
+          "cf_6GWCcskG",
+          "cf_qHsUISQS"
+        ],
+        "taskCustomFieldsOrder": [
+          "cf_6GWCcskG",
+          "cf_qHsUISQS"
+        ],
+        "listCustomFieldsOrder": [
+          "cf_6GWCcskG",
+          "cf_qHsUISQS"
+        ],
+        "autoMilestones": false,
+        "estimationUnit": "points",
+        "hideUsersFromGuests": false,
+        "subtaskStatusEnabled": false,
+        "queryAllFiles": false,
+        "projectFolderId": "0sSAIGwG",
+        "ownerId": "QpCuKyI2",
+        "discussionChatId": "lNAaW0F4",
+        "defaultStatusId": "O9nWOgic"
+      },
+      "status": 201
+    },
+    "get_project": {
+      "config": {
+        "operation": "get_project",
+        "id": "iV6vIU8N"
+      },
+      "method": "GET",
+      "path": "/projects/{id}",
+      "response": {
+        "id": "iV6vIU8N",
+        "createdAt": "2026-05-31T12:00:00.000Z",
+        "updatedAt": "2026-05-31T14:00:00.000Z",
+        "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+        "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+        "createdByActorType": "human",
+        "updatedByActorType": "human",
+        "purgeAt": "2026-06-30T12:00:00.000Z",
+        "deletedById": "Enmkg49J",
+        "archived": false,
+        "niceId": "PRJ",
+        "name": "Example",
+        "description": "A concise description.",
+        "icon": "https://cdn.nifty.pm/example.png",
+        "initials": "NB",
+        "color": "#00A99B",
+        "secondaryColor": "#0E7C74",
+        "portfolioId": "1YEYsy2X",
+        "url": "https://example.com/resource",
+        "accessType": "public",
+        "modules": [
+          "home"
+        ],
+        "defaultTasksView": "table",
+        "hiddenListColumns": [
+          "estimate",
+          "labels"
+        ],
+        "listColumnsOrder": [
+          "name",
+          "assignee",
+          "dueDate"
+        ],
+        "customFieldsOrder": [
+          "cf_6GWCcskG",
+          "cf_qHsUISQS"
+        ],
+        "taskCustomFieldsOrder": [
+          "cf_6GWCcskG",
+          "cf_qHsUISQS"
+        ],
+        "listCustomFieldsOrder": [
+          "cf_6GWCcskG",
+          "cf_qHsUISQS"
+        ],
+        "autoMilestones": false,
+        "estimationUnit": "points",
+        "hideUsersFromGuests": false,
+        "subtaskStatusEnabled": false,
+        "queryAllFiles": false,
+        "projectFolderId": "0sSAIGwG",
+        "ownerId": "QpCuKyI2",
+        "discussionChatId": "lNAaW0F4",
+        "defaultStatusId": "O9nWOgic"
+      },
+      "status": 200
+    },
+    "update_project": {
+      "config": {
+        "operation": "update_project",
+        "id": "iV6vIU8N",
+        "name": "Example",
+        "description": "A concise description.",
+        "archived": false,
+        "accessType": "public",
+        "expectedUpdatedAt": "2026-05-31T12:00:00.000Z"
+      },
+      "method": "PATCH",
+      "path": "/projects/{id}",
+      "response": {
+        "id": "iV6vIU8N",
+        "createdAt": "2026-05-31T12:00:00.000Z",
+        "updatedAt": "2026-05-31T14:00:00.000Z",
+        "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+        "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+        "createdByActorType": "human",
+        "updatedByActorType": "human",
+        "purgeAt": "2026-06-30T12:00:00.000Z",
+        "deletedById": "Enmkg49J",
+        "archived": false,
+        "niceId": "PRJ",
+        "name": "Example",
+        "description": "A concise description.",
+        "icon": "https://cdn.nifty.pm/example.png",
+        "initials": "NB",
+        "color": "#00A99B",
+        "secondaryColor": "#0E7C74",
+        "portfolioId": "1YEYsy2X",
+        "url": "https://example.com/resource",
+        "accessType": "public",
+        "modules": [
+          "home"
+        ],
+        "defaultTasksView": "table",
+        "hiddenListColumns": [
+          "estimate",
+          "labels"
+        ],
+        "listColumnsOrder": [
+          "name",
+          "assignee",
+          "dueDate"
+        ],
+        "customFieldsOrder": [
+          "cf_6GWCcskG",
+          "cf_qHsUISQS"
+        ],
+        "taskCustomFieldsOrder": [
+          "cf_6GWCcskG",
+          "cf_qHsUISQS"
+        ],
+        "listCustomFieldsOrder": [
+          "cf_6GWCcskG",
+          "cf_qHsUISQS"
+        ],
+        "autoMilestones": false,
+        "estimationUnit": "points",
+        "hideUsersFromGuests": false,
+        "subtaskStatusEnabled": false,
+        "queryAllFiles": false,
+        "projectFolderId": "0sSAIGwG",
+        "ownerId": "QpCuKyI2",
+        "discussionChatId": "lNAaW0F4",
+        "defaultStatusId": "O9nWOgic"
+      },
+      "status": 200
+    },
+    "list_tasks": {
+      "config": {
+        "operation": "list_tasks",
+        "projectId": "iV6vIU8N",
+        "scope": "both",
+        "limit": 2
+      },
+      "method": "GET",
+      "path": "/tasks",
+      "response": {
+        "data": [
+          {
+            "id": "KfS0ha8P",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "archived": false,
+            "niceId": 1234,
+            "name": "Example",
+            "description": "A concise description.",
+            "completed": false,
+            "projectId": "iV6vIU8N",
+            "listId": "lN6ZQycO",
+            "statusId": "5aM4ncwI",
+            "parentTaskId": "4KOocqYo",
+            "dependencyId": "i9TUmOWm",
+            "recurringRuleId": "cn2v0xiQ",
+            "startAt": "2026-06-01T12:00:00.000Z",
+            "dueAt": "2026-06-07T12:00:00.000Z",
+            "remindAt": "2026-06-04T02:00:00.000Z",
+            "storyPoints": 100,
+            "estimate": 100,
+            "order": 100,
+            "orderList": 100,
+            "banner": "https://cdn.nifty.pm/example.png",
+            "embedUrl": "https://example.com/resource",
+            "url": "https://example.com/resource",
+            "identifier": "PRJ-14",
+            "devLinks": {
+              "pullRequests": [
+                {
+                  "url": "https://github.com/acme/web/pull/42",
+                  "title": "Fix checkout rounding",
+                  "number": 42,
+                  "state": "open"
+                }
+              ],
+              "branches": [
+                {
+                  "name": "fix/checkout-rounding",
+                  "url": "https://github.com/acme/web/tree/fix/checkout-rounding"
+                }
+              ],
+              "commits": [
+                {
+                  "sha": "3f9c2a1",
+                  "url": "https://github.com/acme/web/commit/3f9c2a1",
+                  "message": "Round totals half-up"
+                }
+              ]
+            },
+            "createdById": "njWQkGgk"
+          },
+          {
+            "id": "o9fSwokO",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "archived": false,
+            "niceId": 1235,
+            "name": "Second example",
+            "description": "A concise description.",
+            "completed": false,
+            "projectId": "iV6vIU8N",
+            "listId": "lN6ZQycO",
+            "statusId": "5aM4ncwI",
+            "parentTaskId": "4KOocqYo",
+            "dependencyId": "i9TUmOWm",
+            "recurringRuleId": "cn2v0xiQ",
+            "startAt": "2026-06-01T12:00:00.000Z",
+            "dueAt": "2026-06-07T12:00:00.000Z",
+            "remindAt": "2026-06-04T02:00:00.000Z",
+            "storyPoints": 100,
+            "estimate": 100,
+            "order": 101,
+            "orderList": 100,
+            "banner": "https://cdn.nifty.pm/example.png",
+            "embedUrl": "https://example.com/resource",
+            "url": "https://example.com/resource",
+            "identifier": "PRJ-14",
+            "devLinks": {
+              "pullRequests": [
+                {
+                  "url": "https://github.com/acme/web/pull/42",
+                  "title": "Fix checkout rounding",
+                  "number": 42,
+                  "state": "open"
+                }
+              ],
+              "branches": [
+                {
+                  "name": "fix/checkout-rounding",
+                  "url": "https://github.com/acme/web/tree/fix/checkout-rounding"
+                }
+              ],
+              "commits": [
+                {
+                  "sha": "3f9c2a1",
+                  "url": "https://github.com/acme/web/commit/3f9c2a1",
+                  "message": "Round totals half-up"
+                }
+              ]
+            },
+            "createdById": "njWQkGgk"
+          }
+        ],
+        "total": 5,
+        "limit": 2,
+        "hasMore": true,
+        "nextCursor": "b2NjdXJyZWRBdD0yMDI2LTA1LTMxVDEyOjAwOjAwWg"
+      },
+      "status": 200
+    },
+    "create_task": {
+      "config": {
+        "operation": "create_task",
+        "name": "Example",
+        "description": "A concise description.",
+        "projectId": "iV6vIU8N",
+        "listId": "lN6ZQycO",
+        "statusId": "5aM4ncwI",
+        "parentTaskId": "4KOocqYo",
+        "startAt": "2026-06-01T12:00:00.000Z",
+        "dueAt": "2026-06-07T12:00:00.000Z",
+        "estimate": 100,
+        "assignees": [
+          "CNIgSuay"
+        ],
+        "labels": [
+          "xbUMIqgS"
+        ]
+      },
+      "method": "POST",
+      "path": "/tasks",
+      "response": {
+        "id": "KfS0ha8P",
+        "createdAt": "2026-05-31T12:00:00.000Z",
+        "updatedAt": "2026-05-31T14:00:00.000Z",
+        "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+        "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+        "createdByActorType": "human",
+        "updatedByActorType": "human",
+        "archived": false,
+        "niceId": 1234,
+        "name": "Example",
+        "description": "A concise description.",
+        "completed": false,
+        "projectId": "iV6vIU8N",
+        "listId": "lN6ZQycO",
+        "statusId": "5aM4ncwI",
+        "parentTaskId": "4KOocqYo",
+        "dependencyId": "i9TUmOWm",
+        "recurringRuleId": "cn2v0xiQ",
+        "startAt": "2026-06-01T12:00:00.000Z",
+        "dueAt": "2026-06-07T12:00:00.000Z",
+        "remindAt": "2026-06-04T02:00:00.000Z",
+        "storyPoints": 100,
+        "estimate": 100,
+        "order": 100,
+        "orderList": 100,
+        "banner": "https://cdn.nifty.pm/example.png",
+        "embedUrl": "https://example.com/resource",
+        "url": "https://example.com/resource",
+        "identifier": "PRJ-14",
+        "devLinks": {
+          "pullRequests": [
+            {
+              "url": "https://github.com/acme/web/pull/42",
+              "title": "Fix checkout rounding",
+              "number": 42,
+              "state": "open"
+            }
+          ],
+          "branches": [
+            {
+              "name": "fix/checkout-rounding",
+              "url": "https://github.com/acme/web/tree/fix/checkout-rounding"
+            }
+          ],
+          "commits": [
+            {
+              "sha": "3f9c2a1",
+              "url": "https://github.com/acme/web/commit/3f9c2a1",
+              "message": "Round totals half-up"
+            }
+          ]
+        },
+        "createdById": "njWQkGgk"
+      },
+      "status": 201
+    },
+    "get_task": {
+      "config": {
+        "operation": "get_task",
+        "id": "KfS0ha8P"
+      },
+      "method": "GET",
+      "path": "/tasks/{id}",
+      "response": {
+        "id": "KfS0ha8P",
+        "createdAt": "2026-05-31T12:00:00.000Z",
+        "updatedAt": "2026-05-31T14:00:00.000Z",
+        "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+        "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+        "createdByActorType": "human",
+        "updatedByActorType": "human",
+        "archived": false,
+        "niceId": 1234,
+        "name": "Example",
+        "description": "A concise description.",
+        "completed": false,
+        "projectId": "iV6vIU8N",
+        "listId": "lN6ZQycO",
+        "statusId": "5aM4ncwI",
+        "parentTaskId": "4KOocqYo",
+        "dependencyId": "i9TUmOWm",
+        "recurringRuleId": "cn2v0xiQ",
+        "startAt": "2026-06-01T12:00:00.000Z",
+        "dueAt": "2026-06-07T12:00:00.000Z",
+        "remindAt": "2026-06-04T02:00:00.000Z",
+        "storyPoints": 100,
+        "estimate": 100,
+        "order": 100,
+        "orderList": 100,
+        "banner": "https://cdn.nifty.pm/example.png",
+        "embedUrl": "https://example.com/resource",
+        "url": "https://example.com/resource",
+        "identifier": "PRJ-14",
+        "devLinks": {
+          "pullRequests": [
+            {
+              "url": "https://github.com/acme/web/pull/42",
+              "title": "Fix checkout rounding",
+              "number": 42,
+              "state": "open"
+            }
+          ],
+          "branches": [
+            {
+              "name": "fix/checkout-rounding",
+              "url": "https://github.com/acme/web/tree/fix/checkout-rounding"
+            }
+          ],
+          "commits": [
+            {
+              "sha": "3f9c2a1",
+              "url": "https://github.com/acme/web/commit/3f9c2a1",
+              "message": "Round totals half-up"
+            }
+          ]
+        },
+        "createdById": "njWQkGgk"
+      },
+      "status": 200
+    },
+    "update_task": {
+      "config": {
+        "operation": "update_task",
+        "id": "KfS0ha8P",
+        "name": "Example",
+        "description": "A concise description.",
+        "completed": false,
+        "archived": false,
+        "listId": "lN6ZQycO",
+        "statusId": "5aM4ncwI",
+        "dueAt": "2026-06-07T12:00:00.000Z",
+        "estimate": 100,
+        "expectedUpdatedAt": "2026-05-31T12:00:00.000Z"
+      },
+      "method": "PATCH",
+      "path": "/tasks/{id}",
+      "response": {
+        "id": "KfS0ha8P",
+        "createdAt": "2026-05-31T12:00:00.000Z",
+        "updatedAt": "2026-05-31T14:00:00.000Z",
+        "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+        "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+        "createdByActorType": "human",
+        "updatedByActorType": "human",
+        "archived": false,
+        "niceId": 1234,
+        "name": "Example",
+        "description": "A concise description.",
+        "completed": false,
+        "projectId": "iV6vIU8N",
+        "listId": "lN6ZQycO",
+        "statusId": "5aM4ncwI",
+        "parentTaskId": "4KOocqYo",
+        "dependencyId": "i9TUmOWm",
+        "recurringRuleId": "cn2v0xiQ",
+        "startAt": "2026-06-01T12:00:00.000Z",
+        "dueAt": "2026-06-07T12:00:00.000Z",
+        "remindAt": "2026-06-04T02:00:00.000Z",
+        "storyPoints": 100,
+        "estimate": 100,
+        "order": 100,
+        "orderList": 100,
+        "banner": "https://cdn.nifty.pm/example.png",
+        "embedUrl": "https://example.com/resource",
+        "url": "https://example.com/resource",
+        "identifier": "PRJ-14",
+        "devLinks": {
+          "pullRequests": [
+            {
+              "url": "https://github.com/acme/web/pull/42",
+              "title": "Fix checkout rounding",
+              "number": 42,
+              "state": "open"
+            }
+          ],
+          "branches": [
+            {
+              "name": "fix/checkout-rounding",
+              "url": "https://github.com/acme/web/tree/fix/checkout-rounding"
+            }
+          ],
+          "commits": [
+            {
+              "sha": "3f9c2a1",
+              "url": "https://github.com/acme/web/commit/3f9c2a1",
+              "message": "Round totals half-up"
+            }
+          ]
+        },
+        "createdById": "njWQkGgk"
+      },
+      "status": 200
+    },
+    "delete_task": {
+      "config": {
+        "operation": "delete_task",
+        "id": "KfS0ha8P"
+      },
+      "method": "DELETE",
+      "path": "/tasks/{id}",
+      "response": null,
+      "status": 204
+    },
+    "search_tasks": {
+      "config": {
+        "operation": "search_tasks",
+        "q": "design",
+        "projectId": "iV6vIU8N",
+        "limit": 2
+      },
+      "method": "GET",
+      "path": "/tasks/search",
+      "response": {
+        "data": [
+          {
+            "id": "KfS0ha8P",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "archived": false,
+            "niceId": 1234,
+            "name": "Example",
+            "description": "A concise description.",
+            "completed": false,
+            "projectId": "iV6vIU8N",
+            "listId": "lN6ZQycO",
+            "statusId": "5aM4ncwI",
+            "parentTaskId": "4KOocqYo",
+            "dependencyId": "i9TUmOWm",
+            "recurringRuleId": "cn2v0xiQ",
+            "startAt": "2026-06-01T12:00:00.000Z",
+            "dueAt": "2026-06-07T12:00:00.000Z",
+            "remindAt": "2026-06-04T02:00:00.000Z",
+            "storyPoints": 100,
+            "estimate": 100,
+            "order": 100,
+            "orderList": 100,
+            "banner": "https://cdn.nifty.pm/example.png",
+            "embedUrl": "https://example.com/resource",
+            "url": "https://example.com/resource",
+            "identifier": "PRJ-14",
+            "devLinks": {
+              "pullRequests": [
+                {
+                  "url": "https://github.com/acme/web/pull/42",
+                  "title": "Fix checkout rounding",
+                  "number": 42,
+                  "state": "open"
+                }
+              ],
+              "branches": [
+                {
+                  "name": "fix/checkout-rounding",
+                  "url": "https://github.com/acme/web/tree/fix/checkout-rounding"
+                }
+              ],
+              "commits": [
+                {
+                  "sha": "3f9c2a1",
+                  "url": "https://github.com/acme/web/commit/3f9c2a1",
+                  "message": "Round totals half-up"
+                }
+              ]
+            },
+            "createdById": "njWQkGgk"
+          },
+          {
+            "id": "o9fSwokO",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "archived": false,
+            "niceId": 1235,
+            "name": "Second example",
+            "description": "A concise description.",
+            "completed": false,
+            "projectId": "iV6vIU8N",
+            "listId": "lN6ZQycO",
+            "statusId": "5aM4ncwI",
+            "parentTaskId": "4KOocqYo",
+            "dependencyId": "i9TUmOWm",
+            "recurringRuleId": "cn2v0xiQ",
+            "startAt": "2026-06-01T12:00:00.000Z",
+            "dueAt": "2026-06-07T12:00:00.000Z",
+            "remindAt": "2026-06-04T02:00:00.000Z",
+            "storyPoints": 100,
+            "estimate": 100,
+            "order": 101,
+            "orderList": 100,
+            "banner": "https://cdn.nifty.pm/example.png",
+            "embedUrl": "https://example.com/resource",
+            "url": "https://example.com/resource",
+            "identifier": "PRJ-14",
+            "devLinks": {
+              "pullRequests": [
+                {
+                  "url": "https://github.com/acme/web/pull/42",
+                  "title": "Fix checkout rounding",
+                  "number": 42,
+                  "state": "open"
+                }
+              ],
+              "branches": [
+                {
+                  "name": "fix/checkout-rounding",
+                  "url": "https://github.com/acme/web/tree/fix/checkout-rounding"
+                }
+              ],
+              "commits": [
+                {
+                  "sha": "3f9c2a1",
+                  "url": "https://github.com/acme/web/commit/3f9c2a1",
+                  "message": "Round totals half-up"
+                }
+              ]
+            },
+            "createdById": "njWQkGgk"
+          }
+        ],
+        "total": 5,
+        "limit": 2,
+        "hasMore": true,
+        "nextCursor": "b2NjdXJyZWRBdD0yMDI2LTA1LTMxVDEyOjAwOjAwWg"
+      },
+      "status": 200
+    },
+    "add_task_assignees": {
+      "config": {
+        "operation": "add_task_assignees",
+        "id": "KfS0ha8P",
+        "ids": [
+          "P3hYIKqK",
+          "nvgG0jMq"
+        ]
+      },
+      "method": "POST",
+      "path": "/tasks/{id}/assignees",
+      "response": {
+        "data": [
+          {
+            "id": "P3hYIKqK",
+            "userId": "EF6LMc0F",
+            "name": "Example",
+            "email": "jane@acme.com",
+            "avatar": "https://cdn.nifty.pm/example.png",
+            "initials": "NB",
+            "color": "#00A99B",
+            "online": false,
+            "tzIana": "America/New_York",
+            "pending": false,
+            "removed": false,
+            "roleId": "zngY4nUy",
+            "theme": "light",
+            "storyPointsCapacity": 100,
+            "workingHours": {
+              "zone": "Europe/Sofia",
+              "days": {
+                "mon": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "tue": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "wed": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "thu": [
+                  {
+                    "start": "09:00",
+                    "end": "17:00"
+                  }
+                ],
+                "fri": [
+                  {
+                    "start": "09:00",
+                    "end": "13:00"
+                  }
+                ],
+                "sat": [],
+                "sun": []
+              }
+            }
+          }
+        ],
+        "affectedIds": [
+          "P3hYIKqK"
+        ],
+        "missingIds": []
+      },
+      "status": 200
+    },
+    "add_task_labels": {
+      "config": {
+        "operation": "add_task_labels",
+        "id": "KfS0ha8P",
+        "ids": [
+          "xbUMIqgS",
+          "rXYsOME8"
+        ]
+      },
+      "method": "POST",
+      "path": "/tasks/{id}/labels",
+      "response": {
+        "data": [
+          {
+            "id": "xbUMIqgS",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "createdByActorId": "49f861f7-4af8-44bf-844f-45f85babe504",
+            "updatedByActorId": "3306ed14-3606-4350-8300-2f06e6c80dce",
+            "createdByActorType": "human",
+            "updatedByActorType": "human",
+            "purgeAt": "2026-06-30T12:00:00.000Z",
+            "deletedById": "7ESqMCCu",
+            "name": "Example",
+            "color": "#00A99B",
+            "default": false,
+            "type": "others"
+          }
+        ],
+        "affectedIds": [
+          "xbUMIqgS"
+        ],
+        "missingIds": []
+      },
+      "status": 200
+    },
+    "list_time_entries": {
+      "config": {
+        "operation": "list_time_entries",
+        "limit": 2
+      },
+      "method": "GET",
+      "path": "/time-entries",
+      "response": {
+        "data": [
+          {
+            "id": "sfmueIsa",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "description": "A concise description.",
+            "start": "2026-06-01T12:00:00.000Z",
+            "end": "2026-06-14T12:00:00.000Z",
+            "manual": false,
+            "projectId": "iV6vIU8N",
+            "memberId": "P3hYIKqK",
+            "taskId": "KfS0ha8P",
+            "taskNiceId": "PROJ-5 \u00b7 deleted",
+            "taskName": "Ship the billing export"
+          },
+          {
+            "id": "czeMwGCa",
+            "createdAt": "2026-05-31T12:00:00.000Z",
+            "updatedAt": "2026-05-31T14:00:00.000Z",
+            "description": "A concise description.",
+            "start": "2026-06-01T12:00:00.000Z",
+            "end": "2026-06-14T12:00:00.000Z",
+            "manual": false,
+            "projectId": "iV6vIU8N",
+            "memberId": "P3hYIKqK",
+            "taskId": "KfS0ha8P",
+            "taskNiceId": "PROJ-5 \u00b7 deleted",
+            "taskName": "Ship the billing export"
+          }
+        ],
+        "total": 5,
+        "limit": 2,
+        "hasMore": true,
+        "nextCursor": "b2NjdXJyZWRBdD0yMDI2LTA1LTMxVDEyOjAwOjAwWg"
+      },
+      "status": 200
+    },
+    "create_time_entry": {
+      "config": {
+        "operation": "create_time_entry",
+        "start": "2026-06-01T12:00:00.000Z",
+        "end": "2026-06-14T12:00:00.000Z",
+        "taskId": "KfS0ha8P",
+        "projectId": "iV6vIU8N",
+        "description": "A concise description."
+      },
+      "method": "POST",
+      "path": "/time-entries",
+      "response": {
+        "id": "sfmueIsa",
+        "createdAt": "2026-05-31T12:00:00.000Z",
+        "updatedAt": "2026-05-31T14:00:00.000Z",
+        "description": "A concise description.",
+        "start": "2026-06-01T12:00:00.000Z",
+        "end": "2026-06-14T12:00:00.000Z",
+        "manual": false,
+        "projectId": "iV6vIU8N",
+        "memberId": "P3hYIKqK",
+        "taskId": "KfS0ha8P",
+        "taskNiceId": "PROJ-5 \u00b7 deleted",
+        "taskName": "Ship the billing export"
+      },
+      "status": 201
+    }
+  }
+}

@@ -1,0 +1,1606 @@
+{
+  "$defs": {
+    "NiftyAddTaskAssigneesConfig": {
+      "additionalProperties": false,
+      "description": "Add assignees to a Task.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key. Reuse only for retries of the same write within 10 minutes.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "add_task_assignees",
+          "default": "add_task_assignees",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Id of the Task.",
+          "minLength": 1,
+          "pattern": "^[0-9A-Za-z_!]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "ids": {
+          "description": "Team Members to add or remove, by id.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "ids"
+      ],
+      "title": "NiftyAddTaskAssigneesConfig",
+      "type": "object"
+    },
+    "NiftyAddTaskLabelsConfig": {
+      "additionalProperties": false,
+      "description": "Add labels to a Task.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key. Reuse only for retries of the same write within 10 minutes.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "add_task_labels",
+          "default": "add_task_labels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Id of the Task.",
+          "minLength": 1,
+          "pattern": "^[0-9A-Za-z_!]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "ids": {
+          "description": "Labels to add or remove, by id.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "ids"
+      ],
+      "title": "NiftyAddTaskLabelsConfig",
+      "type": "object"
+    },
+    "NiftyCreateDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Create Document.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key. Reuse only for retries of the same write within 10 minutes.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_document",
+          "default": "create_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Document display name. Required on create; editable.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "projectId": {
+          "description": "The project this document belongs to. Required on create \u2014 a document always lives in a project \u2014 and immutable afterwards.",
+          "minLength": 1,
+          "title": "Projectid",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1\u20133 sentence summary of what this document is for (max 2,000 chars; null = none). Surfaced in list results so agents can discover a project's knowledge without fetching bodies. Set it when creating a document; keep it short \u2014 it is metadata, not a second body.",
+          "title": "Description"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial document body, as Markdown. Supports headings, lists, tables, code blocks and Nifty mention syntax. Create-only: the body of an existing document is EXTENDED with the `append` operation and read back with the `content` operation \u2014 it can never be replaced or deleted, and it is not returned by list or get.",
+          "title": "Content"
+        }
+      },
+      "required": [
+        "name",
+        "projectId"
+      ],
+      "title": "NiftyCreateDocumentConfig",
+      "type": "object"
+    },
+    "NiftyCreateListConfig": {
+      "additionalProperties": false,
+      "description": "Create List.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key. Reuse only for retries of the same write within 10 minutes.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "List name. Trimmed; obvious spam is rejected with 400.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "projectId": {
+          "description": "Project this list belongs to (scope). Immutable after creation.",
+          "minLength": 1,
+          "title": "Projectid",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name",
+        "projectId"
+      ],
+      "title": "NiftyCreateListConfig",
+      "type": "object"
+    },
+    "NiftyCreateMessageConfig": {
+      "additionalProperties": false,
+      "description": "Create Message.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key. Reuse only for retries of the same write within 10 minutes.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_message",
+          "default": "create_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "text": {
+          "description": "Message body. Supports Markdown formatting, plus embedded mention tags (`<@memberId>` person, `<?taskId>` task, `<#projectId>` project, `<??statusId>` status, `<^listId>` list, `<~labelId>` label, `<$portfolioId>` portfolio, `<!discussionId>` discussion). Nullable for non-text messages (gif, audio).",
+          "maxLength": 655350,
+          "title": "Text",
+          "type": "string"
+        },
+        "taskId": {
+          "description": "The task this message comments on. Exactly one parent context per message.",
+          "title": "Taskid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "taskId"
+      ],
+      "title": "NiftyCreateMessageConfig",
+      "type": "object"
+    },
+    "NiftyCreateProjectConfig": {
+      "additionalProperties": false,
+      "description": "Create Project.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key. Reuse only for retries of the same write within 10 minutes.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Display name. Must be unique among the projects in the same portfolio. Maximum 100 characters.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional project description. Supports Markdown formatting.",
+          "title": "Description"
+        },
+        "portfolioId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The portfolio this project is grouped under. Defaults to the team's General portfolio when omitted on create. Immutable after create.",
+          "title": "Portfolioid"
+        },
+        "accessType": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "limited",
+                "workspace"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Visibility: limited (default \u2014 only invited members), public (all team members auto-added) or workspace (every non-guest team member can find and open it). Omit for limited.",
+          "title": "Accesstype",
+          "enum": [
+            "public",
+            "limited",
+            "workspace"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "NiftyCreateProjectConfig",
+      "type": "object"
+    },
+    "NiftyCreateTaskConfig": {
+      "additionalProperties": false,
+      "description": "Create Task.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key. Reuse only for retries of the same write within 10 minutes.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Task name. 1\u20131024 characters after trimming. Content that reads as promotional (link-farm text, bulk marketing copy) is rejected with a 400.",
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task description. Supports Markdown formatting.",
+          "title": "Description"
+        },
+        "projectId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project this task belongs to; `null` on a personal task. Omit it on create to make a personal task (visible only to you). PATCH-ing it moves the task \u2014 and its subtasks \u2014 into another project; a personal task cannot be moved into a project, nor a project task made personal.",
+          "title": "Projectid"
+        },
+        "listId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The list this task belongs to. Null when the task is not on a list. Legal ids come from `GET /lists`.",
+          "title": "Listid"
+        },
+        "statusId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The status column this task sits in. Null when the task has no status (e.g. a backlog item). Legal ids come from `GET /statuses`.",
+          "title": "Statusid"
+        },
+        "parentTaskId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The parent task, when this task is a subtask. Null on top-level tasks. Subtask siblings are ranked by `order`.",
+          "title": "Parenttaskid"
+        },
+        "startAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When work on this task is scheduled to start.",
+          "title": "Startat"
+        },
+        "dueAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When this task is due.",
+          "title": "Dueat"
+        },
+        "estimate": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Effort estimate in minutes, used when the project's `estimationUnit` is `hours` (enter `20m` / `1h 30m` as 20 / 90); `points` projects keep `storyPoints` and convert through the team's points-per-day at read. `null` means unestimated. Not a rank and not time already spent.",
+          "title": "Estimate"
+        },
+        "assignees": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Team member ids of the people assigned to this task. On create, seeds the set. **On update, REPLACES the whole set \u2014 members you leave out are unassigned.** For additive changes use `POST`/`DELETE /tasks/{id}/assignees`. Read the current set with `?expand=assignees`.",
+          "title": "Assignees"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label ids attached to this task. On create, seeds the set. **On update, REPLACES the whole set \u2014 labels you leave out are detached.** For additive changes use `POST`/`DELETE /tasks/{id}/labels`. Read the current set with `?expand=labels`.",
+          "title": "Labels"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "NiftyCreateTaskConfig",
+      "type": "object"
+    },
+    "NiftyCreateTimeEntryConfig": {
+      "additionalProperties": false,
+      "description": "Create Time Entry.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key. Reuse only for retries of the same write within 10 minutes.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_time_entry",
+          "default": "create_time_entry",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start": {
+          "description": "When the tracked interval began (ISO 8601).",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "When the tracked interval ended (ISO 8601); null while the entry is running. Start a timer with `POST /time-entries/start`. Creating an entry without `end` (or with null) makes a running entry *without* stopping your current one. PATCH `end` to stop a running entry; a stopped entry cannot be reopened, so PATCH with `end: null` is refused.",
+          "title": "End",
+          "type": "string"
+        },
+        "taskId": {
+          "description": "The task this time is tracked against. Set once when the entry is created: an entry cannot be moved to another task afterwards. Null if that task has since been deleted \u2014 the entry is kept, and `taskNiceId` and `taskName` then say which task it was.",
+          "minLength": 1,
+          "title": "Taskid",
+          "type": "string"
+        },
+        "projectId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The project this time is booked against. Set once when the entry is created: an entry cannot be moved to another project afterwards.",
+          "title": "Projectid"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free-text note about what the time was spent on. This is the field `GET /time-entries/search` matches against.",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "taskId"
+      ],
+      "title": "NiftyCreateTimeEntryConfig",
+      "type": "object"
+    },
+    "NiftyDeleteTaskConfig": {
+      "additionalProperties": false,
+      "description": "Delete Task.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key. Reuse only for retries of the same write within 10 minutes.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Id of the Task.",
+          "minLength": 1,
+          "pattern": "^[0-9A-Za-z_!]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "NiftyDeleteTaskConfig",
+      "type": "object"
+    },
+    "NiftyGetCurrentMemberConfig": {
+      "additionalProperties": false,
+      "description": "Me (Team Member).",
+      "properties": {
+        "operation": {
+          "const": "get_current_member",
+          "default": "get_current_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "NiftyGetCurrentMemberConfig",
+      "type": "object"
+    },
+    "NiftyGetProjectConfig": {
+      "additionalProperties": false,
+      "description": "Get Project.",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Id of the Project.",
+          "minLength": 1,
+          "pattern": "^[0-9A-Za-z_!]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "NiftyGetProjectConfig",
+      "type": "object"
+    },
+    "NiftyGetTaskConfig": {
+      "additionalProperties": false,
+      "description": "Get Task.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Id of the Task.",
+          "minLength": 1,
+          "pattern": "^[0-9A-Za-z_!]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "NiftyGetTaskConfig",
+      "type": "object"
+    },
+    "NiftyListDocumentsConfig": {
+      "additionalProperties": false,
+      "description": "List Documents.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page; follow nextCursor until hasMore is false.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response with the same filters.",
+          "title": "Cursor"
+        },
+        "includeTotal": {
+          "default": false,
+          "description": "Request the total count at the cost of an extra provider query.",
+          "title": "Includetotal",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "projectId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict the list to one project. Omit to list documents across every project you can access.",
+          "title": "Projectid"
+        }
+      },
+      "title": "NiftyListDocumentsConfig",
+      "type": "object"
+    },
+    "NiftyListLabelsConfig": {
+      "additionalProperties": false,
+      "description": "List Labels.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page; follow nextCursor until hasMore is false.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response with the same filters.",
+          "title": "Cursor"
+        },
+        "includeTotal": {
+          "default": false,
+          "description": "Request the total count at the cost of an extra provider query.",
+          "title": "Includetotal",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "NiftyListLabelsConfig",
+      "type": "object"
+    },
+    "NiftyListListsConfig": {
+      "additionalProperties": false,
+      "description": "List Lists.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page; follow nextCursor until hasMore is false.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response with the same filters.",
+          "title": "Cursor"
+        },
+        "includeTotal": {
+          "default": false,
+          "description": "Request the total count at the cost of an extra provider query.",
+          "title": "Includetotal",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "projectId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict the list to one project. Omit to list lists across every project you can access.",
+          "title": "Projectid"
+        }
+      },
+      "title": "NiftyListListsConfig",
+      "type": "object"
+    },
+    "NiftyListMembersConfig": {
+      "additionalProperties": false,
+      "description": "List Team Members.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page; follow nextCursor until hasMore is false.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response with the same filters.",
+          "title": "Cursor"
+        },
+        "includeTotal": {
+          "default": false,
+          "description": "Request the total count at the cost of an extra provider query.",
+          "title": "Includetotal",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "NiftyListMembersConfig",
+      "type": "object"
+    },
+    "NiftyListMessagesConfig": {
+      "additionalProperties": false,
+      "description": "List Messages.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page; follow nextCursor until hasMore is false.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response with the same filters.",
+          "title": "Cursor"
+        },
+        "includeTotal": {
+          "default": false,
+          "description": "Request the total count at the cost of an extra provider query.",
+          "title": "Includetotal",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "NiftyListMessagesConfig",
+      "type": "object"
+    },
+    "NiftyListProjectsConfig": {
+      "additionalProperties": false,
+      "description": "List Projects.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page; follow nextCursor until hasMore is false.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response with the same filters.",
+          "title": "Cursor"
+        },
+        "includeTotal": {
+          "default": false,
+          "description": "Request the total count at the cost of an extra provider query.",
+          "title": "Includetotal",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "NiftyListProjectsConfig",
+      "type": "object"
+    },
+    "NiftyListTasksConfig": {
+      "additionalProperties": false,
+      "description": "List Tasks.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page; follow nextCursor until hasMore is false.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response with the same filters.",
+          "title": "Cursor"
+        },
+        "includeTotal": {
+          "default": false,
+          "description": "Request the total count at the cost of an extra provider query.",
+          "title": "Includetotal",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "projectId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict the list to one project. Omit to list tasks across every project you can access.",
+          "title": "Projectid"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "both",
+                "project",
+                "personal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which tasks a workspace-wide list returns: `project` (rows that belong to a project you can access), `personal` (your own rows, which belong to no project), or `both`. Ignored when you pass `projectId`. Default: `both`.",
+          "title": "Scope",
+          "enum": [
+            "both",
+            "project",
+            "personal"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "NiftyListTasksConfig",
+      "type": "object"
+    },
+    "NiftyListTimeEntriesConfig": {
+      "additionalProperties": false,
+      "description": "List Time Entries.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page; follow nextCursor until hasMore is false.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response with the same filters.",
+          "title": "Cursor"
+        },
+        "includeTotal": {
+          "default": false,
+          "description": "Request the total count at the cost of an extra provider query.",
+          "title": "Includetotal",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_time_entries",
+          "default": "list_time_entries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "NiftyListTimeEntriesConfig",
+      "type": "object"
+    },
+    "NiftyPMTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "nifty_pm_personal_access_token",
+          "default": "nifty_pm_personal_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Nifty Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "In Nifty, open Settings \u2192 API Tokens \u2192 New token. Choose the scopes for your actions and paste the token here. Tokens reach one workspace. Include members:read for the connection check; reads need the corresponding resource:read scope, creates and updates resource:write, assignments tasks:link, and deleting tasks tasks:delete. A successful connection check does not prove write permissions.",
+      "x-credential-url": "https://developers.niftypm.com/docs/getting-started"
+    },
+    "NiftySearchTasksConfig": {
+      "additionalProperties": false,
+      "description": "Search Tasks.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page; follow nextCursor until hasMore is false.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous response with the same filters.",
+          "title": "Cursor"
+        },
+        "includeTotal": {
+          "default": false,
+          "description": "Request the total count at the cost of an extra provider query.",
+          "title": "Includetotal",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "search_tasks",
+          "default": "search_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "description": "Full-text search query. Trimmed before matching; URLs, e-mail addresses and HTML markup are rejected.",
+          "maxLength": 200,
+          "minLength": 3,
+          "title": "Q",
+          "type": "string"
+        },
+        "projectId": {
+          "description": "The project to search within. Required \u2014 tasks are project-scoped and search has no workspace-wide mode.",
+          "title": "Projectid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q",
+        "projectId"
+      ],
+      "title": "NiftySearchTasksConfig",
+      "type": "object"
+    },
+    "NiftyUpdateProjectConfig": {
+      "additionalProperties": false,
+      "description": "Update Project.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key. Reuse only for retries of the same write within 10 minutes.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Id of the Project.",
+          "minLength": 1,
+          "pattern": "^[0-9A-Za-z_!]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name. Must be unique among the projects in the same portfolio. Maximum 100 characters.",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional project description. Supports Markdown formatting.",
+          "title": "Description"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Archived projects are hidden from default project lists. Archiving does NOT cascade \u2014 tasks and lists inside the project stay active. Set it with PATCH; a project cannot be created already archived.",
+          "title": "Archived"
+        },
+        "accessType": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "limited",
+                "workspace"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Visibility: limited (default \u2014 only invited members), public (all team members auto-added) or workspace (every non-guest team member can find and open it). Omit for limited.",
+          "title": "Accesstype",
+          "enum": [
+            "public",
+            "limited",
+            "workspace"
+          ],
+          "x-enum-searchable": true
+        },
+        "expectedUpdatedAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional concurrency guard: the `updatedAt` you last read. If the resource has changed since, the update is rejected with 409 instead of overwriting the other writer. Re-read, re-derive your change from the current values, and retry with the fresh `updatedAt`.",
+          "title": "Expectedupdatedat"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "NiftyUpdateProjectConfig",
+      "type": "object"
+    },
+    "NiftyUpdateTaskConfig": {
+      "additionalProperties": false,
+      "description": "Update Task.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key. Reuse only for retries of the same write within 10 minutes.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Id of the Task.",
+          "minLength": 1,
+          "pattern": "^[0-9A-Za-z_!]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task name. 1\u20131024 characters after trimming. Content that reads as promotional (link-farm text, bulk marketing copy) is rejected with a 400.",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task description. Supports Markdown formatting.",
+          "title": "Description"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether this task is marked complete. Set `true` to mark a task done \u2014 Nifty renders completed tasks in a virtual \"Completed\" column, so prefer this over creating a separate \"Done\" status. Pairs with `completedAt` (timestamp) and `completedById` (who completed it).",
+          "title": "Completed"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether this resource is archived.",
+          "title": "Archived"
+        },
+        "listId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The list this task belongs to. Null when the task is not on a list. Legal ids come from `GET /lists`.",
+          "title": "Listid"
+        },
+        "statusId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The status column this task sits in. Null when the task has no status (e.g. a backlog item). Legal ids come from `GET /statuses`.",
+          "title": "Statusid"
+        },
+        "dueAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When this task is due.",
+          "title": "Dueat"
+        },
+        "estimate": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Effort estimate in minutes, used when the project's `estimationUnit` is `hours` (enter `20m` / `1h 30m` as 20 / 90); `points` projects keep `storyPoints` and convert through the team's points-per-day at read. `null` means unestimated. Not a rank and not time already spent.",
+          "title": "Estimate"
+        },
+        "expectedUpdatedAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional concurrency guard: the `updatedAt` you last read. If the resource has changed since, the update is rejected with 409 instead of overwriting the other writer. Re-read, re-derive your change from the current values, and retry with the fresh `updatedAt`.",
+          "title": "Expectedupdatedat"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "NiftyUpdateTaskConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_task_assignees": "#/$defs/NiftyAddTaskAssigneesConfig",
+          "add_task_labels": "#/$defs/NiftyAddTaskLabelsConfig",
+          "create_document": "#/$defs/NiftyCreateDocumentConfig",
+          "create_list": "#/$defs/NiftyCreateListConfig",
+          "create_message": "#/$defs/NiftyCreateMessageConfig",
+          "create_project": "#/$defs/NiftyCreateProjectConfig",
+          "create_task": "#/$defs/NiftyCreateTaskConfig",
+          "create_time_entry": "#/$defs/NiftyCreateTimeEntryConfig",
+          "delete_task": "#/$defs/NiftyDeleteTaskConfig",
+          "get_current_member": "#/$defs/NiftyGetCurrentMemberConfig",
+          "get_project": "#/$defs/NiftyGetProjectConfig",
+          "get_task": "#/$defs/NiftyGetTaskConfig",
+          "list_documents": "#/$defs/NiftyListDocumentsConfig",
+          "list_labels": "#/$defs/NiftyListLabelsConfig",
+          "list_lists": "#/$defs/NiftyListListsConfig",
+          "list_members": "#/$defs/NiftyListMembersConfig",
+          "list_messages": "#/$defs/NiftyListMessagesConfig",
+          "list_projects": "#/$defs/NiftyListProjectsConfig",
+          "list_tasks": "#/$defs/NiftyListTasksConfig",
+          "list_time_entries": "#/$defs/NiftyListTimeEntriesConfig",
+          "search_tasks": "#/$defs/NiftySearchTasksConfig",
+          "update_project": "#/$defs/NiftyUpdateProjectConfig",
+          "update_task": "#/$defs/NiftyUpdateTaskConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/NiftyListDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyCreateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyListLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyGetCurrentMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyCreateMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyDeleteTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftySearchTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyAddTaskAssigneesConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyAddTaskLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyListTimeEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/NiftyCreateTimeEntryConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NiftyPMTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Nifty-pm Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
