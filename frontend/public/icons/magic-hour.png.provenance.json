@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/magic-hour.png",
+  "source": "https://raw.githubusercontent.com/magichourhq/docs/main/icons/favicon.png (official docs favicon declared in https://github.com/magichourhq/docs/blob/main/docs.json)",
+  "license": "Magic Hour brand mark, used nominatively to identify the connected service; trademark rights remain with Magic Hour.",
+  "sha256": "30ac627d6fe590d1fa7d08faa2f43b6d75cda9a633542bf1fee5c3bd2996fab2"
+}
