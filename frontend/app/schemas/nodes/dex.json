@@ -1,0 +1,1711 @@
+{
+  "$defs": {
+    "DexAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "dex_api_key",
+          "default": "dex_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Dex API Key",
+      "type": "object",
+      "x-credential-instructions": "In Dex Settings > Dex API & MCP, create a key for Personal Dex or your workspace. Paste the key here. Choose Read & write to create or change records; a Read-only key supports reads. Workspace API access must be enabled by its owner or admin.",
+      "x-credential-url": "https://getdex.com/docs/api-reference/authentication"
+    },
+    "DexAddContactsToGroup": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_contacts_to_group",
+          "default": "add_contacts_to_group",
+          "title": "Add Contacts To Group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "format": "uuid",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "contact_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Contact Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "group_id",
+        "contact_ids"
+      ],
+      "title": "DexAddContactsToGroup",
+      "type": "object"
+    },
+    "DexAddTagsToContacts": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_tags_to_contacts",
+          "default": "add_tags_to_contacts",
+          "title": "Add Tags To Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Contact Ids",
+          "type": "array"
+        },
+        "tag_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Tag Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "contact_ids",
+        "tag_ids"
+      ],
+      "title": "DexAddTagsToContacts",
+      "type": "object"
+    },
+    "DexCreateContact": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "full_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Title"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "starred": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starred"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When supplied, sends contact_emails with this address. On update this replaces the email collection.",
+          "title": "Email"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "idempotency_key"
+      ],
+      "title": "DexCreateContact",
+      "type": "object"
+    },
+    "DexCreateGroup": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Create Group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "name"
+      ],
+      "title": "DexCreateGroup",
+      "type": "object"
+    },
+    "DexCreateNote": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Create Note",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note": {
+          "maxLength": 50000,
+          "title": "Note",
+          "type": "string"
+        },
+        "event_time": {
+          "format": "date-time",
+          "title": "Event Time",
+          "type": "string"
+        },
+        "contact_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Contact Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "note",
+        "event_time"
+      ],
+      "title": "DexCreateNote",
+      "type": "object"
+    },
+    "DexCreateReminder": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_reminder",
+          "default": "create_reminder",
+          "title": "Create Reminder",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "due_at_date": {
+          "format": "date-time",
+          "title": "Due At Date",
+          "type": "string"
+        },
+        "contact_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Contact Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "text",
+        "due_at_date"
+      ],
+      "title": "DexCreateReminder",
+      "type": "object"
+    },
+    "DexCreateTag": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 99,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "name"
+      ],
+      "title": "DexCreateTag",
+      "type": "object"
+    },
+    "DexDeleteContact": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "contact_id"
+      ],
+      "title": "DexDeleteContact",
+      "type": "object"
+    },
+    "DexDeleteNote": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Delete Note",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "note_id"
+      ],
+      "title": "DexDeleteNote",
+      "type": "object"
+    },
+    "DexDeleteReminder": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_reminder",
+          "default": "delete_reminder",
+          "title": "Delete Reminder",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reminder_id": {
+          "format": "uuid",
+          "title": "Reminder Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "reminder_id"
+      ],
+      "title": "DexDeleteReminder",
+      "type": "object"
+    },
+    "DexGetContact": {
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DexGetContact",
+      "type": "object"
+    },
+    "DexGetReminder": {
+      "properties": {
+        "operation": {
+          "const": "get_reminder",
+          "default": "get_reminder",
+          "title": "Get Reminder",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reminder_id": {
+          "format": "uuid",
+          "title": "Reminder Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reminder_id"
+      ],
+      "title": "DexGetReminder",
+      "type": "object"
+    },
+    "DexGetUser": {
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get My Account",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DexGetUser",
+      "type": "object"
+    },
+    "DexListContactNotes": {
+      "properties": {
+        "take": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use pagination.nextCursor from the preceding page.",
+          "title": "Next cursor"
+        },
+        "operation": {
+          "const": "list_contact_notes",
+          "default": "list_contact_notes",
+          "title": "List Contact Notes",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DexListContactNotes",
+      "type": "object"
+    },
+    "DexListContacts": {
+      "properties": {
+        "take": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy pagination.nextCursor from the previous response. Leave blank for the first page.",
+          "title": "Next cursor"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "updated_since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only contacts updated at or after this UTC timestamp.",
+          "title": "Updated Since"
+        }
+      },
+      "title": "DexListContacts",
+      "type": "object"
+    },
+    "DexListGroups": {
+      "properties": {
+        "take": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use pagination.nextCursor from the preceding page.",
+          "title": "Next cursor"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DexListGroups",
+      "type": "object"
+    },
+    "DexListReminders": {
+      "properties": {
+        "take": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy pagination.nextCursor from the previous response. Leave blank for the first page.",
+          "title": "Next cursor"
+        },
+        "operation": {
+          "const": "list_reminders",
+          "default": "list_reminders",
+          "title": "List Reminders",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DexListReminders",
+      "type": "object"
+    },
+    "DexListTags": {
+      "properties": {
+        "take": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use pagination.nextCursor from the preceding page.",
+          "title": "Next cursor"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DexListTags",
+      "type": "object"
+    },
+    "DexOnNewContact": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_contact",
+          "default": "on_new_contact",
+          "title": "On New Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "updated_since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UTC lower bound for contacts to monitor. Existing records form the initial baseline.",
+          "title": "Updated Since"
+        }
+      },
+      "title": "DexOnNewContact",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "DexOnUpdatedContact": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_updated_contact",
+          "default": "on_updated_contact",
+          "title": "On Updated Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "updated_since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UTC lower bound for contacts to monitor. Existing records form the initial baseline.",
+          "title": "Updated Since"
+        }
+      },
+      "title": "DexOnUpdatedContact",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "DexRemoveContactsFromGroup": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_contacts_from_group",
+          "default": "remove_contacts_from_group",
+          "title": "Remove Contacts From Group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "format": "uuid",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "contact_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Contact Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "group_id",
+        "contact_ids"
+      ],
+      "title": "DexRemoveContactsFromGroup",
+      "type": "object"
+    },
+    "DexUpdateContact": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "full_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Title"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "starred": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starred"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When supplied, sends contact_emails with this address. On update this replaces the email collection.",
+          "title": "Email"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "contact_id"
+      ],
+      "title": "DexUpdateContact",
+      "type": "object"
+    },
+    "DexUpdateNote": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Update Note",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "format": "uuid",
+          "title": "Note Id",
+          "type": "string"
+        },
+        "note": {
+          "maxLength": 50000,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "note_id",
+        "note"
+      ],
+      "title": "DexUpdateNote",
+      "type": "object"
+    },
+    "DexUpdateReminder": {
+      "properties": {
+        "idempotency_key": {
+          "description": "A unique key per logical change; reuse exactly this key and body on retries.",
+          "maxLength": 255,
+          "minLength": 8,
+          "pattern": "^[\\w\\-:.]+$",
+          "title": "Idempotency key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_reminder",
+          "default": "update_reminder",
+          "title": "Update Reminder",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reminder_id": {
+          "format": "uuid",
+          "title": "Reminder Id",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "due_at_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due At Date"
+        },
+        "is_complete": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Complete"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "reminder_id"
+      ],
+      "title": "DexUpdateReminder",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contacts_to_group": "#/$defs/DexAddContactsToGroup",
+          "add_tags_to_contacts": "#/$defs/DexAddTagsToContacts",
+          "create_contact": "#/$defs/DexCreateContact",
+          "create_group": "#/$defs/DexCreateGroup",
+          "create_note": "#/$defs/DexCreateNote",
+          "create_reminder": "#/$defs/DexCreateReminder",
+          "create_tag": "#/$defs/DexCreateTag",
+          "delete_contact": "#/$defs/DexDeleteContact",
+          "delete_note": "#/$defs/DexDeleteNote",
+          "delete_reminder": "#/$defs/DexDeleteReminder",
+          "get_contact": "#/$defs/DexGetContact",
+          "get_reminder": "#/$defs/DexGetReminder",
+          "get_user": "#/$defs/DexGetUser",
+          "list_contact_notes": "#/$defs/DexListContactNotes",
+          "list_contacts": "#/$defs/DexListContacts",
+          "list_groups": "#/$defs/DexListGroups",
+          "list_reminders": "#/$defs/DexListReminders",
+          "list_tags": "#/$defs/DexListTags",
+          "on_new_contact": "#/$defs/DexOnNewContact",
+          "on_updated_contact": "#/$defs/DexOnUpdatedContact",
+          "remove_contacts_from_group": "#/$defs/DexRemoveContactsFromGroup",
+          "update_contact": "#/$defs/DexUpdateContact",
+          "update_note": "#/$defs/DexUpdateNote",
+          "update_reminder": "#/$defs/DexUpdateReminder"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DexGetUser"
+        },
+        {
+          "$ref": "#/$defs/DexListContacts"
+        },
+        {
+          "$ref": "#/$defs/DexGetContact"
+        },
+        {
+          "$ref": "#/$defs/DexDeleteContact"
+        },
+        {
+          "$ref": "#/$defs/DexCreateContact"
+        },
+        {
+          "$ref": "#/$defs/DexUpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DexListGroups"
+        },
+        {
+          "$ref": "#/$defs/DexCreateGroup"
+        },
+        {
+          "$ref": "#/$defs/DexListTags"
+        },
+        {
+          "$ref": "#/$defs/DexCreateTag"
+        },
+        {
+          "$ref": "#/$defs/DexAddContactsToGroup"
+        },
+        {
+          "$ref": "#/$defs/DexRemoveContactsFromGroup"
+        },
+        {
+          "$ref": "#/$defs/DexAddTagsToContacts"
+        },
+        {
+          "$ref": "#/$defs/DexListContactNotes"
+        },
+        {
+          "$ref": "#/$defs/DexCreateNote"
+        },
+        {
+          "$ref": "#/$defs/DexUpdateNote"
+        },
+        {
+          "$ref": "#/$defs/DexDeleteNote"
+        },
+        {
+          "$ref": "#/$defs/DexListReminders"
+        },
+        {
+          "$ref": "#/$defs/DexGetReminder"
+        },
+        {
+          "$ref": "#/$defs/DexCreateReminder"
+        },
+        {
+          "$ref": "#/$defs/DexUpdateReminder"
+        },
+        {
+          "$ref": "#/$defs/DexDeleteReminder"
+        },
+        {
+          "$ref": "#/$defs/DexOnNewContact"
+        },
+        {
+          "$ref": "#/$defs/DexOnUpdatedContact"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DexAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dex Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
