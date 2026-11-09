@@ -1,0 +1,1165 @@
+{
+  "$defs": {
+    "OrgoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "orgo_api_key",
+          "default": "orgo_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Orgo API Key",
+      "type": "object",
+      "x-credential-instructions": "In the Orgo dashboard, create an API key and paste its value without the Bearer prefix. Use an account-wide key with permissions for your workflow. NoClick sends it only to www.orgo.ai. Connecting reads the current account; computer creation and running computers can spend your Orgo credit.",
+      "x-credential-url": "https://www.orgo.ai/dashboard"
+    },
+    "OrgoClickConfig": {
+      "additionalProperties": false,
+      "description": "Click a screen coordinate.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "screen": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional screen selector for computers with multiple displays.",
+          "title": "Screen"
+        },
+        "operation": {
+          "const": "click",
+          "default": "click",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "x": {
+          "title": "X",
+          "type": "integer"
+        },
+        "y": {
+          "title": "Y",
+          "type": "integer"
+        },
+        "button": {
+          "anyOf": [
+            {
+              "enum": [
+                "left",
+                "right"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Button",
+          "enum": [
+            "left",
+            "right"
+          ],
+          "x-enum-searchable": true
+        },
+        "double": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Double"
+        }
+      },
+      "required": [
+        "computer_id",
+        "x",
+        "y"
+      ],
+      "title": "OrgoClickConfig",
+      "type": "object"
+    },
+    "OrgoCreateComputerConfig": {
+      "additionalProperties": false,
+      "description": "Provision a cloud computer; this can spend Orgo credit.",
+      "properties": {
+        "operation": {
+          "const": "create_computer",
+          "default": "create_computer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "os": {
+          "anyOf": [
+            {
+              "enum": [
+                "linux",
+                "windows",
+                "macos",
+                "android",
+                "ios"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Os",
+          "enum": [
+            "linux",
+            "windows",
+            "macos",
+            "android",
+            "ios"
+          ],
+          "x-enum-searchable": true
+        },
+        "ram": {
+          "anyOf": [
+            {
+              "enum": [
+                4,
+                8,
+                10,
+                16,
+                32,
+                64
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RAM in GB; omit to use the provider or template default.",
+          "title": "Ram"
+        },
+        "cpu": {
+          "anyOf": [
+            {
+              "enum": [
+                0.5,
+                1,
+                2,
+                4,
+                6,
+                8,
+                16
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cpu"
+        },
+        "disk_size_gb": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Disk Size Gb"
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "WIDTHxHEIGHTxDEPTH, for example 1280x720x24.",
+          "title": "Resolution"
+        },
+        "ends_in_hours": {
+          "anyOf": [
+            {
+              "maximum": 720,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delete the computer and its contents when the time is up. Omit to keep it.",
+          "title": "Ends In Hours"
+        },
+        "billing_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "hourly",
+                "plan",
+                "monthly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omitted: provider selects billing; hourly launches spend account credit.",
+          "title": "Billing Mode",
+          "enum": [
+            "hourly",
+            "plan",
+            "monthly"
+          ],
+          "x-enum-searchable": true
+        },
+        "compute_request_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this launch ID when manually retrying to avoid provisioning twice.",
+          "title": "Compute Request Id"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[ -~]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key header for this launch.",
+          "title": "Idempotency Key"
+        },
+        "template_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Template reference namespace/name@version.",
+          "title": "Template Ref"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name"
+      ],
+      "title": "OrgoCreateComputerConfig",
+      "type": "object"
+    },
+    "OrgoCreatePublicUrlConfig": {
+      "additionalProperties": false,
+      "description": "Expose a computer port through a public URL.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_public_url",
+          "default": "create_public_url",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "port": {
+          "maximum": 65535,
+          "minimum": 1,
+          "title": "Port",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name prefix; Orgo adds four characters.",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "computer_id",
+        "port"
+      ],
+      "title": "OrgoCreatePublicUrlConfig",
+      "type": "object"
+    },
+    "OrgoDeleteComputerConfig": {
+      "additionalProperties": false,
+      "description": "Delete a computer and everything on it.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_computer",
+          "default": "delete_computer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "computer_id"
+      ],
+      "title": "OrgoDeleteComputerConfig",
+      "type": "object"
+    },
+    "OrgoDeletePublicUrlConfig": {
+      "additionalProperties": false,
+      "description": "Remove a public URL; the application keeps running.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_public_url",
+          "default": "delete_public_url",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url_id": {
+          "format": "uuid",
+          "title": "Url Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "computer_id",
+        "url_id"
+      ],
+      "title": "OrgoDeletePublicUrlConfig",
+      "type": "object"
+    },
+    "OrgoGetAccountCapacityConfig": {
+      "additionalProperties": false,
+      "description": "Read account compute capacity.",
+      "properties": {
+        "operation": {
+          "const": "get_account_capacity",
+          "default": "get_account_capacity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OrgoGetAccountCapacityConfig",
+      "type": "object"
+    },
+    "OrgoGetAccountLimitsConfig": {
+      "additionalProperties": false,
+      "description": "Read account workspace and rate limits.",
+      "properties": {
+        "operation": {
+          "const": "get_account_limits",
+          "default": "get_account_limits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OrgoGetAccountLimitsConfig",
+      "type": "object"
+    },
+    "OrgoGetComputerConfig": {
+      "additionalProperties": false,
+      "description": "Get computer state and connection details.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_computer",
+          "default": "get_computer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "computer_id"
+      ],
+      "title": "OrgoGetComputerConfig",
+      "type": "object"
+    },
+    "OrgoGetComputerOperationConfig": {
+      "additionalProperties": false,
+      "description": "Poll one computer lifecycle operation.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_computer_operation",
+          "default": "get_computer_operation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "operation_id": {
+          "description": "Operation ID returned by an asynchronous lifecycle action.",
+          "format": "uuid",
+          "title": "Operation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "computer_id",
+        "operation_id"
+      ],
+      "title": "OrgoGetComputerOperationConfig",
+      "type": "object"
+    },
+    "OrgoGetMeConfig": {
+      "additionalProperties": false,
+      "description": "Get the current authenticated account.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OrgoGetMeConfig",
+      "type": "object"
+    },
+    "OrgoListComputerAppsConfig": {
+      "additionalProperties": false,
+      "description": "List apps saved on a computer.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_computer_apps",
+          "default": "list_computer_apps",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "computer_id"
+      ],
+      "title": "OrgoListComputerAppsConfig",
+      "type": "object"
+    },
+    "OrgoListPublicUrlsConfig": {
+      "additionalProperties": false,
+      "description": "List the public URLs on a computer.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_public_urls",
+          "default": "list_public_urls",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "computer_id"
+      ],
+      "title": "OrgoListPublicUrlsConfig",
+      "type": "object"
+    },
+    "OrgoListWorkspacesConfig": {
+      "additionalProperties": false,
+      "description": "List workspaces and their computers; Orgo may create a default workspace on the first call.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "OrgoListWorkspacesConfig",
+      "type": "object"
+    },
+    "OrgoPressKeyConfig": {
+      "additionalProperties": false,
+      "description": "Press a key or keyboard shortcut.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "screen": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional screen selector for computers with multiple displays.",
+          "title": "Screen"
+        },
+        "operation": {
+          "const": "press_key",
+          "default": "press_key",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key": {
+          "description": "Key or shortcut, for example ctrl+c.",
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "computer_id",
+        "key"
+      ],
+      "title": "OrgoPressKeyConfig",
+      "type": "object"
+    },
+    "OrgoRestartComputerConfig": {
+      "additionalProperties": false,
+      "description": "Restart a computer.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "restart_computer",
+          "default": "restart_computer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "clear_disk": {
+          "default": false,
+          "description": "GPU computers only: clear the disk and restart; Orgo saves a copy of /root first.",
+          "title": "Clear Disk",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "computer_id"
+      ],
+      "title": "OrgoRestartComputerConfig",
+      "type": "object"
+    },
+    "OrgoResumeComputerConfig": {
+      "additionalProperties": false,
+      "description": "Resume a paused computer.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "ends_in_hours": {
+          "anyOf": [
+            {
+              "maximum": 720,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delete the computer and everything on it after this many hours. Omit to preserve its end.",
+          "title": "Ends In Hours"
+        },
+        "keep_forever": {
+          "default": false,
+          "description": "Explicitly clear the end by sending ends_at null.",
+          "title": "Keep Forever",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "resume_computer",
+          "default": "resume_computer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "computer_id"
+      ],
+      "title": "OrgoResumeComputerConfig",
+      "type": "object"
+    },
+    "OrgoRunBashConfig": {
+      "additionalProperties": false,
+      "description": "Run a shell command on a computer.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "screen": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional screen selector for computers with multiple displays.",
+          "title": "Screen"
+        },
+        "operation": {
+          "const": "run_bash",
+          "default": "run_bash",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "command": {
+          "minLength": 1,
+          "title": "Command",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "maximum": 300,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Command timeout in seconds.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "computer_id",
+        "command"
+      ],
+      "title": "OrgoRunBashConfig",
+      "type": "object"
+    },
+    "OrgoStartComputerConfig": {
+      "additionalProperties": false,
+      "description": "Start a computer; poll an asynchronous operation separately.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "ends_in_hours": {
+          "anyOf": [
+            {
+              "maximum": 720,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delete the computer and everything on it after this many hours. Omit to preserve its end.",
+          "title": "Ends In Hours"
+        },
+        "keep_forever": {
+          "default": false,
+          "description": "Explicitly clear the end by sending ends_at null.",
+          "title": "Keep Forever",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "start_computer",
+          "default": "start_computer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "run_async": {
+          "default": true,
+          "description": "Return immediately with an operation ID to poll.",
+          "title": "Run Async",
+          "type": "boolean"
+        },
+        "billing_mode": {
+          "anyOf": [
+            {
+              "const": "hourly",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Explicitly move an eligible older Free computer to hourly billing.",
+          "title": "Billing Mode"
+        }
+      },
+      "required": [
+        "computer_id"
+      ],
+      "title": "OrgoStartComputerConfig",
+      "type": "object"
+    },
+    "OrgoStopComputerConfig": {
+      "additionalProperties": false,
+      "description": "Stop a computer while keeping its disk.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "stop_computer",
+          "default": "stop_computer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "run_async": {
+          "default": true,
+          "description": "Return immediately with an operation ID to poll.",
+          "title": "Run Async",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "computer_id"
+      ],
+      "title": "OrgoStopComputerConfig",
+      "type": "object"
+    },
+    "OrgoSuspendComputerConfig": {
+      "additionalProperties": false,
+      "description": "Pause a computer with its memory saved.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "suspend_computer",
+          "default": "suspend_computer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "computer_id"
+      ],
+      "title": "OrgoSuspendComputerConfig",
+      "type": "object"
+    },
+    "OrgoTypeTextConfig": {
+      "additionalProperties": false,
+      "description": "Type text into the focused application.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "screen": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional screen selector for computers with multiple displays.",
+          "title": "Screen"
+        },
+        "operation": {
+          "const": "type_text",
+          "default": "type_text",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "computer_id",
+        "text"
+      ],
+      "title": "OrgoTypeTextConfig",
+      "type": "object"
+    },
+    "OrgoUpdateComputerConfig": {
+      "additionalProperties": false,
+      "description": "Rename a computer or change when it is deleted.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "ends_in_hours": {
+          "anyOf": [
+            {
+              "maximum": 720,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delete the computer and everything on it after this many hours. Omit to preserve its end.",
+          "title": "Ends In Hours"
+        },
+        "keep_forever": {
+          "default": false,
+          "description": "Explicitly clear the end by sending ends_at null.",
+          "title": "Keep Forever",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "update_computer",
+          "default": "update_computer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "computer_id"
+      ],
+      "title": "OrgoUpdateComputerConfig",
+      "type": "object"
+    },
+    "OrgoUpdatePublicUrlConfig": {
+      "additionalProperties": false,
+      "description": "Change a public URL port or password.",
+      "properties": {
+        "computer_id": {
+          "description": "Computer ID from List Workspaces (desktops) or Create Computer.",
+          "minLength": 1,
+          "title": "Computer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_public_url",
+          "default": "update_public_url",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url_id": {
+          "format": "uuid",
+          "title": "Url Id",
+          "type": "string"
+        },
+        "port": {
+          "anyOf": [
+            {
+              "maximum": 65535,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Port"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 4,
+              "pattern": "^[!-~]([ -~]*[!-~])?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Password",
+          "ui:widget": "password"
+        },
+        "remove_password": {
+          "default": false,
+          "description": "Make the URL open by sending password null.",
+          "title": "Remove Password",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "computer_id",
+        "url_id"
+      ],
+      "title": "OrgoUpdatePublicUrlConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "click": "#/$defs/OrgoClickConfig",
+          "create_computer": "#/$defs/OrgoCreateComputerConfig",
+          "create_public_url": "#/$defs/OrgoCreatePublicUrlConfig",
+          "delete_computer": "#/$defs/OrgoDeleteComputerConfig",
+          "delete_public_url": "#/$defs/OrgoDeletePublicUrlConfig",
+          "get_account_capacity": "#/$defs/OrgoGetAccountCapacityConfig",
+          "get_account_limits": "#/$defs/OrgoGetAccountLimitsConfig",
+          "get_computer": "#/$defs/OrgoGetComputerConfig",
+          "get_computer_operation": "#/$defs/OrgoGetComputerOperationConfig",
+          "get_me": "#/$defs/OrgoGetMeConfig",
+          "list_computer_apps": "#/$defs/OrgoListComputerAppsConfig",
+          "list_public_urls": "#/$defs/OrgoListPublicUrlsConfig",
+          "list_workspaces": "#/$defs/OrgoListWorkspacesConfig",
+          "press_key": "#/$defs/OrgoPressKeyConfig",
+          "restart_computer": "#/$defs/OrgoRestartComputerConfig",
+          "resume_computer": "#/$defs/OrgoResumeComputerConfig",
+          "run_bash": "#/$defs/OrgoRunBashConfig",
+          "start_computer": "#/$defs/OrgoStartComputerConfig",
+          "stop_computer": "#/$defs/OrgoStopComputerConfig",
+          "suspend_computer": "#/$defs/OrgoSuspendComputerConfig",
+          "type_text": "#/$defs/OrgoTypeTextConfig",
+          "update_computer": "#/$defs/OrgoUpdateComputerConfig",
+          "update_public_url": "#/$defs/OrgoUpdatePublicUrlConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OrgoGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoGetAccountCapacityConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoGetAccountLimitsConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoCreateComputerConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoGetComputerConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoUpdateComputerConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoDeleteComputerConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoStartComputerConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoStopComputerConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoRestartComputerConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoSuspendComputerConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoResumeComputerConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoGetComputerOperationConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoRunBashConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoClickConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoTypeTextConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoPressKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoListPublicUrlsConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoCreatePublicUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoUpdatePublicUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoDeletePublicUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/OrgoListComputerAppsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OrgoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Orgo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

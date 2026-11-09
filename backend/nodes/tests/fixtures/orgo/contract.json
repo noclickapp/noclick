@@ -1,0 +1,1397 @@
+{
+  "source": "https://www.orgo.ai/openapi.json",
+  "version": "1.0.0",
+  "sha256": "5c450cde7c6acbdb1c2e4b7a9a71513b4b19ee1a17693d3879bd78bbbffb363e",
+  "operations": {
+    "get_me": {
+      "method": "GET",
+      "path": "/api/me",
+      "contract": {
+        "operationId": "getMe",
+        "summary": "Current authenticated account",
+        "tags": [
+          "account"
+        ],
+        "responses": {
+          "200": {
+            "description": "Account profile and tier."
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "get_account_capacity": {
+      "method": "GET",
+      "path": "/api/account/capacity",
+      "contract": {
+        "operationId": "getAccountCapacity",
+        "summary": "What the account may run, runs and has added, and how many of each size it may still add",
+        "tags": [
+          "account"
+        ],
+        "responses": {
+          "200": {
+            "description": "computers ({ limit, in_use }: the plan\u2019s count and its computers; total: every computer, plan and hourly; baseline; ceiling: 999 or the account\u2019s own number; can_raise and raise_available), ram_gb and vcpu ({ limit, in_use }; vcpu is the account vCPU pool, with no limit when unmetered), added, self_serve_cap, can_add per size (0 for 2xl unless past_xl_allowed), past_xl_allowed (whether computers past XL, more than 6 vCPU or 32 GB, are the account\u2019s to add and create; false: set up on request), sizes with monthly prices and the vCPU each launches with, rates per term (ram_gb_usd, vcpu_usd, disk_20gb_usd, computer_usd, windows_usd: the per-part prices any shape is billed at) and per_computer_max."
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "403": {
+            "description": "A workspace-scoped key: capacity needs an account-wide key."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "get_account_limits": {
+      "method": "GET",
+      "path": "/api/account/limits",
+      "contract": {
+        "operationId": "getAccountLimits",
+        "summary": "The account\u2019s limits: workspaces, and every rate limit it is held to",
+        "description": "Your own account\u2019s numbers, as the rate limiter reads them. workspaces ({ used, max }: the workspaces it owns, at most 9999); rate_limits (every limit by name, as x-rate-limits names them, with the account\u2019s own numbers in place of its plan\u2019s); rate_limit_source (override when any number is the account\u2019s own, else plan, bops_plan or pay_from_credits); plan_group; unlimited (true for an account that is never rate limited); monthly_limit (always null: there are no monthly limits).",
+        "tags": [
+          "account"
+        ],
+        "responses": {
+          "200": {
+            "description": "workspaces, rate_limits, rate_limit_source, plan_group, unlimited and monthly_limit."
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "list_workspaces": {
+      "method": "GET",
+      "path": "/api/workspaces",
+      "contract": {
+        "operationId": "listWorkspaces",
+        "summary": "List workspaces (projects) for the account",
+        "tags": [
+          "workspaces"
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of workspaces."
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "create_computer": {
+      "method": "POST",
+      "path": "/api/computers",
+      "contract": {
+        "operationId": "createComputer",
+        "summary": "Provision a new cloud computer (optionally from a template via template_ref)",
+        "description": "With no size the computer is 4 GB RAM and 1 vCPU. A ram with no cpu gets that size\u2019s vCPU (8 GB: 2, 16 GB: 4, 32 GB: 6, 64 GB: 8). An explicit cpu is used as given; cpu 16 passes the value check and is refused with 403 PER_COMPUTER_CPU_CAP (8 is the most one computer runs). With template_ref and no cpu/ram the template\u2019s own size applies, with at least the vCPU of its RAM\u2019s size (an 8 GB template launches with 2). vCPU is an account pool shared by the owner\u2019s computers. A computer past XL (more than 6 vCPU or 32 GB, so 2XL: 8 vCPU, 64 GB), asked for or brought by a template, is set up on request on every plan: 403 CONTACT_US_FOR_SIZE with max_cpu and max_ram_gb, unless the workspace owner is on Enterprise or has a negotiated plan that goes past XL (GET /api/billing/compute-limits past_xl_allowed). Clones and hourly launches of 2XL follow the same rule. ends_in_hours (1 to 720) gives a Linux or Windows computer an end: when it is up the computer is deleted, running or not, with everything on it. To keep a computer, leave out the end (omitted or null: it never ends). on_end is not a choice: \"delete\" is accepted and changes nothing, and any other value (\"stop\" included) is 400 INVALID_ENDS. The 201 carries ends_at and on_end (read only). An hourly computer (billing_mode hourly) with an end prepays its whole run at launch: the running rate times the hours, held from the same credit hourly draws on, so it is never stopped for lack of credit before its end; what it does not use goes back when it stops, is deleted, is kept (ends_at null) or its end moves. A prepay always leaves an hour of the owner\u2019s other hourly computers billed by the hour. A Start bills by the hour, unless it sets an end (POST /api/computers/{id}/start ends_in_hours): that run is prepaid once it is running. Moving the end prepays again. The 201 then carries prepaid_until (its end) and prepaid_cents. Send an Idempotency-Key header (any printable key, 1 to 255 characters, such as a UUID or \"job-42\") with an hourly launch so a retry answers with the computer the first request made instead of launching and billing a second one; the key is your account\u2019s, and the same key with another size, OS, name or workspace is 409 HOURLY_REQUEST_CONFLICT. A key that is not a UUID names one launch per UTC day (a launch from the day before stays its own for an hour, unless deleted); after that the same key launches a new computer. A key that is not 1 to 255 printable characters is ignored.",
+        "tags": [
+          "computers"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateComputer"
+              },
+              "example": {
+                "workspace_id": "6f1c2a7e-3b9d-4c1a-9e2f-0a1b2c3d4e5f",
+                "name": "agent-1",
+                "os": "linux",
+                "ram": 8
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created computer."
+          },
+          "400": {
+            "description": "MISSING_FIELDS: workspace_id (or project_id) or name is missing; missing lists which, and by the hour (billing_mode hourly, or any agent account) next points at GET /api/workspaces. A value outside the allowed sets (os, ram, cpu, gpu), disk_size_gb above what the computer may have (disk_exceeds_quota), or an hourly launch naming a cpu and ram no hourly size has (HOURLY_SIZE_UNAVAILABLE, with sizes)."
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "402": {
+            "description": "An hourly launch the account\u2019s credit cannot fund (insufficient_credit). For an hourly computer with an end, the prepay it needs: error (\"This needs $0.22 of credit for 4 hours. You have $0.10.\" for a Medium at $0.055/hr), needed_cents and available_cents; needed_cents includes keep_cents, an hour of the owner\u2019s other hourly computers, when there is any. A caller who may not spend the owner\u2019s credit (a key for one workspace or one computer, an MCP sign-in, a key without Billing write) gets none of these figures."
+          },
+          "403": {
+            "description": "The owner\u2019s plan cannot fund this computer: UPGRADE_REQUIRED (no paid plan, and the create was a plan one: from the app, or billing_mode plan; a Free account\u2019s API create with no billing_mode runs by the hour instead), VM_SLOT_ADDON (the account\u2019s computer count: every computer, plan and hourly, running or stopped. Past the baseline, 50 on every paid plan, a new computer runs by the hour from credit while the credit covers an hour of all of them: a create that names no billing_mode is then made by the hour, and without the credit the body says computers, limit, ceiling and, to a caller who may spend it, credit_usd_needed. raise_available false: this computer cannot be made by the hour (hourly off, or a GPU, image, snapshot, other template or OS), so past the baseline it is refused whatever the credit. At the ceiling, the most the account can have (999, or a higher number Orgo set for it): contact us), RAM_ADDON (RAM), VCPU_ADDON (the account vCPU pool), PER_COMPUTER_RAM_CAP or PER_COMPUTER_CPU_CAP (above what one computer runs), CONTACT_US_FOR_SIZE (past XL, set up on request; with max_cpu and max_ram_gb), PLAN_LIMIT (a plan negotiated with Orgo), WINDOWS_REQUIRES_SCALE, or CLIENT_PRICE_EXCEEDED (a workspace its client pays for). Carries canManageCapacity, and upgradeTier where a plan change would fix it. RAM_ADDON and VCPU_ADDON, and VM_SLOT_ADDON past the baseline with the credit, carry hourly_available: true where the owner may launch it by the hour from credits instead (billing_mode hourly). A key\u2019s create with no billing_mode past the plan\u2019s room is launched that way on its own while the credit covers it, so this refusal then means billing_mode plan or a key that may not spend; with too little credit that create is 402 insufficient_credit. An hourly launch from an MCP sign-in or a key without Billing write on a paid account is HOURLY_NEEDS_BILLING. On a Free account, WINDOWS_REQUIRES_SCALE and a Mac\u2019s UPGRADE_REQUIRED say what to do next: upgrade_required, upgrade_url, retryable, docs_url and next, a list of { method, url, why }. A workspace this account isn\u2019t in, or one that doesn\u2019t exist, is this status with no code: \"You do not have access to this workspace.\" GET /api/workspaces lists yours.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "template_ref given but the template golden is not built, the name is taken (NAME_TAKEN), or an Idempotency-Key already used for a different hourly launch (HOURLY_REQUEST_CONFLICT)."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "description": "ENDS_UNAVAILABLE: ends_in_hours, or on_end, given where they are not set up yet. FREE_HOURLY_BUSY: every free place is taken. It carries retry_after in seconds, a Retry-After header, and a next step that adds credit, which does not wait for a place."
+          }
+        }
+      }
+    },
+    "get_computer": {
+      "method": "GET",
+      "path": "/api/computers/{id}",
+      "contract": {
+        "operationId": "getComputer",
+        "summary": "Get a computer",
+        "description": "Its status, hardware and connection details, and when it ends: ends_at (null: never), on_end (read only, what happens then: \"delete\", or \"stop\" for a computer whose end was set before every end deleted it; null with no end) and deletes_at (its end for on_end delete; for a computer stopped when its time ran out, ended_at, and deletes_at the day it is deleted unless it is started). An hourly computer running out a prepaid end has prepaid_until (when the prepaid run ends) and prepaid_cents (what is held for it); both are null for a computer billed by the hour and for a plan computer. out_of_memory says when its kernel last stopped apps because it ran out of memory: last_at, and kills_24h, how many processes were stopped in the last 24 hours. Null if that has not happened. Linux computers only.",
+        "tags": [
+          "computers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The computer."
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "404": {
+            "description": "No such computer."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "update_computer": {
+      "method": "PATCH",
+      "path": "/api/computers/{id}",
+      "contract": {
+        "operationId": "updateComputer",
+        "summary": "Rename a computer, or set when it ends",
+        "description": "Body: name, bot_mascot, and the end: ends_at (ISO 8601, in the future, at most 720 hours away), ends_in_hours (1 to 720), or ends_at null to keep it forever (send one of the two). When the end is up the computer is deleted: every end set or moved here deletes it, on a computer whose end was set before this rule (on_end \"stop\") too. on_end is not a choice: \"delete\" is accepted and changes nothing (alone, it needs a computer with an end: 400 INVALID_ENDS when there is none), and any other value (\"stop\" included) is 400 INVALID_ENDS. Changing the end needs write access to the workspace and clears a stopped computer\u2019s ended mark. Only Linux and Windows computers can have an end. A running hourly computer prepays its run to the new end: a later end holds the extra (402 when the credit is short, an hour of the owner\u2019s other hourly computers kept, nothing changed), an earlier one gives back what is past it, and ends_at null gives back what it has not used and bills it by the hour again. Only the workspace owner prepays a later end, and on a paid plan only signed in or with a key that has Billing write; anyone else who may write the workspace still moves the end, nothing more is held, the time past what is prepaid is billed by the hour, and the answer says prepay_warning. The answer carries prepaid_until, prepaid_cents and, when credit reached the balance, prepay_returned_cents: what reached it, which after a monthly credit refresh can be less than the unused part, or nothing.",
+        "tags": [
+          "computers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "ends_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date-time"
+                  },
+                  "ends_in_hours": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 1,
+                    "maximum": 720
+                  },
+                  "on_end": {
+                    "$ref": "#/components/schemas/OnEnd"
+                  }
+                }
+              },
+              "example": {
+                "ends_in_hours": 4
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The computer\u2019s id and name, and ends_at, ended_at, deletes_at and on_end (read only) when the end changed or only the end was sent (an hourly computer: prepaid_until, prepaid_cents, prepay_returned_cents, and prepay_warning when a later end was not prepaid)."
+          },
+          "400": {
+            "description": "INVALID_ENDS (a time in the past, past 720 hours, both fields, an on_end other than \"delete\", or on_end alone for a computer with no end) or ENDS_NOT_SUPPORTED (not a Linux or Windows computer)."
+          },
+          "402": {
+            "description": "insufficient_credit: a later end on an hourly computer needs more credit than there is: error, needed_cents (the extra, plus keep_cents for an hour of the owner\u2019s other hourly computers) and available_cents. Nothing changed."
+          },
+          "403": {
+            "description": "View only access (workspace_read_only)."
+          },
+          "409": {
+            "description": "COMPUTER_BUSY (retryable): an operation (a Stop, a Start, or the end itself) holds the computer, so its end did not change."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "description": "ENDS_UNAVAILABLE: ends are not set up yet, or on_end was sent where an end still stops the computer."
+          }
+        }
+      }
+    },
+    "delete_computer": {
+      "method": "DELETE",
+      "path": "/api/computers/{id}",
+      "contract": {
+        "operationId": "deleteComputer",
+        "summary": "Delete a computer and everything on it",
+        "tags": [
+          "computers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted."
+          },
+          "409": {
+            "description": "The computer cannot be deleted now (its code says why)."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "start_computer": {
+      "method": "POST",
+      "path": "/api/computers/{id}/start",
+      "contract": {
+        "operationId": "startComputer",
+        "summary": "Start a computer, optionally for a set number of hours",
+        "description": "Starts a stopped computer (a running one answers success). Body, all optional: async (true answers 202 at once with an operation to poll), and when it ends: ends_in_hours (1 to 720, counted from when it is running) or ends_at (ISO 8601, in the future, at most 720 hours away), not both; null for either keeps it forever. When the end is up the computer is deleted, with everything on it. on_end is not a choice: \"delete\" is accepted with an end and changes nothing, alone it is a 400 (a Start never touches the end a computer already has), and any other value (\"stop\" included) is a 400. The end is checked as PATCH /api/computers/{id} checks it, before anything starts: a bad one is a 400 and nothing starts. It is set only once the computer is running, as PATCH sets it, so a Start that fails holds no credit and leaves no clock running. A computer stopped when its time ran out comes back with the new end (with none, its end is cleared). A running hourly computer prepays its run to the end, under the same rule as PATCH (the workspace owner, and on a paid plan only signed in or with a key that has Billing write); when the credit is short or the caller may not prepay, the end is still set, the time is billed by the hour, and the answer says prepay_warning. An end that could not be set never fails the Start: the 200 carries end_not_set with why (error) and a code. With async, the 202 says end_pending, and the operation\u2019s result carries the end once it is running. An older frozen computer on a Free account, with no hourly billing yet: billing_mode \"hourly\" moves it to the hour from credit and starts it, keeping its size. Only the workspace owner, signed in or with an account-wide key that has Billing write. It needs credit for an hour of it and an hour of the owner\u2019s other hourly computers, and a free account the free checks hold back gets a 429 NEEDS_CARD. Without billing_mode nothing moves: the 402 upgrade_required says hourly_available, and when it is true also running_usd_per_hour, stopped_usd_per_hour, credit_usd and credit_floor_usd.",
+        "tags": [
+          "computers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "async": {
+                    "type": "boolean"
+                  },
+                  "billing_mode": {
+                    "type": "string",
+                    "enum": [
+                      "hourly"
+                    ],
+                    "description": "The owner\u2019s yes to running an older computer on Free by the hour from credit. Nothing else moves one."
+                  },
+                  "ends_in_hours": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 1,
+                    "maximum": 720
+                  },
+                  "ends_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date-time"
+                  },
+                  "on_end": {
+                    "$ref": "#/components/schemas/OnEnd"
+                  }
+                }
+              },
+              "example": {
+                "ends_in_hours": 4
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Started: success, and with an end ends_at, on_end (read only), ended_at and deletes_at, and for an hourly computer prepaid_until, prepaid_cents and prepay_warning when it was not prepaid. end_not_set (error, code) when the end could not be set; the computer is running."
+          },
+          "202": {
+            "description": "async: the operation to poll (operation_id, poll_url), and end_pending with the end it gets once it is running."
+          },
+          "400": {
+            "description": "INVALID_ENDS (a time in the past, past 720 hours, both fields, an on_end other than \"delete\", or on_end without ends_in_hours or ends_at) or ENDS_NOT_SUPPORTED (not a Linux or Windows computer). Nothing started."
+          },
+          "402": {
+            "description": "The plan or the credit does not cover running it (upgrade_required, with hourly_available and, when true, the prices, the credit and its floor; INSUFFICIENT_COMPUTE_CREDIT, with the same fields; insufficient_credit). Nothing moved. next names the call that fixes it (this Start with billing_mode \"hourly\", or the top-up), and a credit refusal add_credit_url, the page a person adds credit on.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "View only access (workspace_read_only), an end asked for by a caller PATCH refuses: computer_key (the computer\u2019s own key or identity token) or computer_scope (a key for one computer), billing_mode \"hourly\" from someone other than the workspace owner, HOURLY_NEEDS_BILLING (a key without Billing write, a key for one workspace or one computer, or an MCP sign-in), or HOURLY_LIMIT (one computer on starting credit). Nothing started."
+          },
+          "409": {
+            "description": "The computer cannot start now (its code says why), or OPERATION_IN_PROGRESS: another Start without this end is under way."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "description": "ENDS_UNAVAILABLE: an end, or on_end, was asked for where they are not set up yet; HOURLY_WORKER_UNAVAILABLE or FREE_HOURLY_BUSY on billing_mode \"hourly\": try again. Nothing started."
+          }
+        }
+      }
+    },
+    "stop_computer": {
+      "method": "POST",
+      "path": "/api/computers/{id}/stop",
+      "contract": {
+        "operationId": "stopComputer",
+        "summary": "Stop a computer",
+        "description": "Stops a running computer; its disk is kept (a stopped computer bills storage only). By default the answer waits until it is stopped (up to 5 minutes). Send {\"async\": true}, ?async=true or Prefer: respond-async to get 202 at once with an operation to poll at poll_url. A Stop already under way is joined, never repeated. Stop takes no end.",
+        "tags": [
+          "computers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "async": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "example": {
+                "async": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stopped: the operation\u2019s result ({ success: true, ... })."
+          },
+          "202": {
+            "description": "Under way: id, status stopping, operation_id, operation and poll_url (also in Location; Retry-After 2).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationAccepted"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not a JSON object, an async that is not a boolean, an end (INVALID_ENDS), or a computer this OS cannot stop (its code says why)."
+          },
+          "402": {
+            "description": "TRIAL_ARCHIVE_UNAVAILABLE: a trial computer is kept by choosing a plan."
+          },
+          "403": {
+            "description": "View only access (workspace_read_only)."
+          },
+          "409": {
+            "description": "The computer cannot stop now (its code says why; suspend_in_progress while its memory is being saved)."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "restart_computer": {
+      "method": "POST",
+      "path": "/api/computers/{id}/restart",
+      "contract": {
+        "operationId": "restartComputer",
+        "summary": "Restart a computer",
+        "description": "Reboots the computer in place; the disk is kept. A GPU computer is restarted by clearing its disk, which needs an explicit {\"clear_disk\": true} (409 RESTART_CLEARS_DISK without it): a copy of /root is saved first, and the answer is 202 with an operation to poll.",
+        "tags": [
+          "computers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "clear_disk": {
+                    "type": "boolean",
+                    "description": "GPU computers only: clear the disk and restart (a copy of /root is saved first)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Restarted: { success: true }."
+          },
+          "202": {
+            "description": "A Clear and restart under way: success, status restarting, operation_id, operation and poll_url (Location; Retry-After 5).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationAccepted"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "View only access (workspace_read_only)."
+          },
+          "409": {
+            "description": "RESTART_CLEARS_DISK (a GPU computer, sent without clear_disk), insufficient_space, or another operation holds the computer."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "suspend_computer": {
+      "method": "POST",
+      "path": "/api/computers/{id}/suspend",
+      "contract": {
+        "operationId": "suspendComputer",
+        "summary": "Pause a computer with its memory saved, so Resume brings it back where it left off",
+        "description": "Saves the running computer\u2019s memory and frees its host; open windows and processes come back with POST /api/computers/{id}/resume. Computers on a plan only: an hourly computer is stopped instead (409 HOURLY_USE_STOP; a stopped hourly computer bills only its disk). Suspending one already suspended answers success.",
+        "tags": [
+          "computers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Suspended: success and status suspended (storage says where its memory is being saved, when that is under way)."
+          },
+          "202": {
+            "description": "Still saving its memory (status suspending): GET /api/computers/{id} until it reads suspended."
+          },
+          "400": {
+            "description": "This kind of computer cannot be suspended (its code says why)."
+          },
+          "403": {
+            "description": "View only access (workspace_read_only)."
+          },
+          "409": {
+            "description": "Not running, HOURLY_USE_STOP (use Stop), converging (Retry-After 30), or another change holds it."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "description": "Its host cannot take a suspend right now; try again."
+          }
+        }
+      }
+    },
+    "resume_computer": {
+      "method": "POST",
+      "path": "/api/computers/{id}/resume",
+      "contract": {
+        "operationId": "resumeComputer",
+        "summary": "Resume a paused computer, optionally for a set number of hours",
+        "description": "Brings a suspended computer back with its memory. Body, optional: ends_in_hours or ends_at, and on_end, as on Start (the computer is deleted when the end is up): checked before anything resumes, set once it is running (an hourly computer prepays to it), and the 200 carries ends_at, on_end (read only), deletes_at and the prepay. A resume still under way (202: its memory is coming back from storage) sets no end and says end_not_set with code STILL_RESUMING; set it with PATCH once it is running. An end that could not be set never fails the resume: the 200 carries end_not_set.",
+        "tags": [
+          "computers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ends_in_hours": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 1,
+                    "maximum": 720
+                  },
+                  "ends_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date-time"
+                  },
+                  "on_end": {
+                    "$ref": "#/components/schemas/OnEnd"
+                  }
+                }
+              },
+              "example": {
+                "ends_in_hours": 4
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Running: success and status running, with the end as on Start."
+          },
+          "202": {
+            "description": "Still resuming (status resuming, or waking for a computer asleep in storage); with an end asked for, end_not_set STILL_RESUMING."
+          },
+          "400": {
+            "description": "INVALID_ENDS (as on Start, an on_end other than \"delete\" or one without ends_in_hours or ends_at among them) or ENDS_NOT_SUPPORTED. Nothing resumed."
+          },
+          "402": {
+            "description": "The plan or the credit does not cover running it (upgrade_required, INSUFFICIENT_COMPUTE_CREDIT, insufficient_credit), with next and, for credit, add_credit_url, as on Start. Nothing resumed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "View only access (workspace_read_only), or an end asked for by a caller PATCH refuses (computer_key, computer_scope), as on Start. Nothing resumed."
+          },
+          "409": {
+            "description": "Not suspended, or its memory is still being saved (suspend_in_progress)."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "description": "ENDS_UNAVAILABLE, or its memory cannot be reached right now."
+          }
+        }
+      }
+    },
+    "get_computer_operation": {
+      "method": "GET",
+      "path": "/api/computers/{id}/operations/{operationId}",
+      "contract": {
+        "operationId": "getComputerOperation",
+        "summary": "Poll a Start, Stop, restore or Clear and restart",
+        "description": "The poll_url a 202 gave. Poll every Retry-After seconds (2) until status is succeeded, failed or needs_review. succeeded carries result; failed carries error ({ error, code, status, retry_after? }).",
+        "tags": [
+          "computers"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "operationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComputerOperation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No such operation on this computer."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "run_bash": {
+      "method": "POST",
+      "path": "/api/computers/{id}/bash",
+      "contract": {
+        "operationId": "runBash",
+        "summary": "Run a shell command on the computer",
+        "description": "Runs command in the computer\u2019s shell and answers when it ends. timeout is in seconds (1 to 300, default 200). ?screen= runs it with that screen\u2019s DISPLAY. A computer asleep is woken first.",
+        "tags": [
+          "control"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "screen",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "command"
+                ],
+                "properties": {
+                  "command": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "timeout": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 300
+                  }
+                }
+              },
+              "example": {
+                "command": "uname -a",
+                "timeout": 30
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "What the command printed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "output": {
+                      "type": "string"
+                    },
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "exit_code": {
+                      "type": "integer"
+                    },
+                    "command": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "command missing or empty, the body not a JSON object, or the computer has no VM."
+          },
+          "404": {
+            "description": "No such computer (with a hint: ids change only when a computer is made again)."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "click": {
+      "method": "POST",
+      "path": "/api/computers/{id}/click",
+      "contract": {
+        "operationId": "click",
+        "summary": "Click at a point on the screen",
+        "tags": [
+          "control"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "screen",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "x",
+                  "y"
+                ],
+                "properties": {
+                  "x": {
+                    "type": "integer"
+                  },
+                  "y": {
+                    "type": "integer"
+                  },
+                  "button": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "right"
+                    ]
+                  },
+                  "double": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "example": {
+                "x": 640,
+                "y": 400,
+                "button": "left"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Clicked: { success: true }."
+          },
+          "400": {
+            "description": "The computer has no VM."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "type_text": {
+      "method": "POST",
+      "path": "/api/computers/{id}/type",
+      "contract": {
+        "operationId": "typeText",
+        "summary": "Type text into whatever has focus",
+        "tags": [
+          "control"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "screen",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "text": "hello"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Typed: { success: true }."
+          },
+          "400": {
+            "description": "The computer has no VM."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "press_key": {
+      "method": "POST",
+      "path": "/api/computers/{id}/key",
+      "contract": {
+        "operationId": "pressKey",
+        "summary": "Press a key or a shortcut",
+        "description": "key is a key name or a shortcut joined with +, for example Enter, Escape or ctrl+c.",
+        "tags": [
+          "control"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "screen",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "key"
+                ],
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "key": "ctrl+c"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pressed: { success: true }."
+          },
+          "400": {
+            "description": "The computer has no VM."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "list_public_urls": {
+      "method": "GET",
+      "path": "/api/computers/{id}/public-urls",
+      "contract": {
+        "operationId": "listPublicUrls",
+        "summary": "List a computer\u2019s public URLs",
+        "description": "A public URL is https://<label>.<base_domain> (orgo.dev) serving a port inside the computer to anyone with the link; a new one\u2019s label is <name>-<tail> (POST). The app must listen on 0.0.0.0:<port>, not 127.0.0.1. Answers { enabled: false, public_urls: [] } where the feature is off or the computer cannot have one (only Linux and Windows computers can).",
+        "tags": [
+          "public-urls"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ComputerId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Settings and the list.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicUrlList"
+                },
+                "example": {
+                  "enabled": true,
+                  "base_domain": "orgo.dev",
+                  "limit": 5,
+                  "account_limit": 10,
+                  "account_used": 3,
+                  "public_urls": [
+                    {
+                      "id": "6f1c2a7e-3b9d-4c1a-9e2f-0a1b2c3d4e5f",
+                      "url": "https://cool-thing-x7k2.orgo.dev",
+                      "hostname": "cool-thing-x7k2.orgo.dev",
+                      "label": "cool-thing-x7k2",
+                      "port": 3000,
+                      "created_at": "2026-10-05T18:00:00.000Z",
+                      "protected": false
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "403": {
+            "description": "No access to this computer, view-only access, or a share-link guest."
+          },
+          "404": {
+            "description": "Computer not found."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "create_public_url": {
+      "method": "POST",
+      "path": "/api/computers/{id}/public-urls",
+      "contract": {
+        "operationId": "createPublicUrl",
+        "summary": "Make a public URL for a port on the computer",
+        "description": "Body: { \"port\": 1 to 65535, \"name\"?: string }. The URL is https://<name>-<tail>.<base_domain>: the tail is 4 characters Orgo adds (a to z and 2 to 9, no i, l or o), so read the address from the answer (url, hostname, label). The name is lowercased; 2 to 16 letters, digits and hyphens, starting and ending with a letter or digit, never two hyphens in a row, not all digits, not a reserved name, not shaped like a computer id (8 hex characters or orgo-...), and not a look-alike: nothing with orgo or bops in it, no word a phishing page leans on (login, password, wallet, verify and others) and no brand phished often (paypal, google, microsoft and others), also with look-alike characters (g00gle); those answer 400 INVALID_NAME, \"That name is not available. Pick another name.\" A name somebody has is never refused: another tail is picked. Without a name, one like keen-otter-x7k2 is picked. \"label\" is the older field: it is read as the name. It is made exactly only for Orgo staff, or for a name removed in the last 30 days, sent back for its workspace (by anyone who may change that workspace\u2019s computers: a removed name waits 30 days for its workspace owner; 409 NAME_HELD to anyone else). The same works with name, typed in full; a name Orgo took down is never given out again (409 NAME_UNAVAILABLE). The computer\u2019s own ports are refused: 22, 3389, 5900 to 5999, 6080 to 6099, 8080 and 9000. Errors are { error, code }. The app must listen on 0.0.0.0:<port>. Cookies the app sets are host-only (a Domain attribute other than the URL\u2019s own hostname is removed).\n\nNeeds a paid plan or credits bought (403 UPGRADE_REQUIRED) on an account Orgo has not stopped from publishing (403 HOSTING_BLOCKED); the caller or the workspace owner counts. At most `limit` URLs a computer and `account_limit` across the workspace owner\u2019s computers (GET). New names are limited to 30 a day per user and a daily number for all of Orgo (429 RATE_LIMITED, NEW_NAMES_LIMIT). These names are also the free names in GET /api/projects/{id}/domains.",
+        "tags": [
+          "public-urls"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ComputerId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePublicUrl"
+              },
+              "example": {
+                "port": 3000,
+                "name": "cool-thing"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicUrl"
+                },
+                "example": {
+                  "id": "6f1c2a7e-3b9d-4c1a-9e2f-0a1b2c3d4e5f",
+                  "url": "https://cool-thing-x7k2.orgo.dev",
+                  "hostname": "cool-thing-x7k2.orgo.dev",
+                  "label": "cool-thing-x7k2",
+                  "port": 3000,
+                  "created_at": "2026-10-05T18:00:00.000Z",
+                  "protected": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad port (INVALID_PORT), bad name (INVALID_NAME; INVALID_LABEL when sent as label), or a computer that cannot have one (PUBLIC_URLS_UNSUPPORTED).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Port 8080 is used by the computer itself and cannot be shared. Run your app on another port.",
+                  "code": "INVALID_PORT"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "403": {
+            "description": "Not a paid account (UPGRADE_REQUIRED), publishing turned off by Orgo support (HOSTING_BLOCKED), an unclaimed agent account (agent_account_unclaimed), no access to this computer, view-only access, or a share-link guest.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Public URLs need a paid plan or credits you\u2019ve bought. Upgrade your plan or add credits, then try again.",
+                  "code": "UPGRADE_REQUIRED"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Public URLs are not enabled for this account, or the computer was not found (no code).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "public URLs are not enabled"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The computer already has a URL on this port (PORT_TAKEN, with public_url: that URL), an exact label is taken (LABEL_TAKEN, staff only), Orgo took the name down (NAME_UNAVAILABLE), the name was removed in the last 30 days and waits for the workspace owner who had it (NAME_HELD), the computer has as many public URLs as it may (PUBLIC_URL_LIMIT, with limit), or the account does, across all its computers (PUBLIC_URL_ACCOUNT_LIMIT, with limit; 10 by default).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "This computer already has 5 public URLs, the most it can have. Remove one to add another.",
+                  "code": "PUBLIC_URL_LIMIT",
+                  "limit": 5
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many public URLs made today by this user (RATE_LIMITED), or Orgo made as many new names today as it can (NEW_NAMES_LIMIT). retry_after and Retry-After say when to try again (the next 00:00 UTC).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No free tail was found for the name. Try again."
+          }
+        }
+      }
+    },
+    "update_public_url": {
+      "method": "PATCH",
+      "path": "/api/computers/{id}/public-urls/{urlId}",
+      "contract": {
+        "operationId": "updatePublicUrl",
+        "summary": "Point a public URL at another port, or set or remove its password",
+        "description": "Body: { \"port\"?: number, \"password\"?: string or null }, at least one. With a password, a visitor gives it before anything reaches the app: a browser opening a page sees a password form, and every other request without the cookie the form sets (API calls, assets, WebSockets, and webhooks from other services) gets 401 text/plain. So a URL that receives webhooks must stay open. A password is 4 to 64 printable ASCII characters (letters, digits, spaces and keyboard symbols), with no space at the start or end, and is case sensitive; null turns it off. A new password signs everyone out. The answer never carries the password, only protected; read it back with GET .../password. Live within 5 seconds.",
+        "tags": [
+          "public-urls"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ComputerId"
+          },
+          {
+            "$ref": "#/components/parameters/PublicUrlId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePublicUrl"
+              },
+              "examples": {
+                "port": {
+                  "value": {
+                    "port": 8000
+                  }
+                },
+                "password": {
+                  "value": {
+                    "password": "k7Rm2qX"
+                  }
+                },
+                "open": {
+                  "value": {
+                    "password": null
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated. Live within 5 seconds.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicUrl"
+                },
+                "example": {
+                  "id": "6f1c2a7e-3b9d-4c1a-9e2f-0a1b2c3d4e5f",
+                  "url": "https://cool-thing-x7k2.orgo.dev",
+                  "hostname": "cool-thing-x7k2.orgo.dev",
+                  "label": "cool-thing-x7k2",
+                  "port": 3000,
+                  "created_at": "2026-10-05T18:00:00.000Z",
+                  "protected": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad port (INVALID_PORT), a password outside the rule (INVALID_PASSWORD), or neither a port nor a password (NOTHING_TO_CHANGE). Nothing changed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "403": {
+            "description": "No access to this computer, view-only access, or a share-link guest."
+          },
+          "404": {
+            "description": "Not found on this computer, or public URLs are not enabled for this account."
+          },
+          "409": {
+            "description": "Another of the computer\u2019s URLs serves this port (PORT_TAKEN, with public_url), or Orgo support turned this URL off (PUBLIC_URL_DISABLED; contact support to change it).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "description": "Passwords are not available in this environment yet (PASSWORD_UNAVAILABLE). Nothing changed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete_public_url": {
+      "method": "DELETE",
+      "path": "/api/computers/{id}/public-urls/{urlId}",
+      "contract": {
+        "operationId": "deletePublicUrl",
+        "summary": "Remove a public URL (the app keeps running)",
+        "tags": [
+          "public-urls"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ComputerId"
+          },
+          {
+            "$ref": "#/components/parameters/PublicUrlId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Removed."
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "403": {
+            "description": "No access to this computer, view-only access, or a share-link guest."
+          },
+          "404": {
+            "description": "Not found on this computer, or public URLs are not enabled for this account."
+          },
+          "409": {
+            "description": "Orgo support turned this URL off (PUBLIC_URL_DISABLED; contact support to remove it).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "list_computer_apps": {
+      "method": "GET",
+      "path": "/api/computers/{id}/apps",
+      "contract": {
+        "operationId": "listComputerApps",
+        "summary": "List the apps on a computer",
+        "description": "An app is something running on the computer that people open by its link (https://<name>.orgo.dev): a public URL with a title, who built it, and who can open it (`access`: team, people or link). Answers { enabled: false, apps: [] } where apps are off for the account. A computer\u2019s own key (ORGO_API_KEY) may call it.",
+        "tags": [
+          "apps"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ComputerId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ enabled, apps }: each app with id, title, description, url, hostname, port, access, state, agent, computer, workspace."
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "404": {
+            "description": "Computer not found."
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    }
+  }
+}
