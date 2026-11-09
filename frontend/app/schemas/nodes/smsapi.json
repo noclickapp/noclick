@@ -1,0 +1,1102 @@
+{
+  "$defs": {
+    "SMSAPIAddContactToGroupConfig": {
+      "additionalProperties": false,
+      "description": "Add contact to group.",
+      "properties": {
+        "contact_id": {
+          "description": "SMSAPI contact Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "group_id": {
+          "description": "SMSAPI group Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_contact_to_group",
+          "default": "add_contact_to_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id",
+        "group_id"
+      ],
+      "title": "SMSAPIAddContactToGroupConfig",
+      "type": "object"
+    },
+    "SMSAPICreateContactConfig": {
+      "additionalProperties": false,
+      "description": "Create contact.",
+      "properties": {
+        "phone_number": {
+          "pattern": "^[0-9]{8,16}$",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 320,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "gender": {
+          "anyOf": [
+            {
+              "enum": [
+                "undefined",
+                "male",
+                "female"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gender",
+          "enum": [
+            "undefined",
+            "male",
+            "female"
+          ],
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "phone_number",
+        "email"
+      ],
+      "title": "SMSAPICreateContactConfig",
+      "type": "object"
+    },
+    "SMSAPICreateGroupConfig": {
+      "additionalProperties": false,
+      "description": "Create group.",
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "idx": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idx"
+        },
+        "contact_expire_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact expiry in days.",
+          "title": "Contact Expire After"
+        },
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SMSAPICreateGroupConfig",
+      "type": "object"
+    },
+    "SMSAPICreateTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Create template.",
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "template": {
+          "maxLength": 918,
+          "minLength": 1,
+          "title": "Template",
+          "type": "string"
+        },
+        "normalize": {
+          "default": false,
+          "title": "Normalize",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "template"
+      ],
+      "title": "SMSAPICreateTemplateConfig",
+      "type": "object"
+    },
+    "SMSAPIDeleteContactConfig": {
+      "additionalProperties": false,
+      "description": "Delete contact.",
+      "properties": {
+        "contact_id": {
+          "description": "SMSAPI contact Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "SMSAPIDeleteContactConfig",
+      "type": "object"
+    },
+    "SMSAPIDeleteGroupConfig": {
+      "additionalProperties": false,
+      "description": "Delete group.",
+      "properties": {
+        "group_id": {
+          "description": "SMSAPI group Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "delete_contacts": {
+          "default": false,
+          "description": "Also delete contacts assigned to the group; defaults to keeping them.",
+          "title": "Delete Contacts",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "SMSAPIDeleteGroupConfig",
+      "type": "object"
+    },
+    "SMSAPIDeleteTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Delete template.",
+      "properties": {
+        "template_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.-]+$",
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "SMSAPIDeleteTemplateConfig",
+      "type": "object"
+    },
+    "SMSAPIGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Get contact.",
+      "properties": {
+        "contact_id": {
+          "description": "SMSAPI contact Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "SMSAPIGetContactConfig",
+      "type": "object"
+    },
+    "SMSAPIGetGroupConfig": {
+      "additionalProperties": false,
+      "description": "Get group.",
+      "properties": {
+        "group_id": {
+          "description": "SMSAPI group Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "SMSAPIGetGroupConfig",
+      "type": "object"
+    },
+    "SMSAPIGetGroupMemberConfig": {
+      "additionalProperties": false,
+      "description": "Get group member.",
+      "properties": {
+        "contact_id": {
+          "description": "SMSAPI contact Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "group_id": {
+          "description": "SMSAPI group Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_group_member",
+          "default": "get_group_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id",
+        "group_id"
+      ],
+      "title": "SMSAPIGetGroupMemberConfig",
+      "type": "object"
+    },
+    "SMSAPIGetProfileConfig": {
+      "additionalProperties": false,
+      "description": "Get profile.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SMSAPIGetProfileConfig",
+      "type": "object"
+    },
+    "SMSAPIGetSendernameConfig": {
+      "additionalProperties": false,
+      "description": "Get sendername.",
+      "properties": {
+        "operation": {
+          "const": "get_sendername",
+          "default": "get_sendername",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sender": {
+          "maxLength": 16,
+          "minLength": 1,
+          "title": "Sender",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sender"
+      ],
+      "title": "SMSAPIGetSendernameConfig",
+      "type": "object"
+    },
+    "SMSAPIGetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Get template.",
+      "properties": {
+        "template_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.-]+$",
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "SMSAPIGetTemplateConfig",
+      "type": "object"
+    },
+    "SMSAPIListContactsConfig": {
+      "additionalProperties": false,
+      "description": "List contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 50,
+          "description": "One page only; increase offset for another page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "first_name",
+                "last_name",
+                "date_updated",
+                "date_created"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order By",
+          "enum": [
+            "first_name",
+            "last_name",
+            "date_updated",
+            "date_created"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "SMSAPIListContactsConfig",
+      "type": "object"
+    },
+    "SMSAPIListGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List groups.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SMSAPIListGroupsConfig",
+      "type": "object"
+    },
+    "SMSAPIListSendernamesConfig": {
+      "additionalProperties": false,
+      "description": "List sendernames.",
+      "properties": {
+        "operation": {
+          "const": "list_sendernames",
+          "default": "list_sendernames",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SMSAPIListSendernamesConfig",
+      "type": "object"
+    },
+    "SMSAPIListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "List templates.",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SMSAPIListTemplatesConfig",
+      "type": "object"
+    },
+    "SMSAPIRemoveContactFromGroupConfig": {
+      "additionalProperties": false,
+      "description": "Remove contact from group.",
+      "properties": {
+        "contact_id": {
+          "description": "SMSAPI contact Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "group_id": {
+          "description": "SMSAPI group Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_contact_from_group",
+          "default": "remove_contact_from_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id",
+        "group_id"
+      ],
+      "title": "SMSAPIRemoveContactFromGroupConfig",
+      "type": "object"
+    },
+    "SMSAPISendSmsConfig": {
+      "additionalProperties": false,
+      "description": "Send sms.",
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "to": {
+          "description": "Up to 100 comma-separated recipient numbers, including country codes.",
+          "pattern": "^[0-9]{8,16}(?:,[0-9]{8,16}){0,99}$",
+          "title": "To",
+          "type": "string"
+        },
+        "message": {
+          "description": "Provider charges per SMS part; Unicode reduces the per-part character limit.",
+          "maxLength": 918,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "sender": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An approved sender name; defaults to the provider's Test sender.",
+          "title": "Sender"
+        },
+        "test": {
+          "default": false,
+          "description": "Validate without sending or charging.",
+          "title": "Test",
+          "type": "boolean"
+        },
+        "normalize": {
+          "default": false,
+          "title": "Normalize",
+          "type": "boolean"
+        },
+        "idx": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom callback reference; check_idx prevents duplicate sends for this reference within 24 hours.",
+          "title": "Idx"
+        },
+        "check_idx": {
+          "default": false,
+          "title": "Check Idx",
+          "type": "boolean"
+        },
+        "max_parts": {
+          "default": 6,
+          "maximum": 6,
+          "minimum": 1,
+          "title": "Max Parts",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "to",
+        "message"
+      ],
+      "title": "SMSAPISendSmsConfig",
+      "type": "object"
+    },
+    "SMSAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "smsapi_api_token",
+          "default": "smsapi_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "SMSAPI API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste a token generated in the SMSAPI Customer Portal under API Settings \u2192 OAuth Tokens. Enable profile, sms, sms_sender and contacts access for the operations you use. NoClick sends it as a Bearer header only to api.smsapi.com. The profile read checks the account; write permissions remain subject to your token grants.",
+      "x-credential-url": "https://www.smsapi.com/docs/#authentication"
+    },
+    "SMSAPIUpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "Update contact.",
+      "properties": {
+        "phone_number": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{8,16}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "gender": {
+          "anyOf": [
+            {
+              "enum": [
+                "undefined",
+                "male",
+                "female"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gender",
+          "enum": [
+            "undefined",
+            "male",
+            "female"
+          ],
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "contact_id": {
+          "description": "SMSAPI contact Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "SMSAPIUpdateContactConfig",
+      "type": "object"
+    },
+    "SMSAPIUpdateGroupConfig": {
+      "additionalProperties": false,
+      "description": "Update group.",
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "idx": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idx"
+        },
+        "contact_expire_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact expiry in days.",
+          "title": "Contact Expire After"
+        },
+        "group_id": {
+          "description": "SMSAPI group Object ID.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "group_id"
+      ],
+      "title": "SMSAPIUpdateGroupConfig",
+      "type": "object"
+    },
+    "SMSAPIUpdateTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Update template.",
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "template": {
+          "maxLength": 918,
+          "minLength": 1,
+          "title": "Template",
+          "type": "string"
+        },
+        "normalize": {
+          "default": false,
+          "title": "Normalize",
+          "type": "boolean"
+        },
+        "template_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.-]+$",
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "template",
+        "template_id"
+      ],
+      "title": "SMSAPIUpdateTemplateConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_to_group": "#/$defs/SMSAPIAddContactToGroupConfig",
+          "create_contact": "#/$defs/SMSAPICreateContactConfig",
+          "create_group": "#/$defs/SMSAPICreateGroupConfig",
+          "create_template": "#/$defs/SMSAPICreateTemplateConfig",
+          "delete_contact": "#/$defs/SMSAPIDeleteContactConfig",
+          "delete_group": "#/$defs/SMSAPIDeleteGroupConfig",
+          "delete_template": "#/$defs/SMSAPIDeleteTemplateConfig",
+          "get_contact": "#/$defs/SMSAPIGetContactConfig",
+          "get_group": "#/$defs/SMSAPIGetGroupConfig",
+          "get_group_member": "#/$defs/SMSAPIGetGroupMemberConfig",
+          "get_profile": "#/$defs/SMSAPIGetProfileConfig",
+          "get_sendername": "#/$defs/SMSAPIGetSendernameConfig",
+          "get_template": "#/$defs/SMSAPIGetTemplateConfig",
+          "list_contacts": "#/$defs/SMSAPIListContactsConfig",
+          "list_groups": "#/$defs/SMSAPIListGroupsConfig",
+          "list_sendernames": "#/$defs/SMSAPIListSendernamesConfig",
+          "list_templates": "#/$defs/SMSAPIListTemplatesConfig",
+          "remove_contact_from_group": "#/$defs/SMSAPIRemoveContactFromGroupConfig",
+          "send_sms": "#/$defs/SMSAPISendSmsConfig",
+          "update_contact": "#/$defs/SMSAPIUpdateContactConfig",
+          "update_group": "#/$defs/SMSAPIUpdateGroupConfig",
+          "update_template": "#/$defs/SMSAPIUpdateTemplateConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SMSAPIGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPISendSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIListSendernamesConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIGetSendernameConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPICreateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIUpdateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIDeleteTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPICreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPICreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIGetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIUpdateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIDeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIAddContactToGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIGetGroupMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/SMSAPIRemoveContactFromGroupConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SMSAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Smsapi Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
