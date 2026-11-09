@@ -1,0 +1,40 @@
+{
+  "source_url": "https://developer.fareharbor.com/api/external/v1/FareHarbor-External-API.yaml/api-reference",
+  "version": "1.0",
+  "sha256": "7d42238b1bea310c0f1c746500ba5a6540b16da23d3dea741da21149e6459caa",
+  "spec_defects": [
+    {
+      "kind": "published-contract-path-template-syntax",
+      "classification": "d",
+      "source": "https://developer.fareharbor.com/api/external/v1/FareHarbor-External-API.yaml/api-reference",
+      "corroborating_docs": "https://developer.fareharbor.com/api/external/v1/FareHarbor-External-API.yaml/home",
+      "description": "Published OpenAPI path keys use <parameter> placeholders, while declared in:path parameters and examples require substituting actual company shortnames, IDs and dates. OpenAPI requires {parameter} syntax. The pinned contract cannot match any of the 24 implemented operations. Provider auth examples and the PHP tutorial confirm variable substitution. A diagnostic copy changing only angle-bracket path delimiters (and dropping two unimplemented regex crew-detail paths) passes 24/24 request and response checks; it is supplemental, not the pinned conformance verdict.",
+      "operations": [
+        "get_company",
+        "list_users",
+        "checkin_qr_code",
+        "list_checkin_statuses",
+        "list_lodgings",
+        "list_availability_lodgings",
+        "list_items",
+        "get_item",
+        "get_availability",
+        "list_availabilities_by_date",
+        "list_availabilities_by_date_range",
+        "list_bookings",
+        "create_booking",
+        "validate_booking",
+        "get_booking",
+        "cancel_booking",
+        "update_booking_note",
+        "update_customer_custom_field_value",
+        "update_resource_use",
+        "checkin_booking",
+        "list_bookings_by_create_date",
+        "list_crew_members",
+        "create_crew_member",
+        "list_roles"
+      ]
+    }
+  ]
+}
