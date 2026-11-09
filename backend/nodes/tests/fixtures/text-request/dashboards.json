@@ -1,0 +1,8 @@
+{
+  "source": "https://www.textrequest.com/dist/swagger/apiv3docs.json",
+  "description": "Dashboard property examples and pagination example values from the published v3 schema, with page_size 1 to exercise continuation.",
+  "body": {
+    "items": [{"id": 121, "name": "Marketing", "phone": "15551234567", "timeZoneId": "Eastern Standard Time"}],
+    "meta": {"page": 0, "page_size": 1, "total_items": 276}
+  }
+}
