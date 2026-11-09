@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/saucelabs.png",
+  "source": "https://raw.githubusercontent.com/saucelabs/sauce-docs/60faf2191621b4ef9debfa6db6e11f4743571fa9/static/img/favicon-32x32.png",
+  "license": "Sauce Labs official brand mark, used nominatively to identify the service. Trademark rights remain with Sauce Labs.",
+  "sha256": "45383fd823b50fdd144f84b810b8dab8d7eb35ea0df2c279a3f077b0f6641148"
+}
