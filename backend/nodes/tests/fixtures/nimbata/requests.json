@@ -1,0 +1,514 @@
+[
+  {
+    "config": {
+      "operation": "get_current_user"
+    },
+    "method": "GET",
+    "path": "/users/me",
+    "query": {},
+    "body": null,
+    "response": {
+      "id": "019a6312-1b2c-7000-8000-000000000001",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "full_name": "Alex Example",
+      "email": "alex@example.test",
+      "phone_number": null,
+      "is_org_owner": true
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_projects",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects",
+    "query": {
+      "page_size": "25"
+    },
+    "body": null,
+    "response": {
+      "items": [
+        {
+          "id": "019a6312-1b2c-7000-8000-000000000001",
+          "name": "Example"
+        }
+      ],
+      "page": {
+        "next": null
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_project",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001",
+    "query": {},
+    "body": null,
+    "response": {
+      "id": "019a6312-1b2c-7000-8000-000000000001",
+      "name": "Example"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_calls",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls",
+    "query": {
+      "page_size": "25"
+    },
+    "body": null,
+    "response": {
+      "items": [
+        {
+          "id": "019a6312-1b2c-7000-8000-000000000001",
+          "name": "Example"
+        }
+      ],
+      "page": {
+        "next": null
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_call",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42"
+    },
+    "method": "GET",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42",
+    "query": {},
+    "body": null,
+    "response": {
+      "id": "019a6312-1b2c-7000-8000-000000000001",
+      "name": "Example"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_leads",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/leads",
+    "query": {
+      "page_size": "25"
+    },
+    "body": null,
+    "response": {
+      "items": [
+        {
+          "id": "019a6312-1b2c-7000-8000-000000000001",
+          "name": "Example"
+        }
+      ],
+      "page": {
+        "next": null
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_lead",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "lead_id": "019a6312-1b2c-7000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/leads/019a6312-1b2c-7000-8000-000000000001",
+    "query": {},
+    "body": null,
+    "response": {
+      "id": "019a6312-1b2c-7000-8000-000000000001",
+      "name": "Example"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_lead_timeline",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "lead_id": "019a6312-1b2c-7000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/leads/019a6312-1b2c-7000-8000-000000000001/timeline",
+    "query": {
+      "page_size": "25"
+    },
+    "body": null,
+    "response": {
+      "lead": {
+        "id": "019a6312-1b2c-7000-8000-000000000001"
+      },
+      "pages": [],
+      "calls": [],
+      "forms": [],
+      "page": {
+        "next": null
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "get_call_activity",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42"
+    },
+    "method": "GET",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/activity",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": null,
+    "response": {
+      "id": "019a6312-1b2c-7000-8000-000000000001",
+      "name": "Example"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_tag_categories",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/tag-categories",
+    "query": {
+      "page_size": "25"
+    },
+    "body": null,
+    "response": {
+      "items": [
+        {
+          "id": "019a6312-1b2c-7000-8000-000000000001",
+          "name": "Example"
+        }
+      ],
+      "page": {
+        "next": null
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "list_tags",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "tag_category_id": "019a6312-1b2c-7000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/tag-categories/019a6312-1b2c-7000-8000-000000000001/tags",
+    "query": {
+      "page_size": "25"
+    },
+    "body": null,
+    "response": {
+      "items": [
+        {
+          "id": "019a6312-1b2c-7000-8000-000000000001",
+          "name": "Example"
+        }
+      ],
+      "page": {
+        "next": null
+      }
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "add_call_tags",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42",
+      "tag_ids": [
+        "019a6312-1b2c-7000-8000-000000000001"
+      ]
+    },
+    "method": "POST",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/tags",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": {
+      "tag_ids": [
+        "019a6312-1b2c-7000-8000-000000000001"
+      ]
+    },
+    "response": {
+      "tag_ids": [
+        "019a6312-1b2c-7000-8000-000000000001"
+      ]
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "replace_call_tags",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42",
+      "tag_ids": [
+        "019a6312-1b2c-7000-8000-000000000001"
+      ]
+    },
+    "method": "PUT",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/tags",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": {
+      "tag_ids": [
+        "019a6312-1b2c-7000-8000-000000000001"
+      ]
+    },
+    "response": {
+      "tag_ids": [
+        "019a6312-1b2c-7000-8000-000000000001"
+      ]
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "remove_call_tag",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "tag_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42"
+    },
+    "method": "DELETE",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/tags/019a6312-1b2c-7000-8000-000000000001",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": null,
+    "response": {
+      "id": "019a6312-1b2c-7000-8000-000000000001",
+      "name": "Example"
+    },
+    "status": 204
+  },
+  {
+    "config": {
+      "operation": "set_call_rating",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42",
+      "value": 4.5
+    },
+    "method": "PUT",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/rating",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": {
+      "value": 4.5
+    },
+    "response": {
+      "value": 4.5
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "clear_call_rating",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42"
+    },
+    "method": "DELETE",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/rating",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": null,
+    "response": {
+      "id": "019a6312-1b2c-7000-8000-000000000001",
+      "name": "Example"
+    },
+    "status": 204
+  },
+  {
+    "config": {
+      "operation": "set_call_value",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42",
+      "value": 123.45
+    },
+    "method": "PUT",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/value",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": {
+      "value": 123.45
+    },
+    "response": {
+      "value": 123.45
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "clear_call_value",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42"
+    },
+    "method": "DELETE",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/value",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": null,
+    "response": {
+      "id": "019a6312-1b2c-7000-8000-000000000001",
+      "name": "Example"
+    },
+    "status": 204
+  },
+  {
+    "config": {
+      "operation": "set_call_comments",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42",
+      "value": "Qualified lead"
+    },
+    "method": "PUT",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/comments",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": {
+      "value": "Qualified lead"
+    },
+    "response": {
+      "value": "Qualified lead"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "clear_call_comments",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42"
+    },
+    "method": "DELETE",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/comments",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": null,
+    "response": {
+      "id": "019a6312-1b2c-7000-8000-000000000001",
+      "name": "Example"
+    },
+    "status": 204
+  },
+  {
+    "config": {
+      "operation": "set_call_followup_date",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42",
+      "value": "2026-11-10"
+    },
+    "method": "PUT",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/action_date",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": {
+      "value": "2026-11-10"
+    },
+    "response": {
+      "value": "2026-11-10"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "clear_call_followup_date",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42"
+    },
+    "method": "DELETE",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/action_date",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": null,
+    "response": {
+      "id": "019a6312-1b2c-7000-8000-000000000001",
+      "name": "Example"
+    },
+    "status": 204
+  },
+  {
+    "config": {
+      "operation": "set_call_caller_name",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42",
+      "value": "Alex Example"
+    },
+    "method": "PUT",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/name",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": {
+      "value": "Alex Example"
+    },
+    "response": {
+      "value": "Alex Example"
+    },
+    "status": 200
+  },
+  {
+    "config": {
+      "operation": "clear_call_caller_name",
+      "org_id": "019a6312-1b2c-7000-8000-000000000001",
+      "project_id": "019a6312-1b2c-7000-8000-000000000001",
+      "call_id": "fixture-call-42"
+    },
+    "method": "DELETE",
+    "path": "/orgs/019a6312-1b2c-7000-8000-000000000001/projects/019a6312-1b2c-7000-8000-000000000001/calls/fixture-call-42/name",
+    "query": {
+      "call_direction": "inbound"
+    },
+    "body": null,
+    "response": {
+      "id": "019a6312-1b2c-7000-8000-000000000001",
+      "name": "Example"
+    },
+    "status": 204
+  }
+]
