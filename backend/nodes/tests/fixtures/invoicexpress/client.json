@@ -1,0 +1,31 @@
+{
+  "source": "https://docs.invoicexpress.com/v2/clients/getclient",
+  "body": {
+    "client": {
+      "id": 196601767,
+      "name": "Ricardo Pereira",
+      "code": null,
+      "language": "pt",
+      "email": "someone@example.com",
+      "address": "Lisbon",
+      "city": "Lisbon",
+      "postal_code": "1750-455",
+      "fiscal_id": "508025338",
+      "website": "www.invoicexpress.com",
+      "country": "Portugal",
+      "phone": "2313423424",
+      "fax": "2313423425",
+      "preferred_contact": {
+        "name": "Ricardo Pereira",
+        "email": "someone@example.com",
+        "phone": "2233442233",
+        "mobile": null
+      },
+      "observations": null,
+      "open_account_link": "https://www.app.invoicexpress.com/suppliers/1f7bba947948c50e04af20d329db5bc67c38cf89",
+      "send_options": 1,
+      "payment_days": 0,
+      "tax_exemption_code": "M00"
+    }
+  }
+}

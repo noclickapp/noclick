@@ -1,0 +1,2544 @@
+{
+  "$defs": {
+    "ChangeInvoiceStateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "examples": [
+            1050
+          ],
+          "minimum": 1,
+          "title": "Invoice ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "change_invoice_state",
+          "default": "change_invoice_state",
+          "title": "Change Invoice State",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice": {
+          "$ref": "#/$defs/StateInput",
+          "title": "Invoice"
+        }
+      },
+      "required": [
+        "document_id",
+        "invoice"
+      ],
+      "title": "ChangeInvoiceStateConfig",
+      "type": "object"
+    },
+    "ClientInput": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "examples": [
+            "Client Name"
+          ],
+          "maxLength": 100,
+          "title": "Name",
+          "type": "string"
+        },
+        "code": {
+          "description": "Maximum length is the database default, not an enforced business rule.",
+          "examples": [
+            "12345"
+          ],
+          "maxLength": 255,
+          "title": "Code",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "foo@bar.com"
+          ],
+          "title": "Email"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "pt",
+                "es"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "pt"
+          ],
+          "title": "Language",
+          "enum": [
+            "en",
+            "pt",
+            "es"
+          ],
+          "x-enum-searchable": true
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "No enforced character limit (text column).",
+          "examples": [
+            "Avenida da Rep\u00fablica, Lisboa"
+          ],
+          "title": "Address"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not an enforced business rule.",
+          "examples": [
+            "Lisboa"
+          ],
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not an enforced business rule.",
+          "examples": [
+            "1050-555"
+          ],
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not an enforced business rule.",
+          "examples": [
+            "Portugal"
+          ],
+          "title": "Country"
+        },
+        "fiscal_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not an enforced business rule.",
+          "examples": [
+            "508025338"
+          ],
+          "title": "Fiscal Id"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "www.invoicexpress.com"
+          ],
+          "title": "Website"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "213456789"
+          ],
+          "title": "Phone"
+        },
+        "fax": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "213456788"
+          ],
+          "title": "Fax"
+        },
+        "preferred_contact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ClientInputPreferredContact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The preferred contact details."
+        },
+        "observations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "No enforced character limit (text column).",
+          "examples": [
+            "Observations"
+          ],
+          "title": "Observations"
+        },
+        "send_options": {
+          "anyOf": [
+            {
+              "enum": [
+                "1",
+                "2",
+                "3"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "1"
+          ],
+          "title": "Send Options",
+          "enum": [
+            "1",
+            "2",
+            "3"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "code"
+      ],
+      "title": "ClientInput",
+      "type": "object"
+    },
+    "ClientInputPreferredContact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact-level name has no length validation, unlike the client-level `name` (max 100); the limit shown is the database default.",
+          "examples": [
+            "Bruce Norris"
+          ],
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact-level email allows one character more than the client-level `email` (max 254).",
+          "examples": [
+            "email@invoicexpress.com"
+          ],
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact-level phone has no length validation, unlike the client-level `phone` (max 20); the limit shown is the database default.",
+          "examples": [
+            "213456789"
+          ],
+          "title": "Phone"
+        }
+      },
+      "title": "ClientInputPreferredContact",
+      "type": "object"
+    },
+    "CreateClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Create Client",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client": {
+          "$ref": "#/$defs/ClientInput",
+          "title": "Client"
+        }
+      },
+      "required": [
+        "client"
+      ],
+      "title": "CreateClientConfig",
+      "type": "object"
+    },
+    "CreateInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_invoice",
+          "default": "create_invoice",
+          "title": "Create Invoice",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice": {
+          "$ref": "#/$defs/CreateInvoiceInput",
+          "title": "Invoice"
+        }
+      },
+      "required": [
+        "invoice"
+      ],
+      "title": "CreateInvoiceConfig",
+      "type": "object"
+    },
+    "CreateInvoiceInput": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "description": "dd/mm/yyyy",
+          "examples": [
+            "22/11/2025"
+          ],
+          "title": "Invoice date",
+          "type": "string"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "dd/mm/yyyy. Defaults to `date` when omitted.",
+          "examples": [
+            "22/12/2025"
+          ],
+          "title": "Due Date"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "PO-999"
+          ],
+          "title": "Reference"
+        },
+        "observations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "No enforced character limit.",
+          "examples": [
+            "Services rendered"
+          ],
+          "title": "Observations"
+        },
+        "retention": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "0"
+          ],
+          "title": "Retention"
+        },
+        "tax_exemption": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not a business rule \u2014 the value is effectively an AT exemption code.",
+          "examples": [
+            "M00"
+          ],
+          "title": "Tax Exemption"
+        },
+        "sequence_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "123456"
+          ],
+          "title": "Sequence Id"
+        },
+        "manual_sequence_number": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not a business rule.",
+          "title": "Manual Sequence Number"
+        },
+        "client": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocumentClientRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/InvoiceItemRequest"
+          },
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        },
+        "mb_reference": {
+          "anyOf": [
+            {
+              "enum": [
+                "0",
+                "1"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "1"
+          ],
+          "title": "Mb Reference",
+          "enum": [
+            "0",
+            "1"
+          ],
+          "x-enum-searchable": true
+        },
+        "owner_invoice_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            1049
+          ],
+          "title": "Owner Invoice Id"
+        },
+        "tax_exemption_reason": {
+          "anyOf": [
+            {
+              "maxLength": 210,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum 210 characters. Enforced by model validation \u2014 longer values are rejected with 422 even though the underlying column would accept more.",
+          "examples": [
+            "M00"
+          ],
+          "title": "Tax Exemption Reason"
+        },
+        "currency_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "USD"
+          ],
+          "title": "Currency Code"
+        },
+        "rate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "1.10"
+          ],
+          "title": "Rate"
+        },
+        "plugin_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "plugin_123"
+          ],
+          "title": "Plugin Id"
+        },
+        "global_discount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GlobalDiscountRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "proprietary_uid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Idempotency key, same as the top-level `proprietary_uid`.",
+          "examples": [
+            "uuid-123"
+          ],
+          "title": "Proprietary Uid"
+        },
+        "tax_exemption_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tax exemption code.",
+          "examples": [
+            "M07"
+          ],
+          "title": "Tax Exemption Code"
+        },
+        "tax_exemption_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tax exemption message.",
+          "examples": [
+            "Isento artigo 9.\u00ba do CIVA"
+          ],
+          "title": "Tax Exemption Message"
+        },
+        "discount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document discount.",
+          "examples": [
+            0
+          ],
+          "title": "Discount"
+        },
+        "raw_owner_invoice": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/InvoiceInputRawOwnerInvoice1"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Credit and debit notes only. Reference to an original document issued outside InvoiceXpress. Send a string, or an object with `document_type`, `document_serie` and `document_number`. Cannot be combined with `owner_invoice_id`.",
+          "title": "Raw Owner Invoice"
+        }
+      },
+      "required": [
+        "date",
+        "items"
+      ],
+      "title": "CreateInvoiceInput",
+      "type": "object"
+    },
+    "CreateItemConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_item",
+          "default": "create_item",
+          "title": "Create Item",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item": {
+          "$ref": "#/$defs/ItemInput",
+          "title": "Item"
+        }
+      },
+      "required": [
+        "item"
+      ],
+      "title": "CreateItemConfig",
+      "type": "object"
+    },
+    "DeleteItemConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "examples": [
+            12345
+          ],
+          "minimum": 1,
+          "title": "Item ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_item",
+          "default": "delete_item",
+          "title": "Delete Item",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "DeleteItemConfig",
+      "type": "object"
+    },
+    "DocumentClientRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Internal client ID. Preferred way to identify an existing client \u2014 see schema description.",
+          "examples": [
+            1310176
+          ],
+          "title": "Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Client A"
+          ],
+          "title": "Name"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not a business rule.",
+          "examples": [
+            "CLI-001"
+          ],
+          "title": "Code"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "client@mail.com"
+          ],
+          "title": "Email"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "No enforced character limit.",
+          "examples": [
+            "Street A"
+          ],
+          "title": "Address"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not a business rule.",
+          "examples": [
+            "Lisbon"
+          ],
+          "title": "City"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not a business rule.",
+          "examples": [
+            "1000-100"
+          ],
+          "title": "Postal Code"
+        },
+        "fiscal_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not a business rule.",
+          "examples": [
+            "500999888"
+          ],
+          "title": "Fiscal Id"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not a business rule.",
+          "examples": [
+            "Portugal"
+          ],
+          "title": "Country"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "www.client-a.com"
+          ],
+          "title": "Website"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "912345678"
+          ],
+          "title": "Phone"
+        },
+        "fax": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "212345678"
+          ],
+          "title": "Fax"
+        },
+        "observations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "No enforced character limit.",
+          "examples": [
+            "VIP Client"
+          ],
+          "title": "Observations"
+        }
+      },
+      "title": "DocumentClientRequest",
+      "type": "object"
+    },
+    "EmailInput": {
+      "additionalProperties": false,
+      "properties": {
+        "client": {
+          "$ref": "#/$defs/EmailInputClient"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Invoice"
+          ],
+          "title": "Subject"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Attached."
+          ],
+          "title": "Body"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "cc@mail.com"
+          ],
+          "title": "Cc"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "bcc@mail.com"
+          ],
+          "title": "Bcc"
+        },
+        "logo": {
+          "anyOf": [
+            {
+              "enum": [
+                "0",
+                "1"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "1"
+          ],
+          "title": "Logo",
+          "enum": [
+            "0",
+            "1"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "client"
+      ],
+      "title": "EmailInput",
+      "type": "object"
+    },
+    "EmailInputClient": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "examples": [
+            "dest@mail.com"
+          ],
+          "title": "Email",
+          "type": "string"
+        },
+        "save": {
+          "enum": [
+            "0",
+            "1"
+          ],
+          "examples": [
+            "1"
+          ],
+          "title": "Save",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "save"
+      ],
+      "title": "EmailInputClient",
+      "type": "object"
+    },
+    "FindClientByCodeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "find_client_by_code",
+          "default": "find_client_by_code",
+          "title": "Find Client by Code",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_code": {
+          "title": "Client Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_code"
+      ],
+      "title": "FindClientByCodeConfig",
+      "type": "object"
+    },
+    "FindClientByNameConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "find_client_by_name",
+          "default": "find_client_by_name",
+          "title": "Find Client by Exact Name",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_name": {
+          "title": "Client Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_name"
+      ],
+      "title": "FindClientByNameConfig",
+      "type": "object"
+    },
+    "GeneratePaymentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "examples": [
+            1050
+          ],
+          "minimum": 1,
+          "title": "Invoice ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "generate_payment",
+          "default": "generate_payment",
+          "title": "Record Invoice Payment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "partial_payment": {
+          "$ref": "#/$defs/PaymentInput",
+          "title": "Partial Payment"
+        }
+      },
+      "required": [
+        "document_id",
+        "partial_payment"
+      ],
+      "title": "GeneratePaymentConfig",
+      "type": "object"
+    },
+    "GeneratePdfConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "examples": [
+            1050
+          ],
+          "minimum": 1,
+          "title": "Invoice ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "generate_pdf",
+          "default": "generate_pdf",
+          "title": "Generate Document PDF",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "second_copy": {
+          "default": false,
+          "description": "A 202 response means the PDF is still generating; request it again later.",
+          "title": "Second copy",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "GeneratePdfConfig",
+      "type": "object"
+    },
+    "GetClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "client_id": {
+          "examples": [
+            12345
+          ],
+          "minimum": 1,
+          "title": "Client ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Get Client",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "GetClientConfig",
+      "type": "object"
+    },
+    "GetInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "examples": [
+            1050
+          ],
+          "minimum": 1,
+          "title": "Invoice ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get Invoice",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "GetInvoiceConfig",
+      "type": "object"
+    },
+    "GetItemConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "examples": [
+            12345
+          ],
+          "minimum": 1,
+          "title": "Item ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_item",
+          "default": "get_item",
+          "title": "Get Item",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "GetItemConfig",
+      "type": "object"
+    },
+    "GetRelatedDocumentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "examples": [
+            1050
+          ],
+          "minimum": 1,
+          "title": "Invoice ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_related_documents",
+          "default": "get_related_documents",
+          "title": "Get Related Documents",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "GetRelatedDocumentsConfig",
+      "type": "object"
+    },
+    "GlobalDiscountRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "value_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "percentage",
+                "absolute"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "percentage"
+          ],
+          "title": "Value Type",
+          "enum": [
+            "percentage",
+            "absolute"
+          ],
+          "x-enum-searchable": true
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            10
+          ],
+          "title": "Value"
+        }
+      },
+      "title": "GlobalDiscountRequest",
+      "type": "object"
+    },
+    "InvoiceInputRawOwnerInvoice1": {
+      "additionalProperties": false,
+      "properties": {
+        "document_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "FT"
+          ],
+          "title": "Document Type"
+        },
+        "document_serie": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "A"
+          ],
+          "title": "Document Serie"
+        },
+        "document_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "123"
+          ],
+          "title": "Document Number"
+        }
+      },
+      "title": "InvoiceInputRawOwnerInvoice1",
+      "type": "object"
+    },
+    "InvoiceItemRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Maximum 60 characters. The V2 API silently truncates longer values to 60; the V3 API rejects them with 422.",
+          "examples": [
+            "Consulting"
+          ],
+          "maxLength": 60,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum 200 characters and 20 lines. The V2 API silently truncates longer values to 200; the V3 API rejects them with 422.",
+          "examples": [
+            "IT Services"
+          ],
+          "title": "Description"
+        },
+        "unit_price": {
+          "examples": [
+            50
+          ],
+          "title": "Unit Price",
+          "type": "number"
+        },
+        "quantity": {
+          "examples": [
+            2
+          ],
+          "title": "Quantity",
+          "type": "number"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Not a length limit \u2014 constrained to a fixed set of unit values.",
+          "examples": [
+            "hour"
+          ],
+          "title": "Unit"
+        },
+        "discount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            0
+          ],
+          "title": "Discount"
+        },
+        "tax": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InvoiceTaxRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "retention": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item retention rate (%).",
+          "examples": [
+            25
+          ],
+          "title": "Retention"
+        }
+      },
+      "required": [
+        "name",
+        "unit_price",
+        "quantity"
+      ],
+      "title": "InvoiceItemRequest",
+      "type": "object"
+    },
+    "InvoiceTaxRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not a business rule.",
+          "examples": [
+            "IVA23"
+          ],
+          "title": "Name"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tax rate (%). Alternative to `name`.",
+          "examples": [
+            23
+          ],
+          "title": "Value"
+        }
+      },
+      "title": "InvoiceTaxRequest",
+      "type": "object"
+    },
+    "InvoiceXpressCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "invoicexpress_api_key",
+          "default": "invoicexpress_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_name": {
+          "description": "The account subdomain in https://ACCOUNT_NAME.app.invoicexpress.com.",
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+          "title": "Account name",
+          "type": "string"
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "account_name",
+        "api_key"
+      ],
+      "title": "InvoiceXpress API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your account name and API key from InvoiceXpress Settings \u2192 API. Enter only the account subdomain, without https:// or .app.invoicexpress.com.",
+      "x-credential-url": "https://www.app.invoicexpress.com/users/api"
+    },
+    "ItemInput": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Item name. Values longer than 60 characters are rejected with HTTP 422 \u2014 they are not truncated.",
+          "examples": [
+            "Item name"
+          ],
+          "maxLength": 60,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item description. Values longer than 200 characters are rejected with HTTP 422 \u2014 they are not truncated.",
+          "examples": [
+            "Item description"
+          ],
+          "title": "Description"
+        },
+        "unit_price": {
+          "examples": [
+            9.99
+          ],
+          "title": "Unit Price",
+          "type": "number"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One of: `hour`, `day`, `month`, `unit`, `service`, `tax`, `other`, `product`, `article`.",
+          "examples": [
+            "service"
+          ],
+          "title": "Unit"
+        },
+        "tax": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ItemInputTax"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "name",
+        "unit_price"
+      ],
+      "title": "ItemInput",
+      "type": "object"
+    },
+    "ItemInputTax": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "IVA23"
+          ],
+          "title": "Name"
+        }
+      },
+      "title": "ItemInputTax",
+      "type": "object"
+    },
+    "ListClientsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "List Clients",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListClientsConfig",
+      "type": "object"
+    },
+    "ListInvoicesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "List Invoices",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client or document text"
+        }
+      },
+      "title": "ListInvoicesConfig",
+      "type": "object"
+    },
+    "ListItemsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_items",
+          "default": "list_items",
+          "title": "List Items",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListItemsConfig",
+      "type": "object"
+    },
+    "ListSequencesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sequences",
+          "default": "list_sequences",
+          "title": "List Sequences",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListSequencesConfig",
+      "type": "object"
+    },
+    "ListTaxesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_taxes",
+          "default": "list_taxes",
+          "title": "List Taxes",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTaxesConfig",
+      "type": "object"
+    },
+    "PaymentInput": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "examples": [
+            10
+          ],
+          "title": "Amount",
+          "type": "number"
+        },
+        "payment_mechanism": {
+          "anyOf": [
+            {
+              "enum": [
+                "TB",
+                "MB",
+                "CC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "TB"
+          ],
+          "title": "Payment Mechanism",
+          "enum": [
+            "TB",
+            "MB",
+            "CC"
+          ],
+          "x-enum-searchable": true
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stored in full on the receipt (observations). The copy on the client's treasury movement is truncated to 255 characters.",
+          "examples": [
+            "Transfer"
+          ],
+          "title": "Note"
+        },
+        "serie": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Serie"
+        },
+        "payment_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "22/11/2025"
+          ],
+          "title": "Payment Date"
+        }
+      },
+      "required": [
+        "amount"
+      ],
+      "title": "PaymentInput",
+      "type": "object"
+    },
+    "SendInvoiceEmailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "examples": [
+            1050
+          ],
+          "minimum": 1,
+          "title": "Invoice ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "send_invoice_email",
+          "default": "send_invoice_email",
+          "title": "Send Invoice Email",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "message": {
+          "$ref": "#/$defs/EmailInput",
+          "title": "Message"
+        }
+      },
+      "required": [
+        "document_id",
+        "message"
+      ],
+      "title": "SendInvoiceEmailConfig",
+      "type": "object"
+    },
+    "StateInput": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "finalized",
+            "deleted",
+            "canceled",
+            "settled",
+            "unsettled"
+          ],
+          "examples": [
+            "finalized"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cancellation reason. Required when `state` is `canceled`, otherwise the request fails with 422 `The cancellation reason is a required field`. No enforced character limit. English text shown; the message follows the account language.",
+          "examples": [
+            "Wrong value"
+          ],
+          "title": "Message"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "StateInput",
+      "type": "object"
+    },
+    "UpdateClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "client_id": {
+          "examples": [
+            12345
+          ],
+          "minimum": 1,
+          "title": "Client ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Update Client",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client": {
+          "$ref": "#/$defs/ClientInput",
+          "title": "Client"
+        }
+      },
+      "required": [
+        "client_id",
+        "client"
+      ],
+      "title": "UpdateClientConfig",
+      "type": "object"
+    },
+    "UpdateInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "examples": [
+            1050
+          ],
+          "minimum": 1,
+          "title": "Invoice ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_invoice",
+          "default": "update_invoice",
+          "title": "Update Invoice",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice": {
+          "$ref": "#/$defs/UpdateInvoiceInput",
+          "title": "Invoice"
+        }
+      },
+      "required": [
+        "document_id",
+        "invoice"
+      ],
+      "title": "UpdateInvoiceConfig",
+      "type": "object"
+    },
+    "UpdateInvoiceInput": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "dd/mm/yyyy",
+          "examples": [
+            "22/11/2025"
+          ],
+          "title": "Date"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "dd/mm/yyyy. Defaults to `date` when omitted.",
+          "examples": [
+            "22/12/2025"
+          ],
+          "title": "Due Date"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "PO-999"
+          ],
+          "title": "Reference"
+        },
+        "observations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "No enforced character limit.",
+          "examples": [
+            "Services rendered"
+          ],
+          "title": "Observations"
+        },
+        "retention": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "0"
+          ],
+          "title": "Retention"
+        },
+        "tax_exemption": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not a business rule \u2014 the value is effectively an AT exemption code.",
+          "examples": [
+            "M00"
+          ],
+          "title": "Tax Exemption"
+        },
+        "sequence_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "123456"
+          ],
+          "title": "Sequence Id"
+        },
+        "manual_sequence_number": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum length is the database default, not a business rule.",
+          "title": "Manual Sequence Number"
+        },
+        "client": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocumentClientRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "items": {
+          "description": "Replaces the complete invoice items list.",
+          "items": {
+            "$ref": "#/$defs/InvoiceItemRequest"
+          },
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        },
+        "mb_reference": {
+          "anyOf": [
+            {
+              "enum": [
+                "0",
+                "1"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "1"
+          ],
+          "title": "Mb Reference",
+          "enum": [
+            "0",
+            "1"
+          ],
+          "x-enum-searchable": true
+        },
+        "owner_invoice_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            1049
+          ],
+          "title": "Owner Invoice Id"
+        },
+        "tax_exemption_reason": {
+          "anyOf": [
+            {
+              "maxLength": 210,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum 210 characters. Enforced by model validation \u2014 longer values are rejected with 422 even though the underlying column would accept more.",
+          "examples": [
+            "M00"
+          ],
+          "title": "Tax Exemption Reason"
+        },
+        "currency_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "USD"
+          ],
+          "title": "Currency Code"
+        },
+        "rate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "1.10"
+          ],
+          "title": "Rate"
+        },
+        "plugin_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "plugin_123"
+          ],
+          "title": "Plugin Id"
+        },
+        "global_discount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GlobalDiscountRequest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "proprietary_uid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Idempotency key, same as the top-level `proprietary_uid`.",
+          "examples": [
+            "uuid-123"
+          ],
+          "title": "Proprietary Uid"
+        },
+        "tax_exemption_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tax exemption code.",
+          "examples": [
+            "M07"
+          ],
+          "title": "Tax Exemption Code"
+        },
+        "tax_exemption_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tax exemption message.",
+          "examples": [
+            "Isento artigo 9.\u00ba do CIVA"
+          ],
+          "title": "Tax Exemption Message"
+        },
+        "discount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document discount.",
+          "examples": [
+            0
+          ],
+          "title": "Discount"
+        },
+        "raw_owner_invoice": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/InvoiceInputRawOwnerInvoice1"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Credit and debit notes only. Reference to an original document issued outside InvoiceXpress. Send a string, or an object with `document_type`, `document_serie` and `document_number`. Cannot be combined with `owner_invoice_id`.",
+          "title": "Raw Owner Invoice"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "UpdateInvoiceInput",
+      "type": "object"
+    },
+    "UpdateItemConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "examples": [
+            12345
+          ],
+          "minimum": 1,
+          "title": "Item ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_item",
+          "default": "update_item",
+          "title": "Update Item",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item": {
+          "$ref": "#/$defs/ItemInput",
+          "title": "Item"
+        }
+      },
+      "required": [
+        "item_id",
+        "item"
+      ],
+      "title": "UpdateItemConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "change_invoice_state": "#/$defs/ChangeInvoiceStateConfig",
+          "create_client": "#/$defs/CreateClientConfig",
+          "create_invoice": "#/$defs/CreateInvoiceConfig",
+          "create_item": "#/$defs/CreateItemConfig",
+          "delete_item": "#/$defs/DeleteItemConfig",
+          "find_client_by_code": "#/$defs/FindClientByCodeConfig",
+          "find_client_by_name": "#/$defs/FindClientByNameConfig",
+          "generate_payment": "#/$defs/GeneratePaymentConfig",
+          "generate_pdf": "#/$defs/GeneratePdfConfig",
+          "get_client": "#/$defs/GetClientConfig",
+          "get_invoice": "#/$defs/GetInvoiceConfig",
+          "get_item": "#/$defs/GetItemConfig",
+          "get_related_documents": "#/$defs/GetRelatedDocumentsConfig",
+          "list_clients": "#/$defs/ListClientsConfig",
+          "list_invoices": "#/$defs/ListInvoicesConfig",
+          "list_items": "#/$defs/ListItemsConfig",
+          "list_sequences": "#/$defs/ListSequencesConfig",
+          "list_taxes": "#/$defs/ListTaxesConfig",
+          "send_invoice_email": "#/$defs/SendInvoiceEmailConfig",
+          "update_client": "#/$defs/UpdateClientConfig",
+          "update_invoice": "#/$defs/UpdateInvoiceConfig",
+          "update_item": "#/$defs/UpdateItemConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ChangeInvoiceStateConfig"
+        },
+        {
+          "$ref": "#/$defs/SendInvoiceEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/GeneratePdfConfig"
+        },
+        {
+          "$ref": "#/$defs/GeneratePaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/GetRelatedDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetClientConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/FindClientByNameConfig"
+        },
+        {
+          "$ref": "#/$defs/FindClientByCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/ListItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteItemConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTaxesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSequencesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/InvoiceXpressCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Invoicexpress Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
