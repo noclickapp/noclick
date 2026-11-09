@@ -1,0 +1,334 @@
+[
+  {
+    "config": {
+      "operation": "list_products"
+    },
+    "method": "GET",
+    "path": "/V1/products",
+    "response": {
+      "items": [],
+      "search_criteria": {},
+      "total_count": 0
+    },
+    "params": {
+      "searchCriteria[pageSize]": "50",
+      "searchCriteria[currentPage]": "1"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_customers"
+    },
+    "method": "GET",
+    "path": "/V1/customers/search",
+    "response": {
+      "items": [],
+      "search_criteria": {},
+      "total_count": 0
+    },
+    "params": {
+      "searchCriteria[pageSize]": "50",
+      "searchCriteria[currentPage]": "1"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_orders"
+    },
+    "method": "GET",
+    "path": "/V1/orders",
+    "response": {
+      "items": [],
+      "search_criteria": {},
+      "total_count": 0
+    },
+    "params": {
+      "searchCriteria[pageSize]": "50",
+      "searchCriteria[currentPage]": "1"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_invoices"
+    },
+    "method": "GET",
+    "path": "/V1/invoices",
+    "response": {
+      "items": [],
+      "search_criteria": {},
+      "total_count": 0
+    },
+    "params": {
+      "searchCriteria[pageSize]": "50",
+      "searchCriteria[currentPage]": "1"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_shipments"
+    },
+    "method": "GET",
+    "path": "/V1/shipments",
+    "response": {
+      "items": [],
+      "search_criteria": {},
+      "total_count": 0
+    },
+    "params": {
+      "searchCriteria[pageSize]": "50",
+      "searchCriteria[currentPage]": "1"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_product",
+      "sku": "24-MB01"
+    },
+    "method": "GET",
+    "path": "/V1/products/24-MB01",
+    "response": {
+      "id": 7
+    }
+  },
+  {
+    "config": {
+      "operation": "get_customer",
+      "customer_id": 7
+    },
+    "method": "GET",
+    "path": "/V1/customers/7",
+    "response": {
+      "id": 7
+    }
+  },
+  {
+    "config": {
+      "operation": "get_order",
+      "order_id": 7
+    },
+    "method": "GET",
+    "path": "/V1/orders/7",
+    "response": {
+      "id": 7
+    }
+  },
+  {
+    "config": {
+      "operation": "get_invoice",
+      "invoice_id": 7
+    },
+    "method": "GET",
+    "path": "/V1/invoices/7",
+    "response": {
+      "id": 7
+    }
+  },
+  {
+    "config": {
+      "operation": "get_shipment",
+      "shipment_id": 7
+    },
+    "method": "GET",
+    "path": "/V1/shipment/7",
+    "response": {
+      "id": 7
+    }
+  },
+  {
+    "config": {
+      "operation": "get_category",
+      "category_id": 7
+    },
+    "method": "GET",
+    "path": "/V1/categories/7",
+    "response": {
+      "id": 7
+    }
+  },
+  {
+    "config": {
+      "operation": "get_stock_item",
+      "sku": "24-MB01"
+    },
+    "method": "GET",
+    "path": "/V1/stockItems/24-MB01",
+    "response": {
+      "id": 7
+    }
+  },
+  {
+    "config": {
+      "operation": "create_product",
+      "sku": "24-MB01",
+      "name": "Joust Duffle Bag",
+      "price": 34,
+      "attribute_set_id": 4
+    },
+    "method": "POST",
+    "path": "/V1/products",
+    "response": {
+      "id": 7
+    },
+    "body": {
+      "product": {
+        "sku": "24-MB01",
+        "name": "Joust Duffle Bag",
+        "price": 34.0,
+        "attribute_set_id": 4,
+        "status": 2,
+        "visibility": 4,
+        "type_id": "simple"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_product",
+      "sku": "24-MB01",
+      "price": 0,
+      "status": 2
+    },
+    "method": "PUT",
+    "path": "/V1/products/24-MB01",
+    "response": {
+      "id": 7
+    },
+    "body": {
+      "product": {
+        "sku": "24-MB01",
+        "price": 0.0,
+        "status": 2
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_product",
+      "sku": "24-MB01"
+    },
+    "method": "DELETE",
+    "path": "/V1/products/24-MB01",
+    "response": true
+  },
+  {
+    "config": {
+      "operation": "create_customer",
+      "email": "jdoe@example.com",
+      "firstname": "Jane",
+      "lastname": "Doe",
+      "website_id": 1
+    },
+    "method": "POST",
+    "path": "/V1/customers",
+    "response": {
+      "id": 7
+    },
+    "body": {
+      "customer": {
+        "email": "jdoe@example.com",
+        "firstname": "Jane",
+        "lastname": "Doe",
+        "website_id": 1
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_customer",
+      "email": "jdoe@example.com",
+      "firstname": "Jane",
+      "lastname": "Doe",
+      "website_id": 1,
+      "customer_id": 7
+    },
+    "method": "PUT",
+    "path": "/V1/customers/7",
+    "response": {
+      "id": 7
+    },
+    "body": {
+      "customer": {
+        "email": "jdoe@example.com",
+        "firstname": "Jane",
+        "lastname": "Doe",
+        "website_id": 1,
+        "id": 7
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "cancel_order",
+      "order_id": 7
+    },
+    "method": "POST",
+    "path": "/V1/orders/7/cancel",
+    "response": true
+  },
+  {
+    "config": {
+      "operation": "hold_order",
+      "order_id": 7
+    },
+    "method": "POST",
+    "path": "/V1/orders/7/hold",
+    "response": true
+  },
+  {
+    "config": {
+      "operation": "unhold_order",
+      "order_id": 7
+    },
+    "method": "POST",
+    "path": "/V1/orders/7/unhold",
+    "response": true
+  },
+  {
+    "config": {
+      "operation": "add_order_comment",
+      "order_id": 7,
+      "comment": "Ready to pack",
+      "notify_customer": true
+    },
+    "method": "POST",
+    "path": "/V1/orders/7/comments",
+    "response": true,
+    "body": {
+      "statusHistory": {
+        "comment": "Ready to pack",
+        "parent_id": 7,
+        "is_customer_notified": 1,
+        "is_visible_on_front": 0
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_order_comments",
+      "order_id": 7
+    },
+    "method": "GET",
+    "path": "/V1/orders/7/comments",
+    "response": {
+      "items": [],
+      "total_count": 0,
+      "search_criteria": {}
+    }
+  },
+  {
+    "config": {
+      "operation": "get_category_tree",
+      "root_category_id": 2,
+      "depth": 4
+    },
+    "method": "GET",
+    "path": "/V1/categories",
+    "response": {
+      "id": 7
+    },
+    "params": {
+      "rootCategoryId": "2",
+      "depth": "4"
+    }
+  }
+]

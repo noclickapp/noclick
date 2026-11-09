@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/magento-v2.svg",
+  "source": "https://raw.githubusercontent.com/magento/magento2/2.4.8/app/design/frontend/Magento/blank/web/images/logo.svg",
+  "license": "Magento brand mark from the official Magento 2.4.8 distribution (OSL-3.0); used nominatively to identify Magento. Trademark rights remain with Adobe/Magento.",
+  "sha256": "7345741478427c9e4e8d8d7602ec0c6276553836a126360d52c9863b838614b6"
+}

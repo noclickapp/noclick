@@ -1,0 +1,1352 @@
+{
+  "$defs": {
+    "AddOrderComment": {
+      "additionalProperties": false,
+      "description": "Add order history with explicit customer-notification and storefront visibility choices.",
+      "properties": {
+        "order_id": {
+          "description": "Internal entity ID, not the displayed increment/order number.",
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "add_order_comment",
+          "default": "add_order_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "comment": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Comment",
+          "type": "string"
+        },
+        "notify_customer": {
+          "default": false,
+          "title": "Notify Customer",
+          "type": "boolean"
+        },
+        "visible_on_front": {
+          "default": false,
+          "title": "Visible On Front",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "order_id",
+        "comment"
+      ],
+      "title": "AddOrderComment",
+      "type": "object"
+    },
+    "CancelOrder": {
+      "additionalProperties": false,
+      "description": "Cancel order using the matching Magento REST endpoint.",
+      "properties": {
+        "order_id": {
+          "description": "Internal entity ID, not the displayed increment/order number.",
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "cancel_order",
+          "default": "cancel_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "CancelOrder",
+      "type": "object"
+    },
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "description": "Create a customer without a password; Magento may send its account email.",
+      "properties": {
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "firstname": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastname": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "website_id": {
+          "description": "Existing customer website ID in this store.",
+          "minimum": 0,
+          "title": "Website Id",
+          "type": "integer"
+        },
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Store Id"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email",
+        "firstname",
+        "lastname",
+        "website_id"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "CreateProduct": {
+      "additionalProperties": false,
+      "description": "Create a simple product with the store's required attribute set.",
+      "properties": {
+        "sku": {
+          "description": "Exact product SKU; it is percent-encoded as one path component.",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Sku",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "price": {
+          "minimum": 0,
+          "title": "Price",
+          "type": "number"
+        },
+        "status": {
+          "default": 2,
+          "enum": [
+            1,
+            2
+          ],
+          "title": "Status",
+          "type": "integer"
+        },
+        "visibility": {
+          "default": 4,
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "title": "Visibility",
+          "type": "integer"
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weight"
+        },
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "attribute_set_id": {
+          "description": "Existing attribute set ID in this store.",
+          "minimum": 1,
+          "title": "Attribute Set Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sku",
+        "name",
+        "price",
+        "attribute_set_id"
+      ],
+      "title": "CreateProduct",
+      "type": "object"
+    },
+    "DeleteProduct": {
+      "additionalProperties": false,
+      "description": "Delete product using the matching Magento REST endpoint.",
+      "properties": {
+        "sku": {
+          "description": "Exact product SKU; it is percent-encoded as one path component.",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Sku",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_product",
+          "default": "delete_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "sku"
+      ],
+      "title": "DeleteProduct",
+      "type": "object"
+    },
+    "GetCategory": {
+      "additionalProperties": false,
+      "description": "Read a category by its internal ID.",
+      "properties": {
+        "operation": {
+          "const": "get_category",
+          "default": "get_category",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "category_id": {
+          "minimum": 1,
+          "title": "Category Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "GetCategory",
+      "type": "object"
+    },
+    "GetCategoryTree": {
+      "additionalProperties": false,
+      "description": "Read the category tree to a bounded depth.",
+      "properties": {
+        "operation": {
+          "const": "get_category_tree",
+          "default": "get_category_tree",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "root_category_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Root Category Id"
+        },
+        "depth": {
+          "default": 3,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Depth",
+          "type": "integer"
+        }
+      },
+      "title": "GetCategoryTree",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "description": "Get customer using the matching Magento REST endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetInvoice": {
+      "additionalProperties": false,
+      "description": "Get invoice using the matching Magento REST endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "minimum": 1,
+          "title": "Invoice Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "GetInvoice",
+      "type": "object"
+    },
+    "GetOrder": {
+      "additionalProperties": false,
+      "description": "Get order using the matching Magento REST endpoint.",
+      "properties": {
+        "order_id": {
+          "description": "Internal entity ID, not the displayed increment/order number.",
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "GetOrder",
+      "type": "object"
+    },
+    "GetProduct": {
+      "additionalProperties": false,
+      "description": "Get product using the matching Magento REST endpoint.",
+      "properties": {
+        "sku": {
+          "description": "Exact product SKU; it is percent-encoded as one path component.",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Sku",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "sku"
+      ],
+      "title": "GetProduct",
+      "type": "object"
+    },
+    "GetShipment": {
+      "additionalProperties": false,
+      "description": "Get shipment using the matching Magento REST endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_shipment",
+          "default": "get_shipment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "shipment_id": {
+          "minimum": 1,
+          "title": "Shipment Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "shipment_id"
+      ],
+      "title": "GetShipment",
+      "type": "object"
+    },
+    "GetStockItem": {
+      "additionalProperties": false,
+      "description": "Get stock item using the matching Magento REST endpoint.",
+      "properties": {
+        "sku": {
+          "description": "Exact product SKU; it is percent-encoded as one path component.",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Sku",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_stock_item",
+          "default": "get_stock_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "sku"
+      ],
+      "title": "GetStockItem",
+      "type": "object"
+    },
+    "HoldOrder": {
+      "additionalProperties": false,
+      "description": "Hold order using the matching Magento REST endpoint.",
+      "properties": {
+        "order_id": {
+          "description": "Internal entity ID, not the displayed increment/order number.",
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "hold_order",
+          "default": "hold_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "HoldOrder",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "description": "List customers using the matching Magento REST endpoint.",
+      "properties": {
+        "page_size": {
+          "default": 50,
+          "description": "Maximum results per page; no automatic fetching of later pages.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "current_page": {
+          "default": 1,
+          "description": "One-based page number; use next_page from the previous result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Current Page",
+          "type": "integer"
+        },
+        "filter_field": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One search filter, for example sku, email, status or updated_at.",
+          "title": "Filter Field"
+        },
+        "filter_value": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Value"
+        },
+        "condition_type": {
+          "default": "eq",
+          "enum": [
+            "eq",
+            "neq",
+            "like",
+            "gt",
+            "gteq",
+            "lt",
+            "lteq",
+            "in",
+            "nin"
+          ],
+          "title": "Condition Type",
+          "type": "string"
+        },
+        "sort_field": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Field"
+        },
+        "sort_direction": {
+          "default": "ASC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListInvoices": {
+      "additionalProperties": false,
+      "description": "List invoices using the matching Magento REST endpoint.",
+      "properties": {
+        "page_size": {
+          "default": 50,
+          "description": "Maximum results per page; no automatic fetching of later pages.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "current_page": {
+          "default": 1,
+          "description": "One-based page number; use next_page from the previous result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Current Page",
+          "type": "integer"
+        },
+        "filter_field": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One search filter, for example sku, email, status or updated_at.",
+          "title": "Filter Field"
+        },
+        "filter_value": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Value"
+        },
+        "condition_type": {
+          "default": "eq",
+          "enum": [
+            "eq",
+            "neq",
+            "like",
+            "gt",
+            "gteq",
+            "lt",
+            "lteq",
+            "in",
+            "nin"
+          ],
+          "title": "Condition Type",
+          "type": "string"
+        },
+        "sort_field": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Field"
+        },
+        "sort_direction": {
+          "default": "ASC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListInvoices",
+      "type": "object"
+    },
+    "ListOrderComments": {
+      "additionalProperties": false,
+      "description": "List order comments using the matching Magento REST endpoint.",
+      "properties": {
+        "order_id": {
+          "description": "Internal entity ID, not the displayed increment/order number.",
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_order_comments",
+          "default": "list_order_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "ListOrderComments",
+      "type": "object"
+    },
+    "ListOrders": {
+      "additionalProperties": false,
+      "description": "List orders using the matching Magento REST endpoint.",
+      "properties": {
+        "page_size": {
+          "default": 50,
+          "description": "Maximum results per page; no automatic fetching of later pages.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "current_page": {
+          "default": 1,
+          "description": "One-based page number; use next_page from the previous result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Current Page",
+          "type": "integer"
+        },
+        "filter_field": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One search filter, for example sku, email, status or updated_at.",
+          "title": "Filter Field"
+        },
+        "filter_value": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Value"
+        },
+        "condition_type": {
+          "default": "eq",
+          "enum": [
+            "eq",
+            "neq",
+            "like",
+            "gt",
+            "gteq",
+            "lt",
+            "lteq",
+            "in",
+            "nin"
+          ],
+          "title": "Condition Type",
+          "type": "string"
+        },
+        "sort_field": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Field"
+        },
+        "sort_direction": {
+          "default": "ASC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOrders",
+      "type": "object"
+    },
+    "ListProducts": {
+      "additionalProperties": false,
+      "description": "List products using the matching Magento REST endpoint.",
+      "properties": {
+        "page_size": {
+          "default": 50,
+          "description": "Maximum results per page; no automatic fetching of later pages.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "current_page": {
+          "default": 1,
+          "description": "One-based page number; use next_page from the previous result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Current Page",
+          "type": "integer"
+        },
+        "filter_field": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One search filter, for example sku, email, status or updated_at.",
+          "title": "Filter Field"
+        },
+        "filter_value": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Value"
+        },
+        "condition_type": {
+          "default": "eq",
+          "enum": [
+            "eq",
+            "neq",
+            "like",
+            "gt",
+            "gteq",
+            "lt",
+            "lteq",
+            "in",
+            "nin"
+          ],
+          "title": "Condition Type",
+          "type": "string"
+        },
+        "sort_field": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Field"
+        },
+        "sort_direction": {
+          "default": "ASC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProducts",
+      "type": "object"
+    },
+    "ListShipments": {
+      "additionalProperties": false,
+      "description": "List shipments using the matching Magento REST endpoint.",
+      "properties": {
+        "page_size": {
+          "default": 50,
+          "description": "Maximum results per page; no automatic fetching of later pages.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "current_page": {
+          "default": 1,
+          "description": "One-based page number; use next_page from the previous result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Current Page",
+          "type": "integer"
+        },
+        "filter_field": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One search filter, for example sku, email, status or updated_at.",
+          "title": "Filter Field"
+        },
+        "filter_value": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Value"
+        },
+        "condition_type": {
+          "default": "eq",
+          "enum": [
+            "eq",
+            "neq",
+            "like",
+            "gt",
+            "gteq",
+            "lt",
+            "lteq",
+            "in",
+            "nin"
+          ],
+          "title": "Condition Type",
+          "type": "string"
+        },
+        "sort_field": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Field"
+        },
+        "sort_direction": {
+          "default": "ASC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_shipments",
+          "default": "list_shipments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListShipments",
+      "type": "object"
+    },
+    "MagentoV2TokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "magento_v2_access_token",
+          "default": "magento_v2_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_base_url": {
+          "description": "Full HTTPS root including store code, for example https://shop.example.com/rest/default. Include a subdirectory if Magento is installed in one.",
+          "title": "Store REST root",
+          "type": "string"
+        },
+        "access_token": {
+          "description": "Paste the token itself, without Authorization or Bearer.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_base_url",
+        "access_token"
+      ],
+      "title": "Magento Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste the store REST root and an existing admin access token authorized for your operations. Admin tokens normally expire after four hours; replace expired tokens manually. Customer tokens cannot access these admin endpoints. An integration access token works only when the store already permits standalone bearer tokens. NoClick does not change that setting or request tokens. This connects Magento Open Source / Adobe Commerce on-premises or PaaS, not Adobe Commerce as a Cloud Service.",
+      "x-credential-url": "https://developer.adobe.com/commerce/webapi/get-started/authentication/gs-authentication-token"
+    },
+    "UnholdOrder": {
+      "additionalProperties": false,
+      "description": "Unhold order using the matching Magento REST endpoint.",
+      "properties": {
+        "order_id": {
+          "description": "Internal entity ID, not the displayed increment/order number.",
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "unhold_order",
+          "default": "unhold_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "UnholdOrder",
+      "type": "object"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "description": "Save customer identity fields; email and names are required by Magento.",
+      "properties": {
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "firstname": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastname": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "website_id": {
+          "description": "Existing customer website ID in this store.",
+          "minimum": 0,
+          "title": "Website Id",
+          "type": "integer"
+        },
+        "store_id": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Store Id"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "email",
+        "firstname",
+        "lastname",
+        "website_id",
+        "customer_id"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    },
+    "UpdateProduct": {
+      "additionalProperties": false,
+      "description": "Update selected product fields; omitted fields are not sent.",
+      "properties": {
+        "sku": {
+          "description": "Exact product SKU; it is percent-encoded as one path component.",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Sku",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1 enabled, 2 disabled.",
+          "title": "Status"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1 not visible, 2 catalog, 3 search, 4 catalog and search.",
+          "title": "Visibility"
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weight"
+        },
+        "operation": {
+          "const": "update_product",
+          "default": "update_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "sku"
+      ],
+      "title": "UpdateProduct",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_order_comment": "#/$defs/AddOrderComment",
+          "cancel_order": "#/$defs/CancelOrder",
+          "create_customer": "#/$defs/CreateCustomer",
+          "create_product": "#/$defs/CreateProduct",
+          "delete_product": "#/$defs/DeleteProduct",
+          "get_category": "#/$defs/GetCategory",
+          "get_category_tree": "#/$defs/GetCategoryTree",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_invoice": "#/$defs/GetInvoice",
+          "get_order": "#/$defs/GetOrder",
+          "get_product": "#/$defs/GetProduct",
+          "get_shipment": "#/$defs/GetShipment",
+          "get_stock_item": "#/$defs/GetStockItem",
+          "hold_order": "#/$defs/HoldOrder",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_invoices": "#/$defs/ListInvoices",
+          "list_order_comments": "#/$defs/ListOrderComments",
+          "list_orders": "#/$defs/ListOrders",
+          "list_products": "#/$defs/ListProducts",
+          "list_shipments": "#/$defs/ListShipments",
+          "unhold_order": "#/$defs/UnholdOrder",
+          "update_customer": "#/$defs/UpdateCustomer",
+          "update_product": "#/$defs/UpdateProduct"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreateProduct"
+        },
+        {
+          "$ref": "#/$defs/UpdateProduct"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/AddOrderComment"
+        },
+        {
+          "$ref": "#/$defs/GetCategoryTree"
+        },
+        {
+          "$ref": "#/$defs/GetCategory"
+        },
+        {
+          "$ref": "#/$defs/ListProducts"
+        },
+        {
+          "$ref": "#/$defs/GetProduct"
+        },
+        {
+          "$ref": "#/$defs/DeleteProduct"
+        },
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/ListOrders"
+        },
+        {
+          "$ref": "#/$defs/GetOrder"
+        },
+        {
+          "$ref": "#/$defs/CancelOrder"
+        },
+        {
+          "$ref": "#/$defs/HoldOrder"
+        },
+        {
+          "$ref": "#/$defs/UnholdOrder"
+        },
+        {
+          "$ref": "#/$defs/ListOrderComments"
+        },
+        {
+          "$ref": "#/$defs/ListInvoices"
+        },
+        {
+          "$ref": "#/$defs/GetInvoice"
+        },
+        {
+          "$ref": "#/$defs/ListShipments"
+        },
+        {
+          "$ref": "#/$defs/GetShipment"
+        },
+        {
+          "$ref": "#/$defs/GetStockItem"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MagentoV2TokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Magento-v2 Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
