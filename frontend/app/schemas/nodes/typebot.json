@@ -1,0 +1,991 @@
+{
+  "$defs": {
+    "TypebotAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "typebot_api_token",
+          "default": "typebot_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Typebot API Token",
+      "type": "object",
+      "x-credential-instructions": "In Typebot, open Settings & Members > My account > API tokens and create a token. Paste it here without the Bearer prefix. NoClick uses the hosted Typebot builder API.",
+      "x-credential-url": "https://docs.typebot.io/api-reference/authentication"
+    },
+    "TypebotCreateFolder": {
+      "additionalProperties": false,
+      "description": "Create folder.",
+      "properties": {
+        "workspace_id": {
+          "description": "Settings & Members > Workspace > Settings > workspace ID.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Folder Id"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name"
+      ],
+      "title": "TypebotCreateFolder",
+      "type": "object"
+    },
+    "TypebotCreateTypebot": {
+      "additionalProperties": false,
+      "description": "Create typebot.",
+      "properties": {
+        "workspace_id": {
+          "description": "Settings & Members > Workspace > Settings > workspace ID.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_typebot",
+          "default": "create_typebot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name"
+      ],
+      "title": "TypebotCreateTypebot",
+      "type": "object"
+    },
+    "TypebotCreateWorkspace": {
+      "additionalProperties": false,
+      "description": "Create workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_workspace",
+          "default": "create_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Icon"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TypebotCreateWorkspace",
+      "type": "object"
+    },
+    "TypebotDeleteFolder": {
+      "additionalProperties": false,
+      "description": "Delete folder.",
+      "properties": {
+        "workspace_id": {
+          "description": "Settings & Members > Workspace > Settings > workspace ID.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "workspace_id",
+        "folder_id"
+      ],
+      "title": "TypebotDeleteFolder",
+      "type": "object"
+    },
+    "TypebotDeleteTypebot": {
+      "additionalProperties": false,
+      "description": "Delete typebot.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_typebot",
+          "default": "delete_typebot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "typebot_id"
+      ],
+      "title": "TypebotDeleteTypebot",
+      "type": "object"
+    },
+    "TypebotGetFolder": {
+      "additionalProperties": false,
+      "description": "Get folder.",
+      "properties": {
+        "workspace_id": {
+          "description": "Settings & Members > Workspace > Settings > workspace ID.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "workspace_id",
+        "folder_id"
+      ],
+      "title": "TypebotGetFolder",
+      "type": "object"
+    },
+    "TypebotGetInDepthAnalytics": {
+      "additionalProperties": false,
+      "description": "Get in depth analytics.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "time_filter": {
+          "default": "last7Days",
+          "enum": [
+            "today",
+            "last7Days",
+            "last30Days",
+            "monthToDate",
+            "lastMonth",
+            "yearToDate",
+            "allTime"
+          ],
+          "title": "Time Filter",
+          "type": "string"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA time zone, for example Europe/Paris.",
+          "title": "Time Zone"
+        },
+        "operation": {
+          "const": "get_in_depth_analytics",
+          "default": "get_in_depth_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "typebot_id"
+      ],
+      "title": "TypebotGetInDepthAnalytics",
+      "type": "object"
+    },
+    "TypebotGetPublishedTypebot": {
+      "additionalProperties": false,
+      "description": "Get published typebot.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_published_typebot",
+          "default": "get_published_typebot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "typebot_id"
+      ],
+      "title": "TypebotGetPublishedTypebot",
+      "type": "object"
+    },
+    "TypebotGetResult": {
+      "additionalProperties": false,
+      "description": "Get result.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "result_id": {
+          "minLength": 1,
+          "title": "Result Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_result",
+          "default": "get_result",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "typebot_id",
+        "result_id"
+      ],
+      "title": "TypebotGetResult",
+      "type": "object"
+    },
+    "TypebotGetStats": {
+      "additionalProperties": false,
+      "description": "Get analytics stats.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "time_filter": {
+          "default": "last7Days",
+          "enum": [
+            "today",
+            "last7Days",
+            "last30Days",
+            "monthToDate",
+            "lastMonth",
+            "yearToDate",
+            "allTime"
+          ],
+          "title": "Time Filter",
+          "type": "string"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA time zone, for example Europe/Paris.",
+          "title": "Time Zone"
+        },
+        "operation": {
+          "const": "get_analytics_stats",
+          "default": "get_analytics_stats",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "typebot_id"
+      ],
+      "title": "TypebotGetStats",
+      "type": "object"
+    },
+    "TypebotGetTranscript": {
+      "additionalProperties": false,
+      "description": "Get result transcript.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "result_id": {
+          "minLength": 1,
+          "title": "Result Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_result_transcript",
+          "default": "get_result_transcript",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "typebot_id",
+        "result_id"
+      ],
+      "title": "TypebotGetTranscript",
+      "type": "object"
+    },
+    "TypebotGetTypebot": {
+      "additionalProperties": false,
+      "description": "Get typebot.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_typebot",
+          "default": "get_typebot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "typebot_id"
+      ],
+      "title": "TypebotGetTypebot",
+      "type": "object"
+    },
+    "TypebotGetWorkspace": {
+      "additionalProperties": false,
+      "description": "Get workspace.",
+      "properties": {
+        "workspace_id": {
+          "description": "Settings & Members > Workspace > Settings > workspace ID.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "TypebotGetWorkspace",
+      "type": "object"
+    },
+    "TypebotListFolders": {
+      "additionalProperties": false,
+      "description": "List folders.",
+      "properties": {
+        "workspace_id": {
+          "description": "Settings & Members > Workspace > Settings > workspace ID.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Folder Id"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "TypebotListFolders",
+      "type": "object"
+    },
+    "TypebotListInvitations": {
+      "additionalProperties": false,
+      "description": "List workspace invitations.",
+      "properties": {
+        "workspace_id": {
+          "description": "Settings & Members > Workspace > Settings > workspace ID.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_workspace_invitations",
+          "default": "list_workspace_invitations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "TypebotListInvitations",
+      "type": "object"
+    },
+    "TypebotListLogs": {
+      "additionalProperties": false,
+      "description": "List result logs.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "result_id": {
+          "minLength": 1,
+          "title": "Result Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_result_logs",
+          "default": "list_result_logs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "typebot_id",
+        "result_id"
+      ],
+      "title": "TypebotListLogs",
+      "type": "object"
+    },
+    "TypebotListMembers": {
+      "additionalProperties": false,
+      "description": "List workspace members.",
+      "properties": {
+        "workspace_id": {
+          "description": "Settings & Members > Workspace > Settings > workspace ID.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_workspace_members",
+          "default": "list_workspace_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "TypebotListMembers",
+      "type": "object"
+    },
+    "TypebotListResults": {
+      "additionalProperties": false,
+      "description": "List results.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "time_filter": {
+          "default": "last7Days",
+          "enum": [
+            "today",
+            "last7Days",
+            "last30Days",
+            "monthToDate",
+            "lastMonth",
+            "yearToDate",
+            "allTime"
+          ],
+          "title": "Time Filter",
+          "type": "string"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA time zone, for example Europe/Paris.",
+          "title": "Time Zone"
+        },
+        "operation": {
+          "const": "list_results",
+          "default": "list_results",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 50,
+          "description": "One page only; pass nextCursor back as cursor.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric nextCursor returned by the previous page.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "typebot_id"
+      ],
+      "title": "TypebotListResults",
+      "type": "object"
+    },
+    "TypebotListTypebots": {
+      "additionalProperties": false,
+      "description": "List typebots.",
+      "properties": {
+        "workspace_id": {
+          "description": "Settings & Members > Workspace > Settings > workspace ID.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_typebots",
+          "default": "list_typebots",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "TypebotListTypebots",
+      "type": "object"
+    },
+    "TypebotListWorkspaces": {
+      "additionalProperties": false,
+      "description": "List workspaces.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TypebotListWorkspaces",
+      "type": "object"
+    },
+    "TypebotPublishTypebot": {
+      "additionalProperties": false,
+      "description": "Publish typebot.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "publish_typebot",
+          "default": "publish_typebot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "typebot_id"
+      ],
+      "title": "TypebotPublishTypebot",
+      "type": "object"
+    },
+    "TypebotUnpublishTypebot": {
+      "additionalProperties": false,
+      "description": "Unpublish typebot.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "unpublish_typebot",
+          "default": "unpublish_typebot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "typebot_id"
+      ],
+      "title": "TypebotUnpublishTypebot",
+      "type": "object"
+    },
+    "TypebotUpdateFolder": {
+      "additionalProperties": false,
+      "description": "Update folder.",
+      "properties": {
+        "workspace_id": {
+          "description": "Settings & Members > Workspace > Settings > workspace ID.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_folder",
+          "default": "update_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "folder_id",
+        "name"
+      ],
+      "title": "TypebotUpdateFolder",
+      "type": "object"
+    },
+    "TypebotUpdateTypebot": {
+      "additionalProperties": false,
+      "description": "Update typebot.",
+      "properties": {
+        "typebot_id": {
+          "description": "Builder typebot ID from the editor URL, not its public chat ID.",
+          "minLength": 1,
+          "title": "Typebot Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_typebot",
+          "default": "update_typebot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Rename the bot without replacing its flow.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "typebot_id",
+        "name"
+      ],
+      "title": "TypebotUpdateTypebot",
+      "type": "object"
+    },
+    "TypebotUpdateWorkspace": {
+      "additionalProperties": false,
+      "description": "Update workspace.",
+      "properties": {
+        "workspace_id": {
+          "description": "Settings & Members > Workspace > Settings > workspace ID.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_workspace",
+          "default": "update_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Icon"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name"
+      ],
+      "title": "TypebotUpdateWorkspace",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_folder": "#/$defs/TypebotCreateFolder",
+          "create_typebot": "#/$defs/TypebotCreateTypebot",
+          "create_workspace": "#/$defs/TypebotCreateWorkspace",
+          "delete_folder": "#/$defs/TypebotDeleteFolder",
+          "delete_typebot": "#/$defs/TypebotDeleteTypebot",
+          "get_analytics_stats": "#/$defs/TypebotGetStats",
+          "get_folder": "#/$defs/TypebotGetFolder",
+          "get_in_depth_analytics": "#/$defs/TypebotGetInDepthAnalytics",
+          "get_published_typebot": "#/$defs/TypebotGetPublishedTypebot",
+          "get_result": "#/$defs/TypebotGetResult",
+          "get_result_transcript": "#/$defs/TypebotGetTranscript",
+          "get_typebot": "#/$defs/TypebotGetTypebot",
+          "get_workspace": "#/$defs/TypebotGetWorkspace",
+          "list_folders": "#/$defs/TypebotListFolders",
+          "list_result_logs": "#/$defs/TypebotListLogs",
+          "list_results": "#/$defs/TypebotListResults",
+          "list_typebots": "#/$defs/TypebotListTypebots",
+          "list_workspace_invitations": "#/$defs/TypebotListInvitations",
+          "list_workspace_members": "#/$defs/TypebotListMembers",
+          "list_workspaces": "#/$defs/TypebotListWorkspaces",
+          "publish_typebot": "#/$defs/TypebotPublishTypebot",
+          "unpublish_typebot": "#/$defs/TypebotUnpublishTypebot",
+          "update_folder": "#/$defs/TypebotUpdateFolder",
+          "update_typebot": "#/$defs/TypebotUpdateTypebot",
+          "update_workspace": "#/$defs/TypebotUpdateWorkspace"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TypebotListWorkspaces"
+        },
+        {
+          "$ref": "#/$defs/TypebotCreateWorkspace"
+        },
+        {
+          "$ref": "#/$defs/TypebotGetWorkspace"
+        },
+        {
+          "$ref": "#/$defs/TypebotUpdateWorkspace"
+        },
+        {
+          "$ref": "#/$defs/TypebotListMembers"
+        },
+        {
+          "$ref": "#/$defs/TypebotListInvitations"
+        },
+        {
+          "$ref": "#/$defs/TypebotListTypebots"
+        },
+        {
+          "$ref": "#/$defs/TypebotGetTypebot"
+        },
+        {
+          "$ref": "#/$defs/TypebotCreateTypebot"
+        },
+        {
+          "$ref": "#/$defs/TypebotUpdateTypebot"
+        },
+        {
+          "$ref": "#/$defs/TypebotDeleteTypebot"
+        },
+        {
+          "$ref": "#/$defs/TypebotPublishTypebot"
+        },
+        {
+          "$ref": "#/$defs/TypebotUnpublishTypebot"
+        },
+        {
+          "$ref": "#/$defs/TypebotGetPublishedTypebot"
+        },
+        {
+          "$ref": "#/$defs/TypebotListResults"
+        },
+        {
+          "$ref": "#/$defs/TypebotGetResult"
+        },
+        {
+          "$ref": "#/$defs/TypebotGetTranscript"
+        },
+        {
+          "$ref": "#/$defs/TypebotListLogs"
+        },
+        {
+          "$ref": "#/$defs/TypebotGetStats"
+        },
+        {
+          "$ref": "#/$defs/TypebotGetInDepthAnalytics"
+        },
+        {
+          "$ref": "#/$defs/TypebotListFolders"
+        },
+        {
+          "$ref": "#/$defs/TypebotGetFolder"
+        },
+        {
+          "$ref": "#/$defs/TypebotCreateFolder"
+        },
+        {
+          "$ref": "#/$defs/TypebotUpdateFolder"
+        },
+        {
+          "$ref": "#/$defs/TypebotDeleteFolder"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TypebotAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Typebot Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
