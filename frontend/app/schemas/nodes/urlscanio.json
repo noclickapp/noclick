@@ -1,0 +1,859 @@
+{
+  "$defs": {
+    "CreateSavedSearch": {
+      "additionalProperties": false,
+      "properties": {
+        "datasource": {
+          "enum": [
+            "hostnames",
+            "scans"
+          ],
+          "title": "Datasource",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "longDescription": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longdescription"
+        },
+        "permissions": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "public:read",
+                  "team:read",
+                  "team:write"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Permissions"
+        },
+        "tlp": {
+          "anyOf": [
+            {
+              "enum": [
+                "red",
+                "amber+strict",
+                "amber",
+                "green",
+                "clear"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tlp",
+          "enum": [
+            "red",
+            "amber+strict",
+            "amber",
+            "green",
+            "clear"
+          ],
+          "x-enum-searchable": true
+        },
+        "usertags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usertags"
+        },
+        "operation": {
+          "const": "create_saved_search",
+          "default": "create_saved_search",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "datasource",
+        "name",
+        "query"
+      ],
+      "title": "CreateSavedSearch",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "urlscan Pro"
+    },
+    "DeleteSavedSearch": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_saved_search",
+          "default": "delete_saved_search",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Search Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "search_id"
+      ],
+      "title": "DeleteSavedSearch",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "urlscan Pro"
+    },
+    "GetAvailableBrands": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_available_brands",
+          "default": "get_available_brands",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAvailableBrands",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "urlscan Pro"
+    },
+    "GetBrandSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_brand_summary",
+          "default": "get_brand_summary",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetBrandSummary",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "urlscan Pro"
+    },
+    "GetCountries": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_countries",
+          "default": "get_countries",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCountries",
+      "type": "object"
+    },
+    "GetHostnameHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_hostname_history",
+          "default": "get_hostname_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "hostname": {
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Hostname",
+          "type": "string"
+        },
+        "limit": {
+          "default": 1000,
+          "maximum": 10000,
+          "minimum": 10,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "pageState": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pageState from the previous response",
+          "title": "Pagestate"
+        }
+      },
+      "required": [
+        "hostname"
+      ],
+      "title": "GetHostnameHistory",
+      "type": "object"
+    },
+    "GetQuotas": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_quotas",
+          "default": "get_quotas",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetQuotas",
+      "type": "object"
+    },
+    "GetResult": {
+      "additionalProperties": false,
+      "description": "Read a completed scan. A 404 may mean it is still processing; retry explicitly later.",
+      "properties": {
+        "scan_id": {
+          "description": "UUID of the scan result",
+          "format": "uuid",
+          "title": "Scan Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_result",
+          "default": "get_result",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scan_id"
+      ],
+      "title": "GetResult",
+      "type": "object"
+    },
+    "GetSimilarResults": {
+      "additionalProperties": false,
+      "properties": {
+        "scan_id": {
+          "description": "UUID of the scan result",
+          "format": "uuid",
+          "title": "Scan Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_similar_results",
+          "default": "get_similar_results",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        },
+        "size": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "search_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search After"
+        }
+      },
+      "required": [
+        "scan_id"
+      ],
+      "title": "GetSimilarResults",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "urlscan Pro"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListChannels": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListChannels",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "urlscan Pro"
+    },
+    "ListSavedSearches": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_saved_searches",
+          "default": "list_saved_searches",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSavedSearches",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "urlscan Pro"
+    },
+    "ListSubscriptions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSubscriptions",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "urlscan Pro"
+    },
+    "ResetVisibility": {
+      "additionalProperties": false,
+      "properties": {
+        "scan_id": {
+          "description": "UUID of the scan result",
+          "format": "uuid",
+          "title": "Scan Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reset_visibility",
+          "default": "reset_visibility",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scan_id"
+      ],
+      "title": "ResetVisibility",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "urlscan Pro"
+    },
+    "Search": {
+      "additionalProperties": false,
+      "description": "Retrieve one page. Pass the last result's comma-separated sort values as search_after.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "description": "Elasticsearch query string, e.g. page.domain:example.com",
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "size": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "search_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search After"
+        },
+        "datasource": {
+          "default": "scans",
+          "enum": [
+            "scans",
+            "hostnames",
+            "incidents",
+            "notifications",
+            "certificates"
+          ],
+          "title": "Datasource",
+          "type": "string"
+        },
+        "collapse": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Collapse"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "Search",
+      "type": "object"
+    },
+    "SubmitScan": {
+      "additionalProperties": false,
+      "description": "Submit a URL once. The response acknowledges a queued scan; poll get_result later.",
+      "properties": {
+        "operation": {
+          "const": "submit_scan",
+          "default": "submit_scan",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "title": "Url",
+          "type": "string"
+        },
+        "visibility": {
+          "default": "private",
+          "description": "Public scans expose the URL and page contents to everyone. Private scans need available quota.",
+          "enum": [
+            "public",
+            "unlisted",
+            "private"
+          ],
+          "title": "Visibility",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 30,
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "referer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Referer"
+        },
+        "customagent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customagent"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SubmitScan",
+      "type": "object"
+    },
+    "UpdateSavedSearch": {
+      "additionalProperties": false,
+      "properties": {
+        "datasource": {
+          "enum": [
+            "hostnames",
+            "scans"
+          ],
+          "title": "Datasource",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "longDescription": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longdescription"
+        },
+        "permissions": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "public:read",
+                  "team:read",
+                  "team:write"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Permissions"
+        },
+        "tlp": {
+          "anyOf": [
+            {
+              "enum": [
+                "red",
+                "amber+strict",
+                "amber",
+                "green",
+                "clear"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tlp",
+          "enum": [
+            "red",
+            "amber+strict",
+            "amber",
+            "green",
+            "clear"
+          ],
+          "x-enum-searchable": true
+        },
+        "usertags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Usertags"
+        },
+        "operation": {
+          "const": "update_saved_search",
+          "default": "update_saved_search",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Search Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "datasource",
+        "name",
+        "query",
+        "search_id"
+      ],
+      "title": "UpdateSavedSearch",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "urlscan Pro"
+    },
+    "UpdateVisibility": {
+      "additionalProperties": false,
+      "description": "Change visibility of your/team scan. 'deleted' removes it from view.",
+      "properties": {
+        "scan_id": {
+          "description": "UUID of the scan result",
+          "format": "uuid",
+          "title": "Scan Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_visibility",
+          "default": "update_visibility",
+          "title": "Operation",
+          "type": "string"
+        },
+        "visibility": {
+          "enum": [
+            "public",
+            "unlisted",
+            "private",
+            "deleted"
+          ],
+          "title": "Visibility",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scan_id",
+        "visibility"
+      ],
+      "title": "UpdateVisibility",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "urlscan Pro"
+    },
+    "UrlscanioAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "urlscanio_api_key",
+          "default": "urlscanio_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "urlscan.io API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your urlscan.io API key from your profile. NoClick checks the current user. Pro operations need a urlscan Pro plan and the key's permissions; connecting does not verify write access.",
+      "x-credential-url": "https://urlscan.io/user/profile/"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_saved_search": "#/$defs/CreateSavedSearch",
+          "delete_saved_search": "#/$defs/DeleteSavedSearch",
+          "get_available_brands": "#/$defs/GetAvailableBrands",
+          "get_brand_summary": "#/$defs/GetBrandSummary",
+          "get_countries": "#/$defs/GetCountries",
+          "get_hostname_history": "#/$defs/GetHostnameHistory",
+          "get_quotas": "#/$defs/GetQuotas",
+          "get_result": "#/$defs/GetResult",
+          "get_similar_results": "#/$defs/GetSimilarResults",
+          "get_user": "#/$defs/GetUser",
+          "list_channels": "#/$defs/ListChannels",
+          "list_saved_searches": "#/$defs/ListSavedSearches",
+          "list_subscriptions": "#/$defs/ListSubscriptions",
+          "reset_visibility": "#/$defs/ResetVisibility",
+          "search": "#/$defs/Search",
+          "submit_scan": "#/$defs/SubmitScan",
+          "update_saved_search": "#/$defs/UpdateSavedSearch",
+          "update_visibility": "#/$defs/UpdateVisibility"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/SubmitScan"
+        },
+        {
+          "$ref": "#/$defs/Search"
+        },
+        {
+          "$ref": "#/$defs/GetResult"
+        },
+        {
+          "$ref": "#/$defs/UpdateVisibility"
+        },
+        {
+          "$ref": "#/$defs/ResetVisibility"
+        },
+        {
+          "$ref": "#/$defs/GetCountries"
+        },
+        {
+          "$ref": "#/$defs/GetQuotas"
+        },
+        {
+          "$ref": "#/$defs/GetAvailableBrands"
+        },
+        {
+          "$ref": "#/$defs/GetBrandSummary"
+        },
+        {
+          "$ref": "#/$defs/GetHostnameHistory"
+        },
+        {
+          "$ref": "#/$defs/GetSimilarResults"
+        },
+        {
+          "$ref": "#/$defs/ListSavedSearches"
+        },
+        {
+          "$ref": "#/$defs/CreateSavedSearch"
+        },
+        {
+          "$ref": "#/$defs/UpdateSavedSearch"
+        },
+        {
+          "$ref": "#/$defs/DeleteSavedSearch"
+        },
+        {
+          "$ref": "#/$defs/ListSubscriptions"
+        },
+        {
+          "$ref": "#/$defs/ListChannels"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/UrlscanioAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Urlscanio Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

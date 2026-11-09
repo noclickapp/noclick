@@ -1,0 +1,578 @@
+{
+  "submitScan": {
+    "source": "https://docs.urlscan.io/_bundle/apis/urlscan-openapi.json?download",
+    "body": {
+      "uuid": "68e26c59-2eae-437b-aeb1-cf750fafe7d7",
+      "visibility": "public",
+      "url": "https://urlscan.io/",
+      "country": "de"
+    }
+  },
+  "searchDatasource": {
+    "source": "https://docs.urlscan.io/_bundle/apis/urlscan-openapi.json?download",
+    "body": {
+      "results": [
+        {
+          "verdicts": {
+            "score": -50,
+            "malicious": false,
+            "urlscan": {
+              "malicious": false
+            },
+            "hasVerdicts": true
+          },
+          "submitter": {
+            "country": "cz"
+          },
+          "dom": {
+            "size": 229965,
+            "hash": "2bdc117bbc12d656241cfda799ffbe033ae58d78469bb3f4e750c4c9d9532a9d"
+          },
+          "frames": {
+            "length": 1
+          },
+          "canonical": {
+            "task": {
+              "url": "urlscan.io/result/db0943fb-586d-4a00-9786-d9f818a30131"
+            },
+            "page": {
+              "url": "urlscan.io/result/db0943fb-586d-4a00-9786-d9f818a30131"
+            }
+          },
+          "task": {
+            "visibility": "public",
+            "method": "manual",
+            "domain": "urlscan.io",
+            "apexDomain": "urlscan.io",
+            "time": "2023-08-18T09:26:20.465Z",
+            "uuid": "78e48885-1b4c-4388-92bb-0d02cad46178",
+            "url": "https://urlscan.io/result/db0943fb-586d-4a00-9786-d9f818a30131/"
+          },
+          "stats": {
+            "uniqIPs": 3,
+            "uniqCountries": 2,
+            "dataLength": 1038051,
+            "encodedDataLength": 517522,
+            "requests": 26
+          },
+          "scanner": {
+            "country": "at"
+          },
+          "links": {
+            "length": 62
+          },
+          "page": {
+            "country": "DE",
+            "server": "nginx",
+            "ip": "49.12.22.106",
+            "mimeType": "text/html",
+            "title": "www.wbc247-korea.com - urlscan.io",
+            "url": "https://urlscan.io/result/db0943fb-586d-4a00-9786-d9f818a30131/",
+            "tlsValidDays": 89,
+            "tlsAgeDays": 49,
+            "ptr": "urlscan.io",
+            "tlsValidFrom": "2023-06-29T10:47:47.000Z",
+            "domain": "urlscan.io",
+            "umbrellaRank": 85248,
+            "apexDomain": "urlscan.io",
+            "asnname": "HETZNER-AS, DE",
+            "asn": "AS24940",
+            "tlsIssuer": "R3",
+            "status": "200"
+          },
+          "text": {
+            "size": 54682,
+            "hash": "e4ae30ae2ca6e8b6b75f18413e9c128a80bf261e2d03d60150b2e0799a05612f"
+          },
+          "_id": "78e48885-1b4c-4388-92bb-0d02cad46178",
+          "_score": null,
+          "sort": [
+            1692350780465,
+            "78e48885-1b4c-4388-92bb-0d02cad46178"
+          ],
+          "result": "https://urlscan.io/api/v1/result/78e48885-1b4c-4388-92bb-0d02cad46178/",
+          "screenshot": "https://urlscan.io/screenshots/78e48885-1b4c-4388-92bb-0d02cad46178.png"
+        },
+        {
+          "verdicts": {
+            "score": -50,
+            "malicious": false,
+            "urlscan": {
+              "malicious": false
+            },
+            "hasVerdicts": true
+          },
+          "submitter": {
+            "country": "ie"
+          },
+          "dom": {
+            "size": 70886,
+            "hash": "8d544648a7ede3eae277db9eac47853452966518f04fcca4571c0a16c5836cb6"
+          },
+          "frames": {
+            "length": 3
+          },
+          "canonical": {
+            "task": {
+              "url": "urlscan.io"
+            },
+            "page": {
+              "url": "urlscan.io"
+            }
+          },
+          "task": {
+            "visibility": "unlisted",
+            "method": "api",
+            "domain": "urlscan.io",
+            "apexDomain": "urlscan.io",
+            "time": "2023-08-18T09:05:32.098Z",
+            "uuid": "e142b92c-153b-42a6-b36b-262b22462e7f",
+            "url": "https://urlscan.io/"
+          },
+          "stats": {
+            "uniqIPs": 5,
+            "uniqCountries": 1,
+            "dataLength": 2566855,
+            "encodedDataLength": 1181236,
+            "requests": 56
+          },
+          "scanner": {
+            "country": "de"
+          },
+          "links": {
+            "length": 10
+          },
+          "page": {
+            "country": "DE",
+            "server": "nginx",
+            "ip": "49.12.22.106",
+            "mimeType": "text/html",
+            "title": "URL and website scanner - urlscan.io",
+            "url": "https://urlscan.io/",
+            "tlsValidDays": 89,
+            "tlsAgeDays": 49,
+            "ptr": "urlscan.io",
+            "tlsValidFrom": "2023-06-29T10:47:47.000Z",
+            "domain": "urlscan.io",
+            "umbrellaRank": 85248,
+            "apexDomain": "urlscan.io",
+            "asnname": "HETZNER-AS, DE",
+            "asn": "AS24940",
+            "tlsIssuer": "R3",
+            "status": "200"
+          },
+          "text": {
+            "size": 35591,
+            "hash": "9374b8777f43be35f95d4633daa288b9db3803e6e54af24b9666d98d1329499d"
+          },
+          "_id": "e142b92c-153b-42a6-b36b-262b22462e7f",
+          "_score": null,
+          "sort": [
+            1692349532098,
+            "e142b92c-153b-42a6-b36b-262b22462e7f"
+          ],
+          "result": "https://urlscan.io/api/v1/result/e142b92c-153b-42a6-b36b-262b22462e7f/",
+          "screenshot": "https://urlscan.io/screenshots/e142b92c-153b-42a6-b36b-262b22462e7f.png"
+        }
+      ],
+      "total": 10000,
+      "took": 23,
+      "has_more": true
+    }
+  },
+  "getAvailableCountries": {
+    "source": "https://docs.urlscan.io/_bundle/apis/urlscan-openapi.json?download",
+    "body": {
+      "countries": [
+        "de",
+        "us",
+        "jp",
+        "fr",
+        "gb",
+        "nl",
+        "ca",
+        "it",
+        "es",
+        "se",
+        "fi",
+        "dk",
+        "no",
+        "is",
+        "au",
+        "nz",
+        "pl",
+        "sg",
+        "ge",
+        "pt",
+        "at",
+        "ch"
+      ]
+    }
+  },
+  "getQuotas": {
+    "source": "https://docs.urlscan.io/_bundle/apis/urlscan-openapi.json?download",
+    "body": {
+      "scope": "team",
+      "limits": {
+        "private": {
+          "day": {
+            "limit": 20000,
+            "used": 0,
+            "remaining": 20000,
+            "percent": 0
+          },
+          "hour": {
+            "limit": 2000,
+            "used": 0,
+            "remaining": 2000,
+            "percent": 0
+          },
+          "minute": {
+            "limit": 120,
+            "used": 0,
+            "remaining": 120,
+            "percent": 0
+          }
+        },
+        "public": {
+          "day": {
+            "limit": 50000,
+            "used": 0,
+            "remaining": 50000,
+            "percent": 0
+          },
+          "hour": {
+            "limit": 5000,
+            "used": 0,
+            "remaining": 5000,
+            "percent": 0
+          },
+          "minute": {
+            "limit": 120,
+            "used": 0,
+            "remaining": 120,
+            "percent": 0
+          }
+        },
+        "retrieve": {
+          "day": {
+            "limit": 150000,
+            "used": 0,
+            "remaining": 150000,
+            "percent": 0
+          },
+          "hour": {
+            "limit": 10000,
+            "used": 0,
+            "remaining": 10000,
+            "percent": 0
+          },
+          "minute": {
+            "limit": 1000,
+            "used": 0,
+            "remaining": 1000,
+            "percent": 0
+          }
+        },
+        "search": {
+          "day": {
+            "limit": 500000,
+            "used": 1389,
+            "remaining": 498611,
+            "reset": "2023-09-30T00:00:00.000Z",
+            "percent": 0
+          },
+          "hour": {
+            "limit": 100000,
+            "used": 21,
+            "remaining": 99979,
+            "reset": "2023-09-29T10:00:00.000Z",
+            "percent": 0
+          },
+          "minute": {
+            "limit": 5000,
+            "used": 1,
+            "remaining": 4999,
+            "reset": "2023-09-29T09:09:00.000Z",
+            "percent": 0
+          }
+        },
+        "unlisted": {
+          "day": {
+            "limit": 40000,
+            "used": 0,
+            "remaining": 40000,
+            "percent": 0
+          },
+          "hour": {
+            "limit": 4000,
+            "used": 0,
+            "remaining": 4000,
+            "percent": 0
+          },
+          "minute": {
+            "limit": 120,
+            "used": 0,
+            "remaining": 120,
+            "percent": 0
+          }
+        },
+        "livescan": {
+          "day": {
+            "limit": 10000,
+            "used": 0,
+            "remaining": 10000,
+            "percent": 0
+          },
+          "hour": {
+            "limit": 1000,
+            "used": 0,
+            "remaining": 1000,
+            "percent": 0
+          },
+          "minute": {
+            "limit": 60,
+            "used": 0,
+            "remaining": 60,
+            "percent": 0
+          }
+        },
+        "liveshot": {
+          "day": 1000,
+          "hour": 100,
+          "minute": 10
+        },
+        "maxRetentionPeriodDays": 90,
+        "privateIncidentCreate": {
+          "day": 10
+        },
+        "unlistedIncidentCreate": {
+          "day": 10000
+        },
+        "privateIncidentOpen": 100,
+        "unlistedIncidentOpen": 200,
+        "maxSearchRangeMonths": 6,
+        "maxSearchResults": 10000,
+        "products": [
+          "livescan",
+          "pro"
+        ],
+        "features": [
+          "country-select",
+          "livescan/tier/base"
+        ],
+        "queryableFields": [
+          "asn",
+          "asnname.*",
+          "brand.*",
+          "canonical.*",
+          "content.*",
+          "country",
+          "date",
+          "dom.*",
+          "domain.*",
+          "filename.*",
+          "files.*",
+          "frames.*",
+          "hash",
+          "indexedAt",
+          "ip",
+          "links.*",
+          "page.*",
+          "result.task.time",
+          "scanner.country",
+          "server",
+          "stats.*",
+          "submitter.country",
+          "task.*",
+          "team",
+          "text.*",
+          "updatedAt",
+          "user",
+          "verdicts.categories",
+          "verdicts.hasVerdicts",
+          "verdicts.malicious",
+          "verdicts.score",
+          "verdicts.urlscan.malicious",
+          "visual"
+        ],
+        "queryVisibility": [
+          "public",
+          "unlisted"
+        ]
+      }
+    }
+  },
+  "getSimilarResults": {
+    "source": "https://docs.urlscan.io/_bundle/apis/urlscan-openapi.json?download",
+    "body": {
+      "results": [
+        {
+          "verdicts": {
+            "score": -50,
+            "malicious": false,
+            "urlscan": {
+              "malicious": false
+            },
+            "hasVerdicts": true
+          },
+          "submitter": {
+            "country": "ie"
+          },
+          "dom": {
+            "size": 71541,
+            "hash": "79b590b0df71e6d0d0d5835009dac485ad26d27ac8d85f266197e23f2e9801d8"
+          },
+          "task": {
+            "visibility": "unlisted",
+            "method": "api",
+            "domain": "urlscan.io",
+            "apexDomain": "urlscan.io",
+            "time": "2023-09-29T09:01:26.240Z",
+            "uuid": "2c900eb9-08c0-4615-af6d-38510f5ce254",
+            "url": "https://urlscan.io/"
+          },
+          "frames": {
+            "length": 3
+          },
+          "stats": {
+            "uniqIPs": 5,
+            "uniqCountries": 2,
+            "dataLength": 2618802,
+            "encodedDataLength": 1239272,
+            "requests": 61
+          },
+          "scanner": {
+            "country": "de"
+          },
+          "links": {
+            "length": 11
+          },
+          "canonical": {
+            "task": {
+              "url": "urlscan.io"
+            },
+            "page": {
+              "url": "urlscan.io"
+            }
+          },
+          "page": {
+            "country": "DE",
+            "server": "nginx",
+            "ip": "49.12.22.106",
+            "mimeType": "text/html",
+            "title": "URL and website scanner - urlscan.io",
+            "url": "https://urlscan.io/",
+            "tlsValidDays": 89,
+            "tlsAgeDays": 21,
+            "ptr": "urlscan.io",
+            "tlsValidFrom": "2023-09-07T10:30:42.000Z",
+            "domain": "urlscan.io",
+            "umbrellaRank": 97618,
+            "apexDomain": "urlscan.io",
+            "asnname": "HETZNER-AS, DE",
+            "asn": "AS24940",
+            "tlsIssuer": "R3",
+            "status": "200"
+          },
+          "text": {
+            "size": 35483,
+            "hash": "7150080736183e13994e725fd4a922b3267a227042912814f7b7eaef1f15b50d"
+          },
+          "_id": "2c900eb9-08c0-4615-af6d-38510f5ce254",
+          "_score": null,
+          "sort": [
+            1695978086240,
+            "2c900eb9-08c0-4615-af6d-38510f5ce254"
+          ],
+          "result": "https://urlscan.io/api/v1/result/2c900eb9-08c0-4615-af6d-38510f5ce254/",
+          "screenshot": "https://urlscan.io/screenshots/2c900eb9-08c0-4615-af6d-38510f5ce254.png"
+        },
+        {
+          "verdicts": {
+            "score": -50,
+            "malicious": false,
+            "urlscan": {
+              "malicious": false
+            },
+            "hasVerdicts": true
+          },
+          "submitter": {
+            "country": "ie"
+          },
+          "dom": {
+            "size": 71496,
+            "hash": "3f714dbe79d09b5ec0eb5f4facf4bb900febef2e7ecebf9574e098d556c85175"
+          },
+          "frames": {
+            "length": 3
+          },
+          "canonical": {
+            "task": {
+              "url": "urlscan.io"
+            },
+            "page": {
+              "url": "urlscan.io"
+            }
+          },
+          "task": {
+            "visibility": "unlisted",
+            "method": "api",
+            "domain": "urlscan.io",
+            "apexDomain": "urlscan.io",
+            "time": "2023-09-29T09:01:08.446Z",
+            "uuid": "7bd80df6-4efd-4953-87be-cb6371ac9083",
+            "url": "https://urlscan.io/"
+          },
+          "stats": {
+            "uniqIPs": 5,
+            "uniqCountries": 1,
+            "dataLength": 2602984,
+            "encodedDataLength": 1237497,
+            "requests": 57
+          },
+          "scanner": {
+            "country": "de"
+          },
+          "links": {
+            "length": 11
+          },
+          "page": {
+            "country": "DE",
+            "server": "nginx",
+            "ip": "49.12.22.106",
+            "mimeType": "text/html",
+            "title": "URL and website scanner - urlscan.io",
+            "url": "https://urlscan.io/",
+            "tlsValidDays": 89,
+            "tlsAgeDays": 21,
+            "ptr": "urlscan.io",
+            "tlsValidFrom": "2023-09-07T10:30:42.000Z",
+            "domain": "urlscan.io",
+            "umbrellaRank": 97618,
+            "apexDomain": "urlscan.io",
+            "asnname": "HETZNER-AS, DE",
+            "asn": "AS24940",
+            "tlsIssuer": "R3",
+            "status": "200"
+          },
+          "text": {
+            "size": 35465,
+            "hash": "a0de075666e5dd0ec7a50e62285aadb96d481a667b8466caa5ca418efaca95e0"
+          },
+          "_id": "7bd80df6-4efd-4953-87be-cb6371ac9083",
+          "_score": null,
+          "sort": [
+            1695978068446,
+            "7bd80df6-4efd-4953-87be-cb6371ac9083"
+          ],
+          "result": "https://urlscan.io/api/v1/result/7bd80df6-4efd-4953-87be-cb6371ac9083/",
+          "screenshot": "https://urlscan.io/screenshots/7bd80df6-4efd-4953-87be-cb6371ac9083.png"
+        }
+      ],
+      "total": 7684,
+      "took": 72,
+      "has_more": false
+    }
+  }
+}
