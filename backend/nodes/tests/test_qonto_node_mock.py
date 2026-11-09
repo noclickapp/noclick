@@ -155,3 +155,19 @@ async def test_unmark_does_not_send_a_paid_date_or_retry(monkeypatch):
     assert requests[0].method == "POST"
     assert requests[0].url.path == "/v2/supplier_invoices/" + ID + "/unmark_as_paid"
     assert requests[0].content == b""
+
+
+def test_qonto_fixture_has_no_embedded_storage_credentials():
+    import re
+    from pathlib import Path
+    from urllib.parse import urlsplit
+
+    fixture_path = Path(__file__).parent / "fixtures/qonto/transaction.json"
+    contents = fixture_path.read_bytes()
+    assert not re.search(rb"AKIA[0-9A-Z]{16}", contents)
+    fixture = json.loads(contents)
+    assert fixture["sanitization"]
+    for attachment in fixture["body"]["transaction"]["attachments"]:
+        url = urlsplit(attachment["url"])
+        assert url.scheme == "https" and url.hostname == "example.invalid"
+        assert not url.query

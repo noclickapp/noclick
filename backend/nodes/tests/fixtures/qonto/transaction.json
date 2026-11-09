@@ -50,7 +50,7 @@
           "file_name": "Foobar",
           "file_size": "666",
           "file_content_type": "image/png",
-          "url": "https://qonto-dev.s3.eu-central-1.amazonaws.com/test/uploads/attachment/ea54f563-eaee-4dcb-b08e-688dc9937d23/%23%3CRack%3A%3ATest%3A%3AUploadedFile%3A0x00005635fc7cf8e8%3E?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20210521%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210521T080955Z&X-Amz-Expires=1800&X-Amz-SignedHeaders=host&X-Amz-Signature=b6b8977aff8529018d15a05f3e36cc5b59e325d675b6538ff55005aa8e2eb3ed",
+          "url": "https://example.invalid/qonto/attachment.png",
           "probative_attachment": {
             "status": "unavailable"
           }
@@ -71,5 +71,6 @@
         "counterparty_bank_identifier_format": "SWIFT_BIC"
       }
     }
-  }
+  },
+  "sanitization": "The documented attachment signed URL is replaced with a nonfunctional example.invalid URL so the fixture embeds no storage credentials."
 }
