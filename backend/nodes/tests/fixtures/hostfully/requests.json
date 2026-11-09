@@ -1,0 +1,426 @@
+{
+  "source": "https://dev.hostfully.com/reference/getting-started",
+  "contract_version": "v3.0.1",
+  "cases": [
+    {
+      "config": {
+        "operation": "get_agency"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/agencies/agency-1",
+      "response": {
+        "agency": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_properties",
+        "limit": 25,
+        "cursor": "opaque+/=",
+        "updated_since": "2023-09-28T10:31:01"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/properties",
+      "response": {
+        "properties": [
+          {
+            "uid": "record-1",
+            "name": "Beach house"
+          }
+        ]
+      },
+      "status": 200,
+      "query": {
+        "agencyUid": "agency-1",
+        "_limit": "25",
+        "_cursor": "opaque+/=",
+        "updatedSince": "2023-09-28T10:31:01"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_property",
+        "property_uid": "prop-1"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/properties/prop-1",
+      "response": {
+        "property": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "update_property",
+        "property_uid": "prop-1",
+        "is_active": false,
+        "booking_notes": "Late arrival"
+      },
+      "method": "PATCH",
+      "path": "/api/v3.3/properties/prop-1",
+      "response": {
+        "property": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": {
+        "isActive": false,
+        "bookingNotes": "Late arrival"
+      }
+    },
+    {
+      "config": {
+        "operation": "list_leads",
+        "property_uid": "prop-1",
+        "check_in_from": "2026-11-01",
+        "check_in_to": "2026-11-30"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/leads",
+      "response": {
+        "leads": [
+          {
+            "uid": "record-1",
+            "name": "Beach house"
+          }
+        ]
+      },
+      "status": 200,
+      "query": {
+        "agencyUid": "agency-1",
+        "_limit": "100",
+        "propertyUid": "prop-1",
+        "checkInFrom": "2026-11-01",
+        "checkInTo": "2026-11-30"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_lead",
+        "lead_uid": "lead-1"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/leads/lead-1",
+      "response": {
+        "lead": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "create_lead",
+        "property_uid": "prop-1",
+        "check_in_date": "2026-11-10",
+        "check_out_date": "2026-11-12",
+        "email": "guest@example.com",
+        "first_name": "Jane"
+      },
+      "method": "POST",
+      "path": "/api/v3.3/leads",
+      "response": {
+        "lead": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": {
+        "agencyUid": "agency-1",
+        "propertyUid": "prop-1",
+        "status": "NEW",
+        "checkInLocalDate": "2026-11-10",
+        "checkOutLocalDate": "2026-11-12",
+        "guestInformation": {
+          "email": "guest@example.com",
+          "firstName": "Jane",
+          "adultCount": 1
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "update_lead",
+        "lead_uid": "lead-1",
+        "notes": "Arrives after 9"
+      },
+      "method": "PATCH",
+      "path": "/api/v3.3/leads/lead-1",
+      "response": {
+        "lead": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": {
+        "notes": "Arrives after 9"
+      }
+    },
+    {
+      "config": {
+        "operation": "book_lead",
+        "lead_uid": "lead-1"
+      },
+      "method": "POST",
+      "path": "/api/v3.3/leads/lead-1/mark-as-booked",
+      "response": {
+        "lead": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "cancel_lead",
+        "lead_uid": "lead-1"
+      },
+      "method": "POST",
+      "path": "/api/v3.3/leads/lead-1/cancel",
+      "response": {
+        "lead": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_messages",
+        "lead_uid": "lead-1"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/messages",
+      "response": {
+        "messages": [
+          {
+            "uid": "record-1",
+            "name": "Beach house"
+          }
+        ]
+      },
+      "status": 200,
+      "query": {
+        "agencyUid": "agency-1",
+        "_limit": "100",
+        "leadUid": "lead-1"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_message",
+        "message_uid": "message-1"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/messages/message-1",
+      "response": {
+        "message": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "send_message",
+        "lead_uid": "lead-1",
+        "text": "Welcome!",
+        "subject": "Your stay"
+      },
+      "method": "POST",
+      "path": "/api/v3.3/messages",
+      "response": {
+        "message": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 201,
+      "query": {},
+      "body": {
+        "leadUid": "lead-1",
+        "type": "EMAIL",
+        "content": {
+          "text": "Welcome!",
+          "subject": "Your stay"
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_threads"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/threads",
+      "response": {
+        "threads": [
+          {
+            "uid": "record-1",
+            "name": "Beach house"
+          }
+        ]
+      },
+      "status": 200,
+      "query": {
+        "agencyUid": "agency-1",
+        "_limit": "100"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_thread",
+        "thread_uid": "thread-1"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/threads/thread-1",
+      "response": {
+        "thread": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_property_calendar",
+        "property_uid": "prop-1",
+        "from_date": "2026-11-10",
+        "to_date": "2026-11-12"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/property-calendar/prop-1",
+      "response": {
+        "calendar": {
+          "propertyUid": "prop-1",
+          "days": []
+        }
+      },
+      "status": 200,
+      "query": {
+        "from": "2026-11-10",
+        "to": "2026-11-12",
+        "availabilityComments": "false"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "list_jobs",
+        "from_date": "2025-01-01",
+        "to_date": "2025-01-10",
+        "modified_since": "2025-01-10",
+        "property_uid": "prop-1"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/jobs",
+      "response": {
+        "jobs": [
+          {
+            "uid": "record-1",
+            "name": "Beach house"
+          }
+        ]
+      },
+      "status": 200,
+      "query": {
+        "from": "2025-01-01",
+        "to": "2025-01-10",
+        "modifiedSince": "2025-01-10",
+        "propertiesUids": "prop-1"
+      },
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_job",
+        "job_uid": "job-1"
+      },
+      "method": "GET",
+      "path": "/api/v3.3/jobs/job-1",
+      "response": {
+        "job": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "create_job",
+        "property_uid": "prop-1",
+        "service_uid": "service-1",
+        "start_local_date_time": "2026-11-12T10:00:00",
+        "end_local_date_time": "2026-11-12T12:00:00"
+      },
+      "method": "POST",
+      "path": "/api/v3.3/jobs",
+      "response": {
+        "job": {
+          "uid": "record-1",
+          "name": "My agency"
+        }
+      },
+      "status": 200,
+      "query": {},
+      "body": {
+        "propertyUid": "prop-1",
+        "serviceUid": "service-1",
+        "startLocalDateTime": "2026-11-12T10:00:00",
+        "endLocalDateTime": "2026-11-12T12:00:00",
+        "status": "NEW"
+      }
+    },
+    {
+      "config": {
+        "operation": "mark_job_done",
+        "job_uid": "job-1"
+      },
+      "method": "POST",
+      "path": "/api/v3.3/jobs/job-1/mark-as-done",
+      "response": null,
+      "status": 200,
+      "query": {},
+      "body": null
+    }
+  ]
+}
