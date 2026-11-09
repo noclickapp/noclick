@@ -1,0 +1,346 @@
+{
+  "list_datasets": {
+    "config": {
+      "operation": "list_datasets"
+    },
+    "method": "GET",
+    "path": "/v1/users/datasets",
+    "query": [
+      "email"
+    ],
+    "body_fields": [],
+    "status": 200
+  },
+  "list_leads": {
+    "config": {
+      "operation": "list_leads",
+      "site": "sample",
+      "criteriaTimeFilter": "sample",
+      "timeField": "eventEsTimestamp"
+    },
+    "method": "GET",
+    "path": "/v1/leads",
+    "query": [
+      "site",
+      "search",
+      "limit",
+      "locale",
+      "nextToken",
+      "criteriaTextFilter",
+      "criteriaNumberFilter",
+      "criteriaTimeFilter",
+      "criteriaFieldFilter",
+      "criteriaExitLinkFilter",
+      "criteriaLeadscoreFilter",
+      "criteriaDisplayFilter",
+      "timeField",
+      "usePresetExclusionList",
+      "userId",
+      "timeZone",
+      "sortBy"
+    ],
+    "body_fields": [],
+    "status": 200
+  },
+  "get_lead": {
+    "config": {
+      "operation": "get_lead",
+      "leadId": "sample",
+      "site": "sample"
+    },
+    "method": "GET",
+    "path": "/v1/leads/{leadId}",
+    "query": [
+      "email",
+      "site"
+    ],
+    "body_fields": [],
+    "status": 200
+  },
+  "list_sessions": {
+    "config": {
+      "operation": "list_sessions",
+      "leadId": "sample",
+      "limit": 42,
+      "site": "sample"
+    },
+    "method": "GET",
+    "path": "/v1/leads/sessions",
+    "query": [
+      "leadId",
+      "limit",
+      "site",
+      "email",
+      "userId",
+      "segmentId",
+      "minTime",
+      "nextToken"
+    ],
+    "body_fields": [],
+    "status": 200
+  },
+  "list_events": {
+    "config": {
+      "operation": "list_events",
+      "sessionId": "sample",
+      "limit": 42,
+      "site": "sample"
+    },
+    "method": "GET",
+    "path": "/v1/leads/events",
+    "query": [
+      "sessionId",
+      "limit",
+      "email",
+      "site",
+      "userId",
+      "segmentId"
+    ],
+    "body_fields": [],
+    "status": 200
+  },
+  "lookup_ip": {
+    "config": {
+      "operation": "lookup_ip",
+      "ip": "sample"
+    },
+    "method": "GET",
+    "path": "/v1/ip-lookup",
+    "query": [
+      "ip",
+      "datasetId"
+    ],
+    "body_fields": [],
+    "status": 200
+  },
+  "lookup_domain": {
+    "config": {
+      "operation": "lookup_domain",
+      "domain": "sample"
+    },
+    "method": "GET",
+    "path": "/v1/domain-lookup",
+    "query": [
+      "domain",
+      "datasetId"
+    ],
+    "body_fields": [],
+    "status": 200
+  },
+  "lookup_email": {
+    "config": {
+      "operation": "lookup_email"
+    },
+    "method": "GET",
+    "path": "/v1/email-lookup",
+    "query": [
+      "email",
+      "firstName",
+      "lastName",
+      "companyName",
+      "companyDomain",
+      "datasetId"
+    ],
+    "body_fields": [],
+    "status": 200
+  },
+  "list_segments": {
+    "config": {
+      "operation": "list_segments",
+      "accountId": "sample",
+      "datasetId": "sample"
+    },
+    "method": "GET",
+    "path": "/v1/segments",
+    "query": [
+      "email",
+      "accountId",
+      "datasetId"
+    ],
+    "body_fields": [],
+    "status": 200
+  },
+  "create_segment": {
+    "config": {
+      "operation": "create_segment",
+      "name": "sample",
+      "accountId": "sample",
+      "datasetId": "sample",
+      "type": "USER"
+    },
+    "method": "POST",
+    "path": "/v1/segments",
+    "query": [
+      "email"
+    ],
+    "body_fields": [
+      "name",
+      "accountId",
+      "datasetId",
+      "type",
+      "textFilter",
+      "numberFilter",
+      "timeFilter",
+      "fieldFilter",
+      "exitLinkFilter",
+      "leadscoreFilter",
+      "displayFilter",
+      "fromFilter",
+      "owner",
+      "hidden",
+      "search",
+      "emailView",
+      "notificationType",
+      "notificationMailIds",
+      "mailTemplate",
+      "format",
+      "dayOfWeek",
+      "additionalCsvFields",
+      "sortBy",
+      "sortOrder",
+      "viewType",
+      "list",
+      "timeField",
+      "csvSetName"
+    ],
+    "status": 200
+  },
+  "update_segment": {
+    "config": {
+      "operation": "update_segment",
+      "segmentId": 42,
+      "segmentName": "sample",
+      "accountId": "sample",
+      "type": "USER",
+      "emailView": "LEAD",
+      "notificationType": "DAILY"
+    },
+    "method": "PUT",
+    "path": "/v1/segments/{segmentId}",
+    "query": [
+      "segmentName"
+    ],
+    "body_fields": [
+      "accountId",
+      "type",
+      "textFilter",
+      "numberFilter",
+      "timeFilter",
+      "fieldFilter",
+      "exitLinkFilter",
+      "leadscoreFilter",
+      "displayFilter",
+      "fromFilter",
+      "owner",
+      "hidden",
+      "search",
+      "emailView",
+      "notificationType",
+      "notificationMailIds",
+      "mailTemplate",
+      "format",
+      "dayOfWeek",
+      "additionalCsvFields",
+      "sortBy",
+      "sortOrder",
+      "viewType",
+      "timeField",
+      "list",
+      "csvSetName"
+    ],
+    "status": 204
+  },
+  "delete_segment": {
+    "config": {
+      "operation": "delete_segment",
+      "segmentId": 42
+    },
+    "method": "DELETE",
+    "path": "/v1/segments/{segmentId}",
+    "query": [],
+    "body_fields": [],
+    "status": 204
+  },
+  "update_lead_tags": {
+    "config": {
+      "operation": "update_lead_tags",
+      "datasetId": "sample",
+      "leadId": "sample",
+      "leadTags": "sample"
+    },
+    "method": "PUT",
+    "path": "/v1/management/lead-tags",
+    "query": [],
+    "body_fields": [
+      "datasetId",
+      "leadId",
+      "leadTags"
+    ],
+    "status": 204
+  },
+  "assign_lead": {
+    "config": {
+      "operation": "assign_lead",
+      "leadId": "sample",
+      "datasetId": "sample",
+      "assignee": 42
+    },
+    "method": "PUT",
+    "path": "/v1/management/assign-leads",
+    "query": [],
+    "body_fields": [
+      "leadId",
+      "datasetId",
+      "assignee"
+    ],
+    "status": 204
+  },
+  "list_exclusions": {
+    "config": {
+      "operation": "list_exclusions",
+      "datasetId": "sample"
+    },
+    "method": "GET",
+    "path": "/v1/dataset-exclusion",
+    "query": [
+      "datasetId",
+      "type"
+    ],
+    "body_fields": [],
+    "status": 200
+  },
+  "hide_lead": {
+    "config": {
+      "operation": "hide_lead",
+      "datasetId": "sample",
+      "type": "use_id",
+      "data": "sample"
+    },
+    "method": "POST",
+    "path": "/v1/dataset-exclusion",
+    "query": [],
+    "body_fields": [
+      "datasetId",
+      "type",
+      "data"
+    ],
+    "status": 204
+  },
+  "unhide_lead": {
+    "config": {
+      "operation": "unhide_lead",
+      "type": "sample",
+      "data": "sample",
+      "datasetId": "sample"
+    },
+    "method": "DELETE",
+    "path": "/v1/dataset-exclusion",
+    "query": [],
+    "body_fields": [
+      "type",
+      "data",
+      "datasetId"
+    ],
+    "status": 204
+  }
+}

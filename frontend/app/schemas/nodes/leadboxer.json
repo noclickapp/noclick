@@ -1,0 +1,1806 @@
+{
+  "$defs": {
+    "AssignLeadConfig": {
+      "additionalProperties": false,
+      "description": "Assign Leads.",
+      "properties": {
+        "operation": {
+          "const": "assign_lead",
+          "default": "assign_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "leadId": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "datasetId": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Dataset ID",
+          "type": "string"
+        },
+        "assignee": {
+          "title": "Assignee",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "leadId",
+        "datasetId",
+        "assignee"
+      ],
+      "title": "AssignLeadConfig",
+      "type": "object"
+    },
+    "CreateSegmentConfig": {
+      "additionalProperties": false,
+      "description": "Create a New Segment.",
+      "properties": {
+        "operation": {
+          "const": "create_segment",
+          "default": "create_segment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Segment name.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "accountId": {
+          "description": "Leadboxer accountId.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Account ID",
+          "type": "string"
+        },
+        "datasetId": {
+          "description": "The dataset for which to create segment.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Dataset ID",
+          "type": "string"
+        },
+        "type": {
+          "description": "Defines the visibility of the segment.   Possible values:   USER  \u2013 Visible only to the current user.  ACCOUNT  \u2013 Shared with all users of the account.",
+          "enum": [
+            "USER",
+            "ACCOUNT"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "textFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text-based filter expression used to filter result fields.Format: field|operator|value. Multiple filters are comma-separated.",
+          "title": "Text filter"
+        },
+        "numberFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric filter expression used to filter results based on numeric fields. Format: field|operator|value. Multiple filters are comma-separated. Supported numeric operators include greaterthan, lessthan, is, isnot, between, and notbetween. The between and notbetween operators use the format min-max.",
+          "title": "Number filter"
+        },
+        "timeFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time-based filter expression used to filter results by time field. Format: field|operator|value.\n\nAllowed fields (same as `timeField` parameter):\n- eventEsTimestamp : Last Seen\n- first_session_unix_timestamp : First Seen\n\nSupported operators:\n- exactly   \u2192 integer value (0 = Today, 1 = Yesterday)\n- lessthan  \u2192 integer value (e.g. 6 = last 7 days)\n- between   \u2192 date range in format dd/MM/yyyy-dd/MM/yyyy\n\nLocale settings are taken into account while interpreting dates and returning results.",
+          "title": "Time filter"
+        },
+        "fieldFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field-based filter used to include leads based on field presence.\n\nFormat:\noperator|field1;field2\n\nAllowed operator:\n- hasanyvalue\n\nAllowed fields:\n- firstName\n- lastName\n- email\n\nMultiple fields can be provided using semicolons.",
+          "title": "Field filter"
+        },
+        "exitLinkFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exit link filter used to include or exclude leads based on exit link values.\n\nFormat:\nfield|operator|value\n\nSupported operators:\n- contains\n- is\n- isnot\n- doesnotcontain\n\nMultiple values can be provided using semicolons.",
+          "title": "Exit link filter"
+        },
+        "leadscoreFilter": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters leads based on given minimum leadscore.",
+          "title": "Leadscore filter"
+        },
+        "displayFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display filter used to control which types of leads are returned.\n\nSupported values:\n- company\n- person\n- unidentified\n\nSelecting 'unidentified' returns leads that could not be identified as a company or a person.\n\nMultiple values can be provided using semicolons.",
+          "title": "Display filter"
+        },
+        "fromFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters leads based on specified from user",
+          "title": "From filter"
+        },
+        "owner": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters leads based specified owner(userId)",
+          "title": "Owner"
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters leads based on presetInclusionList",
+          "title": "Hidden"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keyword search.",
+          "title": "Search"
+        },
+        "emailView": {
+          "default": "NONE",
+          "description": "Email view type. Possible values : NONE, LEAD, ACCOUNT ",
+          "enum": [
+            "NONE",
+            "LEAD",
+            "ACCOUNT"
+          ],
+          "title": "Email view",
+          "type": "string"
+        },
+        "notificationType": {
+          "anyOf": [
+            {
+              "enum": [
+                "NONE",
+                "DAILY",
+                "WEEKLY"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set notification frequency.   Possible values:   NONE  : Do not send any notification.  DAILY  : Send notification daily.  WEEKLY  : Send notification weekly.",
+          "title": "Notification type",
+          "enum": [
+            "NONE",
+            "DAILY",
+            "WEEKLY"
+          ],
+          "x-enum-searchable": true
+        },
+        "notificationMailIds": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of comma separated email addresses for notification.",
+          "title": "Notification mail IDs"
+        },
+        "mailTemplate": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set headlines for the notification email.",
+          "title": "Mail template"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format for the segment notification. Possible values : html, csv",
+          "title": "Format"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Day of week on which weekly notification will be sent. Possible values include numbers from 1 to 7 (where 1 refers to Monday).",
+          "title": "Day of week"
+        },
+        "additionalCsvFields": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of comma separated fields to be included in CSV.",
+          "title": "Additional CSV fields"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to sort result. Possible values :  _score  : records sorted by leadscore.  lastEvent  : records sorted by activity time. Default : _score",
+          "title": "Sort by"
+        },
+        "sortOrder": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort order. Possible values : asc, desc Default : desc",
+          "title": "Sort order"
+        },
+        "viewType": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "View type. Possible values : B2B, B2C Default : B2B",
+          "title": "View type"
+        },
+        "list": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters list file saved using List Settings Page.",
+          "title": "List"
+        },
+        "timeField": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time field"
+        },
+        "csvSetName": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Csv set name"
+        }
+      },
+      "required": [
+        "name",
+        "accountId",
+        "datasetId",
+        "type"
+      ],
+      "title": "CreateSegmentConfig",
+      "type": "object"
+    },
+    "DeleteSegmentConfig": {
+      "additionalProperties": false,
+      "description": "Delete Segment.",
+      "properties": {
+        "operation": {
+          "const": "delete_segment",
+          "default": "delete_segment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "segmentId": {
+          "description": "Segment ID",
+          "minimum": 1,
+          "title": "Segment ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "segmentId"
+      ],
+      "title": "DeleteSegmentConfig",
+      "type": "object"
+    },
+    "GetLeadConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve Lead Details.",
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "leadId": {
+          "description": "Unique identifier of the lead whose information is being requested.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "site": {
+          "description": "The Dataset ID from which the lead information should be retrieved.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Site",
+          "type": "string"
+        }
+      },
+      "required": [
+        "leadId",
+        "site"
+      ],
+      "title": "GetLeadConfig",
+      "type": "object"
+    },
+    "HideLeadConfig": {
+      "additionalProperties": false,
+      "description": "Hide leads.",
+      "properties": {
+        "operation": {
+          "const": "hide_lead",
+          "default": "hide_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "datasetId": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Dataset ID",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "use_id",
+            "organizationName",
+            "organizationDomain",
+            "last_most_likely_company"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "data": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Data",
+          "type": "string"
+        }
+      },
+      "required": [
+        "datasetId",
+        "type",
+        "data"
+      ],
+      "title": "HideLeadConfig",
+      "type": "object"
+    },
+    "LeadboxerAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "leadboxer_api_key",
+          "default": "leadboxer_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "email": {
+          "description": "Email address of your Leadboxer user; used by endpoints that require a user email.",
+          "maxLength": 254,
+          "minLength": 3,
+          "title": "Account email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "email"
+      ],
+      "title": "Leadboxer API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Leadboxer API key and the email address of your Leadboxer user. An API license is required; contact Leadboxer for API access. NoClick sends the key in the x-api-key header to api.leadboxer.com and reads your datasets to check the connection.",
+      "x-credential-url": "https://developers.leadboxer.com/"
+    },
+    "ListDatasetsConfig": {
+      "additionalProperties": false,
+      "description": "Get User Datasets.",
+      "properties": {
+        "operation": {
+          "const": "list_datasets",
+          "default": "list_datasets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListDatasetsConfig",
+      "type": "object"
+    },
+    "ListEventsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve Lead Events.",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sessionId": {
+          "description": "Display data for the given sessionId. SessionId is a unique identifier of each session.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Session ID",
+          "type": "string"
+        },
+        "limit": {
+          "description": "The minimum number of records to be displayed in the output. Range : 1 - 100",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "site": {
+          "description": "Dataset ID (site) for which events are retrieved",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Site",
+          "type": "string"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UserId associated with email",
+          "title": "User ID"
+        },
+        "segmentId": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment ID"
+        }
+      },
+      "required": [
+        "sessionId",
+        "limit",
+        "site"
+      ],
+      "title": "ListEventsConfig",
+      "type": "object"
+    },
+    "ListExclusionsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve leads exclusions.",
+      "properties": {
+        "operation": {
+          "const": "list_exclusions",
+          "default": "list_exclusions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "datasetId": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Dataset ID",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        }
+      },
+      "required": [
+        "datasetId"
+      ],
+      "title": "ListExclusionsConfig",
+      "type": "object"
+    },
+    "ListLeadsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve Leads.",
+      "properties": {
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "site": {
+          "description": "The Dataset ID",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Site",
+          "type": "string"
+        },
+        "search": {
+          "default": "*",
+          "description": "Keyword or phrase to search across all searchable fields. Search is case-insensitive for text fields. Defaults to '*' to match all results.",
+          "maxLength": 8192,
+          "title": "Search",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "No of rows to return in response.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "locale": {
+          "default": "en_US",
+          "description": "Locale for formatting the 'prettyLastEvent' field in response. Determines the language and regional formatting (e.g., dates, text) returned by the API.",
+          "maxLength": 8192,
+          "title": "Locale",
+          "type": "string"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token returned after each request, used to fetch the next page of results. Each token is valid for 10 minutes.",
+          "title": "Next token"
+        },
+        "criteriaTextFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text-based filter expression used to filter result fields.Format: field|operator|value. Multiple filters are comma-separated.",
+          "title": "Criteria text filter"
+        },
+        "criteriaNumberFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric filter expression used to filter results based on numeric fields. Format: field|operator|value. Multiple filters are comma-separated. Supported numeric operators include greaterthan, lessthan, is, isnot, between, and notbetween. The between and notbetween operators use the format min-max.",
+          "title": "Criteria number filter"
+        },
+        "criteriaTimeFilter": {
+          "description": "Time-based filter expression used to filter results by time field. Format: field|operator|value.\n\nAllowed fields (same as `timeField` parameter):\n- eventEsTimestamp : Last Seen\n- first_session_unix_timestamp : First Seen\n\nSupported operators:\n- exactly   \u2192 integer value (0 = Today, 1 = Yesterday)\n- lessthan  \u2192 integer value (e.g. 6 = last 7 days)\n- between   \u2192 date range in format dd/MM/yyyy-dd/MM/yyyy\n\nLocale settings are taken into account while interpreting dates and returning results.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Criteria time filter",
+          "type": "string"
+        },
+        "criteriaFieldFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field-based filter used to include leads based on field presence.\n\nFormat:\noperator|field1;field2\n\nAllowed operator:\n- hasanyvalue\n\nAllowed fields:\n- firstName\n- lastName\n- email\n\nMultiple fields can be provided using semicolons.",
+          "title": "Criteria field filter"
+        },
+        "criteriaExitLinkFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exit link filter used to include or exclude leads based on exit link values.\n\nFormat:\nfield|operator|value\n\nSupported operators:\n- contains\n- is\n- isnot\n- doesnotcontain\n\nMultiple values can be provided using semicolons.",
+          "title": "Criteria exit link filter"
+        },
+        "criteriaLeadscoreFilter": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum lead score threshold (optional). Only records with lead scores greater than the provided number (0\u2013100) are returned.",
+          "title": "Criteria leadscore filter"
+        },
+        "criteriaDisplayFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display filter used to control which types of leads are returned.\n\nSupported values:\n- company\n- person\n- unidentified\n\nSelecting 'unidentified' returns leads that could not be identified as a company or a person.\n\nMultiple values can be provided using semicolons.",
+          "title": "Criteria display filter"
+        },
+        "timeField": {
+          "default": "eventEsTimestamp",
+          "description": "Time field used for filtering.\n\nAllowed values:\n- eventEsTimestamp : Last Seen\n- first_session_unix_timestamp : First Seen",
+          "enum": [
+            "eventEsTimestamp",
+            "first_session_unix_timestamp"
+          ],
+          "title": "Time field",
+          "type": "string"
+        },
+        "usePresetExclusionList": {
+          "anyOf": [
+            {
+              "enum": [
+                "use_id",
+                "last_most_likely_company",
+                "organizationName",
+                "organizationDomain"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use a preset exclusion list of criteria to exclude from result.",
+          "title": "Use preset exclusion list",
+          "enum": [
+            "use_id",
+            "last_most_likely_company",
+            "organizationName",
+            "organizationDomain"
+          ],
+          "x-enum-searchable": true
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User ID"
+        },
+        "timeZone": {
+          "default": "Europe/Amsterdam",
+          "description": "Time zone used when parsing timestamps and evaluating time-based filters. \nIf not provided, the default time zone is Europe/Amsterdam.",
+          "maxLength": 8192,
+          "title": "Time zone",
+          "type": "string"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort results by a specific field and direction.\n\nFormat:\nfield|direction\n\nAllowed fields:\n- lastEvent\n- _score\n\nAllowed directions:\n- asc\n- desc",
+          "title": "Sort by"
+        }
+      },
+      "required": [
+        "site",
+        "criteriaTimeFilter"
+      ],
+      "title": "ListLeadsConfig",
+      "type": "object"
+    },
+    "ListSegmentsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve Segments for a Given Site.",
+      "properties": {
+        "operation": {
+          "const": "list_segments",
+          "default": "list_segments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "accountId": {
+          "description": "The Leadboxer account ID associated with the segments.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Account ID",
+          "type": "string"
+        },
+        "datasetId": {
+          "description": "The dataset for which to fetch segments.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Dataset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "accountId",
+        "datasetId"
+      ],
+      "title": "ListSegmentsConfig",
+      "type": "object"
+    },
+    "ListSessionsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve Lead Sessions.",
+      "properties": {
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "leadId": {
+          "description": "Display data for the given leadId. LeadId is a unique identifier of each lead.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "limit": {
+          "description": "The minimum number of records to be displayed in the output. Range : 1 - 10000",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "site": {
+          "description": "Dataset ID (site) for which sessions are retrieved",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Site",
+          "type": "string"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UserId associated with email",
+          "title": "User ID"
+        },
+        "segmentId": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results using a segment filters",
+          "title": "Segment ID"
+        },
+        "minTime": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter sessions by minimum session duration.",
+          "title": "Min time"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token returned after each request, used to fetch the next page of results. Each token is valid for 10 minutes.",
+          "title": "Next token"
+        }
+      },
+      "required": [
+        "leadId",
+        "limit",
+        "site"
+      ],
+      "title": "ListSessionsConfig",
+      "type": "object"
+    },
+    "LookupDomainConfig": {
+      "additionalProperties": false,
+      "description": "Domain Lookup.",
+      "properties": {
+        "operation": {
+          "const": "lookup_domain",
+          "default": "lookup_domain",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "Domain name to lookup (e.g., leadboxer.com)",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "datasetId": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The dataset ID to associate with the operation\u2019s credit. If not specified, a dataset linked to the account will be selected.",
+          "title": "Dataset ID"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "LookupDomainConfig",
+      "type": "object"
+    },
+    "LookupEmailConfig": {
+      "additionalProperties": false,
+      "description": "Email Lookup (GET).",
+      "properties": {
+        "operation": {
+          "const": "lookup_email",
+          "default": "lookup_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First name of the contact (optional hint)",
+          "title": "First name"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name of the contact (optional hint)",
+          "title": "Last name"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of the company the contact works for (optional hint)",
+          "title": "Company name"
+        },
+        "companyDomain": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Domain of the company the contact works for (optional hint)",
+          "title": "Company domain"
+        },
+        "datasetId": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The dataset ID to associate with the operation\u2019s credit. If not specified, a dataset linked to the account will be selected.",
+          "title": "Dataset ID"
+        }
+      },
+      "title": "LookupEmailConfig",
+      "type": "object"
+    },
+    "LookupIpConfig": {
+      "additionalProperties": false,
+      "description": "IP Address Lookup.",
+      "properties": {
+        "operation": {
+          "const": "lookup_ip",
+          "default": "lookup_ip",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ip": {
+          "description": "IP address to lookup (IPv4|IPv6 format)",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Ip",
+          "type": "string"
+        },
+        "datasetId": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The dataset ID to associate with the operation\u2019s credit. If not specified, a dataset linked to the account will be selected.",
+          "title": "Dataset ID"
+        }
+      },
+      "required": [
+        "ip"
+      ],
+      "title": "LookupIpConfig",
+      "type": "object"
+    },
+    "UnhideLeadConfig": {
+      "additionalProperties": false,
+      "description": "Unhide leads.",
+      "properties": {
+        "operation": {
+          "const": "unhide_lead",
+          "default": "unhide_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "data": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Data",
+          "type": "string"
+        },
+        "datasetId": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Dataset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "data",
+        "datasetId"
+      ],
+      "title": "UnhideLeadConfig",
+      "type": "object"
+    },
+    "UpdateLeadTagsConfig": {
+      "additionalProperties": false,
+      "description": "Update Lead Tags.",
+      "properties": {
+        "operation": {
+          "const": "update_lead_tags",
+          "default": "update_lead_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "datasetId": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Dataset ID",
+          "type": "string"
+        },
+        "leadId": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "leadTags": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Lead tags",
+          "type": "string"
+        }
+      },
+      "required": [
+        "datasetId",
+        "leadId",
+        "leadTags"
+      ],
+      "title": "UpdateLeadTagsConfig",
+      "type": "object"
+    },
+    "UpdateSegmentConfig": {
+      "additionalProperties": false,
+      "description": "Update Existing Segment.",
+      "properties": {
+        "operation": {
+          "const": "update_segment",
+          "default": "update_segment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "segmentId": {
+          "description": "Segment ID",
+          "minimum": 1,
+          "title": "Segment ID",
+          "type": "integer"
+        },
+        "segmentName": {
+          "description": "Segment Name",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Segment name",
+          "type": "string"
+        },
+        "accountId": {
+          "description": "Leadboxer accountId.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Account ID",
+          "type": "string"
+        },
+        "type": {
+          "description": "Set visibility of the segment.   Possible values:   USER  : the segment will be private to user.  ACCOUNT  : the segment will be shared across the users of the account.",
+          "enum": [
+            "USER",
+            "ACCOUNT"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "textFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text-based filter expression used to filter result fields.Format: field|operator|value. Multiple filters are comma-separated.",
+          "title": "Text filter"
+        },
+        "numberFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric filter expression used to filter results based on numeric fields. Format: field|operator|value. Multiple filters are comma-separated. Supported numeric operators include greaterthan, lessthan, is, isnot, between, and notbetween. The between and notbetween operators use the format min-max.",
+          "title": "Number filter"
+        },
+        "timeFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time-based filter expression used to filter results by time field. Format: field|operator|value.\n\nAllowed fields (same as `timeField` parameter):\n- eventEsTimestamp : Last Seen\n- first_session_unix_timestamp : First Seen\n\nSupported operators:\n- exactly   \u2192 integer value (0 = Today, 1 = Yesterday)\n- lessthan  \u2192 integer value (e.g. 6 = last 7 days)\n- between   \u2192 date range in format dd/MM/yyyy-dd/MM/yyyy\n\nLocale settings are taken into account while interpreting dates and returning results.",
+          "title": "Time filter"
+        },
+        "fieldFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field-based filter used to include leads based on field presence.\n\nFormat:\noperator|field1;field2\n\nAllowed operator:\n- hasanyvalue\n\nAllowed fields:\n- firstName\n- lastName\n- email\n\nMultiple fields can be provided using semicolons.",
+          "title": "Field filter"
+        },
+        "exitLinkFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exit link filter used to include or exclude leads based on exit link values.\n\nFormat:\nfield|operator|value\n\nSupported operators:\n- contains\n- is\n- isnot\n- doesnotcontain\n\nMultiple values can be provided using semicolons.",
+          "title": "Exit link filter"
+        },
+        "leadscoreFilter": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters leads based on given minimum leadscore.",
+          "title": "Leadscore filter"
+        },
+        "displayFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display filter used to control which types of leads are returned.\n\nSupported values:\n- company\n- person\n- unidentified\n\nSelecting 'unidentified' returns leads that could not be identified as a company or a person.\n\nMultiple values can be provided using semicolons.",
+          "title": "Display filter"
+        },
+        "fromFilter": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters leads based on specified from user",
+          "title": "From filter"
+        },
+        "owner": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters leads based on specified owner",
+          "title": "Owner"
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters leads based on presetInclusionList",
+          "title": "Hidden"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keyword search",
+          "title": "Search"
+        },
+        "emailView": {
+          "description": "Email view type. Possible values : NONE, LEAD, ACCOUNT ",
+          "enum": [
+            "NONE",
+            "LEAD",
+            "ACCOUNT"
+          ],
+          "title": "Email view",
+          "type": "string"
+        },
+        "notificationType": {
+          "description": "Set notification frequency.   Possible values:   NONE  : Do not send any notification.  DAILY  : Send notification daily.  WEEKLY  : Send notification weekly.",
+          "enum": [
+            "NONE",
+            "DAILY",
+            "WEEKLY"
+          ],
+          "title": "Notification type",
+          "type": "string"
+        },
+        "notificationMailIds": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of comma separated email addresses for notification",
+          "title": "Notification mail IDs"
+        },
+        "mailTemplate": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set headlines for the notification email",
+          "title": "Mail template"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format for the segment notification. Possible values : html, csv",
+          "title": "Format"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Day of week on which weekly notification will be sent. Possible values include numbers from 1 to 7 (where 1 refers to Monday)",
+          "title": "Day of week"
+        },
+        "additionalCsvFields": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of comma separated fields to be included in CSV",
+          "title": "Additional CSV fields"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to sort result. Possible values :  _score  : records will be sorted as per leadscore.  lastEvent  : records will be sorted as per activity time. Default : _score",
+          "title": "Sort by"
+        },
+        "sortOrder": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort order. Possible values : asc, desc Default : desc",
+          "title": "Sort order"
+        },
+        "viewType": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "View type. Possible values : B2B, B2C Default : B2B",
+          "title": "View type"
+        },
+        "timeField": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time field"
+        },
+        "list": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "List"
+        },
+        "csvSetName": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Csv set name"
+        }
+      },
+      "required": [
+        "segmentId",
+        "segmentName",
+        "accountId",
+        "type",
+        "emailView",
+        "notificationType"
+      ],
+      "title": "UpdateSegmentConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "assign_lead": "#/$defs/AssignLeadConfig",
+          "create_segment": "#/$defs/CreateSegmentConfig",
+          "delete_segment": "#/$defs/DeleteSegmentConfig",
+          "get_lead": "#/$defs/GetLeadConfig",
+          "hide_lead": "#/$defs/HideLeadConfig",
+          "list_datasets": "#/$defs/ListDatasetsConfig",
+          "list_events": "#/$defs/ListEventsConfig",
+          "list_exclusions": "#/$defs/ListExclusionsConfig",
+          "list_leads": "#/$defs/ListLeadsConfig",
+          "list_segments": "#/$defs/ListSegmentsConfig",
+          "list_sessions": "#/$defs/ListSessionsConfig",
+          "lookup_domain": "#/$defs/LookupDomainConfig",
+          "lookup_email": "#/$defs/LookupEmailConfig",
+          "lookup_ip": "#/$defs/LookupIpConfig",
+          "unhide_lead": "#/$defs/UnhideLeadConfig",
+          "update_lead_tags": "#/$defs/UpdateLeadTagsConfig",
+          "update_segment": "#/$defs/UpdateSegmentConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListDatasetsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSessionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/LookupIpConfig"
+        },
+        {
+          "$ref": "#/$defs/LookupDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/LookupEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateLeadTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/AssignLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/ListExclusionsConfig"
+        },
+        {
+          "$ref": "#/$defs/HideLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/UnhideLeadConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LeadboxerAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Leadboxer Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
