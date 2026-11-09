@@ -69,7 +69,7 @@
                 "data"
               ],
               "auth_headers": [
-                "Authorization: Bearer REDACTED.SAMPLE.JWT"
+                "Authorization: Bearer EXAMPLE_CALLBACK_TOKEN"
               ]
             }
           ]
@@ -149,7 +149,7 @@
               "data"
             ],
             "auth_headers": [
-              "Authorization: Bearer REDACTED.SAMPLE.JWT"
+              "Authorization: Bearer EXAMPLE_CALLBACK_TOKEN"
             ]
           }
         ],
@@ -220,7 +220,7 @@
               "data"
             ],
             "auth_headers": [
-              "Authorization: Bearer REDACTED.SAMPLE.JWT"
+              "Authorization: Bearer EXAMPLE_CALLBACK_TOKEN"
             ]
           }
         ],

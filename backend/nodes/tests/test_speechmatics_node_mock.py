@@ -1,4 +1,4 @@
-"""Replay Speechmatics' published response examples against the real executor.
+"""Replay Speechmatics' published response examples with synthetic callback credentials.
 
 Assert the wire protocol and the action-specific multipart job configuration.
 """
@@ -89,3 +89,17 @@ def test_bad_key(key):
 
 def test_bad_job_id():
     with pytest.raises(ValueError):SpeechmaticsConfig.model_validate({'config':{'operation':'get_job','job_id':'../usage'}})
+
+
+def test_speechmatics_fixtures_contain_no_credentials():
+    # Use the export scanner so future provider examples cannot reintroduce tokens.
+    import importlib.util
+    root = Path(__file__).resolve().parents[3]
+    scanner_path = root / 'oss/scan_real_secrets.py'
+    if not scanner_path.exists():
+        scanner_path = root / 'scripts/scan_real_secrets.py'
+    spec = importlib.util.spec_from_file_location('speechmatics_secret_scan', scanner_path)
+    scanner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(scanner)
+    fixture = Path(__file__).parent / 'fixtures/speechmatics/responses.json'
+    assert not scanner.find_secrets(fixture.read_bytes())
