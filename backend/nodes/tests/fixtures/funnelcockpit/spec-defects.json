@@ -1,0 +1,161 @@
+[
+  {
+    "endpoint": "POST /add-email-subscriber",
+    "source": "https://api.funnelcockpit.com/openapi.json",
+    "problem": "HTTP 200 response uses oneOf CompatSuccess and CompatErrorResponse; both accept the published {\"success\": true} example, violating oneOf exclusivity.",
+    "published_response": {
+      "description": "Successful response",
+      "content": {
+        "application/json": {
+          "schema": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CompatSuccess"
+              },
+              {
+                "$ref": "#/components/schemas/CompatErrorResponse"
+              }
+            ]
+          },
+          "example": {
+            "success": true
+          }
+        }
+      }
+    },
+    "schemas": {
+      "CompatSuccess": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "additionalProperties": true,
+        "example": {
+          "success": true
+        }
+      },
+      "CompatErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true,
+        "example": {
+          "error": "Invalid request."
+        }
+      }
+    },
+    "node_behavior": "Accept the published success response; reject success:false and error envelopes. Covered by the real-node contract fixture tests."
+  },
+  {
+    "endpoint": "POST /email/subscribe",
+    "source": "https://api.funnelcockpit.com/openapi.json",
+    "problem": "HTTP 200 response uses oneOf CompatSuccess and CompatErrorResponse; both accept the published {\"success\": true} example, violating oneOf exclusivity.",
+    "published_response": {
+      "description": "Successful response",
+      "content": {
+        "application/json": {
+          "schema": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CompatSuccess"
+              },
+              {
+                "$ref": "#/components/schemas/CompatErrorResponse"
+              }
+            ]
+          },
+          "example": {
+            "success": true
+          }
+        }
+      }
+    },
+    "schemas": {
+      "CompatSuccess": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "additionalProperties": true,
+        "example": {
+          "success": true
+        }
+      },
+      "CompatErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true,
+        "example": {
+          "error": "Invalid request."
+        }
+      }
+    },
+    "node_behavior": "Accept the published success response; reject success:false and error envelopes. Covered by the real-node contract fixture tests."
+  },
+  {
+    "endpoint": "POST /webinar/add-viewer",
+    "source": "https://api.funnelcockpit.com/openapi.json",
+    "problem": "HTTP 200 response uses oneOf CompatSuccess and CompatErrorResponse; both accept the published {\"success\": true} example, violating oneOf exclusivity.",
+    "published_response": {
+      "description": "Successful response",
+      "content": {
+        "application/json": {
+          "schema": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CompatSuccess"
+              },
+              {
+                "$ref": "#/components/schemas/CompatErrorResponse"
+              }
+            ]
+          },
+          "example": {
+            "success": true
+          }
+        }
+      }
+    },
+    "schemas": {
+      "CompatSuccess": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "additionalProperties": true,
+        "example": {
+          "success": true
+        }
+      },
+      "CompatErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true,
+        "example": {
+          "error": "Invalid request."
+        }
+      }
+    },
+    "node_behavior": "Accept the published success response; reject success:false and error envelopes. Covered by the real-node contract fixture tests."
+  }
+]
