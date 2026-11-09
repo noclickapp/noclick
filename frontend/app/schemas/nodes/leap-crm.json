@@ -1,0 +1,836 @@
+{
+  "$defs": {
+    "AddJobNote": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_job_note",
+          "default": "add_job_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        },
+        "note": {
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "note"
+      ],
+      "title": "AddJobNote",
+      "type": "object"
+    },
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "description": "Create a residential customer with a required phone number.",
+      "properties": {
+        "first_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "phone_number": {
+          "description": "Customer phone number, 8\u201312 digits.",
+          "pattern": "^[0-9]{8,12}$",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "phone_label": {
+          "default": "cell",
+          "enum": [
+            "home",
+            "cell",
+            "phone",
+            "office",
+            "fax",
+            "other"
+          ],
+          "title": "Phone Label",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "phone_number"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "CreateJob": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_id": {
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "trade_id": {
+          "description": "Trade ID from List trades. This action sends one trade.",
+          "minimum": 1,
+          "title": "Trade Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "same_as_customer_address": {
+          "const": 1,
+          "default": 1,
+          "description": "Use the customer's existing address.",
+          "title": "Same As Customer Address",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "description",
+        "trade_id"
+      ],
+      "title": "CreateJob",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_id": {
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetJob": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJob",
+      "type": "object"
+    },
+    "GetJobFinancialSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_job_financial_summary",
+          "default": "get_job_financial_summary",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJobFinancialSummary",
+      "type": "object"
+    },
+    "GetJobWorkflowHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_job_workflow_history",
+          "default": "get_job_workflow_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJobWorkflowHistory",
+      "type": "object"
+    },
+    "LeapCRMTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "leap_crm_token",
+          "default": "leap_crm_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Leap CRM API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your existing Leap CRM API bearer token. Ask your Leap administrator for API access if you do not have a token. NoClick sends it only to api.jobprogress.com. Customer reads verify access; other operations depend on your account permissions.",
+      "x-credential-url": "https://docs.api.jobprogress.com/"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to fetch. Use meta.pagination from the response to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListJobNotes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_job_notes",
+          "default": "list_job_notes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListJobNotes",
+      "type": "object"
+    },
+    "ListJobs": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to fetch. Use meta.pagination from the response to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "job_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Name"
+        }
+      },
+      "title": "ListJobs",
+      "type": "object"
+    },
+    "ListTrades": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to fetch. Use meta.pagination from the response to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_trades",
+          "default": "list_trades",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTrades",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to fetch. Use meta.pagination from the response to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "ListWorkflowStages": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to fetch. Use meta.pagination from the response to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum records on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_workflow_stages",
+          "default": "list_workflow_stages",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "ListWorkflowStages",
+      "type": "object"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "description": "Update customer name and phone; omitted email/note remain untouched.",
+      "properties": {
+        "first_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "phone_number": {
+          "description": "Customer phone number, 8\u201312 digits.",
+          "pattern": "^[0-9]{8,12}$",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "phone_label": {
+          "default": "cell",
+          "enum": [
+            "home",
+            "cell",
+            "phone",
+            "office",
+            "fax",
+            "other"
+          ],
+          "title": "Phone Label",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_id": {
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "phone_number",
+        "customer_id"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    },
+    "UpdateJob": {
+      "additionalProperties": false,
+      "description": "Update job details, including the customer, trade and address selection.",
+      "properties": {
+        "customer_id": {
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "trade_id": {
+          "description": "Trade ID from List trades. This action sends one trade.",
+          "minimum": 1,
+          "title": "Trade Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "same_as_customer_address": {
+          "const": 1,
+          "default": 1,
+          "description": "Use the customer's existing address.",
+          "title": "Same As Customer Address",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_job",
+          "default": "update_job",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "description",
+        "trade_id",
+        "job_id"
+      ],
+      "title": "UpdateJob",
+      "type": "object"
+    },
+    "UpdateJobNote": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_job_note",
+          "default": "update_job_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "note_id": {
+          "title": "Note Id",
+          "type": "string"
+        },
+        "note": {
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id",
+        "note"
+      ],
+      "title": "UpdateJobNote",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_job_note": "#/$defs/AddJobNote",
+          "create_customer": "#/$defs/CreateCustomer",
+          "create_job": "#/$defs/CreateJob",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_job": "#/$defs/GetJob",
+          "get_job_financial_summary": "#/$defs/GetJobFinancialSummary",
+          "get_job_workflow_history": "#/$defs/GetJobWorkflowHistory",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_job_notes": "#/$defs/ListJobNotes",
+          "list_jobs": "#/$defs/ListJobs",
+          "list_trades": "#/$defs/ListTrades",
+          "list_users": "#/$defs/ListUsers",
+          "list_workflow_stages": "#/$defs/ListWorkflowStages",
+          "update_customer": "#/$defs/UpdateCustomer",
+          "update_job": "#/$defs/UpdateJob",
+          "update_job_note": "#/$defs/UpdateJobNote"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/ListJobs"
+        },
+        {
+          "$ref": "#/$defs/GetJob"
+        },
+        {
+          "$ref": "#/$defs/CreateJob"
+        },
+        {
+          "$ref": "#/$defs/UpdateJob"
+        },
+        {
+          "$ref": "#/$defs/GetJobFinancialSummary"
+        },
+        {
+          "$ref": "#/$defs/GetJobWorkflowHistory"
+        },
+        {
+          "$ref": "#/$defs/ListJobNotes"
+        },
+        {
+          "$ref": "#/$defs/AddJobNote"
+        },
+        {
+          "$ref": "#/$defs/UpdateJobNote"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/ListTrades"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/ListWorkflowStages"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LeapCRMTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Leap-crm Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

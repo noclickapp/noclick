@@ -1,0 +1,84 @@
+{
+  "provider": "Leap CRM",
+  "version": "Unversioned provider OpenAPI 3.0.0 sections; SHA-256 pins identify the contract.",
+  "specs": [
+    {
+      "file": "customer.json",
+      "sha256": "96bb2315edadea4d84812d79c12d572d487ed264f27b45f46b37ce69cc42e304",
+      "version": "",
+      "source_url": "https://docs.api.jobprogress.com/api/customer.json"
+    },
+    {
+      "file": "contacts.json",
+      "sha256": "d78ffcfa25f15acc303de0f54f249b91684078674cb9eb99a51cab40b2659294",
+      "version": "",
+      "source_url": "https://docs.api.jobprogress.com/api/contacts.json"
+    },
+    {
+      "file": "job.json",
+      "sha256": "c01d3e674a91cd714824238692f8fb31acdd433bf3fe85a00debf4eb50e9591e",
+      "version": "",
+      "source_url": "https://docs.api.jobprogress.com/api/job.json"
+    },
+    {
+      "file": "company.json",
+      "sha256": "c5dd08d4f99cfdddb143ab3f8f8d6f75e9047822b243d2822b35fd70cf1ce2f3",
+      "version": "",
+      "source_url": "https://docs.api.jobprogress.com/api/company.json"
+    },
+    {
+      "file": "user.json",
+      "sha256": "54b5accaa99b70fa88ba6c95caa171b15360a6f4cbc9dfa07cc13ea8ddf6055f",
+      "version": "",
+      "source_url": "https://docs.api.jobprogress.com/api/user.json"
+    },
+    {
+      "file": "workflow.json",
+      "sha256": "fbaf21f8038db3c8abe8931f83d62660ae77db05090c42627c96e25f725a5cd4",
+      "version": "",
+      "source_url": "https://docs.api.jobprogress.com/api/workflow.json"
+    },
+    {
+      "file": "job-note.json",
+      "sha256": "ff7e043bf6ef4c281aeebc95abf8c720e3fcf0e7c991878edb2426e6afdb788b",
+      "version": "",
+      "source_url": "https://docs.api.jobprogress.com/api/job-note.json"
+    }
+  ],
+  "spec_defects": [
+    {
+      "kind": "d",
+      "issue": "All used sections declare servers[0].url = {{baseurl}}, an unresolved Postman placeholder rather than an OpenAPI server URL. The harness cannot match any request. The provider documentation sets the default base URL to https://api.jobprogress.com/api/v3, which this node uses.",
+      "docs": [
+        "https://docs.api.jobprogress.com/",
+        "https://docs.api.jobprogress.com/api/customer.json",
+        "https://docs.api.jobprogress.com/api/contacts.json",
+        "https://docs.api.jobprogress.com/api/job.json",
+        "https://docs.api.jobprogress.com/api/company.json",
+        "https://docs.api.jobprogress.com/api/user.json",
+        "https://docs.api.jobprogress.com/api/workflow.json",
+        "https://docs.api.jobprogress.com/api/job-note.json"
+      ],
+      "operations": [
+        "list_customers",
+        "get_customer",
+        "create_customer",
+        "update_customer",
+        "list_jobs",
+        "get_job",
+        "create_job",
+        "update_job",
+        "get_job_financial_summary",
+        "get_job_workflow_history",
+        "list_job_notes",
+        "add_job_note",
+        "update_job_note",
+        "list_contacts",
+        "list_trades",
+        "list_users",
+        "list_workflow_stages"
+      ],
+      "documented_base_url": "https://api.jobprogress.com/api/v3"
+    }
+  ]
+}
