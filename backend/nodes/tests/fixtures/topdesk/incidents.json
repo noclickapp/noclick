@@ -1,0 +1,18 @@
+{
+  "source": "https://developers.topdesk.com/swagger/incident_specification_4.2.10.yaml#/components/schemas/Incident",
+  "kind": "schema-based",
+  "body": [
+    {
+      "id": "e127ddc1-0df3-5ee4-9144-95f751bc13ee",
+      "number": "I 2211 016",
+      "briefDescription": "Coffee machine is not working",
+      "request": "some request",
+      "caller": {
+        "dynamicName": "Example Caller",
+        "email": "caller@example.com"
+      },
+      "creationDate": "2026-01-01T10:00:00Z",
+      "modificationDate": "2026-01-01T11:00:00Z"
+    }
+  ]
+}

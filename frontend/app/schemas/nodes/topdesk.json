@@ -1,0 +1,1805 @@
+{
+  "$defs": {
+    "ArchiveIncident": {
+      "additionalProperties": false,
+      "properties": {
+        "incident_id": {
+          "format": "uuid",
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "archive_incident",
+          "default": "archive_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reason_name": {
+          "description": "Existing archiving reason name.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Reason Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id",
+        "reason_name"
+      ],
+      "title": "ArchiveIncident",
+      "type": "object"
+    },
+    "CreateIncident": {
+      "additionalProperties": false,
+      "properties": {
+        "brief_description": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Brief Description",
+          "type": "string"
+        },
+        "request": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request text; TOPdesk's documented formatting is supported.",
+          "title": "Request"
+        },
+        "action": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add an action to the incident progress trail.",
+          "title": "Action"
+        },
+        "action_invisible_for_caller": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action Invisible For Caller"
+        },
+        "caller_id": {
+          "description": "ID of a registered caller with the Caller checkbox enabled.",
+          "format": "uuid",
+          "title": "Caller Id",
+          "type": "string"
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Category Id"
+        },
+        "subcategory_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Subcategory Id"
+        },
+        "operator_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Operator Id"
+        },
+        "operator_group_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Operator Group Id"
+        },
+        "processing_status_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Processing Status Id"
+        },
+        "priority_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Priority Id"
+        },
+        "impact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Impact Id"
+        },
+        "urgency_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Urgency Id"
+        },
+        "call_type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Call Type Id"
+        },
+        "entry_type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Entry Type Id"
+        },
+        "closure_code_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Closure Code Id"
+        },
+        "external_number": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Number"
+        },
+        "on_hold": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "On Hold"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed"
+        },
+        "closed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Closed"
+        },
+        "operation": {
+          "const": "create_incident",
+          "default": "create_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "default": "firstLine",
+          "enum": [
+            "firstLine",
+            "secondLine"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brief_description",
+        "caller_id"
+      ],
+      "title": "CreateIncident",
+      "type": "object"
+    },
+    "GetIncident": {
+      "additionalProperties": false,
+      "properties": {
+        "incident_id": {
+          "format": "uuid",
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_incident",
+          "default": "get_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "GetIncident",
+      "type": "object"
+    },
+    "GetIncidentByNumber": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_incident_by_number",
+          "default": "get_incident_by_number",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "number": {
+          "description": "Incident number, for example I 1501 001.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "GetIncidentByNumber",
+      "type": "object"
+    },
+    "ListActions": {
+      "additionalProperties": false,
+      "properties": {
+        "incident_id": {
+          "format": "uuid",
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "start": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_actions",
+          "default": "list_actions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "ListActions",
+      "type": "object"
+    },
+    "ListCallTypes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_call_types",
+          "default": "list_call_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCallTypes",
+      "type": "object"
+    },
+    "ListCategories": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCategories",
+      "type": "object"
+    },
+    "ListEntryTypes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_entry_types",
+          "default": "list_entry_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListEntryTypes",
+      "type": "object"
+    },
+    "ListImpacts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_impacts",
+          "default": "list_impacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListImpacts",
+      "type": "object"
+    },
+    "ListIncidents": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_incidents",
+          "default": "list_incidents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_start": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page Start",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TOPdesk FIQL query. See https://developers.topdesk.com/tutorial.html#query",
+          "title": "Query"
+        },
+        "sort": {
+          "default": "creationDate:desc",
+          "maxLength": 500,
+          "title": "Sort",
+          "type": "string"
+        },
+        "include_archived": {
+          "default": false,
+          "description": "Include partial and archived incidents (API all parameter).",
+          "title": "Include Archived",
+          "type": "boolean"
+        }
+      },
+      "title": "ListIncidents",
+      "type": "object"
+    },
+    "ListOperatorGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "page_start": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page Start",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "operation": {
+          "const": "list_operator_groups",
+          "default": "list_operator_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOperatorGroups",
+      "type": "object"
+    },
+    "ListOperators": {
+      "additionalProperties": false,
+      "properties": {
+        "page_start": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page Start",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "operation": {
+          "const": "list_operators",
+          "default": "list_operators",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOperators",
+      "type": "object"
+    },
+    "ListPriorities": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_priorities",
+          "default": "list_priorities",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListPriorities",
+      "type": "object"
+    },
+    "ListProgressTrail": {
+      "additionalProperties": false,
+      "properties": {
+        "incident_id": {
+          "format": "uuid",
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "start": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_progress_trail",
+          "default": "list_progress_trail",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "ListProgressTrail",
+      "type": "object"
+    },
+    "ListRequests": {
+      "additionalProperties": false,
+      "properties": {
+        "incident_id": {
+          "format": "uuid",
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "start": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_requests",
+          "default": "list_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "ListRequests",
+      "type": "object"
+    },
+    "ListStatuses": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_statuses",
+          "default": "list_statuses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListStatuses",
+      "type": "object"
+    },
+    "ListSubcategories": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_subcategories",
+          "default": "list_subcategories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListSubcategories",
+      "type": "object"
+    },
+    "ListTimeSpent": {
+      "additionalProperties": false,
+      "properties": {
+        "incident_id": {
+          "format": "uuid",
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_time_spent",
+          "default": "list_time_spent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "ListTimeSpent",
+      "type": "object"
+    },
+    "ListUrgencies": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_urgencies",
+          "default": "list_urgencies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUrgencies",
+      "type": "object"
+    },
+    "OnNewIncident": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "FIQL filter restricting monitored incidents. Maximum 5,000 matching incidents; narrow larger scopes.",
+          "title": "Query"
+        },
+        "operation": {
+          "const": "on_new_incident",
+          "default": "on_new_incident",
+          "title": "On New Incident",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OnNewIncident",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnUpdatedIncident": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "FIQL filter restricting monitored incidents. Maximum 5,000 matching incidents; narrow larger scopes.",
+          "title": "Query"
+        },
+        "operation": {
+          "const": "on_updated_incident",
+          "default": "on_updated_incident",
+          "title": "On New or Updated Incident",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OnUpdatedIncident",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "RegisterTimeSpent": {
+      "additionalProperties": false,
+      "properties": {
+        "incident_id": {
+          "format": "uuid",
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "register_time_spent",
+          "default": "register_time_spent",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "time_spent": {
+          "description": "Minutes; negative values correct time already registered. Total time must stay nonnegative.",
+          "title": "Time Spent",
+          "type": "integer"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "incident_id",
+        "time_spent"
+      ],
+      "title": "RegisterTimeSpent",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "TOPdeskCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "topdesk_application_token",
+          "default": "topdesk_application_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "base_url": {
+          "description": "For example https://example.topdesk.net. Public HTTPS self-hosted installations are also supported.",
+          "minLength": 1,
+          "title": "TOPdesk URL",
+          "type": "string"
+        },
+        "username": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Operator Login Name",
+          "type": "string"
+        },
+        "application_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Application Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "base_url",
+        "username",
+        "application_token"
+      ],
+      "title": "TOPDESK Application Token",
+      "type": "object",
+      "x-credential-instructions": "Enter your public HTTPS TOPdesk URL, operator login name and application token from My settings > Application tokens (Application passwords on older versions). Give the operator REST API and incident read permissions, plus write permissions for the actions you use. Use the application token as the password, not your account password. Connection checks read your incidents.",
+      "x-credential-url": "https://developers.topdesk.com/tutorial.html#authentication"
+    },
+    "UnarchiveIncident": {
+      "additionalProperties": false,
+      "properties": {
+        "incident_id": {
+          "format": "uuid",
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "unarchive_incident",
+          "default": "unarchive_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "unarchive_partials": {
+          "default": true,
+          "title": "Unarchive Partials",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "UnarchiveIncident",
+      "type": "object"
+    },
+    "UpdateIncident": {
+      "additionalProperties": false,
+      "properties": {
+        "brief_description": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brief Description"
+        },
+        "request": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request text; TOPdesk's documented formatting is supported.",
+          "title": "Request"
+        },
+        "action": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add an action to the incident progress trail.",
+          "title": "Action"
+        },
+        "action_invisible_for_caller": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action Invisible For Caller"
+        },
+        "caller_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Caller Id"
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Category Id"
+        },
+        "subcategory_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Subcategory Id"
+        },
+        "operator_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Operator Id"
+        },
+        "operator_group_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Operator Group Id"
+        },
+        "processing_status_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Processing Status Id"
+        },
+        "priority_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Priority Id"
+        },
+        "impact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Impact Id"
+        },
+        "urgency_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Urgency Id"
+        },
+        "call_type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Call Type Id"
+        },
+        "entry_type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Entry Type Id"
+        },
+        "closure_code_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Closure Code Id"
+        },
+        "external_number": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Number"
+        },
+        "on_hold": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "On Hold"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed"
+        },
+        "closed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Closed"
+        },
+        "incident_id": {
+          "format": "uuid",
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_incident",
+          "default": "update_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "UpdateIncident",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_incident": "#/$defs/ArchiveIncident",
+          "create_incident": "#/$defs/CreateIncident",
+          "get_incident": "#/$defs/GetIncident",
+          "get_incident_by_number": "#/$defs/GetIncidentByNumber",
+          "list_actions": "#/$defs/ListActions",
+          "list_call_types": "#/$defs/ListCallTypes",
+          "list_categories": "#/$defs/ListCategories",
+          "list_entry_types": "#/$defs/ListEntryTypes",
+          "list_impacts": "#/$defs/ListImpacts",
+          "list_incidents": "#/$defs/ListIncidents",
+          "list_operator_groups": "#/$defs/ListOperatorGroups",
+          "list_operators": "#/$defs/ListOperators",
+          "list_priorities": "#/$defs/ListPriorities",
+          "list_progress_trail": "#/$defs/ListProgressTrail",
+          "list_requests": "#/$defs/ListRequests",
+          "list_statuses": "#/$defs/ListStatuses",
+          "list_subcategories": "#/$defs/ListSubcategories",
+          "list_time_spent": "#/$defs/ListTimeSpent",
+          "list_urgencies": "#/$defs/ListUrgencies",
+          "on_new_incident": "#/$defs/OnNewIncident",
+          "on_updated_incident": "#/$defs/OnUpdatedIncident",
+          "register_time_spent": "#/$defs/RegisterTimeSpent",
+          "unarchive_incident": "#/$defs/UnarchiveIncident",
+          "update_incident": "#/$defs/UpdateIncident"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListIncidents"
+        },
+        {
+          "$ref": "#/$defs/GetIncident"
+        },
+        {
+          "$ref": "#/$defs/GetIncidentByNumber"
+        },
+        {
+          "$ref": "#/$defs/CreateIncident"
+        },
+        {
+          "$ref": "#/$defs/UpdateIncident"
+        },
+        {
+          "$ref": "#/$defs/ArchiveIncident"
+        },
+        {
+          "$ref": "#/$defs/UnarchiveIncident"
+        },
+        {
+          "$ref": "#/$defs/ListActions"
+        },
+        {
+          "$ref": "#/$defs/ListRequests"
+        },
+        {
+          "$ref": "#/$defs/ListProgressTrail"
+        },
+        {
+          "$ref": "#/$defs/ListTimeSpent"
+        },
+        {
+          "$ref": "#/$defs/RegisterTimeSpent"
+        },
+        {
+          "$ref": "#/$defs/ListCategories"
+        },
+        {
+          "$ref": "#/$defs/ListSubcategories"
+        },
+        {
+          "$ref": "#/$defs/ListStatuses"
+        },
+        {
+          "$ref": "#/$defs/ListPriorities"
+        },
+        {
+          "$ref": "#/$defs/ListUrgencies"
+        },
+        {
+          "$ref": "#/$defs/ListImpacts"
+        },
+        {
+          "$ref": "#/$defs/ListCallTypes"
+        },
+        {
+          "$ref": "#/$defs/ListEntryTypes"
+        },
+        {
+          "$ref": "#/$defs/ListOperators"
+        },
+        {
+          "$ref": "#/$defs/ListOperatorGroups"
+        },
+        {
+          "$ref": "#/$defs/OnNewIncident"
+        },
+        {
+          "$ref": "#/$defs/OnUpdatedIncident"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TOPdeskCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Topdesk Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
