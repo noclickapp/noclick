@@ -1,0 +1,369 @@
+[
+  [
+    "send_message",
+    {
+      "phone": "+19995550000",
+      "message": "Thanks for signing up for our service!",
+      "from": "+18885550100",
+      "idempotency_key": "request-1"
+    },
+    "POST",
+    "/api/integrations/message/send",
+    {
+      "phone": "+19995550000",
+      "message": "Thanks for signing up for our service!",
+      "from": "+18885550100"
+    },
+    202,
+    {}
+  ],
+  [
+    "list_senders",
+    {},
+    "GET",
+    "/api/integrations/senders",
+    {},
+    200,
+    {
+      "success": true,
+      "senders": [
+        {
+          "id": 77,
+          "channel": "sms",
+          "type": "phone_number",
+          "number": "18885550100",
+          "numberE164": "+18885550100",
+          "label": "Main Line",
+          "countryCode": "US",
+          "primary": true,
+          "canSend": true,
+          "reason": null
+        }
+      ]
+    }
+  ],
+  [
+    "list_lists",
+    {},
+    "GET",
+    "/api/integrations/lists",
+    {},
+    200,
+    {
+      "lists": [
+        {
+          "id": 37,
+          "name": "Webinar Registrants"
+        }
+      ]
+    }
+  ],
+  [
+    "list_fields",
+    {},
+    "GET",
+    "/api/integrations/fields",
+    {},
+    200,
+    {
+      "id": 543,
+      "key": "first_seen",
+      "label": "First Seen"
+    }
+  ],
+  [
+    "list_tags",
+    {},
+    "GET",
+    "/api/integrations/tags",
+    {},
+    200,
+    {
+      "tags": [
+        {
+          "id": 37,
+          "name": "VIP"
+        }
+      ],
+      "pagination": {}
+    }
+  ],
+  [
+    "subscribe_contact",
+    {
+      "phone": "+19995550000",
+      "list": "37",
+      "firstName": "Satoshi"
+    },
+    "POST",
+    "/api/integrations/lists/subscribe",
+    {
+      "phone": "+19995550000",
+      "list": "37",
+      "firstName": "Satoshi"
+    },
+    200,
+    null
+  ],
+  [
+    "unsubscribe_contact",
+    {
+      "phone": "+19995550000",
+      "list": "37"
+    },
+    "PUT",
+    "/api/integrations/lists/unsubscribe",
+    {
+      "phone": "+19995550000",
+      "list": "37"
+    },
+    200,
+    null
+  ],
+  [
+    "upsert_contact",
+    {
+      "phone": "+19995550000",
+      "firstName": "Satoshi",
+      "lists": [
+        1,
+        3,
+        5
+      ],
+      "tags": [
+        2,
+        4,
+        6
+      ]
+    },
+    "POST",
+    "/api/integrations/contacts",
+    {
+      "phone": "+19995550000",
+      "firstName": "Satoshi",
+      "lists": [
+        1,
+        3,
+        5
+      ],
+      "tags": [
+        2,
+        4,
+        6
+      ]
+    },
+    202,
+    null
+  ],
+  [
+    "get_contact",
+    {
+      "phone": "+19995550000",
+      "email": "SatoshiNakamoto@BTCballer.com"
+    },
+    "GET",
+    "/api/integrations/contacts",
+    {
+      "phone": "+19995550000",
+      "email": "SatoshiNakamoto@BTCballer.com"
+    },
+    200,
+    {
+      "contact": {
+        "id": 123
+      }
+    }
+  ],
+  [
+    "add_contact_tags",
+    {
+      "phone": "+19995550000",
+      "tagIds": [
+        37,
+        49,
+        55
+      ]
+    },
+    "POST",
+    "/api/integrations/contacts/tags",
+    {
+      "phone": "+19995550000",
+      "tagIds": [
+        37,
+        49,
+        55
+      ]
+    },
+    200,
+    null
+  ],
+  [
+    "remove_contact_tag",
+    {
+      "phone": "+19995550000",
+      "tagId": 37
+    },
+    "DELETE",
+    "/api/integrations/contacts/tags",
+    {
+      "phone": "+19995550000",
+      "tagId": 37
+    },
+    200,
+    null
+  ],
+  [
+    "get_contact_messages",
+    {
+      "contact_id": 123,
+      "cursor": "Nzk=",
+      "limit": 25,
+      "direction": "outbound",
+      "createdAtFrom": "2026-06-01",
+      "createdAtTo": "2026-06-02"
+    },
+    "GET",
+    "/api/integrations/contacts/123/messages",
+    {
+      "cursor": "Nzk=",
+      "limit": "25",
+      "direction": "outbound",
+      "createdAtFrom": "2026-06-01",
+      "createdAtTo": "2026-06-02"
+    },
+    200,
+    {
+      "success": true,
+      "messages": [],
+      "next_cursor": "ODAxMjM=",
+      "has_more": true
+    }
+  ],
+  [
+    "get_broadcast_recipients",
+    {
+      "broadcast_id": 123,
+      "cursor": "ODAxMjM=",
+      "limit": 100
+    },
+    "GET",
+    "/api/integrations/broadcasts/123/recipients",
+    {
+      "cursor": "ODAxMjM=",
+      "limit": "100"
+    },
+    200,
+    {
+      "success": true,
+      "recipients": [],
+      "next_cursor": null,
+      "has_more": false
+    }
+  ],
+  [
+    "create_broadcast",
+    {
+      "name": "August promo",
+      "list_ids": [
+        4,
+        9
+      ],
+      "message": "Hi %FIRST_NAME%, our sale starts today!"
+    },
+    "POST",
+    "/api/integrations/broadcasts",
+    {
+      "name": "August promo",
+      "list_ids": [
+        4,
+        9
+      ],
+      "message": "Hi %FIRST_NAME%, our sale starts today!"
+    },
+    201,
+    {
+      "success": true,
+      "broadcast": {
+        "id": 123,
+        "status": "draft"
+      }
+    }
+  ],
+  [
+    "preview_broadcast",
+    {
+      "broadcast_id": 123,
+      "phone": "19995550000"
+    },
+    "POST",
+    "/api/integrations/broadcasts/123/preview",
+    {
+      "phone": "19995550000"
+    },
+    202,
+    {
+      "success": true
+    }
+  ],
+  [
+    "schedule_broadcast",
+    {
+      "broadcast_id": 123,
+      "send_now": true
+    },
+    "POST",
+    "/api/integrations/broadcasts/123/schedule",
+    {
+      "send_now": true
+    },
+    200,
+    {
+      "success": true
+    }
+  ],
+  [
+    "cancel_broadcast",
+    {
+      "broadcast_id": 123
+    },
+    "POST",
+    "/api/integrations/broadcasts/123/cancel",
+    {},
+    200,
+    {
+      "success": true
+    }
+  ],
+  [
+    "get_broadcast",
+    {
+      "broadcast_id": 123
+    },
+    "GET",
+    "/api/integrations/broadcasts/123",
+    {},
+    200,
+    {
+      "success": true,
+      "broadcast": {
+        "id": 123,
+        "delivery_success": 1180,
+        "delivery_failure": 15
+      }
+    }
+  ],
+  [
+    "get_contact_lists",
+    {
+      "contact_id": 123
+    },
+    "GET",
+    "/api/integrations/contacts/123/lists",
+    {},
+    200,
+    {
+      "success": true,
+      "lists": []
+    }
+  ]
+]

@@ -1,0 +1,1070 @@
+{
+  "$defs": {
+    "AddContactTags": {
+      "additionalProperties": false,
+      "description": "Queue the addition of tags to a contact.",
+      "properties": {
+        "operation": {
+          "const": "add_contact_tags",
+          "default": "add_contact_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "tagIds": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Tagids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "phone",
+        "tagIds"
+      ],
+      "title": "AddContactTags",
+      "type": "object"
+    },
+    "CancelBroadcast": {
+      "additionalProperties": false,
+      "description": "Cancel a pending broadcast, reverting it to a draft.",
+      "properties": {
+        "broadcast_id": {
+          "exclusiveMinimum": 0,
+          "title": "Broadcast Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "cancel_broadcast",
+          "default": "cancel_broadcast",
+          "title": "Operation",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "CancelBroadcast",
+      "type": "object"
+    },
+    "CreateBroadcast": {
+      "additionalProperties": false,
+      "description": "Create a draft. This operation does not schedule or send the broadcast.",
+      "properties": {
+        "operation": {
+          "const": "create_broadcast",
+          "default": "create_broadcast",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "list_ids": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "List Ids",
+          "type": "array"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "media": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media"
+        },
+        "scheduled_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional intended time stored on the draft, not a send request. Use YYYY-MM-DD HH:mm[:ss] or ISO date/time.",
+          "title": "Scheduled Time"
+        },
+        "scheduled_timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA timezone; provider defaults to America/New_York.",
+          "title": "Scheduled Timezone"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "name",
+        "list_ids",
+        "message"
+      ],
+      "title": "CreateBroadcast",
+      "type": "object"
+    },
+    "GetBroadcast": {
+      "additionalProperties": false,
+      "description": "Read status and delivery, reply and opt-out counts.",
+      "properties": {
+        "broadcast_id": {
+          "exclusiveMinimum": 0,
+          "title": "Broadcast Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_broadcast",
+          "default": "get_broadcast",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "GetBroadcast",
+      "type": "object"
+    },
+    "GetBroadcastRecipients": {
+      "additionalProperties": false,
+      "description": "Read one page of broadcast recipients and delivery results.",
+      "properties": {
+        "broadcast_id": {
+          "exclusiveMinimum": 0,
+          "title": "Broadcast Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_broadcast_recipients",
+          "default": "get_broadcast_recipients",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "GetBroadcastRecipients",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "description": "Find a contact by phone, with email as a fallback.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetContactLists": {
+      "additionalProperties": false,
+      "description": "Read a contact's subscribed lists.",
+      "properties": {
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact_lists",
+          "default": "get_contact_lists",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContactLists",
+      "type": "object"
+    },
+    "GetContactMessages": {
+      "additionalProperties": false,
+      "description": "Read one page of conversation history; pass next_cursor back unchanged.",
+      "properties": {
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact_messages",
+          "default": "get_contact_messages",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "conversation",
+                "broadcast",
+                "automation",
+                "event_reminder",
+                "bot",
+                "keyword",
+                "list_autoresponse",
+                "activecampaign",
+                "highlevel",
+                "hubspot",
+                "make",
+                "zapier",
+                "integration"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "enum": [
+            "conversation",
+            "broadcast",
+            "automation",
+            "event_reminder",
+            "bot",
+            "keyword",
+            "list_autoresponse",
+            "activecampaign",
+            "highlevel",
+            "hubspot",
+            "make",
+            "zapier",
+            "integration"
+          ],
+          "x-enum-searchable": true
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "inbound",
+                "outbound"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Direction",
+          "enum": [
+            "inbound",
+            "outbound"
+          ],
+          "x-enum-searchable": true
+        },
+        "createdAtFrom": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Createdatfrom"
+        },
+        "createdAtTo": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Createdatto"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContactMessages",
+      "type": "object"
+    },
+    "ListFields": {
+      "additionalProperties": false,
+      "description": "Read the account's custom field definitions.",
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFields",
+      "type": "object"
+    },
+    "ListLists": {
+      "additionalProperties": false,
+      "description": "Read lists belonging to the account.",
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListLists",
+      "type": "object"
+    },
+    "ListSenders": {
+      "additionalProperties": false,
+      "description": "Read the account's sending phone numbers.",
+      "properties": {
+        "operation": {
+          "const": "list_senders",
+          "default": "list_senders",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSenders",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "description": "Read tags and the provider's pagination metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "PreviewBroadcast": {
+      "additionalProperties": false,
+      "description": "Queue a real test message to one phone from a draft or scheduled broadcast.",
+      "properties": {
+        "broadcast_id": {
+          "exclusiveMinimum": 0,
+          "title": "Broadcast Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "preview_broadcast",
+          "default": "preview_broadcast",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "broadcast_id",
+        "phone"
+      ],
+      "title": "PreviewBroadcast",
+      "type": "object"
+    },
+    "RemoveContactTag": {
+      "additionalProperties": false,
+      "description": "Queue removal of one tag from a contact.",
+      "properties": {
+        "operation": {
+          "const": "remove_contact_tag",
+          "default": "remove_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "tagId": {
+          "exclusiveMinimum": 0,
+          "title": "Tagid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "phone",
+        "tagId"
+      ],
+      "title": "RemoveContactTag",
+      "type": "object"
+    },
+    "RoezanSMSAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "roezan_sms_api_key",
+          "default": "roezan_sms_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Roezan SMS API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Roezan account API key. NoClick sends it in the x-api-key header to app.roezan.com. The connection check reads your account's sending numbers.",
+      "x-credential-url": "https://developer.roezan.com/docs"
+    },
+    "ScheduleBroadcast": {
+      "additionalProperties": false,
+      "description": "Confirm a draft's stored time, supply a new time, or explicitly send now.",
+      "properties": {
+        "broadcast_id": {
+          "exclusiveMinimum": 0,
+          "title": "Broadcast Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "schedule_broadcast",
+          "default": "schedule_broadcast",
+          "title": "Operation",
+          "type": "string"
+        },
+        "scheduled_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled Time"
+        },
+        "scheduled_timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled Timezone"
+        },
+        "send_now": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set true only to send immediately. Omit to use the draft's stored intent.",
+          "title": "Send Now"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "ScheduleBroadcast",
+      "type": "object"
+    },
+    "SendMessage": {
+      "additionalProperties": false,
+      "description": "Queue one SMS or MMS; acknowledgement does not confirm delivery.",
+      "properties": {
+        "phone": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "media": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media"
+        },
+        "countryCode": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Countrycode"
+        },
+        "from": {
+          "anyOf": [
+            {
+              "pattern": "^\\+[1-9]\\d{1,14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional sending number from list_senders, in E.164 format.",
+          "title": "From"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique per request. Reuse only for an identical retry within 24 hours.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "phone"
+      ],
+      "title": "SendMessage",
+      "type": "object"
+    },
+    "SubscribeContact": {
+      "additionalProperties": false,
+      "description": "Queue creation or subscription of a contact to a list.",
+      "properties": {
+        "phone": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "operation": {
+          "const": "subscribe_contact",
+          "default": "subscribe_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "list": {
+          "description": "List ID from list_lists.",
+          "minLength": 1,
+          "title": "List",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone",
+        "list"
+      ],
+      "title": "SubscribeContact",
+      "type": "object"
+    },
+    "UnsubscribeContact": {
+      "additionalProperties": false,
+      "description": "Queue removal of a contact from a list.",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_contact",
+          "default": "unsubscribe_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "phone": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "list": {
+          "minLength": 1,
+          "title": "List",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone",
+        "list"
+      ],
+      "title": "UnsubscribeContact",
+      "type": "object"
+    },
+    "UpsertContact": {
+      "additionalProperties": false,
+      "description": "Create or update a contact; list and tag changes are asynchronous.",
+      "properties": {
+        "phone": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "operation": {
+          "const": "upsert_contact",
+          "default": "upsert_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "lists": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lists"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "phone"
+      ],
+      "title": "UpsertContact",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_tags": "#/$defs/AddContactTags",
+          "cancel_broadcast": "#/$defs/CancelBroadcast",
+          "create_broadcast": "#/$defs/CreateBroadcast",
+          "get_broadcast": "#/$defs/GetBroadcast",
+          "get_broadcast_recipients": "#/$defs/GetBroadcastRecipients",
+          "get_contact": "#/$defs/GetContact",
+          "get_contact_lists": "#/$defs/GetContactLists",
+          "get_contact_messages": "#/$defs/GetContactMessages",
+          "list_fields": "#/$defs/ListFields",
+          "list_lists": "#/$defs/ListLists",
+          "list_senders": "#/$defs/ListSenders",
+          "list_tags": "#/$defs/ListTags",
+          "preview_broadcast": "#/$defs/PreviewBroadcast",
+          "remove_contact_tag": "#/$defs/RemoveContactTag",
+          "schedule_broadcast": "#/$defs/ScheduleBroadcast",
+          "send_message": "#/$defs/SendMessage",
+          "subscribe_contact": "#/$defs/SubscribeContact",
+          "unsubscribe_contact": "#/$defs/UnsubscribeContact",
+          "upsert_contact": "#/$defs/UpsertContact"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SendMessage"
+        },
+        {
+          "$ref": "#/$defs/ListSenders"
+        },
+        {
+          "$ref": "#/$defs/ListLists"
+        },
+        {
+          "$ref": "#/$defs/ListFields"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/SubscribeContact"
+        },
+        {
+          "$ref": "#/$defs/UnsubscribeContact"
+        },
+        {
+          "$ref": "#/$defs/UpsertContact"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/AddContactTags"
+        },
+        {
+          "$ref": "#/$defs/RemoveContactTag"
+        },
+        {
+          "$ref": "#/$defs/GetContactMessages"
+        },
+        {
+          "$ref": "#/$defs/GetBroadcastRecipients"
+        },
+        {
+          "$ref": "#/$defs/CreateBroadcast"
+        },
+        {
+          "$ref": "#/$defs/PreviewBroadcast"
+        },
+        {
+          "$ref": "#/$defs/ScheduleBroadcast"
+        },
+        {
+          "$ref": "#/$defs/CancelBroadcast"
+        },
+        {
+          "$ref": "#/$defs/GetBroadcast"
+        },
+        {
+          "$ref": "#/$defs/GetContactLists"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RoezanSMSAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Roezan-sms Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
