@@ -1,0 +1,1133 @@
+{
+  "list_envelopes": {
+    "method": "GET",
+    "path": "/envelopes",
+    "config": {
+      "operation": "list_envelopes"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "offset": 0,
+      "limit": 10,
+      "total_envelopes": "3",
+      "envelopes": [
+        {
+          "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+          "envelope_title": "Another Test",
+          "envelope_status": "draft",
+          "envelope_redirect_url": "",
+          "envelope_created": "2025-07-07T11:30:27+0000",
+          "envelope_sent": null,
+          "envelope_processed": null,
+          "envelope_all_at_once_enabled": true,
+          "envelope_requires_otp": false,
+          "envelope_has_qes": true,
+          "envelope_parties": [
+            {
+              "party_id": "45583378",
+              "party_title": "Abby Test",
+              "party_mobile_last4": null,
+              "party_password": null,
+              "party_is_qes_signer": true
+            }
+          ]
+        },
+        {
+          "envelope_fingerprint": "84b6334b5e5249a78e7ae3f4bba33068",
+          "envelope_title": "2nd Test",
+          "envelope_status": "signed",
+          "envelope_redirect_url": "",
+          "envelope_created": "2025-07-07T11:27:44+0000",
+          "envelope_sent": "2025-07-07T11:29:31+0000",
+          "envelope_processed": "2025-07-07T11:30:09+0000",
+          "envelope_all_at_once_enabled": true,
+          "envelope_requires_otp": false,
+          "envelope_parties": [
+            {
+              "party_id": "45583236",
+              "party_title": "Abby Test",
+              "party_mobile_last4": null,
+              "party_password": null
+            }
+          ]
+        },
+        {
+          "envelope_fingerprint": "2a965d809ca943fb98ca71d3c7c98af5",
+          "envelope_title": "Test Envelope",
+          "envelope_status": "signed",
+          "envelope_redirect_url": "",
+          "envelope_created": "2025-07-07T10:30:02+0000",
+          "envelope_sent": "2025-07-07T11:26:20+0000",
+          "envelope_processed": "2025-07-07T11:27:20+0000",
+          "envelope_all_at_once_enabled": true,
+          "envelope_requires_otp": false,
+          "envelope_parties": [
+            {
+              "party_id": "45583038",
+              "party_title": "Jane Doe",
+              "party_mobile_last4": null,
+              "party_password": null
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "create_envelope": {
+    "method": "POST",
+    "path": "/envelopes",
+    "config": {
+      "operation": "create_envelope",
+      "envelope_title": "Melbourne Road 23/06/25",
+      "user_id": 819622,
+      "envelope_redirect_url": "https://www.example.com",
+      "envelope_all_at_once_enabled": true,
+      "envelope_password_protect": false,
+      "envelope_auto_expire_hours": 144,
+      "envelope_auto_remind_hours": 72,
+      "envelope_meta": {
+        "internal_id": "ABC123",
+        "VIP": false
+      },
+      "envelope_parties": [
+        {
+          "party_name": "Alex Mitchell",
+          "party_email": "abby+alex@signable.co.uk",
+          "party_id": "20748256",
+          "party_role": "signer",
+          "party_message": "Hello Alex, Please review and sign",
+          "party_mobile": "+447712345678"
+        },
+        {
+          "party_name": "Abby Signers",
+          "party_email": "abby@signable.co.uk",
+          "party_id": "20748255",
+          "party_role": "signer",
+          "party_message": "Hello, Please sign pronto!",
+          "party_mobile": "+447712345678"
+        },
+        {
+          "party_name": "Spectator",
+          "party_email": "abby+spectator@signable.co.uk",
+          "party_id": "20750393",
+          "party_role": "copy",
+          "party_message": "Hello Maisy, Please have a read"
+        }
+      ],
+      "envelope_documents": [
+        {
+          "document_title": "TC 2025 v2",
+          "document_template_fingerprint": "28f9add86f25028df2eee9adee866aba",
+          "document_merge_fields": [
+            {
+              "field_id": "454958773",
+              "field_value": "Note that breakables are not included in rent cost"
+            }
+          ]
+        }
+      ]
+    },
+    "status": 202,
+    "mime": "application/json",
+    "body": {
+      "http": 202,
+      "message": "Your envelope with title Singer Road 23/06/25 will be processed and sent out.",
+      "href": "https://api.signable.co.uk/v1/envelopes/584ea8b41b0d4c17a96b967433b211e6",
+      "envelope_title": "Singer Road 23/06/25",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+      "envelope_password_protect": false,
+      "envelope_requires_otp": true,
+      "envelope_redirect_url": "https://www.example.com",
+      "envelope_queued": "2025-07-16T14:39:02+0000",
+      "envelope_all_at_once_enabled": false,
+      "envelope_qes": {
+        "credits_remaining": 2
+      },
+      "envelope_parties": [
+        {
+          "party_id": "45849370",
+          "party_title": "Alex Mitchell",
+          "party_mobile_last4": "5678",
+          "party_password": null
+        },
+        {
+          "party_id": "45849371",
+          "party_title": "Abby Signers",
+          "party_mobile_last4": "5678",
+          "party_password": null
+        },
+        {
+          "party_id": "45849372",
+          "party_title": "Spectator",
+          "party_mobile_last4": null,
+          "party_password": null
+        },
+        {
+          "party_id": "45849373",
+          "party_title": "Tim Matthews",
+          "party_mobile_last4": "5678",
+          "party_password": null
+        }
+      ]
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "get_envelope": {
+    "method": "GET",
+    "path": "/envelopes/{envelope_fingerprint}",
+    "config": {
+      "operation": "get_envelope",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+      "envelope_title": "17 John Street Tenancy Contract - 25th Jun 2025",
+      "envelope_status": "sent",
+      "envelope_redirect_url": null,
+      "envelope_created": "2025-07-08T14:58:54+0000",
+      "envelope_sent": "2025-07-08T15:02:49+0000",
+      "envelope_processed": null,
+      "envelope_all_at_once_enabled": true,
+      "envelope_requires_otp": false,
+      "envelope_qes": {
+        "has_fields": true,
+        "credit_count": 1,
+        "signature_count": 1,
+        "document_count": 1,
+        "party_count": 1
+      },
+      "envelope_parties": [
+        {
+          "party_id": "45631119",
+          "party_title": "Abby Signable",
+          "party_mobile_last4": null,
+          "party_password": "Test123",
+          "party_is_qes_signer": true,
+          "contact_id": "17225983",
+          "contact_email": "abby@signable.co.uk",
+          "party_status": "in progress",
+          "party_signature_type": "remote",
+          "party_role": "signer",
+          "party_signing_url": "https://sign.signable.app/#...",
+          "party_qes_status": null,
+          "party_qes_session_expires_at": null
+        },
+        {
+          "party_id": "45631121",
+          "party_title": "Sabby",
+          "party_mobile_last4": null,
+          "party_password": null,
+          "party_is_qes_signer": false,
+          "contact_id": "17241370",
+          "contact_email": "abby+010725@signable.co.uk",
+          "party_status": "in progress",
+          "party_signature_type": "remote",
+          "party_role": "signer",
+          "party_signing_url": "https://sign.signable.app/#...",
+          "party_qes_status": null,
+          "party_qes_session_expires_at": null
+        },
+        {
+          "party_id": "45631122",
+          "party_title": "Bristol Solicitors",
+          "party_mobile_last4": null,
+          "party_password": null,
+          "party_is_qes_signer": false,
+          "contact_id": "17241371",
+          "contact_email": "test@example.com",
+          "party_status": "pending",
+          "party_signature_type": "remote",
+          "party_role": "copy",
+          "party_signing_url": "https://sign.signable.app/#...",
+          "party_qes_status": null,
+          "party_qes_session_expires_at": null
+        }
+      ],
+      "envelope_documents": [
+        {
+          "document_fingerprint": "78c54190abc34179919e6c2197465926",
+          "document_title": "Sample Tenancy Contract",
+          "document_page_total": "2",
+          "document_thumbnails": [
+            "https://docs.signable.app/small/78c54190abc34179919e6c2197465926-0.jpg?Policy=...&Signature=...&Key-Pair-Id=...",
+            "https://docs.signable.app/small/78c54190abc34179919e6c2197465926-1.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "document_pages": [
+            "https://docs.signable.app/large/78c54190abc34179919e6c2197465926-0.jpg?Policy=...&Signature=...&Key-Pair-Id=...",
+            "https://docs.signable.app/large/78c54190abc34179919e6c2197465926-1.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "document_fields": [
+            {
+              "field_id": "452902787",
+              "field_title": "First Name",
+              "field_type": "text",
+              "field_value": "Abby Sackson",
+              "party_id": "45631119",
+              "field_merge": "Sender Name",
+              "field_format": null
+            },
+            {
+              "field_id": "452902789",
+              "field_title": "Date please",
+              "field_type": "date",
+              "field_value": "",
+              "party_id": "45631119",
+              "field_merge": null,
+              "field_format": null
+            },
+            {
+              "field_id": "452902791",
+              "field_title": "Date Signed",
+              "field_type": "date-signed",
+              "field_value": "31/01/2026",
+              "party_id": "45631119",
+              "field_merge": null,
+              "field_format": "dd/mm/yyyy"
+            },
+            {
+              "field_id": "452902790",
+              "field_title": "Passport Copy",
+              "field_type": "upload",
+              "field_value": "Files have been uploaded. Download them via the authenticated API: https://api.signable.co.uk/v1/envelopes/584ea8b41b0d4c17a96b967433b211e6/download",
+              "party_id": "45631119",
+              "field_merge": null,
+              "field_format": null
+            }
+          ]
+        },
+        {
+          "document_fingerprint": "2cbd40997bc64c1c9b700d80471723b9",
+          "document_title": "Sample Contract",
+          "document_page_total": "1",
+          "document_thumbnails": [
+            "https://docs.signable.app/small/2cbd40997bc64c1c9b700d80471723b9-0.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "document_pages": [
+            "https://docs.signable.app/large/2cbd40997bc64c1c9b700d80471723b9-0.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "document_fields": [
+            {
+              "field_id": "452902797",
+              "field_title": "Print Name",
+              "field_type": "text",
+              "field_value": "",
+              "party_id": "45631119",
+              "field_merge": null
+            },
+            {
+              "field_id": "452902798",
+              "field_title": "Full Address",
+              "field_type": "text",
+              "field_value": "",
+              "party_id": "45631119",
+              "field_merge": null
+            }
+          ]
+        }
+      ],
+      "envelope_history": [
+        {
+          "history_detail": "Envelope generated by Abby Loves Signable",
+          "history_ip": "147.147.97.34",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+          "history_date": "2025-07-08T14:58:54+0000"
+        },
+        {
+          "history_detail": "Document generated with fingerprint 78c54190abc34179919e6c2197465926",
+          "history_ip": "147.147.97.34",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+          "history_date": "2025-07-08T14:58:55+0000"
+        },
+        {
+          "history_detail": "Document generated with fingerprint 2cbd40997bc64c1c9b700d80471723b9",
+          "history_ip": "147.147.97.34",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+          "history_date": "2025-07-08T14:58:55+0000"
+        },
+        {
+          "history_detail": "Sent the envelope to Abby Signable (abby@signable.co.uk) for signing",
+          "history_ip": "147.147.97.34",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+          "history_date": "2025-07-08T15:02:48+0000"
+        },
+        {
+          "history_detail": "Sent the envelope to Sabby (abby+010725@signable.co.uk) for signing",
+          "history_ip": "147.147.97.34",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+          "history_date": "2025-07-08T15:02:49+0000"
+        },
+        {
+          "history_detail": "Document emailed to abby@signable.co.uk",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-08T15:02:49+0000"
+        },
+        {
+          "history_detail": "Document emailed to abby+010725@signable.co.uk",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-08T15:02:49+0000"
+        },
+        {
+          "history_detail": "Abby Signable opened the document email.",
+          "history_ip": "66.249.93.102",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 5.1; rv:11.0) Gecko Firefox/11.0 (via ggpht.com GoogleImageProxy)",
+          "history_date": "2025-07-09T08:37:19+0000"
+        },
+        {
+          "history_detail": "Sabby opened the document email.",
+          "history_ip": "66.249.93.98",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 5.1; rv:11.0) Gecko Firefox/11.0 (via ggpht.com GoogleImageProxy)",
+          "history_date": "2025-07-09T08:37:19+0000"
+        },
+        {
+          "history_detail": "Sent Abby Signable a reminder to sign the document.",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-13T15:03:15+0000"
+        },
+        {
+          "history_detail": "Sent Sabby a reminder to sign the document.",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-13T15:03:15+0000"
+        },
+        {
+          "history_detail": "Document emailed to abby@signable.co.uk",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-13T15:03:15+0000"
+        },
+        {
+          "history_detail": "Document emailed to abby+010725@signable.co.uk",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-13T15:03:15+0000"
+        }
+      ],
+      "envelope_meta": {
+        "internal_id": "ABC123",
+        "VIP": false
+      }
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "send_draft_envelope": {
+    "method": "POST",
+    "path": "/envelopes/{envelope_fingerprint}/send",
+    "config": {
+      "operation": "send_draft_envelope",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+      "envelope_title": "17 John Street Tenancy Contract - 25th Jun 2025",
+      "envelope_status": "sent",
+      "envelope_redirect_url": null,
+      "envelope_created": "2025-07-08T14:58:54+0000",
+      "envelope_sent": "2025-07-08T15:02:49+0000",
+      "envelope_processed": null,
+      "envelope_all_at_once_enabled": true,
+      "envelope_requires_otp": false,
+      "envelope_qes": {
+        "has_fields": true,
+        "credit_count": 1,
+        "signature_count": 1,
+        "document_count": 1,
+        "party_count": 1
+      },
+      "envelope_parties": [
+        {
+          "party_id": "45631119",
+          "party_title": "Abby Signable",
+          "party_mobile_last4": null,
+          "party_password": "Test123",
+          "party_is_qes_signer": true,
+          "contact_id": "17225983",
+          "contact_email": "abby@signable.co.uk",
+          "party_status": "in progress",
+          "party_signature_type": "remote",
+          "party_role": "signer",
+          "party_signing_url": "https://sign.signable.app/#...",
+          "party_qes_status": null,
+          "party_qes_session_expires_at": null
+        },
+        {
+          "party_id": "45631121",
+          "party_title": "Sabby",
+          "party_mobile_last4": null,
+          "party_password": null,
+          "party_is_qes_signer": false,
+          "contact_id": "17241370",
+          "contact_email": "abby+010725@signable.co.uk",
+          "party_status": "in progress",
+          "party_signature_type": "remote",
+          "party_role": "signer",
+          "party_signing_url": "https://sign.signable.app/#...",
+          "party_qes_status": null,
+          "party_qes_session_expires_at": null
+        },
+        {
+          "party_id": "45631122",
+          "party_title": "Bristol Solicitors",
+          "party_mobile_last4": null,
+          "party_password": null,
+          "party_is_qes_signer": false,
+          "contact_id": "17241371",
+          "contact_email": "test@example.com",
+          "party_status": "pending",
+          "party_signature_type": "remote",
+          "party_role": "copy",
+          "party_signing_url": "https://sign.signable.app/#...",
+          "party_qes_status": null,
+          "party_qes_session_expires_at": null
+        }
+      ],
+      "envelope_documents": [
+        {
+          "document_fingerprint": "78c54190abc34179919e6c2197465926",
+          "document_title": "Sample Tenancy Contract",
+          "document_page_total": "2",
+          "document_thumbnails": [
+            "https://docs.signable.app/small/78c54190abc34179919e6c2197465926-0.jpg?Policy=...&Signature=...&Key-Pair-Id=...",
+            "https://docs.signable.app/small/78c54190abc34179919e6c2197465926-1.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "document_pages": [
+            "https://docs.signable.app/large/78c54190abc34179919e6c2197465926-0.jpg?Policy=...&Signature=...&Key-Pair-Id=...",
+            "https://docs.signable.app/large/78c54190abc34179919e6c2197465926-1.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "document_fields": [
+            {
+              "field_id": "452902787",
+              "field_title": "First Name",
+              "field_type": "text",
+              "field_value": "Abby Sackson",
+              "party_id": "45631119",
+              "field_merge": "Sender Name",
+              "field_format": null
+            },
+            {
+              "field_id": "452902789",
+              "field_title": "Date please",
+              "field_type": "date",
+              "field_value": "",
+              "party_id": "45631119",
+              "field_merge": null,
+              "field_format": null
+            },
+            {
+              "field_id": "452902791",
+              "field_title": "Date Signed",
+              "field_type": "date-signed",
+              "field_value": "31/01/2026",
+              "party_id": "45631119",
+              "field_merge": null,
+              "field_format": "dd/mm/yyyy"
+            },
+            {
+              "field_id": "452902790",
+              "field_title": "Passport Copy",
+              "field_type": "upload",
+              "field_value": "Files have been uploaded. Download them via the authenticated API: https://api.signable.co.uk/v1/envelopes/584ea8b41b0d4c17a96b967433b211e6/download",
+              "party_id": "45631119",
+              "field_merge": null,
+              "field_format": null
+            }
+          ]
+        },
+        {
+          "document_fingerprint": "2cbd40997bc64c1c9b700d80471723b9",
+          "document_title": "Sample Contract",
+          "document_page_total": "1",
+          "document_thumbnails": [
+            "https://docs.signable.app/small/2cbd40997bc64c1c9b700d80471723b9-0.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "document_pages": [
+            "https://docs.signable.app/large/2cbd40997bc64c1c9b700d80471723b9-0.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "document_fields": [
+            {
+              "field_id": "452902797",
+              "field_title": "Print Name",
+              "field_type": "text",
+              "field_value": "",
+              "party_id": "45631119",
+              "field_merge": null
+            },
+            {
+              "field_id": "452902798",
+              "field_title": "Full Address",
+              "field_type": "text",
+              "field_value": "",
+              "party_id": "45631119",
+              "field_merge": null
+            }
+          ]
+        }
+      ],
+      "envelope_history": [
+        {
+          "history_detail": "Envelope generated by Abby Loves Signable",
+          "history_ip": "147.147.97.34",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+          "history_date": "2025-07-08T14:58:54+0000"
+        },
+        {
+          "history_detail": "Document generated with fingerprint 78c54190abc34179919e6c2197465926",
+          "history_ip": "147.147.97.34",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+          "history_date": "2025-07-08T14:58:55+0000"
+        },
+        {
+          "history_detail": "Document generated with fingerprint 2cbd40997bc64c1c9b700d80471723b9",
+          "history_ip": "147.147.97.34",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+          "history_date": "2025-07-08T14:58:55+0000"
+        },
+        {
+          "history_detail": "Sent the envelope to Abby Signable (abby@signable.co.uk) for signing",
+          "history_ip": "147.147.97.34",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+          "history_date": "2025-07-08T15:02:48+0000"
+        },
+        {
+          "history_detail": "Sent the envelope to Sabby (abby+010725@signable.co.uk) for signing",
+          "history_ip": "147.147.97.34",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+          "history_date": "2025-07-08T15:02:49+0000"
+        },
+        {
+          "history_detail": "Document emailed to abby@signable.co.uk",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-08T15:02:49+0000"
+        },
+        {
+          "history_detail": "Document emailed to abby+010725@signable.co.uk",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-08T15:02:49+0000"
+        },
+        {
+          "history_detail": "Abby Signable opened the document email.",
+          "history_ip": "66.249.93.102",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 5.1; rv:11.0) Gecko Firefox/11.0 (via ggpht.com GoogleImageProxy)",
+          "history_date": "2025-07-09T08:37:19+0000"
+        },
+        {
+          "history_detail": "Sabby opened the document email.",
+          "history_ip": "66.249.93.98",
+          "history_user_agent": "Mozilla/5.0 (Windows NT 5.1; rv:11.0) Gecko Firefox/11.0 (via ggpht.com GoogleImageProxy)",
+          "history_date": "2025-07-09T08:37:19+0000"
+        },
+        {
+          "history_detail": "Sent Abby Signable a reminder to sign the document.",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-13T15:03:15+0000"
+        },
+        {
+          "history_detail": "Sent Sabby a reminder to sign the document.",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-13T15:03:15+0000"
+        },
+        {
+          "history_detail": "Document emailed to abby@signable.co.uk",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-13T15:03:15+0000"
+        },
+        {
+          "history_detail": "Document emailed to abby+010725@signable.co.uk",
+          "history_ip": "",
+          "history_user_agent": "",
+          "history_date": "2025-07-13T15:03:15+0000"
+        }
+      ],
+      "envelope_meta": {
+        "internal_id": "ABC123",
+        "VIP": false
+      }
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "delete_envelope": {
+    "method": "DELETE",
+    "path": "/envelopes/{envelope_fingerprint}",
+    "config": {
+      "operation": "delete_envelope",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "message": "The envelope has been deleted",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+      "envelope_title": "Test Envelope",
+      "envelope_status": "deleted"
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "remind_envelope": {
+    "method": "PUT",
+    "path": "/envelopes/{envelope_fingerprint}/remind",
+    "config": {
+      "operation": "remind_envelope",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "message": "The signing parties for this envelope have been reminded.",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+      "envelope_title": "17 John Street Tenancy Contract - 25th Jun 2025",
+      "envelope_all_at_once_enabled": true
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "cancel_envelope": {
+    "method": "PUT",
+    "path": "/envelopes/{envelope_fingerprint}/cancel",
+    "config": {
+      "operation": "cancel_envelope",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "message": "The envelope has been cancelled",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+      "envelope_title": "Contract Settlement",
+      "envelope_status": "cancelled",
+      "envelope_processed": "2025-07-14T13:34:34+0000"
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "expire_envelope": {
+    "method": "PUT",
+    "path": "/envelopes/{envelope_fingerprint}/expire",
+    "config": {
+      "operation": "expire_envelope",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "message": "The envelope has been expired",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+      "envelope_title": "Industrial Contract",
+      "envelope_status": "expired",
+      "envelope_processed": "2025-07-14T14:37:34+0000"
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "update_envelope_party": {
+    "method": "PATCH",
+    "path": "/envelopes/{envelope_fingerprint}/parties/{party_id}",
+    "config": {
+      "operation": "update_envelope_party",
+      "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+      "party_id": 1234567,
+      "party_email": "abby+updated@signable.co.uk",
+      "party_title": "Abby"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "party_id": 1234567,
+      "party_title": "Abby",
+      "party_email": "abby+updated@signable.co.uk",
+      "party_role": "signer"
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "list_templates": {
+    "method": "GET",
+    "path": "/templates",
+    "config": {
+      "operation": "list_templates"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "offset": 0,
+      "limit": 10,
+      "total_templates": "2",
+      "templates": [
+        {
+          "template_id": "53890528",
+          "template_fingerprint": "e0b3a9cbd4a6ff2cb57cfca161a38309",
+          "template_title": "Sample Tenancy Contract",
+          "template_page_total": "2",
+          "template_in_progress": "0",
+          "template_parties_total": "1",
+          "template_widget_url": "https://sign.signable.app/#/widget/YzVsBQ5Dyj",
+          "template_widget_embed": "<iframe src='https://sign.signable.app/#/widget/YzVsBQ5Dyj' frameborder='0' style='border:0;width:100%;height:100vh;' scrolling='yes'></iframe>",
+          "template_thumbnails": [
+            "https://docs.signable.app/small/e0b3a9cbd4a6ff2cb57cfca161a38309-0.jpg?Policy=...&Signature=...&Key-Pair-Id=...",
+            "https://docs.signable.app/small/e0b3a9cbd4a6ff2cb57cfca161a38309-1.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "template_pages": [
+            "https://docs.signable.app/large/e0b3a9cbd4a6ff2cb57cfca161a38309-0.jpg?Policy=...&Signature=...&Key-Pair-Id=...",
+            "https://docs.signable.app/large/e0b3a9cbd4a6ff2cb57cfca161a38309-1.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "template_uploaded": "2025-07-07T15:49:43+0000",
+          "template_parties": [
+            {
+              "party_id": "20576938",
+              "party_name": "Signer 1"
+            }
+          ]
+        },
+        {
+          "template_id": "53690003",
+          "template_fingerprint": "b786a173554cc06371248caf0b250704",
+          "template_title": "Sample Contract",
+          "template_page_total": "1",
+          "template_in_progress": "3",
+          "template_parties_total": "1",
+          "template_widget_url": "https://sign.signable.app/#/widget/",
+          "template_widget_embed": "<iframe src='https://sign.signable.app/#/widget/' frameborder='0' style='border:0;width:100%;height:100vh;' scrolling='yes'></iframe>",
+          "template_thumbnails": [
+            "https://docs.signable.app/small/b786a173554cc06371248caf0b250704-0.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "template_pages": [
+            "https://docs.signable.app/large/b786a173554cc06371248caf0b250704-0.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+          ],
+          "template_uploaded": "2025-07-01T08:40:38+0000",
+          "template_parties": [
+            {
+              "party_id": "20459705",
+              "party_name": "Party",
+              "party_merge_fields": [
+                {
+                  "field_id": "450927743",
+                  "field_merge": "Name of Sender",
+                  "field_type": "text"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "get_template": {
+    "method": "GET",
+    "path": "/templates/{template_fingerprint}",
+    "config": {
+      "operation": "get_template",
+      "template_fingerprint": "b786a173554cc06371248caf0b250704"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "template_id": "53690003",
+      "template_fingerprint": "b786a173554cc06371248caf0b250704",
+      "template_title": "Sample Contract",
+      "template_page_total": "1",
+      "template_in_progress": "3",
+      "template_parties_total": "1",
+      "template_widget_url": "https://sign.signable.app/#/widget/YzVsBQ5Dyj",
+      "template_widget_embed": "<iframe src='https://sign.signable.app/#/widget/YzVsBQ5Dyj' frameborder='0' style='border:0;width:100%;height:100vh;' scrolling='yes'></iframe>",
+      "template_thumbnails": [
+        "https://docs.signable.app/small/b786a173554cc06371248caf0b250704-0.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+      ],
+      "template_pages": [
+        "https://docs.signable.app/large/b786a173554cc06371248caf0b250704-0.jpg?Policy=...&Signature=...&Key-Pair-Id=..."
+      ],
+      "template_uploaded": "2025-07-01T08:40:38+0000",
+      "template_parties": [
+        {
+          "party_id": "20459705",
+          "party_name": "Party",
+          "party_merge_fields": [
+            {
+              "field_id": "450927743",
+              "field_merge": "Name of Sender",
+              "field_type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "list_contacts": {
+    "method": "GET",
+    "path": "/contacts",
+    "config": {
+      "operation": "list_contacts"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "offset": 0,
+      "limit": 50,
+      "total_contacts": "100",
+      "next": "https://api.signable.co.uk/v1/contacts?offset=50&limit=50",
+      "contacts": [
+        {
+          "contact_id": "17224073",
+          "contact_name": "Buffy The Vampire Slayer",
+          "contact_email": "buffy@sunnydale.com",
+          "contact_outstanding_documents": "0",
+          "contact_created": "2025-07-07T09:54:08+0000"
+        },
+        {
+          "contact_id": "17224050",
+          "contact_name": "Jane Doe",
+          "contact_email": "jane@example.com",
+          "contact_outstanding_documents": "0",
+          "contact_created": "2025-07-07T09:52:54+0000"
+        },
+        {
+          "contact_id": "17224044",
+          "contact_name": "Jo Bloggs",
+          "contact_email": "jo@example.com",
+          "contact_outstanding_documents": "0",
+          "contact_created": "2025-07-07T09:52:32+0000"
+        }
+      ]
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "create_contact": {
+    "method": "POST",
+    "path": "/contacts",
+    "config": {
+      "operation": "create_contact",
+      "contact_name": "Hanz Zimmer",
+      "contact_email": "hanz.zimmer@music.com"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "message": "Hanz Zimmer has been added to your contact list.",
+      "href": "https://api.signable.co.uk/v1/contacts/17224150",
+      "contact_id": "17224150",
+      "contact_name": "Hanz Zimmer",
+      "contact_email": "hanz.zimmer@music.com",
+      "contact_created": "2025-07-07T09:57:39+0000"
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "get_contact": {
+    "method": "GET",
+    "path": "/contacts/{contact_id}",
+    "config": {
+      "operation": "get_contact",
+      "contact_id": 17224150
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "contact_id": 17224150,
+      "contact_name": "Hanz Zimmer",
+      "contact_email": "hanz.zimmer@music.com",
+      "contact_outstanding_documents": "0",
+      "contact_created": "2025-07-07T09:57:39+0000"
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "update_contact": {
+    "method": "PUT",
+    "path": "/contacts/{contact_id}",
+    "config": {
+      "operation": "update_contact",
+      "contact_id": 17224150,
+      "contact_name": "Nemo",
+      "contact_email": "nemo@coralreef.com"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "message": "Nemo has been updated in your contact list.",
+      "href": "https://api.signable.co.uk/v1/contacts/17224150",
+      "contact_id": 17224150,
+      "contact_name": "Nemo",
+      "contact_email": "nemo@coralreef.com",
+      "contact_updated": "2025-07-07T09:59:25+0000"
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "delete_contact": {
+    "method": "DELETE",
+    "path": "/contacts/{contact_id}",
+    "config": {
+      "operation": "delete_contact",
+      "contact_id": 17224150
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "message": "Nemo has been removed from your contact list.",
+      "contact_id": 17224150,
+      "contact_name": "Nemo",
+      "contact_email": "nemo@coralreef.com"
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "list_contact_envelopes": {
+    "method": "GET",
+    "path": "/contacts/{contact_id}/envelopes",
+    "config": {
+      "operation": "list_contact_envelopes",
+      "contact_id": 17225983
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "offset": 0,
+      "limit": 10,
+      "total_envelopes": "3",
+      "envelopes": [
+        {
+          "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+          "envelope_title": "Another Test",
+          "envelope_status": "draft",
+          "envelope_created": "2025-07-07T11:30:27+0000",
+          "envelope_sent": null,
+          "envelope_processed": null
+        },
+        {
+          "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+          "envelope_title": "2nd Test",
+          "envelope_status": "signed",
+          "envelope_created": "2025-07-07T11:27:44+0000",
+          "envelope_sent": "2025-07-07T11:29:31+0000",
+          "envelope_processed": "2025-07-07T11:30:09+0000"
+        },
+        {
+          "envelope_fingerprint": "584ea8b41b0d4c17a96b967433b211e6",
+          "envelope_title": "Test Envelope",
+          "envelope_status": "signed",
+          "envelope_created": "2025-07-07T10:30:02+0000",
+          "envelope_sent": "2025-07-07T11:26:20+0000",
+          "envelope_processed": "2025-07-07T11:27:20+0000"
+        }
+      ]
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "list_users": {
+    "method": "GET",
+    "path": "/users",
+    "config": {
+      "operation": "list_users"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "offset": 0,
+      "limit": 50,
+      "total_users": "2",
+      "users": [
+        {
+          "user_id": "836499",
+          "role_id": "3",
+          "user_name": "Abby Loves Signable",
+          "user_email": "abby+010725@signable.co.uk",
+          "user_added": "2025-07-01T08:40:38+0000",
+          "user_last_updated": "2025-07-07T07:57:54+0000"
+        },
+        {
+          "user_id": "837142",
+          "role_id": "1",
+          "user_name": "Sabby",
+          "user_email": "abby+sabby@signable.co.uk",
+          "user_added": "2025-07-07T07:58:38+0000",
+          "user_last_updated": "2025-07-07T07:58:44+0000"
+        }
+      ]
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "get_user": {
+    "method": "GET",
+    "path": "/users/{user_id}",
+    "config": {
+      "operation": "get_user",
+      "user_id": 836499
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "user_id": 836499,
+      "role_id": "3",
+      "user_name": "Abby Loves Signable",
+      "user_email": "abby+010725@signable.co.uk",
+      "user_added": "2025-07-01T08:40:38+0000",
+      "user_last_updated": "2025-07-07T07:57:54+0000"
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "get_branding": {
+    "method": "GET",
+    "path": "/branding",
+    "config": {
+      "operation": "get_branding"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "branding_logo": "https://www.signable.co.uk/signable.png",
+      "branding_colour": "#0095E6"
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  },
+  "get_settings": {
+    "method": "GET",
+    "path": "/settings",
+    "config": {
+      "operation": "get_settings"
+    },
+    "status": 200,
+    "mime": "application/json",
+    "body": {
+      "http": 200,
+      "setting_signature_more_info": true,
+      "setting_signature_format_accepted": "typed,drawn,upload",
+      "setting_signature_format_default": "typed",
+      "setting_email_pdf_attach": true,
+      "setting_email_pdf_attach_sender": true,
+      "setting_email_envelope_open": true,
+      "setting_email_main_email": true,
+      "setting_email_return_address_user": true,
+      "setting_signing_consumer_regulations_act": false,
+      "setting_signing_tooltips": false,
+      "setting_signing_questions": true,
+      "setting_pdf_audit_trail_hide": true,
+      "setting_all_at_once_default": false,
+      "setting_qes_enabled": true
+    },
+    "source": "https://developers.signable.app/_spec/openapi.yaml"
+  }
+}

@@ -1,0 +1,1038 @@
+{
+  "$defs": {
+    "SignableAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "signable_api_key",
+          "default": "signable_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Signable API Key",
+      "type": "object",
+      "x-credential-instructions": "In Signable, open Company Settings \u2192 API & Webhooks, add an API key and paste it here. Use a test key for rehearsals. NoClick sends the key as the Basic username with password x to api.signable.co.uk.",
+      "x-credential-url": "https://signable.app/"
+    },
+    "SignableCancelEnvelopeConfig": {
+      "additionalProperties": false,
+      "description": "Cancel an active envelope and email signing parties.",
+      "properties": {
+        "envelope_fingerprint": {
+          "description": "Envelope fingerprint from Signable.",
+          "minLength": 1,
+          "title": "Envelope Fingerprint",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_envelope",
+          "default": "cancel_envelope",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "envelope_fingerprint"
+      ],
+      "title": "SignableCancelEnvelopeConfig",
+      "type": "object"
+    },
+    "SignableCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_name": {
+          "minLength": 1,
+          "title": "Contact Name",
+          "type": "string"
+        },
+        "contact_email": {
+          "minLength": 1,
+          "title": "Contact Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_name",
+        "contact_email"
+      ],
+      "title": "SignableCreateContactConfig",
+      "type": "object"
+    },
+    "SignableCreateEnvelopeConfig": {
+      "additionalProperties": false,
+      "description": "Create an envelope; by default Signable queues it for sending.",
+      "properties": {
+        "operation": {
+          "const": "create_envelope",
+          "default": "create_envelope",
+          "title": "Operation",
+          "type": "string",
+          "x-display-name": "Create Envelope (Send or Draft)"
+        },
+        "envelope_title": {
+          "minLength": 1,
+          "title": "Envelope Title",
+          "type": "string"
+        },
+        "envelope_parties": {
+          "items": {
+            "$ref": "#/$defs/SignableParty"
+          },
+          "minItems": 1,
+          "title": "Envelope Parties",
+          "type": "array"
+        },
+        "envelope_documents": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SignableDocumentURL"
+              },
+              {
+                "$ref": "#/$defs/SignableDocumentFile"
+              },
+              {
+                "$ref": "#/$defs/SignableTemplateDocument"
+              }
+            ]
+          },
+          "minItems": 1,
+          "title": "Envelope Documents",
+          "type": "array"
+        },
+        "is_draft": {
+          "default": false,
+          "description": "Save without sending. False queues the envelope and sends signing emails.",
+          "title": "Is Draft",
+          "type": "boolean"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "envelope_redirect_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Envelope Redirect Url"
+        },
+        "envelope_all_at_once_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Envelope All At Once Enabled"
+        },
+        "envelope_password_protect": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Envelope Password Protect"
+        },
+        "envelope_auto_expire_hours": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Envelope Auto Expire Hours"
+        },
+        "envelope_auto_remind_hours": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Envelope Auto Remind Hours"
+        },
+        "envelope_meta": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Envelope Meta"
+        }
+      },
+      "required": [
+        "envelope_title",
+        "envelope_parties",
+        "envelope_documents"
+      ],
+      "title": "SignableCreateEnvelopeConfig",
+      "type": "object"
+    },
+    "SignableDeleteContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "SignableDeleteContactConfig",
+      "type": "object"
+    },
+    "SignableDeleteEnvelopeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "envelope_fingerprint": {
+          "description": "Envelope fingerprint from Signable.",
+          "minLength": 1,
+          "title": "Envelope Fingerprint",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_envelope",
+          "default": "delete_envelope",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "envelope_fingerprint"
+      ],
+      "title": "SignableDeleteEnvelopeConfig",
+      "type": "object"
+    },
+    "SignableDocumentFile": {
+      "additionalProperties": false,
+      "properties": {
+        "document_title": {
+          "minLength": 1,
+          "title": "Document Title",
+          "type": "string"
+        },
+        "document_file_content": {
+          "description": "Base64 encoded file contents.",
+          "title": "Document File Content",
+          "type": "string"
+        },
+        "document_file_name": {
+          "description": "Filename ending in .pdf, .docx or .xlsx.",
+          "title": "Document File Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_title",
+        "document_file_content",
+        "document_file_name"
+      ],
+      "title": "SignableDocumentFile",
+      "type": "object"
+    },
+    "SignableDocumentURL": {
+      "additionalProperties": false,
+      "properties": {
+        "document_title": {
+          "minLength": 1,
+          "title": "Document Title",
+          "type": "string"
+        },
+        "document_url": {
+          "description": "Public URL of a PDF, Word or Excel document for Signable to fetch.",
+          "title": "Document Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_title",
+        "document_url"
+      ],
+      "title": "SignableDocumentURL",
+      "type": "object"
+    },
+    "SignableExpireEnvelopeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "envelope_fingerprint": {
+          "description": "Envelope fingerprint from Signable.",
+          "minLength": 1,
+          "title": "Envelope Fingerprint",
+          "type": "string"
+        },
+        "operation": {
+          "const": "expire_envelope",
+          "default": "expire_envelope",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "envelope_fingerprint"
+      ],
+      "title": "SignableExpireEnvelopeConfig",
+      "type": "object"
+    },
+    "SignableGetBrandingConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_branding",
+          "default": "get_branding",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "SignableGetBrandingConfig",
+      "type": "object"
+    },
+    "SignableGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "SignableGetContactConfig",
+      "type": "object"
+    },
+    "SignableGetEnvelopeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "envelope_fingerprint": {
+          "description": "Envelope fingerprint from Signable.",
+          "minLength": 1,
+          "title": "Envelope Fingerprint",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_envelope",
+          "default": "get_envelope",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "envelope_fingerprint"
+      ],
+      "title": "SignableGetEnvelopeConfig",
+      "type": "object"
+    },
+    "SignableGetSettingsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_settings",
+          "default": "get_settings",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "SignableGetSettingsConfig",
+      "type": "object"
+    },
+    "SignableGetTemplateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string"
+        },
+        "template_fingerprint": {
+          "minLength": 1,
+          "title": "Template Fingerprint",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_fingerprint"
+      ],
+      "title": "SignableGetTemplateConfig",
+      "type": "object"
+    },
+    "SignableGetUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "SignableGetUserConfig",
+      "type": "object"
+    },
+    "SignableListContactEnvelopesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Index of the first record. Fetch another page explicitly.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Records per page; Signable supports at most 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contact_envelopes",
+          "default": "list_contact_envelopes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "SignableListContactEnvelopesConfig",
+      "type": "object"
+    },
+    "SignableListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Index of the first record. Fetch another page explicitly.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Records per page; Signable supports at most 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "SignableListContactsConfig",
+      "type": "object"
+    },
+    "SignableListEnvelopesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Index of the first record. Fetch another page explicitly.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Records per page; Signable supports at most 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_envelopes",
+          "default": "list_envelopes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "envelope_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "processing",
+                "failed",
+                "draft",
+                "sent",
+                "qes_in_progress",
+                "signed",
+                "cancelled",
+                "expired",
+                "rejected",
+                "verify"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Envelope Status",
+          "enum": [
+            "processing",
+            "failed",
+            "draft",
+            "sent",
+            "qes_in_progress",
+            "signed",
+            "cancelled",
+            "expired",
+            "rejected",
+            "verify"
+          ],
+          "x-enum-searchable": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case-insensitive search in the envelope title.",
+          "title": "Q"
+        }
+      },
+      "title": "SignableListEnvelopesConfig",
+      "type": "object"
+    },
+    "SignableListTemplatesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Index of the first record. Fetch another page explicitly.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Records per page; Signable supports at most 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "SignableListTemplatesConfig",
+      "type": "object"
+    },
+    "SignableListUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Index of the first record. Fetch another page explicitly.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Records per page; Signable supports at most 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "SignableListUsersConfig",
+      "type": "object"
+    },
+    "SignableMergeField": {
+      "additionalProperties": false,
+      "properties": {
+        "field_id": {
+          "title": "Field Id",
+          "type": "string"
+        },
+        "field_value": {
+          "title": "Field Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_id",
+        "field_value"
+      ],
+      "title": "SignableMergeField",
+      "type": "object"
+    },
+    "SignableParty": {
+      "additionalProperties": false,
+      "properties": {
+        "party_name": {
+          "minLength": 1,
+          "title": "Party Name",
+          "type": "string"
+        },
+        "party_email": {
+          "minLength": 1,
+          "title": "Party Email",
+          "type": "string"
+        },
+        "party_role": {
+          "default": "signer",
+          "enum": [
+            "signer",
+            "copy"
+          ],
+          "title": "Party Role",
+          "type": "string"
+        },
+        "party_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when sending a template: the party ID defined in it.",
+          "title": "Party Id"
+        },
+        "party_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Party Message"
+        },
+        "party_mobile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "E.164 number; enables OTP for this signer. Omit for copy recipients.",
+          "title": "Party Mobile"
+        },
+        "party_password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Party Password"
+        }
+      },
+      "required": [
+        "party_name",
+        "party_email"
+      ],
+      "title": "SignableParty",
+      "type": "object"
+    },
+    "SignableRemindEnvelopeConfig": {
+      "additionalProperties": false,
+      "description": "Send reminder emails to outstanding signers and reset the reminder timer.",
+      "properties": {
+        "envelope_fingerprint": {
+          "description": "Envelope fingerprint from Signable.",
+          "minLength": 1,
+          "title": "Envelope Fingerprint",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remind_envelope",
+          "default": "remind_envelope",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "envelope_fingerprint"
+      ],
+      "title": "SignableRemindEnvelopeConfig",
+      "type": "object"
+    },
+    "SignableSendDraftEnvelopeConfig": {
+      "additionalProperties": false,
+      "description": "Send a draft; queues signing emails and can reserve QES credits.",
+      "properties": {
+        "envelope_fingerprint": {
+          "description": "Envelope fingerprint from Signable.",
+          "minLength": 1,
+          "title": "Envelope Fingerprint",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_draft_envelope",
+          "default": "send_draft_envelope",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "envelope_fingerprint"
+      ],
+      "title": "SignableSendDraftEnvelopeConfig",
+      "type": "object"
+    },
+    "SignableTemplateDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "document_title": {
+          "minLength": 1,
+          "title": "Document Title",
+          "type": "string"
+        },
+        "document_template_fingerprint": {
+          "minLength": 1,
+          "title": "Document Template Fingerprint",
+          "type": "string"
+        },
+        "document_merge_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/SignableMergeField"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Merge Fields"
+        }
+      },
+      "required": [
+        "document_title",
+        "document_template_fingerprint"
+      ],
+      "title": "SignableTemplateDocument",
+      "type": "object"
+    },
+    "SignableUpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Name"
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Email"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "SignableUpdateContactConfig",
+      "type": "object"
+    },
+    "SignableUpdateEnvelopePartyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "envelope_fingerprint": {
+          "description": "Envelope fingerprint from Signable.",
+          "minLength": 1,
+          "title": "Envelope Fingerprint",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_envelope_party",
+          "default": "update_envelope_party",
+          "title": "Operation",
+          "type": "string"
+        },
+        "party_id": {
+          "minimum": 1,
+          "title": "Party Id",
+          "type": "integer"
+        },
+        "party_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Party Email"
+        },
+        "party_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Party Title"
+        }
+      },
+      "required": [
+        "envelope_fingerprint",
+        "party_id"
+      ],
+      "title": "SignableUpdateEnvelopePartyConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_envelope": "#/$defs/SignableCancelEnvelopeConfig",
+          "create_contact": "#/$defs/SignableCreateContactConfig",
+          "create_envelope": "#/$defs/SignableCreateEnvelopeConfig",
+          "delete_contact": "#/$defs/SignableDeleteContactConfig",
+          "delete_envelope": "#/$defs/SignableDeleteEnvelopeConfig",
+          "expire_envelope": "#/$defs/SignableExpireEnvelopeConfig",
+          "get_branding": "#/$defs/SignableGetBrandingConfig",
+          "get_contact": "#/$defs/SignableGetContactConfig",
+          "get_envelope": "#/$defs/SignableGetEnvelopeConfig",
+          "get_settings": "#/$defs/SignableGetSettingsConfig",
+          "get_template": "#/$defs/SignableGetTemplateConfig",
+          "get_user": "#/$defs/SignableGetUserConfig",
+          "list_contact_envelopes": "#/$defs/SignableListContactEnvelopesConfig",
+          "list_contacts": "#/$defs/SignableListContactsConfig",
+          "list_envelopes": "#/$defs/SignableListEnvelopesConfig",
+          "list_templates": "#/$defs/SignableListTemplatesConfig",
+          "list_users": "#/$defs/SignableListUsersConfig",
+          "remind_envelope": "#/$defs/SignableRemindEnvelopeConfig",
+          "send_draft_envelope": "#/$defs/SignableSendDraftEnvelopeConfig",
+          "update_contact": "#/$defs/SignableUpdateContactConfig",
+          "update_envelope_party": "#/$defs/SignableUpdateEnvelopePartyConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SignableListEnvelopesConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableCreateEnvelopeConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableGetEnvelopeConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableSendDraftEnvelopeConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableDeleteEnvelopeConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableRemindEnvelopeConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableCancelEnvelopeConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableExpireEnvelopeConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableUpdateEnvelopePartyConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableListContactEnvelopesConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableGetBrandingConfig"
+        },
+        {
+          "$ref": "#/$defs/SignableGetSettingsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SignableAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Signable Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
