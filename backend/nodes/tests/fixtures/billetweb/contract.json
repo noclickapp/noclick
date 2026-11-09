@@ -1,0 +1,311 @@
+{
+  "list_events": {
+    "method": "GET",
+    "path": "/api/events",
+    "config": {
+      "operation": "list_events"
+    }
+  },
+  "list_attendees": {
+    "method": "GET",
+    "path": "/api/attendees",
+    "config": {
+      "operation": "list_attendees"
+    }
+  },
+  "list_event_attendees": {
+    "method": "GET",
+    "path": "/api/event/{id}/attendees",
+    "config": {
+      "operation": "list_event_attendees",
+      "event_id": 1235
+    }
+  },
+  "get_availability": {
+    "method": "GET",
+    "path": "/api/event/{id}/avail",
+    "config": {
+      "operation": "get_availability",
+      "event_id": 1235
+    }
+  },
+  "list_waiting": {
+    "method": "GET",
+    "path": "/api/event/{id}/waiting",
+    "config": {
+      "operation": "list_waiting",
+      "event_id": 1235
+    }
+  },
+  "update_event": {
+    "method": "POST",
+    "path": "/api/event/{id}/update",
+    "config": {
+      "operation": "update_event",
+      "event_id": 1235,
+      "data": {
+        "status": 1,
+        "title": "Mon événement",
+        "location": "Paris"
+      }
+    }
+  },
+  "clone_event": {
+    "method": "POST",
+    "path": "/api/event/{id}/clone",
+    "config": {
+      "operation": "clone_event",
+      "event_id": 1235,
+      "name": "Retro future shock 2025",
+      "start": 1740000000
+    }
+  },
+  "list_tickets": {
+    "method": "GET",
+    "path": "/api/event/{id}/tickets",
+    "config": {
+      "operation": "list_tickets",
+      "event_id": 1235
+    }
+  },
+  "list_event_forms": {
+    "method": "GET",
+    "path": "/api/event/{id}/forms",
+    "config": {
+      "operation": "list_event_forms",
+      "event_id": 1235
+    }
+  },
+  "update_tickets": {
+    "method": "POST",
+    "path": "/api/event/{id}/tickets_update",
+    "config": {
+      "operation": "update_tickets",
+      "event_id": 1235,
+      "data": [
+        {
+          "id": 0,
+          "name": "Plein tarif",
+          "price": 20.49
+        },
+        {
+          "id": 0,
+          "name": "Tarif réduit",
+          "price": 10
+        }
+      ]
+    }
+  },
+  "list_forms": {
+    "method": "GET",
+    "path": "/api/forms",
+    "config": {
+      "operation": "list_forms"
+    }
+  },
+  "list_fields": {
+    "method": "GET",
+    "path": "/api/fields",
+    "config": {
+      "operation": "list_fields"
+    }
+  },
+  "list_sessions": {
+    "method": "GET",
+    "path": "/api/event/{id}/dates",
+    "config": {
+      "operation": "list_sessions",
+      "event_id": 1235
+    }
+  },
+  "update_sessions": {
+    "method": "POST",
+    "path": "/api/event/{id}/dates_update",
+    "config": {
+      "operation": "update_sessions",
+      "event_id": 1235,
+      "data": [
+        {
+          "id": 0,
+          "start": 1583247094,
+          "tickets": "all"
+        }
+      ]
+    }
+  },
+  "check_tickets": {
+    "method": "POST",
+    "path": "/api/event/{id}/check",
+    "config": {
+      "operation": "check_tickets",
+      "event_id": 1235,
+      "data": [
+        {
+          "id": 656087,
+          "used": 1,
+          "lane": "Entrée principale"
+        }
+      ]
+    }
+  },
+  "add_orders": {
+    "method": "POST",
+    "path": "/api/event/{id}/add_order",
+    "config": {
+      "operation": "add_orders",
+      "event_id": 1235,
+      "data": [
+        {
+          "payment_type": "cash",
+          "request_id": "CMD-1",
+          "products": [
+            {
+              "ticket": "Plein tarif",
+              "name": "Dupont",
+              "firstname": "Jean",
+              "request_id": "BIL-1"
+            },
+            {
+              "ticket": "Tarif réduit",
+              "name": "Martin",
+              "firstname": "Alice",
+              "request_id": "BIL-2"
+            }
+          ]
+        },
+        {
+          "payment_type": "multiple",
+          "payment_split": {
+            "cash": 10,
+            "card": 5
+          },
+          "request_id": "CMD-2",
+          "email": "bob@example.com",
+          "ship": 1,
+          "products": [
+            {
+              "ticket": "Plein tarif",
+              "name": "Durand",
+              "firstname": "Bob",
+              "request_id": "BIL-3"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "delete_orders": {
+    "method": "POST",
+    "path": "/api/event/{id}/delete_order",
+    "config": {
+      "operation": "delete_orders",
+      "event_id": 1235,
+      "data": [
+        123,
+        124
+      ]
+    }
+  },
+  "pay_orders": {
+    "method": "POST",
+    "path": "/api/event/{id}/pay_order",
+    "config": {
+      "operation": "pay_orders",
+      "event_id": 1235,
+      "data": [
+        {
+          "id": 1234567,
+          "payment_type": "cash",
+          "notification": 1
+        }
+      ]
+    }
+  },
+  "update_orders": {
+    "method": "POST",
+    "path": "/api/event/{id}/update_order",
+    "config": {
+      "operation": "update_orders",
+      "event_id": 1235,
+      "data": [
+        {
+          "id": 1234567,
+          "accredited": 3,
+          "notification": 1
+        }
+      ]
+    }
+  },
+  "update_products": {
+    "method": "POST",
+    "path": "/api/event/{id}/update_product",
+    "config": {
+      "operation": "update_products",
+      "event_id": 1235,
+      "data": [
+        {
+          "id": 1234567,
+          "name": "Dupont",
+          "firstname": "Jean",
+          "custom": {
+            "6": "0612131415",
+            "8": "75001"
+          }
+        }
+      ]
+    }
+  },
+  "list_lists": {
+    "method": "GET",
+    "path": "/api/lists",
+    "config": {
+      "operation": "list_lists"
+    }
+  },
+  "get_list": {
+    "method": "GET",
+    "path": "/api/list/{id}/data",
+    "config": {
+      "operation": "get_list",
+      "list_id": 123
+    }
+  },
+  "add_list_entries": {
+    "method": "POST",
+    "path": "/api/list/{id}/push",
+    "config": {
+      "operation": "add_list_entries",
+      "list_id": 123,
+      "data": [
+        [
+          "jean@dupont.fr",
+          "Jean",
+          "Dupont"
+        ]
+      ]
+    }
+  },
+  "remove_list_entries": {
+    "method": "POST",
+    "path": "/api/list/{id}/remove",
+    "config": {
+      "operation": "remove_list_entries",
+      "list_id": 123,
+      "data": [
+        [
+          "jean@dupont.fr"
+        ],
+        [
+          "pierre@richard.fr"
+        ]
+      ]
+    }
+  },
+  "list_contacts": {
+    "method": "GET",
+    "path": "/api/crm/contacts",
+    "config": {
+      "operation": "list_contacts"
+    }
+  }
+}
