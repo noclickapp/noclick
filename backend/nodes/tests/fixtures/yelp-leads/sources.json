@@ -1,0 +1,5 @@
+{
+  "lead.json": "https://docs.developer.yelp.com/reference/get-lead",
+  "events.json": "https://docs.developer.yelp.com/reference/get-lead-events",
+  "lead_ids.json": "https://docs.developer.yelp.com/reference/get-lead-ids-for-business"
+}

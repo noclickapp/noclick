@@ -1,0 +1,492 @@
+{
+  "$defs": {
+    "GetLead": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Get Lead",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "GetLead",
+      "type": "object"
+    },
+    "GetLeadEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_lead_events",
+          "default": "get_lead_events",
+          "title": "Get Lead Events",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "older_than_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Older than cursor"
+        },
+        "newer_than_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Newer than cursor"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "GetLeadEvents",
+      "type": "object"
+    },
+    "GetNewerLeadEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_newer_lead_events",
+          "default": "get_newer_lead_events",
+          "title": "Get Newer Lead Events",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "older_than_cursor": {
+          "default": null,
+          "title": "Older Than Cursor",
+          "type": "null",
+          "ui:hidden": true
+        },
+        "newer_than_cursor": {
+          "minLength": 1,
+          "title": "After cursor",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id",
+        "newer_than_cursor"
+      ],
+      "title": "GetNewerLeadEvents",
+      "type": "object"
+    },
+    "GetOlderLeadEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_older_lead_events",
+          "default": "get_older_lead_events",
+          "title": "Get Older Lead Events",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "older_than_cursor": {
+          "minLength": 1,
+          "title": "Before cursor",
+          "type": "string"
+        },
+        "newer_than_cursor": {
+          "default": null,
+          "title": "Newer Than Cursor",
+          "type": "null",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lead_id",
+        "older_than_cursor"
+      ],
+      "title": "GetOlderLeadEvents",
+      "type": "object"
+    },
+    "ListLeadIds": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_lead_ids",
+          "default": "list_lead_ids",
+          "title": "List Business Lead IDs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after_lead_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After lead ID"
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created at or after"
+        },
+        "created_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created at or before"
+        }
+      },
+      "title": "ListLeadIds",
+      "type": "object"
+    },
+    "MarkLeadAsReplied": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mark_lead_as_replied",
+          "default": "mark_lead_as_replied",
+          "title": "Mark Lead as Replied",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reply_type": {
+          "enum": [
+            "PHONE",
+            "EMAIL"
+          ],
+          "title": "Reply medium",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id",
+        "reply_type"
+      ],
+      "title": "MarkLeadAsReplied",
+      "type": "object"
+    },
+    "MarkLeadEventAsRead": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mark_lead_event_as_read",
+          "default": "mark_lead_event_as_read",
+          "title": "Mark Lead Events as Read",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "description": "Marks this event and all earlier events as read.",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "time_read": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 with timezone; defaults to Yelp's current time.",
+          "title": "Read time"
+        }
+      },
+      "required": [
+        "lead_id",
+        "event_id"
+      ],
+      "title": "MarkLeadEventAsRead",
+      "type": "object"
+    },
+    "MarkLeadRepliedByEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mark_lead_replied_by_email",
+          "default": "mark_lead_replied_by_email",
+          "title": "Mark Lead Replied by Email",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reply_type": {
+          "const": "EMAIL",
+          "default": "EMAIL",
+          "title": "Reply Type",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "MarkLeadRepliedByEmail",
+      "type": "object"
+    },
+    "MarkLeadRepliedByPhone": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mark_lead_replied_by_phone",
+          "default": "mark_lead_replied_by_phone",
+          "title": "Mark Lead Replied by Phone",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reply_type": {
+          "const": "PHONE",
+          "default": "PHONE",
+          "title": "Reply Type",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "MarkLeadRepliedByPhone",
+      "type": "object"
+    },
+    "WriteLeadEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "write_lead_event",
+          "default": "write_lead_event",
+          "title": "Reply to Lead",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_content": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "request_type": {
+          "const": "TEXT",
+          "default": "TEXT",
+          "title": "Request Type",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lead_id",
+        "request_content"
+      ],
+      "title": "WriteLeadEvent",
+      "type": "object"
+    },
+    "YelpLeadsOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "yelp_leads_oauth",
+          "default": "yelp_leads_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "business_id": {
+          "title": "Yelp business ID",
+          "type": "string"
+        },
+        "access_token": {
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "title": "Refresh token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "description": "ISO 8601 expiry including timezone.",
+          "title": "Token expiry",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id",
+        "access_token",
+        "refresh_token",
+        "expires_at"
+      ],
+      "title": "Yelp Leads OAuth",
+      "type": "object",
+      "x-credential-instructions": "Requires a Yelp-approved reseller partner OAuth application and an advertising business. Enter your Yelp business ID before signing in. For manual connection, paste existing OAuth access and refresh tokens, their ISO 8601 expiry, and the business ID. A Places API key does not grant Leads access.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://docs.developer.yelp.com/docs/oauth-authorization",
+      "x-oauth-provider": "yelp_leads",
+      "x-oauth-scopes": [
+        "leads"
+      ]
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_lead": "#/$defs/GetLead",
+          "get_lead_events": "#/$defs/GetLeadEvents",
+          "get_newer_lead_events": "#/$defs/GetNewerLeadEvents",
+          "get_older_lead_events": "#/$defs/GetOlderLeadEvents",
+          "list_lead_ids": "#/$defs/ListLeadIds",
+          "mark_lead_as_replied": "#/$defs/MarkLeadAsReplied",
+          "mark_lead_event_as_read": "#/$defs/MarkLeadEventAsRead",
+          "mark_lead_replied_by_email": "#/$defs/MarkLeadRepliedByEmail",
+          "mark_lead_replied_by_phone": "#/$defs/MarkLeadRepliedByPhone",
+          "write_lead_event": "#/$defs/WriteLeadEvent"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetLead"
+        },
+        {
+          "$ref": "#/$defs/GetLeadEvents"
+        },
+        {
+          "$ref": "#/$defs/WriteLeadEvent"
+        },
+        {
+          "$ref": "#/$defs/MarkLeadAsReplied"
+        },
+        {
+          "$ref": "#/$defs/MarkLeadEventAsRead"
+        },
+        {
+          "$ref": "#/$defs/ListLeadIds"
+        },
+        {
+          "$ref": "#/$defs/GetOlderLeadEvents"
+        },
+        {
+          "$ref": "#/$defs/GetNewerLeadEvents"
+        },
+        {
+          "$ref": "#/$defs/MarkLeadRepliedByPhone"
+        },
+        {
+          "$ref": "#/$defs/MarkLeadRepliedByEmail"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/YelpLeadsOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Yelp-leads Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
