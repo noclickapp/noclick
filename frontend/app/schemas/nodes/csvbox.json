@@ -1,0 +1,4401 @@
+{
+  "$defs": {
+    "CsvboxAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "csvbox_api_key",
+          "default": "csvbox_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "secret_api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Secret API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "secret_api_key"
+      ],
+      "title": "Csvbox API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Csvbox API key and secret API key from your dashboard's API Credentials page. Both keys are required. NoClick verifies the pair by reading your sheets.",
+      "x-credential-url": "https://app.csvbox.io"
+    },
+    "CsvboxCreateSheetConfig": {
+      "additionalProperties": false,
+      "description": "Create a sheet importer. Every supplied script item is created.",
+      "properties": {
+        "title": {
+          "examples": [
+            "Customer Import"
+          ],
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "webhooks": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxWebhook"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "[]",
+          "title": "Webhooks",
+          "ui:widget": "state_editor"
+        },
+        "destinations": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxDestinations"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "[]",
+          "title": "Destinations",
+          "ui:widget": "state_editor"
+        },
+        "sheet_columns": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxSheetColumn"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "[]",
+          "title": "Sheet Columns",
+          "ui:widget": "state_editor"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxSteps"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "{}",
+          "ui:widget": "state_editor"
+        },
+        "security_settings": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxSecuritySettings"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "{}",
+          "ui:widget": "state_editor"
+        },
+        "virtual_columns": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxVirtualColumn"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH MERGES: only the items you list are touched. Existing items you do not name are left alone \u2014 nothing is deleted implicitly. Sending [] is a no-op, not a clear. To remove one item send {\"column_name\": \"old_one\", \"_delete\": true}; every other field on a _delete item is ignored, so js_code is not required. It merges at FIELD level too: on an item that already exists every field you omit keeps its stored value, so {\"function_name\": \"check_email\", \"active\": false} disables that function without re-sending its code, columns or dependencies.",
+          "placeholder": "[]",
+          "title": "Virtual Columns",
+          "ui:widget": "state_editor"
+        },
+        "validation_functions": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxValidationFunction"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH MERGES: unlisted items are untouched, [] is a no-op. Delete one with {\"function_name\": \"old_one\", \"_delete\": true}. Two functions are shown: `check_email` needs nothing beyond the built-ins, while `check_date` declares `dayjs` \u2014 remove that dependency and its code is rejected with js_disallowed_global. That entry omits the optional `integrity` field so this body can be sent unmodified; in your own sheet add `\"integrity\": \"sha384-<digest published by the CDN>\"` beside the `url`, and add further scripts as further comma-separated objects in the same array (5 max).",
+          "placeholder": "[]",
+          "title": "Validation Functions",
+          "ui:widget": "state_editor"
+        },
+        "data_transforms": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxDataTransform"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH MERGES: unlisted items are untouched, [] is a no-op. Delete one with {\"transform_name\": \"old_one\", \"_delete\": true}.",
+          "placeholder": "[]",
+          "title": "Data Transforms",
+          "ui:widget": "state_editor"
+        },
+        "pdf_metadata_config": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxPdfMetadataField"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to extract from an uploaded PDF/DOCX. Sending the key replaces the whole stored array; omitting it leaves any existing configuration untouched.",
+          "examples": [
+            [
+              {
+                "name": "Author",
+                "source": "native"
+              },
+              {
+                "name": "Invoice Number",
+                "source": "document-kv"
+              },
+              {
+                "name": "processed_by",
+                "source": "static",
+                "value": "AP Team"
+              },
+              {
+                "name": "invoice_date",
+                "source": "line-match",
+                "value": "Invoice Date:"
+              }
+            ]
+          ],
+          "placeholder": "[]",
+          "title": "Pdf Metadata Config",
+          "ui:widget": "state_editor"
+        },
+        "operation": {
+          "const": "create_sheet",
+          "default": "create_sheet",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CsvboxCreateSheetConfig",
+      "type": "object"
+    },
+    "CsvboxDataTransform": {
+      "additionalProperties": false,
+      "description": "A transform that rewrites values in place. Max 10 per sheet.",
+      "properties": {
+        "transform_name": {
+          "examples": [
+            "uppercase_country"
+          ],
+          "maxLength": 190,
+          "title": "Transform Name",
+          "type": "string"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "column",
+                "row"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "column"
+          ],
+          "title": "Scope",
+          "enum": [
+            "column",
+            "row"
+          ],
+          "x-enum-searchable": true
+        },
+        "run_at": {
+          "anyOf": [
+            {
+              "enum": [
+                "before_validation",
+                "after_validation"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the transform runs relative to validation.",
+          "examples": [
+            "before_validation"
+          ],
+          "title": "Run At",
+          "enum": [
+            "before_validation",
+            "after_validation"
+          ],
+          "x-enum-searchable": true
+        },
+        "columns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Columns"
+        },
+        "dynamic_columns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dynamic Columns"
+        },
+        "js_code": {
+          "anyOf": [
+            {
+              "maxLength": 32768,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Function body receiving `csvbox`, mutating it and returning it. Required unless `_delete` is true, or a PATCH is updating an item that already exists \u2014 an omitted `js_code` then keeps the stored snippet. Sending an empty string, null or whitespace is refused with js_syntax_error: preservation is triggered by absence, not emptiness.",
+          "examples": [
+            "for (let i = 0; i < csvbox.column['col1'].length; i++) { csvbox.column['col1'][i] = String(csvbox.column['col1'][i]).toUpperCase(); } return csvbox;"
+          ],
+          "title": "Js Code"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Active"
+        },
+        "dependencies": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxJsDependency"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supported here as on every collection. Empty in this example because the snippet above needs only `csvbox` and built-ins \u2014 see the `check_date` validation function for a worked dependency. To use one here, send `[{\"url\": \"https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js\", \"globals\": [\"dayjs\"], \"integrity\": \"sha384-\u2026\"}]`; `globals` and `integrity` are optional, and further scripts are further objects in the same array. See the JsDependency schema for the host allowlist and per-field rules.",
+          "examples": [
+            []
+          ],
+          "title": "Dependencies"
+        },
+        "_delete": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH only. See VirtualColumn._delete.",
+          "examples": [
+            false
+          ],
+          "title": "Delete"
+        }
+      },
+      "required": [
+        "transform_name"
+      ],
+      "title": "CsvboxDataTransform",
+      "type": "object"
+    },
+    "CsvboxDestinations": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "webhook",
+                "testapi",
+                "none",
+                "xano"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "webhook"
+          ],
+          "title": "Type",
+          "enum": [
+            "webhook",
+            "testapi",
+            "none",
+            "xano"
+          ],
+          "x-enum-searchable": true
+        },
+        "isActive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Isactive"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxDestinationsSettings"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "CsvboxDestinations",
+      "type": "object"
+    },
+    "CsvboxDestinationsSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "anyOf": [
+            {
+              "enum": [
+                "POST",
+                "PATCH"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "POST"
+          ],
+          "title": "Method",
+          "enum": [
+            "POST",
+            "PATCH"
+          ],
+          "x-enum-searchable": true
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "https://example.com/api/import"
+          ],
+          "title": "Url"
+        },
+        "post_data_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "JSON",
+                "FORM_DATA",
+                "XML"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "JSON"
+          ],
+          "title": "Post Data Format",
+          "enum": [
+            "JSON",
+            "FORM_DATA",
+            "XML"
+          ],
+          "x-enum-searchable": true
+        },
+        "rows_per_chunk": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            100
+          ],
+          "title": "Rows Per Chunk"
+        },
+        "request_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "parallel",
+                "sequential"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "parallel"
+          ],
+          "title": "Request Type",
+          "enum": [
+            "parallel",
+            "sequential"
+          ],
+          "x-enum-searchable": true
+        },
+        "server_side_validation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Server Side Validation"
+        },
+        "allow_resubmit": {
+          "anyOf": [
+            {
+              "enum": [
+                "all_rows",
+                "error_rows_only"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "all_rows"
+          ],
+          "title": "Allow Resubmit",
+          "enum": [
+            "all_rows",
+            "error_rows_only"
+          ],
+          "x-enum-searchable": true
+        },
+        "custom_headers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxHeader"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Headers"
+        }
+      },
+      "title": "CsvboxDestinationsSettings",
+      "type": "object"
+    },
+    "CsvboxGetSheetConfig": {
+      "additionalProperties": false,
+      "description": "Read a sheet's columns, scripts and importer settings.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sheet",
+          "default": "get_sheet",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sheet_license_key"
+      ],
+      "title": "CsvboxGetSheetConfig",
+      "type": "object"
+    },
+    "CsvboxHeader": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "description": "---------------------------------------------------------\nHEADER OBJECT\n---------------------------------------------------------",
+          "examples": [
+            "Content-Type"
+          ],
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "examples": [
+            "application/json"
+          ],
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "title": "CsvboxHeader",
+      "type": "object"
+    },
+    "CsvboxJsDependency": {
+      "additionalProperties": false,
+      "description": "A third-party script an item's `js_code` may use. The API never accepts raw HTML \u2014 send the URL and the server renders the <script src> tag. Migrating from the web UI: `js_dependency` markup is not a writable field. Full shape, all three fields, on any of the three collections: `\"dependencies\": [{\"url\": \"https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js\", \"globals\": [\"dayjs\"], \"integrity\": \"sha384-\u2026\"}]`. Only `url` is required; `globals` is what makes the library's name callable from `js_code`, and `integrity` is optional. Up to 5 dependencies per item \u2014 send them as separate objects in the array, comma-separated, one per script. The server renders each as `<script src=\"\u2026\" integrity=\"\u2026\" crossorigin=\"anonymous\"></script>`, in the order sent, so a library that must load before another goes first.",
+      "properties": {
+        "url": {
+          "description": "HTTPS only. Host must be exactly cdn.jsdelivr.net, unpkg.com or cdnjs.cloudflare.com (no subdomains). Path must end in .js or .mjs. No query string, fragment, userinfo or port.",
+          "examples": [
+            "https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"
+          ],
+          "maxLength": 512,
+          "title": "Url",
+          "type": "string"
+        },
+        "globals": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Names this script defines. Each is added to the allowed-identifier list for this item only \u2014 code referencing an undeclared global is rejected with js_disallowed_global. May not shadow a built-in or `csvbox`. Loading the script is not enough on its own: the code gate checks this list, so a name absent from it is refused whether or not the CDN would have defined it at runtime. Up to 5 names, each matching /^[A-Za-z_$][A-Za-z0-9_$]{0,63}$/.",
+          "title": "Globals"
+        },
+        "integrity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Subresource Integrity digest: sha256-, sha384- or sha512- followed by base64. When sent it is rendered as the tag's integrity attribute, so the browser refuses the script if the file does not hash to it. Take the digest from the CDN's own copy button (jsDelivr and cdnjs both publish one) \u2014 a digest that does not match the exact file at that URL stops the library loading, and the failure shows up in the importer at runtime, not as a 422 here. Pin an exact version in the URL when you use it: a floating version resolves to a different file later and invalidates the digest.",
+          "examples": [
+            "sha384-abc123+/def456=="
+          ],
+          "title": "Integrity"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "CsvboxJsDependency",
+      "type": "object"
+    },
+    "CsvboxListItem": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "ind"
+          ],
+          "title": "Value"
+        },
+        "display_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "India"
+          ],
+          "title": "Display Label"
+        },
+        "dependents": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxListItemChild"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dependents"
+        }
+      },
+      "title": "CsvboxListItem",
+      "type": "object"
+    },
+    "CsvboxListItemChild": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "mh"
+          ],
+          "title": "Value"
+        },
+        "display_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Maharashtra"
+          ],
+          "title": "Display Label"
+        },
+        "dependents": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxListItemDependent"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dependents"
+        }
+      },
+      "title": "CsvboxListItemChild",
+      "type": "object"
+    },
+    "CsvboxListItemDependent": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "mum"
+          ],
+          "title": "Value"
+        },
+        "display_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Mumbai"
+          ],
+          "title": "Display Label"
+        }
+      },
+      "title": "CsvboxListItemDependent",
+      "type": "object"
+    },
+    "CsvboxListSheetsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of sheets owned by the API user; use page to continue.",
+      "properties": {
+        "operation": {
+          "const": "list_sheets",
+          "default": "list_sheets",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "CsvboxListSheetsConfig",
+      "type": "object"
+    },
+    "CsvboxMergeDataTransformsConfig": {
+      "additionalProperties": false,
+      "description": "Merge transforms by transform_name. Omitted fields are preserved on existing items; _delete removes one.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "merge_data_transforms",
+          "default": "merge_data_transforms",
+          "title": "Operation",
+          "type": "string"
+        },
+        "data_transforms": {
+          "items": {
+            "$ref": "#/$defs/CsvboxDataTransform"
+          },
+          "maxItems": 10,
+          "placeholder": "[]",
+          "title": "Data Transforms",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "sheet_license_key",
+        "data_transforms"
+      ],
+      "title": "CsvboxMergeDataTransformsConfig",
+      "type": "object"
+    },
+    "CsvboxMergeValidationFunctionsConfig": {
+      "additionalProperties": false,
+      "description": "Merge validators by function_name. Omitted code and scope fields are preserved on existing items; _delete removes one.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "merge_validation_functions",
+          "default": "merge_validation_functions",
+          "title": "Operation",
+          "type": "string"
+        },
+        "validation_functions": {
+          "items": {
+            "$ref": "#/$defs/CsvboxValidationFunction"
+          },
+          "maxItems": 10,
+          "placeholder": "[]",
+          "title": "Validation Functions",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "sheet_license_key",
+        "validation_functions"
+      ],
+      "title": "CsvboxMergeValidationFunctionsConfig",
+      "type": "object"
+    },
+    "CsvboxMergeVirtualColumnsConfig": {
+      "additionalProperties": false,
+      "description": "Merge computed columns by column_name; _delete removes one and [] is a no-op.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "merge_virtual_columns",
+          "default": "merge_virtual_columns",
+          "title": "Operation",
+          "type": "string"
+        },
+        "virtual_columns": {
+          "items": {
+            "$ref": "#/$defs/CsvboxVirtualColumn"
+          },
+          "maxItems": 20,
+          "placeholder": "[]",
+          "title": "Virtual Columns",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "sheet_license_key",
+        "virtual_columns"
+      ],
+      "title": "CsvboxMergeVirtualColumnsConfig",
+      "type": "object"
+    },
+    "CsvboxPatchSheetConfig": {
+      "additionalProperties": false,
+      "description": "PATCH changes only supplied fields. Script collections merge named items; [] is a no-op and _delete removes a named item.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Updated Sheet"
+          ],
+          "title": "Title"
+        },
+        "webhooks": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxWebhook"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "[]",
+          "title": "Webhooks",
+          "ui:widget": "state_editor"
+        },
+        "destinations": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxDestinations"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "[]",
+          "title": "Destinations",
+          "ui:widget": "state_editor"
+        },
+        "sheet_columns": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxSheetColumn"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "[]",
+          "title": "Sheet Columns",
+          "ui:widget": "state_editor"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxSteps"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "{}",
+          "ui:widget": "state_editor"
+        },
+        "security_settings": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxSecuritySettings"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "{}",
+          "ui:widget": "state_editor"
+        },
+        "virtual_columns": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxVirtualColumn"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH MERGES: only the items you list are touched. Existing items you do not name are left alone \u2014 nothing is deleted implicitly. Sending [] is a no-op, not a clear. To remove one item send {\"column_name\": \"old_one\", \"_delete\": true}; every other field on a _delete item is ignored, so js_code is not required. It merges at FIELD level too: on an item that already exists every field you omit keeps its stored value, so {\"function_name\": \"check_email\", \"active\": false} disables that function without re-sending its code, columns or dependencies.",
+          "placeholder": "[]",
+          "title": "Virtual Columns",
+          "ui:widget": "state_editor"
+        },
+        "validation_functions": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxValidationFunction"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH MERGES: unlisted items are untouched, [] is a no-op. Delete one with {\"function_name\": \"old_one\", \"_delete\": true}. Two functions are shown: `check_email` needs nothing beyond the built-ins, while `check_date` declares `dayjs` \u2014 remove that dependency and its code is rejected with js_disallowed_global. That entry omits the optional `integrity` field so this body can be sent unmodified; in your own sheet add `\"integrity\": \"sha384-<digest published by the CDN>\"` beside the `url`, and add further scripts as further comma-separated objects in the same array (5 max).",
+          "placeholder": "[]",
+          "title": "Validation Functions",
+          "ui:widget": "state_editor"
+        },
+        "data_transforms": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxDataTransform"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH MERGES: unlisted items are untouched, [] is a no-op. Delete one with {\"transform_name\": \"old_one\", \"_delete\": true}.",
+          "placeholder": "[]",
+          "title": "Data Transforms",
+          "ui:widget": "state_editor"
+        },
+        "pdf_metadata_config": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxPdfMetadataField"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to extract from an uploaded PDF/DOCX. Sending the key replaces the whole stored array; omitting it leaves any existing configuration untouched.",
+          "examples": [
+            [
+              {
+                "name": "Author",
+                "source": "native"
+              },
+              {
+                "name": "Invoice Number",
+                "source": "document-kv"
+              },
+              {
+                "name": "processed_by",
+                "source": "static",
+                "value": "AP Team"
+              },
+              {
+                "name": "invoice_date",
+                "source": "line-match",
+                "value": "Invoice Date:"
+              }
+            ]
+          ],
+          "placeholder": "[]",
+          "title": "Pdf Metadata Config",
+          "ui:widget": "state_editor"
+        },
+        "operation": {
+          "const": "patch_sheet",
+          "default": "patch_sheet",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sheet_license_key"
+      ],
+      "title": "CsvboxPatchSheetConfig",
+      "type": "object"
+    },
+    "CsvboxPdfMetadataField": {
+      "additionalProperties": false,
+      "description": "One metadata field to extract from an uploaded PDF/DOCX. Max 20 per sheet.",
+      "properties": {
+        "name": {
+          "description": "Output key. For `source=native`/`document-kv` this also drives matching (see `source`); for `static`/`line-match` it is only the output key.",
+          "examples": [
+            "Invoice Number"
+          ],
+          "maxLength": 100,
+          "title": "Name",
+          "type": "string"
+        },
+        "source": {
+          "description": "Where the value comes from. `native`: `name` is matched case-insensitively against the uploaded PDF/DOCX's own document properties (e.g. Author, Title, Subject, Keywords, CreationDate) \u2014 `value` is ignored. `document-kv`: `name` must match, after whitespace/trailing-punctuation normalization, the exact (case-sensitive) label text of a key-value pair detected on the document (e.g. a form field literally labeled `Invoice Number`) \u2014 `value` is ignored. `static`: `value` is returned verbatim. `line-match`: `value` is a search term \u2014 the document's extracted text is scanned line by line and whatever follows that term is returned (falling back to the next line if nothing follows it on the same line).",
+          "enum": [
+            "native",
+            "document-kv",
+            "static",
+            "line-match"
+          ],
+          "examples": [
+            "document-kv"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when `source` is `static` (the literal to return) or `line-match` (the search term). Ignored for `native` and `document-kv`.",
+          "title": "Value",
+          "x-csvbox-nullable": true
+        }
+      },
+      "required": [
+        "name",
+        "source"
+      ],
+      "title": "CsvboxPdfMetadataField",
+      "type": "object"
+    },
+    "CsvboxRenameSheetConfig": {
+      "additionalProperties": false,
+      "description": "Change only the sheet title.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "rename_sheet",
+          "default": "rename_sheet",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "examples": [
+            "Updated Sheet"
+          ],
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sheet_license_key",
+        "title"
+      ],
+      "title": "CsvboxRenameSheetConfig",
+      "type": "object"
+    },
+    "CsvboxSecuritySettings": {
+      "additionalProperties": false,
+      "properties": {
+        "region": {
+          "anyOf": [
+            {
+              "enum": [
+                "us",
+                "eu"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "us"
+          ],
+          "title": "Region",
+          "enum": [
+            "us",
+            "eu"
+          ],
+          "x-enum-searchable": true
+        },
+        "domains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domains"
+        },
+        "import_url_upload": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Import Url Upload"
+        },
+        "s3_upload": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "S3 Upload"
+        }
+      },
+      "title": "CsvboxSecuritySettings",
+      "type": "object"
+    },
+    "CsvboxSetColumnsConfig": {
+      "additionalProperties": false,
+      "description": "Set the sheet's column definitions and built-in validation rules.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_sheet_columns",
+          "default": "set_sheet_columns",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sheet_columns": {
+          "items": {
+            "$ref": "#/$defs/CsvboxSheetColumn"
+          },
+          "placeholder": "[]",
+          "title": "Sheet Columns",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "sheet_license_key",
+        "sheet_columns"
+      ],
+      "title": "CsvboxSetColumnsConfig",
+      "type": "object"
+    },
+    "CsvboxSetDestinationsConfig": {
+      "additionalProperties": false,
+      "description": "Configure the destination receiving imported rows.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_destinations",
+          "default": "set_destinations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "destinations": {
+          "items": {
+            "$ref": "#/$defs/CsvboxDestinations"
+          },
+          "placeholder": "[]",
+          "title": "Destinations",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "sheet_license_key",
+        "destinations"
+      ],
+      "title": "CsvboxSetDestinationsConfig",
+      "type": "object"
+    },
+    "CsvboxSetPdfMetadataConfig": {
+      "additionalProperties": false,
+      "description": "Replace the PDF/DOCX metadata extraction configuration; [] clears it.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_pdf_metadata",
+          "default": "set_pdf_metadata",
+          "title": "Operation",
+          "type": "string"
+        },
+        "pdf_metadata_config": {
+          "items": {
+            "$ref": "#/$defs/CsvboxPdfMetadataField"
+          },
+          "maxItems": 20,
+          "placeholder": "[]",
+          "title": "Pdf Metadata Config",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "sheet_license_key",
+        "pdf_metadata_config"
+      ],
+      "title": "CsvboxSetPdfMetadataConfig",
+      "type": "object"
+    },
+    "CsvboxSetSecurityConfig": {
+      "additionalProperties": false,
+      "description": "Configure region, allowed domains and upload security settings.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_security_settings",
+          "default": "set_security_settings",
+          "title": "Operation",
+          "type": "string"
+        },
+        "security_settings": {
+          "$ref": "#/$defs/CsvboxSecuritySettings",
+          "placeholder": "{}",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "sheet_license_key",
+        "security_settings"
+      ],
+      "title": "CsvboxSetSecurityConfig",
+      "type": "object"
+    },
+    "CsvboxSetStepsConfig": {
+      "additionalProperties": false,
+      "description": "Configure upload, mapping, verification and result-screen settings.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_import_steps",
+          "default": "set_import_steps",
+          "title": "Operation",
+          "type": "string"
+        },
+        "steps": {
+          "$ref": "#/$defs/CsvboxSteps",
+          "placeholder": "{}",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "sheet_license_key",
+        "steps"
+      ],
+      "title": "CsvboxSetStepsConfig",
+      "type": "object"
+    },
+    "CsvboxSetWebhooksConfig": {
+      "additionalProperties": false,
+      "description": "Configure the import-completion webhook.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_webhooks",
+          "default": "set_webhooks",
+          "title": "Operation",
+          "type": "string"
+        },
+        "webhooks": {
+          "items": {
+            "$ref": "#/$defs/CsvboxWebhook"
+          },
+          "placeholder": "[]",
+          "title": "Webhooks",
+          "type": "array",
+          "ui:widget": "state_editor"
+        }
+      },
+      "required": [
+        "sheet_license_key",
+        "webhooks"
+      ],
+      "title": "CsvboxSetWebhooksConfig",
+      "type": "object"
+    },
+    "CsvboxSheetColumn": {
+      "additionalProperties": false,
+      "properties": {
+        "column_name": {
+          "examples": [
+            "email"
+          ],
+          "title": "Column Name",
+          "type": "string"
+        },
+        "display_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Email"
+          ],
+          "title": "Display Label"
+        },
+        "info_hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Enter user email"
+          ],
+          "title": "Info Hint"
+        },
+        "matching_keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "email,user_email"
+          ],
+          "title": "Matching Keywords"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "text",
+                "number",
+                "email",
+                "date",
+                "time",
+                "boolean",
+                "regex",
+                "ip",
+                "url",
+                "credit_card",
+                "phone_number",
+                "currency",
+                "list",
+                "dependent_list",
+                "dynamic_list",
+                "dependent_dynamic_list",
+                "multiselect_list",
+                "multiselect_dynamic_list",
+                "percentage",
+                "iana_timezone",
+                "upc",
+                "uuid",
+                "domain",
+                "currency_code",
+                "country_code_a2",
+                "country_code_a3",
+                "imei",
+                "ean",
+                "json"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "text"
+          ],
+          "title": "Type",
+          "enum": [
+            "text",
+            "number",
+            "email",
+            "date",
+            "time",
+            "boolean",
+            "regex",
+            "ip",
+            "url",
+            "credit_card",
+            "phone_number",
+            "currency",
+            "list",
+            "dependent_list",
+            "dynamic_list",
+            "dependent_dynamic_list",
+            "multiselect_list",
+            "multiselect_dynamic_list",
+            "percentage",
+            "iana_timezone",
+            "upc",
+            "uuid",
+            "domain",
+            "currency_code",
+            "country_code_a2",
+            "country_code_a3",
+            "imei",
+            "ean",
+            "json"
+          ],
+          "x-enum-searchable": true
+        },
+        "default_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            ""
+          ],
+          "title": "Default Value"
+        },
+        "required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "Required"
+        },
+        "read_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "Read Only"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            1
+          ],
+          "title": "Position"
+        },
+        "validators": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxSheetColumnValidators"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Validators depend on the column type. See examples below for each type."
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxSheetColumnMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Data transforms configured for this column, under the same metadata.transforms key POST/PUT/PATCH accept. An empty object when no transforms are configured."
+        }
+      },
+      "required": [
+        "column_name"
+      ],
+      "title": "CsvboxSheetColumn",
+      "type": "object"
+    },
+    "CsvboxSheetColumnMetadata": {
+      "additionalProperties": false,
+      "description": "Data transforms configured for this column, under the same metadata.transforms key POST/PUT/PATCH accept. An empty object when no transforms are configured.",
+      "properties": {
+        "transforms": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transforms"
+        }
+      },
+      "title": "CsvboxSheetColumnMetadata",
+      "type": "object"
+    },
+    "CsvboxSheetColumnValidators": {
+      "additionalProperties": false,
+      "description": "Validators depend on the column type. See examples below for each type.",
+      "properties": {
+        "min_length": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[text] Minimum character length",
+          "examples": [
+            2
+          ],
+          "title": "Min Length"
+        },
+        "max_length": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[text] Maximum character length",
+          "examples": [
+            50
+          ],
+          "title": "Max Length"
+        },
+        "min_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[number, percentage] Minimum numeric value",
+          "examples": [
+            1
+          ],
+          "title": "Min Value"
+        },
+        "max_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[number, percentage] Maximum numeric value",
+          "examples": [
+            100
+          ],
+          "title": "Max Value"
+        },
+        "output": {
+          "anyOf": [
+            {
+              "enum": [
+                "number",
+                "percent"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[percentage] Output format",
+          "examples": [
+            "number"
+          ],
+          "title": "Output",
+          "enum": [
+            "number",
+            "percent"
+          ],
+          "x-enum-searchable": true
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[date] Date format e.g. YYYY-MM-DD | [time] Time format e.g. HH:mm:ss",
+          "examples": [
+            "YYYY-MM-DD"
+          ],
+          "title": "Format"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[date, time] Custom format string, used when format is \"custom\"",
+          "examples": [
+            "DD/MM/YYYY"
+          ],
+          "title": "Custom"
+        },
+        "multiple": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[date, time] Accepted formats, used when format is \"multiple\"",
+          "title": "Multiple"
+        },
+        "expression": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[regex] Regular expression pattern",
+          "examples": [
+            "^\\d{10}$"
+          ],
+          "title": "Expression"
+        },
+        "error_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[regex] Custom error message",
+          "examples": [
+            "Please enter a valid 10 digit phone number"
+          ],
+          "title": "Error Message"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "enum": [
+                "ipv4",
+                "ipv6"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[ip] IP version",
+          "examples": [
+            "ipv4"
+          ],
+          "title": "Version",
+          "enum": [
+            "ipv4",
+            "ipv6"
+          ],
+          "x-enum-searchable": true
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[phone_number] Country code e.g. IN, US",
+          "examples": [
+            "IN"
+          ],
+          "title": "Country Code"
+        },
+        "symbol": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Currency symbol",
+          "examples": [
+            "$"
+          ],
+          "title": "Symbol"
+        },
+        "require_symbol": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Whether symbol is required",
+          "examples": [
+            false
+          ],
+          "title": "Require Symbol"
+        },
+        "allow_space_after_symbol": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Allow a space between the symbol and digits",
+          "examples": [
+            false
+          ],
+          "title": "Allow Space After Symbol"
+        },
+        "symbol_after_digits": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Place the symbol after the digits instead of before",
+          "examples": [
+            false
+          ],
+          "title": "Symbol After Digits"
+        },
+        "allow_negatives": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Allow negative values",
+          "examples": [
+            true
+          ],
+          "title": "Allow Negatives"
+        },
+        "parens_for_negatives": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Show negative values in parentheses instead of a minus sign",
+          "examples": [
+            false
+          ],
+          "title": "Parens For Negatives"
+        },
+        "negative_sign_before_digits": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Place the negative sign before the digits",
+          "examples": [
+            true
+          ],
+          "title": "Negative Sign Before Digits"
+        },
+        "negative_sign_after_digits": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Place the negative sign after the digits",
+          "examples": [
+            false
+          ],
+          "title": "Negative Sign After Digits"
+        },
+        "thousands_separator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Thousands separator character",
+          "examples": [
+            ","
+          ],
+          "title": "Thousands Separator"
+        },
+        "decimal_separator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Decimal separator character",
+          "examples": [
+            "."
+          ],
+          "title": "Decimal Separator"
+        },
+        "allow_decimal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Allow decimal values",
+          "examples": [
+            true
+          ],
+          "title": "Allow Decimal"
+        },
+        "require_decimal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Require a decimal portion",
+          "examples": [
+            false
+          ],
+          "title": "Require Decimal"
+        },
+        "digits_after_decimal": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Number of digits allowed after the decimal separator",
+          "examples": [
+            2
+          ],
+          "title": "Digits After Decimal"
+        },
+        "allow_space_after_digits": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[currency] Allow a trailing space after the digits",
+          "examples": [
+            false
+          ],
+          "title": "Allow Space After Digits"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxListItem"
+              },
+              "type": "array"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[list] Array of ListItem objects (with dependents) | [multiselect_list] Array of strings",
+          "title": "Values"
+        },
+        "case_sensitive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[list, multiselect_list] Case-sensitive matching",
+          "examples": [
+            false
+          ],
+          "title": "Case Sensitive"
+        },
+        "trim_whitespace": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[list, dynamic_list, multiselect_list, multiselect_dynamic_list] Trim whitespace before matching",
+          "examples": [
+            false
+          ],
+          "title": "Trim Whitespace"
+        },
+        "accept_list_values": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[list] Accept values already present in the configured list without further validation",
+          "examples": [
+            false
+          ],
+          "title": "Accept List Values"
+        },
+        "primary_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[dependent_list, dependent_dynamic_list] The column_name of the parent list column",
+          "examples": [
+            "col14"
+          ],
+          "title": "Primary Column"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[dynamic_list] URL to fetch list options from",
+          "examples": [
+            "https://example.com/api/list-options"
+          ],
+          "title": "Source Url"
+        },
+        "request_method": {
+          "anyOf": [
+            {
+              "enum": [
+                "GET",
+                "POST"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[dynamic_list] HTTP method",
+          "examples": [
+            "GET"
+          ],
+          "title": "Request Method",
+          "enum": [
+            "GET",
+            "POST"
+          ],
+          "x-enum-searchable": true
+        },
+        "request_headers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxHeader"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[dynamic_list] Custom request headers",
+          "title": "Request Headers"
+        },
+        "custom_user_attributes": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[dynamic_list] Include custom user attributes in request",
+          "examples": [
+            true
+          ],
+          "title": "Custom User Attributes"
+        },
+        "other_values": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[dynamic_list, multiselect_list] Allow values outside predefined list",
+          "examples": [
+            false
+          ],
+          "title": "Other Values"
+        },
+        "delimiter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[multiselect_list, multiselect_dynamic_list] Delimiter for multiple values",
+          "examples": [
+            ","
+          ],
+          "title": "Delimiter"
+        },
+        "dml_source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[multiselect_dynamic_list] URL to fetch list options from",
+          "examples": [
+            "https://example.com/api/multiselect-dynamic-options"
+          ],
+          "title": "Dml Source Url"
+        },
+        "dml_request_method": {
+          "anyOf": [
+            {
+              "enum": [
+                "GET",
+                "POST",
+                "PATCH"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[multiselect_dynamic_list] HTTP method",
+          "examples": [
+            "GET"
+          ],
+          "title": "Dml Request Method",
+          "enum": [
+            "GET",
+            "POST",
+            "PATCH"
+          ],
+          "x-enum-searchable": true
+        },
+        "dml_request_headers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxHeader"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[multiselect_dynamic_list] Custom request headers",
+          "title": "Dml Request Headers"
+        },
+        "dml_other_values": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "[multiselect_dynamic_list] Allow values outside predefined list",
+          "examples": [
+            false
+          ],
+          "title": "Dml Other Values"
+        }
+      },
+      "title": "CsvboxSheetColumnValidators",
+      "type": "object"
+    },
+    "CsvboxSteps": {
+      "additionalProperties": false,
+      "properties": {
+        "file_upload": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxStepsFileUpload"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "select_header": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxStepsSelectHeader"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "map_columns": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxStepsMapColumns"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "verify_data": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxStepsVerifyData"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "results": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxStepsResults"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "CsvboxSteps",
+      "type": "object"
+    },
+    "CsvboxStepsFileUpload": {
+      "additionalProperties": false,
+      "properties": {
+        "types": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Types"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "File Upload"
+          ],
+          "title": "Title"
+        },
+        "help": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Upload your CSV file"
+          ],
+          "title": "Help"
+        },
+        "sample_file_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            ""
+          ],
+          "title": "Sample File Url"
+        },
+        "size_mb": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            200
+          ],
+          "title": "Size Mb"
+        },
+        "validation_msg": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "upto 200mb allowed"
+          ],
+          "title": "Validation Msg"
+        },
+        "copy_paste": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Copy Paste"
+        },
+        "copy_delimiter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "comma"
+          ],
+          "title": "Copy Delimiter"
+        },
+        "show_upload": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Show Upload"
+        },
+        "worksheet_select": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Worksheet Select"
+        },
+        "description_option": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Description Option"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "en"
+          ],
+          "title": "Lang"
+        },
+        "excel_date_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "custom"
+          ],
+          "title": "Excel Date Format"
+        },
+        "excel_date_custom": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "DD-MM-YYYY"
+          ],
+          "title": "Excel Date Custom"
+        },
+        "hide_cancel": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "Hide Cancel"
+        },
+        "split": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Split large files into multiple imports",
+          "examples": [
+            true
+          ],
+          "title": "Split"
+        },
+        "split_rows": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rows per import when splitting (min 1)",
+          "examples": [
+            1000
+          ],
+          "title": "Split Rows"
+        },
+        "split_confirm": {
+          "anyOf": [
+            {
+              "enum": [
+                "no",
+                "yes",
+                "no_if_no_errors"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User confirmation required after each import: no=0, yes=1, no_if_no_errors=2",
+          "examples": [
+            "no"
+          ],
+          "title": "Split Confirm",
+          "enum": [
+            "no",
+            "yes",
+            "no_if_no_errors"
+          ],
+          "x-enum-searchable": true
+        },
+        "extract_types": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "pdf",
+                  "docs",
+                  "images"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allowed document extraction types (mapped to .pdf/.doc/images)",
+          "examples": [
+            [
+              "pdf",
+              "images"
+            ]
+          ],
+          "title": "Extract Types"
+        },
+        "page_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max pages allowed for extraction (null = no limit)",
+          "examples": [
+            10
+          ],
+          "title": "Page Limit",
+          "x-csvbox-nullable": true
+        },
+        "accept_raw_value": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Skip data-type coercion and pass raw cell values through. Defaults to false, deliberately \u2014 see the repo's revert-accept-raw-values-default change; this is not a stale default to \"fix\".",
+          "examples": [
+            false
+          ],
+          "title": "Accept Raw Value"
+        },
+        "skip_min_rows": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Skip extracted tables with fewer than this many rows (table extraction only)",
+          "examples": [
+            2
+          ],
+          "title": "Skip Min Rows",
+          "x-csvbox-nullable": true
+        },
+        "skip_max_rows": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Skip extracted tables with more than this many rows (table extraction only)",
+          "examples": [
+            1000
+          ],
+          "title": "Skip Max Rows",
+          "x-csvbox-nullable": true
+        },
+        "skip_min_cols": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Skip extracted tables with fewer than this many columns (table extraction only)",
+          "examples": [
+            2
+          ],
+          "title": "Skip Min Cols",
+          "x-csvbox-nullable": true
+        },
+        "skip_max_cols": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Skip extracted tables with more than this many columns (table extraction only)",
+          "examples": [
+            20
+          ],
+          "title": "Skip Max Cols",
+          "x-csvbox-nullable": true
+        }
+      },
+      "title": "CsvboxStepsFileUpload",
+      "type": "object"
+    },
+    "CsvboxStepsMapColumns": {
+      "additionalProperties": false,
+      "properties": {
+        "skip": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Skip"
+        },
+        "help": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Map columns"
+          ],
+          "title": "Help"
+        },
+        "mapping_mode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "template_fields"
+          ],
+          "title": "Mapping Mode"
+        },
+        "bulk_cols_dd": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "Bulk Cols Dd"
+        },
+        "accept_unmapped": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Accept Unmapped"
+        },
+        "accept_unmapped_select": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Accept Unmapped Select"
+        },
+        "allow_zero_template": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Allow Zero Template"
+        },
+        "ignore_cols": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Ignore Cols"
+        },
+        "ignore_cols_default": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Ignore Cols Default"
+        },
+        "user_keywords": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "User Keywords"
+        }
+      },
+      "title": "CsvboxStepsMapColumns",
+      "type": "object"
+    },
+    "CsvboxStepsResults": {
+      "additionalProperties": false,
+      "properties": {
+        "close_mode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "close_on_success"
+          ],
+          "title": "Close Mode"
+        },
+        "redirect_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            ""
+          ],
+          "title": "Redirect Url"
+        },
+        "success_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "static"
+          ],
+          "title": "Success Type"
+        },
+        "success_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Import successful"
+          ],
+          "title": "Success Text"
+        },
+        "success_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "get"
+          ],
+          "title": "Success Method"
+        },
+        "success_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            ""
+          ],
+          "title": "Success Url"
+        },
+        "success_headers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxHeader"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom headers sent with the success dynamic callback",
+          "title": "Success Headers"
+        },
+        "failed_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "static"
+          ],
+          "title": "Failed Type"
+        },
+        "failed_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Failure"
+          ],
+          "title": "Failed Text"
+        },
+        "failed_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "get"
+          ],
+          "title": "Failed Method"
+        },
+        "failed_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            ""
+          ],
+          "title": "Failed Url"
+        },
+        "failed_headers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxHeader"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom headers sent with the failure dynamic callback",
+          "title": "Failed Headers"
+        },
+        "show_resubmit": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "Show Resubmit"
+        },
+        "show_error_text": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "Show Error Text"
+        }
+      },
+      "title": "CsvboxStepsResults",
+      "type": "object"
+    },
+    "CsvboxStepsSelectHeader": {
+      "additionalProperties": false,
+      "properties": {
+        "skip": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Skip"
+        },
+        "help": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Select header row"
+          ],
+          "title": "Help"
+        },
+        "default_row": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "2"
+          ],
+          "title": "Default Row"
+        },
+        "encoding_option": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Encoding Option"
+        },
+        "encoding": {
+          "anyOf": [
+            {
+              "enum": [
+                "utf-8",
+                "windows-1251",
+                "windows-1252",
+                "ibm866",
+                "iso-8859-2",
+                "iso-8859-3",
+                "iso-8859-4",
+                "iso-8859-5",
+                "iso-8859-6",
+                "iso-8859-7",
+                "iso-8859-8",
+                "iso-8859-8-i",
+                "iso-8859-10",
+                "iso-8859-13",
+                "iso-8859-14",
+                "iso-8859-15",
+                "iso-8859-16",
+                "koi8-r",
+                "koi8-u",
+                "macintosh",
+                "windows-874",
+                "windows-1250",
+                "windows-1253",
+                "windows-1254",
+                "windows-1255",
+                "windows-1256",
+                "windows-1257",
+                "windows-1258",
+                "gbk",
+                "gb18030",
+                "big5",
+                "euc-jp",
+                "shift-jis",
+                "euc-kr",
+                "utf-16be",
+                "utf-16le"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Accepted values: utf-8, windows-1251, windows-1252, ibm866, iso-8859-2, iso-8859-3, iso-8859-4, iso-8859-5, iso-8859-6, iso-8859-7, iso-8859-8, iso-8859-8-i, iso-8859-10, iso-8859-13, iso-8859-14, iso-8859-15, iso-8859-16, koi8-r, koi8-u, macintosh, windows-874, windows-1250, windows-1253, windows-1254, windows-1255, windows-1256, windows-1257, windows-1258, gbk, gb18030, big5, euc-jp, shift-jis, euc-kr, utf-16be, utf-16le. Values are case-insensitive and lowercased before storage.",
+          "examples": [
+            "windows-1252"
+          ],
+          "title": "Encoding",
+          "enum": [
+            "utf-8",
+            "windows-1251",
+            "windows-1252",
+            "ibm866",
+            "iso-8859-2",
+            "iso-8859-3",
+            "iso-8859-4",
+            "iso-8859-5",
+            "iso-8859-6",
+            "iso-8859-7",
+            "iso-8859-8",
+            "iso-8859-8-i",
+            "iso-8859-10",
+            "iso-8859-13",
+            "iso-8859-14",
+            "iso-8859-15",
+            "iso-8859-16",
+            "koi8-r",
+            "koi8-u",
+            "macintosh",
+            "windows-874",
+            "windows-1250",
+            "windows-1253",
+            "windows-1254",
+            "windows-1255",
+            "windows-1256",
+            "windows-1257",
+            "windows-1258",
+            "gbk",
+            "gb18030",
+            "big5",
+            "euc-jp",
+            "shift-jis",
+            "euc-kr",
+            "utf-16be",
+            "utf-16le"
+          ],
+          "x-enum-searchable": true
+        },
+        "row_column_switch": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "Row Column Switch"
+        }
+      },
+      "title": "CsvboxStepsSelectHeader",
+      "type": "object"
+    },
+    "CsvboxStepsVerifyData": {
+      "additionalProperties": false,
+      "properties": {
+        "skip": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Skip"
+        },
+        "help": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Verify data"
+          ],
+          "title": "Help"
+        },
+        "row_display_mode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "invalid"
+          ],
+          "title": "Row Display Mode"
+        },
+        "export_option": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Export Option"
+        },
+        "search_option": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "Search Option"
+        },
+        "ai_transform": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Ai Transform"
+        },
+        "allow_new_rows": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "Allow New Rows"
+        },
+        "rows_display": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            25
+          ],
+          "title": "Rows Display"
+        },
+        "allow_invalid": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Allow Invalid"
+        },
+        "invalid_confirmation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "Invalid Confirmation"
+        },
+        "max_rows": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            600
+          ],
+          "title": "Max Rows"
+        },
+        "allow_upload_if_max": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            false
+          ],
+          "title": "Allow Upload If Max"
+        },
+        "max_rows_msg": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "maaaaaax"
+          ],
+          "title": "Max Rows Msg"
+        },
+        "min_rows": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            2
+          ],
+          "title": "Min Rows"
+        },
+        "min_rows_msg": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "miiiiin"
+          ],
+          "title": "Min Rows Msg"
+        }
+      },
+      "title": "CsvboxStepsVerifyData",
+      "type": "object"
+    },
+    "CsvboxUpdateSheetConfig": {
+      "additionalProperties": false,
+      "description": "PUT updates supplied fields. Supplied script collections replace stored collections: omitted items are deleted, and [] clears the collection.",
+      "properties": {
+        "sheet_license_key": {
+          "description": "Sheet license key (slug) or numeric sheet ID from List Sheets.",
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Sheet License Key",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Updated Sheet"
+          ],
+          "title": "Title"
+        },
+        "webhooks": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxWebhook"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "[]",
+          "title": "Webhooks",
+          "ui:widget": "state_editor"
+        },
+        "destinations": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxDestinations"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "[]",
+          "title": "Destinations",
+          "ui:widget": "state_editor"
+        },
+        "sheet_columns": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxSheetColumn"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "[]",
+          "title": "Sheet Columns",
+          "ui:widget": "state_editor"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxSteps"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "{}",
+          "ui:widget": "state_editor"
+        },
+        "security_settings": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxSecuritySettings"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "placeholder": "{}",
+          "ui:widget": "state_editor"
+        },
+        "virtual_columns": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxVirtualColumn"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH MERGES: only the items you list are touched. Existing items you do not name are left alone \u2014 nothing is deleted implicitly. Sending [] is a no-op, not a clear. To remove one item send {\"column_name\": \"old_one\", \"_delete\": true}; every other field on a _delete item is ignored, so js_code is not required. It merges at FIELD level too: on an item that already exists every field you omit keeps its stored value, so {\"function_name\": \"check_email\", \"active\": false} disables that function without re-sending its code, columns or dependencies.",
+          "placeholder": "[]",
+          "title": "Virtual Columns",
+          "ui:widget": "state_editor"
+        },
+        "validation_functions": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxValidationFunction"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH MERGES: unlisted items are untouched, [] is a no-op. Delete one with {\"function_name\": \"old_one\", \"_delete\": true}. Two functions are shown: `check_email` needs nothing beyond the built-ins, while `check_date` declares `dayjs` \u2014 remove that dependency and its code is rejected with js_disallowed_global. That entry omits the optional `integrity` field so this body can be sent unmodified; in your own sheet add `\"integrity\": \"sha384-<digest published by the CDN>\"` beside the `url`, and add further scripts as further comma-separated objects in the same array (5 max).",
+          "placeholder": "[]",
+          "title": "Validation Functions",
+          "ui:widget": "state_editor"
+        },
+        "data_transforms": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxDataTransform"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH MERGES: unlisted items are untouched, [] is a no-op. Delete one with {\"transform_name\": \"old_one\", \"_delete\": true}.",
+          "placeholder": "[]",
+          "title": "Data Transforms",
+          "ui:widget": "state_editor"
+        },
+        "pdf_metadata_config": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxPdfMetadataField"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to extract from an uploaded PDF/DOCX. Sending the key replaces the whole stored array; omitting it leaves any existing configuration untouched.",
+          "examples": [
+            [
+              {
+                "name": "Author",
+                "source": "native"
+              },
+              {
+                "name": "Invoice Number",
+                "source": "document-kv"
+              },
+              {
+                "name": "processed_by",
+                "source": "static",
+                "value": "AP Team"
+              },
+              {
+                "name": "invoice_date",
+                "source": "line-match",
+                "value": "Invoice Date:"
+              }
+            ]
+          ],
+          "placeholder": "[]",
+          "title": "Pdf Metadata Config",
+          "ui:widget": "state_editor"
+        },
+        "operation": {
+          "const": "update_sheet",
+          "default": "update_sheet",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sheet_license_key"
+      ],
+      "title": "CsvboxUpdateSheetConfig",
+      "type": "object"
+    },
+    "CsvboxValidationFunction": {
+      "additionalProperties": false,
+      "description": "A custom validation rule. Max 10 per sheet.",
+      "properties": {
+        "function_name": {
+          "examples": [
+            "check_email"
+          ],
+          "maxLength": 190,
+          "title": "Function Name",
+          "type": "string"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "column",
+                "row"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`column` runs over whole columns via csvbox.column[...]; `row` runs per row via csvbox.row[...]. A column-scoped item must name at least one entry across `columns` and `dynamic_columns`. On a PATCH updating an existing item, `scope`, `columns` and `dynamic_columns` preserve as a GROUP: send none of the three and the stored scoping is kept; send any one and all three are taken from the request, so `columns` alone also clears `dynamic_columns`.",
+          "examples": [
+            "column"
+          ],
+          "title": "Scope",
+          "enum": [
+            "column",
+            "row"
+          ],
+          "x-enum-searchable": true
+        },
+        "columns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sheet columns this function reads. Validated against the sheet as it stands AFTER this request, so one call may add a column and a function that uses it. A scope preserved by a PATCH that sent none of the three scope fields is written back as stored and is not re-checked.",
+          "title": "Columns"
+        },
+        "dynamic_columns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Columns that only exist at import time and so cannot be checked against the sheet definition.",
+          "title": "Dynamic Columns"
+        },
+        "js_code": {
+          "anyOf": [
+            {
+              "maxLength": 32768,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Function body receiving `csvbox` and returning an array of errors \u2014 empty means valid. Required unless `_delete` is true, or a PATCH is updating an item that already exists \u2014 an omitted `js_code` then keeps the stored snippet. Sending an empty string, null or whitespace is refused with js_syntax_error: preservation is triggered by absence, not emptiness.",
+          "examples": [
+            "const rows = csvbox.column['col4'] || []; const errs = []; for (let i = 0; i < rows.length; i++) { if (String(rows[i]).indexOf('@') === -1) { errs.push({ row_id: i + 1, column: 'col4', message: 'Not a valid email' }); } } return errs;"
+          ],
+          "title": "Js Code"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            true
+          ],
+          "title": "Active"
+        },
+        "dependencies": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxJsDependency"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scripts this item's `js_code` may use. The `check_date` example below is the worked case: `[{\"url\": \"https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js\", \"globals\": [\"dayjs\"]}]`, plus an optional `integrity` digest per entry. Remove it and the same code is rejected with js_disallowed_global, which is the whole purpose of `globals`. Up to 5 entries, comma-separated in the array, loaded in the order sent.",
+          "title": "Dependencies"
+        },
+        "_delete": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH only. See VirtualColumn._delete.",
+          "examples": [
+            false
+          ],
+          "title": "Delete"
+        }
+      },
+      "required": [
+        "function_name"
+      ],
+      "title": "CsvboxValidationFunction",
+      "type": "object"
+    },
+    "CsvboxVirtualColumn": {
+      "additionalProperties": false,
+      "description": "A computed column. Max 20 per sheet. `column_name` must not collide with a real sheet column.",
+      "properties": {
+        "column_name": {
+          "examples": [
+            "full_name"
+          ],
+          "maxLength": 190,
+          "title": "Column Name",
+          "type": "string"
+        },
+        "js_code": {
+          "anyOf": [
+            {
+              "maxLength": 32768,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Function body receiving a single `csvbox` argument and returning the computed value. Required unless `_delete` is true, or a PATCH is updating an item that already exists \u2014 an omitted `js_code` then keeps the stored snippet. Sending an empty string, null or whitespace is refused with js_syntax_error: preservation is triggered by absence, not emptiness.",
+          "examples": [
+            "const a = csvbox.row['col1'] || ''; const b = csvbox.row['col2'] || ''; return (a + ' ' + b).trim();"
+          ],
+          "title": "Js Code"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to true on API create \u2014 unlike the web UI, whose post-save toggle starts off.",
+          "examples": [
+            true
+          ],
+          "title": "Active"
+        },
+        "dependencies": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxJsDependency"
+              },
+              "maxItems": 5,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supported here as on every collection. Empty in this example because the snippet above needs only `csvbox` and built-ins \u2014 see the `check_date` validation function for a worked dependency. To use one here, send `[{\"url\": \"https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js\", \"globals\": [\"dayjs\"], \"integrity\": \"sha384-\u2026\"}]`; `globals` and `integrity` are optional, and further scripts are further objects in the same array. See the JsDependency schema for the host allowlist and per-field rules.",
+          "examples": [
+            []
+          ],
+          "title": "Dependencies"
+        },
+        "_delete": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PATCH only. When true the item is deleted and every other field on it is ignored, including `js_code`.",
+          "examples": [
+            false
+          ],
+          "title": "Delete"
+        }
+      },
+      "required": [
+        "column_name"
+      ],
+      "title": "CsvboxVirtualColumn",
+      "type": "object"
+    },
+    "CsvboxWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "import_complete": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CsvboxWebhookImportComplete"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "CsvboxWebhook",
+      "type": "object"
+    },
+    "CsvboxWebhookImportComplete": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "https://example.com/webhook"
+          ],
+          "title": "Url"
+        },
+        "send_copy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Send a copy of imported data to client",
+          "examples": [
+            false
+          ],
+          "title": "Send Copy"
+        },
+        "custom_headers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CsvboxHeader"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Headers"
+        }
+      },
+      "title": "CsvboxWebhookImportComplete",
+      "type": "object"
+    },
+    "JsonValue": {}
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_sheet": "#/$defs/CsvboxCreateSheetConfig",
+          "get_sheet": "#/$defs/CsvboxGetSheetConfig",
+          "list_sheets": "#/$defs/CsvboxListSheetsConfig",
+          "merge_data_transforms": "#/$defs/CsvboxMergeDataTransformsConfig",
+          "merge_validation_functions": "#/$defs/CsvboxMergeValidationFunctionsConfig",
+          "merge_virtual_columns": "#/$defs/CsvboxMergeVirtualColumnsConfig",
+          "patch_sheet": "#/$defs/CsvboxPatchSheetConfig",
+          "rename_sheet": "#/$defs/CsvboxRenameSheetConfig",
+          "set_destinations": "#/$defs/CsvboxSetDestinationsConfig",
+          "set_import_steps": "#/$defs/CsvboxSetStepsConfig",
+          "set_pdf_metadata": "#/$defs/CsvboxSetPdfMetadataConfig",
+          "set_security_settings": "#/$defs/CsvboxSetSecurityConfig",
+          "set_sheet_columns": "#/$defs/CsvboxSetColumnsConfig",
+          "set_webhooks": "#/$defs/CsvboxSetWebhooksConfig",
+          "update_sheet": "#/$defs/CsvboxUpdateSheetConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CsvboxListSheetsConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxGetSheetConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxCreateSheetConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxUpdateSheetConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxPatchSheetConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxRenameSheetConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxSetColumnsConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxSetDestinationsConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxSetWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxSetStepsConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxSetSecurityConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxMergeVirtualColumnsConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxMergeValidationFunctionsConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxMergeDataTransformsConfig"
+        },
+        {
+          "$ref": "#/$defs/CsvboxSetPdfMetadataConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CsvboxAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Csvbox Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

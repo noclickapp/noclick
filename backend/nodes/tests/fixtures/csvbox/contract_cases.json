@@ -1,0 +1,1244 @@
+{
+  "source": "https://app.csvbox.io/docs?api-docs.json",
+  "version": "1.2.0",
+  "cases": [
+    {
+      "config": {
+        "operation": "list_sheets",
+        "page": 1,
+        "per_page": 20
+      },
+      "method": "GET",
+      "path": "/1.1/sheet",
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "get_sheet",
+        "sheet_license_key": "a1b2c3d4"
+      },
+      "method": "GET",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": null
+    },
+    {
+      "config": {
+        "operation": "create_sheet",
+        "title": "Customer Import"
+      },
+      "method": "POST",
+      "path": "/1.1/sheet",
+      "body": {
+        "title": "Customer Import"
+      }
+    },
+    {
+      "config": {
+        "operation": "update_sheet",
+        "sheet_license_key": "a1b2c3d4",
+        "title": "Updated Sheet"
+      },
+      "method": "PUT",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "title": "Updated Sheet"
+      }
+    },
+    {
+      "config": {
+        "operation": "patch_sheet",
+        "sheet_license_key": "a1b2c3d4",
+        "title": "Updated Sheet"
+      },
+      "method": "PATCH",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "title": "Updated Sheet"
+      }
+    },
+    {
+      "config": {
+        "operation": "rename_sheet",
+        "sheet_license_key": "a1b2c3d4",
+        "title": "Updated Sheet"
+      },
+      "method": "PATCH",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "title": "Updated Sheet"
+      }
+    },
+    {
+      "config": {
+        "operation": "set_sheet_columns",
+        "sheet_license_key": "a1b2c3d4",
+        "sheet_columns": [
+          {
+            "column_name": "col1",
+            "display_label": "Col1 - Text",
+            "info_hint": "What is your highest educational degree",
+            "matching_keywords": "degree, education",
+            "type": "text",
+            "validators": {
+              "min_length": 2,
+              "max_length": 50
+            },
+            "default_value": "",
+            "required": false,
+            "position": 5
+          },
+          {
+            "column_name": "col2",
+            "display_label": "col2 - Number",
+            "info_hint": "Years of work experience",
+            "type": "number",
+            "validators": {
+              "min_value": 1,
+              "max_value": 100
+            },
+            "required": false,
+            "position": 6
+          },
+          {
+            "column_name": "col4",
+            "display_label": "col4 - Email",
+            "type": "email",
+            "required": false,
+            "position": 7
+          },
+          {
+            "column_name": "col5",
+            "display_label": "col5 - Date",
+            "type": "date",
+            "required": false,
+            "validators": {
+              "format": "YYYY-MM-DD"
+            },
+            "position": 8
+          },
+          {
+            "column_name": "col6",
+            "display_label": "col6 - Time",
+            "type": "time",
+            "required": false,
+            "validators": {
+              "format": "HH:mm:ss"
+            }
+          },
+          {
+            "column_name": "col7",
+            "display_label": "col7 - Boolean",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "column_name": "col8",
+            "display_label": "col8 - Regex",
+            "type": "regex",
+            "required": false,
+            "validators": {
+              "expression": "^\\d{10}$",
+              "error_message": "Please enter a valid 10 digit phone number"
+            }
+          },
+          {
+            "column_name": "col9",
+            "display_label": "col9 - IP",
+            "type": "ip",
+            "required": false,
+            "validators": {
+              "version": "ipv4"
+            }
+          },
+          {
+            "column_name": "col10",
+            "display_label": "col10 - URL",
+            "type": "url",
+            "required": false
+          },
+          {
+            "column_name": "col11",
+            "display_label": "col11 - Credit Card",
+            "type": "credit_card",
+            "required": false
+          },
+          {
+            "column_name": "col12",
+            "display_label": "col12 - Phone Number",
+            "type": "phone_number",
+            "required": false,
+            "validators": {
+              "country_code": "IN"
+            }
+          },
+          {
+            "column_name": "col13",
+            "display_label": "col13 - Currency",
+            "type": "currency",
+            "required": false,
+            "validators": {
+              "symbol": "$",
+              "require_symbol": false
+            }
+          },
+          {
+            "column_name": "col14",
+            "display_label": "col14 - List",
+            "type": "list",
+            "required": false,
+            "validators": {
+              "values": [
+                {
+                  "value": "ind",
+                  "display_label": "India",
+                  "dependents": [
+                    {
+                      "value": "mh",
+                      "display_label": "Maharashtra",
+                      "dependents": [
+                        {
+                          "value": "mum",
+                          "display_label": "Mumbai"
+                        },
+                        {
+                          "value": "pun",
+                          "display_label": "Pune"
+                        }
+                      ]
+                    },
+                    {
+                      "value": "gj",
+                      "display_label": "Gujarat",
+                      "dependents": [
+                        {
+                          "value": "amd",
+                          "display_label": "Ahmedabad"
+                        },
+                        {
+                          "value": "sur",
+                          "display_label": "Surat"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "value": "usa",
+                  "display_label": "United States",
+                  "dependents": [
+                    {
+                      "value": "ca",
+                      "display_label": "California",
+                      "dependents": [
+                        {
+                          "value": "la",
+                          "display_label": "Los Angeles"
+                        },
+                        {
+                          "value": "sf",
+                          "display_label": "San Francisco"
+                        }
+                      ]
+                    },
+                    {
+                      "value": "ny",
+                      "display_label": "New York",
+                      "dependents": [
+                        {
+                          "value": "nyc",
+                          "display_label": "New York City"
+                        },
+                        {
+                          "value": "buf",
+                          "display_label": "Buffalo"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "value": "can",
+                  "display_label": "Canada",
+                  "dependents": [
+                    {
+                      "value": "on",
+                      "display_label": "Ontario",
+                      "dependents": [
+                        {
+                          "value": "tor",
+                          "display_label": "Toronto"
+                        },
+                        {
+                          "value": "ott",
+                          "display_label": "Ottawa"
+                        }
+                      ]
+                    },
+                    {
+                      "value": "bc",
+                      "display_label": "British Columbia",
+                      "dependents": [
+                        {
+                          "value": "van",
+                          "display_label": "Vancouver"
+                        },
+                        {
+                          "value": "vic",
+                          "display_label": "Victoria"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "case_sensitive": false
+            }
+          },
+          {
+            "column_name": "col15",
+            "display_label": "col15 - Dependent List",
+            "type": "dependent_list",
+            "required": false,
+            "validators": {
+              "primary_column": "col14"
+            }
+          },
+          {
+            "column_name": "col16",
+            "display_label": "col16 - Dependent List",
+            "type": "dependent_list",
+            "required": false,
+            "validators": {
+              "primary_column": "col15"
+            }
+          },
+          {
+            "column_name": "col17",
+            "display_label": "col17 - Dynamic List",
+            "type": "dynamic_list",
+            "required": false,
+            "validators": {
+              "source_url": "https://example.com/api/dynamic-list-options",
+              "request_method": "GET",
+              "request_headers": [],
+              "custom_user_attributes": true,
+              "other_values": false
+            }
+          },
+          {
+            "column_name": "col18",
+            "display_label": "col18 - Dependent Dynamic List",
+            "type": "dependent_dynamic_list",
+            "required": false,
+            "validators": {
+              "primary_column": "col17"
+            }
+          },
+          {
+            "column_name": "col19",
+            "display_label": "col19 - Dependent Dynamic List",
+            "type": "dependent_dynamic_list",
+            "required": false,
+            "validators": {
+              "primary_column": "col18"
+            }
+          },
+          {
+            "column_name": "col20",
+            "display_label": "col20 - Multiselect List",
+            "type": "multiselect_list",
+            "required": false,
+            "validators": {
+              "values": [
+                "Red",
+                "Green",
+                "Blue",
+                "orange",
+                "yellow",
+                "black"
+              ],
+              "delimiter": ",",
+              "case_sensitive": false,
+              "other_values": false
+            }
+          },
+          {
+            "column_name": "col21",
+            "display_label": "col21 - Multiselect Dynamic List",
+            "type": "multiselect_dynamic_list",
+            "required": false,
+            "validators": {
+              "dml_source_url": "https://example.com/api/multiselect-dynamic-options",
+              "dml_request_method": "GET",
+              "dml_request_headers": [],
+              "delimiter": ",",
+              "dml_other_values": false
+            }
+          },
+          {
+            "column_name": "col22",
+            "display_label": "col22 - Percentage",
+            "type": "percentage",
+            "required": false,
+            "validators": {
+              "min_value": 0,
+              "max_value": 100,
+              "output": "percent"
+            }
+          },
+          {
+            "column_name": "col23",
+            "display_label": "col23 - UUID",
+            "type": "uuid",
+            "required": false
+          },
+          {
+            "column_name": "col24",
+            "display_label": "col24 - JSON",
+            "type": "json",
+            "required": false
+          }
+        ]
+      },
+      "method": "PATCH",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "sheet_columns": [
+          {
+            "column_name": "col1",
+            "display_label": "Col1 - Text",
+            "info_hint": "What is your highest educational degree",
+            "matching_keywords": "degree, education",
+            "type": "text",
+            "validators": {
+              "min_length": 2,
+              "max_length": 50
+            },
+            "default_value": "",
+            "required": false,
+            "position": 5
+          },
+          {
+            "column_name": "col2",
+            "display_label": "col2 - Number",
+            "info_hint": "Years of work experience",
+            "type": "number",
+            "validators": {
+              "min_value": 1,
+              "max_value": 100
+            },
+            "required": false,
+            "position": 6
+          },
+          {
+            "column_name": "col4",
+            "display_label": "col4 - Email",
+            "type": "email",
+            "required": false,
+            "position": 7
+          },
+          {
+            "column_name": "col5",
+            "display_label": "col5 - Date",
+            "type": "date",
+            "required": false,
+            "validators": {
+              "format": "YYYY-MM-DD"
+            },
+            "position": 8
+          },
+          {
+            "column_name": "col6",
+            "display_label": "col6 - Time",
+            "type": "time",
+            "required": false,
+            "validators": {
+              "format": "HH:mm:ss"
+            }
+          },
+          {
+            "column_name": "col7",
+            "display_label": "col7 - Boolean",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "column_name": "col8",
+            "display_label": "col8 - Regex",
+            "type": "regex",
+            "required": false,
+            "validators": {
+              "expression": "^\\d{10}$",
+              "error_message": "Please enter a valid 10 digit phone number"
+            }
+          },
+          {
+            "column_name": "col9",
+            "display_label": "col9 - IP",
+            "type": "ip",
+            "required": false,
+            "validators": {
+              "version": "ipv4"
+            }
+          },
+          {
+            "column_name": "col10",
+            "display_label": "col10 - URL",
+            "type": "url",
+            "required": false
+          },
+          {
+            "column_name": "col11",
+            "display_label": "col11 - Credit Card",
+            "type": "credit_card",
+            "required": false
+          },
+          {
+            "column_name": "col12",
+            "display_label": "col12 - Phone Number",
+            "type": "phone_number",
+            "required": false,
+            "validators": {
+              "country_code": "IN"
+            }
+          },
+          {
+            "column_name": "col13",
+            "display_label": "col13 - Currency",
+            "type": "currency",
+            "required": false,
+            "validators": {
+              "symbol": "$",
+              "require_symbol": false
+            }
+          },
+          {
+            "column_name": "col14",
+            "display_label": "col14 - List",
+            "type": "list",
+            "required": false,
+            "validators": {
+              "values": [
+                {
+                  "value": "ind",
+                  "display_label": "India",
+                  "dependents": [
+                    {
+                      "value": "mh",
+                      "display_label": "Maharashtra",
+                      "dependents": [
+                        {
+                          "value": "mum",
+                          "display_label": "Mumbai"
+                        },
+                        {
+                          "value": "pun",
+                          "display_label": "Pune"
+                        }
+                      ]
+                    },
+                    {
+                      "value": "gj",
+                      "display_label": "Gujarat",
+                      "dependents": [
+                        {
+                          "value": "amd",
+                          "display_label": "Ahmedabad"
+                        },
+                        {
+                          "value": "sur",
+                          "display_label": "Surat"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "value": "usa",
+                  "display_label": "United States",
+                  "dependents": [
+                    {
+                      "value": "ca",
+                      "display_label": "California",
+                      "dependents": [
+                        {
+                          "value": "la",
+                          "display_label": "Los Angeles"
+                        },
+                        {
+                          "value": "sf",
+                          "display_label": "San Francisco"
+                        }
+                      ]
+                    },
+                    {
+                      "value": "ny",
+                      "display_label": "New York",
+                      "dependents": [
+                        {
+                          "value": "nyc",
+                          "display_label": "New York City"
+                        },
+                        {
+                          "value": "buf",
+                          "display_label": "Buffalo"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "value": "can",
+                  "display_label": "Canada",
+                  "dependents": [
+                    {
+                      "value": "on",
+                      "display_label": "Ontario",
+                      "dependents": [
+                        {
+                          "value": "tor",
+                          "display_label": "Toronto"
+                        },
+                        {
+                          "value": "ott",
+                          "display_label": "Ottawa"
+                        }
+                      ]
+                    },
+                    {
+                      "value": "bc",
+                      "display_label": "British Columbia",
+                      "dependents": [
+                        {
+                          "value": "van",
+                          "display_label": "Vancouver"
+                        },
+                        {
+                          "value": "vic",
+                          "display_label": "Victoria"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "case_sensitive": false
+            }
+          },
+          {
+            "column_name": "col15",
+            "display_label": "col15 - Dependent List",
+            "type": "dependent_list",
+            "required": false,
+            "validators": {
+              "primary_column": "col14"
+            }
+          },
+          {
+            "column_name": "col16",
+            "display_label": "col16 - Dependent List",
+            "type": "dependent_list",
+            "required": false,
+            "validators": {
+              "primary_column": "col15"
+            }
+          },
+          {
+            "column_name": "col17",
+            "display_label": "col17 - Dynamic List",
+            "type": "dynamic_list",
+            "required": false,
+            "validators": {
+              "source_url": "https://example.com/api/dynamic-list-options",
+              "request_method": "GET",
+              "request_headers": [],
+              "custom_user_attributes": true,
+              "other_values": false
+            }
+          },
+          {
+            "column_name": "col18",
+            "display_label": "col18 - Dependent Dynamic List",
+            "type": "dependent_dynamic_list",
+            "required": false,
+            "validators": {
+              "primary_column": "col17"
+            }
+          },
+          {
+            "column_name": "col19",
+            "display_label": "col19 - Dependent Dynamic List",
+            "type": "dependent_dynamic_list",
+            "required": false,
+            "validators": {
+              "primary_column": "col18"
+            }
+          },
+          {
+            "column_name": "col20",
+            "display_label": "col20 - Multiselect List",
+            "type": "multiselect_list",
+            "required": false,
+            "validators": {
+              "values": [
+                "Red",
+                "Green",
+                "Blue",
+                "orange",
+                "yellow",
+                "black"
+              ],
+              "delimiter": ",",
+              "case_sensitive": false,
+              "other_values": false
+            }
+          },
+          {
+            "column_name": "col21",
+            "display_label": "col21 - Multiselect Dynamic List",
+            "type": "multiselect_dynamic_list",
+            "required": false,
+            "validators": {
+              "dml_source_url": "https://example.com/api/multiselect-dynamic-options",
+              "dml_request_method": "GET",
+              "dml_request_headers": [],
+              "delimiter": ",",
+              "dml_other_values": false
+            }
+          },
+          {
+            "column_name": "col22",
+            "display_label": "col22 - Percentage",
+            "type": "percentage",
+            "required": false,
+            "validators": {
+              "min_value": 0,
+              "max_value": 100,
+              "output": "percent"
+            }
+          },
+          {
+            "column_name": "col23",
+            "display_label": "col23 - UUID",
+            "type": "uuid",
+            "required": false
+          },
+          {
+            "column_name": "col24",
+            "display_label": "col24 - JSON",
+            "type": "json",
+            "required": false
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "set_destinations",
+        "sheet_license_key": "a1b2c3d4",
+        "destinations": [
+          {
+            "type": "webhook",
+            "isActive": true,
+            "settings": {
+              "method": "POST",
+              "url": "https://example.com/api/import",
+              "post_data_format": "JSON",
+              "rows_per_chunk": 100,
+              "request_type": "parallel",
+              "server_side_validation": true,
+              "allow_resubmit": "all_rows",
+              "custom_headers": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "method": "PATCH",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "destinations": [
+          {
+            "type": "webhook",
+            "isActive": true,
+            "settings": {
+              "method": "POST",
+              "url": "https://example.com/api/import",
+              "post_data_format": "JSON",
+              "rows_per_chunk": 100,
+              "request_type": "parallel",
+              "server_side_validation": true,
+              "allow_resubmit": "all_rows",
+              "custom_headers": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "set_webhooks",
+        "sheet_license_key": "a1b2c3d4",
+        "webhooks": [
+          {
+            "import_complete": {
+              "url": "https://example.com/webhook",
+              "send_copy": false,
+              "custom_headers": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "method": "PATCH",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "webhooks": [
+          {
+            "import_complete": {
+              "url": "https://example.com/webhook",
+              "send_copy": false,
+              "custom_headers": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "set_import_steps",
+        "sheet_license_key": "a1b2c3d4",
+        "steps": {
+          "file_upload": {
+            "types": [
+              ".csv"
+            ],
+            "title": "File Upload",
+            "help": "Upload your CSV file",
+            "sample_file_url": "",
+            "size_mb": 200,
+            "validation_msg": "upto 200mb allowed",
+            "copy_paste": true,
+            "copy_delimiter": "comma",
+            "show_upload": true,
+            "worksheet_select": true,
+            "description_option": true,
+            "lang": "en",
+            "excel_date_format": "custom",
+            "excel_date_custom": "DD-MM-YYYY",
+            "hide_cancel": false,
+            "split": true,
+            "split_rows": 1000,
+            "split_confirm": "no",
+            "extract_types": [
+              "pdf",
+              "images"
+            ],
+            "page_limit": 10,
+            "accept_raw_value": false,
+            "skip_min_rows": 2,
+            "skip_max_rows": 1000,
+            "skip_min_cols": 2,
+            "skip_max_cols": 20
+          },
+          "select_header": {
+            "skip": true,
+            "help": "Select header row",
+            "default_row": "2",
+            "encoding_option": true,
+            "encoding": "windows-1252",
+            "row_column_switch": false
+          },
+          "map_columns": {
+            "skip": true,
+            "help": "Map columns",
+            "mapping_mode": "template_fields",
+            "bulk_cols_dd": false,
+            "accept_unmapped": true,
+            "accept_unmapped_select": true,
+            "allow_zero_template": true,
+            "ignore_cols": true,
+            "ignore_cols_default": true,
+            "user_keywords": false
+          },
+          "verify_data": {
+            "skip": true,
+            "help": "Verify data",
+            "row_display_mode": "invalid",
+            "export_option": true,
+            "search_option": false,
+            "ai_transform": true,
+            "allow_new_rows": false,
+            "rows_display": 25,
+            "allow_invalid": true,
+            "invalid_confirmation": false,
+            "max_rows": 600,
+            "allow_upload_if_max": false,
+            "max_rows_msg": "maaaaaax",
+            "min_rows": 2,
+            "min_rows_msg": "miiiiin"
+          },
+          "results": {
+            "close_mode": "close_on_success",
+            "redirect_url": "",
+            "success_type": "static",
+            "success_text": "Import successful",
+            "success_method": "get",
+            "success_url": "",
+            "success_headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "failed_type": "static",
+            "failed_text": "Failure",
+            "failed_method": "get",
+            "failed_url": "",
+            "failed_headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "show_resubmit": false,
+            "show_error_text": false
+          }
+        }
+      },
+      "method": "PATCH",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "steps": {
+          "file_upload": {
+            "types": [
+              ".csv"
+            ],
+            "title": "File Upload",
+            "help": "Upload your CSV file",
+            "sample_file_url": "",
+            "size_mb": 200,
+            "validation_msg": "upto 200mb allowed",
+            "copy_paste": true,
+            "copy_delimiter": "comma",
+            "show_upload": true,
+            "worksheet_select": true,
+            "description_option": true,
+            "lang": "en",
+            "excel_date_format": "custom",
+            "excel_date_custom": "DD-MM-YYYY",
+            "hide_cancel": false,
+            "split": true,
+            "split_rows": 1000,
+            "split_confirm": "no",
+            "extract_types": [
+              "pdf",
+              "images"
+            ],
+            "page_limit": 10,
+            "accept_raw_value": false,
+            "skip_min_rows": 2,
+            "skip_max_rows": 1000,
+            "skip_min_cols": 2,
+            "skip_max_cols": 20
+          },
+          "select_header": {
+            "skip": true,
+            "help": "Select header row",
+            "default_row": "2",
+            "encoding_option": true,
+            "encoding": "windows-1252",
+            "row_column_switch": false
+          },
+          "map_columns": {
+            "skip": true,
+            "help": "Map columns",
+            "mapping_mode": "template_fields",
+            "bulk_cols_dd": false,
+            "accept_unmapped": true,
+            "accept_unmapped_select": true,
+            "allow_zero_template": true,
+            "ignore_cols": true,
+            "ignore_cols_default": true,
+            "user_keywords": false
+          },
+          "verify_data": {
+            "skip": true,
+            "help": "Verify data",
+            "row_display_mode": "invalid",
+            "export_option": true,
+            "search_option": false,
+            "ai_transform": true,
+            "allow_new_rows": false,
+            "rows_display": 25,
+            "allow_invalid": true,
+            "invalid_confirmation": false,
+            "max_rows": 600,
+            "allow_upload_if_max": false,
+            "max_rows_msg": "maaaaaax",
+            "min_rows": 2,
+            "min_rows_msg": "miiiiin"
+          },
+          "results": {
+            "close_mode": "close_on_success",
+            "redirect_url": "",
+            "success_type": "static",
+            "success_text": "Import successful",
+            "success_method": "get",
+            "success_url": "",
+            "success_headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "failed_type": "static",
+            "failed_text": "Failure",
+            "failed_method": "get",
+            "failed_url": "",
+            "failed_headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "show_resubmit": false,
+            "show_error_text": false
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "set_security_settings",
+        "sheet_license_key": "a1b2c3d4",
+        "security_settings": {
+          "region": "us",
+          "domains": [
+            "example.com"
+          ],
+          "import_url_upload": true,
+          "s3_upload": true
+        }
+      },
+      "method": "PATCH",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "security_settings": {
+          "region": "us",
+          "domains": [
+            "example.com"
+          ],
+          "import_url_upload": true,
+          "s3_upload": true
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "merge_virtual_columns",
+        "sheet_license_key": "a1b2c3d4",
+        "virtual_columns": [
+          {
+            "column_name": "full_name",
+            "js_code": "const a = csvbox.row['col1'] || ''; const b = csvbox.row['col2'] || ''; return (a + ' ' + b).trim();",
+            "active": true,
+            "dependencies": [],
+            "_delete": false
+          }
+        ]
+      },
+      "method": "PATCH",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "virtual_columns": [
+          {
+            "column_name": "full_name",
+            "js_code": "const a = csvbox.row['col1'] || ''; const b = csvbox.row['col2'] || ''; return (a + ' ' + b).trim();",
+            "active": true,
+            "dependencies": [],
+            "_delete": false
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "merge_validation_functions",
+        "sheet_license_key": "a1b2c3d4",
+        "validation_functions": [
+          {
+            "function_name": "check_email",
+            "scope": "column",
+            "columns": [
+              "col4"
+            ],
+            "js_code": "const rows = csvbox.column['col4'] || []; const errs = []; for (let i = 0; i < rows.length; i++) { if (String(rows[i]).indexOf('@') === -1) { errs.push({ row_id: i + 1, column: 'col4', message: 'Not a valid email' }); } } return errs;",
+            "active": true
+          },
+          {
+            "function_name": "check_date",
+            "scope": "column",
+            "columns": [
+              "col5"
+            ],
+            "js_code": "const rows = csvbox.column['col5'] || []; const errs = []; const today = dayjs(); for (let i = 0; i < rows.length; i++) { const raw = String(rows[i] || '').trim(); if (raw === '') { continue; } const d = dayjs(raw); if (!d.isValid() || d.format('YYYY-MM-DD') !== raw) { errs.push({ row_id: i + 1, column: 'col5', message: 'Use YYYY-MM-DD, e.g. 2024-01-31' }); } else if (d.isAfter(today)) { errs.push({ row_id: i + 1, column: 'col5', message: 'Date cannot be in the future' }); } else if (d.year() < 1900) { errs.push({ row_id: i + 1, column: 'col5', message: 'Date must be 1900 or later' }); } } return errs;",
+            "dependencies": [
+              {
+                "url": "https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js",
+                "globals": [
+                  "dayjs"
+                ]
+              }
+            ],
+            "active": true
+          }
+        ]
+      },
+      "method": "PATCH",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "validation_functions": [
+          {
+            "function_name": "check_email",
+            "scope": "column",
+            "columns": [
+              "col4"
+            ],
+            "js_code": "const rows = csvbox.column['col4'] || []; const errs = []; for (let i = 0; i < rows.length; i++) { if (String(rows[i]).indexOf('@') === -1) { errs.push({ row_id: i + 1, column: 'col4', message: 'Not a valid email' }); } } return errs;",
+            "active": true
+          },
+          {
+            "function_name": "check_date",
+            "scope": "column",
+            "columns": [
+              "col5"
+            ],
+            "js_code": "const rows = csvbox.column['col5'] || []; const errs = []; const today = dayjs(); for (let i = 0; i < rows.length; i++) { const raw = String(rows[i] || '').trim(); if (raw === '') { continue; } const d = dayjs(raw); if (!d.isValid() || d.format('YYYY-MM-DD') !== raw) { errs.push({ row_id: i + 1, column: 'col5', message: 'Use YYYY-MM-DD, e.g. 2024-01-31' }); } else if (d.isAfter(today)) { errs.push({ row_id: i + 1, column: 'col5', message: 'Date cannot be in the future' }); } else if (d.year() < 1900) { errs.push({ row_id: i + 1, column: 'col5', message: 'Date must be 1900 or later' }); } } return errs;",
+            "dependencies": [
+              {
+                "url": "https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js",
+                "globals": [
+                  "dayjs"
+                ]
+              }
+            ],
+            "active": true
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "merge_data_transforms",
+        "sheet_license_key": "a1b2c3d4",
+        "data_transforms": [
+          {
+            "transform_name": "uppercase_country",
+            "scope": "column",
+            "run_at": "before_validation",
+            "columns": [
+              "col1"
+            ],
+            "dynamic_columns": [
+              "region"
+            ],
+            "js_code": "for (let i = 0; i < csvbox.column['col1'].length; i++) { csvbox.column['col1'][i] = String(csvbox.column['col1'][i]).toUpperCase(); } return csvbox;",
+            "active": true,
+            "dependencies": [],
+            "_delete": false
+          }
+        ]
+      },
+      "method": "PATCH",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "data_transforms": [
+          {
+            "transform_name": "uppercase_country",
+            "scope": "column",
+            "run_at": "before_validation",
+            "columns": [
+              "col1"
+            ],
+            "dynamic_columns": [
+              "region"
+            ],
+            "js_code": "for (let i = 0; i < csvbox.column['col1'].length; i++) { csvbox.column['col1'][i] = String(csvbox.column['col1'][i]).toUpperCase(); } return csvbox;",
+            "active": true,
+            "dependencies": [],
+            "_delete": false
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "set_pdf_metadata",
+        "sheet_license_key": "a1b2c3d4",
+        "pdf_metadata_config": [
+          {
+            "name": "Author",
+            "source": "native"
+          },
+          {
+            "name": "Invoice Number",
+            "source": "document-kv"
+          },
+          {
+            "name": "processed_by",
+            "source": "static",
+            "value": "AP Team"
+          },
+          {
+            "name": "invoice_date",
+            "source": "line-match",
+            "value": "Invoice Date:"
+          }
+        ]
+      },
+      "method": "PATCH",
+      "path": "/1.1/sheet/a1b2c3d4",
+      "body": {
+        "pdf_metadata_config": [
+          {
+            "name": "Author",
+            "source": "native"
+          },
+          {
+            "name": "Invoice Number",
+            "source": "document-kv"
+          },
+          {
+            "name": "processed_by",
+            "source": "static",
+            "value": "AP Team"
+          },
+          {
+            "name": "invoice_date",
+            "source": "line-match",
+            "value": "Invoice Date:"
+          }
+        ]
+      }
+    }
+  ]
+}
