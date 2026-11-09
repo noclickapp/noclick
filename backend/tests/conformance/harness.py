@@ -1800,6 +1800,9 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
         )
         # A webhook trigger is fed the contract's events and a poll trigger checked on its list call (triggers.py);
         # any other trigger family (app-event subscriptions) is a passthrough on a manual run, not an API call.
+        if kind:
+            # Reported as a trigger even when it never gets as far as its own checks (an invalid config witness).
+            result.trigger = {"kind": kind, "failures": [], "advisory": []}
         if (op.startswith("on_") and kind is None) or op == "custom_request":
             result.skipped = (
                 "trigger passthrough"
@@ -1977,7 +1980,6 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
             if kind == "poll":
                 poll_reads = triggers.Reads(node_files)
                 await triggers.seen_nothing(node)
-                result.trigger = {"kind": "poll", "failures": [], "advisory": []}
             with offline(), intercept_http(transport), resolved_offline():
                 output = await node.execute({})
                 if kind == "poll":

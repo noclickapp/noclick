@@ -294,3 +294,13 @@ async def test_a_documented_payload_vouches_for_fields_its_schema_leaves_out(mon
     [op] = (await harness.run_provider("tasks"))["operations"]
     assert op["trigger"]["failures"] == [
         "reads results[].title, which the GET /tasks response schema doesn't have"]
+
+
+async def test_a_trigger_that_never_runs_is_still_reported_failed(monkeypatch):
+    install(monkeypatch, "tasks", poll_node(), poll_doc(), {})
+    monkeypatch.setattr(harness, "INPUTS", {"on_new_task": {"config": {"schedule": "every so often"},
+                                                            "source": SOURCE}})
+    report = await harness.run_provider("tasks")
+    [op] = report["operations"]
+    assert op["trigger"]["kind"] == "poll" and op["fixture_errors"]
+    assert openapi_verdict(report, "/nonexistent", audit=False)["triggers"] == {"on_new_task": "failed"}
