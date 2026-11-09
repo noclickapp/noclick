@@ -1,0 +1,608 @@
+{
+  "$defs": {
+    "ClaudeChat": {
+      "additionalProperties": false,
+      "description": "Generate a synchronous Claude Sonnet 4.6 answer.",
+      "properties": {
+        "prompt": {
+          "description": "Text to send as one user message.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "operation": {
+          "const": "chat_claude_sonnet_4_6",
+          "default": "chat_claude_sonnet_4_6",
+          "title": "Operation",
+          "type": "string"
+        },
+        "max_tokens": {
+          "default": 4096,
+          "minimum": 1,
+          "title": "Max Tokens",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "ClaudeChat",
+      "type": "object"
+    },
+    "CreateCharacter": {
+      "additionalProperties": false,
+      "description": "Create an Omni character from one or two reference images.",
+      "properties": {
+        "operation": {
+          "const": "create_character",
+          "default": "create_character",
+          "title": "Operation",
+          "type": "string"
+        },
+        "descriptions": {
+          "minLength": 1,
+          "title": "Descriptions",
+          "type": "string"
+        },
+        "image_urls": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Image Urls",
+          "type": "array"
+        },
+        "audio_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audio Ids"
+        },
+        "character_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Character Name"
+        }
+      },
+      "required": [
+        "descriptions",
+        "image_urls"
+      ],
+      "title": "CreateCharacter",
+      "type": "object"
+    },
+    "CreateVoice": {
+      "additionalProperties": false,
+      "description": "Register an Omni voice configuration; this does not generate audio.",
+      "properties": {
+        "operation": {
+          "const": "create_voice",
+          "default": "create_voice",
+          "title": "Operation",
+          "type": "string"
+        },
+        "audio_id": {
+          "description": "Preset voice ID, for example achernar.",
+          "minLength": 1,
+          "title": "Audio Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 210,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "voice_description": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voice Description"
+        },
+        "example_dialogue": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Example Dialogue"
+        }
+      },
+      "required": [
+        "audio_id",
+        "name"
+      ],
+      "title": "CreateVoice",
+      "type": "object"
+    },
+    "GPT52Chat": {
+      "additionalProperties": false,
+      "description": "Generate a synchronous answer using gpt 5 2.",
+      "properties": {
+        "prompt": {
+          "description": "Text to send as one user message.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "operation": {
+          "const": "chat_gpt_5_2",
+          "default": "chat_gpt_5_2",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "GPT52Chat",
+      "type": "object"
+    },
+    "Gemini31Chat": {
+      "additionalProperties": false,
+      "description": "Generate a synchronous answer using gemini 3 1 pro.",
+      "properties": {
+        "prompt": {
+          "description": "Text to send as one user message.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "operation": {
+          "const": "chat_gemini_3_1_pro",
+          "default": "chat_gemini_3_1_pro",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "Gemini31Chat",
+      "type": "object"
+    },
+    "Gemini36Chat": {
+      "additionalProperties": false,
+      "description": "Generate a synchronous answer using gemini 3 6 flash.",
+      "properties": {
+        "prompt": {
+          "description": "Text to send as one user message.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "operation": {
+          "const": "chat_gemini_3_6_flash",
+          "default": "chat_gemini_3_6_flash",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "Gemini36Chat",
+      "type": "object"
+    },
+    "Gemini38Chat": {
+      "additionalProperties": false,
+      "description": "Generate a synchronous answer using gemini 3 8 flash.",
+      "properties": {
+        "prompt": {
+          "description": "Text to send as one user message.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "operation": {
+          "const": "chat_gemini_3_8_flash",
+          "default": "chat_gemini_3_8_flash",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "Gemini38Chat",
+      "type": "object"
+    },
+    "Gemini3Chat": {
+      "additionalProperties": false,
+      "description": "Generate a synchronous answer using gemini 3 pro.",
+      "properties": {
+        "prompt": {
+          "description": "Text to send as one user message.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "operation": {
+          "const": "chat_gemini_3_pro",
+          "default": "chat_gemini_3_pro",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "Gemini3Chat",
+      "type": "object"
+    },
+    "GeminiArgonChat": {
+      "additionalProperties": false,
+      "description": "Generate a synchronous answer using gemini 4 argon.",
+      "properties": {
+        "prompt": {
+          "description": "Text to send as one user message.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "operation": {
+          "const": "chat_gemini_4_argon",
+          "default": "chat_gemini_4_argon",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "GeminiArgonChat",
+      "type": "object"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "description": "Read the account's remaining credits.",
+      "properties": {
+        "operation": {
+          "const": "get_account_credits",
+          "default": "get_account_credits",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetDownloadURL": {
+      "additionalProperties": false,
+      "description": "Get a generated file's download URL, valid for 20 minutes.",
+      "properties": {
+        "operation": {
+          "const": "get_download_url",
+          "default": "get_download_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "GetDownloadURL",
+      "type": "object"
+    },
+    "GetTask": {
+      "additionalProperties": false,
+      "description": "Read one task's current state and any completed result; no polling.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "task_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "KieaiAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kieai_api_key",
+          "default": "kieai_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Kieai API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Kie.ai API key. NoClick checks your account credit balance to verify that the key is accepted. Chat and transcription requests consume your Kie.ai credits.",
+      "x-credential-url": "https://kie.ai/api-key"
+    },
+    "KimiResponse": {
+      "additionalProperties": false,
+      "description": "Generate a synchronous Kimi K3 Responses API answer.",
+      "properties": {
+        "prompt": {
+          "description": "Text to send as one user message.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_kimi_response",
+          "default": "create_kimi_response",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "const": "kimi-k3",
+          "default": "kimi-k3",
+          "title": "Model",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "KimiResponse",
+      "type": "object"
+    },
+    "TranscribeAudio": {
+      "additionalProperties": false,
+      "description": "Queue Nemotron transcription or translation and return its task ID.",
+      "properties": {
+        "operation": {
+          "const": "transcribe_audio",
+          "default": "transcribe_audio",
+          "title": "Operation",
+          "type": "string"
+        },
+        "audio_url": {
+          "format": "uri",
+          "title": "Audio Url",
+          "type": "string"
+        },
+        "timestamps": {
+          "default": false,
+          "title": "Timestamps",
+          "type": "boolean"
+        },
+        "target_language": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "zh",
+                "ja",
+                "ko",
+                "fr",
+                "de",
+                "es",
+                "pt",
+                "it",
+                "ru",
+                "nl",
+                "pl",
+                "cs",
+                "sk",
+                "hi",
+                "bg",
+                "hr",
+                "da",
+                "et",
+                "fi",
+                "hu",
+                "lv",
+                "lt",
+                "ro",
+                "sl",
+                "sv",
+                "th",
+                "uk",
+                "ar",
+                "el",
+                "he",
+                "mt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Language",
+          "enum": [
+            "en",
+            "zh",
+            "ja",
+            "ko",
+            "fr",
+            "de",
+            "es",
+            "pt",
+            "it",
+            "ru",
+            "nl",
+            "pl",
+            "cs",
+            "sk",
+            "hi",
+            "bg",
+            "hr",
+            "da",
+            "et",
+            "fi",
+            "hu",
+            "lv",
+            "lt",
+            "ro",
+            "sl",
+            "sv",
+            "th",
+            "uk",
+            "ar",
+            "el",
+            "he",
+            "mt"
+          ],
+          "x-enum-searchable": true
+        },
+        "callback_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Callback Url"
+        }
+      },
+      "required": [
+        "audio_url"
+      ],
+      "title": "TranscribeAudio",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "chat_claude_sonnet_4_6": "#/$defs/ClaudeChat",
+          "chat_gemini_3_1_pro": "#/$defs/Gemini31Chat",
+          "chat_gemini_3_6_flash": "#/$defs/Gemini36Chat",
+          "chat_gemini_3_8_flash": "#/$defs/Gemini38Chat",
+          "chat_gemini_3_pro": "#/$defs/Gemini3Chat",
+          "chat_gemini_4_argon": "#/$defs/GeminiArgonChat",
+          "chat_gpt_5_2": "#/$defs/GPT52Chat",
+          "create_character": "#/$defs/CreateCharacter",
+          "create_kimi_response": "#/$defs/KimiResponse",
+          "create_voice": "#/$defs/CreateVoice",
+          "get_account_credits": "#/$defs/GetCredits",
+          "get_download_url": "#/$defs/GetDownloadURL",
+          "get_task": "#/$defs/GetTask",
+          "transcribe_audio": "#/$defs/TranscribeAudio"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCredits"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/TranscribeAudio"
+        },
+        {
+          "$ref": "#/$defs/CreateVoice"
+        },
+        {
+          "$ref": "#/$defs/CreateCharacter"
+        },
+        {
+          "$ref": "#/$defs/GetDownloadURL"
+        },
+        {
+          "$ref": "#/$defs/GPT52Chat"
+        },
+        {
+          "$ref": "#/$defs/Gemini38Chat"
+        },
+        {
+          "$ref": "#/$defs/Gemini3Chat"
+        },
+        {
+          "$ref": "#/$defs/Gemini31Chat"
+        },
+        {
+          "$ref": "#/$defs/GeminiArgonChat"
+        },
+        {
+          "$ref": "#/$defs/Gemini36Chat"
+        },
+        {
+          "$ref": "#/$defs/ClaudeChat"
+        },
+        {
+          "$ref": "#/$defs/KimiResponse"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KieaiAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kieai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

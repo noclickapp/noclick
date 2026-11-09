@@ -1,0 +1,405 @@
+{
+  "get_account_credits": {
+    "method": "GET",
+    "path": "/api/v1/chat/credit",
+    "config": {},
+    "response": {
+      "code": 200,
+      "msg": "success",
+      "data": 100.5
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "get_task": {
+    "method": "GET",
+    "path": "/api/v1/jobs/recordInfo",
+    "config": {
+      "task_id": "task_12345678"
+    },
+    "response": {
+      "code": 200,
+      "msg": "success",
+      "data": {
+        "taskId": "task_12345678",
+        "model": "grok-imagine/text-to-image",
+        "state": "success",
+        "param": "{\"model\":\"grok-imagine/text-to-image\",\"callBackUrl\":\"https://your-domain.com/api/callback\",\"input\":\"{\\\"prompt\\\":\\\"电影肖像...\\\",\\\"aspect_ratio\\\":\\\"3:2\\\"}\"}",
+        "resultJson": "{\"resultUrls\":[\"https://example.com/generated-content.jpg\"]}",
+        "failCode": "",
+        "failMsg": "",
+        "costTime": 15,
+        "completeTime": 1698765432000,
+        "createTime": 1698765400000,
+        "updateTime": 1698765432000,
+        "progress": 45,
+        "creditsConsumed": 50
+      }
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "transcribe_audio": {
+    "method": "POST",
+    "path": "/api/v1/jobs/createTask",
+    "config": {
+      "audio_url": "https://static.aiquickdraw.com/tools/example/1793873594707_8fvLCiGf.mp3",
+      "timestamps": true,
+      "callback_url": "https://your-domain.com/api/callback"
+    },
+    "response": {
+      "code": 200,
+      "msg": "success",
+      "data": {
+        "taskId": "task_nemotron_1762345821000"
+      }
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "create_voice": {
+    "method": "POST",
+    "path": "/api/v1/omni/audio/create",
+    "config": {
+      "audio_id": "achernar",
+      "name": "achernar Narrator",
+      "voice_description": "一个沉稳、清晰、富有亲和力的男性声音，适合科技产品讲解与日常对话。",
+      "example_dialogue": "你好,我是achernar"
+    },
+    "response": {
+      "code": 200,
+      "msg": "success",
+      "data": {
+        "audioId": "a8f1c2d3e4f5...",
+        "name": "温柔女声"
+      }
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "create_character": {
+    "method": "POST",
+    "path": "/api/v1/omni/character/create",
+    "config": {
+      "descriptions": "一个银白短发、身穿未来风机能夹克的年轻女性角色，冷静、敏捷，具有赛博朋克气质。",
+      "image_urls": [
+        "https://example.com/assets/character-reference.png"
+      ],
+      "audio_ids": [
+        "audio_01hx8p0demo"
+      ],
+      "character_name": "珍妮"
+    },
+    "response": {
+      "code": 200,
+      "msg": "success",
+      "data": {
+        "characterId": "b09dbf56...",
+        "characterName": "可爱角色",
+        "imageUrl": "https://xx.com/profile.png",
+        "bodyImageUrl": "https://xx.com/body.png"
+      }
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "get_download_url": {
+    "method": "POST",
+    "path": "/api/v1/common/download-url",
+    "config": {
+      "url": "https://example.com/generated-content.jpg"
+    },
+    "response": {
+      "code": 200,
+      "msg": "success",
+      "data": "https://tempfile.1f6cxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxbd98"
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "chat_gpt_5_2": {
+    "method": "POST",
+    "path": "/gpt-5-2/v1/chat/completions",
+    "config": {
+      "prompt": "What is in this image?"
+    },
+    "response": {
+      "id": "chatcmpl-example-123",
+      "object": "chat.completion",
+      "created": 1741569952,
+      "model": "gpt-5-2",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "你好，有什么可以帮你的吗？",
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 10,
+        "completion_tokens": 50,
+        "total_tokens": 60
+      }
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "chat_gemini_3_8_flash": {
+    "method": "POST",
+    "path": "/gemini-3-8-flash-openai/v1/chat/completions",
+    "config": {
+      "prompt": "What is in this image?"
+    },
+    "response": {
+      "id": "chatcmpl-c90c370251f24fd4b2d85a052e38f47a",
+      "object": "chat.completion",
+      "created": 1791213382,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "OK"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 6,
+        "completion_tokens": 1,
+        "total_tokens": 97,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "credits_consumed": 0.01
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "chat_gemini_3_pro": {
+    "method": "POST",
+    "path": "/gemini-3-pro/v1/chat/completions",
+    "config": {
+      "prompt": "What is in this image?"
+    },
+    "response": {
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "Synthetic answer"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 10,
+        "completion_tokens": 50,
+        "total_tokens": 60
+      }
+    },
+    "kind": "synthetic"
+  },
+  "chat_gemini_3_1_pro": {
+    "method": "POST",
+    "path": "/gemini-3.1-pro/v1/chat/completions",
+    "config": {
+      "prompt": "What is in this image?"
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "message": {
+            "content": "Hello! How can I help you today?",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1768283309,
+      "credits_consumed": 0.27,
+      "id": "chatcmpl-********************z6IaTP6H",
+      "object": "chat.completion",
+      "usage": {
+        "completion_tokens": 383,
+        "completion_tokens_details": {
+          "audio_tokens": 0,
+          "text_tokens": 0,
+          "reasoning_tokens": 374
+        },
+        "prompt_tokens": 1,
+        "total_tokens": 384
+      }
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "chat_gemini_4_argon": {
+    "method": "POST",
+    "path": "/gemini-4-argon-openai/v1/chat/completions",
+    "config": {
+      "prompt": "What is in this image?"
+    },
+    "response": {
+      "id": "chatcmpl-c90c370251f24fd4b2d85a052e38f47a",
+      "object": "chat.completion",
+      "created": 1791213382,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "OK"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 6,
+        "completion_tokens": 1,
+        "total_tokens": 97,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "credits_consumed": 0.01
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "chat_gemini_3_6_flash": {
+    "method": "POST",
+    "path": "/gemini-3-6-flash-openai/v1/chat/completions",
+    "config": {
+      "prompt": "What is in this image?"
+    },
+    "response": {
+      "id": "chatcmpl-c90c370251f24fd4b2d85a052e38f47a",
+      "object": "chat.completion",
+      "created": 1791213382,
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "OK"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 6,
+        "completion_tokens": 1,
+        "total_tokens": 97,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        }
+      },
+      "credits_consumed": 0.01
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "chat_claude_sonnet_4_6": {
+    "method": "POST",
+    "path": "/claude/v1/messages",
+    "config": {
+      "prompt": "What is in this image?"
+    },
+    "response": {
+      "role": "assistant",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "output_tokens": 57,
+        "service_tier": "standard",
+        "cache_creation_input_tokens": 0,
+        "input_tokens": 600,
+        "cache_read_input_tokens": 0,
+        "inference_geo": "not_available"
+      },
+      "stop_reason": "tool_use",
+      "model": "claude-sonnet-4-6",
+      "id": "msg_01VSoxV4a8YWB3DBh9TdM63W",
+      "credits_consumed": 0.15,
+      "type": "message",
+      "content": [
+        {
+          "input": {
+            "location": "Beijing, China"
+          },
+          "caller": {
+            "type": "direct"
+          },
+          "name": "get_current_weather",
+          "id": "toolu_018gdqs2FHxrRjQHLZv1qvbF",
+          "type": "tool_use"
+        }
+      ]
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  },
+  "create_kimi_response": {
+    "method": "POST",
+    "path": "/openai/v1/responses",
+    "config": {
+      "prompt": "What is in this image?"
+    },
+    "response": {
+      "id": "resp_551f7700-da28-4b8d-b831-9a675b85e73a",
+      "object": "response",
+      "created_at": 1790128550,
+      "status": "completed",
+      "model": "moonshotai/kimi-k3",
+      "output": [
+        {
+          "type": "reasoning",
+          "id": "rs_b1beab9c6ba54a7598441ed82d771f89",
+          "status": "completed",
+          "summary": [
+            {
+              "type": "summary_text",
+              "text": "用户希望用一句话介绍北京……"
+            }
+          ]
+        },
+        {
+          "type": "message",
+          "id": "msg_347976f56b104ab291ebcc068164502c",
+          "status": "completed",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "text": "北京是中国的首都，一座拥有三千多年建城史的历史文化名城，既承载着故宫、长城等千年古都的厚重底蕴，又展现着现代化国际大都市的蓬勃活力。"
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "input_tokens": 92,
+        "output_tokens": 341,
+        "total_tokens": 433,
+        "output_tokens_details": {
+          "reasoning_tokens": 291
+        }
+      },
+      "credits_consumed": 1.08
+    },
+    "source": "https://api.apidog.com/api/v1/projects/764533/published-projects/export-data?branchId=1179260",
+    "kind": "provider_example"
+  }
+}
