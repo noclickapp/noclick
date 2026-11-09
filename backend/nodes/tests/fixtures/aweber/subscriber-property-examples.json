@@ -1,0 +1,32 @@
+{
+  "source": "https://api.aweber.com/_definitions.yaml",
+  "definition": "Subscriber",
+  "properties": {
+    "id": {
+      "description": "The lead ID",
+      "type": "integer",
+      "minimum": 0,
+      "example": 789
+    },
+    "name": {
+      "description": "The subscriber's name.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60,
+      "example": "John Doe"
+    },
+    "email": {
+      "description": "The subscriber's email address.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50,
+      "format": "email"
+    },
+    "subscribed_at": {
+      "description": "The timestamp for when the subscriber subscribed",
+      "type": "string",
+      "format": "date-time",
+      "example": "2015-10-13T16:19:20-04:00"
+    }
+  }
+}
