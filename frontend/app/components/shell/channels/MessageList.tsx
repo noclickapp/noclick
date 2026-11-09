@@ -376,6 +376,12 @@ function RepliesBar({ msg, members, user, onOpen }: { msg: ChannelMessage; membe
     );
 }
 
+/** Who pinned: NoClick's line names them ("Priya Shah pinned a message…"). */
+function pinnerOf(msg: ChannelMessage, members: ChannelMember[]): string {
+    const named = /^(.+?) pinned a message/.exec(msg.text)?.[1];
+    return named ? named.split(' ')[0] : firstName(msg.author, members);
+}
+
 /** The quiet line pinning leaves in the timeline, as Slack's. */
 function PinLine({ msg, members, actions }: { msg: ChannelMessage; members: ChannelMember[]; actions: MessageActions }) {
     const pinned = msg.event?.messageId;
@@ -385,7 +391,7 @@ function PinLine({ msg, members, actions }: { msg: ChannelMessage; members: Chan
                 <Pin className="h-3.5 w-3.5" strokeWidth={2} />
             </span>
             <span className="min-w-0 truncate">
-                <span className="font-medium text-foreground/80">{firstName(msg.author, members)}</span> pinned{' '}
+                <span className="font-medium text-foreground/80">{pinnerOf(msg, members)}</span> pinned{' '}
                 {pinned && actions.onOpenMessage ? (
                     <button type="button" onClick={() => actions.onOpenMessage?.(pinned)} className={LINKISH}>
                         a message
