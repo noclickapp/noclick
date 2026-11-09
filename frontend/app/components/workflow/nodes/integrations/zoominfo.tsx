@@ -15,7 +15,7 @@ ZoomInfoIcon.displayName = 'ZoomInfoIcon';
 export const ZoomInfoNode: NodeDefinition = {
     type: 'automation-zoominfo',
     label: 'ZoomInfo',
-    description: 'Search and enrich prospects, inspect usage, and manage audiences',
+    description: 'Monitor contact updates, scoops and intent signals; search prospects and manage audiences',
     category: 'crm-sales',
     Icon: ZoomInfoIcon,
     iconColor: '',

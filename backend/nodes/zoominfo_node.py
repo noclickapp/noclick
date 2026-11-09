@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import date
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
 
@@ -15,11 +16,12 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.oauth.zoominfo_oauth import OAUTH_PROVIDER
 from nodes.scopes.zoominfo import ZOOMINFO_SCOPES
-from nodes.zoominfo_operations import ZOOMINFO_OPERATIONS, OUTPUT_FIELDS
+from nodes.zoominfo_operations import ZOOMINFO_OPERATIONS, ZOOMINFO_TRIGGERS, OUTPUT_FIELDS
 from utils.ssrf import guarded_async_client
 
 BASE = "https://api.zoominfo.com/gtm"
@@ -60,7 +62,7 @@ class _Input(BaseModel):
     def check_values(self):
         if hasattr(self, "filters"):
             filters = _object(self.filters)
-            if self.operation == "search_intent" and (not isinstance(filters.get("topics"), list) or not filters["topics"]):
+            if self.operation in {"search_intent", "on_new_intent"} and (not isinstance(filters.get("topics"), list) or not filters["topics"]):
                 raise ValueError("Intent search requires a nonempty topics array")
         for name in ("audience_id", "upload_id"):
             if hasattr(self, name):
@@ -72,16 +74,24 @@ class _Input(BaseModel):
         return self
 
 
+class _PollInput(PollTriggerConfigBase, _Input):
+    # Canvas metadata is ignored; the poll family hashes declared fields only.
+    model_config = ConfigDict(extra="ignore", hide_input_in_errors=True)
+
+
 def _model(name, spec):
     fields = {"operation": (Literal[name], Field(name, json_schema_extra={"ui:hidden": True, "x-display-name": name.replace("_", " ").title()}))}
     kind = spec["kind"]
-    if kind == "search":
+    if kind in {"search", "poll"}:
         fields.update(
             filters=(str, Field(..., max_length=100000, title="Search filters (JSON)", description="ZoomInfo attributes, for example " + json.dumps(spec["example"]) + ". See " + spec["source"], json_schema_extra={"ui:widget": "textarea"})),
-            page_number=(int, Field(1, ge=1)),
-            page_size=(int, Field(25, ge=1, le=100)),
         )
-        if spec["sort"]:
+        if kind == "search":
+            fields["page_number"] = (int, Field(1, ge=1))
+            fields["page_size"] = (int, Field(25, ge=1, le=100))
+        if kind == "poll":
+            fields["since"] = (date, Field(..., title="Monitor since", description="Earliest date to search (YYYY-MM-DD). Existing matches are baselined when armed; narrow the filters if more than 10,000 records match."))
+        if kind == "search" and spec["sort"]:
             fields["sort"] = (str | None, Field(None, max_length=200, description="Provider field name; prefix with - for descending order."))
     if kind == "enrich":
         contact = name == "enrich_contacts"
@@ -108,7 +118,11 @@ def _model(name, spec):
         fields["upload_operation"] = (Literal["ADD", "DELETE"], Field(..., description="Add or remove these audience members."))
         fields["fields"] = (list[Literal["ziCompanyId", "ziPersonId", "firstName", "lastName", "emailAddress", "companyName", "companyUrl"]], Field(..., min_length=1, max_length=7))
         fields["records"] = (list[list[str]], Field(..., min_length=1, max_length=10000, description="Member rows, in the exact order of fields."))
-    return create_model("ZoomInfo" + "".join(p.title() for p in name.split("_")) + "Config", __base__=_Input, __doc__=name.replace("_", " ").title() + ". " + spec["source"], **fields)
+    if kind == "poll":
+        fields["operation"][1].json_schema_extra.update({
+            "x-is-trigger": True, "x-category": "Triggers", "x-display-name": spec["label"],
+        })
+    return create_model("ZoomInfo" + "".join(p.title() for p in name.split("_")) + "Config", __base__=_PollInput if kind == "poll" else _Input, __doc__=name.replace("_", " ").title() + ". " + spec["source"], **fields)
 
 
 ZOOMINFO_CONFIGS = {name: _model(name, spec) for name, spec in ZOOMINFO_OPERATIONS.items()}
@@ -119,7 +133,7 @@ class ZoomInfoNodeConfig(NodeConfig[ZoomInfoConfig, ZoomInfoOAuthCredential]):
     pass
 
 
-class ZoomInfoNode(WorkflowNode):
+class ZoomInfoNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-zoominfo"
     scope_registry = ZOOMINFO_SCOPES
     connection_evidence = ConnectionEvidence(operation="get_usage", noun="ZoomInfo account usage and limits")
@@ -127,6 +141,68 @@ class ZoomInfoNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return ZoomInfoNodeConfig
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in ZOOMINFO_TRIGGERS:
+            return bool(output.get("new_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        operation = output.get("operation")
+        if operation not in ZOOMINFO_TRIGGERS:
+            return super().resolve_agent_event(output)
+        records = output.get("data", [])
+        if not records:
+            return None
+        lines = []
+        for record in records[:10]:
+            attributes = record.get("attributes", {})
+            company = attributes.get("company") or {}
+            where = f"{company.get('name') or 'Company unspecified'} (company id {company.get('id') or 'unavailable'})"
+            identifier = record["id"]
+            if operation == "on_updated_contact":
+                person = " ".join(str(attributes.get(k) or "") for k in ("firstName", "lastName")).strip()
+                lines.append(f"- {person or 'Contact'} (contact id {identifier}), {attributes.get('jobTitle') or 'role unspecified'} at {where}; updated {attributes.get('lastUpdatedDate') or 'date unavailable'}")
+            elif operation == "on_new_scoop":
+                lines.append(f"- {where}: {attributes.get('description') or 'New scoop'} (scoop id {identifier}, published {attributes.get('publishedDate') or 'date unavailable'}) {attributes.get('link') or ''}")
+            else:
+                lines.append(f"- {where}: intent for {attributes.get('topic') or 'topic unspecified'}, score {attributes.get('signalScore')}, signal date {attributes.get('signalDate')} (intent id {identifier})")
+        if len(records) > 10:
+            lines.append(f"- … and {len(records) - 10} more; all records are in the trigger output")
+        return {"text": f"ZoomInfo: {len(records)} {ZOOMINFO_TRIGGERS[operation]['label'].lower()} event(s):\n" + "\n".join(lines), "conversation_key": None}
+
+    async def _poll(self, token, cfg, spec, credentials):
+        attributes = _object(cfg.filters)
+        attributes[spec["date_filter"]] = cfg.since.isoformat()
+        body = {"data": {"type": spec["resource"], "attributes": attributes}}
+        records = []
+        for page in range(1, 101):
+            query = {"page[number]": page, "page[size]": 100}
+            if spec["sort"]:
+                query["sort"] = spec["sort"]
+            result = await self._request(token, cfg.operation, spec, spec["path"], query, body, credentials)
+            if result.get("status") != "success":
+                return result
+            batch = result["data"]
+            if not isinstance(batch, list) or any(not isinstance(r, dict) or not r.get("id") or not isinstance(r.get("attributes"), dict) for r in batch):
+                return {"status": "error", "error": "ZoomInfo returned an unexpected search page"}
+            records.extend(batch)
+            total = (result.get("meta") or {}).get("totalResults")
+            if not batch or (isinstance(total, int) and len(records) >= total) or (total is None and len(batch) < 100):
+                break
+        else:
+            return {"status": "error", "error": "ZoomInfo monitoring exceeds 10,000 records; narrow the filters or monitor-since date"}
+        def identity(record):
+            identifier = str(record["id"])
+            if cfg.operation == "on_updated_contact":
+                # A new version of the same contact is a new event.
+                identifier += ":" + str(record["attributes"].get("lastUpdatedDate") or "")
+            return identifier
+        unique = {identity(record): record for record in records}
+        fresh = await self._filter_unseen(list(unique.values()), identity)
+        return {"status": "success", "operation": cfg.operation, "data": fresh, "new_count": len(fresh)}
 
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
@@ -174,6 +250,12 @@ class ZoomInfoNode(WorkflowNode):
         token = await ensure_fresh_oauth_token(credential_id=(self.node_data or {}).get("credential_id"), user_id=self.user_id,
             credential=credentials, refresh=OAUTH_PROVIDER.refresh, provider="zoominfo", caller_path="execute")
         self.config.credentials = ZoomInfoOAuthCredential.model_validate(credentials)
+        if kind == "poll":
+            return await self._poll(token, cfg, spec, credentials)
+        return await self._request(token, cfg.operation, spec, path, query, body, credentials)
+
+    async def _request(self, token, operation, spec, path, query, body, credentials):
+        kind = spec["kind"]
         try:
             async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
                 response = await client.request(spec["method"], BASE + path, params=query,
@@ -195,7 +277,7 @@ class ZoomInfoNode(WorkflowNode):
                         pass
                 return {"status": "error", "http_status": response.status_code, "error": message}
             if response.status_code == 204:
-                return {"status": "success", "operation": cfg.operation, "http_status": 204}
+                return {"status": "success", "operation": operation, "http_status": 204}
             if len(response.content) > 10_000_000:
                 raise ValueError("ZoomInfo response exceeds the JSON limit")
             if response.headers.get("content-type", "").split(";", 1)[0].lower() not in {MEDIA, "application/json"}:
@@ -205,6 +287,6 @@ class ZoomInfoNode(WorkflowNode):
                 raise ValueError("ZoomInfo returned an unexpected JSON:API response")
             if kind == "usage" and (not isinstance(payload["data"], list) or not payload["data"] or any(not isinstance(r, dict) or not isinstance(r.get("id"), str) or not r["id"] or r.get("type") != "UserUsage" or not isinstance(r.get("attributes"), dict) or not isinstance(r["attributes"].get("usage"), list) for r in payload["data"])):
                 raise ValueError("ZoomInfo returned no account usage evidence")
-            return {"status": "success", "operation": cfg.operation, "http_status": response.status_code, **{key: payload[key] for key in ("data", "links", "meta") if key in payload}}
+            return {"status": "success", "operation": operation, "http_status": response.status_code, **{key: payload[key] for key in ("data", "links", "meta") if key in payload}}
         except (httpx.HTTPError, ValueError):
             return {"status": "error", "error": "ZoomInfo request could not be confirmed"}

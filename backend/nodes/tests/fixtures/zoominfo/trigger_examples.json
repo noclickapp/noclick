@@ -1,0 +1,186 @@
+{
+  "on_updated_contact": {
+    "source": "https://docs.zoominfo.com/openapi/openapi-data-v1.yaml#/paths/~1data~1v1~1contacts~1search",
+    "body": {
+      "data": [
+        {
+          "attributes": {
+            "company": {
+              "id": 344589814,
+              "name": "ZoomInfo"
+            },
+            "contactAccuracyScore": 95,
+            "directPhoneDoNotCall": false,
+            "firstName": "Filip",
+            "hasCompanyCountry": true,
+            "hasCompanyEmployeeCount": true,
+            "hasCompanyIndustry": true,
+            "hasCompanyPhone": true,
+            "hasCompanyRevenue": true,
+            "hasCompanyState": true,
+            "hasCompanyStreet": true,
+            "hasCompanyZipCode": true,
+            "hasDirectPhone": false,
+            "hasEmail": true,
+            "hasMobilePhone": true,
+            "hasSupplementalEmail": true,
+            "jobTitle": "Chief Technology Officer",
+            "lastName": "Popovic",
+            "lastUpdatedDate": "2025-04-04T18:13:00Z",
+            "mobilePhoneDoNotCall": false,
+            "validDate": "2024-11-14T22:29:00Z"
+          },
+          "id": "4191419698",
+          "type": "Contact"
+        }
+      ],
+      "links": {
+        "first": "/data/v1/contacts/search?page[number]=1&page[size]=25",
+        "last": "/data/v1/contacts/search?page[number]=1&page[size]=25"
+      },
+      "meta": {
+        "page": {
+          "number": 1,
+          "total": 1
+        },
+        "totalResults": 1
+      }
+    }
+  },
+  "on_new_scoop": {
+    "source": "https://docs.zoominfo.com/openapi/openapi-data-v1.yaml#/paths/~1data~1v1~1scoops~1search",
+    "body": {
+      "data": [
+        {
+          "type": "Scoop",
+          "id": "1382057",
+          "attributes": {
+            "id": "1382057",
+            "company": {
+              "id": "344589814",
+              "name": "ZoomInfo"
+            },
+            "description": "ZoomInfo Datanyze has recently been ranked #986 on the 2019 SaaS 1000 Top SaaS Companies list.",
+            "originalPublishedDate": "2019-02-22T00:00:00Z",
+            "publishedDate": "2019-02-22T00:00:00Z",
+            "types": [
+              {
+                "id": "6",
+                "type": "Award"
+              }
+            ]
+          }
+        },
+        {
+          "type": "Scoop",
+          "id": "1382056",
+          "attributes": {
+            "id": "1382056",
+            "company": {
+              "id": "344589814",
+              "name": "ZoomInfo"
+            },
+            "description": "ZoomInfo has recently been ranked #139 on the 2019 SaaS 1000 Top SaaS Companies list.",
+            "originalPublishedDate": "2019-02-15T00:00:00Z",
+            "publishedDate": "2019-02-15T00:00:00Z",
+            "topics": [
+              {
+                "id": "5",
+                "topic": "Award"
+              }
+            ],
+            "types": [
+              {
+                "id": "6",
+                "type": "Award"
+              }
+            ]
+          }
+        },
+        {
+          "type": "Scoop",
+          "id": "1373240",
+          "attributes": {
+            "id": "1373240",
+            "company": {
+              "id": "344589814",
+              "name": "ZoomInfo"
+            },
+            "description": "ZoomInfo has been recognized as a 2019 Top Rated Sales Intelligence Software by TrustRadius.",
+            "originalPublishedDate": "2019-02-11T00:00:00Z",
+            "publishedDate": "2019-02-11T00:00:00Z",
+            "topics": [
+              {
+                "id": "5",
+                "topic": "Award"
+              }
+            ],
+            "types": [
+              {
+                "id": "6",
+                "type": "Award"
+              }
+            ]
+          }
+        }
+      ],
+      "links": {
+        "first": "uri=/data/v1/scoops/search?page[number]=1&page[size]=25",
+        "last": "uri=/data/v1/scoops/search?page[number]=1&page[size]=25"
+      },
+      "meta": {
+        "page": {
+          "number": 1,
+          "total": 3
+        },
+        "totalResults": 3
+      }
+    }
+  },
+  "on_new_intent": {
+    "source": "https://docs.zoominfo.com/openapi/openapi-data-v1.yaml#/paths/~1data~1v1~1intent~1search",
+    "body": {
+      "data": [
+        {
+          "attributes": {
+            "audienceStrength": "B",
+            "category": "Cloud",
+            "recommendedContacts": [
+              {
+                "id": "4191419698",
+                "firstName": "Filip",
+                "lastName": "Popovic",
+                "jobTitle": "Chief Technology Officer",
+                "companyName": "ZoomInfo"
+              },
+              {
+                "id": "1260398587",
+                "firstName": "John",
+                "lastName": "Doe",
+                "jobTitle": "Software Engineer",
+                "companyName": "TechCorp"
+              }
+            ],
+            "signalDate": "2025-05-24T00:00:00Z",
+            "signalScore": 82,
+            "spikesInDateRange": 1,
+            "topic": "Cloud Applications"
+          },
+          "id": "vopctz9gg4g8#47028048#20250524",
+          "type": "Intent"
+        }
+      ],
+      "links": {
+        "first": "/data/v1/intents/search?page#[number]=1&page#[size]=25",
+        "last": "/data/v1/intents/search?page#[number]=1&page#[size]=25"
+      },
+      "meta": {
+        "page": {
+          "number": 1,
+          "total": 1
+        },
+        "totalResults": 1
+      }
+    }
+  }
+}

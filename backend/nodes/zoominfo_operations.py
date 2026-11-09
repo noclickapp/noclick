@@ -127,6 +127,20 @@ ZOOMINFO_OPERATIONS = {'search_contacts': {'method': 'POST',
                          'scope': 'api:audience-member:manage',
                          'source': 'https://docs.gtm.ai/reference/audienceinterface_getaudienceupload'}}
 
+# Poll the same provider search endpoints, with their documented date filters.
+ZOOMINFO_TRIGGERS = {
+    "on_updated_contact": {"search": "search_contacts", "label": "New or Updated Contact",
+                           "date_filter": "lastUpdatedDateAfter", "sort": None},
+    "on_new_scoop": {"search": "search_scoops", "label": "New Scoop",
+                     "date_filter": "publishedStartDate", "sort": "-originalPublishedDate"},
+    "on_new_intent": {"search": "search_intent", "label": "New Intent Signal",
+                      "date_filter": "signalStartDate", "sort": "-signalDate"},
+}
+for _name, _trigger in ZOOMINFO_TRIGGERS.items():
+    ZOOMINFO_OPERATIONS[_name] = {**ZOOMINFO_OPERATIONS[_trigger["search"]],
+                                 **_trigger, "kind": "poll"}
+
+
 OUTPUT_FIELDS = {'enrich_contacts': ['city',
                      'companyAlternateLogos',
                      'companyCity',

@@ -156,3 +156,116 @@ async def test_zoominfo_oauth_identity_and_declaration(monkeypatch):
     schema = native.ZoomInfoNode.get_config_schema()
     assert schema["$defs"]["ZoomInfoOAuthCredential"]["x-oauth-scopes"] == native.ZOOMINFO_SCOPES.declared_scopes()
     assert native.ZoomInfoNode.connection_evidence.operation == "get_usage"
+
+
+# Original response bodies are copied from ZoomInfo's published OpenAPI examples.
+TRIGGER_EXAMPLES = json.loads((Path(__file__).parent / "fixtures/zoominfo/trigger_examples.json").read_text())
+TRIGGER_CONFIGS = {
+    "on_updated_contact": {"filters": '{"companyName":"ZoomInfo"}', "since": "2024-01-01"},
+    "on_new_scoop": {"filters": '{"scoopType":"6"}', "since": "2018-11-01"},
+    "on_new_intent": {"filters": '{"topics":["Cloud Applications"]}', "since": "2024-01-01"},
+}
+
+
+def poll_state(monkeypatch, n):
+    state = {}
+    async def update(mutator, **kwargs):
+        replacement, result = mutator(state.copy())
+        if replacement is not None:
+            state.clear()
+            state.update(replacement)
+        return result
+    monkeypatch.setattr(n, "_update_node_state", update)
+    return state
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", TRIGGER_CONFIGS)
+async def test_zoominfo_poll_baseline_new_items_and_agent_event(monkeypatch, operation):
+    from copy import deepcopy
+    payload = deepcopy(TRIGGER_EXAMPLES[operation]["body"])
+    calls = transport(monkeypatch, payload)
+    n = node({"operation": operation, **TRIGGER_CONFIGS[operation]})
+    state = poll_state(monkeypatch, n)
+    first = await n.execute({})
+    assert first["new_count"] == 0 and state["seen_ids"]
+    assert not native.ZoomInfoNode.should_propagate_output(first, {"operation": operation})
+    assert native.ZoomInfoNode.resolve_agent_event(first) is None
+    # Same documented shape, another record/version as the next provider page.
+    changed = deepcopy(payload["data"][0])
+    changed["id"] += "-next"
+    payload["data"].append(changed)
+    payload["meta"]["totalResults"] = len(payload["data"])
+    result = await n.execute({})
+    assert result["data"] == [changed] and result["new_count"] == 1
+    assert n.trigger_emitted_event(result)
+    event = native.ZoomInfoNode.resolve_agent_event(result)
+    assert "ZoomInfo" in event["text"] and changed["id"] in event["text"]
+    attrs = changed["attributes"]
+    assert (attrs.get("lastName") or attrs.get("description") or attrs.get("topic")) in event["text"]
+    assert (await n.execute({}))["new_count"] == 0
+    assert calls[0].url.params["page[size]"] == "100"
+    request = json.loads(calls[0].content)
+    spec = native.ZOOMINFO_OPERATIONS[operation]
+    assert request["data"]["attributes"][spec["date_filter"]] == TRIGGER_CONFIGS[operation]["since"]
+    assert calls[0].url.path == "/gtm" + spec["path"]
+    if spec["sort"]:
+        assert calls[0].url.params["sort"] == spec["sort"]
+
+
+@pytest.mark.asyncio
+async def test_zoominfo_poll_same_contact_new_version(monkeypatch):
+    from copy import deepcopy
+    payload = deepcopy(TRIGGER_EXAMPLES["on_updated_contact"]["body"])
+    transport(monkeypatch, payload)
+    n = node({"operation": "on_updated_contact", **TRIGGER_CONFIGS["on_updated_contact"]})
+    poll_state(monkeypatch, n)
+    await n.execute({})
+    payload["data"][0]["attributes"]["lastUpdatedDate"] = "2025-04-05T18:13:00Z"
+    result = await n.execute({})
+    assert result["new_count"] == 1
+    assert (await n.execute({}))["new_count"] == 0
+
+
+@pytest.mark.asyncio
+async def test_zoominfo_poll_all_pages_before_state_write(monkeypatch):
+    from copy import deepcopy
+    payload = deepcopy(TRIGGER_EXAMPLES["on_updated_contact"]["body"])
+    first = deepcopy(payload)
+    first["meta"]["totalResults"] = 2
+    second = deepcopy(payload)
+    second["data"][0]["id"] = "next-contact"
+    second["meta"]["totalResults"] = 2
+    calls = []
+    def handle(request):
+        calls.append(request)
+        return httpx.Response(200, json=first if request.url.params["page[number]"] == "1" else second, headers={"content-type": native.MEDIA})
+    @asynccontextmanager
+    async def client(**kwargs):
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handle), **kwargs) as c:
+            yield c
+    monkeypatch.setattr(native, "guarded_async_client", client)
+    n = node({"operation": "on_updated_contact", **TRIGGER_CONFIGS["on_updated_contact"]})
+    state = poll_state(monkeypatch, n)
+    assert (await n.execute({}))["new_count"] == 0
+    assert len(state["seen_ids"]) == 2 and len(calls) == 2
+    # Failure on a later page must not consume the earlier page's events.
+    first["data"][0]["id"] = "unseen-contact"
+    second["data"] = "invalid"
+    before = deepcopy(state)
+    assert (await n.execute({}))["status"] == "error"
+    assert state == before
+
+
+def test_zoominfo_poll_scope_and_schema():
+    from nodes.core.poll_trigger import poll_scope, PollTriggerConfigBase
+    for operation, values in TRIGGER_CONFIGS.items():
+        config = {"operation": operation, **values}
+        parsed = native.ZoomInfoNode.parse_config({"config": config}).config
+        assert isinstance(parsed, PollTriggerConfigBase)
+        assert parsed.model_fields["operation"].json_schema_extra["x-is-trigger"] is True
+        original = poll_scope(native.ZoomInfoNode, config)
+        assert original == poll_scope(native.ZoomInfoNode, {**config, "label": "Cosmetic edit"})
+        assert original != poll_scope(native.ZoomInfoNode, {**config, "since": "2025-01-01"})
+    with pytest.raises(ValueError):
+        node({"operation": "on_new_intent", "filters": '{"companyName":"ZoomInfo"}', "since": "2024-01-01"})
