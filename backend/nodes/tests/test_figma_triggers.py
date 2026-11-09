@@ -42,7 +42,7 @@ def test_invalid_deliveries_fail_closed(body):
 @pytest.mark.parametrize("event_type", list(EVENTS))
 async def test_documented_events(event_type):
     payload = EVENTS[event_type]["body"]
-    assert FigmaNode.verify_webhook_signature(json.dumps(payload).encode(), {}, {"signing_secret": "secretpasscode"})
+    assert FigmaNode.verify_webhook_signature(json.dumps(payload).encode(), {}, {"signing_secret": payload["passcode"]})
     control = await FigmaNode.handle_control_event(payload, {}, pool=None, workflow_id=None, node_id=None)
     if event_type == "PING":
         assert control
@@ -56,9 +56,9 @@ async def test_documented_events(event_type):
     assert "passcode" not in output and "_webhook" not in output
     event = FigmaNode.resolve_agent_event(output)
     assert payload["file_key"] == event["conversation_key"]
-    assert payload["file_name"] in event["text"]
+    assert (payload.get("file_name") or payload["file_key"]) in event["text"]
     assert payload["file_key"] in event["text"]
-    assert "secretpasscode" not in event["text"]
+    assert payload["passcode"] not in event["text"]
     if event_type == "FILE_COMMENT":
         assert "Change selection colors" in event["text"]
         assert "Dylan Field" in event["text"]

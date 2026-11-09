@@ -288,6 +288,7 @@ class FigmaNodeConfig(NodeConfig[FigmaConfig, FigmaCredential]):
 
 class FigmaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-figma"
+    webhook_replace_stale_endpoint = True
     credential_provider_labels = {"figma": "Figma Account"}
     connection_evidence = ConnectionEvidence(
         operation="get_current_user", noun="account", identity_operation="get_current_user")
