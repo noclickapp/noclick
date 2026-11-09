@@ -1,0 +1,900 @@
+{
+  "$defs": {
+    "BenchmarkEmailClassicCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "benchmark_email_classic_api_token",
+          "default": "benchmark_email_classic_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Admin API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Benchmark Email Classic API Token",
+      "type": "object",
+      "x-credential-instructions": "In Benchmark Email Classic, open Integrations \u2192 API and copy your Admin API Token. Paste the token alone. NoClick sends it in the AuthToken header to Benchmark's Classic API. This is separate from the newer Benchmark Email API key.",
+      "x-credential-url": "https://ui.benchmarkemail.com/Integrate#AP"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "List ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Add Contact to List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Add Contact to List"
+        },
+        "email": {
+          "maxLength": 254,
+          "minLength": 1,
+          "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email_permission": {
+          "description": "1 only when the contact gave permission to receive email; 0 otherwise.",
+          "enum": [
+            "0",
+            "1"
+          ],
+          "title": "Email Permission",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "email",
+        "email_permission"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateEmail": {
+      "additionalProperties": false,
+      "description": "Create campaign details without calling the send or schedule endpoints.",
+      "properties": {
+        "operation": {
+          "const": "create_email",
+          "default": "create_email",
+          "title": "Create Email Campaign Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Emails",
+          "x-display-name": "Create Email Campaign Draft"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Campaign Name",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "from_name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "From Name",
+          "type": "string"
+        },
+        "from_email": {
+          "maxLength": 254,
+          "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+          "title": "From Email",
+          "type": "string"
+        },
+        "reply_email": {
+          "maxLength": 254,
+          "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+          "title": "Reply Email",
+          "type": "string"
+        },
+        "version": {
+          "default": "400",
+          "description": "Classic editor version; the collection's draft example uses 400.",
+          "maxLength": 20,
+          "title": "Editor Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "subject",
+        "from_name",
+        "from_email",
+        "reply_email"
+      ],
+      "title": "CreateEmail",
+      "type": "object"
+    },
+    "CreateList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create Contact List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Create Contact List"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "List Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateList",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "description": "Delete from the specified list only; not the all-lists endpoint.",
+      "properties": {
+        "list_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "List ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact from List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Delete Contact from List"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Email Campaign ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_email",
+          "default": "delete_email",
+          "title": "Delete Email Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Emails",
+          "x-display-name": "Delete Email Campaign"
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "DeleteEmail",
+      "type": "object"
+    },
+    "DeleteList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "List ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_list",
+          "default": "delete_list",
+          "title": "Delete Contact List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Delete Contact List"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "DeleteList",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "List ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Email Campaign ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_email",
+          "default": "get_email",
+          "title": "Get Email Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Emails",
+          "x-display-name": "Get Email Campaign"
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "GetEmail",
+      "type": "object"
+    },
+    "GetEmailClicks": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Email Campaign ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_email_clicks",
+          "default": "get_email_clicks",
+          "title": "Get Email Clicks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Email Clicks"
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "GetEmailClicks",
+      "type": "object"
+    },
+    "GetEmailOpens": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Email Campaign ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_email_opens",
+          "default": "get_email_opens",
+          "title": "Get Email Opens",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Email Opens"
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "GetEmailOpens",
+      "type": "object"
+    },
+    "GetEmailReport": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Email Campaign ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_email_report",
+          "default": "get_email_report",
+          "title": "Get Email Campaign Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Email Campaign Report"
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "GetEmailReport",
+      "type": "object"
+    },
+    "GetList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "List ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Get Contact List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Get Contact List"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetList",
+      "type": "object"
+    },
+    "GetListFields": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "List ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_list_fields",
+          "default": "get_list_fields",
+          "title": "Get Contact List Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Get Contact List Fields"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetListFields",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "description": "Read the API's default page of contacts in one list.",
+      "properties": {
+        "list_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "List ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListEmails": {
+      "additionalProperties": false,
+      "description": "Read the API's default page of email campaigns, with the total Count.",
+      "properties": {
+        "operation": {
+          "const": "list_emails",
+          "default": "list_emails",
+          "title": "List Email Campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Emails",
+          "x-display-name": "List Email Campaigns"
+        }
+      },
+      "title": "ListEmails",
+      "type": "object"
+    },
+    "ListLists": {
+      "additionalProperties": false,
+      "description": "Read the API's default page of lists; Count is the provider's total.",
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "List Contact Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "List Contact Lists"
+        }
+      },
+      "title": "ListLists",
+      "type": "object"
+    },
+    "RenameEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "email_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Email Campaign ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "rename_email",
+          "default": "rename_email",
+          "title": "Rename Email Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Emails",
+          "x-display-name": "Rename Email Campaign"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Campaign Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email_id",
+        "name"
+      ],
+      "title": "RenameEmail",
+      "type": "object"
+    },
+    "SearchContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "title": "Search Contacts by Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Search Contacts by Email"
+        },
+        "email": {
+          "maxLength": 254,
+          "minLength": 1,
+          "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "search_filter": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Filter"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "SearchContacts",
+      "type": "object"
+    },
+    "UnsubscribeContact": {
+      "additionalProperties": false,
+      "description": "Move the contact to the master Do Not Contact list.",
+      "properties": {
+        "list_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "List ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "unsubscribe_contact",
+          "default": "unsubscribe_contact",
+          "title": "Unsubscribe Contact Globally",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Unsubscribe Contact Globally"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_id"
+      ],
+      "title": "UnsubscribeContact",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "List ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update Contact"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "minLength": 1,
+              "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "List ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_list",
+          "default": "update_list",
+          "title": "Update Contact List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Update Contact List"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "List Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "list_id",
+        "name"
+      ],
+      "title": "UpdateList",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/CreateContact",
+          "create_email": "#/$defs/CreateEmail",
+          "create_list": "#/$defs/CreateList",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_email": "#/$defs/DeleteEmail",
+          "delete_list": "#/$defs/DeleteList",
+          "get_account": "#/$defs/GetAccount",
+          "get_contact": "#/$defs/GetContact",
+          "get_email": "#/$defs/GetEmail",
+          "get_email_clicks": "#/$defs/GetEmailClicks",
+          "get_email_opens": "#/$defs/GetEmailOpens",
+          "get_email_report": "#/$defs/GetEmailReport",
+          "get_list": "#/$defs/GetList",
+          "get_list_fields": "#/$defs/GetListFields",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_emails": "#/$defs/ListEmails",
+          "list_lists": "#/$defs/ListLists",
+          "rename_email": "#/$defs/RenameEmail",
+          "search_contacts": "#/$defs/SearchContacts",
+          "unsubscribe_contact": "#/$defs/UnsubscribeContact",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_list": "#/$defs/UpdateList"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListLists"
+        },
+        {
+          "$ref": "#/$defs/GetList"
+        },
+        {
+          "$ref": "#/$defs/GetListFields"
+        },
+        {
+          "$ref": "#/$defs/CreateList"
+        },
+        {
+          "$ref": "#/$defs/UpdateList"
+        },
+        {
+          "$ref": "#/$defs/DeleteList"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/SearchContacts"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/UnsubscribeContact"
+        },
+        {
+          "$ref": "#/$defs/ListEmails"
+        },
+        {
+          "$ref": "#/$defs/GetEmail"
+        },
+        {
+          "$ref": "#/$defs/CreateEmail"
+        },
+        {
+          "$ref": "#/$defs/RenameEmail"
+        },
+        {
+          "$ref": "#/$defs/DeleteEmail"
+        },
+        {
+          "$ref": "#/$defs/GetEmailReport"
+        },
+        {
+          "$ref": "#/$defs/GetEmailOpens"
+        },
+        {
+          "$ref": "#/$defs/GetEmailClicks"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BenchmarkEmailClassicCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Benchmark-email-classic Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
