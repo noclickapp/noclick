@@ -1,0 +1,1806 @@
+{
+  "$defs": {
+    "BookingFormData": {
+      "additionalProperties": false,
+      "description": "Field IDs come from Get Scheduling Form for this business and service.",
+      "properties": {
+        "fields": {
+          "additionalProperties": true,
+          "description": "Object keyed by scheduling form field UID. Supply every required field, including when using client_id.",
+          "title": "Fields",
+          "type": "object"
+        },
+        "service_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service Fields"
+        },
+        "meeting_details": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For client location/phone services, include meeting_interaction_details.",
+          "title": "Meeting Details"
+        },
+        "others": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Others"
+        },
+        "policies": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "boolean"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Policies"
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "title": "BookingFormData",
+      "type": "object"
+    },
+    "VcitaAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "vcita_api_token",
+          "default": "vcita_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "vcita API Token",
+      "type": "object",
+      "x-credential-instructions": "As the account owner, open Settings > Integrations > Webhooks > Connect and copy the API token. Paste the token below without the Bearer prefix. It is sent only to api.vcita.biz. Your token's permissions determine which operations are available.",
+      "x-credential-url": "https://app.vcita.com/app/settings/integrations",
+      "x-help-url": "https://support.vcita.com/hc/en-us/articles/227895628-vcita-REST-API-for-Developers"
+    },
+    "VcitaCancelBookingConfig": {
+      "additionalProperties": false,
+      "description": "Cancel a Booking [Alpha].",
+      "properties": {
+        "operation": {
+          "const": "cancel_booking",
+          "default": "cancel_booking",
+          "title": "Cancel Booking",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking_id": {
+          "description": "Booking (appointment/event) uid. Can be obtained from:\n- `GET /platform/v1/scheduling/bookings` (requires Client token)\n- `GET /platform/v1/scheduling/appointments` (returns `id` field which is the booking_id)\n- Response from `POST /platform/v1/scheduling/bookings` (returns `data.booking.id`)",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Booking Id",
+          "type": "string"
+        },
+        "business_id": {
+          "description": "Business uid",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Business Id",
+          "type": "string"
+        },
+        "event_instance_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event instance uid. Required only for cancelling event registrations (not appointments).",
+          "title": "Event Instance Id"
+        }
+      },
+      "required": [
+        "booking_id",
+        "business_id"
+      ],
+      "title": "VcitaCancelBookingConfig",
+      "type": "object"
+    },
+    "VcitaCreateBookingConfig": {
+      "additionalProperties": false,
+      "description": "Create New Booking [Alpha].",
+      "properties": {
+        "operation": {
+          "const": "create_booking",
+          "default": "create_booking",
+          "title": "Create Booking",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "business_id": {
+          "description": "Business uid",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Business Id",
+          "type": "string"
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source campaign",
+          "title": "Campaign"
+        },
+        "channel": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source channel",
+          "title": "Channel"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client uid. Only usable with a Client token. Does not exempt the request from scheduling-form validation: fields marked `required: true` must still be supplied via `form_data.fields`, otherwise the request fails with 422 `FORM_VALIDATION_ERROR`.",
+          "title": "Client Id"
+        },
+        "event_instance_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event instance uid. Required for event registration (not appointment booking).",
+          "title": "Event Instance Id"
+        },
+        "form_data": {
+          "$ref": "#/$defs/BookingFormData",
+          "description": "Client form data for the scheduling form. **Required** - every field marked `required: true` in the form definition must be present here, even when `client_id` is supplied. Field uids come from `GET /platform/v1/scheduling/scheduling_forms/get_form?business_id={business_id}&service_id={service_id}`.\n\n## Structure\n`form_data` is an object of named sections - `fields`, `service_fields`, `meeting_details`, `others`, `policies`, `client_settings`. Every section is an object, never an array, and `fields` is keyed by field uid:\n```json\n{\n  \"form_data\": {\n    \"fields\": {\n      \"{email_field_id}\": \"client@example.com\",\n      \"{first_name_field_id}\": \"John\"\n    },\n    \"others\": { \"notes\": null },\n    \"policies\": {}\n  }\n}\n```\n\nThere is no `field_id` / `type` / `new_data` wrapper."
+        },
+        "matter_uid": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matter uid (conversation context)",
+          "title": "Matter Uid"
+        },
+        "portal_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business uid (same as business_id, for portal context)",
+          "title": "Portal Id"
+        },
+        "service_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Service uid. Required for appointment booking.",
+          "title": "Service Id"
+        },
+        "source_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source name (e.g., 'client_portal', 'api')",
+          "title": "Source Name"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source URL",
+          "title": "Source Url"
+        },
+        "staff_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Staff uid. Required for appointment booking. Must be one of the service's `providers_staff` (see `GET /platform/v1/services`).",
+          "title": "Staff Id"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 format (e.g., \"2026-09-16T15:00:00Z\"). Required for appointment. Must be a slot where the whole service duration fits - see `GET /platform/v1/staff/availability`.",
+          "title": "Start Time"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default is set to UTC if not provided",
+          "title": "Time Zone"
+        }
+      },
+      "required": [
+        "business_id",
+        "form_data"
+      ],
+      "title": "VcitaCreateBookingConfig",
+      "type": "object"
+    },
+    "VcitaCreateClientConfig": {
+      "additionalProperties": false,
+      "description": "Create a Client.",
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Create Client",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Address",
+          "title": "Address"
+        },
+        "custom_field1": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom Field 1",
+          "title": "Custom Field1"
+        },
+        "custom_field2": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom Field 2",
+          "title": "Custom Field2"
+        },
+        "custom_field3": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom Field 3",
+          "title": "Custom Field3"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email Address. Must be a valid email format (e.g., user@example.com)",
+          "format": "email",
+          "title": "Email"
+        },
+        "first_name": {
+          "description": "First Name",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last Name",
+          "title": "Last Name"
+        },
+        "opt_in": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Marketing email opt-in status. Accepts boolean values (`true` / `false`) or string values (`\"1\"` / `\"0\"`). When set to `true` (or `\"1\"`), the client is opted in to receive marketing emails; when set to `false` (or `\"0\"`), the client is opted out. This is distinct from `opt_in_transactional_sms`, which controls transactional SMS consent.",
+          "title": "Opt In"
+        },
+        "opt_in_transactional_sms": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the client opts in to receive transactional SMS messages.",
+          "title": "Opt In Transactional Sms"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone Number",
+          "title": "Phone"
+        },
+        "source_campaign": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source campaign",
+          "title": "Source Campaign"
+        },
+        "source_channel": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source channel",
+          "title": "Source Channel"
+        },
+        "source_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source name",
+          "title": "Source Name"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source URL",
+          "title": "Source Url"
+        },
+        "staff_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Staff ID. Reference to the staff member (see staff entity).",
+          "title": "Staff Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "lead",
+                "customer",
+                "loyal",
+                "inactive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use a client status to categorize clients according to their relationship with your business. Valid values: lead, customer, loyal, inactive",
+          "title": "Status",
+          "enum": [
+            "lead",
+            "customer",
+            "loyal",
+            "inactive"
+          ],
+          "x-enum-searchable": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The tag system is based on customized labels that you create, so you can sort your data using personalized words, phrases or themes that are meaningful to you and your business",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "first_name"
+      ],
+      "title": "VcitaCreateClientConfig",
+      "type": "object"
+    },
+    "VcitaDeleteClientConfig": {
+      "additionalProperties": false,
+      "description": "Deletes a Client by Id.",
+      "properties": {
+        "operation": {
+          "const": "delete_client",
+          "default": "delete_client",
+          "title": "Delete Client",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Client UID",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "VcitaDeleteClientConfig",
+      "type": "object"
+    },
+    "VcitaGetAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Get Appointment.",
+      "properties": {
+        "operation": {
+          "const": "get_appointment",
+          "default": "get_appointment",
+          "title": "Get Appointment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "appointment_id": {
+          "description": "Appointment id",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Appointment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "appointment_id"
+      ],
+      "title": "VcitaGetAppointmentConfig",
+      "type": "object"
+    },
+    "VcitaGetClientConfig": {
+      "additionalProperties": false,
+      "description": "Retrieves a Client by Id.",
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Get Client",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Client UID",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "VcitaGetClientConfig",
+      "type": "object"
+    },
+    "VcitaGetFieldConfig": {
+      "additionalProperties": false,
+      "description": "Get Field Details.",
+      "properties": {
+        "operation": {
+          "const": "get_field",
+          "default": "get_field",
+          "title": "Get Field",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "field_id": {
+          "description": "Field ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Field Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_id"
+      ],
+      "title": "VcitaGetFieldConfig",
+      "type": "object"
+    },
+    "VcitaGetInvoiceConfig": {
+      "additionalProperties": false,
+      "description": "Get Invoice By ID.",
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get Invoice",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "description": "Invoice ID",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "VcitaGetInvoiceConfig",
+      "type": "object"
+    },
+    "VcitaGetPaymentConfig": {
+      "additionalProperties": false,
+      "description": "Get Payment by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_payment",
+          "default": "get_payment",
+          "title": "Get Payment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_uid": {
+          "description": "Payment UID",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Payment Uid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "payment_uid"
+      ],
+      "title": "VcitaGetPaymentConfig",
+      "type": "object"
+    },
+    "VcitaGetSchedulingFormConfig": {
+      "additionalProperties": false,
+      "description": "Get Scheduling Form.",
+      "properties": {
+        "operation": {
+          "const": "get_scheduling_form",
+          "default": "get_scheduling_form",
+          "title": "Get Scheduling Form",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "business_id": {
+          "description": "Business uid",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Business Id",
+          "type": "string"
+        },
+        "service_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Service uid, to get the form for a specific service. Omit it and the business-level form is returned, which can miss service-specific fields. Accepts a comma-separated list of uids for a multi-service booking (e.g. \"vpa6mzkt11f1n2pc,x8enou59f38uy7kb\").",
+          "title": "Service Id"
+        }
+      },
+      "required": [
+        "business_id"
+      ],
+      "title": "VcitaGetSchedulingFormConfig",
+      "type": "object"
+    },
+    "VcitaGetServiceConfig": {
+      "additionalProperties": false,
+      "description": "Get Service Details.",
+      "properties": {
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Get Service",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_uid": {
+          "description": "Service UID",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Service Uid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_uid"
+      ],
+      "title": "VcitaGetServiceConfig",
+      "type": "object"
+    },
+    "VcitaGetStaffAvailabilityConfig": {
+      "additionalProperties": false,
+      "description": "Get Staff Availability.",
+      "properties": {
+        "operation": {
+          "const": "get_staff_availability",
+          "default": "get_staff_availability",
+          "title": "Get Staff Availability",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "description": "The start date of the availability window in `YYYY-MM-DD` format (e.g., \"2026-03-03\"). Must be a valid date string that can be parsed into a timezone-aware datetime.",
+          "maxLength": 10000,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "The end date of the availability window in `YYYY-MM-DD` format (e.g., \"2026-03-10\"). Must be a valid date string that can be parsed into a timezone-aware datetime. The range between `start_date` and `end_date` determines the window for which availability slots are returned.",
+          "maxLength": 10000,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "title": "End Date",
+          "type": "string"
+        },
+        "staff_ids_array": {
+          "description": "Comma-separated list of staff member UIDs to query availability for (e.g., \"j9c1xh0vzvkr2g0g\" or \"j9c1xh0vzvkr2g0g, abc123def456\"). If the value is a comma-separated string, it will be split into an array internally. At least one staff UID should be provided for meaningful results.",
+          "maxLength": 10000,
+          "title": "Staff Ids Array",
+          "type": "string"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA time zone identifier used to localize the returned availability slots (e.g., \"UTC\", \"America/New_York\", \"Asia/Jerusalem\"). Defaults to \"UTC\" if not provided. The time zone affects the `start_time` formatting and date grouping in the response.",
+          "title": "Time Zone"
+        },
+        "aggregate_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "date",
+                "staff"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Controls how the availability slots are grouped in the response. When set to \"date\" (the default), slots are grouped by date string (e.g., \"2026-03-03\"). When set to \"staff\", slots are grouped first by staff UID and then by date, and the `staff_id` field is removed from individual slot objects.",
+          "title": "Aggregate By",
+          "enum": [
+            "date",
+            "staff"
+          ],
+          "x-enum-searchable": true
+        },
+        "booking_instance_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An existing booking instance UID to exclude from the availability calculation. This is useful when rescheduling an appointment \u2014 the time currently occupied by this booking will be treated as available. (e.g., \"bk_abc123\")",
+          "title": "Booking Instance Id"
+        },
+        "include_dst": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to \"true\", the returned `start_time` values will include daylight saving time (DST) offset adjustments for the specified time zone. When \"false\" or omitted, DST adjustments may not be applied.",
+          "title": "Include Dst",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "show_past_availabilities": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to \"true\", includes availability slots that fall before the current time. By default (\"false\"), only future availability is returned.",
+          "title": "Show Past Availabilities",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "ignore_min_schedule": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to \"true\", ignores the business's minimum scheduling notice (the minimum amount of time before an appointment can be booked). Useful for internal tools or admin-level booking where the minimum lead time should not apply.",
+          "title": "Ignore Min Schedule",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "AppointmentService",
+                "EventService"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of service to check availability for. \"AppointmentService\" returns individual appointment slots based on staff schedules. \"EventService\" returns event instance availability with additional fields such as pricing and interaction details.",
+          "title": "Type",
+          "enum": [
+            "AppointmentService",
+            "EventService"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date",
+        "staff_ids_array"
+      ],
+      "title": "VcitaGetStaffAvailabilityConfig",
+      "type": "object"
+    },
+    "VcitaListAppointmentsConfig": {
+      "additionalProperties": false,
+      "description": "Get Appointments List.",
+      "properties": {
+        "operation": {
+          "const": "list_appointments",
+          "default": "list_appointments",
+          "title": "List Appointments",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business ID (optional)",
+          "title": "Business Id"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client ID Filter",
+          "title": "Client Id"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "State Filter - rejected/scheduled/done/cancelled/pending_reschedule/reschedule e.g state=done,rejected",
+          "title": "State"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Multiple order by option - updated:DESC,start_at:ASC,created:DESC",
+          "title": "Sort"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number of results. Default: 1",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "How many items to return per page. Default: 25. Max: 100",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "VcitaListAppointmentsConfig",
+      "type": "object"
+    },
+    "VcitaListClientsConfig": {
+      "additionalProperties": false,
+      "description": "Get Clients.",
+      "properties": {
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "List Clients",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_term": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search Term",
+          "title": "Search Term"
+        },
+        "search_by": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search By - email/uid/phone/updated_at",
+          "title": "Search By"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify the updated_at filter range, available operators for updated_at: gte, lte. example: updated_at[gte]=2019-01-01",
+          "title": "Updated At"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number of results. Default: 1",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "How many items to return per page. Default: 25. Max: 100",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "on_behalf_of": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business UID to act on behalf of. Required for Directory tokens.",
+          "title": "On Behalf Of"
+        }
+      },
+      "title": "VcitaListClientsConfig",
+      "type": "object"
+    },
+    "VcitaListEstimatesConfig": {
+      "additionalProperties": false,
+      "description": "Get Estimates List.",
+      "properties": {
+        "operation": {
+          "const": "list_estimates",
+          "default": "list_estimates",
+          "title": "List Estimates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort results. Available fields: created_at, updated_at, state. Operators: asc, desc. Example: sort=created_at:asc,updated_at:desc",
+          "title": "Sort"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number of results. Default: 1",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "How many items to return per page. Default: 25",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "VcitaListEstimatesConfig",
+      "type": "object"
+    },
+    "VcitaListFieldsConfig": {
+      "additionalProperties": false,
+      "description": "Get Fields List.",
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "List Fields",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "VcitaListFieldsConfig",
+      "type": "object"
+    },
+    "VcitaListInvoicesConfig": {
+      "additionalProperties": false,
+      "description": "Get Invoices List.",
+      "properties": {
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "List Invoices",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort by one of the following: created_at, updated_at, state. available operators: asc, desc. example: sort=created_at:asc,updated_at:desc",
+          "title": "Sort"
+        },
+        "page": {
+          "default": "1",
+          "description": "Page offset",
+          "maxLength": 10000,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Page",
+          "type": "string"
+        },
+        "per_page": {
+          "default": "25",
+          "description": "Page size",
+          "maxLength": 10000,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Per Page",
+          "type": "string"
+        }
+      },
+      "title": "VcitaListInvoicesConfig",
+      "type": "object"
+    },
+    "VcitaListPaymentsConfig": {
+      "additionalProperties": false,
+      "description": "Get Payments List.",
+      "properties": {
+        "operation": {
+          "const": "list_payments",
+          "default": "list_payments",
+          "title": "List Payments",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "on_behalf_of": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A unique identifer of the business. Can be the Business UID or nickname\\external ID",
+          "title": "On Behalf Of"
+        },
+        "page": {
+          "default": "1",
+          "description": "Page offset",
+          "maxLength": 10000,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Page",
+          "type": "string"
+        },
+        "per_page": {
+          "default": "25",
+          "description": "Page size",
+          "maxLength": 10000,
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Per Page",
+          "type": "string"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort by one of the following: created_at, updated_at.\n                                                                      Available operators: asc, desc.\n                                                                      Example: sort=created_at:asc,updated_at:desc",
+          "title": "Sort"
+        }
+      },
+      "title": "VcitaListPaymentsConfig",
+      "type": "object"
+    },
+    "VcitaListServicesConfig": {
+      "additionalProperties": false,
+      "description": "Get Services List.",
+      "properties": {
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "List Services",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number of results. Default: 1",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "How many items to return per page. Default: 25. Max: 100",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "business_id": {
+          "description": "The business's unique identifier",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Business Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "business_id"
+      ],
+      "title": "VcitaListServicesConfig",
+      "type": "object"
+    },
+    "VcitaUpdateClientConfig": {
+      "additionalProperties": false,
+      "description": "Updates a Client.",
+      "properties": {
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Update Client",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Client UID",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Address. Send `null` or `\"\"` to clear this field if force_nullifying is true.",
+          "title": "Address"
+        },
+        "custom_field1": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom Field 1",
+          "title": "Custom Field1"
+        },
+        "custom_field2": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom Field 2",
+          "title": "Custom Field2"
+        },
+        "custom_field3": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom Field 3",
+          "title": "Custom Field3"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email Address. Must be a valid email format (e.g., user@example.com)",
+          "format": "email",
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First Name",
+          "title": "First Name"
+        },
+        "force_nullifying": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, allows nullable fields (address, mobile_phone) to be cleared by sending `null` or empty string. Must be boolean true or string \"true\".",
+          "title": "Force Nullifying"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last Name",
+          "title": "Last Name"
+        },
+        "mobile_phone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone Number. Send `null` or `\"\"` to clear this field if force_nullifying is true.",
+          "title": "Mobile Phone"
+        },
+        "opt_in": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Marketing email opt-in status. Accepts boolean values (`true` / `false`) or string values (`\"1\"` / `\"0\"`). When set to `true` (or `\"1\"`), the client is opted in to receive marketing emails; when set to `false` (or `\"0\"`), the client is opted out. This is distinct from `opt_in_transactional_sms`, which controls transactional SMS consent.",
+          "title": "Opt In"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone Number",
+          "title": "Phone"
+        },
+        "source_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source name. Updates the client's source label (e.g., \"website\", \"client_portal\", \"contact_form\"). The new value is reflected in the `source` field on subsequent GET responses. Note: unlike `POST /platform/v1/clients`, this does NOT create or update the underlying source record, so existing `source_url`, `channel`, and `campaign` values remain unchanged.",
+          "title": "Source Name"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source URL. Persists the URL on the client record but, unlike `POST /platform/v1/clients`, does NOT update the underlying source record. As a result, the value will not be reflected in the `source_url` field returned by subsequent GET responses (which is read from the source record). To change the visible `source_url`, `channel`, or `campaign` of an existing client, the source record itself must be updated through other means.",
+          "title": "Source Url"
+        },
+        "spam": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client marked as spam",
+          "title": "Spam"
+        },
+        "staff_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Staff ID",
+          "title": "Staff Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "lead",
+                "customer",
+                "loyal",
+                "inactive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use a client status to categorize clients according to their relationship with your business. Valid values: lead, customer, loyal, inactive",
+          "title": "Status",
+          "enum": [
+            "lead",
+            "customer",
+            "loyal",
+            "inactive"
+          ],
+          "x-enum-searchable": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The tag system is based on customized labels that you create, so you can sort your data using personalized words, phrases or themes that are meaningful to you and your business",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "VcitaUpdateClientConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_booking": "#/$defs/VcitaCancelBookingConfig",
+          "create_booking": "#/$defs/VcitaCreateBookingConfig",
+          "create_client": "#/$defs/VcitaCreateClientConfig",
+          "delete_client": "#/$defs/VcitaDeleteClientConfig",
+          "get_appointment": "#/$defs/VcitaGetAppointmentConfig",
+          "get_client": "#/$defs/VcitaGetClientConfig",
+          "get_field": "#/$defs/VcitaGetFieldConfig",
+          "get_invoice": "#/$defs/VcitaGetInvoiceConfig",
+          "get_payment": "#/$defs/VcitaGetPaymentConfig",
+          "get_scheduling_form": "#/$defs/VcitaGetSchedulingFormConfig",
+          "get_service": "#/$defs/VcitaGetServiceConfig",
+          "get_staff_availability": "#/$defs/VcitaGetStaffAvailabilityConfig",
+          "list_appointments": "#/$defs/VcitaListAppointmentsConfig",
+          "list_clients": "#/$defs/VcitaListClientsConfig",
+          "list_estimates": "#/$defs/VcitaListEstimatesConfig",
+          "list_fields": "#/$defs/VcitaListFieldsConfig",
+          "list_invoices": "#/$defs/VcitaListInvoicesConfig",
+          "list_payments": "#/$defs/VcitaListPaymentsConfig",
+          "list_services": "#/$defs/VcitaListServicesConfig",
+          "update_client": "#/$defs/VcitaUpdateClientConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VcitaListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaGetClientConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaCreateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaUpdateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaDeleteClientConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaGetFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaListAppointmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaGetAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaCreateBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaCancelBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaListServicesConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaGetServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaListPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaGetPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaGetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaListEstimatesConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaGetSchedulingFormConfig"
+        },
+        {
+          "$ref": "#/$defs/VcitaGetStaffAvailabilityConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VcitaAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Vcita Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
