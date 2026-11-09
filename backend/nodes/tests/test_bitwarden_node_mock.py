@@ -64,3 +64,119 @@ def test_custom_permission_null_is_not_a_wire_value():
         native.MemberCreateRequestModel(type=2, email="jsmith@example.com", permissions=None)
     body = native.MemberCreateRequestModel(type=2, email="jsmith@example.com")
     assert "permissions" not in body.model_dump(mode="json", exclude_unset=True)
+
+
+# Copied verbatim from https://bitwarden.com/help/public-api/#sample-request.
+EVENT_RESPONSE = json.loads((Path(__file__).parent / 'fixtures/bitwarden/events.json').read_text())['body']
+
+
+def poll_node(config=None):
+    instance = node({'operation': 'on_new_event', **(config or {})})
+    state = {}
+    async def update(mutator, **kwargs):
+        replacement, result = mutator(dict(state))
+        if replacement is not None:
+            state.clear()
+            state.update(replacement)
+        return result
+    instance._update_node_state = update
+    return instance, state
+
+
+@pytest.mark.asyncio
+async def test_documented_events_baseline_pagination_dedup_and_agent(monkeypatch):
+    instance, state = poll_node({'actingUserId': 'a2549f79-a71f-4eb9-9234-eb7247333f94'})
+    requests = []
+    real = httpx.AsyncClient
+    def reply(request):
+        requests.append(request)
+        assert request.url.path == '/public/events'
+        assert request.url.params['actingUserId'] == 'a2549f79-a71f-4eb9-9234-eb7247333f94'
+        assert 'schedule' not in request.url.params and 'lookback_hours' not in request.url.params
+        from datetime import datetime, timedelta
+        start, end = (datetime.fromisoformat(request.url.params[k]) for k in ('start', 'end'))
+        assert end - start == timedelta(hours=24)
+        if request.url.params.get('continuationToken'):
+            assert request.url.params['continuationToken'] == 'string'
+            return httpx.Response(200, json={'object': 'list', 'data': [], 'continuationToken': None})
+        return httpx.Response(200, json=EVENT_RESPONSE)
+    monkeypatch.setattr(native.httpx, 'AsyncClient', lambda **kw: real(transport=httpx.MockTransport(reply), **kw))
+    assert await instance.execute({}) == {'events': [], 'new_event_count': 0}
+    assert instance.trigger_produced_no_event({})
+    assert native.BitwardenNode.resolve_agent_event({'events': []}) is None
+    assert len(state['seen_ids']) == 1
+    # An existing empty baseline models the documented event arriving after arming.
+    state['seen_ids'] = []
+    result = await instance.execute({})
+    assert result == {'events': EVENT_RESPONSE['data'], 'new_event_count': 1}
+    assert instance.trigger_emitted_event(result)
+    assert native.BitwardenNode.should_propagate_output(result, {'operation': 'on_new_event'})
+    event = native.BitwardenNode.resolve_agent_event(result)
+    assert 'string logged in' in event['text']
+    assert '2020-11-04T15:01:21.698Z' in event['text'] and 'itemId=string' in event['text']
+    assert await instance.execute({}) == {'events': [], 'new_event_count': 0}
+    assert len(requests) == 6
+    for first, second in zip(requests[::2], requests[1::2]):
+        assert first.url.params['start'] == second.url.params['start']
+        assert first.url.params['end'] == second.url.params['end']
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('kind,code', list(native.EVENT_KINDS.items()))
+async def test_event_kind_filters_are_contract_enum_values(monkeypatch, kind, code):
+    instance, state = poll_node({'event_kind': kind})
+    state['seen_ids'] = []
+    # Vary only the documented EventType enum to exercise each configured filter.
+    matching = {**EVENT_RESPONSE['data'][0], 'type': code}
+    other = {**matching, 'type': 1000}
+    async def request(*args, **kwargs):
+        return {'object': 'list', 'data': [other, matching, matching], 'continuationToken': None}
+    monkeypatch.setattr(instance, '_request', request)
+    result = await instance.execute({})
+    assert result == {'events': [matching], 'new_event_count': 1}
+    assert native.EVENT_LABELS[code] in native.BitwardenNode.resolve_agent_event(result)['text']
+
+
+@pytest.mark.asyncio
+async def test_poll_scope_rebaselines_only_on_watched_fields(monkeypatch):
+    from nodes.core.poll_trigger import poll_scope
+    instance, state = poll_node()
+    async def request(*args, **kwargs):
+        return {**EVENT_RESPONSE, 'continuationToken': None}
+    monkeypatch.setattr(instance, '_request', request)
+    state.update(seen_ids=[], scope=poll_scope(native.BitwardenNode, {'operation': 'on_new_event'}))
+    scope = state['scope']
+    assert poll_scope(native.BitwardenNode, {'operation': 'on_new_event', 'label': 'New label',
+        'schedule': {'frequency': 'minutes', 'interval': 10}}) == scope
+    instance._config = native.BitwardenNode.parse_config({'config': {'operation': 'on_new_event',
+        'event_kind': 'item_created'}, 'credentials': instance.config.credentials.model_dump()})
+    assert await instance.execute({}) == {'events': [], 'new_event_count': 0}
+    assert state['scope'] != scope
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('failure', ['repeated_cursor', 'http_error', 'invalid_list', 'too_many', 'page_limit'])
+async def test_incomplete_poll_never_advances_seen_state(monkeypatch, failure):
+    instance, state = poll_node()
+    state['seen_ids'] = []
+    calls = 0
+    async def request(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        if failure == 'http_error' and calls == 2:
+            raise ValueError('Bitwarden HTTP 401: Token expired')
+        if failure == 'invalid_list':
+            return {'object': 'list'}
+        if failure == 'too_many':
+            return {'data': EVENT_RESPONSE['data'] * 10001}
+        return {**EVENT_RESPONSE, 'continuationToken': str(calls) if failure == 'page_limit' else 'string'}
+    monkeypatch.setattr(instance, '_request', request)
+    with pytest.raises(ValueError):
+        await instance.execute({})
+    assert state == {'seen_ids': []}
+
+
+def test_event_identity_uses_documented_fields_and_is_order_independent():
+    event = EVENT_RESPONSE['data'][0]
+    assert native.BitwardenNode._event_key(event) == native.BitwardenNode._event_key(dict(reversed(list(event.items()))))
+    assert native.BitwardenNode._event_key(event) != native.BitwardenNode._event_key({**event, 'type': 1100})

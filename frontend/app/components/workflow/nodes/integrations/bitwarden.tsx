@@ -15,7 +15,7 @@ BitwardenIcon.displayName = 'BitwardenIcon';
 export const BitwardenNode: NodeDefinition = {
     type: 'automation-bitwarden',
     label: 'Bitwarden',
-    description: 'Manage organization members, groups, collections, events and policies',
+    description: 'Start workflows from organization events and manage members, groups, collections and policies',
     category: 'developer-tools',
     Icon: BitwardenIcon,
     iconColor: '',

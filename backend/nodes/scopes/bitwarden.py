@@ -6,6 +6,7 @@ BITWARDEN_SCOPES = ScopeRegistry("bitwarden", {
     'update_collection': ScopeRequirement(scopes=("api.organization",)),
     'delete_collection': ScopeRequirement(scopes=("api.organization",)),
     'list_collections': ScopeRequirement(scopes=("api.organization",)),
+    'on_new_event': ScopeRequirement(scopes=("api.organization",)),
     'list_events': ScopeRequirement(scopes=("api.organization",)),
     'get_group': ScopeRequirement(scopes=("api.organization",)),
     'update_group': ScopeRequirement(scopes=("api.organization",)),

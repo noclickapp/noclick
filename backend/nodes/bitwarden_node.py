@@ -6,7 +6,9 @@ This API does not expose passwords or decrypted vault items.
 """
 from __future__ import annotations
 
-from datetime import datetime
+import hashlib
+import json
+from datetime import datetime, timedelta, timezone
 from typing import Annotated, Literal, Union
 from uuid import UUID
 
@@ -14,6 +16,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode, runtime_config_view
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.scopes.bitwarden import BITWARDEN_SCOPES
 
 
@@ -238,7 +241,35 @@ class ListPolicies(Closed):
     continuationToken: str | None = Field(None, title="Continuation Token", description="Copy the cursor returned by the previous page; omit for the first page.")
 
 
-Operation = Annotated[Union[GetCollection, UpdateCollection, DeleteCollection, ListCollections, ListEvents, GetGroup, UpdateGroup, DeleteGroup, GetMemberIdsGroup, UpdateMemberIdsGroup, ListGroups, CreateGroup, GetMember, UpdateMember, RemoveMember, GetGroupIdsMember, UpdateGroupIdsMember, ListMembers, CreateMember, ReinviteMember, RevokeMember, RestoreMember, GetSubscriptionOrganization, GetPolicy, ListPolicies], Field(discriminator="operation")]
+class OnNewEvent(PollTriggerConfigBase):
+    model_config = ConfigDict(json_schema_extra={"x-requires-webhook": True})
+    operation: Literal["on_new_event"] = Field("on_new_event", title="On New Organization Event", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "On New Organization Event",
+    })
+    event_kind: Literal["all", "item_created", "item_updated", "member_invited", "member_updated",
+                        "member_removed", "access_revoked", "access_restored", "login_failed"] = Field(
+        "all", title="Event", description="Watch all organization events, or a common item, member, or security event.")
+    actingUserId: UUID | None = Field(None, title="Acting User ID")
+    itemId: UUID | None = Field(None, title="Item ID")
+    secretId: UUID | None = Field(None, title="Secret ID")
+    projectId: UUID | None = Field(None, title="Project ID")
+    lookback_hours: int = Field(24, ge=1, le=720, title="Lookback Hours",
+        description="Poll this recent window, including delayed logs. Existing events are baselined when enabled. "
+                    "Events older than the window after a pause cannot be recovered; use a window longer than the schedule interval. "
+                    "Keep the window below 10,000 matching events. Organization bearer tokens expire after 60 minutes.")
+
+
+# EventType enum from the pinned Bitwarden Public API OpenAPI document.
+EVENT_KINDS = {"item_created": 1100, "item_updated": 1101, "member_invited": 1500,
+               "member_updated": 1502, "member_removed": 1503, "access_revoked": 1511,
+               "access_restored": 1512, "login_failed": 1005}
+EVENT_LABELS = {1000: "logged in", 1005: "failed to log in", 1100: "created an item", 1101: "updated an item",
+                1500: "invited a member", 1502: "updated a member", 1503: "removed a member",
+                1511: "revoked a member's access", 1512: "restored a member's access"}
+
+
+Operation = Annotated[Union[GetCollection, UpdateCollection, DeleteCollection, ListCollections, ListEvents, GetGroup, UpdateGroup, DeleteGroup, GetMemberIdsGroup, UpdateMemberIdsGroup, ListGroups, CreateGroup, GetMember, UpdateMember, RemoveMember, GetGroupIdsMember, UpdateGroupIdsMember, ListMembers, CreateMember, ReinviteMember, RevokeMember, RestoreMember, GetSubscriptionOrganization, GetPolicy, ListPolicies, OnNewEvent], Field(discriminator="operation")]
 
 class BitwardenNodeConfig(NodeConfig[Operation, BitwardenAccessTokenCredential]):
     pass
@@ -246,7 +277,7 @@ class BitwardenNodeConfig(NodeConfig[Operation, BitwardenAccessTokenCredential])
 
 ROUTES = {'get_collection': ('GET', '/public/collections/{id}'), 'update_collection': ('PUT', '/public/collections/{id}'), 'delete_collection': ('DELETE', '/public/collections/{id}'), 'list_collections': ('GET', '/public/collections'), 'list_events': ('GET', '/public/events'), 'get_group': ('GET', '/public/groups/{id}'), 'update_group': ('PUT', '/public/groups/{id}'), 'delete_group': ('DELETE', '/public/groups/{id}'), 'get_member_ids_group': ('GET', '/public/groups/{id}/member-ids'), 'update_member_ids_group': ('PUT', '/public/groups/{id}/member-ids'), 'list_groups': ('GET', '/public/groups'), 'create_group': ('POST', '/public/groups'), 'get_member': ('GET', '/public/members/{id}'), 'update_member': ('PUT', '/public/members/{id}'), 'remove_member': ('DELETE', '/public/members/{id}'), 'get_group_ids_member': ('GET', '/public/members/{id}/group-ids'), 'update_group_ids_member': ('PUT', '/public/members/{id}/group-ids'), 'list_members': ('GET', '/public/members'), 'create_member': ('POST', '/public/members'), 'reinvite_member': ('POST', '/public/members/{id}/reinvite'), 'revoke_member': ('POST', '/public/members/{id}/revoke'), 'restore_member': ('POST', '/public/members/{id}/restore'), 'get_subscription_organization': ('GET', '/public/organization/subscription'), 'get_policy': ('GET', '/public/policies/{type}'), 'list_policies': ('GET', '/public/policies')}
 
-class BitwardenNode(WorkflowNode):
+class BitwardenNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-bitwarden"
     scope_registry = BITWARDEN_SCOPES
     connection_evidence = ConnectionEvidence(noun="groups", operation="list_groups", label_keys=("name", "id"))
@@ -259,11 +290,93 @@ class BitwardenNode(WorkflowNode):
     def parse_config(cls, config_data):
         return BitwardenNodeConfig.model_validate(runtime_config_view(config_data, BitwardenNodeConfig))
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") == "on_new_event":
+            return bool(output.get("new_event_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        events = output.get("events") if isinstance(output, dict) else None
+        if not isinstance(events, list):
+            return super().resolve_agent_event(output)
+        if not events:
+            return None
+        lines = []
+        for event in events[:10]:
+            actor = event.get("actingUserId") or event.get("installationId") or "Unknown actor"
+            action = EVENT_LABELS.get(event.get("type"), f"performed event type {event.get('type')}")
+            ids = ", ".join(f"{key}={event[key]}" for key in (
+                "itemId", "collectionId", "groupId", "policyId", "memberId",
+                "secretId", "projectId", "serviceAccountId") if event.get(key))
+            lines.append(f"- {actor} {action} at {event.get('date')}" + (f" ({ids})" if ids else ""))
+        if len(events) > 10:
+            lines.append(f"- … and {len(events) - 10} more events in the workflow output")
+        return {"text": f"Bitwarden organization: {len(events)} new event(s):\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    @staticmethod
+    def _event_key(event):
+        # Public API events have no id. Hash their documented fields instead of inventing one.
+        return hashlib.sha256(json.dumps(event, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+    async def _poll_events(self, credential, op):
+        end = datetime.now(timezone.utc)
+        params = {"start": (end - timedelta(hours=op.lookback_hours)).isoformat(), "end": end.isoformat()}
+        params.update({key: str(getattr(op, key)) for key in (
+            "actingUserId", "itemId", "secretId", "projectId") if getattr(op, key) is not None})
+        events = []
+        cursors = set()
+        for _ in range(200):
+            result = await self._request(credential, "GET", "/public/events", params=params)
+            if not isinstance(result, dict) or not isinstance(result.get("data"), list):
+                raise ValueError("Bitwarden returned an invalid event list")
+            for event in result["data"]:
+                if not isinstance(event, dict) or "date" not in event or "type" not in event:
+                    raise ValueError("Bitwarden returned an invalid event")
+                if op.event_kind == "all" or event["type"] == EVENT_KINDS[op.event_kind]:
+                    events.append(event)
+            if len(events) > 10000:
+                raise ValueError("Bitwarden poll exceeds 10,000 matching events; narrow the filters or lookback window")
+            cursor = result.get("continuationToken")
+            if not cursor:
+                break
+            if cursor in cursors:
+                raise ValueError("Bitwarden repeated an event continuation token")
+            cursors.add(cursor)
+            params["continuationToken"] = cursor
+        else:
+            raise ValueError("Bitwarden poll exceeds 200 pages; narrow the filters or lookback window")
+        # Deduplicate within the complete window too, before updating the shared seen-set.
+        unique = {self._event_key(event): event for event in events}
+        fresh = await self._filter_unseen(sorted(unique.values(), key=lambda event: event["date"]), self._event_key)
+        return {"events": fresh, "new_event_count": len(fresh)}
+
+    @staticmethod
+    async def _request(credential, method, path, *, params=None, body=None):
+        host = {"US": "https://api.bitwarden.com", "EU": "https://api.bitwarden.eu", "Gov": "https://api.bitwarden-gov.com"}[credential.region]
+        async with httpx.AsyncClient(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, host + path,
+                headers={"Authorization": "Bearer " + credential.access_token, "Accept": "application/json"},
+                params=params, **({"json": body} if body is not None else {}))
+        if not 200 <= response.status_code < 300:
+            try:
+                message = response.json().get("message", "Bitwarden request failed")
+            except (ValueError, AttributeError):
+                message = "Bitwarden request failed"
+            raise ValueError(f"Bitwarden HTTP {response.status_code}: {str(message).replace(credential.access_token, '[redacted]')}")
+        return response.json() if response.content else {"acknowledged": True}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Bitwarden organization access token")
         credential = self.config.credentials
         op = self.config.config
+        if isinstance(op, OnNewEvent):
+            output = await self._poll_events(credential, op)
+            await self.emit(output)
+            return output
         method, path = ROUTES[op.operation]
         values = op.model_dump(mode="json", exclude_unset=True)
         if "{id}" in path:
@@ -271,19 +384,8 @@ class BitwardenNode(WorkflowNode):
         if "{type}" in path:
             path = path.replace("{type}", str(op.policy_type))
         params = {k: v for k, v in values.items() if k not in {"operation", "id", "policy_type", "body"} and v is not None}
-        host = {"US": "https://api.bitwarden.com", "EU": "https://api.bitwarden.eu", "Gov": "https://api.bitwarden-gov.com"}[credential.region]
-        async with httpx.AsyncClient(timeout=30, follow_redirects=False, trust_env=False) as client:
-            response = await client.request(method, host + path,
-                headers={"Authorization": "Bearer " + credential.access_token, "Accept": "application/json"},
-                params=params, **({"json": op.body.model_dump(mode="json", exclude_unset=True)} if hasattr(op, "body") else {}))
-        if not 200 <= response.status_code < 300:
-            # Preserve provider rejection text for the connection seam, redact the secret.
-            try:
-                message = response.json().get("message", "Bitwarden request failed")
-            except (ValueError, AttributeError):
-                message = "Bitwarden request failed"
-            raise ValueError(f"Bitwarden HTTP {response.status_code}: {str(message).replace(credential.access_token, '[redacted]')}")
-        result = response.json() if response.content else {"acknowledged": True}
+        result = await self._request(credential, method, path, params=params,
+            body=op.body.model_dump(mode="json", exclude_unset=True) if hasattr(op, "body") else None)
         output = {"data": result.get("data", result) if isinstance(result, dict) else result}
         if isinstance(result, dict) and "continuationToken" in result:
             output["continuationToken"] = result["continuationToken"]
