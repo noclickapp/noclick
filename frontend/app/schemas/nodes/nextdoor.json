@@ -1,0 +1,729 @@
+{
+  "$defs": {
+    "CreateComment": {
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "secure_profile_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile ID"
+        },
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Create Comment or Reply",
+          "type": "string"
+        },
+        "body_text": {
+          "minLength": 1,
+          "title": "Comment Text",
+          "type": "string"
+        },
+        "media_attachments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Attachments"
+        },
+        "parent_comment_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include to reply to a comment; id remains the post share ID.",
+          "title": "Parent Comment ID"
+        }
+      },
+      "required": [
+        "id",
+        "body_text"
+      ],
+      "title": "CreateComment",
+      "type": "object"
+    },
+    "CreateListing": {
+      "properties": {
+        "operation": {
+          "const": "create_listing",
+          "default": "create_listing",
+          "title": "Create For Sale or Free Listing",
+          "type": "string"
+        },
+        "fsf": {
+          "$ref": "#/$defs/Listing"
+        },
+        "body_text": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Post Text",
+          "type": "string"
+        },
+        "hashtag": {
+          "anyOf": [
+            {
+              "pattern": "^\\S+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hashtag"
+        },
+        "smartlink_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Smartlink Url"
+        }
+      },
+      "required": [
+        "fsf",
+        "body_text"
+      ],
+      "title": "CreateListing",
+      "type": "object"
+    },
+    "CreatePost": {
+      "properties": {
+        "body_text": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Post Text",
+          "type": "string"
+        },
+        "hashtag": {
+          "anyOf": [
+            {
+              "pattern": "^\\S+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hashtag"
+        },
+        "media_attachments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Media URLs"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latitude"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longitude"
+        },
+        "smartlink_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Link Preview URL"
+        },
+        "operation": {
+          "const": "create_post",
+          "default": "create_post",
+          "title": "Create Post",
+          "type": "string"
+        },
+        "secure_profile_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Select an id returned by List Account Profiles, or omit for the primary profile.",
+          "title": "Profile ID"
+        }
+      },
+      "required": [
+        "body_text"
+      ],
+      "title": "CreatePost",
+      "type": "object"
+    },
+    "DeleteComment": {
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "secure_profile_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile ID"
+        },
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Delete Comment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteComment",
+      "type": "object"
+    },
+    "DeletePost": {
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "secure_profile_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile ID"
+        },
+        "operation": {
+          "const": "delete_post",
+          "default": "delete_post",
+          "title": "Delete Post",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeletePost",
+      "type": "object"
+    },
+    "EditComment": {
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "secure_profile_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile ID"
+        },
+        "operation": {
+          "const": "edit_comment",
+          "default": "edit_comment",
+          "title": "Edit Comment",
+          "type": "string"
+        },
+        "body_text": {
+          "minLength": 1,
+          "title": "Comment Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "body_text"
+      ],
+      "title": "EditComment",
+      "type": "object"
+    },
+    "EditPost": {
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "secure_profile_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile ID"
+        },
+        "operation": {
+          "const": "edit_post",
+          "default": "edit_post",
+          "title": "Edit Post",
+          "type": "string"
+        },
+        "body_text": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Post Text"
+        },
+        "hashtag": {
+          "anyOf": [
+            {
+              "pattern": "^\\S+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hashtag"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lon"
+        },
+        "smartlink_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Smartlink Url"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "EditPost",
+      "type": "object"
+    },
+    "GetAccount": {
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Current Account",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "ListAgencyBoundaries": {
+      "properties": {
+        "operation": {
+          "const": "list_agency_boundaries",
+          "default": "list_agency_boundaries",
+          "title": "List Agency Boundaries",
+          "type": "string"
+        },
+        "show_geometries": {
+          "default": true,
+          "title": "Include Geometries",
+          "type": "boolean"
+        },
+        "enable_pagination": {
+          "default": true,
+          "title": "Enable Pagination",
+          "type": "boolean"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use the cursor from the preceding response. One page per execution.",
+          "title": "After Cursor"
+        }
+      },
+      "title": "ListAgencyBoundaries",
+      "type": "object"
+    },
+    "ListPosts": {
+      "properties": {
+        "operation": {
+          "const": "list_posts",
+          "default": "list_posts",
+          "title": "Get Your Posts",
+          "type": "string"
+        }
+      },
+      "title": "ListPosts",
+      "type": "object"
+    },
+    "ListProfiles": {
+      "properties": {
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "List Account Profiles",
+          "type": "string"
+        }
+      },
+      "title": "ListProfiles",
+      "type": "object"
+    },
+    "Listing": {
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "price": {
+          "minLength": 1,
+          "title": "Price",
+          "type": "string"
+        },
+        "category": {
+          "minLength": 1,
+          "title": "Category",
+          "type": "string"
+        },
+        "image_attachments": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Image Attachments",
+          "type": "array"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "price",
+        "category",
+        "image_attachments"
+      ],
+      "title": "Listing",
+      "type": "object"
+    },
+    "NextdoorOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "nextdoor_oauth",
+          "default": "nextdoor_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Nextdoor Account",
+      "type": "object",
+      "x-credential-instructions": "Connect a Nextdoor account through an approved Publish API application. Agency boundaries require an agency account. Ads Manager tokens are for a different API.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developer.nextdoor.com/reference/applying-for-access",
+      "x-oauth-provider": "nextdoor",
+      "x-oauth-scopes": [
+        "agency.boundary:read",
+        "comment:write",
+        "openid",
+        "post:read",
+        "post:write",
+        "profile:read"
+      ]
+    },
+    "SetCommenting": {
+      "properties": {
+        "operation": {
+          "const": "set_commenting",
+          "default": "set_commenting",
+          "title": "Set Post Commenting",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Post ID",
+          "type": "string"
+        },
+        "comment_status": {
+          "title": "Enable Comments",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "comment_status"
+      ],
+      "title": "SetCommenting",
+      "type": "object"
+    },
+    "SetListingSold": {
+      "properties": {
+        "operation": {
+          "const": "set_listing_sold",
+          "default": "set_listing_sold",
+          "title": "Set Listing Sold Status",
+          "type": "string"
+        },
+        "classified_id": {
+          "minLength": 1,
+          "title": "Classified ID",
+          "type": "string"
+        },
+        "sold": {
+          "title": "Sold",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "classified_id",
+        "sold"
+      ],
+      "title": "SetListingSold",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_comment": "#/$defs/CreateComment",
+          "create_listing": "#/$defs/CreateListing",
+          "create_post": "#/$defs/CreatePost",
+          "delete_comment": "#/$defs/DeleteComment",
+          "delete_post": "#/$defs/DeletePost",
+          "edit_comment": "#/$defs/EditComment",
+          "edit_post": "#/$defs/EditPost",
+          "get_account": "#/$defs/GetAccount",
+          "list_agency_boundaries": "#/$defs/ListAgencyBoundaries",
+          "list_posts": "#/$defs/ListPosts",
+          "list_profiles": "#/$defs/ListProfiles",
+          "set_commenting": "#/$defs/SetCommenting",
+          "set_listing_sold": "#/$defs/SetListingSold"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListProfiles"
+        },
+        {
+          "$ref": "#/$defs/ListPosts"
+        },
+        {
+          "$ref": "#/$defs/CreatePost"
+        },
+        {
+          "$ref": "#/$defs/CreateListing"
+        },
+        {
+          "$ref": "#/$defs/SetListingSold"
+        },
+        {
+          "$ref": "#/$defs/CreateComment"
+        },
+        {
+          "$ref": "#/$defs/EditComment"
+        },
+        {
+          "$ref": "#/$defs/DeleteComment"
+        },
+        {
+          "$ref": "#/$defs/EditPost"
+        },
+        {
+          "$ref": "#/$defs/DeletePost"
+        },
+        {
+          "$ref": "#/$defs/ListAgencyBoundaries"
+        },
+        {
+          "$ref": "#/$defs/SetCommenting"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NextdoorOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Nextdoor Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
