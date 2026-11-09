@@ -1,0 +1,1502 @@
+{
+  "source": "https://api-headless.circle.so/api/admin/v2/swagger.yaml",
+  "responses": {
+    "get_community": {
+      "status": 200,
+      "body": {
+        "id": 1,
+        "created_at": "2025-04-01T21:24:17.411Z",
+        "updated_at": "2025-04-01T21:33:43.219Z",
+        "name": "My Community",
+        "locale": "en",
+        "slug": "my-community",
+        "allow_signups_to_public_community": true,
+        "community_switcher_enabled": true,
+        "custom_cta_for_share_links": true,
+        "locked_post_cta_heading": "Become a member",
+        "locked_post_cta_body": "Please join us to continue reading this post.",
+        "locked_post_cta_button_text": "Sign up",
+        "locked_post_cta_button_url": "https://www.community.com/signup",
+        "custom_tos_enabled": true,
+        "custom_tos": "https://www.community.com/tos",
+        "default_existing_member_space_id": 1,
+        "default_logged_out_space_id": 1,
+        "default_new_member_space_id": 1,
+        "default_search_sorting": "latest",
+        "is_private": true,
+        "private_signup_link_label": "Not a member?",
+        "private_signup_link_url": "https://www.community.com/signup",
+        "reply_to_email": "support@community.com",
+        "white_label": true,
+        "weekly_digest_enabled": true,
+        "digest_subject": "Weekly Digest",
+        "digest_intro": "Here's what's happening this week.",
+        "digests_hide_posts": false,
+        "digests_hide_comments": false,
+        "digests_hide_stats": false,
+        "digests_hide_members": false,
+        "prefs": {
+          "has_posts": true,
+          "has_spaces": true,
+          "has_invited_member": true,
+          "brand_color": {
+            "light": "#000000",
+            "dark": "#000000"
+          },
+          "brand_text_color": {
+            "light": "#FFFFFF",
+            "dark": "#FFFFFF"
+          }
+        },
+        "community_setting": {
+          "id": 1,
+          "created_at": "2025-04-01T21:24:17.411Z",
+          "updated_at": "2025-04-01T21:33:43.219Z",
+          "ios_app_enabled": true,
+          "show_ios_app_banner": true,
+          "deactivate_account_enabled": true,
+          "allow_profile_search_indexing": true,
+          "truncate_post_body_in_email_notifications": true,
+          "hide_emails_on_member_profiles": true,
+          "allow_members_to_go_live": true,
+          "enforce_otp_for_signup": true,
+          "community_activity_notifications_email_enabled": true,
+          "community_activity_notifications_in_app_enabled": true,
+          "desktop_app_community_visibility_enabled": true,
+          "allow_moderator_csv_download": true,
+          "member_media_uploads_enabled": true,
+          "default_space_ids": [
+            1,
+            2
+          ],
+          "default_logged_out_redirect_type": "Space",
+          "default_logged_out_redirect_id": 1
+        }
+      }
+    },
+    "list_members": {
+      "status": 200,
+      "body": {
+        "page": 1,
+        "per_page": 10,
+        "has_next_page": false,
+        "count": 2,
+        "page_count": 2,
+        "records": [
+          {
+            "first_name": "Gov.",
+            "last_name": "Loriann Barton",
+            "headline": "Sales Orchestrator",
+            "created_at": "2024-09-03T16:20:19.814Z",
+            "updated_at": "2024-09-03T16:20:19.826Z",
+            "community_id": 1,
+            "last_seen_at": null,
+            "profile_confirmed_at": "2024-09-03T16:20:19.000Z",
+            "member_since": "2024-09-03T16:20:19.000Z",
+            "member_since_overridden": false,
+            "id": 2,
+            "profile_url": "http://reynolds.circledev.net:31337/u/352c3aff",
+            "public_uid": "352c3aff",
+            "profile_fields": [
+              {
+                "id": 1,
+                "label": "Label",
+                "field_type": "select",
+                "key": "profile_field_key_1",
+                "placeholder": null,
+                "description": null,
+                "required": false,
+                "platform_field": false,
+                "created_at": "2024-09-03T16:20:19.864Z",
+                "updated_at": "2024-09-03T16:20:19.864Z",
+                "community_member_profile_field": null,
+                "number_options": null,
+                "choices": [
+                  {
+                    "id": 1,
+                    "value": "Choice 1"
+                  }
+                ],
+                "pages": [
+                  {
+                    "id": 2,
+                    "name": "edit_profile",
+                    "position": 1,
+                    "visible": true,
+                    "created_at": "2024-09-03T16:20:19.868Z",
+                    "updated_at": "2024-09-03T16:20:19.868Z"
+                  },
+                  {
+                    "id": 3,
+                    "name": "profile_view",
+                    "position": 1,
+                    "visible": true,
+                    "created_at": "2024-09-03T16:20:19.869Z",
+                    "updated_at": "2024-09-03T16:20:19.869Z"
+                  },
+                  {
+                    "id": 1,
+                    "name": "signup",
+                    "position": 1,
+                    "visible": true,
+                    "created_at": "2024-09-03T16:20:19.866Z",
+                    "updated_at": "2024-09-03T16:20:19.866Z"
+                  }
+                ]
+              }
+            ],
+            "flattened_profile_fields": {
+              "profile_field_key_1": null
+            },
+            "avatar_url": null,
+            "user_id": 3,
+            "name": "Gov. Loriann Barton",
+            "email": "raul@nitzsche.org",
+            "accepted_invitation": "2024-09-03 16:20:19 UTC",
+            "active": true,
+            "sso_provider_user_id": null,
+            "member_tags": [],
+            "posts_count": 0,
+            "comments_count": 0,
+            "gamification_stats": {
+              "community_member_id": 2,
+              "total_points": 0,
+              "current_level": 1,
+              "current_level_name": "Level 1",
+              "points_to_next_level": 50,
+              "level_progress": 50
+            },
+            "activity_score": {
+              "activity_score": "23.0",
+              "presence": "3.0",
+              "participation": "10.0",
+              "contribution": "24.0",
+              "connection": "24.0"
+            }
+          },
+          {
+            "first_name": "Alfred",
+            "last_name": "Rice",
+            "headline": "Government Executive",
+            "created_at": "2024-09-03T16:20:19.605Z",
+            "updated_at": "2024-09-03T16:20:19.779Z",
+            "community_id": 1,
+            "last_seen_at": null,
+            "profile_confirmed_at": "2024-09-03T16:20:19.000Z",
+            "member_since": "2024-09-03T16:20:19.000Z",
+            "member_since_overridden": false,
+            "id": 1,
+            "profile_url": "http://reynolds.circledev.net:31337/u/a5f6b09a",
+            "public_uid": "a5f6b09a",
+            "profile_fields": [
+              {
+                "id": 1,
+                "label": "Label",
+                "field_type": "select",
+                "key": "profile_field_key_1",
+                "placeholder": null,
+                "description": null,
+                "required": false,
+                "platform_field": false,
+                "created_at": "2024-09-03T16:20:19.864Z",
+                "updated_at": "2024-09-03T16:20:19.864Z",
+                "community_member_profile_field": {
+                  "id": 1,
+                  "text": null,
+                  "textarea": null,
+                  "created_at": "2024-09-03T16:20:19.885Z",
+                  "updated_at": "2024-09-03T16:20:19.885Z",
+                  "display_value": [
+                    "Choice 1"
+                  ],
+                  "community_member_choices": [
+                    {
+                      "id": 1,
+                      "profile_field_choice": {
+                        "id": 1,
+                        "value": "Choice 1"
+                      }
+                    }
+                  ]
+                },
+                "number_options": null,
+                "choices": [
+                  {
+                    "id": 1,
+                    "value": "Choice 1"
+                  }
+                ],
+                "pages": [
+                  {
+                    "id": 2,
+                    "name": "edit_profile",
+                    "position": 1,
+                    "visible": true,
+                    "created_at": "2024-09-03T16:20:19.868Z",
+                    "updated_at": "2024-09-03T16:20:19.868Z"
+                  },
+                  {
+                    "id": 3,
+                    "name": "profile_view",
+                    "position": 1,
+                    "visible": true,
+                    "created_at": "2024-09-03T16:20:19.869Z",
+                    "updated_at": "2024-09-03T16:20:19.869Z"
+                  },
+                  {
+                    "id": 1,
+                    "name": "signup",
+                    "position": 1,
+                    "visible": true,
+                    "created_at": "2024-09-03T16:20:19.866Z",
+                    "updated_at": "2024-09-03T16:20:19.866Z"
+                  }
+                ]
+              }
+            ],
+            "flattened_profile_fields": {
+              "profile_field_key_1": [
+                "Choice 1"
+              ]
+            },
+            "avatar_url": null,
+            "user_id": 2,
+            "name": "Alfred Rice",
+            "email": "mariano.ondricka@stehr.biz",
+            "accepted_invitation": "2024-09-03 16:20:19 UTC",
+            "active": true,
+            "sso_provider_user_id": null,
+            "member_tags": [
+              {
+                "name": "minus",
+                "id": 1
+              }
+            ],
+            "posts_count": 0,
+            "comments_count": 0,
+            "gamification_stats": {
+              "community_member_id": 1,
+              "total_points": 0,
+              "current_level": 2,
+              "current_level_name": "Level 2",
+              "points_to_next_level": 30,
+              "level_progress": 70
+            },
+            "activity_score": {}
+          }
+        ]
+      }
+    },
+    "get_member": {
+      "status": 200,
+      "body": {
+        "first_name": "Gov.",
+        "last_name": "Loriann Barton",
+        "headline": "Sales Orchestrator",
+        "created_at": "2024-09-03T16:20:19.814Z",
+        "updated_at": "2024-09-03T16:20:19.826Z",
+        "community_id": 1,
+        "last_seen_at": null,
+        "profile_confirmed_at": "2024-09-03T16:20:19.000Z",
+        "member_since": "2024-09-03T16:20:19.000Z",
+        "member_since_overridden": false,
+        "id": 2,
+        "profile_url": "http://reynolds.circledev.net:31337/u/352c3aff",
+        "public_uid": "352c3aff",
+        "profile_fields": [
+          {
+            "id": 1,
+            "label": "Label",
+            "field_type": "select",
+            "key": "profile_field_key_1",
+            "placeholder": null,
+            "description": null,
+            "required": false,
+            "platform_field": false,
+            "created_at": "2024-09-03T16:20:19.864Z",
+            "updated_at": "2024-09-03T16:20:19.864Z",
+            "community_member_profile_field": null,
+            "number_options": null,
+            "choices": [
+              {
+                "id": 1,
+                "value": "Choice 1"
+              }
+            ],
+            "pages": [
+              {
+                "id": 2,
+                "name": "edit_profile",
+                "position": 1,
+                "visible": true,
+                "created_at": "2024-09-03T16:20:19.868Z",
+                "updated_at": "2024-09-03T16:20:19.868Z"
+              },
+              {
+                "id": 3,
+                "name": "profile_view",
+                "position": 1,
+                "visible": true,
+                "created_at": "2024-09-03T16:20:19.869Z",
+                "updated_at": "2024-09-03T16:20:19.869Z"
+              },
+              {
+                "id": 1,
+                "name": "signup",
+                "position": 1,
+                "visible": true,
+                "created_at": "2024-09-03T16:20:19.866Z",
+                "updated_at": "2024-09-03T16:20:19.866Z"
+              }
+            ]
+          }
+        ],
+        "flattened_profile_fields": {
+          "profile_field_key_1": null
+        },
+        "avatar_url": null,
+        "user_id": 3,
+        "name": "Gov. Loriann Barton",
+        "email": "raul@nitzsche.org",
+        "accepted_invitation": "2024-09-03 16:20:19 UTC",
+        "active": true,
+        "sso_provider_user_id": null,
+        "member_tags": [],
+        "posts_count": 0,
+        "comments_count": 0,
+        "gamification_stats": {
+          "community_member_id": 2,
+          "total_points": 0,
+          "current_level": 1,
+          "current_level_name": "Level 1",
+          "points_to_next_level": 50,
+          "level_progress": 50
+        },
+        "activity_score": {
+          "activity_score": "23.0",
+          "presence": "3.0",
+          "participation": "10.0",
+          "contribution": "24.0",
+          "connection": "24.0"
+        }
+      }
+    },
+    "search_member": {
+      "status": 200,
+      "body": {
+        "first_name": "Johnie",
+        "last_name": "Feeney",
+        "headline": "Senior Developer",
+        "created_at": "2024-08-23T09:01:17.166Z",
+        "updated_at": "2024-08-23T09:01:17.352Z",
+        "community_id": 1,
+        "last_seen_at": "2024-08-23T09:01:37.000Z",
+        "profile_confirmed_at": "2024-08-23T09:01:17.000Z",
+        "member_since": "2024-08-23T09:01:17.000Z",
+        "member_since_overridden": false,
+        "id": 1,
+        "profile_url": "http://becker-hettinger.circledev.net:31337/u/ed9f7768",
+        "public_uid": "ed9f7768",
+        "profile_fields": [
+          {
+            "id": 1,
+            "label": "Label",
+            "field_type": "select",
+            "key": "profile_field_key_1",
+            "placeholder": null,
+            "description": null,
+            "required": false,
+            "platform_field": false,
+            "created_at": "2024-08-23T09:01:17.394Z",
+            "updated_at": "2024-08-23T09:01:17.394Z",
+            "community_member_profile_field": {
+              "id": 1,
+              "text": null,
+              "textarea": null,
+              "created_at": "2024-08-23T09:01:17.413Z",
+              "updated_at": "2024-08-23T09:01:17.413Z",
+              "display_value": [
+                "Choice 1"
+              ],
+              "community_member_choices": [
+                {
+                  "id": 1,
+                  "profile_field_choice": {
+                    "id": 1,
+                    "value": "Choice 1"
+                  }
+                }
+              ]
+            },
+            "number_options": null,
+            "choices": [
+              {
+                "id": 1,
+                "value": "Choice 1"
+              }
+            ],
+            "pages": [
+              {
+                "id": 2,
+                "name": "edit_profile",
+                "position": 1,
+                "visible": true,
+                "created_at": "2024-08-23T09:01:17.397Z",
+                "updated_at": "2024-08-23T09:01:17.397Z"
+              },
+              {
+                "id": 3,
+                "name": "profile_view",
+                "position": 1,
+                "visible": true,
+                "created_at": "2024-08-23T09:01:17.399Z",
+                "updated_at": "2024-08-23T09:01:17.399Z"
+              },
+              {
+                "id": 1,
+                "name": "signup",
+                "position": 1,
+                "visible": true,
+                "created_at": "2024-08-23T09:01:17.396Z",
+                "updated_at": "2024-08-23T09:01:17.396Z"
+              }
+            ]
+          }
+        ],
+        "flattened_profile_fields": {
+          "profile_field_key_1": [
+            "Choice 1"
+          ]
+        },
+        "avatar_url": null,
+        "user_id": 2,
+        "name": "Johnie Feeney",
+        "email": "benjamin@cremin-okeefe.io",
+        "accepted_invitation": "2024-08-23 09:01:16 UTC",
+        "active": true,
+        "sso_provider_user_id": null,
+        "member_tags": [
+          {
+            "name": "inventore",
+            "id": 1
+          }
+        ],
+        "posts_count": 0,
+        "comments_count": 0,
+        "gamification_stats": {
+          "community_member_id": 2,
+          "total_points": 0,
+          "current_level": 1,
+          "current_level_name": "Level 1",
+          "points_to_next_level": 50,
+          "level_progress": 50
+        }
+      }
+    },
+    "create_member": {
+      "status": 201,
+      "body": {
+        "message": "This user has been invited to the community and has been added to following space groups: Name 1 spaces: molestiae.",
+        "community_member": {
+          "first_name": "Baz",
+          "last_name": "Tazo",
+          "headline": "Anotha one",
+          "created_at": "2024-09-04T16:18:10.634Z",
+          "updated_at": "2024-09-04T16:18:10.641Z",
+          "community_id": 1,
+          "last_seen_at": null,
+          "profile_confirmed_at": null,
+          "member_since": null,
+          "member_since_overridden": false,
+          "id": 2,
+          "profile_url": "http://hammes.circledev.net:31337/u/7b8a7a69",
+          "public_uid": "7b8a7a69",
+          "profile_fields": [
+            {
+              "id": 1,
+              "label": "Label",
+              "field_type": "text",
+              "key": "profile_field_key_1",
+              "placeholder": null,
+              "description": null,
+              "required": false,
+              "platform_field": true,
+              "created_at": "2024-09-04T16:18:10.285Z",
+              "updated_at": "2024-09-04T16:18:10.285Z",
+              "community_member_profile_field": {
+                "id": 2,
+                "text": "Bar",
+                "textarea": null,
+                "created_at": "2024-09-04T16:18:10.654Z",
+                "updated_at": "2024-09-04T16:18:10.657Z",
+                "display_value": "Bar",
+                "community_member_choices": []
+              },
+              "number_options": null,
+              "choices": [],
+              "pages": [
+                {
+                  "id": 2,
+                  "name": "edit_profile",
+                  "position": 1,
+                  "visible": true,
+                  "created_at": "2024-09-04T16:18:10.287Z",
+                  "updated_at": "2024-09-04T16:18:10.287Z"
+                },
+                {
+                  "id": 3,
+                  "name": "profile_view",
+                  "position": 1,
+                  "visible": true,
+                  "created_at": "2024-09-04T16:18:10.288Z",
+                  "updated_at": "2024-09-04T16:18:10.288Z"
+                },
+                {
+                  "id": 1,
+                  "name": "signup",
+                  "position": 1,
+                  "visible": true,
+                  "created_at": "2024-09-04T16:18:10.286Z",
+                  "updated_at": "2024-09-04T16:18:10.286Z"
+                }
+              ]
+            }
+          ],
+          "flattened_profile_fields": {
+            "profile_field_key_1": "Bar"
+          },
+          "avatar_url": null,
+          "user_id": 3,
+          "name": "Baz",
+          "email": "craig_koss@shields.info",
+          "accepted_invitation": "",
+          "active": false,
+          "sso_provider_user_id": null,
+          "member_tags": [
+            {
+              "name": "perferendis",
+              "id": 1
+            }
+          ],
+          "posts_count": 0,
+          "comments_count": 0
+        }
+      }
+    },
+    "update_member": {
+      "status": 200,
+      "body": {
+        "first_name": "Baz",
+        "last_name": null,
+        "headline": "New headline",
+        "created_at": "2024-09-10T01:40:57.450Z",
+        "updated_at": "2024-09-10T01:41:13.180Z",
+        "community_id": 1,
+        "last_seen_at": null,
+        "profile_confirmed_at": "2024-09-10T01:40:57.000Z",
+        "member_since": "2024-09-10T01:40:57.000Z",
+        "member_since_overridden": false,
+        "id": 2,
+        "profile_url": "http://torphy.circledev.net:31337/u/1e32c94e",
+        "public_uid": "1e32c94e",
+        "profile_fields": [
+          {
+            "id": 1,
+            "label": "Label",
+            "field_type": "text",
+            "key": "profile_field_key_1",
+            "placeholder": null,
+            "description": null,
+            "required": false,
+            "platform_field": true,
+            "created_at": "2024-09-10T01:40:57.484Z",
+            "updated_at": "2024-09-10T01:40:57.484Z",
+            "community_member_profile_field": {
+              "id": 1,
+              "text": "Bar",
+              "textarea": null,
+              "created_at": "2024-09-10T01:41:13.198Z",
+              "updated_at": "2024-09-10T01:41:13.201Z",
+              "display_value": "Bar",
+              "community_member_choices": []
+            },
+            "number_options": null,
+            "choices": [],
+            "pages": [
+              {
+                "id": 2,
+                "name": "edit_profile",
+                "position": 1,
+                "visible": true,
+                "created_at": "2024-09-10T01:40:57.486Z",
+                "updated_at": "2024-09-10T01:40:57.486Z"
+              },
+              {
+                "id": 3,
+                "name": "profile_view",
+                "position": 1,
+                "visible": true,
+                "created_at": "2024-09-10T01:40:57.487Z",
+                "updated_at": "2024-09-10T01:40:57.487Z"
+              },
+              {
+                "id": 1,
+                "name": "signup",
+                "position": 1,
+                "visible": true,
+                "created_at": "2024-09-10T01:40:57.484Z",
+                "updated_at": "2024-09-10T01:40:57.484Z"
+              }
+            ]
+          }
+        ],
+        "flattened_profile_fields": {
+          "profile_field_key_1": "Bar"
+        },
+        "avatar_url": null,
+        "user_id": 3,
+        "name": "Baz",
+        "email": "carlton@ernser.biz",
+        "accepted_invitation": "2024-09-10 01:40:57 UTC",
+        "active": true,
+        "sso_provider_user_id": null,
+        "member_tags": [],
+        "posts_count": 0,
+        "comments_count": 0
+      }
+    },
+    "deactivate_member": {
+      "status": 200,
+      "body": {
+        "message": "The community member has been removed from the community."
+      }
+    },
+    "list_spaces": {
+      "status": 200,
+      "body": {
+        "page": 1,
+        "per_page": 60,
+        "has_next_page": false,
+        "count": 2,
+        "page_count": 2,
+        "records": [
+          {
+            "id": 1,
+            "name": "aut",
+            "slug": "sit",
+            "cover_image_url": "https://medhurst.example.com/storage/cover_images/1/picsum.jpeg",
+            "cover_image_visible": true,
+            "cover_image_display_style": "wide",
+            "community_id": 1,
+            "is_private": false,
+            "hide_post_settings": false,
+            "display_view": "posts",
+            "is_post_disabled": false,
+            "space_type": "basic",
+            "host": "https://medhurst.example.com",
+            "post_ids": [
+              1
+            ],
+            "url": "https://medhurst.example.com/c/sit",
+            "custom_emoji_url": "https://medhurst.example.com/emoji/1",
+            "custom_emoji_dark_url": "https://medhurst.example.com/emoji/2",
+            "emoji": "#",
+            "space_group": {
+              "id": 2,
+              "name": "Name 1"
+            },
+            "topics": [
+              32,
+              21,
+              12
+            ],
+            "event_auto_rsvp_enabled": false,
+            "default_in_app_notification_setting": "never",
+            "default_mention_in_app_notification_setting": "never",
+            "default_mention_mobile_notification_setting": "never",
+            "default_mobile_notification_setting": "never",
+            "default_notification_setting": "never"
+          },
+          {
+            "id": 2,
+            "name": "maxime",
+            "slug": "ad",
+            "cover_image_url": "https://medhurst.example.com/storage/cover_images/2/picsum.jpeg",
+            "cover_image_visible": true,
+            "cover_image_display_style": "wide",
+            "community_id": 1,
+            "is_private": false,
+            "hide_post_settings": false,
+            "display_view": "posts",
+            "is_post_disabled": false,
+            "space_type": "basic",
+            "host": "https://medhurst.example.com",
+            "post_ids": [
+              14,
+              52
+            ],
+            "url": "https://medhurst.example.com/c/ad",
+            "custom_emoji_url": "https://medhurst.example.com/emoji/1",
+            "custom_emoji_dark_url": "https://medhurst.example.com/emoji/2",
+            "emoji": "#",
+            "space_group": {
+              "id": 3,
+              "name": "Name 2"
+            },
+            "topics": [
+              1,
+              2,
+              3
+            ],
+            "event_auto_rsvp_enabled": false,
+            "default_in_app_notification_setting": "never",
+            "default_mention_in_app_notification_setting": "never",
+            "default_mention_mobile_notification_setting": "never",
+            "default_mobile_notification_setting": "never",
+            "default_notification_setting": "never"
+          }
+        ]
+      }
+    },
+    "get_space": {
+      "status": 200,
+      "body": {
+        "id": 1,
+        "name": "aut",
+        "slug": "sit",
+        "cover_image_url": "https://medhurst.example.com/storage/cover_images/1/picsum.jpeg",
+        "cover_image_visible": true,
+        "cover_image_display_style": "wide",
+        "community_id": 1,
+        "is_private": false,
+        "hide_post_settings": false,
+        "display_view": "posts",
+        "is_post_disabled": false,
+        "space_type": "basic",
+        "host": "https://medhurst.example.com",
+        "post_ids": [
+          1
+        ],
+        "url": "https://medhurst.example.com/c/sit",
+        "custom_emoji_url": "https://medhurst.example.com/emoji/1",
+        "custom_emoji_dark_url": "https://medhurst.example.com/emoji/2",
+        "emoji": "#",
+        "space_group": {
+          "id": 2,
+          "name": "Name 1"
+        },
+        "topics": [
+          32,
+          21,
+          12
+        ],
+        "event_auto_rsvp_enabled": false,
+        "default_in_app_notification_setting": "never",
+        "default_mobile_notification_setting": "never",
+        "default_notification_setting": "never",
+        "default_mention_in_app_notification_setting": "never",
+        "default_mention_mobile_notification_setting": "never"
+      }
+    },
+    "list_space_members": {
+      "status": 200,
+      "body": {
+        "page": 1,
+        "per_page": 60,
+        "has_next_page": false,
+        "count": 2,
+        "page_count": 2,
+        "records": [
+          {
+            "id": 2,
+            "user_id": 3,
+            "space_id": 1,
+            "notification_type": "never",
+            "posts_read_count": 1,
+            "in_app_notification_setting": "never",
+            "community_member_id": 2,
+            "moderator": false,
+            "mobile_notification_setting": "never",
+            "access_type": "invite",
+            "status": "active",
+            "created_at": "2024-09-11T12:48:42.000Z",
+            "updated_at": "2024-09-11T12:48:42.000Z",
+            "community_member": {
+              "first_name": "John",
+              "last_name": "Doe",
+              "headline": "Software Engineer",
+              "community_id": 1,
+              "profile_url": "https://example.com/john-doe",
+              "public_uid": "john-doe",
+              "avatar_url": "https://example.com/john-doe.png",
+              "name": "John Doe",
+              "email": "john.doe@example.com"
+            }
+          },
+          {
+            "id": 1,
+            "user_id": 2,
+            "space_id": 1,
+            "notification_type": "never",
+            "posts_read_count": 0,
+            "in_app_notification_setting": "never",
+            "community_member_id": 1,
+            "moderator": false,
+            "mobile_notification_setting": "never",
+            "access_type": "invite",
+            "status": "active",
+            "created_at": "2024-09-11T12:48:42.000Z",
+            "updated_at": "2024-09-11T12:48:42.000Z",
+            "community_member": {
+              "first_name": "Jane",
+              "last_name": "Doe",
+              "headline": "Software Engineer",
+              "community_id": 1,
+              "profile_url": "https://example.com/jane-doe",
+              "public_uid": "jane-doe",
+              "avatar_url": "https://example.com/jane-doe.png",
+              "name": "Jane Doe",
+              "email": "jane.doe@example.com"
+            }
+          }
+        ]
+      }
+    },
+    "add_space_member": {
+      "status": 200,
+      "body": {
+        "message": "User added to space"
+      }
+    },
+    "remove_space_member": {
+      "status": 200,
+      "body": {
+        "message": "Member removed from space"
+      }
+    },
+    "list_posts": {
+      "status": 200,
+      "body": {
+        "page": 1,
+        "per_page": 60,
+        "has_next_page": false,
+        "count": 2,
+        "page_count": 2,
+        "records": [
+          {
+            "id": 2,
+            "status": "published",
+            "name": "Second post",
+            "slug": "kiehn",
+            "comments_count": 0,
+            "hide_meta_info": false,
+            "published_at": "2024-06-27T08:31:30.777Z",
+            "created_at": "2024-06-27T08:31:30.781Z",
+            "updated_at": "2024-06-27T08:31:30.784Z",
+            "is_comments_enabled": true,
+            "is_liking_enabled": true,
+            "flagged_for_approval_at": null,
+            "body": {
+              "id": 2,
+              "name": "body",
+              "body": "<div><!--block-->Iusto sint asperiores sed.</div>",
+              "record_type": "Post",
+              "record_id": 2,
+              "created_at": "2024-06-27T08:31:30.000Z",
+              "updated_at": "2024-06-27T08:31:30.000Z"
+            },
+            "url": "http://dickinson.circledev.net:31337/c/post/kiehn",
+            "space_name": "post",
+            "space_slug": "post",
+            "space_id": 1,
+            "user_id": 6,
+            "user_email": "lyndon@frami.info",
+            "user_name": "Rory Wyman",
+            "community_id": 1,
+            "user_avatar_url": "https://example.com/avatar.png",
+            "cover_image_url": "http://login.circledev.net/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhOMlk1ZURWNGRXSmlPR0Z3WnpCck1tdzNjbmR4ZURocE4zTnllUVk2QmtWVU9oQmthWE53YjNOcGRHbHZia2tpUVdsdWJHbHVaVHNnWm1sc1pXNWhiV1U5SW5CcFkzTjFiUzVxY0dWbklqc2dabWxzWlc1aGJXVXFQVlZVUmkwNEp5ZHdhV056ZFcwdWFuQmxad1k3QmxRNkVXTnZiblJsYm5SZmRIbHdaVWtpRDJsdFlXZGxMMnB3WldjR093WlVPaEZ6WlhKMmFXTmxYMjVoYldVNkNYUmxjM1E9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2tleSJ9fQ==--de2ca9f5695147b886fe65a18179e53f445d42cb/picsum.jpeg",
+            "cover_image": "eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--705b374a95b895bfd07289c5a26f002d24650efa",
+            "cardview_thumbnail_url": "http://login.circledev.net/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhOMlk1ZURWNGRXSmlPR0Z3WnpCck1tdzNjbmR4ZURocE4zTnllUVk2QmtWVU9oQmthWE53YjNOcGRHbHZia2tpUVdsdWJHbHVaVHNnWm1sc1pXNWhiV1U5SW5CcFkzTjFiUzVxY0dWbklqc2dabWxzWlc1aGJXVXFQVlZVUmkwNEp5ZHdhV056ZFcwdWFuQmxad1k3QmxRNkVXTnZiblJsYm5SZmRIbHdaVWtpRDJsdFlXZGxMMnB3WldjR093WlVPaEZ6WlhKMmFXTmxYMjVoYldVNkNYUmxjM1E9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2tleSJ9fQ==--de2ca9f5695147b886fe65a18179e53f445d42cb/picsum.jpeg",
+            "cardview_thumbnail": "eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--705b374a95b895bfd07289c5a26f002d24650efa",
+            "is_comments_closed": false,
+            "custom_html": "<div>Click Me!</div>",
+            "likes_count": 0,
+            "member_posts_count": 2,
+            "member_comments_count": 0,
+            "member_likes_count": 0,
+            "topics": [
+              12,
+              43,
+              54
+            ]
+          },
+          {
+            "id": 1,
+            "status": "published",
+            "name": "First post",
+            "slug": "ryan-brown",
+            "hide_meta_info": false,
+            "published_at": "2024-06-27T08:31:30.577Z",
+            "comments_count": 0,
+            "created_at": "2024-06-27T08:31:30.598Z",
+            "updated_at": "2024-06-27T08:31:30.602Z",
+            "is_comments_enabled": true,
+            "is_liking_enabled": true,
+            "flagged_for_approval_at": null,
+            "body": {
+              "id": 2,
+              "name": "body",
+              "body": "<div><p>Test</p></div>",
+              "record_type": "Post",
+              "record_id": 2,
+              "created_at": "2024-08-05T05:07:04.000Z",
+              "updated_at": "2024-08-05T05:07:04.000Z"
+            },
+            "tiptap_body": {
+              "body": {
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Test",
+                        "circle_ios_fallback_text": "Test"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "circle_ios_fallback_text": "Test",
+              "attachments": [],
+              "inline_attachments": [],
+              "sgids_to_object_map": {},
+              "format": "post",
+              "community_members": [],
+              "entities": [],
+              "group_mentions": [],
+              "polls": []
+            },
+            "url": "http://dickinson.circledev.net:31337/c/post/ryan-brown",
+            "space_name": "post",
+            "space_slug": "post",
+            "space_id": 1,
+            "user_id": 3,
+            "user_email": "delena@klein.net",
+            "user_name": "Stacey Schamberger PhD",
+            "community_id": 1,
+            "user_avatar_url": "https://example.com/avatar.png",
+            "cover_image_url": "http://login.circledev.net/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhOMlk1ZURWNGRXSmlPR0Z3WnpCck1tdzNjbmR4ZURocE4zTnllUVk2QmtWVU9oQmthWE53YjNOcGRHbHZia2tpUVdsdWJHbHVaVHNnWm1sc1pXNWhiV1U5SW5CcFkzTjFiUzVxY0dWbklqc2dabWxzWlc1aGJXVXFQVlZVUmkwNEp5ZHdhV056ZFcwdWFuQmxad1k3QmxRNkVXTnZiblJsYm5SZmRIbHdaVWtpRDJsdFlXZGxMMnB3WldjR093WlVPaEZ6WlhKMmFXTmxYMjVoYldVNkNYUmxjM1E9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2tleSJ9fQ==--de2ca9f5695147b886fe65a18179e53f445d42cb/picsum.jpeg",
+            "cover_image": "eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--705b374a95b895bfd07289c5a26f002d24650efa",
+            "cardview_thumbnail_url": "http://login.circledev.net/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhOMlk1ZURWNGRXSmlPR0Z3WnpCck1tdzNjbmR4ZURocE4zTnllUVk2QmtWVU9oQmthWE53YjNOcGRHbHZia2tpUVdsdWJHbHVaVHNnWm1sc1pXNWhiV1U5SW5CcFkzTjFiUzVxY0dWbklqc2dabWxzWlc1aGJXVXFQVlZVUmkwNEp5ZHdhV056ZFcwdWFuQmxad1k3QmxRNkVXTnZiblJsYm5SZmRIbHdaVWtpRDJsdFlXZGxMMnB3WldjR093WlVPaEZ6WlhKMmFXTmxYMjVoYldVNkNYUmxjM1E9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2tleSJ9fQ==--de2ca9f5695147b886fe65a18179e53f445d42cb/picsum.jpeg",
+            "cardview_thumbnail": "eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--705b374a95b895bfd07289c5a26f002d24650efa",
+            "is_comments_closed": false,
+            "custom_html": "<div>Hello World!</div>",
+            "likes_count": 0,
+            "member_posts_count": 2,
+            "member_comments_count": 0,
+            "member_likes_count": 0,
+            "topics": [
+              55,
+              54,
+              65
+            ]
+          }
+        ]
+      }
+    },
+    "get_post": {
+      "status": 200,
+      "body": {
+        "id": 2,
+        "status": "published",
+        "name": "Second post",
+        "slug": "kiehn",
+        "comments_count": 0,
+        "hide_meta_info": false,
+        "published_at": "2024-06-27T08:31:30.777Z",
+        "created_at": "2024-06-27T08:31:30.781Z",
+        "updated_at": "2024-06-27T08:31:30.784Z",
+        "is_comments_enabled": true,
+        "is_liking_enabled": true,
+        "flagged_for_approval_at": null,
+        "body": {
+          "id": 2,
+          "name": "body",
+          "body": "<div><p>Test</p></div>",
+          "record_type": "Post",
+          "record_id": 2,
+          "created_at": "2024-08-05T05:07:04.000Z",
+          "updated_at": "2024-08-05T05:07:04.000Z"
+        },
+        "tiptap_body": {
+          "body": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Test",
+                    "circle_ios_fallback_text": "Test"
+                  }
+                ]
+              }
+            ]
+          },
+          "circle_ios_fallback_text": "Test",
+          "attachments": [],
+          "inline_attachments": [],
+          "sgids_to_object_map": {},
+          "format": "post",
+          "community_members": [],
+          "entities": [],
+          "group_mentions": [],
+          "polls": []
+        },
+        "url": "http://dickinson.circledev.net:31337/c/post/kiehn",
+        "space_name": "post",
+        "space_slug": "post",
+        "space_id": 1,
+        "user_id": 6,
+        "user_email": "lyndon@frami.info",
+        "user_name": "Rory Wyman",
+        "community_id": 1,
+        "user_avatar_url": "https://example.com/avatar.png",
+        "cover_image_url": "http://login.circledev.net/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhOMlk1ZURWNGRXSmlPR0Z3WnpCck1tdzNjbmR4ZURocE4zTnllUVk2QmtWVU9oQmthWE53YjNOcGRHbHZia2tpUVdsdWJHbHVaVHNnWm1sc1pXNWhiV1U5SW5CcFkzTjFiUzVxY0dWbklqc2dabWxzWlc1aGJXVXFQVlZVUmkwNEp5ZHdhV056ZFcwdWFuQmxad1k3QmxRNkVXTnZiblJsYm5SZmRIbHdaVWtpRDJsdFlXZGxMMnB3WldjR093WlVPaEZ6WlhKMmFXTmxYMjVoYldVNkNYUmxjM1E9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2tleSJ9fQ==--de2ca9f5695147b886fe65a18179e53f445d42cb/picsum.jpeg",
+        "cover_image": "eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--705b374a95b895bfd07289c5a26f002d24650efa",
+        "cardview_thumbnail_url": "http://login.circledev.net/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhOMlk1ZURWNGRXSmlPR0Z3WnpCck1tdzNjbmR4ZURocE4zTnllUVk2QmtWVU9oQmthWE53YjNOcGRHbHZia2tpUVdsdWJHbHVaVHNnWm1sc1pXNWhiV1U5SW5CcFkzTjFiUzVxY0dWbklqc2dabWxzWlc1aGJXVXFQVlZVUmkwNEp5ZHdhV056ZFcwdWFuQmxad1k3QmxRNkVXTnZiblJsYm5SZmRIbHdaVWtpRDJsdFlXZGxMMnB3WldjR093WlVPaEZ6WlhKMmFXTmxYMjVoYldVNkNYUmxjM1E9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2tleSJ9fQ==--de2ca9f5695147b886fe65a18179e53f445d42cb/picsum.jpeg",
+        "cardview_thumbnail": "eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--705b374a95b895bfd07289c5a26f002d24650efa",
+        "is_comments_closed": false,
+        "custom_html": "<div>Click Me!</div>",
+        "likes_count": 0,
+        "member_posts_count": 2,
+        "member_comments_count": 0,
+        "member_likes_count": 0,
+        "topics": [
+          12,
+          43,
+          54
+        ]
+      }
+    },
+    "create_post": {
+      "status": 200,
+      "body": {
+        "message": "Post created.",
+        "post": {
+          "id": 2,
+          "status": "published",
+          "name": "ullam",
+          "slug": "ullam",
+          "comments_count": 0,
+          "hide_meta_info": false,
+          "published_at": "2024-07-01T10:44:32.659Z",
+          "created_at": "2024-07-01T10:44:32.659Z",
+          "updated_at": "2024-07-01T10:44:32.661Z",
+          "is_comments_enabled": true,
+          "is_liking_enabled": true,
+          "flagged_for_approval_at": null,
+          "body": {
+            "id": 2,
+            "name": "body",
+            "body": "<div><p>Test</p></div>",
+            "record_type": "Post",
+            "record_id": 2,
+            "created_at": "2024-08-05T05:07:04.000Z",
+            "updated_at": "2024-08-05T05:07:04.000Z"
+          },
+          "tiptap_body": {
+            "body": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Test",
+                      "circle_ios_fallback_text": "Test"
+                    }
+                  ]
+                }
+              ]
+            },
+            "circle_ios_fallback_text": "Test",
+            "attachments": [],
+            "inline_attachments": [],
+            "sgids_to_object_map": {},
+            "format": "post",
+            "community_members": [],
+            "entities": [],
+            "group_mentions": [],
+            "polls": []
+          },
+          "url": "http://torphy.circledev.net:31337/c/in/ullam",
+          "space_name": "distinctio",
+          "space_slug": "in",
+          "space_id": 1,
+          "user_id": 2,
+          "user_email": "antonina@hills-jaskolski.org",
+          "user_name": "Ellis Oberbrunner",
+          "community_id": 1,
+          "user_avatar_url": null,
+          "cover_image_url": null,
+          "cover_image": null,
+          "cardview_thumbnail_url": null,
+          "cardview_thumbnail": null,
+          "is_comments_closed": false,
+          "custom_html": "<div>Hello world</div>",
+          "likes_count": 0,
+          "member_posts_count": 2,
+          "member_comments_count": 0,
+          "member_likes_count": 0,
+          "topics": []
+        }
+      }
+    },
+    "update_post": {
+      "status": 200,
+      "body": {
+        "success": true,
+        "message": "Post updated.",
+        "post": {
+          "id": 1,
+          "status": "published",
+          "name": "deserunt",
+          "slug": "wintheiser",
+          "comments_count": 0,
+          "hide_meta_info": false,
+          "published_at": "2024-07-01T15:41:09.277Z",
+          "created_at": "2024-07-01T15:41:09.297Z",
+          "updated_at": "2024-07-01T15:41:09.678Z",
+          "is_comments_enabled": true,
+          "is_liking_enabled": true,
+          "flagged_for_approval_at": null,
+          "body": {
+            "id": 2,
+            "name": "body",
+            "body": "<div><p>Test</p></div>",
+            "record_type": "Post",
+            "record_id": 2,
+            "created_at": "2024-08-05T05:07:04.000Z",
+            "updated_at": "2024-08-05T05:07:04.000Z"
+          },
+          "tiptap_body": {
+            "body": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Another Test",
+                      "circle_ios_fallback_text": "Another Test"
+                    }
+                  ]
+                }
+              ]
+            },
+            "circle_ios_fallback_text": "Test",
+            "attachments": [],
+            "inline_attachments": [],
+            "sgids_to_object_map": {},
+            "format": "post",
+            "community_members": [],
+            "entities": [],
+            "group_mentions": [],
+            "polls": []
+          },
+          "url": "http://price.circledev.net:31337/c/similique/wintheiser",
+          "space_name": "laboriosam",
+          "space_slug": "similique",
+          "space_id": 1,
+          "user_id": 2,
+          "user_email": "zola.brekke@sporer-barrows.com",
+          "user_name": "Clay Schamberger II",
+          "community_id": 1,
+          "user_avatar_url": null,
+          "cover_image_url": null,
+          "cover_image": null,
+          "cardview_thumbnail_url": null,
+          "cardview_thumbnail": null,
+          "is_comments_closed": false,
+          "custom_html": "<div>Hello world</div>",
+          "likes_count": 0,
+          "member_posts_count": 1,
+          "member_comments_count": 0,
+          "member_likes_count": 0,
+          "topics": []
+        }
+      }
+    },
+    "delete_post": {
+      "status": 200,
+      "body": {
+        "success": true,
+        "message": "This post has been removed from the space."
+      }
+    },
+    "list_comments": {
+      "status": 200,
+      "body": {
+        "page": 1,
+        "per_page": 10,
+        "has_next_page": false,
+        "count": 2,
+        "page_count": 2,
+        "records": [
+          {
+            "id": 2,
+            "parent_comment_id": 12,
+            "flagged_for_approval_at": "2024-09-04T06:55:07.879Z",
+            "created_at": "2024-09-02T06:55:07.879Z",
+            "body": {
+              "id": 4,
+              "name": "body",
+              "body": "Second comment",
+              "record_type": "Comment",
+              "record_id": 2,
+              "created_at": "2024-09-02T06:55:07.000Z",
+              "updated_at": "2024-09-02T06:55:07.000Z"
+            },
+            "user": {
+              "id": 2,
+              "name": "Alfonzo Treutel",
+              "avatar_url": "https://secure.gravatar.com/avatar/0b0d8721ad4cbc76065f8f7992650ea7?default=404&secure=true&size=300",
+              "email": "tomika@upton-lemke.io"
+            },
+            "post": {
+              "id": 2,
+              "name": "First post",
+              "slug": "leuschke"
+            },
+            "space": {
+              "id": 1,
+              "slug": "comment",
+              "name": "comment"
+            },
+            "url": "http://mccullough-fay.circledev.net:31337/c/comment/leuschke#comment_wrapper_2",
+            "community_id": 1,
+            "likes_count": 0,
+            "user_posts_count": 2,
+            "user_likes_count": 0,
+            "user_comments_count": 2
+          },
+          {
+            "id": 1,
+            "parent_comment_id": null,
+            "flagged_for_approval_at": null,
+            "created_at": "2024-09-02T06:55:07.864Z",
+            "body": {
+              "id": 3,
+              "name": "body",
+              "body": "First comment",
+              "record_type": "Comment",
+              "record_id": 1,
+              "created_at": "2024-09-02T06:55:07.000Z",
+              "updated_at": "2024-09-02T06:55:07.000Z"
+            },
+            "user": {
+              "id": 2,
+              "name": "Alfonzo Treutel",
+              "avatar_url": "https://secure.gravatar.com/avatar/0b0d8721ad4cbc76065f8f7992650ea7?default=404&secure=true&size=300",
+              "email": "tomika@upton-lemke.io"
+            },
+            "post": {
+              "id": 2,
+              "name": "First post",
+              "slug": "leuschke"
+            },
+            "space": {
+              "id": 1,
+              "slug": "comment",
+              "name": "comment"
+            },
+            "url": "http://mccullough-fay.circledev.net:31337/c/comment/leuschke#comment_wrapper_1",
+            "community_id": 1,
+            "likes_count": 0,
+            "user_posts_count": 2,
+            "user_likes_count": 0,
+            "user_comments_count": 2,
+            "replies_count": 1
+          }
+        ]
+      }
+    },
+    "get_comment": {
+      "status": 200,
+      "body": {
+        "id": 1,
+        "parent_comment_id": null,
+        "flagged_for_approval_at": null,
+        "created_at": "2024-09-09T16:10:35.597Z",
+        "body": {
+          "id": 2,
+          "name": "body",
+          "body": "First comment",
+          "record_type": "Comment",
+          "record_id": 1,
+          "created_at": "2024-09-09T16:10:35.000Z",
+          "updated_at": "2024-09-09T16:10:35.000Z"
+        },
+        "user": {
+          "id": 2,
+          "name": "Norman Cronin JD",
+          "avatar_url": "https://secure.gravatar.com/avatar/9e6c9fdd020092f3b08403df25b52e1a?default=404&secure=true&size=300",
+          "email": "lois_herzog@boyle.io"
+        },
+        "post": {
+          "id": 1,
+          "name": "First post",
+          "slug": "williamson"
+        },
+        "space": {
+          "id": 1,
+          "slug": "distinctio",
+          "name": "maxime"
+        },
+        "url": "http://corwin.circledev.net:31337/c/distinctio/williamson#comment_wrapper_1",
+        "community_id": 1,
+        "likes_count": 0,
+        "user_posts_count": 1,
+        "user_likes_count": 0,
+        "user_comments_count": 2,
+        "replies_count": 1,
+        "replies": [
+          {
+            "id": 2,
+            "parent_comment_id": 1,
+            "flagged_for_approval_at": null,
+            "created_at": "2024-09-09T16:10:35.612Z",
+            "body": {
+              "id": 3,
+              "name": "body",
+              "body": "Second comment",
+              "record_type": "Comment",
+              "record_id": 2,
+              "created_at": "2024-09-09T16:10:35.000Z",
+              "updated_at": "2024-09-09T16:10:35.000Z"
+            },
+            "user": {
+              "id": 2,
+              "name": "Norman Cronin JD",
+              "avatar_url": "https://secure.gravatar.com/avatar/9e6c9fdd020092f3b08403df25b52e1a?default=404&secure=true&size=300",
+              "email": "lois_herzog@boyle.io"
+            },
+            "post": {
+              "id": 1,
+              "name": "First post",
+              "slug": "williamson"
+            },
+            "space": {
+              "id": 1,
+              "slug": "distinctio",
+              "name": "maxime"
+            },
+            "url": "http://corwin.circledev.net:31337/c/distinctio/williamson#comment_wrapper_2",
+            "community_id": 1,
+            "likes_count": 0,
+            "user_posts_count": 1,
+            "user_likes_count": 0,
+            "user_comments_count": 2
+          }
+        ]
+      }
+    },
+    "create_comment": {
+      "status": 201,
+      "body": {
+        "id": 2,
+        "parent_comment_id": 1,
+        "flagged_for_approval_at": null,
+        "created_at": "2024-09-03T08:59:50.111Z",
+        "body": {
+          "id": 3,
+          "name": "body",
+          "body": "First comment",
+          "record_type": "Comment",
+          "record_id": 2,
+          "created_at": "2024-09-03T08:59:50.000Z",
+          "updated_at": "2024-09-03T08:59:50.000Z"
+        },
+        "user": {
+          "id": 2,
+          "name": "Dulce Hauck",
+          "avatar_url": "https://secure.gravatar.com/avatar/e8e59111d32b648a5d74689a04ecda4c?default=404&secure=true&size=300",
+          "email": "francoise.schmitt@harber-huels.org"
+        },
+        "post": {
+          "id": 1,
+          "name": "First post",
+          "slug": "lind"
+        },
+        "space": {
+          "id": 1,
+          "slug": "comment",
+          "name": "comment"
+        },
+        "url": "http://ratke.circledev.net:31337/c/comment/lind#comment_wrapper_2",
+        "community_id": 1,
+        "likes_count": 0,
+        "user_posts_count": 1,
+        "user_likes_count": 0,
+        "user_comments_count": 2
+      }
+    },
+    "delete_comment": {
+      "status": 200,
+      "body": {
+        "message": "Comment deleted."
+      }
+    },
+    "list_member_tags": {
+      "status": 200,
+      "body": {
+        "page": 1,
+        "per_page": 20,
+        "has_next_page": false,
+        "count": 0,
+        "page_count": 0,
+        "records": []
+      }
+    },
+    "create_member_tag": {
+      "status": 201,
+      "body": {
+        "color": "#0ce806",
+        "display_format": "label",
+        "name": "Created Tag Name",
+        "display_locations": {
+          "post_bio": true,
+          "profile_page": true,
+          "member_directory": true
+        },
+        "is_public": true,
+        "is_background_enabled": true,
+        "created_at": "2025-04-01T21:24:17.411Z",
+        "updated_at": "2025-04-01T21:33:43.219Z",
+        "id": 1,
+        "tagged_members_count": 1,
+        "emoji": "🤩",
+        "custom_emoji_url": null,
+        "custom_emoji_dark_url": null
+      }
+    },
+    "tag_member": {
+      "status": 201,
+      "body": {
+        "message": "Person tagged successfully!"
+      }
+    },
+    "untag_member": {
+      "status": 200,
+      "body": {
+        "message": "Tag has been removed"
+      }
+    }
+  }
+}
