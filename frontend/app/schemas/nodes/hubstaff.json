@@ -1,0 +1,1317 @@
+{
+  "$defs": {
+    "HubstaffCreateClient": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "description": "Create client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Clients",
+          "x-display-name": "Create Client",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name"
+      ],
+      "title": "HubstaffCreateClient",
+      "type": "object"
+    },
+    "HubstaffCreateProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "description": "Create project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Create Project",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name"
+      ],
+      "title": "HubstaffCreateProject",
+      "type": "object"
+    },
+    "HubstaffCreateTask": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "description": "Create task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "summary": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Id"
+        }
+      },
+      "required": [
+        "project_id",
+        "summary"
+      ],
+      "title": "HubstaffCreateTask",
+      "type": "object"
+    },
+    "HubstaffCreateTimeEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_time_entry",
+          "default": "create_time_entry",
+          "description": "Create time entry",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Entries",
+          "x-display-name": "Create Time Entry",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "start_time": {
+          "description": "ISO 8601 timestamp with timezone.",
+          "format": "date-time",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "tracked": {
+          "description": "Seconds tracked.",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Tracked",
+          "type": "integer"
+        },
+        "note": {
+          "description": "Reason required by the default organization setting.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Id"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        }
+      },
+      "required": [
+        "user_id",
+        "project_id",
+        "start_time",
+        "tracked",
+        "note"
+      ],
+      "title": "HubstaffCreateTimeEntry",
+      "type": "object"
+    },
+    "HubstaffDeleteTask": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "description": "Delete task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Delete Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Task Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "HubstaffDeleteTask",
+      "type": "object"
+    },
+    "HubstaffGetClient": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "description": "Get client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Clients",
+          "x-display-name": "Get Client",
+          "x-is-trigger": false
+        },
+        "client_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Client Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "HubstaffGetClient",
+      "type": "object"
+    },
+    "HubstaffGetOrganization": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "description": "Get organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Get Organization",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Organization Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "HubstaffGetOrganization",
+      "type": "object"
+    },
+    "HubstaffGetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "description": "Get project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Project Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HubstaffGetProject",
+      "type": "object"
+    },
+    "HubstaffGetTask": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "description": "Get task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Task Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "HubstaffGetTask",
+      "type": "object"
+    },
+    "HubstaffListClients": {
+      "additionalProperties": false,
+      "properties": {
+        "page_start_id": {
+          "default": 0,
+          "description": "Use next_page_start_id from the previous result.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Page Start Id",
+          "type": "integer"
+        },
+        "page_limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "description": "List clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Clients",
+          "x-display-name": "List Clients",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "archived",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "archived",
+            "all"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "HubstaffListClients",
+      "type": "object"
+    },
+    "HubstaffListDailyActivities": {
+      "additionalProperties": false,
+      "properties": {
+        "page_start_id": {
+          "default": 0,
+          "description": "Use next_page_start_id from the previous result.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Page Start Id",
+          "type": "integer"
+        },
+        "page_limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_daily_activities",
+          "default": "list_daily_activities",
+          "description": "List daily activities",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activity",
+          "x-display-name": "List Daily Activities",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "date_start": {
+          "description": "Inclusive start date (YYYY-MM-DD).",
+          "format": "date",
+          "title": "Date Start",
+          "type": "string"
+        },
+        "date_stop": {
+          "description": "Inclusive stop date (YYYY-MM-DD).",
+          "format": "date",
+          "title": "Date Stop",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "date_start",
+        "date_stop"
+      ],
+      "title": "HubstaffListDailyActivities",
+      "type": "object"
+    },
+    "HubstaffListMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "page_start_id": {
+          "default": 0,
+          "description": "Use next_page_start_id from the previous result.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Page Start Id",
+          "type": "integer"
+        },
+        "page_limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "description": "List members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "List Members",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Organization Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "HubstaffListMembers",
+      "type": "object"
+    },
+    "HubstaffListOrganizations": {
+      "additionalProperties": false,
+      "properties": {
+        "page_start_id": {
+          "default": 0,
+          "description": "Use next_page_start_id from the previous result.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Page Start Id",
+          "type": "integer"
+        },
+        "page_limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "description": "List organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "List Organizations",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HubstaffListOrganizations",
+      "type": "object"
+    },
+    "HubstaffListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "page_start_id": {
+          "default": 0,
+          "description": "Use next_page_start_id from the previous result.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Page Start Id",
+          "type": "integer"
+        },
+        "page_limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "description": "List projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "archived",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "archived",
+            "all"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "HubstaffListProjects",
+      "type": "object"
+    },
+    "HubstaffListTasks": {
+      "additionalProperties": false,
+      "properties": {
+        "page_start_id": {
+          "default": 0,
+          "description": "Use next_page_start_id from the previous result.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Page Start Id",
+          "type": "integer"
+        },
+        "page_limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "description": "List tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Tasks",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Project Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HubstaffListTasks",
+      "type": "object"
+    },
+    "HubstaffListTimesheets": {
+      "additionalProperties": false,
+      "properties": {
+        "page_start_id": {
+          "default": 0,
+          "description": "Use next_page_start_id from the previous result.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Page Start Id",
+          "type": "integer"
+        },
+        "page_limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_timesheets",
+          "default": "list_timesheets",
+          "description": "List timesheets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Timesheets",
+          "x-display-name": "List Timesheets",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Organization Id",
+          "type": "integer"
+        },
+        "date_start": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Start"
+        },
+        "date_stop": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Stop"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "submitted",
+                "approved",
+                "denied"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "open",
+            "submitted",
+            "approved",
+            "denied"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "HubstaffListTimesheets",
+      "type": "object"
+    },
+    "HubstaffOrganizationTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "hubstaff_organization_token",
+          "default": "hubstaff_organization_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Organization access token",
+          "type": "string",
+          "ui:help": "Paste the organization token secret without the Bearer prefix.",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Hubstaff Organization Access Token",
+      "type": "object",
+      "x-credential-instructions": "In Hubstaff, open Settings \u2192 All settings \u2192 Organization \u2192 Security & log in \u2192 API access tokens. Create an organization access token assigned to an active member with the permissions your workflow needs, then paste the secret shown once. These tokens start with hsoat_ and are sent directly as Bearer credentials. Personal access tokens from the developer portal require exchange and are not supported here. API access requires a Team plan or above.",
+      "x-credential-url": "https://support.hubstaff.com/time-tracking-api/"
+    },
+    "HubstaffUpdateClient": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "description": "Update client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Clients",
+          "x-display-name": "Update Client",
+          "x-is-trigger": false
+        },
+        "client_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Client Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "HubstaffUpdateClient",
+      "type": "object"
+    },
+    "HubstaffUpdateProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "description": "Update project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HubstaffUpdateProject",
+      "type": "object"
+    },
+    "HubstaffUpdateTask": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "description": "Update task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Update Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Task Id",
+          "type": "integer"
+        },
+        "lock_version": {
+          "description": "Current lock_version from Get Task; prevents overwriting concurrent edits.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Lock Version",
+          "type": "integer"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Id"
+        }
+      },
+      "required": [
+        "task_id",
+        "lock_version"
+      ],
+      "title": "HubstaffUpdateTask",
+      "type": "object"
+    },
+    "HubstaffUpdateTimesheet": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_timesheet",
+          "default": "update_timesheet",
+          "description": "Update timesheet",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Timesheets",
+          "x-display-name": "Update Timesheet",
+          "x-is-trigger": false
+        },
+        "timesheet_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Timesheet Id",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "submitted",
+            "approved",
+            "denied"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "denial_reason": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Denial Reason"
+        },
+        "confirm_pending_manual_time_request_denial": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirm Pending Manual Time Request Denial"
+        },
+        "acknowledge_pending_time_off_requests": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acknowledge Pending Time Off Requests"
+        }
+      },
+      "required": [
+        "timesheet_id",
+        "status"
+      ],
+      "title": "HubstaffUpdateTimesheet",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_client": "#/$defs/HubstaffCreateClient",
+          "create_project": "#/$defs/HubstaffCreateProject",
+          "create_task": "#/$defs/HubstaffCreateTask",
+          "create_time_entry": "#/$defs/HubstaffCreateTimeEntry",
+          "delete_task": "#/$defs/HubstaffDeleteTask",
+          "get_client": "#/$defs/HubstaffGetClient",
+          "get_organization": "#/$defs/HubstaffGetOrganization",
+          "get_project": "#/$defs/HubstaffGetProject",
+          "get_task": "#/$defs/HubstaffGetTask",
+          "list_clients": "#/$defs/HubstaffListClients",
+          "list_daily_activities": "#/$defs/HubstaffListDailyActivities",
+          "list_members": "#/$defs/HubstaffListMembers",
+          "list_organizations": "#/$defs/HubstaffListOrganizations",
+          "list_projects": "#/$defs/HubstaffListProjects",
+          "list_tasks": "#/$defs/HubstaffListTasks",
+          "list_timesheets": "#/$defs/HubstaffListTimesheets",
+          "update_client": "#/$defs/HubstaffUpdateClient",
+          "update_project": "#/$defs/HubstaffUpdateProject",
+          "update_task": "#/$defs/HubstaffUpdateTask",
+          "update_timesheet": "#/$defs/HubstaffUpdateTimesheet"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HubstaffListOrganizations"
+        },
+        {
+          "$ref": "#/$defs/HubstaffGetOrganization"
+        },
+        {
+          "$ref": "#/$defs/HubstaffListMembers"
+        },
+        {
+          "$ref": "#/$defs/HubstaffListProjects"
+        },
+        {
+          "$ref": "#/$defs/HubstaffGetProject"
+        },
+        {
+          "$ref": "#/$defs/HubstaffCreateProject"
+        },
+        {
+          "$ref": "#/$defs/HubstaffUpdateProject"
+        },
+        {
+          "$ref": "#/$defs/HubstaffListClients"
+        },
+        {
+          "$ref": "#/$defs/HubstaffGetClient"
+        },
+        {
+          "$ref": "#/$defs/HubstaffCreateClient"
+        },
+        {
+          "$ref": "#/$defs/HubstaffUpdateClient"
+        },
+        {
+          "$ref": "#/$defs/HubstaffListTasks"
+        },
+        {
+          "$ref": "#/$defs/HubstaffGetTask"
+        },
+        {
+          "$ref": "#/$defs/HubstaffCreateTask"
+        },
+        {
+          "$ref": "#/$defs/HubstaffUpdateTask"
+        },
+        {
+          "$ref": "#/$defs/HubstaffDeleteTask"
+        },
+        {
+          "$ref": "#/$defs/HubstaffListDailyActivities"
+        },
+        {
+          "$ref": "#/$defs/HubstaffListTimesheets"
+        },
+        {
+          "$ref": "#/$defs/HubstaffUpdateTimesheet"
+        },
+        {
+          "$ref": "#/$defs/HubstaffCreateTimeEntry"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HubstaffOrganizationTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hubstaff Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
