@@ -1,0 +1,965 @@
+{
+  "source": "https://login.gymsales.net/swagger/v1/gymsales_api_swagger.json",
+  "version": "1.1.8",
+  "operations": {
+    "list_companies": {
+      "config": {
+        "operation": "list_companies"
+      },
+      "method": "GET",
+      "path": "/companies/",
+      "response": [
+        {
+          "id": 452,
+          "external_id": 2895,
+          "group_id": 3,
+          "name": "API Company",
+          "email": "apicompany@example.com",
+          "phone": "+61447135119",
+          "address": "15 Adelaide street",
+          "city": "Brisbane",
+          "state": "QLD",
+          "zip": "4000",
+          "country": "AU",
+          "time_zone": "Brisbane",
+          "work_time_from": "08:00",
+          "work_time_into": "20:00",
+          "status": "active",
+          "visitor_app_code": "789450",
+          "enable_former_member_status": true,
+          "enable_guest_status": true,
+          "enable_whatsapp_messaging": true,
+          "salesforce_id": null,
+          "ignite_branding": false,
+          "pause_automated_items": true,
+          "track_re_engagement_after_days": null,
+          "slug": "api-company"
+        },
+        {
+          "id": 452,
+          "external_id": 3325,
+          "group_id": null,
+          "name": "API Company 2",
+          "email": "apicompany2@example.com",
+          "phone": "+918845189898",
+          "address": "17 Heat Street",
+          "city": "Mumbai",
+          "state": "Maharastra",
+          "zip": "666000",
+          "country": "IN",
+          "time_zone": "Kolkata",
+          "work_time_from": "08:00 am",
+          "work_time_into": "08:00 pm",
+          "status": "active",
+          "visitor_app_code": "3512160",
+          "enable_former_member_status": null,
+          "enable_guest_status": true,
+          "enable_whatsapp_messaging": true,
+          "salesforce_id": null,
+          "ignite_branding": false,
+          "pause_automated_items": false,
+          "track_re_engagement_after_days": 10,
+          "slug": "api-company-2"
+        }
+      ],
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "get_company": {
+      "config": {
+        "operation": "get_company",
+        "id": "468"
+      },
+      "method": "GET",
+      "path": "/companies/{id}",
+      "response": {
+        "id": 438,
+        "external_id": 123456,
+        "group_id": 3,
+        "name": "API company",
+        "email": "apicompany@example.com",
+        "phone": "+61447135119",
+        "address": "15 Adelaide street",
+        "city": "Brisbane",
+        "state": "QLD",
+        "zip": "4000",
+        "country": "AU",
+        "time_zone": "Brisbane",
+        "work_time_from": "08:00",
+        "work_time_into": "20:00",
+        "status": "active",
+        "visitor_app_code": "789450",
+        "enable_former_member_status": true,
+        "enable_guest_status": true,
+        "enable_whatsapp_messaging": true,
+        "salesforce_id": null,
+        "ignite_branding": false,
+        "pause_automated_items": false,
+        "track_re_engagement_after_days": null,
+        "slug": "api-company"
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "list_company_groups": {
+      "config": {
+        "operation": "list_company_groups"
+      },
+      "method": "GET",
+      "path": "/company_groups",
+      "response": {
+        "collection": [],
+        "pagination": {
+          "total_pages": 1,
+          "total_entries": 0
+        }
+      },
+      "response_status": 200,
+      "response_source": "Synthetic empty page conforming to the published schema; no response example is published."
+    },
+    "list_tags": {
+      "config": {
+        "operation": "list_tags"
+      },
+      "method": "GET",
+      "path": "/tags",
+      "response": {
+        "collection": [],
+        "pagination": {
+          "total_pages": 1,
+          "total_entries": 0
+        }
+      },
+      "response_status": 200,
+      "response_source": "Synthetic empty page conforming to the published schema; no response example is published."
+    },
+    "search_people": {
+      "config": {
+        "operation": "search_people"
+      },
+      "method": "GET",
+      "path": "/people/search",
+      "response": {
+        "id": 7864990,
+        "company_id": 145,
+        "company_external_id": null,
+        "first_name": "Michael",
+        "last_name": null,
+        "address": null,
+        "city": "",
+        "state": "",
+        "zip": "",
+        "phone_home": null,
+        "phone_mobile": "+61421236988",
+        "phone_work": null,
+        "phone_home_formatted": null,
+        "phone_mobile_formatted": "0421 236 988",
+        "phone_work_formatted": null,
+        "email": null,
+        "contact_method_name": "Renewal",
+        "source_name": null,
+        "tag_list": "",
+        "avatar": null,
+        "social_link": null,
+        "salesperson": {
+          "id": 738,
+          "external_id": null,
+          "first_name": "Joe",
+          "last_name": "Tong"
+        },
+        "status": "enquiry",
+        "trial_end_at": null,
+        "trial_days_quantity": 0,
+        "gender": null,
+        "birthday": null,
+        "sms_opted_out": null,
+        "abcfin_status": null,
+        "email_opted_out": null,
+        "do_not_call": null,
+        "whatsapp_opted_out": null,
+        "email_suppressed": false,
+        "email_suppressed_reason": null,
+        "marketing_external_id": null,
+        "additional_contacts": []
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "fuzzy_search_people": {
+      "config": {
+        "operation": "fuzzy_search_people"
+      },
+      "method": "GET",
+      "path": "/people/fuzzy",
+      "response": [
+        {
+          "id": 7864990,
+          "company_id": 145,
+          "company_external_id": null,
+          "first_name": "Michael",
+          "last_name": null,
+          "address": null,
+          "city": "",
+          "state": "",
+          "zip": "",
+          "phone_home": null,
+          "phone_mobile": "+61421236988",
+          "phone_work": null,
+          "phone_home_formatted": null,
+          "phone_mobile_formatted": "0421 236 988",
+          "phone_work_formatted": null,
+          "email": null,
+          "contact_method_name": "Renewal",
+          "source_name": null,
+          "tag_list": "",
+          "avatar": null,
+          "social_link": null,
+          "salesperson": {
+            "id": 738,
+            "external_id": null,
+            "first_name": "Joe",
+            "last_name": "Tong"
+          },
+          "status": "enquiry",
+          "trial_end_at": null,
+          "trial_days_quantity": 0,
+          "gender": null,
+          "birthday": null,
+          "sms_opted_out": null,
+          "abcfin_status": null,
+          "email_opted_out": null,
+          "do_not_call": null,
+          "whatsapp_opted_out": null,
+          "email_suppressed": false,
+          "email_suppressed_reason": null,
+          "marketing_external_id": null,
+          "additional_contacts": []
+        }
+      ],
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "get_person": {
+      "config": {
+        "operation": "get_person",
+        "id": "643634"
+      },
+      "method": "GET",
+      "path": "/people/{id}",
+      "response": {
+        "id": 643634,
+        "external_id": 5433,
+        "company_id": 438,
+        "company_external_id": 2879,
+        "first_name": "Angelita",
+        "last_name": "Bechtelar",
+        "address": "6328 Becker Inlet",
+        "city": "Batzburgh",
+        "state": "CA",
+        "zip": "81066",
+        "phone_home": "03  0751-3140",
+        "phone_mobile": "0411 033-381",
+        "phone_work": "03  1231-7621",
+        "email": "email@server.com",
+        "contact_method_name": "Internet",
+        "source_name": "www.source.com",
+        "tag_list": "Tag3, tag2, tag1",
+        "avatar": "https://www.example.com/avatar.jpg",
+        "social_link": "https://twitter.com/username",
+        "salesperson": null,
+        "status": "enquiry",
+        "trial_end_at": null,
+        "trial_days_quantity": null,
+        "gender": "M",
+        "birthday": null,
+        "sms_opted_out": false,
+        "email_opted_out": false,
+        "do_not_call": false,
+        "whatsapp_opted_out": false,
+        "email_suppressed": false,
+        "email_suppressed_reason": null,
+        "abcfin_company_id": "9999"
+      },
+      "response_status": 201,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "create_person": {
+      "config": {
+        "operation": "create_person",
+        "company_id": "438",
+        "first_name": "Angelita"
+      },
+      "method": "POST",
+      "path": "/people",
+      "response": {
+        "id": 643634,
+        "external_id": 5433,
+        "company_id": 438,
+        "company_external_id": 2879,
+        "first_name": "Angelita",
+        "last_name": "Bechtelar",
+        "address": "6328 Becker Inlet",
+        "city": "Batzburgh",
+        "state": "CA",
+        "zip": "81066",
+        "phone_home": "03  0751-3140",
+        "phone_mobile": "0411 033-381",
+        "phone_work": "03  1231-7621",
+        "email": "email@server.com",
+        "contact_method_name": "Internet",
+        "source_name": "www.source.com",
+        "tag_list": "Tag3, tag2, tag1",
+        "avatar": "https://www.example.com/avatar.jpg",
+        "social_link": "https://twitter.com/username",
+        "salesperson": null,
+        "status": "enquiry",
+        "trial_end_at": null,
+        "trial_days_quantity": null,
+        "gender": "M",
+        "birthday": "1987-03-10",
+        "sms_opted_out": false,
+        "email_opted_out": false,
+        "do_not_call": false,
+        "whatsapp_opted_out": false,
+        "email_suppressed": false,
+        "email_suppressed_reason": null
+      },
+      "response_status": 201,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "update_person": {
+      "config": {
+        "operation": "update_person",
+        "id": "100",
+        "first_name": "Angelita",
+        "company_id": "438"
+      },
+      "method": "PUT",
+      "path": "/people/{id}",
+      "response": {
+        "id": 643634,
+        "external_id": 5433,
+        "company_id": 438,
+        "company_external_id": 2879,
+        "first_name": "Angelita",
+        "last_name": "Bechtelar",
+        "address": "6328 Becker Inlet",
+        "city": "Batzburgh",
+        "state": "CA",
+        "zip": "81066",
+        "phone_home": "03  0751-3140",
+        "phone_mobile": "0411 033-381",
+        "phone_work": "03  1231-7621",
+        "email": "email@server.com",
+        "contact_method_name": "Internet",
+        "source_name": "www.source.com",
+        "tag_list": "Tag3, tag2, tag1",
+        "avatar": "https://www.example.com/avatar.jpg",
+        "social_link": "https://twitter.com/username",
+        "salesperson": null,
+        "status": "enquiry",
+        "trial_end_at": null,
+        "trial_days_quantity": null,
+        "gender": "M",
+        "birthday": "1987-03-10",
+        "sms_opted_out": false,
+        "email_opted_out": false,
+        "do_not_call": false,
+        "whatsapp_opted_out": false,
+        "email_suppressed": false,
+        "email_suppressed_reason": null
+      },
+      "response_status": 201,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "list_notes": {
+      "config": {
+        "operation": "list_notes",
+        "person_id": "643633"
+      },
+      "method": "GET",
+      "path": "/people/{person_id}/notes",
+      "response": {
+        "collection": [
+          {
+            "id": 6131525,
+            "person_id": 643633,
+            "person_external_id": 5432,
+            "person_name": "Angelita Bechtelar",
+            "object": "Email",
+            "action": "received",
+            "title": "Duplicate Inbound Lead",
+            "description": "first_name: Angelita\nlast_name: Bechtelar\naddress: 6328 Becker Inlet\ncity: Batzburgh\nstate: CA\nzip: 81066\nphone_home: 03  0751-3140\nphone_mobile: 0411 033-381\nphone_work: 03  1231-7621\nemail: email@server.com\ntag_list: tag1,tag2,tag3\nnotes: Asperiores quasi consequuntur minus aut",
+            "user_id": 1754,
+            "user_external_id": null,
+            "user_name": "SomeWare API",
+            "created_at": "2015-08-16T06:30:29.514+01:00",
+            "updated_at": "2015-08-16T06:30:29.514+01:00",
+            "description_formatted": "<p>first_name: Angelita\n<br />last_name: Bechtelar\n<br />address: 6328 Becker Inlet\n<br />city: Batzburgh\n<br />state: CA\n<br />zip: 81066\n<br />phone_home: 03  0751-3140\n<br />phone_mobile: 0411 033-381\n<br />phone_work: 03  1231-7621\n<br />email: email@server.com\n<br />tag_list: tag1,tag2,tag3\n<br />notes: Asperiores quasi consequuntur minus aut</p>"
+          },
+          {
+            "id": 6131524,
+            "person_id": 643633,
+            "person_external_id": 5432,
+            "person_name": "Angelita Bechtelar",
+            "object": "Email",
+            "action": "received",
+            "title": "Duplicate Inbound Lead",
+            "description": "first_name: Angelita\nlast_name: Bechtelar\naddress: 6328 Becker Inlet\ncity: Batzburgh\nstate: CA\nzip: 81066\nphone_home: 03  0751-3140\nphone_mobile: 0411 033-380\nphone_work: 03  1231-7621\nemail: email@server.com\ntag_list: tag1,tag2,tag3\nnotes: Asperiores quasi consequuntur minus aut",
+            "user_id": 1754,
+            "user_external_id": null,
+            "user_name": "SomeWare API",
+            "created_at": "2015-08-16T06:30:20.589+01:00",
+            "updated_at": "2015-08-16T06:30:20.589+01:00",
+            "description_formatted": "<p>first_name: Angelita\n<br />last_name: Bechtelar\n<br />address: 6328 Becker Inlet\n<br />city: Batzburgh\n<br />state: CA\n<br />zip: 81066\n<br />phone_home: 03  0751-3140\n<br />phone_mobile: 0411 033-380\n<br />phone_work: 03  1231-7621\n<br />email: email@server.com\n<br />tag_list: tag1,tag2,tag3\n<br />notes: Asperiores quasi consequuntur minus aut</p>"
+          },
+          {
+            "id": 6131523,
+            "person_id": 643633,
+            "person_external_id": 5432,
+            "person_name": "Angelita Bechtelar",
+            "object": "Email",
+            "action": "received",
+            "title": "Duplicate Inbound Lead",
+            "description": "first_name: Angelita\nlast_name: Bechtelar\naddress: 6328 Becker Inlet\ncity: Batzburgh\nstate: CA\nzip: 81066\nphone_home: 03  0751-3140\nphone_mobile: 0411 033-380\nphone_work: 03  1231-7621\nemail: email@server.com\ntag_list: tag1,tag2,tag3\nnotes: Asperiores quasi consequuntur minus aut",
+            "user_id": 1754,
+            "user_external_id": null,
+            "user_name": "SomeWare API",
+            "created_at": "2015-08-16T06:30:19.516+01:00",
+            "updated_at": "2015-08-16T06:30:19.516+01:00",
+            "description_formatted": "<p>first_name: Angelita\n<br />last_name: Bechtelar\n<br />address: 6328 Becker Inlet\n<br />city: Batzburgh\n<br />state: CA\n<br />zip: 81066\n<br />phone_home: 03  0751-3140\n<br />phone_mobile: 0411 033-380\n<br />phone_work: 03  1231-7621\n<br />email: email@server.com\n<br />tag_list: tag1,tag2,tag3\n<br />notes: Asperiores quasi consequuntur minus aut</p>"
+          },
+          {
+            "id": 6131522,
+            "person_id": 643633,
+            "person_external_id": 5432,
+            "person_name": "Angelita Bechtelar",
+            "object": "Email",
+            "action": "received",
+            "title": "Duplicate Inbound Lead",
+            "description": "first_name: Angelita\nlast_name: Bechtelar\naddress: 6328 Becker Inlet\ncity: Batzburgh\nstate: CA\nzip: 81066\nphone_home: 03  0751-3140\nphone_mobile: 0411 033-380\nphone_work: 03  1231-7621\nemail: email@server.com\ntag_list: tag1,tag2,tag3\nnotes: Asperiores quasi consequuntur minus aut",
+            "user_id": 1754,
+            "user_external_id": null,
+            "user_name": "SomeWare API",
+            "created_at": "2015-08-16T06:29:52.624+01:00",
+            "updated_at": "2015-08-16T06:29:52.624+01:00",
+            "description_formatted": "<p>first_name: Angelita\n<br />last_name: Bechtelar\n<br />address: 6328 Becker Inlet\n<br />city: Batzburgh\n<br />state: CA\n<br />zip: 81066\n<br />phone_home: 03  0751-3140\n<br />phone_mobile: 0411 033-380\n<br />phone_work: 03  1231-7621\n<br />email: email@server.com\n<br />tag_list: tag1,tag2,tag3\n<br />notes: Asperiores quasi consequuntur minus aut</p>"
+          },
+          {
+            "id": 6131521,
+            "person_id": 643633,
+            "person_external_id": 5432,
+            "person_name": "Angelita Bechtelar",
+            "object": "Email",
+            "action": "received",
+            "title": "Duplicate Inbound Lead",
+            "description": "first_name: Angelita\nlast_name: Bechtelar\naddress: 6328 Becker Inlet\ncity: Batzburgh\nstate: CA\nzip: 81066\nphone_home: 03  0751-3140\nphone_mobile: 0411 033-380\nphone_work: 03  1231-7621\ntag_list: tag1,tag2,tag3\nnotes: Asperiores quasi consequuntur minus aut",
+            "user_id": 1754,
+            "user_external_id": null,
+            "user_name": "SomeWare API",
+            "created_at": "2015-08-16T06:29:33.893+01:00",
+            "updated_at": "2015-08-16T06:29:33.893+01:00",
+            "description_formatted": "<p>first_name: Angelita\n<br />last_name: Bechtelar\n<br />address: 6328 Becker Inlet\n<br />city: Batzburgh\n<br />state: CA\n<br />zip: 81066\n<br />phone_home: 03  0751-3140\n<br />phone_mobile: 0411 033-380\n<br />phone_work: 03  1231-7621\n<br />tag_list: tag1,tag2,tag3\n<br />notes: Asperiores quasi consequuntur minus aut</p>"
+          }
+        ],
+        "pagination": {
+          "total_pages": 3,
+          "total_entries": 14
+        }
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "create_note": {
+      "config": {
+        "operation": "create_note",
+        "person_id": "9191588",
+        "description": "Note"
+      },
+      "method": "POST",
+      "path": "/people/{person_id}/notes",
+      "response": {
+        "id": 129138855,
+        "person_id": 9191588,
+        "person_external_id": null,
+        "person_name": "Michael Taylor",
+        "object": "Note",
+        "action": "added",
+        "title": null,
+        "description": "Note",
+        "user_id": 29833,
+        "user_external_id": null,
+        "user_name": "Ian Zeevaert",
+        "created_at": "2023-01-04T10:34:00.814-06:00",
+        "updated_at": "2023-01-04T10:34:00.814-06:00",
+        "description_formatted": "<p>Note</p>"
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "list_activities": {
+      "config": {
+        "operation": "list_activities",
+        "person_id": "9191588"
+      },
+      "method": "GET",
+      "path": "/people/{person_id}/activities",
+      "response": {
+        "collection": [
+          {
+            "id": 164785144,
+            "person_id": 52705863,
+            "type": "Event",
+            "name": "non-sale appt test",
+            "description": "",
+            "start": "2018-12-21T10:30:00-06:00",
+            "duration": 30,
+            "kind_id": 86,
+            "kind_code": "non-sales-appointment",
+            "kind_name": "Non-Sales Appointment",
+            "confirmed": false,
+            "complete": false,
+            "completed_at": null,
+            "outcome": null,
+            "recurring": false,
+            "summary": "non-sale appt test"
+          }
+        ],
+        "pagination": {
+          "total_pages": 1,
+          "total_entries": 1
+        }
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "create_activity": {
+      "config": {
+        "operation": "create_activity",
+        "person_id": "9191588",
+        "type": "Event",
+        "kind_code": "non-sales-appointment",
+        "start": "2018-12-21T10:30:00-06:00"
+      },
+      "method": "POST",
+      "path": "/people/{person_id}/activities",
+      "response": {
+        "id": 164785144,
+        "person_id": 52705863,
+        "type": "Event",
+        "name": "non-sale appt test",
+        "description": "",
+        "start": "2018-12-21T10:30:00-06:00",
+        "duration": 30,
+        "kind_id": 86,
+        "kind_code": "non-sales-appointment",
+        "kind_name": "Non-Sales Appointment",
+        "confirmed": false,
+        "complete": false,
+        "completed_at": null,
+        "outcome": null,
+        "recurring": false,
+        "summary": "non-sale appt test"
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "list_external_duplicates": {
+      "config": {
+        "operation": "list_external_duplicates",
+        "person_id": "9191588"
+      },
+      "method": "GET",
+      "path": "/people/{person_id}/external_duplicates",
+      "response": {
+        "collection": [
+          {
+            "id": 164785144,
+            "person_id": 52705863,
+            "external_id": 54218078,
+            "company_id": 1889,
+            "created_at": "2025-01-18T07:57:49-06:00",
+            "updated_at": "2025-02-04T12:00:30-06:00",
+            "deleted_at": "2025-02-04T12:00:30-06:00"
+          }
+        ],
+        "pagination": {
+          "total_pages": 1,
+          "total_entries": 1
+        }
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "add_tag": {
+      "config": {
+        "operation": "add_tag",
+        "id": "9191588",
+        "tag_name": "tag1"
+      },
+      "method": "PUT",
+      "path": "/people/{id}/add_tag",
+      "response": {
+        "id": 643634,
+        "external_id": 5433,
+        "company_id": 438,
+        "company_external_id": 2879,
+        "first_name": "Angelita",
+        "last_name": "Bechtelar",
+        "address": "6328 Becker Inlet",
+        "city": "Batzburgh",
+        "state": "CA",
+        "zip": "81066",
+        "phone_home": "03  0751-3140",
+        "phone_mobile": "0411 033-381",
+        "phone_work": "03  1231-7621",
+        "email": "email@server.com",
+        "contact_method_name": "Internet",
+        "source_name": "www.source.com",
+        "tag_list": "Tag3, tag2, tag1",
+        "avatar": "https://www.example.com/avatar.jpg",
+        "social_link": "https://twitter.com/username",
+        "salesperson": null,
+        "status": "enquiry",
+        "trial_end_at": null,
+        "trial_days_quantity": null,
+        "gender": "M",
+        "birthday": "1987-03-10",
+        "email_suppressed": false,
+        "email_suppressed_reason": null
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "remove_tag": {
+      "config": {
+        "operation": "remove_tag",
+        "id": "9191588",
+        "tag_name": "tag1"
+      },
+      "method": "PUT",
+      "path": "/people/{id}/remove_tag",
+      "response": {
+        "id": 643634,
+        "external_id": 5433,
+        "company_id": 438,
+        "company_external_id": 2879,
+        "first_name": "Angelita",
+        "last_name": "Bechtelar",
+        "address": "6328 Becker Inlet",
+        "city": "Batzburgh",
+        "state": "CA",
+        "zip": "81066",
+        "phone_home": "03  0751-3140",
+        "phone_mobile": "0411 033-381",
+        "phone_work": "03  1231-7621",
+        "email": "email@server.com",
+        "contact_method_name": "Internet",
+        "source_name": "www.source.com",
+        "tag_list": "Tag3, tag2, tag1",
+        "avatar": "https://www.example.com/avatar.jpg",
+        "social_link": "https://twitter.com/username",
+        "salesperson": null,
+        "status": "enquiry",
+        "trial_end_at": null,
+        "trial_days_quantity": null,
+        "gender": "M",
+        "birthday": "1987-03-10",
+        "email_suppressed": false,
+        "email_suppressed_reason": null
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "email_opt_out": {
+      "config": {
+        "operation": "email_opt_out",
+        "email": "email@server.com",
+        "company_id": 438
+      },
+      "method": "PUT",
+      "path": "/people/email_opt_out",
+      "response": {
+        "collection": [
+          {
+            "id": 9191588,
+            "company_id": 1918,
+            "company_external_id": null,
+            "first_name": "Michael",
+            "last_name": "Taylor",
+            "address": "6328 Becker Inlet",
+            "city": "sdas",
+            "state": "asd",
+            "zip": "211212",
+            "phone_home": "+13108882222",
+            "phone_mobile": "+12125552222",
+            "phone_work": "+13108882222",
+            "phone_home_formatted": "(310) 888-2222",
+            "phone_mobile_formatted": "(212) 555-2222",
+            "phone_work_formatted": "(310) 888-2222",
+            "email": "michael@gmail.com",
+            "contact_method_name": "Phone-in",
+            "source_name": "Facebook",
+            "tag_list": "",
+            "avatar": null,
+            "social_link": null,
+            "salesperson": {
+              "id": 119,
+              "external_id": null,
+              "first_name": "Gaby",
+              "last_name": "Weissbacher"
+            },
+            "status": "sale",
+            "trial_end_at": null,
+            "trial_days_quantity": 0,
+            "gender": "M",
+            "birthday": "1998-02-11",
+            "sms_opted_out": true,
+            "abcfin_status": null,
+            "email_opted_out": true,
+            "do_not_call": false,
+            "whatsapp_opted_out": false,
+            "email_suppressed": false,
+            "email_suppressed_reason": null,
+            "marketing_external_id": null,
+            "additional_contacts": []
+          }
+        ],
+        "pagination": {
+          "total_pages": 1,
+          "total_entries": 1
+        }
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "sms_opt_out": {
+      "config": {
+        "operation": "sms_opt_out",
+        "phone_mobile": "0411 033 381",
+        "company_id": 438
+      },
+      "method": "PUT",
+      "path": "/people/sms_opt_out",
+      "response": {
+        "collection": [
+          {
+            "id": 9191588,
+            "company_id": 1918,
+            "company_external_id": null,
+            "first_name": "Michael",
+            "last_name": "Taylor",
+            "address": "6328 Becker Inlet",
+            "city": "sdas",
+            "state": "asd",
+            "zip": "211212",
+            "phone_home": "+13108882222",
+            "phone_mobile": "+12125552222",
+            "phone_work": "+13108882222",
+            "phone_home_formatted": "(310) 888-2222",
+            "phone_mobile_formatted": "(212) 555-2222",
+            "phone_work_formatted": "(310) 888-2222",
+            "email": "michael@gmail.com",
+            "contact_method_name": "Phone-in",
+            "source_name": "Facebook",
+            "tag_list": "",
+            "avatar": null,
+            "social_link": null,
+            "salesperson": {
+              "id": 119,
+              "external_id": null,
+              "first_name": "Gaby",
+              "last_name": "Weissbacher"
+            },
+            "status": "sale",
+            "trial_end_at": null,
+            "trial_days_quantity": 0,
+            "gender": "M",
+            "birthday": "1998-02-11",
+            "sms_opted_out": true,
+            "abcfin_status": null,
+            "email_opted_out": false,
+            "do_not_call": false,
+            "whatsapp_opted_out": false,
+            "email_suppressed": false,
+            "email_suppressed_reason": null,
+            "marketing_external_id": null,
+            "additional_contacts": []
+          }
+        ],
+        "pagination": {
+          "total_pages": 1,
+          "total_entries": 1
+        }
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "set_do_not_call": {
+      "config": {
+        "operation": "set_do_not_call",
+        "person_id": "9191588",
+        "do_not_call": true
+      },
+      "method": "PUT",
+      "path": "/people/do_not_call",
+      "response": {
+        "collection": [
+          {
+            "id": 9191588,
+            "company_id": 1918,
+            "company_external_id": null,
+            "first_name": "Michael",
+            "last_name": "Taylor",
+            "address": "6328 Becker Inlet",
+            "city": "sdas",
+            "state": "asd",
+            "zip": "211212",
+            "phone_home": "+13108882222",
+            "phone_mobile": "+12125552222",
+            "phone_work": "+13108882222",
+            "phone_home_formatted": "(310) 888-2222",
+            "phone_mobile_formatted": "(212) 555-2222",
+            "phone_work_formatted": "(310) 888-2222",
+            "email": "michael@gmail.com",
+            "contact_method_name": "Phone-in",
+            "source_name": "Facebook",
+            "tag_list": "",
+            "avatar": null,
+            "social_link": null,
+            "salesperson": {
+              "id": 119,
+              "external_id": null,
+              "first_name": "Gaby",
+              "last_name": "Weissbacher"
+            },
+            "status": "sale",
+            "trial_end_at": null,
+            "trial_days_quantity": 0,
+            "gender": "M",
+            "birthday": "1998-02-11",
+            "do_not_call": true,
+            "abcfin_status": null,
+            "email_opted_out": false,
+            "whatsapp_opted_out": false,
+            "email_suppressed": false,
+            "email_suppressed_reason": null,
+            "marketing_external_id": null,
+            "additional_contacts": []
+          }
+        ],
+        "pagination": {
+          "total_pages": 1,
+          "total_entries": 1
+        }
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "extend_trial": {
+      "config": {
+        "operation": "extend_trial",
+        "id": "9191588",
+        "trial_end_at": "2023-01-18T07:57:49-06:00"
+      },
+      "method": "PUT",
+      "path": "/people/{id}/extend_trial",
+      "response": {
+        "id": 643634,
+        "external_id": 5433,
+        "company_id": 438,
+        "company_external_id": 2879,
+        "first_name": "Angelita",
+        "last_name": "Bechtelar",
+        "address": "6328 Becker Inlet",
+        "city": "Batzburgh",
+        "state": "CA",
+        "zip": "81066",
+        "phone_home": "03  0751-3140",
+        "phone_mobile": "0411 033-381",
+        "phone_work": "03  1231-7621",
+        "email": "email@server.com",
+        "contact_method_name": "Internet",
+        "source_name": "www.source.com",
+        "tag_list": "Tag3, tag2, tag1",
+        "avatar": "https://www.example.com/avatar.jpg",
+        "social_link": "https://twitter.com/username",
+        "salesperson": null,
+        "status": "enquiry",
+        "trial_end_at": "2023-12-12",
+        "trial_days_quantity": null,
+        "gender": "M",
+        "birthday": "1987-03-10",
+        "email_suppressed": false,
+        "email_suppressed_reason": null
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    },
+    "get_salesperson_report": {
+      "config": {
+        "operation": "get_salesperson_report"
+      },
+      "method": "GET",
+      "path": "/reports/salesperson",
+      "response": {
+        "filter": {
+          "date_from": "2023-01-18T00:00:00+11:00",
+          "date_into": "2023-01-19T23:59:59+11:00",
+          "engagement": "all",
+          "status": "all"
+        },
+        "entities": [
+          {
+            "type": "company",
+            "external_id": null,
+            "company_name": "Fernwood Bulleen",
+            "company_id": 1,
+            "referrals_pos": 0,
+            "new_leads": 0,
+            "booked_a1": 0,
+            "booked_a2": 0,
+            "booked_a3": 0,
+            "booked_total": 0,
+            "tour_today": 0,
+            "tour_sale": 0,
+            "service_calls": 0,
+            "service_call_attempts": 0,
+            "contacts": 0,
+            "contact_attempts": 0,
+            "tour_show_up": 0,
+            "tour_total": 0,
+            "walk_in_total": 0,
+            "walk_in_sale": 0,
+            "personal_training_sold": 0,
+            "membership_12_month": 0,
+            "membership_no_contract": 0,
+            "online_booked_total": 0,
+            "tour_uncompleted": 0,
+            "walk_in_uncompleted": 0,
+            "name": "Total: Fernwood Bulleen",
+            "region": "Unallocated",
+            "total": 0.0,
+            "total_sale": 0.0,
+            "contact_ratio_num": 0,
+            "tour_show_ratio_num": 0,
+            "tour_close_ratio_num": 0,
+            "walk_in_close_ratio_num": 0,
+            "total_close_ratio_num": 0,
+            "referrals_per_sale": 0.0,
+            "membership_12_month_ratio_num": 0,
+            "contact_ratio": "0%",
+            "tour_show_ratio": "0%",
+            "tour_close_ratio": "0%",
+            "walk_in_close_ratio": "0%",
+            "total_close_ratio": "0%",
+            "membership_12_month_ratio": "0%",
+            "index": 0
+          }
+        ]
+      },
+      "response_status": 200,
+      "response_source": "Provider-published response example, copied verbatim."
+    }
+  }
+}
