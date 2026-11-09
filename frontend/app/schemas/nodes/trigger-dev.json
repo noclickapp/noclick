@@ -1,0 +1,1059 @@
+{
+  "$defs": {
+    "ActivateSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "schedule_id": {
+          "description": "Trigger.dev schedule ID, such as sched_1234.",
+          "minLength": 1,
+          "title": "Schedule Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "activate_schedule",
+          "default": "activate_schedule",
+          "title": "Activate schedule",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "ActivateSchedule",
+      "type": "object"
+    },
+    "AddRunTags": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "description": "Trigger.dev run ID, such as run_1234.",
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_run_tags",
+          "default": "add_run_tags",
+          "title": "Add run tags",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tags": {
+          "items": {
+            "maxLength": 128,
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "run_id",
+        "tags"
+      ],
+      "title": "AddRunTags",
+      "type": "object"
+    },
+    "BatchTaskItem": {
+      "additionalProperties": false,
+      "properties": {
+        "payload": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "context": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TriggerOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "task": {
+          "minLength": 1,
+          "title": "Task",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task"
+      ],
+      "title": "BatchTaskItem",
+      "type": "object"
+    },
+    "BatchTriggerTask": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "batch_trigger_task",
+          "default": "batch_trigger_task",
+          "title": "Batch trigger one task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_identifier": {
+          "minLength": 1,
+          "title": "Task Identifier",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/TriggerItem"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_identifier",
+        "items"
+      ],
+      "title": "BatchTriggerTask",
+      "type": "object"
+    },
+    "BatchTriggerTasks": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "batch_trigger_tasks",
+          "default": "batch_trigger_tasks",
+          "title": "Batch trigger tasks",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/BatchTaskItem"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "BatchTriggerTasks",
+      "type": "object"
+    },
+    "CancelRun": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "description": "Trigger.dev run ID, such as run_1234.",
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_run",
+          "default": "cancel_run",
+          "title": "Cancel run",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "CancelRun",
+      "type": "object"
+    },
+    "CreateSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_schedule",
+          "default": "create_schedule",
+          "title": "Create schedule",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task": {
+          "minLength": 1,
+          "title": "Task",
+          "type": "string"
+        },
+        "cron": {
+          "minLength": 1,
+          "title": "Cron",
+          "type": "string"
+        },
+        "deduplication_key": {
+          "minLength": 1,
+          "title": "Deduplication Key",
+          "type": "string"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA timezone, for example America/New_York; defaults to UTC.",
+          "title": "Timezone"
+        }
+      },
+      "required": [
+        "task",
+        "cron",
+        "deduplication_key"
+      ],
+      "title": "CreateSchedule",
+      "type": "object"
+    },
+    "DeactivateSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "schedule_id": {
+          "description": "Trigger.dev schedule ID, such as sched_1234.",
+          "minLength": 1,
+          "title": "Schedule Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "deactivate_schedule",
+          "default": "deactivate_schedule",
+          "title": "Deactivate schedule",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "DeactivateSchedule",
+      "type": "object"
+    },
+    "DeleteSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "schedule_id": {
+          "description": "Trigger.dev schedule ID, such as sched_1234.",
+          "minLength": 1,
+          "title": "Schedule Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_schedule",
+          "default": "delete_schedule",
+          "title": "Delete schedule",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "DeleteSchedule",
+      "type": "object"
+    },
+    "GetBatch": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_batch",
+          "default": "get_batch",
+          "title": "Get batch",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "GetBatch",
+      "type": "object"
+    },
+    "GetBatchResults": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_batch_results",
+          "default": "get_batch_results",
+          "title": "Get batch results",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "GetBatchResults",
+      "type": "object"
+    },
+    "GetQueue": {
+      "additionalProperties": false,
+      "properties": {
+        "queue": {
+          "description": "Queue ID, task identifier or custom queue name according to queue_type.",
+          "minLength": 1,
+          "title": "Queue",
+          "type": "string"
+        },
+        "queue_type": {
+          "default": "id",
+          "enum": [
+            "id",
+            "task",
+            "custom"
+          ],
+          "title": "Queue Type",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_queue",
+          "default": "get_queue",
+          "title": "Get queue",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "queue"
+      ],
+      "title": "GetQueue",
+      "type": "object"
+    },
+    "GetRun": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "description": "Trigger.dev run ID, such as run_1234.",
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_run",
+          "default": "get_run",
+          "title": "Get run",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "GetRun",
+      "type": "object"
+    },
+    "GetRunResult": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "description": "Trigger.dev run ID, such as run_1234.",
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_run_result",
+          "default": "get_run_result",
+          "title": "Get run result",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "GetRunResult",
+      "type": "object"
+    },
+    "GetSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "schedule_id": {
+          "description": "Trigger.dev schedule ID, such as sched_1234.",
+          "minLength": 1,
+          "title": "Schedule Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_schedule",
+          "default": "get_schedule",
+          "title": "Get schedule",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "GetSchedule",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ListQueues": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_queues",
+          "default": "list_queues",
+          "title": "List queues",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListQueues",
+      "type": "object"
+    },
+    "ListRuns": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_runs",
+          "default": "list_runs",
+          "title": "List runs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 10,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before"
+        },
+        "task_identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Identifier"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "PENDING_VERSION",
+                  "QUEUED",
+                  "EXECUTING",
+                  "REATTEMPTING",
+                  "FROZEN",
+                  "COMPLETED",
+                  "CANCELED",
+                  "FAILED",
+                  "CRASHED",
+                  "INTERRUPTED",
+                  "SYSTEM_FAILURE"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "title": "ListRuns",
+      "type": "object"
+    },
+    "ListSchedules": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_schedules",
+          "default": "list_schedules",
+          "title": "List schedules",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListSchedules",
+      "type": "object"
+    },
+    "PauseQueue": {
+      "additionalProperties": false,
+      "properties": {
+        "queue": {
+          "description": "Queue ID, task identifier or custom queue name according to queue_type.",
+          "minLength": 1,
+          "title": "Queue",
+          "type": "string"
+        },
+        "queue_type": {
+          "default": "id",
+          "enum": [
+            "id",
+            "task",
+            "custom"
+          ],
+          "title": "Queue Type",
+          "type": "string"
+        },
+        "operation": {
+          "const": "pause_queue",
+          "default": "pause_queue",
+          "title": "Pause or resume queue",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "action": {
+          "enum": [
+            "pause",
+            "resume"
+          ],
+          "title": "Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "queue",
+        "action"
+      ],
+      "title": "PauseQueue",
+      "type": "object"
+    },
+    "ReplayRun": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "description": "Trigger.dev run ID, such as run_1234.",
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "replay_run",
+          "default": "replay_run",
+          "title": "Replay run",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ReplayRun",
+      "type": "object"
+    },
+    "RescheduleRun": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "description": "Trigger.dev run ID, such as run_1234.",
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reschedule_run",
+          "default": "reschedule_run",
+          "title": "Reschedule run",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "delay": {
+          "description": "Duration such as 10m, or an ISO 8601 date-time.",
+          "minLength": 1,
+          "title": "Delay",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "delay"
+      ],
+      "title": "RescheduleRun",
+      "type": "object"
+    },
+    "TriggerDevAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "trigger_dev_api_key",
+          "default": "trigger_dev_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "Environment API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Trigger.dev API Key",
+      "type": "object",
+      "x-credential-instructions": "In your Trigger.dev project, open API Keys and create a named environment API key with access to the operations you need, including listing runs for connection verification. Paste the key here. Personal access tokens use different endpoints and are not supported by this credential.",
+      "x-credential-url": "https://cloud.trigger.dev",
+      "x-help-url": "https://trigger.dev/docs/management/authentication"
+    },
+    "TriggerItem": {
+      "additionalProperties": false,
+      "properties": {
+        "payload": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "context": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TriggerOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "TriggerItem",
+      "type": "object"
+    },
+    "TriggerOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "concurrencyKey": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Concurrencykey"
+        },
+        "idempotencyKey": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotencykey"
+        },
+        "delay": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delay"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 128,
+                "type": "string"
+              },
+              "maxItems": 10,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "machine": {
+          "anyOf": [
+            {
+              "enum": [
+                "micro",
+                "small-1x",
+                "small-2x",
+                "medium-1x",
+                "medium-2x",
+                "large-1x",
+                "large-2x"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Machine",
+          "enum": [
+            "micro",
+            "small-1x",
+            "small-2x",
+            "medium-1x",
+            "medium-2x",
+            "large-1x",
+            "large-2x"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "TriggerOptions",
+      "type": "object"
+    },
+    "TriggerTask": {
+      "additionalProperties": false,
+      "properties": {
+        "payload": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "context": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        },
+        "options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TriggerOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "trigger_task",
+          "default": "trigger_task",
+          "title": "Trigger task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_identifier": {
+          "minLength": 1,
+          "title": "Task Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_identifier"
+      ],
+      "title": "TriggerTask",
+      "type": "object"
+    },
+    "UpdateRunMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "description": "Trigger.dev run ID, such as run_1234.",
+          "minLength": 1,
+          "title": "Run Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_run_metadata",
+          "default": "update_run_metadata",
+          "title": "Update run metadata",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "metadata": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "run_id",
+        "metadata"
+      ],
+      "title": "UpdateRunMetadata",
+      "type": "object"
+    },
+    "UpdateSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "schedule_id": {
+          "description": "Trigger.dev schedule ID, such as sched_1234.",
+          "minLength": 1,
+          "title": "Schedule Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_schedule",
+          "default": "update_schedule",
+          "title": "Update schedule",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task": {
+          "minLength": 1,
+          "title": "Task",
+          "type": "string"
+        },
+        "cron": {
+          "minLength": 1,
+          "title": "Cron",
+          "type": "string"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        }
+      },
+      "required": [
+        "schedule_id",
+        "task",
+        "cron"
+      ],
+      "title": "UpdateSchedule",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "activate_schedule": "#/$defs/ActivateSchedule",
+          "add_run_tags": "#/$defs/AddRunTags",
+          "batch_trigger_task": "#/$defs/BatchTriggerTask",
+          "batch_trigger_tasks": "#/$defs/BatchTriggerTasks",
+          "cancel_run": "#/$defs/CancelRun",
+          "create_schedule": "#/$defs/CreateSchedule",
+          "deactivate_schedule": "#/$defs/DeactivateSchedule",
+          "delete_schedule": "#/$defs/DeleteSchedule",
+          "get_batch": "#/$defs/GetBatch",
+          "get_batch_results": "#/$defs/GetBatchResults",
+          "get_queue": "#/$defs/GetQueue",
+          "get_run": "#/$defs/GetRun",
+          "get_run_result": "#/$defs/GetRunResult",
+          "get_schedule": "#/$defs/GetSchedule",
+          "list_queues": "#/$defs/ListQueues",
+          "list_runs": "#/$defs/ListRuns",
+          "list_schedules": "#/$defs/ListSchedules",
+          "pause_queue": "#/$defs/PauseQueue",
+          "replay_run": "#/$defs/ReplayRun",
+          "reschedule_run": "#/$defs/RescheduleRun",
+          "trigger_task": "#/$defs/TriggerTask",
+          "update_run_metadata": "#/$defs/UpdateRunMetadata",
+          "update_schedule": "#/$defs/UpdateSchedule"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TriggerTask"
+        },
+        {
+          "$ref": "#/$defs/BatchTriggerTask"
+        },
+        {
+          "$ref": "#/$defs/BatchTriggerTasks"
+        },
+        {
+          "$ref": "#/$defs/ListRuns"
+        },
+        {
+          "$ref": "#/$defs/AddRunTags"
+        },
+        {
+          "$ref": "#/$defs/UpdateRunMetadata"
+        },
+        {
+          "$ref": "#/$defs/RescheduleRun"
+        },
+        {
+          "$ref": "#/$defs/CreateSchedule"
+        },
+        {
+          "$ref": "#/$defs/UpdateSchedule"
+        },
+        {
+          "$ref": "#/$defs/PauseQueue"
+        },
+        {
+          "$ref": "#/$defs/GetRun"
+        },
+        {
+          "$ref": "#/$defs/ReplayRun"
+        },
+        {
+          "$ref": "#/$defs/CancelRun"
+        },
+        {
+          "$ref": "#/$defs/GetRunResult"
+        },
+        {
+          "$ref": "#/$defs/GetBatch"
+        },
+        {
+          "$ref": "#/$defs/GetBatchResults"
+        },
+        {
+          "$ref": "#/$defs/ListSchedules"
+        },
+        {
+          "$ref": "#/$defs/GetSchedule"
+        },
+        {
+          "$ref": "#/$defs/DeleteSchedule"
+        },
+        {
+          "$ref": "#/$defs/ActivateSchedule"
+        },
+        {
+          "$ref": "#/$defs/DeactivateSchedule"
+        },
+        {
+          "$ref": "#/$defs/ListQueues"
+        },
+        {
+          "$ref": "#/$defs/GetQueue"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TriggerDevAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Trigger-dev Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
