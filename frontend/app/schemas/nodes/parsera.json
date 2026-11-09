@@ -1,0 +1,1104 @@
+{
+  "$defs": {
+    "AgentExtract": {
+      "additionalProperties": false,
+      "description": "Start one-shot agent extraction without creating a reusable scraper.",
+      "properties": {
+        "url": {
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Attribute"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "operation": {
+          "const": "agent_extract",
+          "default": "agent_extract",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "callback_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Callback Url"
+        },
+        "source": {
+          "default": "api",
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "prompt"
+      ],
+      "title": "AgentExtract",
+      "type": "object"
+    },
+    "Attribute": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "type": {
+          "default": "any",
+          "enum": [
+            "string",
+            "integer",
+            "number",
+            "bool",
+            "list",
+            "object",
+            "any",
+            "image"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Attribute",
+      "type": "object"
+    },
+    "AttributeData": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "type": {
+          "default": "any",
+          "enum": [
+            "string",
+            "integer",
+            "number",
+            "bool",
+            "list",
+            "object",
+            "any"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "AttributeData",
+      "type": "object"
+    },
+    "CreateAgentScraper": {
+      "additionalProperties": false,
+      "description": "Create agent scraper using the published Parsera endpoint.",
+      "properties": {
+        "operation": {
+          "const": "create_agent_scraper",
+          "default": "create_agent_scraper",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateAgentScraper",
+      "type": "object"
+    },
+    "CreateClassicScraper": {
+      "additionalProperties": false,
+      "description": "Create classic scraper using the published Parsera endpoint.",
+      "properties": {
+        "operation": {
+          "const": "create_classic_scraper",
+          "default": "create_classic_scraper",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateClassicScraper",
+      "type": "object"
+    },
+    "DeleteAgentScraper": {
+      "additionalProperties": false,
+      "description": "Delete agent scraper using the published Parsera endpoint.",
+      "properties": {
+        "operation": {
+          "const": "delete_agent_scraper",
+          "default": "delete_agent_scraper",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scraper_id": {
+          "title": "Scraper Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scraper_id"
+      ],
+      "title": "DeleteAgentScraper",
+      "type": "object"
+    },
+    "DeleteClassicScraper": {
+      "additionalProperties": false,
+      "description": "Delete classic scraper using the published Parsera endpoint.",
+      "properties": {
+        "operation": {
+          "const": "delete_classic_scraper",
+          "default": "delete_classic_scraper",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scraper_id": {
+          "title": "Scraper Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scraper_id"
+      ],
+      "title": "DeleteClassicScraper",
+      "type": "object"
+    },
+    "Extract": {
+      "additionalProperties": false,
+      "description": "Extract structured fields from a webpage synchronously.",
+      "properties": {
+        "url": {
+          "description": "Webpage URL to extract through Parsera.",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "proxy_country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proxy Country"
+        },
+        "cookies": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cookies"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/AttributeData"
+              },
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "items": {
+                "$ref": "#/$defs/Attribute"
+              },
+              "type": "array"
+            }
+          ],
+          "description": "Fields to extract: a name-to-description object, typed field object, or list of attributes.",
+          "title": "Attributes"
+        },
+        "prompt": {
+          "default": "",
+          "title": "Prompt",
+          "type": "string"
+        },
+        "mode": {
+          "default": "standard",
+          "enum": [
+            "standard",
+            "code"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "enable_pagination": {
+          "default": false,
+          "title": "Enable Pagination",
+          "type": "boolean"
+        },
+        "max_pages": {
+          "default": 2,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "source": {
+          "default": "api",
+          "title": "Source",
+          "type": "string"
+        },
+        "operation": {
+          "const": "extract",
+          "default": "extract",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url",
+        "attributes"
+      ],
+      "title": "Extract",
+      "type": "object"
+    },
+    "ExtractAsync": {
+      "additionalProperties": false,
+      "description": "Start an asynchronous structured extraction; poll its task separately.",
+      "properties": {
+        "url": {
+          "description": "Webpage URL to extract through Parsera.",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "proxy_country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proxy Country"
+        },
+        "cookies": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cookies"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/AttributeData"
+              },
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "items": {
+                "$ref": "#/$defs/Attribute"
+              },
+              "type": "array"
+            }
+          ],
+          "description": "Fields to extract: a name-to-description object, typed field object, or list of attributes.",
+          "title": "Attributes"
+        },
+        "prompt": {
+          "default": "",
+          "title": "Prompt",
+          "type": "string"
+        },
+        "mode": {
+          "default": "standard",
+          "enum": [
+            "standard",
+            "code"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "enable_pagination": {
+          "default": false,
+          "title": "Enable Pagination",
+          "type": "boolean"
+        },
+        "max_pages": {
+          "default": 2,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "source": {
+          "default": "api",
+          "title": "Source",
+          "type": "string"
+        },
+        "operation": {
+          "const": "extract_async",
+          "default": "extract_async",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "callback_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional webhook URL Parsera calls when the task finishes.",
+          "title": "Callback Url"
+        }
+      },
+      "required": [
+        "url",
+        "attributes"
+      ],
+      "title": "ExtractAsync",
+      "type": "object"
+    },
+    "ExtractMarkdown": {
+      "additionalProperties": false,
+      "description": "Fetch webpage content as Markdown.",
+      "properties": {
+        "url": {
+          "description": "Webpage URL to extract through Parsera.",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "proxy_country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proxy Country"
+        },
+        "cookies": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cookies"
+        },
+        "operation": {
+          "const": "extract_markdown",
+          "default": "extract_markdown",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ExtractMarkdown",
+      "type": "object"
+    },
+    "GenerateAgentScraper": {
+      "additionalProperties": false,
+      "description": "Build a reusable agentic scraper, optionally using an existing template.",
+      "properties": {
+        "url": {
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Attribute"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "operation": {
+          "const": "generate_agent_scraper",
+          "default": "generate_agent_scraper",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Id"
+        }
+      },
+      "required": [
+        "url",
+        "prompt"
+      ],
+      "title": "GenerateAgentScraper",
+      "type": "object"
+    },
+    "GetAgentExtractionStatus": {
+      "additionalProperties": false,
+      "description": "Get agent extraction status using the published Parsera endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_agent_extraction_status",
+          "default": "get_agent_extraction_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "GetAgentExtractionStatus",
+      "type": "object"
+    },
+    "GetAgentScraper": {
+      "additionalProperties": false,
+      "description": "Get agent scraper using the published Parsera endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_agent_scraper",
+          "default": "get_agent_scraper",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scraper_id": {
+          "title": "Scraper Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scraper_id"
+      ],
+      "title": "GetAgentScraper",
+      "type": "object"
+    },
+    "GetClassicScraper": {
+      "additionalProperties": false,
+      "description": "Get classic scraper using the published Parsera endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_classic_scraper",
+          "default": "get_classic_scraper",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scraper_id": {
+          "title": "Scraper Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scraper_id"
+      ],
+      "title": "GetClassicScraper",
+      "type": "object"
+    },
+    "GetExtractionStatus": {
+      "additionalProperties": false,
+      "description": "Get extraction status using the published Parsera endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_extraction_status",
+          "default": "get_extraction_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "GetExtractionStatus",
+      "type": "object"
+    },
+    "GetScraperRunStatus": {
+      "additionalProperties": false,
+      "description": "Get scraper run status using the published Parsera endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_scraper_run_status",
+          "default": "get_scraper_run_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "GetScraperRunStatus",
+      "type": "object"
+    },
+    "ListScrapers": {
+      "additionalProperties": false,
+      "description": "List scrapers using the published Parsera endpoint.",
+      "properties": {
+        "operation": {
+          "const": "list_scrapers",
+          "default": "list_scrapers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListScrapers",
+      "type": "object"
+    },
+    "Parse": {
+      "additionalProperties": false,
+      "description": "Extract structured fields from supplied text or HTML.",
+      "properties": {
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/AttributeData"
+              },
+              "type": "object"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "items": {
+                "$ref": "#/$defs/Attribute"
+              },
+              "type": "array"
+            }
+          ],
+          "description": "Fields to extract: a name-to-description object, typed field object, or list of attributes.",
+          "title": "Attributes"
+        },
+        "prompt": {
+          "default": "",
+          "title": "Prompt",
+          "type": "string"
+        },
+        "mode": {
+          "default": "standard",
+          "enum": [
+            "standard",
+            "code"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "enable_pagination": {
+          "default": false,
+          "title": "Enable Pagination",
+          "type": "boolean"
+        },
+        "max_pages": {
+          "default": 2,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "source": {
+          "default": "api",
+          "title": "Source",
+          "type": "string"
+        },
+        "operation": {
+          "const": "parse",
+          "default": "parse",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "content": {
+          "minLength": 1,
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "attributes",
+        "content"
+      ],
+      "title": "Parse",
+      "type": "object"
+    },
+    "ParseraAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "parsera_api_key",
+          "default": "parsera_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Parsera API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Parsera API key from the dashboard. NoClick verifies it by listing your scrapers.",
+      "x-credential-url": "https://parsera.org/docs/quickstart"
+    },
+    "RunScraper": {
+      "additionalProperties": false,
+      "description": "Run a reusable scraper and wait for its result in this API call.",
+      "properties": {
+        "template_id": {
+          "description": "ID of the reusable scraper to run.",
+          "title": "Template Id",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "proxy_country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proxy Country"
+        },
+        "cookies": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cookies"
+        },
+        "source": {
+          "default": "api",
+          "title": "Source",
+          "type": "string"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parameters"
+        },
+        "operation": {
+          "const": "run_scraper",
+          "default": "run_scraper",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pagination_detection_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pagination Detection Url"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "RunScraper",
+      "type": "object"
+    },
+    "RunScraperAsync": {
+      "additionalProperties": false,
+      "description": "Start a reusable scraper run and return immediately with its run ID.",
+      "properties": {
+        "template_id": {
+          "description": "ID of the reusable scraper to run.",
+          "title": "Template Id",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "proxy_country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proxy Country"
+        },
+        "cookies": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cookies"
+        },
+        "source": {
+          "default": "api",
+          "title": "Source",
+          "type": "string"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parameters"
+        },
+        "operation": {
+          "const": "run_scraper_async",
+          "default": "run_scraper_async",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "max_pages": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Pages"
+        },
+        "callback_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Callback Url"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "RunScraperAsync",
+      "type": "object"
+    },
+    "StopAgentExtraction": {
+      "additionalProperties": false,
+      "description": "Stop agent extraction using the published Parsera endpoint.",
+      "properties": {
+        "operation": {
+          "const": "stop_agent_extraction",
+          "default": "stop_agent_extraction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "StopAgentExtraction",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "agent_extract": "#/$defs/AgentExtract",
+          "create_agent_scraper": "#/$defs/CreateAgentScraper",
+          "create_classic_scraper": "#/$defs/CreateClassicScraper",
+          "delete_agent_scraper": "#/$defs/DeleteAgentScraper",
+          "delete_classic_scraper": "#/$defs/DeleteClassicScraper",
+          "extract": "#/$defs/Extract",
+          "extract_async": "#/$defs/ExtractAsync",
+          "extract_markdown": "#/$defs/ExtractMarkdown",
+          "generate_agent_scraper": "#/$defs/GenerateAgentScraper",
+          "get_agent_extraction_status": "#/$defs/GetAgentExtractionStatus",
+          "get_agent_scraper": "#/$defs/GetAgentScraper",
+          "get_classic_scraper": "#/$defs/GetClassicScraper",
+          "get_extraction_status": "#/$defs/GetExtractionStatus",
+          "get_scraper_run_status": "#/$defs/GetScraperRunStatus",
+          "list_scrapers": "#/$defs/ListScrapers",
+          "parse": "#/$defs/Parse",
+          "run_scraper": "#/$defs/RunScraper",
+          "run_scraper_async": "#/$defs/RunScraperAsync",
+          "stop_agent_extraction": "#/$defs/StopAgentExtraction"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Extract"
+        },
+        {
+          "$ref": "#/$defs/Parse"
+        },
+        {
+          "$ref": "#/$defs/ExtractMarkdown"
+        },
+        {
+          "$ref": "#/$defs/ExtractAsync"
+        },
+        {
+          "$ref": "#/$defs/GetExtractionStatus"
+        },
+        {
+          "$ref": "#/$defs/CreateClassicScraper"
+        },
+        {
+          "$ref": "#/$defs/GetClassicScraper"
+        },
+        {
+          "$ref": "#/$defs/DeleteClassicScraper"
+        },
+        {
+          "$ref": "#/$defs/AgentExtract"
+        },
+        {
+          "$ref": "#/$defs/GetAgentExtractionStatus"
+        },
+        {
+          "$ref": "#/$defs/StopAgentExtraction"
+        },
+        {
+          "$ref": "#/$defs/CreateAgentScraper"
+        },
+        {
+          "$ref": "#/$defs/GenerateAgentScraper"
+        },
+        {
+          "$ref": "#/$defs/GetAgentScraper"
+        },
+        {
+          "$ref": "#/$defs/DeleteAgentScraper"
+        },
+        {
+          "$ref": "#/$defs/ListScrapers"
+        },
+        {
+          "$ref": "#/$defs/RunScraper"
+        },
+        {
+          "$ref": "#/$defs/RunScraperAsync"
+        },
+        {
+          "$ref": "#/$defs/GetScraperRunStatus"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ParseraAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Parsera Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
