@@ -7,8 +7,13 @@ No application permissions, arbitrary URLs, MIME or attachments are exposed.
 """
 from __future__ import annotations
 
+import asyncio
+import hmac
+import json
+import secrets
+import time
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Annotated, Any, Literal, Union
 from urllib.parse import quote, urlsplit
 
@@ -17,6 +22,7 @@ from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
 from nodes.scopes.office_365 import OFFICE_365_SCOPES
 
@@ -131,7 +137,30 @@ def _model(name, spec):
 
 
 CONFIG_MODELS = {name: _model(name, spec) for name, spec in OPERATIONS.items()}
-Office365OperationConfig = Annotated[Union[tuple(CONFIG_MODELS.values())], Field(discriminator="operation")]
+
+
+class Office365OnNewMessageConfig(WebhookTriggerConfigBase):
+    operation: Literal["on_new_message"] = Field("on_new_message", title="On New Email", json_schema_extra={
+        "ui:hidden": True, "x-display-name": "On New Email", "x-category": "Triggers", "x-is-trigger": True,
+    })
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Automatically connected to your Outlook inbox.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+class Office365OnOutlookChangeConfig(WebhookTriggerConfigBase):
+    operation: Literal["on_outlook_change"] = Field("on_outlook_change", title="On Outlook Change", json_schema_extra={
+        "ui:hidden": True, "x-display-name": "On Outlook Change", "x-category": "Triggers", "x-is-trigger": True,
+    })
+    collection: Literal["messages", "events", "contacts"] = Field("messages", title="Watch",
+        description="Mail, calendar events or personal contacts in your own mailbox.")
+    change_type: Literal["created", "updated", "deleted", "created,updated", "created,updated,deleted"] = Field(
+        "created,updated", title="Changes")
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Automatically registered with Microsoft Graph.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+TRIGGER_MODELS = (Office365OnNewMessageConfig, Office365OnOutlookChangeConfig)
+Office365OperationConfig = Annotated[Union[tuple(CONFIG_MODELS.values()) + TRIGGER_MODELS], Field(discriminator="operation")]
 
 
 class Office365NodeConfig(NodeConfig[Office365OperationConfig, Office365OAuthCredential]):
@@ -146,7 +175,8 @@ def _page_url(value: str, path: str) -> str:
     return value
 
 
-class Office365Node(WorkflowNode):
+class Office365Node(ExternalWebhookTriggerMixin, WorkflowNode):
+    webhook_replace_stale_endpoint = True
     integration_type = "automation-office-365"
     borrowed_credential_types = frozenset({"microsoft_outlook_oauth"})
     credential_provider_labels = {"microsoft": "Microsoft Account"}
@@ -166,9 +196,180 @@ class Office365Node(WorkflowNode):
             refresh=refresh_access_token, provider="microsoft",
         )
 
+    @staticmethod
+    def _subscription_target(config):
+        if config.get("operation") == "on_new_message":
+            return "me/mailfolders('inbox')/messages", "created", "messages"
+        parsed = Office365OnOutlookChangeConfig.model_validate(config)
+        return "me/" + parsed.collection, parsed.change_type, parsed.collection
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        if config.get("operation") not in {"on_new_message", "on_outlook_change"}:
+            return {}
+        resource, changes, _ = cls._subscription_target(config)
+        # Graph's endpoint authorization expires in about one hour. The existing
+        # reconciler replaces registrations every half hour, also refreshing that
+        # authorization, without relying on a browser autosave of expiry mirrors.
+        # https://learn.microsoft.com/en-us/graph/change-notifications-delivery-webhooks
+        return {"resource": resource, "changes": changes, "renewal_window": int(time.time() // 1800)}
+
+    @staticmethod
+    async def _webhook_request(credential, method, path, body=None):
+        token = credential.get("access_token")
+        if not token:
+            raise ValueError("Connect a Microsoft account to activate this trigger")
+        async with httpx.AsyncClient(timeout=30, follow_redirects=False, trust_env=False) as client:
+            kwargs = {"headers": {"Authorization": f"Bearer {token}", "Accept": "application/json"}}
+            if body is not None:
+                kwargs["json"] = body
+            response = await client.request(method, GRAPH_ROOT + path, **kwargs)
+        if method == "DELETE" and response.status_code in {204, 404}:
+            return {}
+        # The pin uses a generic 2XX response; the method docs show 201.
+        success_codes = {200, 201} if method == "POST" else {200}
+        if response.status_code not in success_codes:
+            # Registration JSON contains the clientState secret: never echo it.
+            raise ValueError(f"Microsoft Graph {method} failed ({response.status_code})")
+        payload = response.json()
+        if not isinstance(payload, dict) or not isinstance(payload.get("id"), str) or not payload["id"]:
+            raise ValueError("Microsoft Graph returned a resource without an ID")
+        return payload
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        resource, changes, _ = cls._subscription_target(config)
+        secret = secrets.token_urlsafe(32)
+        # Basic notifications: no encrypted resource data or provider JWTs.
+        # https://learn.microsoft.com/en-us/graph/api/subscription-post-subscriptions
+        result = await cls._webhook_request(credential, "POST", "/subscriptions", {
+            "changeType": changes, "notificationUrl": webhook_url, "resource": resource,
+            "expirationDateTime": (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat(),
+            "clientState": secret,
+        })
+        return {"external_webhook_id": result["id"], "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        identifier = config.get("external_webhook_id")
+        if identifier and credential:
+            await cls._webhook_request(credential, "DELETE", "/subscriptions/" + quote(str(identifier), safe=""))
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # Graph basic deliveries have no HMAC: every notification must echo
+        # the random clientState supplied at registration, even in a batch.
+        secret = config.get("signing_secret")
+        if not isinstance(secret, str) or not secret:
+            return False
+        try:
+            payload = json.loads(body)
+            events = payload.get("value") if isinstance(payload, dict) else None
+            return isinstance(events, list) and bool(events) and all(
+                isinstance(event, dict) and isinstance(event.get("clientState"), str)
+                and hmac.compare_digest(event["clientState"].encode(), secret.encode())
+                for event in events)
+        except (ValueError, TypeError):
+            return False
+
+    @classmethod
+    def _matching_notifications(cls, payload, config):
+        _, changes, collection = cls._subscription_target(config)
+        kinds = {"messages": "message", "events": "event", "contacts": "contact"}
+        matches = []
+        events = payload.get("value") if isinstance(payload, dict) else None
+        for event in events if isinstance(events, list) else []:
+            if not isinstance(event, dict) or event.get("changeType") not in changes.split(","):
+                continue
+            resource = event.get("resourceData")
+            if not isinstance(resource, dict) or not isinstance(resource.get("id"), str) or not resource["id"]:
+                continue
+            kind = resource.get("@odata.type")
+            if not isinstance(kind, str) or kind.lower() != "#microsoft.graph." + kinds[collection]:
+                continue
+            matches.append(event)
+        return matches
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return bool(cls._matching_notifications(payload, config))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        enriched = payload.get("_office365_enrichment")
+        if isinstance(enriched, dict):
+            return enriched
+        _, _, collection = cls._subscription_target(config)
+        # Copy only public event fields: clientState and relay headers never
+        # become workflow output, learned examples or agent context.
+        changes = [{"change_type": event["changeType"], "id": event["resourceData"]["id"],
+                    "resource": event.get("resource"), "subscription_id": event.get("subscriptionId")}
+                   for event in cls._matching_notifications(payload, config)]
+        return {"status": "success", "operation": config["operation"], "collection": collection,
+                "changes": changes}
+
+    @classmethod
+    async def transform_trigger_payload(cls, payload, config, *, pool, workflow_id, node_id):
+        payload = {key: value for key, value in payload.items() if key != "_office365_enrichment"}
+        output = cls.resolve_trigger_payload(payload, config)
+        if pool is None or workflow_id is None:
+            return payload
+        from utils.inbound_media import resolve_delivery_credential
+        try:
+            async with asyncio.timeout(5):
+                credential, _ = await resolve_delivery_credential(pool, config, workflow_id, "microsoft_outlook_oauth")
+                if not credential:
+                    return payload
+                credential = await cls.freshen_credential(credential)
+                # Bound enrichment; the rest keep actionable IDs. A deleted or
+                # unavailable resource still delivers the original notification.
+                for change in output["changes"][:10]:
+                    if change["change_type"] == "deleted":
+                        continue
+                    try:
+                        change["data"] = await cls._webhook_request(credential, "GET",
+                            "/me/" + output["collection"] + "/" + quote(change["id"], safe=""))
+                    except (ValueError, httpx.HTTPError):
+                        continue
+        except Exception:
+            return payload
+        # The resolver runs after this transform; use a private enrichment map
+        # whose entries are generated by fixed Graph GETs, never provider input.
+        return {**payload, "_office365_enrichment": output}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        changes = output.get("changes") if isinstance(output, dict) else None
+        if not isinstance(changes, list) or not changes:
+            return None
+        collection = output["collection"]
+        lines = []
+        for change in changes:
+            data = change.get("data") or {}
+            person = data.get("from") or data.get("organizer") or {}
+            address = person.get("emailAddress") or {}
+            who = address.get("name") or address.get("address") or data.get("displayName") or "Connected Microsoft account"
+            title = data.get("subject") or data.get("displayName") or change["id"]
+            content = data.get("bodyPreview") or (data.get("body") or {}).get("content")
+            lines.append(f"{collection.title()} {change['change_type']} in Outlook: {title}\n"
+                         f"Who: {who}\nID: {change['id']}\nResource: {change.get('resource')}")
+            if content:
+                lines.append(str(content))
+            if data.get("webLink"):
+                lines.append(data["webLink"])
+            if data.get("start"):
+                lines.append(f"Start: {data['start']}; End: {data.get('end')}")
+            if not data and change["change_type"] != "deleted":
+                singular = {"messages": "message", "events": "event", "contacts": "contact"}[collection]
+                lines.append(f"Use get_{singular} with this ID to read its content.")
+        return {"text": "\n".join(lines), "channel_name": "Microsoft Office 365",
+                "conversation_id": "office-365:" + collection + ":" + changes[0]["id"]}
+
     async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(self.config, Office365NodeConfig) or not self.config.credentials:
             raise ValueError("Connect a Microsoft Office 365 account")
+        if isinstance(self.config.config, TRIGGER_MODELS):
+            return self.no_event_output(self.config.config.operation)
         from nodes.core.oauth_refresh import ensure_fresh_oauth_token
         from nodes.oauth.microsoft_oauth import refresh_access_token
 

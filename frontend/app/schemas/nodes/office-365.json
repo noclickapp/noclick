@@ -652,6 +652,283 @@
         "offline_access"
       ]
     },
+    "Office365OnNewMessageConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_message",
+          "default": "on_new_message",
+          "title": "On New Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Email",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically connected to your Outlook inbox.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "Office365OnNewMessageConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "Office365OnOutlookChangeConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_outlook_change",
+          "default": "on_outlook_change",
+          "title": "On Outlook Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Outlook Change",
+          "x-is-trigger": true
+        },
+        "collection": {
+          "default": "messages",
+          "description": "Mail, calendar events or personal contacts in your own mailbox.",
+          "enum": [
+            "messages",
+            "events",
+            "contacts"
+          ],
+          "title": "Watch",
+          "type": "string"
+        },
+        "change_type": {
+          "default": "created,updated",
+          "enum": [
+            "created",
+            "updated",
+            "deleted",
+            "created,updated",
+            "created,updated,deleted"
+          ],
+          "title": "Changes",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically registered with Microsoft Graph.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "Office365OnOutlookChangeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "Office365ReplyMessageConfig": {
       "additionalProperties": false,
       "properties": {
@@ -863,6 +1140,8 @@
           "list_mail_folders": "#/$defs/Office365ListMailFoldersConfig",
           "list_messages": "#/$defs/Office365ListMessagesConfig",
           "move_message": "#/$defs/Office365MoveMessageConfig",
+          "on_new_message": "#/$defs/Office365OnNewMessageConfig",
+          "on_outlook_change": "#/$defs/Office365OnOutlookChangeConfig",
           "reply_message": "#/$defs/Office365ReplyMessageConfig",
           "send_mail": "#/$defs/Office365SendMailConfig",
           "update_contact": "#/$defs/Office365UpdateContactConfig",
@@ -934,6 +1213,12 @@
         },
         {
           "$ref": "#/$defs/Office365DeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365OnNewMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/Office365OnOutlookChangeConfig"
         }
       ],
       "title": "Config"

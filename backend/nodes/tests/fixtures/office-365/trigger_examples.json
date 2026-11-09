@@ -1,0 +1,41 @@
+{
+  "description": "Microsoft Graph basic notification and registration examples. Added to verify Office 365 webhook delivery against provider-published JSON.",
+  "notification": {
+    "body": {
+      "value": [
+        {
+          "id": "lsgTZMr9KwAAA",
+          "subscriptionId": "{subscription_guid}",
+          "subscriptionExpirationDateTime": "2016-03-19T22:11:09.952Z",
+          "clientState": "secretClientValue",
+          "changeType": "created",
+          "resource": "users/{user_guid}@{tenant_guid}/messages/{long_id_string}",
+          "tenantId": "84bd8158-6d4d-4958-8b9f-9d6445542f95",
+          "resourceData": {
+            "@odata.type": "#Microsoft.Graph.Message",
+            "@odata.id": "Users/{user_guid}@{tenant_guid}/Messages/{long_id_string}",
+            "@odata.etag": "W/\"CQAAABYAAADkrWGo7bouTKlsgTZMr9KwAAAUWRHf\"",
+            "id": "{long_id_string}"
+          }
+        }
+      ]
+    },
+    "source": "https://learn.microsoft.com/en-us/graph/change-notifications-delivery-webhooks"
+  },
+  "registration": {
+    "body": {
+      "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#subscriptions/$entity",
+      "id": "7f105c7d-2dc5-4530-97cd-4e7ae6534c07",
+      "resource": "me/mailFolders('Inbox')/messages",
+      "applicationId": "24d3b144-21ae-4080-943f-7067b395b913",
+      "changeType": "created",
+      "clientState": "secretClientValue",
+      "notificationUrl": "https://webhook.azurewebsites.net/api/send/myNotifyClient",
+      "expirationDateTime": "2016-11-20T18:23:45.9356913Z",
+      "creatorId": "8ee44408-0679-472c-bc2a-692812af3437",
+      "latestSupportedTlsVersion": "v1_2",
+      "notificationContentType": "application/json"
+    },
+    "source": "https://learn.microsoft.com/en-us/graph/api/subscription-post-subscriptions?view=graph-rest-1.0"
+  }
+}

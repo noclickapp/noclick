@@ -198,7 +198,7 @@ def test_office_365_matches_existing_microsoft_sign_in_type():
     handler = MicrosoftOAuthHandler.__new__(MicrosoftOAuthHandler)
     resolved = handler._get_credential_type_from_name("Microsoft Office 365 OAuth", scopes)
     assert resolved == office.Office365OAuthCredential.model_fields["credential_type"].default
-    assert set(office.OPERATIONS) == set(office.OFFICE_365_SCOPES)
+    assert set(office.OPERATIONS) | {"on_new_message", "on_outlook_change"} == set(office.OFFICE_365_SCOPES)
 
 
 def test_office_365_manual_credential_has_default_type_and_normalized_token():
@@ -211,3 +211,132 @@ def test_office_365_manual_credential_has_default_type_and_normalized_token():
 def test_office_365_validates_event_time_pair(start, end):
     with pytest.raises(ValueError, match="local ISO"):
         make_node("create_event", {**EVENT, "start": start, "end": end})
+
+
+# Microsoft documents basic notification envelopes separately from resource GETs.
+# These examples are pinned verbatim, including the clientState field we strip.
+TRIGGER_EXAMPLES = json.loads((Path(__file__).parent / "fixtures/office-365/trigger_examples.json").read_text())
+
+
+def notification():
+    import copy
+    return copy.deepcopy(TRIGGER_EXAMPLES["notification"]["body"])
+
+
+@pytest.mark.parametrize("operation,config,resource,changes", [
+    ("on_new_message", {}, "me/mailfolders('inbox')/messages", "created"),
+    ("on_outlook_change", {}, "me/messages", "created,updated"),
+    ("on_outlook_change", {"collection": "events", "change_type": "updated"}, "me/events", "updated"),
+    ("on_outlook_change", {"collection": "contacts", "change_type": "deleted"}, "me/contacts", "deleted"),
+])
+@pytest.mark.parametrize("status", [200, 201])
+async def test_office_365_subscription_registration(transport, operation, config, resource, changes, status):
+    from datetime import datetime, timezone
+    requests, replies, _ = transport
+    replies.append((status, TRIGGER_EXAMPLES["registration"]["body"]))
+    result = await office.Office365Node._register_external_webhook(
+        webhook_url="https://example.com/webhook", credential=AUTH,
+        config={"operation": operation, **config}, node_id="office-test")
+    request = requests[0]
+    body = json.loads(request.content)
+    assert request.method == "POST" and request.url.path == "/v1.0/subscriptions"
+    assert request.headers["authorization"] == "Bearer fixture-access-token"
+    assert body["resource"] == resource and body["changeType"] == changes
+    assert body["notificationUrl"] == "https://example.com/webhook"
+    assert 3500 < (datetime.fromisoformat(body["expirationDateTime"]) - datetime.now(timezone.utc)).total_seconds() <= 3600
+    assert result["external_webhook_id"] == TRIGGER_EXAMPLES["registration"]["body"]["id"]
+    assert body["clientState"] == result["signing_secret"] and len(result["signing_secret"]) >= 32
+    assert "includeResourceData" not in body
+
+
+@pytest.mark.parametrize("status", [204, 404])
+async def test_office_365_subscription_cleanup_is_idempotent(transport, status):
+    requests, replies, _ = transport
+    replies.append((status, None))
+    await office.Office365Node._unregister_external_webhook(
+        credential=AUTH, config={"external_webhook_id": "subscription/one"}, node_id="office-test")
+    assert requests[0].method == "DELETE" and requests[0].url.raw_path == b"/v1.0/subscriptions/subscription%2Fone"
+
+
+def test_office_365_client_state_verifies_every_notification():
+    payload = notification()
+    secret = payload["value"][0]["clientState"]
+    verify = office.Office365Node.verify_webhook_signature
+    assert verify(json.dumps(payload).encode(), {}, {"signing_secret": secret})
+    assert not verify(json.dumps(payload).encode(), {}, {})
+    assert not verify(json.dumps(payload).encode(), {}, {"signing_secret": "wrong"})
+    for body in [b"[]", b"{}", b"{", b'{"value":[]}', b'{"value":[null]}']:
+        assert not verify(body, {}, {"signing_secret": secret})
+    payload["value"].append({**payload["value"][0], "clientState": "wrong"})
+    assert not verify(json.dumps(payload).encode(), {}, {"signing_secret": secret})
+
+
+@pytest.mark.parametrize("operation", ["on_new_message", "on_outlook_change"])
+async def test_office_365_documented_notification_to_agent(operation):
+    payload = notification()
+    config = {"operation": operation}
+    assert office.Office365Node.filter_trigger_payload(payload, config)
+    transformed = await office.Office365Node.transform_trigger_payload(
+        {**payload, "_office365_enrichment": {"changes": [{"data": "untrusted"}]}}, config,
+        pool=None, workflow_id=None, node_id="office-test")
+    output = office.Office365Node.resolve_trigger_payload(transformed, config)
+    assert len(output["changes"]) == 1 and output["changes"][0]["id"] == payload["value"][0]["resourceData"]["id"]
+    assert "clientState" not in json.dumps(output) and "untrusted" not in json.dumps(output)
+    assert payload["value"][0]["clientState"] not in json.dumps(output)
+    event = office.Office365Node.resolve_agent_event(output)
+    assert "created in Outlook" in event["text"] and "get_message" in event["text"]
+    assert output["changes"][0]["id"] in event["text"]
+    manual = await make_node(operation).execute({"value": payload["value"]})
+    assert manual["status"] == "no_event"
+
+
+def test_office_365_subscription_filters_changes_and_collections():
+    payload = notification()
+    assert not office.Office365Node.filter_trigger_payload(payload, {"operation": "on_outlook_change", "change_type": "updated"})
+    assert not office.Office365Node.filter_trigger_payload(payload, {"operation": "on_outlook_change", "collection": "events"})
+    assert not office.Office365Node.filter_trigger_payload({"value": [None, {}, {"changeType": "created"}]}, {"operation": "on_new_message"})
+
+
+def test_office_365_renewal_uses_existing_reconciler(monkeypatch):
+    from utils.webhook_manager import registration_fingerprint
+    cls = office.Office365Node
+    config = {"operation": "on_outlook_change"}
+    monkeypatch.setattr(office.time, "time", lambda: 1801)
+    first = registration_fingerprint(cls, "on_outlook_change", "credential", config)
+    assert first == registration_fingerprint(cls, "on_outlook_change", "credential", config)
+    assert first != registration_fingerprint(cls, "on_outlook_change", "credential", {**config, "collection": "contacts"})
+    monkeypatch.setattr(office.time, "time", lambda: 3601)
+    assert first != registration_fingerprint(cls, "on_outlook_change", "credential", config)
+    assert cls.webhook_replace_stale_endpoint
+    assert cls.registration_fingerprint_fields({"operation": "get_profile"}) == {}
+
+
+async def test_office_365_enriches_agent_email_from_documented_get(transport, monkeypatch):
+    from utils import inbound_media
+    payload = notification()
+    message = FIXTURES["GET /me/messages/{message-id}"]["body"]
+    monkeypatch.setattr(inbound_media, "resolve_delivery_credential", AsyncMock(return_value=(AUTH, "owner")))
+    monkeypatch.setattr(office.Office365Node, "freshen_credential", AsyncMock(return_value=AUTH))
+    transport[1].append((200, message))
+    transformed = await office.Office365Node.transform_trigger_payload(
+        payload, {"operation": "on_new_message"}, pool=object(), workflow_id="workflow", node_id="office-test")
+    output = office.Office365Node.resolve_trigger_payload(transformed, {"operation": "on_new_message"})
+    assert output["changes"][0]["data"] == message
+    text = office.Office365Node.resolve_agent_event(output)["text"]
+    assert message["subject"] in text
+    assert message["from"]["emailAddress"]["name"] in text
+    assert message["bodyPreview"] in text
+    assert transport[0][0].url.host == "graph.microsoft.com"
+    assert transport[0][0].url.path.endswith("/me/messages/" + payload["value"][0]["resourceData"]["id"])
+
+
+async def test_office_365_enrichment_failure_preserves_actionable_event(transport, monkeypatch):
+    from utils import inbound_media
+    monkeypatch.setattr(inbound_media, "resolve_delivery_credential", AsyncMock(return_value=(AUTH, "owner")))
+    monkeypatch.setattr(office.Office365Node, "freshen_credential", AsyncMock(return_value=AUTH))
+    transport[1].append((404, {"error": {"message": "gone"}}))
+    payload = await office.Office365Node.transform_trigger_payload(
+        notification(), {"operation": "on_new_message"}, pool=object(), workflow_id="workflow", node_id="office-test")
+    output = office.Office365Node.resolve_trigger_payload(payload, {"operation": "on_new_message"})
+    assert office.Office365Node.resolve_agent_event(output)["text"]
+    assert "data" not in output["changes"][0]
