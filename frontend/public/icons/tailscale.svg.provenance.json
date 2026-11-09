@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/tailscale.svg",
+  "source": "https://tailscale.com/favicon.svg",
+  "license": "Tailscale trademark; official site icon used to identify the Tailscale integration",
+  "sha256": "a5bad3bf6a94e50a9f7969283721f75a80da92a4086ded04e709830a2086c001"
+}
