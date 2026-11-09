@@ -1,0 +1,1526 @@
+{
+  "$defs": {
+    "UserbackAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "userback_api_token",
+          "default": "userback_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Userback API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your Userback REST API token from the token page linked in the authentication documentation. An API-enabled account and Admin permissions are required. NoClick sends it as a Bearer token to rest.userback.io and lists projects to check the connection.",
+      "x-credential-url": "https://docs.userback.io/reference/authentication"
+    },
+    "UserbackCreateCommentConfig": {
+      "additionalProperties": false,
+      "description": "Comment on a feedback.",
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "feedbackId": {
+          "description": "ID is a generic type that is used to represent a unique identifier",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Feedbackid",
+          "type": "integer"
+        },
+        "replyCommentId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID is a generic type that is used to represent a unique identifier",
+          "title": "Replycommentid"
+        },
+        "comment": {
+          "description": "The contents of the comment.",
+          "maxLength": 65535,
+          "pattern": ".*",
+          "title": "Comment",
+          "type": "string"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID is a generic type that is used to represent a unique identifier",
+          "title": "Userid"
+        },
+        "isPublic": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, the comment is public and visible to all users.",
+          "title": "Ispublic"
+        },
+        "guestEmail": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email of the ananymous user who created the comment, if defined.",
+          "title": "Guestemail"
+        },
+        "guestName": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "pattern": ".*",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the ananymous user who created the comment, if defined.",
+          "title": "Guestname"
+        }
+      },
+      "required": [
+        "feedbackId",
+        "comment"
+      ],
+      "title": "UserbackCreateCommentConfig",
+      "type": "object"
+    },
+    "UserbackCreateFeedbackConfig": {
+      "additionalProperties": false,
+      "description": "Create a feedback.",
+      "properties": {
+        "operation": {
+          "const": "create_feedback",
+          "default": "create_feedback",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "projectId": {
+          "description": "ID is a generic type that is used to represent a unique identifier",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Projectid",
+          "type": "integer"
+        },
+        "email": {
+          "description": "The email of the user who submitted the Feedback",
+          "maxLength": 255,
+          "minLength": 3,
+          "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "feedbackType": {
+          "description": "The type of feedback that was given.",
+          "enum": [
+            "General",
+            "Bug",
+            "Idea"
+          ],
+          "title": "Feedbacktype",
+          "type": "string"
+        },
+        "title": {
+          "description": "The title provided by the user submitting the Feedback",
+          "maxLength": 255,
+          "minLength": 0,
+          "pattern": ".*",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "description": "The description provided by the user submitting the Feedback",
+          "maxLength": 65535,
+          "minLength": 0,
+          "pattern": ".*",
+          "title": "Description",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 0,
+              "pattern": ".*",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the user who submitted the Feedback",
+          "title": "Name"
+        },
+        "pageUrl": {
+          "anyOf": [
+            {
+              "maxLength": 65535,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The url of the page where the feedback was submitted",
+          "title": "Pageurl"
+        },
+        "isShared": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isshared"
+        },
+        "allowPublicComment": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, public comments are allowed to be posted on the feedback",
+          "title": "Allowpubliccomment"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "neutral",
+                "high",
+                "urgent"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "low",
+            "neutral",
+            "high",
+            "urgent"
+          ],
+          "x-enum-searchable": true
+        },
+        "category": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": ".*",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If defined, the category the feedback was assigned to",
+          "title": "Category"
+        },
+        "rating": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "pattern": "^star_[1-5]$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines the rating given by the user submitting the feedback",
+          "title": "Rating"
+        },
+        "assigneeId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID is a generic type that is used to represent a unique identifier",
+          "title": "Assigneeid"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Define the due date of the feedback",
+          "title": "Duedate"
+        },
+        "notify": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to false, notifications to Email, Instant Messengers and Auto-Reply will be supressed.",
+          "title": "Notify"
+        }
+      },
+      "required": [
+        "projectId",
+        "email",
+        "feedbackType",
+        "title",
+        "description"
+      ],
+      "title": "UserbackCreateFeedbackConfig",
+      "type": "object"
+    },
+    "UserbackCreateWorkflowConfig": {
+      "additionalProperties": false,
+      "description": "Create a workflow.",
+      "properties": {
+        "operation": {
+          "const": "create_workflow",
+          "default": "create_workflow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "The name of the workflow",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[\\w\\-\\s\\.\\!\\#]+$",
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "description": "The color of the workflow in a hex format",
+          "maxLength": 7,
+          "pattern": "^#([A-F0-9]{6}|[A-F0-9]{3})$",
+          "title": "Color",
+          "type": "string"
+        },
+        "projectId": {
+          "description": "ID is a generic type that is used to represent a unique identifier",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Projectid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "color",
+        "projectId"
+      ],
+      "title": "UserbackCreateWorkflowConfig",
+      "type": "object"
+    },
+    "UserbackDeleteCommentConfig": {
+      "additionalProperties": false,
+      "description": "Delete a comment.",
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback comment ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackDeleteCommentConfig",
+      "type": "object"
+    },
+    "UserbackDeleteFeedbackConfig": {
+      "additionalProperties": false,
+      "description": "Delete a feedback.",
+      "properties": {
+        "operation": {
+          "const": "delete_feedback",
+          "default": "delete_feedback",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback feedback ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackDeleteFeedbackConfig",
+      "type": "object"
+    },
+    "UserbackDeleteWorkflowConfig": {
+      "additionalProperties": false,
+      "description": "Delete a workflow.",
+      "properties": {
+        "operation": {
+          "const": "delete_workflow",
+          "default": "delete_workflow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback workflow ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackDeleteWorkflowConfig",
+      "type": "object"
+    },
+    "UserbackGetCommentConfig": {
+      "additionalProperties": false,
+      "description": "Get a comment.",
+      "properties": {
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback comment ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackGetCommentConfig",
+      "type": "object"
+    },
+    "UserbackGetFeedbackConfig": {
+      "additionalProperties": false,
+      "description": "Get a feedback.",
+      "properties": {
+        "operation": {
+          "const": "get_feedback",
+          "default": "get_feedback",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback feedback ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackGetFeedbackConfig",
+      "type": "object"
+    },
+    "UserbackGetMemberConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a Member by Id.",
+      "properties": {
+        "operation": {
+          "const": "get_member",
+          "default": "get_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback member ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackGetMemberConfig",
+      "type": "object"
+    },
+    "UserbackGetProjectConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a project by Id.",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback project ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackGetProjectConfig",
+      "type": "object"
+    },
+    "UserbackGetSessionRecordingConfig": {
+      "additionalProperties": false,
+      "description": "Get a SessionRecording.",
+      "properties": {
+        "operation": {
+          "const": "get_session_recording",
+          "default": "get_session_recording",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback session recording ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackGetSessionRecordingConfig",
+      "type": "object"
+    },
+    "UserbackListCommentsConfig": {
+      "additionalProperties": false,
+      "description": "List comments from a feedback.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution reads one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "description": "Maximum records per page.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 4,
+              "pattern": "^[a-zA-Z0-9_]+,(asc|desc)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field and direction, for example id,desc.",
+          "title": "Sort"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Userback OData filter expression.",
+          "title": "Filter"
+        },
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "UserbackListCommentsConfig",
+      "type": "object"
+    },
+    "UserbackListFeedbackConfig": {
+      "additionalProperties": false,
+      "description": "List feedbacks.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution reads one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "description": "Maximum records per page.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 4,
+              "pattern": "^[a-zA-Z0-9_]+,(asc|desc)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field and direction, for example id,desc.",
+          "title": "Sort"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Userback OData filter expression.",
+          "title": "Filter"
+        },
+        "operation": {
+          "const": "list_feedback",
+          "default": "list_feedback",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "UserbackListFeedbackConfig",
+      "type": "object"
+    },
+    "UserbackListMembersConfig": {
+      "additionalProperties": false,
+      "description": "List available members.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution reads one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "description": "Maximum records per page.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 4,
+              "pattern": "^[a-zA-Z0-9_]+,(asc|desc)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field and direction, for example id,desc.",
+          "title": "Sort"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Userback OData filter expression.",
+          "title": "Filter"
+        },
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "UserbackListMembersConfig",
+      "type": "object"
+    },
+    "UserbackListProjectsConfig": {
+      "additionalProperties": false,
+      "description": "List available projects.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution reads one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "description": "Maximum records per page.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 4,
+              "pattern": "^[a-zA-Z0-9_]+,(asc|desc)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field and direction, for example id,desc.",
+          "title": "Sort"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Userback OData filter expression.",
+          "title": "Filter"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "UserbackListProjectsConfig",
+      "type": "object"
+    },
+    "UserbackListSessionRecordingsConfig": {
+      "additionalProperties": false,
+      "description": "List SessionRecordings.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution reads one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "description": "Maximum records per page.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 4,
+              "pattern": "^[a-zA-Z0-9_]+,(asc|desc)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field and direction, for example id,desc.",
+          "title": "Sort"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Userback OData filter expression.",
+          "title": "Filter"
+        },
+        "operation": {
+          "const": "list_session_recordings",
+          "default": "list_session_recordings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "UserbackListSessionRecordingsConfig",
+      "type": "object"
+    },
+    "UserbackListWorkflowsConfig": {
+      "additionalProperties": false,
+      "description": "List workflows.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each execution reads one page.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "description": "Maximum records per page.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 4,
+              "pattern": "^[a-zA-Z0-9_]+,(asc|desc)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field and direction, for example id,desc.",
+          "title": "Sort"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Userback OData filter expression.",
+          "title": "Filter"
+        },
+        "operation": {
+          "const": "list_workflows",
+          "default": "list_workflows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "UserbackListWorkflowsConfig",
+      "type": "object"
+    },
+    "UserbackUpdateCommentConfig": {
+      "additionalProperties": false,
+      "description": "Update a comment.",
+      "properties": {
+        "operation": {
+          "const": "update_comment",
+          "default": "update_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback comment ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID is a generic type that is used to represent a unique identifier",
+          "title": "Userid"
+        },
+        "isPublic": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, the comment is public and visible to all users.",
+          "title": "Ispublic"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "maxLength": 65535,
+              "pattern": ".*",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The contents of the comment.",
+          "title": "Comment"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackUpdateCommentConfig",
+      "type": "object"
+    },
+    "UserbackUpdateFeedbackConfig": {
+      "additionalProperties": false,
+      "description": "Update a feedback.",
+      "properties": {
+        "operation": {
+          "const": "update_feedback",
+          "default": "update_feedback",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback feedback ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "feedbackType": {
+          "anyOf": [
+            {
+              "enum": [
+                "General",
+                "Bug",
+                "Idea"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of feedback that was given.",
+          "title": "Feedbacktype",
+          "enum": [
+            "General",
+            "Bug",
+            "Idea"
+          ],
+          "x-enum-searchable": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 0,
+              "pattern": ".*",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The title provided by the user submitting the Feedback",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 65535,
+              "minLength": 0,
+              "pattern": ".*",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description provided by the user submitting the Feedback",
+          "title": "Description"
+        },
+        "pageUrl": {
+          "anyOf": [
+            {
+              "maxLength": 65535,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The url of the page where the feedback was submitted",
+          "title": "Pageurl"
+        },
+        "isShared": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isshared"
+        },
+        "allowPublicComment": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, public comments are allowed to be posted on the feedback",
+          "title": "Allowpubliccomment"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "neutral",
+                "high",
+                "urgent"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "low",
+            "neutral",
+            "high",
+            "urgent"
+          ],
+          "x-enum-searchable": true
+        },
+        "category": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": ".*",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If defined, the category the feedback was assigned to",
+          "title": "Category"
+        },
+        "rating": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "pattern": "^star_[1-5]$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defines the rating given by the user submitting the feedback",
+          "title": "Rating"
+        },
+        "assigneeId": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID is a generic type that is used to represent a unique identifier",
+          "title": "Assigneeid"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Define the due date of the feedback",
+          "title": "Duedate"
+        },
+        "notify": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to false, notifications to Email, Instant Messengers and Auto-Reply will be supressed.",
+          "title": "Notify"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackUpdateFeedbackConfig",
+      "type": "object"
+    },
+    "UserbackUpdateMemberConfig": {
+      "additionalProperties": false,
+      "description": "Update member information.",
+      "properties": {
+        "operation": {
+          "const": "update_member",
+          "default": "update_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback member ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "The name of the user.",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": ".*",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "UserbackUpdateMemberConfig",
+      "type": "object"
+    },
+    "UserbackUpdateProjectConfig": {
+      "additionalProperties": false,
+      "description": "Update project information.",
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback project ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "pattern": ".*",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project name",
+          "title": "Name"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 65535,
+              "pattern": "^[a-zA-Z][a-zA-Z0-9+.-]*://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project url",
+          "title": "Url"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackUpdateProjectConfig",
+      "type": "object"
+    },
+    "UserbackUpdateWorkflowConfig": {
+      "additionalProperties": false,
+      "description": "Update a workflow.",
+      "properties": {
+        "operation": {
+          "const": "update_workflow",
+          "default": "update_workflow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Userback workflow ID.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[\\w\\-\\s\\.\\!\\#]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the workflow",
+          "title": "Name"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 7,
+              "pattern": "^#([A-F0-9]{6}|[A-F0-9]{3})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The color of the workflow in a hex format",
+          "title": "Color"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UserbackUpdateWorkflowConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_comment": "#/$defs/UserbackCreateCommentConfig",
+          "create_feedback": "#/$defs/UserbackCreateFeedbackConfig",
+          "create_workflow": "#/$defs/UserbackCreateWorkflowConfig",
+          "delete_comment": "#/$defs/UserbackDeleteCommentConfig",
+          "delete_feedback": "#/$defs/UserbackDeleteFeedbackConfig",
+          "delete_workflow": "#/$defs/UserbackDeleteWorkflowConfig",
+          "get_comment": "#/$defs/UserbackGetCommentConfig",
+          "get_feedback": "#/$defs/UserbackGetFeedbackConfig",
+          "get_member": "#/$defs/UserbackGetMemberConfig",
+          "get_project": "#/$defs/UserbackGetProjectConfig",
+          "get_session_recording": "#/$defs/UserbackGetSessionRecordingConfig",
+          "list_comments": "#/$defs/UserbackListCommentsConfig",
+          "list_feedback": "#/$defs/UserbackListFeedbackConfig",
+          "list_members": "#/$defs/UserbackListMembersConfig",
+          "list_projects": "#/$defs/UserbackListProjectsConfig",
+          "list_session_recordings": "#/$defs/UserbackListSessionRecordingsConfig",
+          "list_workflows": "#/$defs/UserbackListWorkflowsConfig",
+          "update_comment": "#/$defs/UserbackUpdateCommentConfig",
+          "update_feedback": "#/$defs/UserbackUpdateFeedbackConfig",
+          "update_member": "#/$defs/UserbackUpdateMemberConfig",
+          "update_project": "#/$defs/UserbackUpdateProjectConfig",
+          "update_workflow": "#/$defs/UserbackUpdateWorkflowConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/UserbackGetCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackUpdateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackGetFeedbackConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackUpdateFeedbackConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackDeleteFeedbackConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackListFeedbackConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackCreateFeedbackConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackGetMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackUpdateMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackGetSessionRecordingConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackListSessionRecordingsConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackListWorkflowsConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackCreateWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackUpdateWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/UserbackDeleteWorkflowConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/UserbackAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Userback Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create feedback from a support ticket",
+    "Add a comment to feedback",
+    "List projects",
+    "Update feedback priority"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
