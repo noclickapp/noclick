@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/temporal.svg",
+  "source": "https://raw.githubusercontent.com/temporalio/ui/main/src/lib/vendor/logo.svg",
+  "license": "Temporal brand mark from the official Temporal UI repository (MIT); used nominatively to identify Temporal. Trademark rights remain with Temporal Technologies.",
+  "sha256": "44c7bc2a29ceca307e211794834db2a5d26f998dc763630e3ba1f41520fa27fa"
+}

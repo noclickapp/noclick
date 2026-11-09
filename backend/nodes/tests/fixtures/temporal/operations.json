@@ -1,0 +1,233 @@
+{
+  "get_account": {
+    "config": {
+      "operation": "get_account"
+    },
+    "method": "GET",
+    "path": "/cloud/account",
+    "operation_id": "GetAccount"
+  },
+  "get_current_identity": {
+    "config": {
+      "operation": "get_current_identity"
+    },
+    "method": "GET",
+    "path": "/cloud/current-identity",
+    "operation_id": "GetCurrentIdentity"
+  },
+  "get_async_operation": {
+    "config": {
+      "operation": "get_async_operation",
+      "async_operation_id": "operation-123"
+    },
+    "method": "GET",
+    "path": "/cloud/operations/operation-123",
+    "operation_id": "GetAsyncOperation"
+  },
+  "list_namespaces": {
+    "config": {
+      "operation": "list_namespaces",
+      "page_size": 25,
+      "page_token": "next + token",
+      "name": "payments",
+      "project_id": "project-123"
+    },
+    "method": "GET",
+    "path": "/cloud/namespaces",
+    "operation_id": "GetNamespaces"
+  },
+  "get_namespace": {
+    "config": {
+      "operation": "get_namespace",
+      "namespace": "payments.a1b2c"
+    },
+    "method": "GET",
+    "path": "/cloud/namespaces/payments.a1b2c",
+    "operation_id": "GetNamespace"
+  },
+  "create_namespace": {
+    "config": {
+      "operation": "create_namespace",
+      "spec": {
+        "name": "payments",
+        "retentionDays": 7,
+        "replicas": [
+          {
+            "region": "aws-us-west-2"
+          }
+        ]
+      }
+    },
+    "method": "POST",
+    "path": "/cloud/namespaces",
+    "operation_id": "CreateNamespace"
+  },
+  "delete_namespace": {
+    "config": {
+      "operation": "delete_namespace",
+      "namespace": "payments.a1b2c",
+      "resource_version": "version-1"
+    },
+    "method": "DELETE",
+    "path": "/cloud/namespaces/payments.a1b2c",
+    "operation_id": "DeleteNamespace"
+  },
+  "list_users": {
+    "config": {
+      "operation": "list_users",
+      "email": "person@example.com",
+      "namespace": "payments.a1b2c"
+    },
+    "method": "GET",
+    "path": "/cloud/users",
+    "operation_id": "listUsers"
+  },
+  "get_user": {
+    "config": {
+      "operation": "get_user",
+      "user_id": "user-123"
+    },
+    "method": "GET",
+    "path": "/cloud/users/user-123",
+    "operation_id": "GetUser"
+  },
+  "create_user": {
+    "config": {
+      "operation": "create_user",
+      "spec": {
+        "email": "person@example.com",
+        "access": {
+          "accountAccess": {
+            "role": "ROLE_READ"
+          }
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/cloud/users",
+    "operation_id": "CreateUser"
+  },
+  "update_user": {
+    "config": {
+      "operation": "update_user",
+      "user_id": "user-123",
+      "resource_version": "version-1",
+      "spec": {
+        "email": "person@example.com",
+        "access": {
+          "accountAccess": {
+            "role": "ROLE_READ"
+          },
+          "namespaceAccesses": {
+            "payments.a1b2c": {
+              "permission": "PERMISSION_READ"
+            }
+          }
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/cloud/users/user-123",
+    "operation_id": "UpdateUser"
+  },
+  "delete_user": {
+    "config": {
+      "operation": "delete_user",
+      "user_id": "user-123",
+      "resource_version": "version-1"
+    },
+    "method": "DELETE",
+    "path": "/cloud/users/user-123",
+    "operation_id": "DeleteUser"
+  },
+  "list_service_accounts": {
+    "config": {
+      "operation": "list_service_accounts"
+    },
+    "method": "GET",
+    "path": "/cloud/service-accounts",
+    "operation_id": "GetServiceAccounts"
+  },
+  "get_service_account": {
+    "config": {
+      "operation": "get_service_account",
+      "service_account_id": "service-123"
+    },
+    "method": "GET",
+    "path": "/cloud/service-accounts/service-123",
+    "operation_id": "GetServiceAccount"
+  },
+  "create_service_account": {
+    "config": {
+      "operation": "create_service_account",
+      "spec": {
+        "name": "automation",
+        "access": {
+          "accountAccess": {
+            "role": "ROLE_READ"
+          }
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/cloud/service-accounts",
+    "operation_id": "CreateServiceAccount"
+  },
+  "update_service_account": {
+    "config": {
+      "operation": "update_service_account",
+      "service_account_id": "service-123",
+      "resource_version": "version-1",
+      "spec": {
+        "name": "automation",
+        "description": "updated",
+        "namespaceScopedAccess": {
+          "namespace": "payments.a1b2c",
+          "access": {
+            "permission": "PERMISSION_READ"
+          }
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/cloud/service-accounts/service-123",
+    "operation_id": "UpdateServiceAccount"
+  },
+  "delete_service_account": {
+    "config": {
+      "operation": "delete_service_account",
+      "service_account_id": "service-123",
+      "resource_version": "version-1"
+    },
+    "method": "DELETE",
+    "path": "/cloud/service-accounts/service-123",
+    "operation_id": "DeleteServiceAccount"
+  },
+  "list_regions": {
+    "config": {
+      "operation": "list_regions"
+    },
+    "method": "GET",
+    "path": "/cloud/regions",
+    "operation_id": "GetRegions"
+  },
+  "get_region": {
+    "config": {
+      "operation": "get_region",
+      "region": "aws-us-west-2"
+    },
+    "method": "GET",
+    "path": "/cloud/regions/aws-us-west-2",
+    "operation_id": "GetRegion"
+  },
+  "list_api_keys": {
+    "config": {
+      "operation": "list_api_keys",
+      "owner_type": "OWNER_TYPE_USER",
+      "owner_id": "user-123"
+    },
+    "method": "GET",
+    "path": "/cloud/api-keys",
+    "operation_id": "GetApiKeys"
+  }
+}
