@@ -1,0 +1,1018 @@
+{
+  "$defs": {
+    "FourthwallAPICredential": {
+      "properties": {
+        "credential_type": {
+          "const": "fourthwall_api",
+          "default": "fourthwall_api",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "minLength": 1,
+          "title": "API username",
+          "type": "string"
+        },
+        "password": {
+          "minLength": 1,
+          "title": "API password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "username",
+        "password"
+      ],
+      "title": "Fourthwall API User",
+      "type": "object",
+      "x-credential-instructions": "As a Fourthwall Super Admin, open Settings \u2192 For developers \u2192 Open API \u2192 Create API User. Paste the generated username and password. These shop credentials grant full API access to your shop.",
+      "x-credential-url": "https://my-shop.fourthwall.com/admin/dashboard/settings/for-developers"
+    },
+    "FourthwallArchiveProductConfig": {
+      "additionalProperties": false,
+      "description": "Archive a product (offer).",
+      "properties": {
+        "operation": {
+          "const": "archive_product",
+          "default": "archive_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productId": {
+          "minLength": 1,
+          "title": "Productid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "productId"
+      ],
+      "title": "FourthwallArchiveProductConfig",
+      "type": "object"
+    },
+    "FourthwallCreateCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Create a new collection.",
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "offerIds": {
+          "description": "Full list of product UUIDs. Replaces the collection contents; an empty list clears it.",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Offerids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "offerIds"
+      ],
+      "title": "FourthwallCreateCollectionConfig",
+      "type": "object"
+    },
+    "FourthwallGetCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Get collection by ID or slug.",
+      "properties": {
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collectionIdOrSlug": {
+          "minLength": 1,
+          "title": "Collectionidorslug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collectionIdOrSlug"
+      ],
+      "title": "FourthwallGetCollectionConfig",
+      "type": "object"
+    },
+    "FourthwallGetCollectionProductsConfig": {
+      "additionalProperties": false,
+      "description": "Get products in a collection.",
+      "properties": {
+        "operation": {
+          "const": "get_collection_products",
+          "default": "get_collection_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collectionId": {
+          "minLength": 1,
+          "title": "Collectionid",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "PUBLIC",
+                "AVAILABLE",
+                "SOLD_OUT",
+                "HIDDEN",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter for product status in a collection",
+          "title": "Status",
+          "enum": [
+            "PUBLIC",
+            "AVAILABLE",
+            "SOLD_OUT",
+            "HIDDEN",
+            "ARCHIVED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "collectionId"
+      ],
+      "title": "FourthwallGetCollectionProductsConfig",
+      "type": "object"
+    },
+    "FourthwallGetCurrentShopConfig": {
+      "additionalProperties": false,
+      "description": "Get current shop.",
+      "properties": {
+        "operation": {
+          "const": "get_current_shop",
+          "default": "get_current_shop",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FourthwallGetCurrentShopConfig",
+      "type": "object"
+    },
+    "FourthwallGetDonationConfig": {
+      "additionalProperties": false,
+      "description": "Get donation by id.",
+      "properties": {
+        "operation": {
+          "const": "get_donation",
+          "default": "get_donation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "donationId": {
+          "minLength": 1,
+          "title": "Donationid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "donationId"
+      ],
+      "title": "FourthwallGetDonationConfig",
+      "type": "object"
+    },
+    "FourthwallGetMemberConfig": {
+      "additionalProperties": false,
+      "description": "Get member.",
+      "properties": {
+        "operation": {
+          "const": "get_member",
+          "default": "get_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "FourthwallGetMemberConfig",
+      "type": "object"
+    },
+    "FourthwallGetOrderByFriendlyIdConfig": {
+      "additionalProperties": false,
+      "description": "Get order by friendly id.",
+      "properties": {
+        "operation": {
+          "const": "get_order_by_friendly_id",
+          "default": "get_order_by_friendly_id",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "friendlyId": {
+          "minLength": 1,
+          "title": "Friendlyid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "friendlyId"
+      ],
+      "title": "FourthwallGetOrderByFriendlyIdConfig",
+      "type": "object"
+    },
+    "FourthwallGetOrderConfig": {
+      "additionalProperties": false,
+      "description": "Get order by id.",
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "orderId": {
+          "minLength": 1,
+          "title": "Orderid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "orderId"
+      ],
+      "title": "FourthwallGetOrderConfig",
+      "type": "object"
+    },
+    "FourthwallGetProductConfig": {
+      "additionalProperties": false,
+      "description": "Get product (offer) by id.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productId": {
+          "minLength": 1,
+          "title": "Productid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "productId"
+      ],
+      "title": "FourthwallGetProductConfig",
+      "type": "object"
+    },
+    "FourthwallGetProductInventoryConfig": {
+      "additionalProperties": false,
+      "description": "Get product (offer) inventory by id.",
+      "properties": {
+        "operation": {
+          "const": "get_product_inventory",
+          "default": "get_product_inventory",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productId": {
+          "minLength": 1,
+          "title": "Productid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "productId"
+      ],
+      "title": "FourthwallGetProductInventoryConfig",
+      "type": "object"
+    },
+    "FourthwallGetPromotionConfig": {
+      "additionalProperties": false,
+      "description": "Get a promotion by id.",
+      "properties": {
+        "operation": {
+          "const": "get_promotion",
+          "default": "get_promotion",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "promotionId": {
+          "minLength": 1,
+          "title": "Promotionid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "promotionId"
+      ],
+      "title": "FourthwallGetPromotionConfig",
+      "type": "object"
+    },
+    "FourthwallListCollectionsConfig": {
+      "additionalProperties": false,
+      "description": "Get all collections.",
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "FourthwallListCollectionsConfig",
+      "type": "object"
+    },
+    "FourthwallListDonationsConfig": {
+      "additionalProperties": false,
+      "description": "Get all donations.",
+      "properties": {
+        "operation": {
+          "const": "list_donations",
+          "default": "list_donations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "FourthwallListDonationsConfig",
+      "type": "object"
+    },
+    "FourthwallListEntriesConfig": {
+      "additionalProperties": false,
+      "description": "Get all mailing list entries.",
+      "properties": {
+        "operation": {
+          "const": "list_entries",
+          "default": "list_entries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "FourthwallListEntriesConfig",
+      "type": "object"
+    },
+    "FourthwallListMembersConfig": {
+      "additionalProperties": false,
+      "description": "List members.",
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "FourthwallListMembersConfig",
+      "type": "object"
+    },
+    "FourthwallListOrdersConfig": {
+      "additionalProperties": false,
+      "description": "Get all orders.",
+      "properties": {
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "createdAt_gt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Createdat Gt"
+        },
+        "createdAt_lt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Createdat Lt"
+        },
+        "updatedAt_gt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updatedat Gt"
+        },
+        "updatedAt_lt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updatedat Lt"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "CONFIRMED",
+                  "PARTIALLY_IN_PRODUCTION",
+                  "IN_PRODUCTION",
+                  "PARTIALLY_SHIPPED",
+                  "SHIPPED",
+                  "PARTIALLY_DELIVERED",
+                  "DELIVERED",
+                  "CANCELLED",
+                  "COMPLETED"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "title": "FourthwallListOrdersConfig",
+      "type": "object"
+    },
+    "FourthwallListProductsConfig": {
+      "additionalProperties": false,
+      "description": "Get all products (offers).",
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "FourthwallListProductsConfig",
+      "type": "object"
+    },
+    "FourthwallListPromotionsConfig": {
+      "additionalProperties": false,
+      "description": "Get all promotions.",
+      "properties": {
+        "operation": {
+          "const": "list_promotions",
+          "default": "list_promotions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "codes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Codes"
+        }
+      },
+      "title": "FourthwallListPromotionsConfig",
+      "type": "object"
+    },
+    "FourthwallListTiersConfig": {
+      "additionalProperties": false,
+      "description": "List membership tiers.",
+      "properties": {
+        "operation": {
+          "const": "list_tiers",
+          "default": "list_tiers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FourthwallListTiersConfig",
+      "type": "object"
+    },
+    "FourthwallUpdateCollectionAvailabilityConfig": {
+      "additionalProperties": false,
+      "description": "Update collection availability.",
+      "properties": {
+        "operation": {
+          "const": "update_collection_availability",
+          "default": "update_collection_availability",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collectionId": {
+          "minLength": 1,
+          "title": "Collectionid",
+          "type": "string"
+        },
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "collectionId",
+        "available"
+      ],
+      "title": "FourthwallUpdateCollectionAvailabilityConfig",
+      "type": "object"
+    },
+    "FourthwallUpdateCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Update a collection.",
+      "properties": {
+        "operation": {
+          "const": "update_collection",
+          "default": "update_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collectionId": {
+          "minLength": 1,
+          "title": "Collectionid",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "offerIds": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full list of product UUIDs. Replaces the collection contents; an empty list clears it.",
+          "title": "Offerids"
+        }
+      },
+      "required": [
+        "collectionId"
+      ],
+      "title": "FourthwallUpdateCollectionConfig",
+      "type": "object"
+    },
+    "FourthwallUpdateCollectionProductsConfig": {
+      "additionalProperties": false,
+      "description": "Set collection products.",
+      "properties": {
+        "operation": {
+          "const": "update_collection_products",
+          "default": "update_collection_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collectionId": {
+          "minLength": 1,
+          "title": "Collectionid",
+          "type": "string"
+        },
+        "offerIds": {
+          "description": "Full list of product UUIDs. Replaces the collection contents; an empty list clears it.",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Offerids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "collectionId",
+        "offerIds"
+      ],
+      "title": "FourthwallUpdateCollectionProductsConfig",
+      "type": "object"
+    },
+    "FourthwallUpdateProductAvailabilityConfig": {
+      "additionalProperties": false,
+      "description": "Update product (offer) availability by id.",
+      "properties": {
+        "operation": {
+          "const": "update_product_availability",
+          "default": "update_product_availability",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productId": {
+          "minLength": 1,
+          "title": "Productid",
+          "type": "string"
+        },
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "productId",
+        "available"
+      ],
+      "title": "FourthwallUpdateProductAvailabilityConfig",
+      "type": "object"
+    },
+    "FourthwallUpdateProductStateConfig": {
+      "additionalProperties": false,
+      "description": "Update product (offer) lifecycle state.",
+      "properties": {
+        "operation": {
+          "const": "update_product_state",
+          "default": "update_product_state",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productId": {
+          "minLength": 1,
+          "title": "Productid",
+          "type": "string"
+        },
+        "state": {
+          "description": "Target lifecycle state. `PUBLIC` makes the product visible on the storefront; `HIDDEN` keeps it unlisted. The sold-out (`available`) flag is preserved across the transition \u2014 use `PUT /products/{productId}/availability` to flip it.",
+          "enum": [
+            "PUBLIC",
+            "HIDDEN"
+          ],
+          "minLength": 1,
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "productId",
+        "state"
+      ],
+      "title": "FourthwallUpdateProductStateConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_product": "#/$defs/FourthwallArchiveProductConfig",
+          "create_collection": "#/$defs/FourthwallCreateCollectionConfig",
+          "get_collection": "#/$defs/FourthwallGetCollectionConfig",
+          "get_collection_products": "#/$defs/FourthwallGetCollectionProductsConfig",
+          "get_current_shop": "#/$defs/FourthwallGetCurrentShopConfig",
+          "get_donation": "#/$defs/FourthwallGetDonationConfig",
+          "get_member": "#/$defs/FourthwallGetMemberConfig",
+          "get_order": "#/$defs/FourthwallGetOrderConfig",
+          "get_order_by_friendly_id": "#/$defs/FourthwallGetOrderByFriendlyIdConfig",
+          "get_product": "#/$defs/FourthwallGetProductConfig",
+          "get_product_inventory": "#/$defs/FourthwallGetProductInventoryConfig",
+          "get_promotion": "#/$defs/FourthwallGetPromotionConfig",
+          "list_collections": "#/$defs/FourthwallListCollectionsConfig",
+          "list_donations": "#/$defs/FourthwallListDonationsConfig",
+          "list_entries": "#/$defs/FourthwallListEntriesConfig",
+          "list_members": "#/$defs/FourthwallListMembersConfig",
+          "list_orders": "#/$defs/FourthwallListOrdersConfig",
+          "list_products": "#/$defs/FourthwallListProductsConfig",
+          "list_promotions": "#/$defs/FourthwallListPromotionsConfig",
+          "list_tiers": "#/$defs/FourthwallListTiersConfig",
+          "update_collection": "#/$defs/FourthwallUpdateCollectionConfig",
+          "update_collection_availability": "#/$defs/FourthwallUpdateCollectionAvailabilityConfig",
+          "update_collection_products": "#/$defs/FourthwallUpdateCollectionProductsConfig",
+          "update_product_availability": "#/$defs/FourthwallUpdateProductAvailabilityConfig",
+          "update_product_state": "#/$defs/FourthwallUpdateProductStateConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FourthwallGetCurrentShopConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallListOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallGetOrderByFriendlyIdConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallGetProductInventoryConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallUpdateProductStateConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallUpdateProductAvailabilityConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallArchiveProductConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallUpdateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallGetCollectionProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallUpdateCollectionProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallUpdateCollectionAvailabilityConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallListPromotionsConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallGetPromotionConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallListEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallListDonationsConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallGetDonationConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallGetMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/FourthwallListTiersConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FourthwallAPICredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Fourthwall Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
