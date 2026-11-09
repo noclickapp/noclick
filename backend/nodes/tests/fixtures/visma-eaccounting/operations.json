@@ -1,0 +1,522 @@
+{
+  "note": "Synthetic fixtures for offline request-boundary tests; not provider response witnesses.",
+  "cases": {
+    "get_company_settings": {
+      "config": {
+        "operation": "get_company_settings"
+      },
+      "method": "GET",
+      "path": "/v2/companysettings",
+      "body": null,
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 200
+    },
+    "list_customers": {
+      "config": {
+        "operation": "list_customers"
+      },
+      "method": "GET",
+      "path": "/v2/customers",
+      "body": null,
+      "response": {
+        "Data": [
+          {
+            "Id": "11111111-1111-4111-8111-111111111111",
+            "Name": "Example Company"
+          }
+        ],
+        "Meta": {
+          "CurrentPage": 1,
+          "PageSize": 50,
+          "TotalNumberOfPages": 2,
+          "TotalNumberOfResults": 51,
+          "ServerTimeUtc": "2026-10-01T00:00:00Z"
+        }
+      },
+      "status": 200
+    },
+    "get_customer": {
+      "config": {
+        "operation": "get_customer",
+        "customerId": "11111111-1111-4111-8111-111111111111"
+      },
+      "method": "GET",
+      "path": "/v2/customers/11111111-1111-4111-8111-111111111111",
+      "body": null,
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 200
+    },
+    "create_customer": {
+      "config": {
+        "operation": "create_customer",
+        "InvoiceCity": "Test",
+        "InvoicePostalCode": "Test",
+        "Name": "Example Company",
+        "TermsOfPaymentId": "11111111-1111-4111-8111-111111111111",
+        "IsPrivatePerson": false,
+        "IsActive": false
+      },
+      "method": "POST",
+      "path": "/v2/customers",
+      "body": {
+        "InvoiceCity": "Test",
+        "InvoicePostalCode": "Test",
+        "Name": "Example Company",
+        "TermsOfPaymentId": "11111111-1111-4111-8111-111111111111",
+        "IsPrivatePerson": false,
+        "IsActive": false
+      },
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 201
+    },
+    "update_customer": {
+      "config": {
+        "operation": "update_customer",
+        "customerId": "11111111-1111-4111-8111-111111111111",
+        "InvoiceCity": "Test",
+        "InvoicePostalCode": "Test",
+        "Name": "Example Company",
+        "TermsOfPaymentId": "11111111-1111-4111-8111-111111111111",
+        "IsPrivatePerson": false,
+        "IsActive": false
+      },
+      "method": "PUT",
+      "path": "/v2/customers/11111111-1111-4111-8111-111111111111",
+      "body": {
+        "InvoiceCity": "Test",
+        "InvoicePostalCode": "Test",
+        "Name": "Example Company",
+        "TermsOfPaymentId": "11111111-1111-4111-8111-111111111111",
+        "IsPrivatePerson": false,
+        "IsActive": false
+      },
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 200
+    },
+    "list_articles": {
+      "config": {
+        "operation": "list_articles"
+      },
+      "method": "GET",
+      "path": "/v2/articles",
+      "body": null,
+      "response": {
+        "Data": [
+          {
+            "Id": "11111111-1111-4111-8111-111111111111",
+            "Name": "Example Company"
+          }
+        ],
+        "Meta": {
+          "CurrentPage": 1,
+          "PageSize": 50,
+          "TotalNumberOfPages": 2,
+          "TotalNumberOfResults": 51,
+          "ServerTimeUtc": "2026-10-01T00:00:00Z"
+        }
+      },
+      "status": 200
+    },
+    "get_article": {
+      "config": {
+        "operation": "get_article",
+        "articleId": "11111111-1111-4111-8111-111111111111"
+      },
+      "method": "GET",
+      "path": "/v2/articles/11111111-1111-4111-8111-111111111111",
+      "body": null,
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 200
+    },
+    "create_article": {
+      "config": {
+        "operation": "create_article",
+        "IsActive": false,
+        "Number": "Test",
+        "Name": "Example Company",
+        "CodingId": "11111111-1111-4111-8111-111111111111",
+        "UnitId": "11111111-1111-4111-8111-111111111111"
+      },
+      "method": "POST",
+      "path": "/v2/articles",
+      "body": {
+        "IsActive": false,
+        "Number": "Test",
+        "Name": "Example Company",
+        "CodingId": "11111111-1111-4111-8111-111111111111",
+        "UnitId": "11111111-1111-4111-8111-111111111111"
+      },
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 201
+    },
+    "update_article": {
+      "config": {
+        "operation": "update_article",
+        "articleId": "11111111-1111-4111-8111-111111111111",
+        "IsActive": false,
+        "Number": "Test",
+        "Name": "Example Company",
+        "CodingId": "11111111-1111-4111-8111-111111111111",
+        "UnitId": "11111111-1111-4111-8111-111111111111"
+      },
+      "method": "PUT",
+      "path": "/v2/articles/11111111-1111-4111-8111-111111111111",
+      "body": {
+        "IsActive": false,
+        "Number": "Test",
+        "Name": "Example Company",
+        "CodingId": "11111111-1111-4111-8111-111111111111",
+        "UnitId": "11111111-1111-4111-8111-111111111111"
+      },
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 200
+    },
+    "list_suppliers": {
+      "config": {
+        "operation": "list_suppliers"
+      },
+      "method": "GET",
+      "path": "/v2/suppliers",
+      "body": null,
+      "response": {
+        "Data": [
+          {
+            "Id": "11111111-1111-4111-8111-111111111111",
+            "Name": "Example Company"
+          }
+        ],
+        "Meta": {
+          "CurrentPage": 1,
+          "PageSize": 50,
+          "TotalNumberOfPages": 2,
+          "TotalNumberOfResults": 51,
+          "ServerTimeUtc": "2026-10-01T00:00:00Z"
+        }
+      },
+      "status": 200
+    },
+    "get_supplier": {
+      "config": {
+        "operation": "get_supplier",
+        "id": "11111111-1111-4111-8111-111111111111"
+      },
+      "method": "GET",
+      "path": "/v2/suppliers/11111111-1111-4111-8111-111111111111",
+      "body": null,
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 200
+    },
+    "create_supplier": {
+      "config": {
+        "operation": "create_supplier",
+        "Name": "Example Company",
+        "TermsOfPaymentId": "11111111-1111-4111-8111-111111111111"
+      },
+      "method": "POST",
+      "path": "/v2/suppliers",
+      "body": {
+        "Name": "Example Company",
+        "TermsOfPaymentId": "11111111-1111-4111-8111-111111111111"
+      },
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 201
+    },
+    "update_supplier": {
+      "config": {
+        "operation": "update_supplier",
+        "id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company",
+        "TermsOfPaymentId": "11111111-1111-4111-8111-111111111111"
+      },
+      "method": "PUT",
+      "path": "/v2/suppliers/11111111-1111-4111-8111-111111111111",
+      "body": {
+        "Name": "Example Company",
+        "TermsOfPaymentId": "11111111-1111-4111-8111-111111111111"
+      },
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 200
+    },
+    "list_customer_invoices": {
+      "config": {
+        "operation": "list_customer_invoices"
+      },
+      "method": "GET",
+      "path": "/v2/customerinvoices",
+      "body": null,
+      "response": {
+        "Data": [
+          {
+            "Id": "11111111-1111-4111-8111-111111111111",
+            "Name": "Example Company"
+          }
+        ],
+        "Meta": {
+          "CurrentPage": 1,
+          "PageSize": 50,
+          "TotalNumberOfPages": 2,
+          "TotalNumberOfResults": 51,
+          "ServerTimeUtc": "2026-10-01T00:00:00Z"
+        }
+      },
+      "status": 200
+    },
+    "get_customer_invoice": {
+      "config": {
+        "operation": "get_customer_invoice",
+        "invoiceId": "11111111-1111-4111-8111-111111111111"
+      },
+      "method": "GET",
+      "path": "/v2/customerinvoices/11111111-1111-4111-8111-111111111111",
+      "body": null,
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 200
+    },
+    "create_customer_invoice": {
+      "config": {
+        "operation": "create_customer_invoice",
+        "EuThirdParty": false,
+        "CustomerId": "11111111-1111-4111-8111-111111111111",
+        "Rows": "[{\"ArticleId\": \"11111111-1111-4111-8111-111111111111\", \"Text\": \"Consulting\", \"UnitPrice\": 100, \"Quantity\": 1}]",
+        "RotReducedInvoicingType": 1
+      },
+      "method": "POST",
+      "path": "/v2/customerinvoices",
+      "body": {
+        "EuThirdParty": false,
+        "CustomerId": "11111111-1111-4111-8111-111111111111",
+        "Rows": [
+          {
+            "ArticleId": "11111111-1111-4111-8111-111111111111",
+            "Text": "Consulting",
+            "UnitPrice": 100,
+            "Quantity": 1
+          }
+        ],
+        "RotReducedInvoicingType": 1
+      },
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 201
+    },
+    "list_customer_invoice_drafts": {
+      "config": {
+        "operation": "list_customer_invoice_drafts"
+      },
+      "method": "GET",
+      "path": "/v2/customerinvoicedrafts",
+      "body": null,
+      "response": {
+        "Data": [
+          {
+            "Id": "11111111-1111-4111-8111-111111111111",
+            "Name": "Example Company"
+          }
+        ],
+        "Meta": {
+          "CurrentPage": 1,
+          "PageSize": 50,
+          "TotalNumberOfPages": 2,
+          "TotalNumberOfResults": 51,
+          "ServerTimeUtc": "2026-10-01T00:00:00Z"
+        }
+      },
+      "status": 200
+    },
+    "get_customer_invoice_draft": {
+      "config": {
+        "operation": "get_customer_invoice_draft",
+        "invoiceDraftId": "11111111-1111-4111-8111-111111111111"
+      },
+      "method": "GET",
+      "path": "/v2/customerinvoicedrafts/11111111-1111-4111-8111-111111111111",
+      "body": null,
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 200
+    },
+    "create_customer_invoice_draft": {
+      "config": {
+        "operation": "create_customer_invoice_draft",
+        "CustomerId": "11111111-1111-4111-8111-111111111111",
+        "RotReducedInvoicingType": 0,
+        "EuThirdParty": false,
+        "Rows": "[{\"IsTextRow\": false, \"ReversedConstructionServicesVatFree\": false, \"ArticleId\": \"11111111-1111-4111-8111-111111111111\", \"Text\": \"Consulting\", \"UnitPrice\": 100, \"Quantity\": 1}]"
+      },
+      "method": "POST",
+      "path": "/v2/customerinvoicedrafts",
+      "body": {
+        "CustomerId": "11111111-1111-4111-8111-111111111111",
+        "RotReducedInvoicingType": 0,
+        "EuThirdParty": false,
+        "Rows": [
+          {
+            "IsTextRow": false,
+            "ReversedConstructionServicesVatFree": false,
+            "ArticleId": "11111111-1111-4111-8111-111111111111",
+            "Text": "Consulting",
+            "UnitPrice": 100,
+            "Quantity": 1
+          }
+        ]
+      },
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 201
+    },
+    "update_customer_invoice_draft": {
+      "config": {
+        "operation": "update_customer_invoice_draft",
+        "customerInvoiceDraftId": "11111111-1111-4111-8111-111111111111",
+        "CustomerId": "11111111-1111-4111-8111-111111111111",
+        "RotReducedInvoicingType": 0,
+        "EuThirdParty": false,
+        "Rows": "[{\"IsTextRow\": false, \"ReversedConstructionServicesVatFree\": false, \"ArticleId\": \"11111111-1111-4111-8111-111111111111\", \"Text\": \"Consulting\", \"UnitPrice\": 100, \"Quantity\": 1}]"
+      },
+      "method": "PUT",
+      "path": "/v2/customerinvoicedrafts/11111111-1111-4111-8111-111111111111",
+      "body": {
+        "CustomerId": "11111111-1111-4111-8111-111111111111",
+        "RotReducedInvoicingType": 0,
+        "EuThirdParty": false,
+        "Rows": [
+          {
+            "IsTextRow": false,
+            "ReversedConstructionServicesVatFree": false,
+            "ArticleId": "11111111-1111-4111-8111-111111111111",
+            "Text": "Consulting",
+            "UnitPrice": 100,
+            "Quantity": 1
+          }
+        ]
+      },
+      "response": {
+        "Id": "11111111-1111-4111-8111-111111111111",
+        "Name": "Example Company"
+      },
+      "status": 200
+    },
+    "delete_customer_invoice_draft": {
+      "config": {
+        "operation": "delete_customer_invoice_draft",
+        "customerInvoiceDraftId": "11111111-1111-4111-8111-111111111111"
+      },
+      "method": "DELETE",
+      "path": "/v2/customerinvoicedrafts/11111111-1111-4111-8111-111111111111",
+      "body": null,
+      "response": null,
+      "status": 204
+    },
+    "list_terms_of_payment": {
+      "config": {
+        "operation": "list_terms_of_payment"
+      },
+      "method": "GET",
+      "path": "/v2/termsofpayments",
+      "body": null,
+      "response": {
+        "Data": [
+          {
+            "Id": "11111111-1111-4111-8111-111111111111",
+            "Name": "Example Company"
+          }
+        ],
+        "Meta": {
+          "CurrentPage": 1,
+          "PageSize": 50,
+          "TotalNumberOfPages": 2,
+          "TotalNumberOfResults": 51,
+          "ServerTimeUtc": "2026-10-01T00:00:00Z"
+        }
+      },
+      "status": 200
+    },
+    "list_units": {
+      "config": {
+        "operation": "list_units"
+      },
+      "method": "GET",
+      "path": "/v2/units",
+      "body": null,
+      "response": {
+        "Data": [
+          {
+            "Id": "11111111-1111-4111-8111-111111111111",
+            "Name": "Example Company"
+          }
+        ],
+        "Meta": {
+          "CurrentPage": 1,
+          "PageSize": 50,
+          "TotalNumberOfPages": 2,
+          "TotalNumberOfResults": 51,
+          "ServerTimeUtc": "2026-10-01T00:00:00Z"
+        }
+      },
+      "status": 200
+    },
+    "list_article_account_codings": {
+      "config": {
+        "operation": "list_article_account_codings"
+      },
+      "method": "GET",
+      "path": "/v2/articleaccountcodings",
+      "body": null,
+      "response": {
+        "Data": [
+          {
+            "Id": "11111111-1111-4111-8111-111111111111",
+            "Name": "Example Company"
+          }
+        ],
+        "Meta": {
+          "CurrentPage": 1,
+          "PageSize": 50,
+          "TotalNumberOfPages": 2,
+          "TotalNumberOfResults": 51,
+          "ServerTimeUtc": "2026-10-01T00:00:00Z"
+        }
+      },
+      "status": 200
+    }
+  }
+}

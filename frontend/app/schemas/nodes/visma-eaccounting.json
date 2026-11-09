@@ -1,0 +1,2305 @@
+{
+  "$defs": {
+    "VismaCreateArticleConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_article",
+          "default": "create_article",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Create Article",
+          "x-is-trigger": false
+        },
+        "IsActive": {
+          "description": "Indicates whether the article is active",
+          "title": "Isactive",
+          "type": "boolean"
+        },
+        "Number": {
+          "description": "Article number",
+          "maxLength": 40,
+          "minLength": 0,
+          "title": "Number",
+          "type": "string"
+        },
+        "Name": {
+          "description": "Article name (Swedish)",
+          "maxLength": 50,
+          "minLength": 0,
+          "title": "Name",
+          "type": "string"
+        },
+        "NetPrice": {
+          "default": null,
+          "description": "Documented request body field.",
+          "maximum": 99000000,
+          "minimum": 0,
+          "title": "Netprice",
+          "type": "number"
+        },
+        "GrossPrice": {
+          "default": null,
+          "description": "Documented request body field.",
+          "maximum": 99000000,
+          "minimum": 0,
+          "title": "Grossprice",
+          "type": "number"
+        },
+        "CodingId": {
+          "description": "Get from /v2/articleaccountcodings",
+          "format": "uuid",
+          "title": "Codingid",
+          "type": "string"
+        },
+        "UnitId": {
+          "description": "Source: Get from /v2/units",
+          "format": "uuid",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "StockBalance": {
+          "default": null,
+          "description": "Purpose: Sets the stock balance for this article Default: 0 When stock module is active, this is read only",
+          "maximum": 1000000000000000,
+          "minimum": -1000000000000000,
+          "title": "Stockbalance",
+          "type": "number"
+        },
+        "PurchasePrice": {
+          "default": null,
+          "description": "Purchase price of the article in domestic currency. When saved on the article this is rounded to 2 decimals.",
+          "maximum": 99000000,
+          "minimum": 0,
+          "title": "Purchaseprice",
+          "type": "number"
+        },
+        "Note": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Article Note",
+          "title": "Note"
+        }
+      },
+      "required": [
+        "IsActive",
+        "Number",
+        "Name",
+        "CodingId",
+        "UnitId"
+      ],
+      "title": "VismaCreateArticleConfig",
+      "type": "object"
+    },
+    "VismaCreateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Create Customer",
+          "x-is-trigger": false
+        },
+        "InvoiceCity": {
+          "description": "Documented request body field.",
+          "maxLength": 50,
+          "minLength": 0,
+          "title": "Invoicecity",
+          "type": "string"
+        },
+        "InvoicePostalCode": {
+          "description": "Documented request body field.",
+          "maxLength": 10,
+          "minLength": 0,
+          "title": "Invoicepostalcode",
+          "type": "string"
+        },
+        "CustomerNumber": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique identifier, if not provided, the system will provide one. For batch POST requests it is mandatory.",
+          "title": "Customernumber"
+        },
+        "ContactPersonName": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Contactpersonname"
+        },
+        "CurrencyCode": {
+          "anyOf": [
+            {
+              "maxLength": 3,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default value: Currency of the user company",
+          "title": "Currencycode"
+        },
+        "EmailAddress": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This is a default email address for sending customer invoices.",
+          "title": "Emailaddress"
+        },
+        "InvoiceAddress1": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Invoiceaddress1"
+        },
+        "InvoiceCountryCode": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When setting a VAT number this should be filled in as well.",
+          "title": "Invoicecountrycode"
+        },
+        "Name": {
+          "description": "Documented request body field.",
+          "maxLength": 50,
+          "minLength": 0,
+          "title": "Name",
+          "type": "string"
+        },
+        "Note": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Note"
+        },
+        "Telephone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Telephone"
+        },
+        "TermsOfPaymentId": {
+          "description": "Source: Get from /v2/termsofpayment",
+          "format": "uuid",
+          "title": "Termsofpaymentid",
+          "type": "string"
+        },
+        "VatNumber": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "<strong>Possible values:</strong><br/>8-12 numbers and letters<br/><br/>Format: 2 character country code followed by.",
+          "title": "Vatnumber"
+        },
+        "IsPrivatePerson": {
+          "description": "Documented request body field.",
+          "title": "Isprivateperson",
+          "type": "boolean"
+        },
+        "IsActive": {
+          "description": "Documented request body field.",
+          "title": "Isactive",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "InvoiceCity",
+        "InvoicePostalCode",
+        "Name",
+        "TermsOfPaymentId",
+        "IsPrivatePerson",
+        "IsActive"
+      ],
+      "title": "VismaCreateCustomerConfig",
+      "type": "object"
+    },
+    "VismaCreateCustomerInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_customer_invoice",
+          "default": "create_customer_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Create Customer Invoice",
+          "x-is-trigger": false
+        },
+        "rotReducedAutomaticDistribution": {
+          "default": false,
+          "description": "Used for the automatic distribution per person of the rot reduced invoicing amount",
+          "title": "Rotreducedautomaticdistribution",
+          "type": "boolean"
+        },
+        "EuThirdParty": {
+          "description": "Default is false. True only if EU intermediary, VAT triangulation rules apply. Only if EU company is invoicing to a company from a different EU country, may set to True if desired.",
+          "title": "Euthirdparty",
+          "type": "boolean"
+        },
+        "CustomerId": {
+          "description": "Documented request body field.",
+          "format": "uuid",
+          "title": "Customerid",
+          "type": "string"
+        },
+        "Rows": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/create_customer_invoiceRowsRow"
+            },
+            "type": "array"
+          },
+          "description": "Documented request body field.",
+          "title": "Rows",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "InvoiceDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Invoicedate"
+        },
+        "DueDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Duedate"
+        },
+        "RotReducedInvoicingType": {
+          "description": "<strong>Possible values:</strong><br/>0 = Normal,<br/>1 = Rot,<br/>2 = Rut",
+          "maximum": 2,
+          "minimum": 0,
+          "title": "Rotreducedinvoicingtype",
+          "type": "integer"
+        },
+        "OurReference": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Ourreference"
+        },
+        "YourReference": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Yourreference"
+        },
+        "TermsOfPaymentId": {
+          "default": null,
+          "description": "Specify a different terms of payment for the invoice. If not filled customer's terms of payment will be used",
+          "format": "uuid",
+          "title": "Termsofpaymentid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "EuThirdParty",
+        "CustomerId",
+        "Rows",
+        "RotReducedInvoicingType"
+      ],
+      "title": "VismaCreateCustomerInvoiceConfig",
+      "type": "object"
+    },
+    "VismaCreateCustomerInvoiceDraftConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_customer_invoice_draft",
+          "default": "create_customer_invoice_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Create Customer Invoice Draft",
+          "x-is-trigger": false
+        },
+        "overrideCustomerIsPrivatePerson": {
+          "default": false,
+          "description": "True to override if the customer on the draft is a private individual",
+          "title": "Overridecustomerisprivateperson",
+          "type": "boolean"
+        },
+        "CustomerId": {
+          "description": "Source: Get from /v2/customers",
+          "format": "uuid",
+          "title": "Customerid",
+          "type": "string"
+        },
+        "RotReducedInvoicingType": {
+          "description": "Documented request body field.",
+          "enum": [
+            0,
+            1,
+            2
+          ],
+          "title": "Rotreducedinvoicingtype",
+          "type": "integer"
+        },
+        "Rows": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/$defs/create_customer_invoice_draftRowsRow"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Rows",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "YourReference": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Yourreference"
+        },
+        "OurReference": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Ourreference"
+        },
+        "TermsOfPaymentId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify a different terms of payment for the invoice. If not filled customer's terms of payment will be used",
+          "title": "Termsofpaymentid"
+        },
+        "EuThirdParty": {
+          "description": "Documented request body field.",
+          "title": "Euthirdparty",
+          "type": "boolean"
+        },
+        "InvoiceDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Invoicedate"
+        },
+        "DueDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date of the customer invoice draft",
+          "title": "Duedate"
+        }
+      },
+      "required": [
+        "CustomerId",
+        "RotReducedInvoicingType",
+        "EuThirdParty"
+      ],
+      "title": "VismaCreateCustomerInvoiceDraftConfig",
+      "type": "object"
+    },
+    "VismaCreateSupplierConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_supplier",
+          "default": "create_supplier",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Create Supplier",
+          "x-is-trigger": false
+        },
+        "SupplierNumber": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Unique identifier. If not provided, Bookkeeping & Invoicing/eAccounting will provide one",
+          "title": "Suppliernumber"
+        },
+        "Address1": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Street address of the supplier",
+          "title": "Address1"
+        },
+        "City": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "City"
+        },
+        "CorporateIdentityNumber": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Corporate identity number of the supplier",
+          "title": "Corporateidentitynumber"
+        },
+        "CountryCode": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default value: Country of the user company",
+          "title": "Countrycode"
+        },
+        "CurrencyCode": {
+          "anyOf": [
+            {
+              "maxLength": 3,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default value: Currency of the user company",
+          "title": "Currencycode"
+        },
+        "EmailAddress": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Email address of the supplier",
+          "title": "Emailaddress"
+        },
+        "Name": {
+          "description": "Documented request body field.",
+          "maxLength": 50,
+          "minLength": 0,
+          "title": "Name",
+          "type": "string"
+        },
+        "Note": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Custom note for the supplier",
+          "title": "Note"
+        },
+        "PostalCode": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field.",
+          "title": "Postalcode"
+        },
+        "Telephone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Phone number of the supplier",
+          "title": "Telephone"
+        },
+        "TermsOfPaymentId": {
+          "description": "Source: Get from /v2/termsofpayment",
+          "format": "uuid",
+          "title": "Termsofpaymentid",
+          "type": "string"
+        },
+        "IsActive": {
+          "default": null,
+          "description": "Indicates if the supplier is active",
+          "title": "Isactive",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "Name",
+        "TermsOfPaymentId"
+      ],
+      "title": "VismaCreateSupplierConfig",
+      "type": "object"
+    },
+    "VismaDeleteCustomerInvoiceDraftConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_customer_invoice_draft",
+          "default": "delete_customer_invoice_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Delete Customer Invoice Draft",
+          "x-is-trigger": false
+        },
+        "customerInvoiceDraftId": {
+          "description": "The id of the draft you want to delete",
+          "format": "uuid",
+          "title": "Customerinvoicedraftid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customerInvoiceDraftId"
+      ],
+      "title": "VismaDeleteCustomerInvoiceDraftConfig",
+      "type": "object"
+    },
+    "VismaEAccountingOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "visma_eaccounting_oauth",
+          "default": "visma_eaccounting_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Visma eAccounting OAuth",
+      "type": "object",
+      "x-credential-instructions": "Connect Visma eAccounting and select the company to automate. Sales and purchase access are required. You can also paste an existing access token by hand.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://selfservice.developer.vismaonline.com/",
+      "x-oauth-provider": "visma-eaccounting",
+      "x-oauth-scopes": [
+        "ea:api",
+        "ea:purchase",
+        "ea:sales",
+        "offline_access"
+      ]
+    },
+    "VismaGetArticleConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_article",
+          "default": "get_article",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Get Article",
+          "x-is-trigger": false
+        },
+        "articleId": {
+          "description": "This represents the Id of the article",
+          "format": "uuid",
+          "title": "Articleid",
+          "type": "string"
+        },
+        "showPricesWithTwoDecimals": {
+          "default": false,
+          "description": "Show prices with two decimals",
+          "title": "Showpriceswithtwodecimals",
+          "type": "boolean"
+        },
+        "customerId": {
+          "default": null,
+          "description": "Customer ID for price calculations.If customerId is provided in querystring,\r\n                                       then article prices and discounts will be returned based on which pricelist\r\n                                       and discount agreement is assigned to customer.",
+          "format": "uuid",
+          "title": "Customerid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "articleId"
+      ],
+      "title": "VismaGetArticleConfig",
+      "type": "object"
+    },
+    "VismaGetCompanySettingsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_company_settings",
+          "default": "get_company_settings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Get Company Settings",
+          "x-is-trigger": false
+        }
+      },
+      "title": "VismaGetCompanySettingsConfig",
+      "type": "object"
+    },
+    "VismaGetCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Get Customer",
+          "x-is-trigger": false
+        },
+        "customerId": {
+          "description": "This represents the Id of the customer you want to get",
+          "format": "uuid",
+          "title": "Customerid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customerId"
+      ],
+      "title": "VismaGetCustomerConfig",
+      "type": "object"
+    },
+    "VismaGetCustomerInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer_invoice",
+          "default": "get_customer_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Get Customer Invoice",
+          "x-is-trigger": false
+        },
+        "invoiceId": {
+          "description": "Customer invoice id",
+          "format": "uuid",
+          "title": "Invoiceid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoiceId"
+      ],
+      "title": "VismaGetCustomerInvoiceConfig",
+      "type": "object"
+    },
+    "VismaGetCustomerInvoiceDraftConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer_invoice_draft",
+          "default": "get_customer_invoice_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Get Customer Invoice Draft",
+          "x-is-trigger": false
+        },
+        "invoiceDraftId": {
+          "description": "Id of the draft",
+          "format": "uuid",
+          "title": "Invoicedraftid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoiceDraftId"
+      ],
+      "title": "VismaGetCustomerInvoiceDraftConfig",
+      "type": "object"
+    },
+    "VismaGetSupplierConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_supplier",
+          "default": "get_supplier",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Get Supplier",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "This represents the Id of the Supplier.",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "VismaGetSupplierConfig",
+      "type": "object"
+    },
+    "VismaListArticleAccountCodingsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_article_account_codings",
+          "default": "list_article_account_codings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Article Account Codings",
+          "x-is-trigger": false
+        },
+        "vatRateDate": {
+          "default": null,
+          "description": "Date to get VAT rates for. Defaults to today",
+          "title": "Vatratedate",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "VismaListArticleAccountCodingsConfig",
+      "type": "object"
+    },
+    "VismaListArticlesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_articles",
+          "default": "list_articles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Articles",
+          "x-is-trigger": false
+        },
+        "showPricesWithTwoDecimals": {
+          "default": false,
+          "description": "Show prices with two decimals",
+          "title": "Showpriceswithtwodecimals",
+          "type": "boolean"
+        },
+        "customerId": {
+          "default": null,
+          "description": "Customer ID for price calculations.If customerId is provided in querystring,\r\n                                       then article prices and discounts will be returned based on which pricelist \r\n                                       and discount agreement is assigned to customer.",
+          "format": "uuid",
+          "title": "Customerid",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "VismaListArticlesConfig",
+      "type": "object"
+    },
+    "VismaListCustomerInvoiceDraftsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_customer_invoice_drafts",
+          "default": "list_customer_invoice_drafts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Customer Invoice Drafts",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "VismaListCustomerInvoiceDraftsConfig",
+      "type": "object"
+    },
+    "VismaListCustomerInvoicesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_customer_invoices",
+          "default": "list_customer_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Customer Invoices",
+          "x-is-trigger": false
+        },
+        "modifiedSinceUtc": {
+          "default": null,
+          "description": "Used to get the invoices which have been modified since a prompted date",
+          "format": "date-time",
+          "title": "Modifiedsinceutc",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "VismaListCustomerInvoicesConfig",
+      "type": "object"
+    },
+    "VismaListCustomersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Customers",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "VismaListCustomersConfig",
+      "type": "object"
+    },
+    "VismaListSuppliersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_suppliers",
+          "default": "list_suppliers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Suppliers",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "VismaListSuppliersConfig",
+      "type": "object"
+    },
+    "VismaListTermsOfPaymentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_terms_of_payment",
+          "default": "list_terms_of_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Terms Of Payment",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "VismaListTermsOfPaymentConfig",
+      "type": "object"
+    },
+    "VismaListUnitsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_units",
+          "default": "list_units",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "List Units",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "description": "One page per request; use next_page from the preceding result.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "VismaListUnitsConfig",
+      "type": "object"
+    },
+    "VismaUpdateArticleConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_article",
+          "default": "update_article",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Update Article",
+          "x-is-trigger": false
+        },
+        "articleId": {
+          "description": "This represents the Id of the article",
+          "format": "uuid",
+          "title": "Articleid",
+          "type": "string"
+        },
+        "IsActive": {
+          "description": "Indicates whether the article is active PUT replaces the record; include values to retain.",
+          "title": "Isactive",
+          "type": "boolean"
+        },
+        "Number": {
+          "description": "Article number PUT replaces the record; include values to retain.",
+          "maxLength": 40,
+          "minLength": 0,
+          "title": "Number",
+          "type": "string"
+        },
+        "Name": {
+          "description": "Article name (Swedish) PUT replaces the record; include values to retain.",
+          "maxLength": 50,
+          "minLength": 0,
+          "title": "Name",
+          "type": "string"
+        },
+        "NetPrice": {
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "maximum": 99000000,
+          "minimum": 0,
+          "title": "Netprice",
+          "type": "number"
+        },
+        "GrossPrice": {
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "maximum": 99000000,
+          "minimum": 0,
+          "title": "Grossprice",
+          "type": "number"
+        },
+        "CodingId": {
+          "description": "Get from /v2/articleaccountcodings PUT replaces the record; include values to retain.",
+          "format": "uuid",
+          "title": "Codingid",
+          "type": "string"
+        },
+        "UnitId": {
+          "description": "Source: Get from /v2/units PUT replaces the record; include values to retain.",
+          "format": "uuid",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "StockBalance": {
+          "default": null,
+          "description": "Purpose: Sets the stock balance for this article Default: 0 When stock module is active, this is read only PUT replaces the record; include values to retain.",
+          "maximum": 1000000000000000,
+          "minimum": -1000000000000000,
+          "title": "Stockbalance",
+          "type": "number"
+        },
+        "PurchasePrice": {
+          "default": null,
+          "description": "Purchase price of the article in domestic currency. When saved on the article this is rounded to 2 decimals. PUT replaces the record; include values to retain.",
+          "maximum": 99000000,
+          "minimum": 0,
+          "title": "Purchaseprice",
+          "type": "number"
+        },
+        "Note": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Article Note PUT replaces the record; include values to retain.",
+          "title": "Note"
+        }
+      },
+      "required": [
+        "articleId",
+        "IsActive",
+        "Number",
+        "Name",
+        "CodingId",
+        "UnitId"
+      ],
+      "title": "VismaUpdateArticleConfig",
+      "type": "object"
+    },
+    "VismaUpdateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Update Customer",
+          "x-is-trigger": false
+        },
+        "customerId": {
+          "description": "This represents the Id of the customer you want to update",
+          "format": "uuid",
+          "title": "Customerid",
+          "type": "string"
+        },
+        "InvoiceCity": {
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "maxLength": 50,
+          "minLength": 0,
+          "title": "Invoicecity",
+          "type": "string"
+        },
+        "InvoicePostalCode": {
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "maxLength": 10,
+          "minLength": 0,
+          "title": "Invoicepostalcode",
+          "type": "string"
+        },
+        "CustomerNumber": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique identifier, if not provided, the system will provide one. For batch POST requests it is mandatory. PUT replaces the record; include values to retain.",
+          "title": "Customernumber"
+        },
+        "ContactPersonName": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Contactpersonname"
+        },
+        "CurrencyCode": {
+          "anyOf": [
+            {
+              "maxLength": 3,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default value: Currency of the user company PUT replaces the record; include values to retain.",
+          "title": "Currencycode"
+        },
+        "EmailAddress": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This is a default email address for sending customer invoices. PUT replaces the record; include values to retain.",
+          "title": "Emailaddress"
+        },
+        "InvoiceAddress1": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Invoiceaddress1"
+        },
+        "InvoiceCountryCode": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When setting a VAT number this should be filled in as well. PUT replaces the record; include values to retain.",
+          "title": "Invoicecountrycode"
+        },
+        "Name": {
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "maxLength": 50,
+          "minLength": 0,
+          "title": "Name",
+          "type": "string"
+        },
+        "Note": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Note"
+        },
+        "Telephone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Telephone"
+        },
+        "TermsOfPaymentId": {
+          "description": "Source: Get from /v2/termsofpayment PUT replaces the record; include values to retain.",
+          "format": "uuid",
+          "title": "Termsofpaymentid",
+          "type": "string"
+        },
+        "VatNumber": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "<strong>Possible values:</strong><br/>8-12 numbers and letters<br/><br/>Format: 2 character country code followed by. PUT replaces the record; include values to retain.",
+          "title": "Vatnumber"
+        },
+        "IsPrivatePerson": {
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Isprivateperson",
+          "type": "boolean"
+        },
+        "IsActive": {
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Isactive",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "customerId",
+        "InvoiceCity",
+        "InvoicePostalCode",
+        "Name",
+        "TermsOfPaymentId",
+        "IsPrivatePerson",
+        "IsActive"
+      ],
+      "title": "VismaUpdateCustomerConfig",
+      "type": "object"
+    },
+    "VismaUpdateCustomerInvoiceDraftConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_customer_invoice_draft",
+          "default": "update_customer_invoice_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Update Customer Invoice Draft",
+          "x-is-trigger": false
+        },
+        "customerInvoiceDraftId": {
+          "description": "This is the id of the draft to update",
+          "format": "uuid",
+          "title": "Customerinvoicedraftid",
+          "type": "string"
+        },
+        "CustomerId": {
+          "description": "Source: Get from /v2/customers PUT replaces the record; include values to retain.",
+          "format": "uuid",
+          "title": "Customerid",
+          "type": "string"
+        },
+        "RotReducedInvoicingType": {
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "enum": [
+            0,
+            1,
+            2
+          ],
+          "title": "Rotreducedinvoicingtype",
+          "type": "integer"
+        },
+        "Rows": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/$defs/update_customer_invoice_draftRowsRow"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Rows",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "YourReference": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Yourreference"
+        },
+        "OurReference": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Ourreference"
+        },
+        "TermsOfPaymentId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify a different terms of payment for the invoice. If not filled customer's terms of payment will be used PUT replaces the record; include values to retain.",
+          "title": "Termsofpaymentid"
+        },
+        "EuThirdParty": {
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Euthirdparty",
+          "type": "boolean"
+        },
+        "InvoiceDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Invoicedate"
+        },
+        "DueDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date of the customer invoice draft PUT replaces the record; include values to retain.",
+          "title": "Duedate"
+        }
+      },
+      "required": [
+        "customerInvoiceDraftId",
+        "CustomerId",
+        "RotReducedInvoicingType",
+        "EuThirdParty"
+      ],
+      "title": "VismaUpdateCustomerInvoiceDraftConfig",
+      "type": "object"
+    },
+    "VismaUpdateSupplierConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_supplier",
+          "default": "update_supplier",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounting",
+          "x-display-name": "Update Supplier",
+          "x-is-trigger": false
+        },
+        "id": {
+          "description": "This represents the Id of the Supplier.",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "SupplierNumber": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Unique identifier. If not provided, Bookkeeping & Invoicing/eAccounting will provide one PUT replaces the record; include values to retain.",
+          "title": "Suppliernumber"
+        },
+        "Address1": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Street address of the supplier PUT replaces the record; include values to retain.",
+          "title": "Address1"
+        },
+        "City": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "City"
+        },
+        "CorporateIdentityNumber": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Corporate identity number of the supplier PUT replaces the record; include values to retain.",
+          "title": "Corporateidentitynumber"
+        },
+        "CountryCode": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default value: Country of the user company PUT replaces the record; include values to retain.",
+          "title": "Countrycode"
+        },
+        "CurrencyCode": {
+          "anyOf": [
+            {
+              "maxLength": 3,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default value: Currency of the user company PUT replaces the record; include values to retain.",
+          "title": "Currencycode"
+        },
+        "EmailAddress": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Email address of the supplier PUT replaces the record; include values to retain.",
+          "title": "Emailaddress"
+        },
+        "Name": {
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "maxLength": 50,
+          "minLength": 0,
+          "title": "Name",
+          "type": "string"
+        },
+        "Note": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Custom note for the supplier PUT replaces the record; include values to retain.",
+          "title": "Note"
+        },
+        "PostalCode": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented request body field. PUT replaces the record; include values to retain.",
+          "title": "Postalcode"
+        },
+        "Telephone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Phone number of the supplier PUT replaces the record; include values to retain.",
+          "title": "Telephone"
+        },
+        "TermsOfPaymentId": {
+          "description": "Source: Get from /v2/termsofpayment PUT replaces the record; include values to retain.",
+          "format": "uuid",
+          "title": "Termsofpaymentid",
+          "type": "string"
+        },
+        "IsActive": {
+          "default": null,
+          "description": "Indicates if the supplier is active PUT replaces the record; include values to retain.",
+          "title": "Isactive",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "Name",
+        "TermsOfPaymentId"
+      ],
+      "title": "VismaUpdateSupplierConfig",
+      "type": "object"
+    },
+    "create_customer_invoiceRowsRow": {
+      "additionalProperties": false,
+      "properties": {
+        "ArticleId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purpose: Null if text row",
+          "title": "Articleid"
+        },
+        "Text": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default: For non text rows, default value will be the article's name; for text rows, there should be at least one character in place",
+          "title": "Text"
+        },
+        "UnitPrice": {
+          "default": null,
+          "description": "Format: 2 decimals allowed if the customer and currency are domestic or 4 decimals if customer or currency is foreign",
+          "title": "Unitprice",
+          "type": "number"
+        },
+        "DiscountPercentage": {
+          "default": null,
+          "description": "Percentage discount n the row. Format: 4 decimals",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Discountpercentage",
+          "type": "number"
+        },
+        "Quantity": {
+          "default": null,
+          "description": "Format: 4 decimals",
+          "title": "Quantity",
+          "type": "number"
+        },
+        "IsVatFree": {
+          "default": null,
+          "description": "True if this row is marked as VAT free. False otherwise",
+          "title": "Isvatfree",
+          "type": "boolean"
+        }
+      },
+      "title": "create_customer_invoiceRowsRow",
+      "type": "object"
+    },
+    "create_customer_invoice_draftRowsRow": {
+      "additionalProperties": false,
+      "properties": {
+        "ArticleId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source: Get from /v2/articles. Required if IsTextRow is false",
+          "title": "Articleid"
+        },
+        "IsTextRow": {
+          "description": "Documented request field.",
+          "title": "Istextrow",
+          "type": "boolean"
+        },
+        "Text": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default: For non text rows, default value will be the article's name; for text rows, there should be at least one character in place",
+          "title": "Text"
+        },
+        "UnitPrice": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: 2 decimals allowed if the customer is domestic or 4 decimals if foreign. When omitted and ArticleId is provided, the article's stored price may be used automatically depending on account configuration (net price or gross price depending on whether the invoice includes VAT). An explicitly provided value is always used as-is. The default behavior when unit price is zero is specified by setting ReplaceUnitPriceWhenZero on the customer invoice draft.",
+          "title": "Unitprice"
+        },
+        "DiscountPercentage": {
+          "default": null,
+          "description": "Format: 4 decimals allowed. Discount of the row in percentage.",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Discountpercentage",
+          "type": "number"
+        },
+        "Quantity": {
+          "default": null,
+          "description": "Format: 2 decimals. Quantity of the article on the row.",
+          "title": "Quantity",
+          "type": "number"
+        },
+        "ReversedConstructionServicesVatFree": {
+          "description": "Documented request field.",
+          "title": "Reversedconstructionservicesvatfree",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "IsTextRow",
+        "ReversedConstructionServicesVatFree"
+      ],
+      "title": "create_customer_invoice_draftRowsRow",
+      "type": "object"
+    },
+    "update_customer_invoice_draftRowsRow": {
+      "additionalProperties": false,
+      "properties": {
+        "ArticleId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source: Get from /v2/articles. Required if IsTextRow is false",
+          "title": "Articleid"
+        },
+        "IsTextRow": {
+          "description": "Documented request field.",
+          "title": "Istextrow",
+          "type": "boolean"
+        },
+        "Text": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default: For non text rows, default value will be the article's name; for text rows, there should be at least one character in place",
+          "title": "Text"
+        },
+        "UnitPrice": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: 2 decimals allowed if the customer is domestic or 4 decimals if foreign. When omitted and ArticleId is provided, the article's stored price may be used automatically depending on account configuration (net price or gross price depending on whether the invoice includes VAT). An explicitly provided value is always used as-is. The default behavior when unit price is zero is specified by setting ReplaceUnitPriceWhenZero on the customer invoice draft.",
+          "title": "Unitprice"
+        },
+        "DiscountPercentage": {
+          "default": null,
+          "description": "Format: 4 decimals allowed. Discount of the row in percentage.",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Discountpercentage",
+          "type": "number"
+        },
+        "Quantity": {
+          "default": null,
+          "description": "Format: 2 decimals. Quantity of the article on the row.",
+          "title": "Quantity",
+          "type": "number"
+        },
+        "ReversedConstructionServicesVatFree": {
+          "description": "Documented request field.",
+          "title": "Reversedconstructionservicesvatfree",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "IsTextRow",
+        "ReversedConstructionServicesVatFree"
+      ],
+      "title": "update_customer_invoice_draftRowsRow",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_article": "#/$defs/VismaCreateArticleConfig",
+          "create_customer": "#/$defs/VismaCreateCustomerConfig",
+          "create_customer_invoice": "#/$defs/VismaCreateCustomerInvoiceConfig",
+          "create_customer_invoice_draft": "#/$defs/VismaCreateCustomerInvoiceDraftConfig",
+          "create_supplier": "#/$defs/VismaCreateSupplierConfig",
+          "delete_customer_invoice_draft": "#/$defs/VismaDeleteCustomerInvoiceDraftConfig",
+          "get_article": "#/$defs/VismaGetArticleConfig",
+          "get_company_settings": "#/$defs/VismaGetCompanySettingsConfig",
+          "get_customer": "#/$defs/VismaGetCustomerConfig",
+          "get_customer_invoice": "#/$defs/VismaGetCustomerInvoiceConfig",
+          "get_customer_invoice_draft": "#/$defs/VismaGetCustomerInvoiceDraftConfig",
+          "get_supplier": "#/$defs/VismaGetSupplierConfig",
+          "list_article_account_codings": "#/$defs/VismaListArticleAccountCodingsConfig",
+          "list_articles": "#/$defs/VismaListArticlesConfig",
+          "list_customer_invoice_drafts": "#/$defs/VismaListCustomerInvoiceDraftsConfig",
+          "list_customer_invoices": "#/$defs/VismaListCustomerInvoicesConfig",
+          "list_customers": "#/$defs/VismaListCustomersConfig",
+          "list_suppliers": "#/$defs/VismaListSuppliersConfig",
+          "list_terms_of_payment": "#/$defs/VismaListTermsOfPaymentConfig",
+          "list_units": "#/$defs/VismaListUnitsConfig",
+          "update_article": "#/$defs/VismaUpdateArticleConfig",
+          "update_customer": "#/$defs/VismaUpdateCustomerConfig",
+          "update_customer_invoice_draft": "#/$defs/VismaUpdateCustomerInvoiceDraftConfig",
+          "update_supplier": "#/$defs/VismaUpdateSupplierConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VismaGetCompanySettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaListArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaGetArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaCreateArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaUpdateArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaListSuppliersConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaGetSupplierConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaCreateSupplierConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaUpdateSupplierConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaListCustomerInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaGetCustomerInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaCreateCustomerInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaListCustomerInvoiceDraftsConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaGetCustomerInvoiceDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaCreateCustomerInvoiceDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaUpdateCustomerInvoiceDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaDeleteCustomerInvoiceDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaListTermsOfPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaListUnitsConfig"
+        },
+        {
+          "$ref": "#/$defs/VismaListArticleAccountCodingsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VismaEAccountingOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Visma-eaccounting Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
