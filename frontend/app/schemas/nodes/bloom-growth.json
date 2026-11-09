@@ -1,0 +1,797 @@
+{
+  "$defs": {
+    "ArchiveGoal": {
+      "description": "Archive a goal.",
+      "properties": {
+        "operation": {
+          "const": "archive_goal",
+          "default": "archive_goal",
+          "title": "Operation",
+          "type": "string"
+        },
+        "goal_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Goal Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "goal_id"
+      ],
+      "title": "ArchiveGoal",
+      "type": "object"
+    },
+    "BloomGrowthTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bloom_growth_api_token",
+          "default": "bloom_growth_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Bloom Growth API Token",
+      "type": "object",
+      "x-credential-instructions": "Generate an access_token using Bloom Growth's API instructions and paste the token here without the Bearer prefix. Tokens expire after two weeks; replace an expired token with a newly generated one. NoClick sends it only to app-next.bloomgrowth.com.",
+      "x-credential-type": "api_key",
+      "x-credential-url": "https://help.bloomgrowth.com/en/all-about-the-bloom-growth-api"
+    },
+    "CompleteTodo": {
+      "description": "Complete or reopen a to-do using the documented status query parameter.",
+      "properties": {
+        "operation": {
+          "const": "complete_todo",
+          "default": "complete_todo",
+          "title": "Operation",
+          "type": "string"
+        },
+        "todo_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Todo Id",
+          "type": "integer"
+        },
+        "completed": {
+          "default": true,
+          "title": "Completed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "todo_id"
+      ],
+      "title": "CompleteTodo",
+      "type": "object"
+    },
+    "CreateGoal": {
+      "description": "Create a goal, optionally assigning its accountable owner.",
+      "properties": {
+        "operation": {
+          "const": "create_goal",
+          "default": "create_goal",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "accountable_user_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accountable User Id"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateGoal",
+      "type": "object"
+    },
+    "CreateIssue": {
+      "description": "Create an issue in a weekly meeting.",
+      "properties": {
+        "operation": {
+          "const": "create_issue",
+          "default": "create_issue",
+          "title": "Operation",
+          "type": "string"
+        },
+        "meeting_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Meeting Id",
+          "type": "integer"
+        },
+        "title": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owner Id"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "meeting_id",
+        "title"
+      ],
+      "title": "CreateIssue",
+      "type": "object"
+    },
+    "CreateMilestone": {
+      "description": "Add a milestone with a title and due date to a goal.",
+      "properties": {
+        "operation": {
+          "const": "create_milestone",
+          "default": "create_milestone",
+          "title": "Operation",
+          "type": "string"
+        },
+        "goal_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Goal Id",
+          "type": "integer"
+        },
+        "title": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "due_date": {
+          "format": "date-time",
+          "title": "Due Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "goal_id",
+        "title",
+        "due_date"
+      ],
+      "title": "CreateMilestone",
+      "type": "object"
+    },
+    "CreateTodo": {
+      "description": "Create a personal to-do; the provider defaults the due date to seven days.",
+      "properties": {
+        "operation": {
+          "const": "create_todo",
+          "default": "create_todo",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateTodo",
+      "type": "object"
+    },
+    "GetCurrentWeek": {
+      "description": "Get the current scorecard week.",
+      "properties": {
+        "operation": {
+          "const": "get_current_week",
+          "default": "get_current_week",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCurrentWeek",
+      "type": "object"
+    },
+    "GetGoal": {
+      "description": "Get one goal.",
+      "properties": {
+        "operation": {
+          "const": "get_goal",
+          "default": "get_goal",
+          "title": "Operation",
+          "type": "string"
+        },
+        "goal_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Goal Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "goal_id"
+      ],
+      "title": "GetGoal",
+      "type": "object"
+    },
+    "GetIssue": {
+      "description": "Get one issue.",
+      "properties": {
+        "operation": {
+          "const": "get_issue",
+          "default": "get_issue",
+          "title": "Operation",
+          "type": "string"
+        },
+        "issue_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Issue Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "GetIssue",
+      "type": "object"
+    },
+    "GetMe": {
+      "description": "Get the user represented by the token; also proves the connection.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetMe",
+      "type": "object"
+    },
+    "GetMeasurable": {
+      "description": "Get one metric.",
+      "properties": {
+        "operation": {
+          "const": "get_measurable",
+          "default": "get_measurable",
+          "title": "Operation",
+          "type": "string"
+        },
+        "measurable_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Measurable Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "measurable_id"
+      ],
+      "title": "GetMeasurable",
+      "type": "object"
+    },
+    "GetScorecard": {
+      "description": "Get your scorecard.",
+      "properties": {
+        "operation": {
+          "const": "get_scorecard",
+          "default": "get_scorecard",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetScorecard",
+      "type": "object"
+    },
+    "GetTodo": {
+      "description": "Get a to-do by its ID.",
+      "properties": {
+        "operation": {
+          "const": "get_todo",
+          "default": "get_todo",
+          "title": "Operation",
+          "type": "string"
+        },
+        "todo_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Todo Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "todo_id"
+      ],
+      "title": "GetTodo",
+      "type": "object"
+    },
+    "ListGoals": {
+      "description": "List your goals (called rocks in the API).",
+      "properties": {
+        "operation": {
+          "const": "list_goals",
+          "default": "list_goals",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListGoals",
+      "type": "object"
+    },
+    "ListIssues": {
+      "description": "List issues you own.",
+      "properties": {
+        "operation": {
+          "const": "list_issues",
+          "default": "list_issues",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListIssues",
+      "type": "object"
+    },
+    "ListMeasurables": {
+      "description": "List metrics you own.",
+      "properties": {
+        "operation": {
+          "const": "list_measurables",
+          "default": "list_measurables",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListMeasurables",
+      "type": "object"
+    },
+    "ListMeetingHeadlines": {
+      "description": "List headlines in a weekly meeting.",
+      "properties": {
+        "operation": {
+          "const": "list_meeting_headlines",
+          "default": "list_meeting_headlines",
+          "title": "Operation",
+          "type": "string"
+        },
+        "meeting_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Meeting Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "meeting_id"
+      ],
+      "title": "ListMeetingHeadlines",
+      "type": "object"
+    },
+    "ListMeetingIssues": {
+      "description": "List issues in a weekly meeting.",
+      "properties": {
+        "operation": {
+          "const": "list_meeting_issues",
+          "default": "list_meeting_issues",
+          "title": "Operation",
+          "type": "string"
+        },
+        "meeting_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Meeting Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "meeting_id"
+      ],
+      "title": "ListMeetingIssues",
+      "type": "object"
+    },
+    "ListMeetingTodos": {
+      "description": "List a weekly meeting's to-dos, optionally including closed items.",
+      "properties": {
+        "operation": {
+          "const": "list_meeting_todos",
+          "default": "list_meeting_todos",
+          "title": "Operation",
+          "type": "string"
+        },
+        "meeting_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Meeting Id",
+          "type": "integer"
+        },
+        "include_closed": {
+          "default": false,
+          "title": "Include Closed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "meeting_id"
+      ],
+      "title": "ListMeetingTodos",
+      "type": "object"
+    },
+    "ListMilestones": {
+      "description": "List a goal's milestones.",
+      "properties": {
+        "operation": {
+          "const": "list_milestones",
+          "default": "list_milestones",
+          "title": "Operation",
+          "type": "string"
+        },
+        "goal_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Goal Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "goal_id"
+      ],
+      "title": "ListMilestones",
+      "type": "object"
+    },
+    "ListTodos": {
+      "description": "List your personal to-dos.",
+      "properties": {
+        "operation": {
+          "const": "list_todos",
+          "default": "list_todos",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTodos",
+      "type": "object"
+    },
+    "ListUsers": {
+      "description": "List all users visible to the connected account.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "UpdateGoal": {
+      "description": "Update a goal's title or accountable owner.",
+      "properties": {
+        "operation": {
+          "const": "update_goal",
+          "default": "update_goal",
+          "title": "Operation",
+          "type": "string"
+        },
+        "goal_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Goal Id",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "accountable_user_id": {
+          "anyOf": [
+            {
+              "maximum": 9223372036854775807,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accountable User Id"
+        }
+      },
+      "required": [
+        "goal_id"
+      ],
+      "title": "UpdateGoal",
+      "type": "object"
+    },
+    "UpdateScore": {
+      "description": "Set a score's value. Null, which deletes a score, is not accepted.",
+      "properties": {
+        "operation": {
+          "const": "update_score",
+          "default": "update_score",
+          "title": "Operation",
+          "type": "string"
+        },
+        "score_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Score Id",
+          "type": "integer"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "score_id",
+        "value"
+      ],
+      "title": "UpdateScore",
+      "type": "object"
+    },
+    "UpdateTodo": {
+      "description": "Change a to-do's title or due date; omitted fields are not sent.",
+      "properties": {
+        "operation": {
+          "const": "update_todo",
+          "default": "update_todo",
+          "title": "Operation",
+          "type": "string"
+        },
+        "todo_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Todo Id",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        }
+      },
+      "required": [
+        "todo_id"
+      ],
+      "title": "UpdateTodo",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_goal": "#/$defs/ArchiveGoal",
+          "complete_todo": "#/$defs/CompleteTodo",
+          "create_goal": "#/$defs/CreateGoal",
+          "create_issue": "#/$defs/CreateIssue",
+          "create_milestone": "#/$defs/CreateMilestone",
+          "create_todo": "#/$defs/CreateTodo",
+          "get_current_week": "#/$defs/GetCurrentWeek",
+          "get_goal": "#/$defs/GetGoal",
+          "get_issue": "#/$defs/GetIssue",
+          "get_me": "#/$defs/GetMe",
+          "get_measurable": "#/$defs/GetMeasurable",
+          "get_scorecard": "#/$defs/GetScorecard",
+          "get_todo": "#/$defs/GetTodo",
+          "list_goals": "#/$defs/ListGoals",
+          "list_issues": "#/$defs/ListIssues",
+          "list_measurables": "#/$defs/ListMeasurables",
+          "list_meeting_headlines": "#/$defs/ListMeetingHeadlines",
+          "list_meeting_issues": "#/$defs/ListMeetingIssues",
+          "list_meeting_todos": "#/$defs/ListMeetingTodos",
+          "list_milestones": "#/$defs/ListMilestones",
+          "list_todos": "#/$defs/ListTodos",
+          "list_users": "#/$defs/ListUsers",
+          "update_goal": "#/$defs/UpdateGoal",
+          "update_score": "#/$defs/UpdateScore",
+          "update_todo": "#/$defs/UpdateTodo"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetMe"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/ListTodos"
+        },
+        {
+          "$ref": "#/$defs/GetTodo"
+        },
+        {
+          "$ref": "#/$defs/CreateTodo"
+        },
+        {
+          "$ref": "#/$defs/UpdateTodo"
+        },
+        {
+          "$ref": "#/$defs/CompleteTodo"
+        },
+        {
+          "$ref": "#/$defs/ListGoals"
+        },
+        {
+          "$ref": "#/$defs/GetGoal"
+        },
+        {
+          "$ref": "#/$defs/CreateGoal"
+        },
+        {
+          "$ref": "#/$defs/UpdateGoal"
+        },
+        {
+          "$ref": "#/$defs/ArchiveGoal"
+        },
+        {
+          "$ref": "#/$defs/ListMilestones"
+        },
+        {
+          "$ref": "#/$defs/CreateMilestone"
+        },
+        {
+          "$ref": "#/$defs/ListIssues"
+        },
+        {
+          "$ref": "#/$defs/GetIssue"
+        },
+        {
+          "$ref": "#/$defs/CreateIssue"
+        },
+        {
+          "$ref": "#/$defs/ListMeetingIssues"
+        },
+        {
+          "$ref": "#/$defs/ListMeetingTodos"
+        },
+        {
+          "$ref": "#/$defs/ListMeetingHeadlines"
+        },
+        {
+          "$ref": "#/$defs/ListMeasurables"
+        },
+        {
+          "$ref": "#/$defs/GetMeasurable"
+        },
+        {
+          "$ref": "#/$defs/GetScorecard"
+        },
+        {
+          "$ref": "#/$defs/UpdateScore"
+        },
+        {
+          "$ref": "#/$defs/GetCurrentWeek"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BloomGrowthTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bloom-growth Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

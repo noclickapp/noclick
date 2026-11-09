@@ -1,0 +1,421 @@
+{
+  "description": "Synthetic offline request/response fixtures, reviewed against the published v1 contract. Not live provider responses.",
+  "source": "https://app-next.bloomgrowth.com/swagger/v1/swagger.json",
+  "cases": [
+    {
+      "operation": "get_me",
+      "method": "GET",
+      "path": "/api/v1/users/mine",
+      "config": {
+        "operation": "get_me"
+      },
+      "body": null,
+      "query": {},
+      "response": {
+        "Id": 7,
+        "Name": "Ada Example"
+      },
+      "empty": false
+    },
+    {
+      "operation": "list_users",
+      "method": "GET",
+      "path": "/api/v1/users/mineviewable",
+      "config": {
+        "operation": "list_users"
+      },
+      "body": null,
+      "query": {},
+      "response": [
+        {
+          "Id": 7,
+          "Name": "Ada Example"
+        }
+      ],
+      "empty": false
+    },
+    {
+      "operation": "list_todos",
+      "method": "GET",
+      "path": "/api/v1/todo/users/mine",
+      "config": {
+        "operation": "list_todos"
+      },
+      "body": null,
+      "query": {},
+      "response": [
+        {
+          "Id": 42,
+          "Name": "Review launch"
+        }
+      ],
+      "empty": false
+    },
+    {
+      "operation": "get_todo",
+      "method": "GET",
+      "path": "/api/v1/todo/42",
+      "config": {
+        "operation": "get_todo",
+        "todo_id": 42
+      },
+      "body": null,
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": false
+    },
+    {
+      "operation": "create_todo",
+      "method": "POST",
+      "path": "/api/v1/todo/create",
+      "config": {
+        "operation": "create_todo",
+        "title": "Review launch",
+        "notes": "Check readiness",
+        "due_date": "2026-12-01T09:00:00Z"
+      },
+      "body": {
+        "title": "Review launch",
+        "notes": "Check readiness",
+        "dueDate": "2026-12-01T09:00:00Z"
+      },
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": false
+    },
+    {
+      "operation": "update_todo",
+      "method": "PUT",
+      "path": "/api/v1/todo/42",
+      "config": {
+        "operation": "update_todo",
+        "todo_id": 42,
+        "title": "Review next launch"
+      },
+      "body": {
+        "title": "Review next launch"
+      },
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": true
+    },
+    {
+      "operation": "complete_todo",
+      "method": "POST",
+      "path": "/api/v1/todo/42/complete",
+      "config": {
+        "operation": "complete_todo",
+        "todo_id": 42,
+        "completed": false
+      },
+      "body": null,
+      "query": {
+        "status": "false"
+      },
+      "response": false,
+      "empty": false
+    },
+    {
+      "operation": "list_goals",
+      "method": "GET",
+      "path": "/api/v1/rocks/user/mine",
+      "config": {
+        "operation": "list_goals"
+      },
+      "body": null,
+      "query": {},
+      "response": [
+        {
+          "Id": 42,
+          "Name": "Launch"
+        }
+      ],
+      "empty": false
+    },
+    {
+      "operation": "get_goal",
+      "method": "GET",
+      "path": "/api/v1/rocks/42",
+      "config": {
+        "operation": "get_goal",
+        "goal_id": 42
+      },
+      "body": null,
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": false
+    },
+    {
+      "operation": "create_goal",
+      "method": "POST",
+      "path": "/api/v1/rocks/create",
+      "config": {
+        "operation": "create_goal",
+        "title": "Launch",
+        "accountable_user_id": 7
+      },
+      "body": {
+        "title": "Launch",
+        "accountableUserId": 7
+      },
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": false
+    },
+    {
+      "operation": "update_goal",
+      "method": "PUT",
+      "path": "/api/v1/rocks/42",
+      "config": {
+        "operation": "update_goal",
+        "goal_id": 42,
+        "accountable_user_id": 8
+      },
+      "body": {
+        "accountableUserId": 8
+      },
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": true
+    },
+    {
+      "operation": "archive_goal",
+      "method": "PUT",
+      "path": "/api/v1/rocks/42/archive",
+      "config": {
+        "operation": "archive_goal",
+        "goal_id": 42
+      },
+      "body": null,
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": true
+    },
+    {
+      "operation": "list_milestones",
+      "method": "GET",
+      "path": "/api/v1/rocks/42/milestones",
+      "config": {
+        "operation": "list_milestones",
+        "goal_id": 42
+      },
+      "body": null,
+      "query": {},
+      "response": [],
+      "empty": false
+    },
+    {
+      "operation": "create_milestone",
+      "method": "POST",
+      "path": "/api/v1/rocks/42/milestones",
+      "config": {
+        "operation": "create_milestone",
+        "goal_id": 42,
+        "title": "Launch",
+        "due_date": "2026-12-01T09:00:00Z"
+      },
+      "body": {
+        "title": "Launch",
+        "dueDate": "2026-12-01T09:00:00Z"
+      },
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": false
+    },
+    {
+      "operation": "list_issues",
+      "method": "GET",
+      "path": "/api/v1/issues/users/mine",
+      "config": {
+        "operation": "list_issues"
+      },
+      "body": null,
+      "query": {},
+      "response": [],
+      "empty": false
+    },
+    {
+      "operation": "get_issue",
+      "method": "GET",
+      "path": "/api/v1/issues/42",
+      "config": {
+        "operation": "get_issue",
+        "issue_id": 42
+      },
+      "body": null,
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": false
+    },
+    {
+      "operation": "create_issue",
+      "method": "POST",
+      "path": "/api/v1/issues/create",
+      "config": {
+        "operation": "create_issue",
+        "meeting_id": 21,
+        "title": "Blocked launch",
+        "owner_id": 7,
+        "notes": "Need review"
+      },
+      "body": {
+        "meetingId": 21,
+        "title": "Blocked launch",
+        "ownerId": 7,
+        "notes": "Need review"
+      },
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": false
+    },
+    {
+      "operation": "list_meeting_issues",
+      "method": "GET",
+      "path": "/api/v1/l10/21/issues",
+      "config": {
+        "operation": "list_meeting_issues",
+        "meeting_id": 21
+      },
+      "body": null,
+      "query": {},
+      "response": [],
+      "empty": false
+    },
+    {
+      "operation": "list_meeting_todos",
+      "method": "GET",
+      "path": "/api/v1/l10/21/todos",
+      "config": {
+        "operation": "list_meeting_todos",
+        "meeting_id": 21,
+        "include_closed": true
+      },
+      "body": null,
+      "query": {
+        "INCLUDE_CLOSED": "true"
+      },
+      "response": [],
+      "empty": false
+    },
+    {
+      "operation": "list_meeting_headlines",
+      "method": "GET",
+      "path": "/api/v1/l10/21/headlines",
+      "config": {
+        "operation": "list_meeting_headlines",
+        "meeting_id": 21
+      },
+      "body": null,
+      "query": {},
+      "response": [],
+      "empty": false
+    },
+    {
+      "operation": "list_measurables",
+      "method": "GET",
+      "path": "/api/v1/measurables/user/mine",
+      "config": {
+        "operation": "list_measurables"
+      },
+      "body": null,
+      "query": {},
+      "response": [],
+      "empty": false
+    },
+    {
+      "operation": "get_measurable",
+      "method": "GET",
+      "path": "/api/v1/measurables/42",
+      "config": {
+        "operation": "get_measurable",
+        "measurable_id": 42
+      },
+      "body": null,
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": false
+    },
+    {
+      "operation": "get_scorecard",
+      "method": "GET",
+      "path": "/api/v1/scorecard/user/mine",
+      "config": {
+        "operation": "get_scorecard"
+      },
+      "body": null,
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Measurables": []
+      },
+      "empty": false
+    },
+    {
+      "operation": "update_score",
+      "method": "PUT",
+      "path": "/api/v1/scores/42",
+      "config": {
+        "operation": "update_score",
+        "score_id": 42,
+        "value": 0
+      },
+      "body": {
+        "value": 0.0
+      },
+      "query": {},
+      "response": {
+        "Id": 42,
+        "Name": "Weekly review"
+      },
+      "empty": true
+    },
+    {
+      "operation": "get_current_week",
+      "method": "GET",
+      "path": "/api/v1/weeks/current",
+      "config": {
+        "operation": "get_current_week"
+      },
+      "body": null,
+      "query": {},
+      "response": {
+        "Id": 42,
+        "IsCurrentWeek": true
+      },
+      "empty": false
+    }
+  ]
+}

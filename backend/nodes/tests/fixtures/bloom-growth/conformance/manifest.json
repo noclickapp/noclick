@@ -1,0 +1,14 @@
+{
+  "bloom-growth": {
+    "file": "openapi.json",
+    "sha256": "b7c9f4dfefa9790a7fee0a4d636330aa41917a7297cbb89390a60112722f5ad7",
+    "version": "v1",
+    "source_url": "https://app-next.bloomgrowth.com/swagger/v1/swagger.json",
+    "node_type": "automation-bloom-growth",
+    "credential": {
+      "credential_type": "bloom_growth_api_token",
+      "api_token": "<token>"
+    },
+    "server_url": "https://app-next.bloomgrowth.com"
+  }
+}
