@@ -1,0 +1,587 @@
+{
+  "$defs": {
+    "AddIndividuals": {
+      "additionalProperties": false,
+      "description": "Invite individuals and assign their filer roles; SEC sends invitations.",
+      "properties": {
+        "cik": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the connected account's CIK. An alternate CIK must authorize these tokens.",
+          "title": "Filer CIK"
+        },
+        "operation": {
+          "const": "add_individuals",
+          "default": "add_individuals",
+          "title": "Operation",
+          "type": "string"
+        },
+        "individuals": {
+          "items": {
+            "$ref": "#/$defs/IndividualRole"
+          },
+          "minItems": 1,
+          "title": "Individuals",
+          "type": "array"
+        }
+      },
+      "required": [
+        "individuals"
+      ],
+      "title": "AddIndividuals",
+      "type": "object"
+    },
+    "ChangeIndividualRoles": {
+      "additionalProperties": false,
+      "description": "Change existing individuals' administrator and user roles.",
+      "properties": {
+        "cik": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the connected account's CIK. An alternate CIK must authorize these tokens.",
+          "title": "Filer CIK"
+        },
+        "operation": {
+          "const": "change_individual_roles",
+          "default": "change_individual_roles",
+          "title": "Operation",
+          "type": "string"
+        },
+        "individuals": {
+          "items": {
+            "$ref": "#/$defs/EmailRole"
+          },
+          "minItems": 1,
+          "title": "Individuals",
+          "type": "array"
+        }
+      },
+      "required": [
+        "individuals"
+      ],
+      "title": "ChangeIndividualRoles",
+      "type": "object"
+    },
+    "EmailRole": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "inAdminRole": {
+          "default": false,
+          "title": "Account Administrator",
+          "type": "boolean"
+        },
+        "inTechAdminRole": {
+          "default": false,
+          "title": "Technical Administrator",
+          "type": "boolean"
+        },
+        "inUserRole": {
+          "default": true,
+          "title": "User",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "EmailRole",
+      "type": "object"
+    },
+    "GetFilerAccount": {
+      "additionalProperties": false,
+      "description": "View filer account information. CCC secrets are omitted.",
+      "properties": {
+        "cik": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the connected account's CIK. An alternate CIK must authorize these tokens.",
+          "title": "Filer CIK"
+        },
+        "operation": {
+          "const": "get_filer_account",
+          "default": "get_filer_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetFilerAccount",
+      "type": "object"
+    },
+    "GetFilingCredentials": {
+      "additionalProperties": false,
+      "description": "Verify whether these credentials can file for the CIK.",
+      "properties": {
+        "cik": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the connected account's CIK. An alternate CIK must authorize these tokens.",
+          "title": "Filer CIK"
+        },
+        "operation": {
+          "const": "get_filing_credentials",
+          "default": "get_filing_credentials",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetFilingCredentials",
+      "type": "object"
+    },
+    "GetMultipleSubmissionStatuses": {
+      "additionalProperties": false,
+      "description": "Check up to 25 submission accession numbers in one request.",
+      "properties": {
+        "operation": {
+          "const": "get_multiple_submission_statuses",
+          "default": "get_multiple_submission_statuses",
+          "title": "Operation",
+          "type": "string"
+        },
+        "accession_numbers": {
+          "items": {
+            "pattern": "^[0-9]{10}-[0-9]{2}-[0-9]{6}$",
+            "type": "string"
+          },
+          "maxItems": 25,
+          "minItems": 1,
+          "title": "Accession Numbers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "accession_numbers"
+      ],
+      "title": "GetMultipleSubmissionStatuses",
+      "type": "object"
+    },
+    "GetSubmissionStatus": {
+      "additionalProperties": false,
+      "description": "Check one submission by its accession number.",
+      "properties": {
+        "operation": {
+          "const": "get_submission_status",
+          "default": "get_submission_status",
+          "title": "Operation",
+          "type": "string"
+        },
+        "accession_number": {
+          "pattern": "^[0-9]{10}-[0-9]{2}-[0-9]{6}$",
+          "title": "Accession Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "accession_number"
+      ],
+      "title": "GetSubmissionStatus",
+      "type": "object"
+    },
+    "GetSystemStatus": {
+      "additionalProperties": false,
+      "description": "Check EDGAR operating status using the filer token.",
+      "properties": {
+        "operation": {
+          "const": "get_system_status",
+          "default": "get_system_status",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetSystemStatus",
+      "type": "object"
+    },
+    "IndividualRole": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "inAdminRole": {
+          "default": false,
+          "title": "Account Administrator",
+          "type": "boolean"
+        },
+        "inTechAdminRole": {
+          "default": false,
+          "title": "Technical Administrator",
+          "type": "boolean"
+        },
+        "inUserRole": {
+          "default": true,
+          "title": "User",
+          "type": "boolean"
+        },
+        "firstName": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "middleName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Middle Name"
+        },
+        "lastName": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "firstName",
+        "lastName"
+      ],
+      "title": "IndividualRole",
+      "type": "object"
+    },
+    "ListDelegations": {
+      "additionalProperties": false,
+      "description": "View delegations to and from the filer.",
+      "properties": {
+        "cik": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the connected account's CIK. An alternate CIK must authorize these tokens.",
+          "title": "Filer CIK"
+        },
+        "operation": {
+          "const": "list_delegations",
+          "default": "list_delegations",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListDelegations",
+      "type": "object"
+    },
+    "ListIndividuals": {
+      "additionalProperties": false,
+      "description": "View individuals associated with the filer.",
+      "properties": {
+        "cik": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the connected account's CIK. An alternate CIK must authorize these tokens.",
+          "title": "Filer CIK"
+        },
+        "operation": {
+          "const": "list_individuals",
+          "default": "list_individuals",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListIndividuals",
+      "type": "object"
+    },
+    "RemoveIndividuals": {
+      "additionalProperties": false,
+      "description": "Remove individuals from the filer's account.",
+      "properties": {
+        "cik": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the connected account's CIK. An alternate CIK must authorize these tokens.",
+          "title": "Filer CIK"
+        },
+        "operation": {
+          "const": "remove_individuals",
+          "default": "remove_individuals",
+          "title": "Operation",
+          "type": "string"
+        },
+        "emails": {
+          "items": {
+            "maxLength": 254,
+            "minLength": 3,
+            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "RemoveIndividuals",
+      "type": "object"
+    },
+    "RequestDelegationInvitations": {
+      "additionalProperties": false,
+      "description": "Request delegation invitations from the specified CIKs.",
+      "properties": {
+        "cik": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the connected account's CIK. An alternate CIK must authorize these tokens.",
+          "title": "Filer CIK"
+        },
+        "operation": {
+          "const": "request_delegation_invitations",
+          "default": "request_delegation_invitations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ciks": {
+          "items": {
+            "pattern": "^[0-9]{10}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Filer CIKs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ciks"
+      ],
+      "title": "RequestDelegationInvitations",
+      "type": "object"
+    },
+    "SecAPITokensCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "sec_api_tokens",
+          "default": "sec_api_tokens",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filer_api_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Filer API Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "user_api_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "User API Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "cik": {
+          "description": "Your account's 10-digit Central Index Key, including leading zeroes.",
+          "pattern": "^[0-9]{10}$",
+          "title": "Filer CIK",
+          "type": "string"
+        }
+      },
+      "required": [
+        "filer_api_token",
+        "user_api_token",
+        "cik"
+      ],
+      "title": "Sec API Tokens",
+      "type": "object",
+      "x-credential-instructions": "Paste a filer API token supplied by your technical administrator, your user API token from Filer Management, and the 10-digit CIK of the account you manage. Filer-management writes require the appropriate account administrator role. NoClick sends both tokens to the production SEC EDGAR API; submission-status and system-status reads use only the filer token.",
+      "x-credential-url": "https://filermanagement.edgarfiling.sec.gov/"
+    },
+    "SendDelegationInvitations": {
+      "additionalProperties": false,
+      "description": "Send delegation invitations to the specified CIKs.",
+      "properties": {
+        "cik": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{10}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the connected account's CIK. An alternate CIK must authorize these tokens.",
+          "title": "Filer CIK"
+        },
+        "operation": {
+          "const": "send_delegation_invitations",
+          "default": "send_delegation_invitations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ciks": {
+          "items": {
+            "pattern": "^[0-9]{10}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Filer CIKs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ciks"
+      ],
+      "title": "SendDelegationInvitations",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_individuals": "#/$defs/AddIndividuals",
+          "change_individual_roles": "#/$defs/ChangeIndividualRoles",
+          "get_filer_account": "#/$defs/GetFilerAccount",
+          "get_filing_credentials": "#/$defs/GetFilingCredentials",
+          "get_multiple_submission_statuses": "#/$defs/GetMultipleSubmissionStatuses",
+          "get_submission_status": "#/$defs/GetSubmissionStatus",
+          "get_system_status": "#/$defs/GetSystemStatus",
+          "list_delegations": "#/$defs/ListDelegations",
+          "list_individuals": "#/$defs/ListIndividuals",
+          "remove_individuals": "#/$defs/RemoveIndividuals",
+          "request_delegation_invitations": "#/$defs/RequestDelegationInvitations",
+          "send_delegation_invitations": "#/$defs/SendDelegationInvitations"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetFilerAccount"
+        },
+        {
+          "$ref": "#/$defs/ListDelegations"
+        },
+        {
+          "$ref": "#/$defs/RequestDelegationInvitations"
+        },
+        {
+          "$ref": "#/$defs/SendDelegationInvitations"
+        },
+        {
+          "$ref": "#/$defs/ListIndividuals"
+        },
+        {
+          "$ref": "#/$defs/AddIndividuals"
+        },
+        {
+          "$ref": "#/$defs/ChangeIndividualRoles"
+        },
+        {
+          "$ref": "#/$defs/RemoveIndividuals"
+        },
+        {
+          "$ref": "#/$defs/GetFilingCredentials"
+        },
+        {
+          "$ref": "#/$defs/GetSystemStatus"
+        },
+        {
+          "$ref": "#/$defs/GetSubmissionStatus"
+        },
+        {
+          "$ref": "#/$defs/GetMultipleSubmissionStatuses"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SecAPITokensCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Sec Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
