@@ -1,0 +1,49 @@
+{
+  "user": {
+    "id": "7dNGUkKit2O",
+    "name": "Charlotte Blue",
+    "email": "charlotte+blue@synap.ac",
+    "subPortalId": "rtQY0MErP9S",
+    "customAttributes": {
+      "employee-id": null,
+      "team": null,
+      "quote": null,
+      "dob": null,
+      "last-certified-grade": null,
+      "checker": null,
+      "boxes": null
+    }
+  },
+  "portal": {
+    "id": "9i0FAHIDOM"
+  },
+  "meta": {
+    "timestamp": "2024-06-25T11:16:31.398Z",
+    "eventName": "learningRecord.updated"
+  },
+  "learningRecord": {
+    "objectId": "lcfdxBQ13vT",
+    "name": "The Smallest Record Who Ever Lived- Updated",
+    "score": 66,
+    "visibleToStudent": true,
+    "achievedOn": "2024-06-24T23:00:00.000Z",
+    "attr": {
+      "grade": "a",
+      "file": {
+        "url": "https://synap-files-prod.s3.eu-west-1.amazonaws.com/9i0FAHIDOM/user/7dNGUkKit2O/learning-record-attr/file/vader.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAIOSFODNN7EXAMPLE%2F20240625%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20240625T113125Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEBQaCWV1LXdlc3QtMSJHMEUCIQCIZQ7TYH2JMLPp2TFCtv8wxZrmAKf6hlVg2n1w%2B8o%2B%2FgIgToHG%2Fpgr6OyIoLDdqRMi%2Fn8Et%2Blxh%2FLguyuBrjFFKtMqoAMIvf%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARADGgw3NjU4OTI4OTY4MzYiDB6iLPq%2BzTXFj3v1lyr0AqpIU89mIl8inU80LYMA7pje0lmsS965Sd1JxC%2BgY9FoSdYHz%2FjxN9eLPU%2BzDLdWaBr6qzJtzPOxGyQrSrzUB5dEoCsGLc242ckbT4U%2BbBzzM4MZjstMOUx5uREfHLQkqAzpbHBtMqEAAjZ5LmZhzvMkBtO0EJcxvgh%2F5QQmpU6sg5Sfmic7xHAAun9KBTDPsAOcPmafK%2FwMyNexWqYRt7oMkTwjfznfzKjM4eBBzgOEHvhYVr4WGzqYpo1mDBtaFSRf5AKTthQDB%2FVibB1fmrV%2Fx9T9o2IJQJPUH1U06yBQ3UhtgxlXzYVExyDB1sgrhs8tmiycw6Q5pJBLHMfIplOsTsI8dSFQBZptywY2zzTeWQnYqC1JGu0nU7krr2kX20Y5XQEaFncvb%2Bwa3GUOMa0DP7%2B3nZk6Zs31JcB6%2FjMu8j%2FfsCN%2FYEwN%2B%2F4owQPfKZOitaY0O4XgHJRbV14g88jbUWPZTrcxYhHT%2FTb09uwOZzt0eDDw0uqzBjqdAYzwuoYP1pGbxlkpNz%2FdVPyv8317HiV13L0qoHsDBl9MDGuCR7HEPWPVfThY6v%2BbLh1d6YyhFLyO%2BXezYxKtW%2FAifKhh%2FDud4HK%2BCJqZsTtru8ffoKtmLTJbZFIfTyM5W8pPTeItTbQlfJCCqRvHyVam0Cis5bM8K%2BwEEIbU5xb40G2kcPsuBZEz3mzZsm1ITp0kYqX2IZhH1bHxKSE%3D&X-Amz-SignedHeaders=host&X-Amz-Signature=a18b4ccebc5cd57f491c8a9cdca22b63465c0026462f911e19a7b9a715cc6887",
+        "filePath": "9i0FAHIDOM/user/7dNGUkKit2O/learning-record-attr/file/vader.pdf",
+        "fileName": "WU7BRiKFgZg.pdf",
+        "mimeType": "application/pdf",
+        "size": 423377
+      },
+      "free-text": "waolom?\nwysb wysb wysb"
+    }
+  },
+  "updatedFields": [
+    "attr",
+    "achievedOn",
+    "name",
+    "score",
+    "file"
+  ]
+}

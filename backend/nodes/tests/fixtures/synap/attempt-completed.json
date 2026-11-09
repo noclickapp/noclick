@@ -1,0 +1,58 @@
+{
+  "user": {
+    "id": "FID_USER",
+    "name": "Fixture Learner",
+    "email": "learner@example.test",
+    "customAttributes": {}
+  },
+  "portal": {
+    "id": "FID_PORTAL"
+  },
+  "meta": {
+    "timestamp": "2026-11-09T00:00:00Z"
+  },
+  "attempt": {
+    "score": 80,
+    "scoreFrac": 0.8,
+    "totalAnsweredCorrectly": 8,
+    "id": "FID_ATTEMPT",
+    "isExam": false,
+    "state": {
+      "responseQuestionMap": [],
+      "isRevoked": false,
+      "isStarted": true,
+      "timeStarted": "2026-11-08T23:50:00Z",
+      "timeCompleted": "2026-11-09T00:00:00Z",
+      "timeSpentInMs": 600000,
+      "results": {
+        "status": "released"
+      }
+    },
+    "marks": {},
+    "totalQuestions": 10,
+    "tags": {
+      "nonFacetTags": [],
+      "skill": [],
+      "difficulty": [],
+      "subtopic": [],
+      "topic": [],
+      "subject": [],
+      "module": [],
+      "exam": []
+    },
+    "totalAnswered": 10,
+    "timeStarted": "2026-11-08T23:50:00Z",
+    "timeCompleted": "2026-11-09T00:00:00Z",
+    "timeSpentInMs": 600000
+  },
+  "test": {
+    "id": "FID_TEST",
+    "title": "Physics"
+  },
+  "id": "FID_ATTEMPT",
+  "score": 80,
+  "scoreFrac": 0.8,
+  "timeStarted": "2026-11-08T23:50:00Z",
+  "timeCompleted": "2026-11-09T00:00:00Z",
+  "timeSpentInMs": 600000
+}
