@@ -1,0 +1,1380 @@
+{
+  "$defs": {
+    "AddGroupContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_group_contacts",
+          "default": "add_group_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phoneNumbers": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Contact phone numbers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "resource_id",
+        "phoneNumbers"
+      ],
+      "title": "AddGroupContacts",
+      "type": "object"
+    },
+    "BlockNumbers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "block_numbers",
+          "default": "block_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phoneNumbers": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Phone numbers to block",
+          "type": "array"
+        }
+      },
+      "required": [
+        "phoneNumbers"
+      ],
+      "title": "BlockNumbers",
+      "type": "object"
+    },
+    "CreateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 25,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phoneNumbers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact phone numbers"
+        },
+        "groupIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Groups to merge"
+        },
+        "strictValidation": {
+          "default": true,
+          "title": "Require all phone numbers to be valid",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateGroup",
+      "type": "object"
+    },
+    "CreateTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company name"
+        },
+        "mediaFileId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media file ID"
+        },
+        "mediaFileUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media file URL"
+        },
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "message"
+      ],
+      "title": "CreateTemplate",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "properties": {
+        "phoneNumber": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Phone number",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "phoneNumber"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "DeleteGroup",
+      "type": "object"
+    },
+    "DeleteMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_messages",
+          "default": "delete_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ids": {
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Message IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "DeleteMessages",
+      "type": "object"
+    },
+    "DeleteTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "DeleteTemplate",
+      "type": "object"
+    },
+    "EZTextingCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "ez_texting_basic",
+          "default": "ez_texting_basic",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        },
+        "password": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "username",
+        "password"
+      ],
+      "title": "EZ Texting Account",
+      "type": "object",
+      "x-credential-instructions": "Enter your EZ Texting username and password. EZ Texting documents these same account credentials for HTTP Basic API authentication. They are sent only to a.eztexting.com over HTTPS. Connecting reads one page of your contacts; write permissions and message delivery are not verified.",
+      "x-credential-url": "https://developers.eztexting.com/docs/authentication"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "phoneNumber": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Phone number",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "phoneNumber"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetCreditBalance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_credit_balance",
+          "default": "get_credit_balance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCreditBalance",
+      "type": "object"
+    },
+    "GetGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetGroup",
+      "type": "object"
+    },
+    "GetMessageDetails": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_message_details",
+          "default": "get_message_details",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetMessageDetails",
+      "type": "object"
+    },
+    "GetMessageReport": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_message_report",
+          "default": "get_message_report",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetMessageReport",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "ListContactFields": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number. Each run reads one page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": "20",
+          "enum": [
+            "10",
+            "20",
+            "50",
+            "100",
+            "200"
+          ],
+          "title": "Page size",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_contact_fields",
+          "default": "list_contact_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContactFields",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number. Each run reads one page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": "20",
+          "enum": [
+            "10",
+            "20",
+            "50",
+            "100",
+            "200"
+          ],
+          "title": "Page size",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone number contains"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name contains"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name contains"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email contains"
+        },
+        "group_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group name contains"
+        },
+        "opt_out": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Opted out"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number. Each run reads one page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": "20",
+          "enum": [
+            "10",
+            "20",
+            "50",
+            "100",
+            "200"
+          ],
+          "title": "Page size",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group name contains"
+        }
+      },
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "ListMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number. Each run reads one page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": "20",
+          "enum": [
+            "10",
+            "20",
+            "50",
+            "100",
+            "200"
+          ],
+          "title": "Page size",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sending phone number"
+        },
+        "contact_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact phone number"
+        },
+        "incoming": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Incoming"
+        },
+        "unread": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unread"
+        },
+        "text_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message text query"
+        }
+      },
+      "title": "ListMessages",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number. Each run reads one page.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": "20",
+          "enum": [
+            "10",
+            "20",
+            "50",
+            "100",
+            "200"
+          ],
+          "title": "Page size",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template name contains"
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "RemoveGroupContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_group_contacts",
+          "default": "remove_group_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "phoneNumbers": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Contact phone numbers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "resource_id",
+        "phoneNumbers"
+      ],
+      "title": "RemoveGroupContacts",
+      "type": "object"
+    },
+    "SendMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "message": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message text"
+        },
+        "messageTemplateId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message template ID"
+        },
+        "toNumbers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recipient phone numbers"
+        },
+        "groupIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recipient group IDs"
+        },
+        "fromNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required by EZ Texting when the account has multiple sending numbers.",
+          "title": "Sending number"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company name"
+        },
+        "sendAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date and time with timezone; omit to send immediately.",
+          "format": "date-time",
+          "title": "Send at"
+        },
+        "mediaFileId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media file ID"
+        },
+        "mediaUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media URL"
+        },
+        "messageType": {
+          "default": "SMS",
+          "enum": [
+            "SMS",
+            "MMS"
+          ],
+          "title": "Message type",
+          "type": "string"
+        },
+        "strictValidation": {
+          "default": true,
+          "title": "Require all recipients to be valid",
+          "type": "boolean"
+        }
+      },
+      "title": "SendMessage",
+      "type": "object"
+    },
+    "UpdateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 25,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "resource_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "resource_id"
+      ],
+      "title": "UpdateGroup",
+      "type": "object"
+    },
+    "UpdateTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company name"
+        },
+        "mediaFileId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media file ID"
+        },
+        "mediaFileUrl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media file URL"
+        },
+        "resource_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "message",
+        "resource_id"
+      ],
+      "title": "UpdateTemplate",
+      "type": "object"
+    },
+    "UpsertContact": {
+      "additionalProperties": false,
+      "properties": {
+        "phoneNumber": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Phone number",
+          "type": "string"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Email"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "custom1": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom1"
+        },
+        "custom2": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom2"
+        },
+        "custom3": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom3"
+        },
+        "custom4": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom4"
+        },
+        "custom5": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom5"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom field values"
+        },
+        "groupIdsAdd": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group IDs to add"
+        },
+        "groupIdsRemove": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group IDs to remove"
+        },
+        "operation": {
+          "const": "upsert_contact",
+          "default": "upsert_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "phoneNumber"
+      ],
+      "title": "UpsertContact",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_group_contacts": "#/$defs/AddGroupContacts",
+          "block_numbers": "#/$defs/BlockNumbers",
+          "create_group": "#/$defs/CreateGroup",
+          "create_template": "#/$defs/CreateTemplate",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_group": "#/$defs/DeleteGroup",
+          "delete_messages": "#/$defs/DeleteMessages",
+          "delete_template": "#/$defs/DeleteTemplate",
+          "get_contact": "#/$defs/GetContact",
+          "get_credit_balance": "#/$defs/GetCreditBalance",
+          "get_group": "#/$defs/GetGroup",
+          "get_message_details": "#/$defs/GetMessageDetails",
+          "get_message_report": "#/$defs/GetMessageReport",
+          "get_template": "#/$defs/GetTemplate",
+          "list_contact_fields": "#/$defs/ListContactFields",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_groups": "#/$defs/ListGroups",
+          "list_messages": "#/$defs/ListMessages",
+          "list_templates": "#/$defs/ListTemplates",
+          "remove_group_contacts": "#/$defs/RemoveGroupContacts",
+          "send_message": "#/$defs/SendMessage",
+          "update_group": "#/$defs/UpdateGroup",
+          "update_template": "#/$defs/UpdateTemplate",
+          "upsert_contact": "#/$defs/UpsertContact"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/UpsertContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/CreateGroup"
+        },
+        {
+          "$ref": "#/$defs/GetGroup"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroup"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroup"
+        },
+        {
+          "$ref": "#/$defs/AddGroupContacts"
+        },
+        {
+          "$ref": "#/$defs/RemoveGroupContacts"
+        },
+        {
+          "$ref": "#/$defs/ListMessages"
+        },
+        {
+          "$ref": "#/$defs/SendMessage"
+        },
+        {
+          "$ref": "#/$defs/DeleteMessages"
+        },
+        {
+          "$ref": "#/$defs/GetMessageDetails"
+        },
+        {
+          "$ref": "#/$defs/GetMessageReport"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/CreateTemplate"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        },
+        {
+          "$ref": "#/$defs/UpdateTemplate"
+        },
+        {
+          "$ref": "#/$defs/DeleteTemplate"
+        },
+        {
+          "$ref": "#/$defs/GetCreditBalance"
+        },
+        {
+          "$ref": "#/$defs/ListContactFields"
+        },
+        {
+          "$ref": "#/$defs/BlockNumbers"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EZTextingCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Ez-texting Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
