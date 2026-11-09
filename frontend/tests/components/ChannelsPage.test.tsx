@@ -380,7 +380,7 @@ describe('Channels on the platform', () => {
         fireEvent.click(within(dialog).getByRole('checkbox', { name: /Quill/ }));
         fireEvent.click(within(dialog).getByRole('button', { name: 'Start channel' }));
         await waitFor(() =>
-            expect(platform.createChannel).toHaveBeenCalledWith({ name: 'q4-planning', topic: '', mode: 'mentions', agents: [platform.agentRows[1]], workspaceId: 'ws_acme' })
+            expect(platform.createChannel).toHaveBeenCalledWith({ name: 'q4-planning', topic: '', mode: 'all', agents: [platform.agentRows[1]], workspaceId: 'ws_acme' })
         );
     });
 

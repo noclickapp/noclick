@@ -43,7 +43,7 @@ export function NewChannelDialog({
 }) {
     const [name, setName] = useState('');
     const [topic, setTopic] = useState('');
-    const [mode, setMode] = useState<ChannelMode>('mentions');
+    const [mode, setMode] = useState<ChannelMode>('all');
     const [picked, setPicked] = useState<ReadonlySet<string>>(new Set());
     const [problem, setProblem] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
@@ -52,7 +52,7 @@ export function NewChannelDialog({
     const reset = () => {
         setName('');
         setTopic('');
-        setMode('mentions');
+        setMode('all');
         setPicked(new Set());
         setProblem(null);
     };
@@ -131,8 +131,8 @@ export function NewChannelDialog({
                         className="w-full rounded-xl"
                         buttonClassName="h-9 flex-1 text-[13px]"
                         options={[
-                            { value: 'mentions', label: 'When @-mentioned' },
                             { value: 'all', label: 'Every message' },
+                            { value: 'mentions', label: 'When @-mentioned' },
                         ]}
                         value={mode}
                         onChange={setMode}
