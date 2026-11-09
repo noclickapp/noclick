@@ -1,0 +1,541 @@
+{
+  "check_connection": {
+    "method": "GET",
+    "path": "/auth/check",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "API key is valid.",
+      "data": {
+        "team_id": 123,
+        "timestamp": "2024-01-15T10:30:00.000Z"
+      }
+    }
+  },
+  "send_email": {
+    "method": "POST",
+    "path": "/emails",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Email queued for delivery.",
+      "data": {
+        "request_id": "12345678901234567890",
+        "accepted": 1,
+        "rejected": 0
+      }
+    }
+  },
+  "list_emails": {
+    "method": "GET",
+    "path": "/emails",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Emails retrieved successfully.",
+      "data": {
+        "events": {
+          "data": [
+            {
+              "event_id": "abc123",
+              "type": "injection",
+              "timestamp": "2024-01-15T10:30:00Z",
+              "request_id": "12345678901234567890",
+              "message_id": "msg-abc123",
+              "subject": "Welcome Email",
+              "friendly_from": "sender@example.com",
+              "sending_domain": "example.com",
+              "rcpt_to": "recipient@example.com",
+              "click_tracking": true,
+              "open_tracking": true,
+              "transactional": true
+            }
+          ],
+          "total_count": 1,
+          "from": "2024-01-05T00:00:00Z",
+          "to": "2024-01-15T23:59:59Z",
+          "pagination": {
+            "next_cursor": null,
+            "per_page": 25
+          }
+        }
+      }
+    }
+  },
+  "list_email_events": {
+    "method": "GET",
+    "path": "/emails/events",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Email events retrieved successfully.",
+      "data": {
+        "events": {
+          "data": [
+            {
+              "event_id": "event-delivery-1",
+              "type": "delivery",
+              "timestamp": "2024-01-15T10:31:00.000Z",
+              "request_id": "12345678901234567890",
+              "rcpt_to": "recipient@example.com",
+              "raw_rcpt_to": "recipient@example.com",
+              "recipient_domain": "example.com",
+              "mailbox_provider": "Gmail",
+              "mailbox_provider_region": "Global",
+              "subject": "Welcome to Lettr",
+              "friendly_from": "sender@example.com",
+              "queue_time": 500
+            },
+            {
+              "event_id": "event-bounce-1",
+              "type": "bounce",
+              "timestamp": "2024-01-15T10:32:00.000Z",
+              "request_id": "12345678901234567891",
+              "rcpt_to": "bounced@example.com",
+              "raw_rcpt_to": "bounced@example.com",
+              "recipient_domain": "example.com",
+              "mailbox_provider": "Gmail",
+              "mailbox_provider_region": "Global",
+              "subject": "Welcome to Lettr",
+              "bounce_class": 10,
+              "error_code": "550",
+              "reason": "User unknown"
+            }
+          ],
+          "total_count": 2,
+          "from": "2024-01-05T00:00:00+00:00",
+          "to": "2024-01-15T10:35:00+00:00",
+          "pagination": {
+            "next_cursor": null,
+            "per_page": 25
+          }
+        }
+      }
+    }
+  },
+  "get_email": {
+    "method": "GET",
+    "path": "/emails/{requestId}",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Email retrieved successfully.",
+      "data": {
+        "transmission_id": "7610639000055488914",
+        "state": "delivered",
+        "scheduled_at": null,
+        "from": "sender@example.com",
+        "from_name": null,
+        "subject": "Welcome to Lettr",
+        "recipients": [
+          "recipient@example.com"
+        ],
+        "num_recipients": 1,
+        "events": [
+          {
+            "event_id": "event-open-1",
+            "type": "open",
+            "timestamp": "2024-01-15T10:32:00.000Z",
+            "request_id": "7610639000055488914",
+            "rcpt_to": "recipient@example.com",
+            "raw_rcpt_to": "recipient@example.com",
+            "recipient_domain": "example.com",
+            "mailbox_provider": "Gmail",
+            "mailbox_provider_region": "Global",
+            "subject": "Welcome to Lettr",
+            "friendly_from": "sender@example.com"
+          },
+          {
+            "event_id": "event-delivery-1",
+            "type": "delivery",
+            "timestamp": "2024-01-15T10:31:00.000Z",
+            "request_id": "7610639000055488914",
+            "rcpt_to": "recipient@example.com",
+            "raw_rcpt_to": "recipient@example.com",
+            "recipient_domain": "example.com",
+            "mailbox_provider": "Gmail",
+            "mailbox_provider_region": "Global",
+            "subject": "Welcome to Lettr",
+            "friendly_from": "sender@example.com",
+            "queue_time": 500
+          },
+          {
+            "event_id": "event-injection-1",
+            "type": "injection",
+            "timestamp": "2024-01-15T10:30:00.000Z",
+            "request_id": "7610639000055488914",
+            "rcpt_to": "recipient@example.com",
+            "raw_rcpt_to": "recipient@example.com",
+            "recipient_domain": "example.com",
+            "mailbox_provider": "Gmail",
+            "mailbox_provider_region": "Global",
+            "subject": "Welcome to Lettr",
+            "friendly_from": "sender@example.com"
+          }
+        ]
+      }
+    }
+  },
+  "schedule_email": {
+    "method": "POST",
+    "path": "/emails/scheduled",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Email scheduled for delivery.",
+      "data": {
+        "request_id": "sch_01JQZ3N2K8XW9V6M4TBRC7YHDE",
+        "transmission_id": null,
+        "state": "scheduled",
+        "scheduled_at": "2024-01-16T10:00:00Z",
+        "from": "sender@example.com",
+        "from_name": "Sender Name",
+        "subject": "Scheduled Newsletter",
+        "recipients": [
+          "recipient@example.com"
+        ],
+        "num_recipients": 1,
+        "accepted": 1,
+        "rejected": 0,
+        "tag": null,
+        "failure_reason": null,
+        "events": []
+      }
+    }
+  },
+  "list_scheduled_emails": {
+    "method": "GET",
+    "path": "/emails/scheduled",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Scheduled emails retrieved successfully.",
+      "data": {
+        "scheduled_emails": [
+          {
+            "request_id": "sch_01JQZ3N2K8XW9V6M4TBRC7YHDE",
+            "transmission_id": null,
+            "state": "scheduled",
+            "scheduled_at": "2024-01-16T10:00:00Z",
+            "from": "sender@example.com",
+            "from_name": "Sender Name",
+            "subject": "Scheduled Newsletter",
+            "recipients": [
+              "recipient@example.com"
+            ],
+            "num_recipients": 1,
+            "accepted": 1,
+            "rejected": 0,
+            "tag": null,
+            "failure_reason": null,
+            "events": []
+          }
+        ],
+        "pagination": {
+          "total": 1,
+          "per_page": 25,
+          "current_page": 1,
+          "last_page": 1
+        }
+      }
+    }
+  },
+  "get_scheduled_email": {
+    "method": "GET",
+    "path": "/emails/scheduled/{transmissionId}",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": null
+  },
+  "cancel_scheduled_email": {
+    "method": "DELETE",
+    "path": "/emails/scheduled/{transmissionId}",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Scheduled transmission cancelled successfully.",
+      "data": {
+        "request_id": "sch_01JQZ3N2K8XW9V6M4TBRC7YHDE",
+        "transmission_id": null,
+        "state": "cancelled",
+        "scheduled_at": "2024-01-16T10:00:00Z",
+        "from": "sender@example.com",
+        "from_name": "Sender Name",
+        "subject": "Scheduled Newsletter",
+        "recipients": [
+          "recipient@example.com"
+        ],
+        "num_recipients": 1,
+        "accepted": 1,
+        "rejected": 0,
+        "tag": null,
+        "failure_reason": null,
+        "events": []
+      }
+    }
+  },
+  "list_domains": {
+    "method": "GET",
+    "path": "/domains",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Domains retrieved successfully.",
+      "data": {
+        "domains": [
+          {
+            "domain": "example.com",
+            "status": "approved",
+            "status_label": "Approved",
+            "can_send": true,
+            "cname_status": "valid",
+            "dkim_status": "valid",
+            "created_at": "2024-01-15T10:30:00+00:00",
+            "updated_at": "2024-01-16T14:45:00+00:00"
+          },
+          {
+            "domain": "pending.example.com",
+            "status": "pending",
+            "status_label": "Pending Review",
+            "can_send": false,
+            "cname_status": null,
+            "dkim_status": null,
+            "created_at": "2024-01-17T09:00:00+00:00",
+            "updated_at": "2024-01-17T09:00:00+00:00"
+          }
+        ]
+      }
+    }
+  },
+  "create_domain": {
+    "method": "POST",
+    "path": "/domains",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Domain created successfully.",
+      "data": {
+        "domain": "example.com",
+        "status": "approved",
+        "status_label": "Approved",
+        "dkim": {
+          "public": "MIGfMA0GCSqGSIb3DQEBA...",
+          "selector": "scph0123",
+          "headers": "from:to:subject:date",
+          "signing_domain": "example.com"
+        }
+      }
+    }
+  },
+  "get_domain": {
+    "method": "GET",
+    "path": "/domains/{domain}",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Domain retrieved successfully.",
+      "data": {
+        "domain": "example.com",
+        "status": "approved",
+        "status_label": "Approved",
+        "can_send": true,
+        "cname_status": "valid",
+        "dkim_status": "valid",
+        "dmarc_status": "valid",
+        "spf_status": "valid",
+        "is_primary_domain": false,
+        "tracking_domain": "tracking.example.com",
+        "dns": {
+          "dkim": {
+            "selector": "scph0123",
+            "public": "MIGfMA0GCSqGSIb3DQEBA...",
+            "headers": "from:to:subject:date"
+          }
+        },
+        "dns_provider": null,
+        "created_at": "2024-01-15T10:30:00+00:00",
+        "updated_at": "2024-01-16T14:45:00+00:00"
+      }
+    }
+  },
+  "delete_domain": {
+    "method": "DELETE",
+    "path": "/domains/{domain}",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": null
+  },
+  "verify_domain": {
+    "method": "POST",
+    "path": "/domains/{domain}/verify",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": null
+  },
+  "list_templates": {
+    "method": "GET",
+    "path": "/templates",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Templates retrieved successfully.",
+      "data": {
+        "templates": [
+          {
+            "id": 1,
+            "name": "Welcome Email",
+            "slug": "welcome-email",
+            "project_id": 5,
+            "folder_id": 10,
+            "purpose": "transactional",
+            "preparation_status": "ready",
+            "created_at": "2025-01-15T10:00:00+00:00",
+            "updated_at": "2025-01-20T14:30:00+00:00"
+          }
+        ],
+        "pagination": {
+          "total": 42,
+          "per_page": 25,
+          "current_page": 1,
+          "last_page": 2
+        }
+      }
+    }
+  },
+  "create_template": {
+    "method": "POST",
+    "path": "/templates",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Template created successfully.",
+      "data": {
+        "id": 123,
+        "name": "Welcome Email",
+        "slug": "welcome-email",
+        "project_id": 5,
+        "folder_id": 10,
+        "purpose": "transactional",
+        "preparation_status": "pending",
+        "active_version": 1,
+        "merge_tags": [
+          {
+            "key": "FIRST_NAME",
+            "required": true
+          }
+        ],
+        "created_at": "2026-01-28T12:00:00+00:00"
+      }
+    }
+  },
+  "get_template": {
+    "method": "GET",
+    "path": "/templates/{slug}",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Template retrieved successfully.",
+      "data": {
+        "id": 1,
+        "name": "Welcome Email",
+        "slug": "welcome-email",
+        "project_id": 5,
+        "folder_id": 10,
+        "purpose": "transactional",
+        "preparation_status": "ready",
+        "active_version": 2,
+        "versions_count": 3,
+        "created_at": "2025-01-15T10:00:00+00:00",
+        "updated_at": "2025-01-20T14:30:00+00:00"
+      }
+    }
+  },
+  "update_template": {
+    "method": "PUT",
+    "path": "/templates/{slug}",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Template updated successfully.",
+      "data": {
+        "id": 123,
+        "name": "Updated Welcome Email",
+        "slug": "welcome-email",
+        "project_id": 5,
+        "folder_id": 10,
+        "purpose": "transactional",
+        "preparation_status": "pending",
+        "active_version": 2,
+        "merge_tags": [
+          {
+            "key": "NAME",
+            "required": true
+          }
+        ],
+        "created_at": "2026-01-15T10:00:00+00:00",
+        "updated_at": "2026-01-28T14:30:00+00:00"
+      }
+    }
+  },
+  "delete_template": {
+    "method": "DELETE",
+    "path": "/templates/{slug}",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Template deleted successfully."
+    }
+  },
+  "get_template_merge_tags": {
+    "method": "GET",
+    "path": "/templates/{slug}/merge-tags",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": {
+      "message": "Merge tags retrieved successfully.",
+      "data": {
+        "project_id": 13,
+        "template_slug": "welcome-email",
+        "version": 2,
+        "merge_tags": [
+          {
+            "key": "first_name",
+            "required": true
+          },
+          {
+            "key": "company_name",
+            "required": false
+          },
+          {
+            "key": "order_items",
+            "required": false,
+            "children": [
+              {
+                "key": "item_name",
+                "type": "text"
+              },
+              {
+                "key": "item_quantity",
+                "type": "number"
+              },
+              {
+                "key": "item_price",
+                "type": "number"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "list_contacts": {
+    "method": "GET",
+    "path": "/audience/contacts",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": null
+  },
+  "create_contact": {
+    "method": "POST",
+    "path": "/audience/contacts",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": null
+  },
+  "get_contact": {
+    "method": "GET",
+    "path": "/audience/contacts/{contactId}",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": null
+  },
+  "update_contact": {
+    "method": "PATCH",
+    "path": "/audience/contacts/{contactId}",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": null
+  },
+  "delete_contact": {
+    "method": "DELETE",
+    "path": "/audience/contacts/{contactId}",
+    "source": "https://docs.lettr.com/openapi.json",
+    "response": null
+  }
+}
