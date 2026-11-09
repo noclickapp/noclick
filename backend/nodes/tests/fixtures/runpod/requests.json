@@ -1,0 +1,320 @@
+[
+  {
+    "operation": "list_pods",
+    "config": {},
+    "method": "GET",
+    "path": "/pods",
+    "status": 200,
+    "response": [
+      {
+        "id": "resource123",
+        "name": "Example"
+      }
+    ]
+  },
+  {
+    "operation": "get_pod",
+    "config": {
+      "pod_id": "resource123"
+    },
+    "method": "GET",
+    "path": "/pods/resource123",
+    "status": 200,
+    "response": {
+      "id": "resource123",
+      "name": "Example"
+    }
+  },
+  {
+    "operation": "update_pod",
+    "config": {
+      "pod_id": "resource123",
+      "name": "Updated"
+    },
+    "method": "PATCH",
+    "path": "/pods/resource123",
+    "body": {
+      "name": "Updated"
+    },
+    "status": 200,
+    "response": {
+      "id": "resource123",
+      "name": "Updated"
+    }
+  },
+  {
+    "operation": "delete_pod",
+    "config": {
+      "pod_id": "resource123"
+    },
+    "method": "DELETE",
+    "path": "/pods/resource123",
+    "status": 204
+  },
+  {
+    "operation": "create_pod",
+    "config": {
+      "image_name": "runpod/pytorch:2.1.0-py3.10-cuda11.8.0-devel-ubuntu22.04",
+      "gpu_type_ids": [
+        "NVIDIA GeForce RTX 4090"
+      ]
+    },
+    "body": {
+      "imageName": "runpod/pytorch:2.1.0-py3.10-cuda11.8.0-devel-ubuntu22.04",
+      "gpuTypeIds": [
+        "NVIDIA GeForce RTX 4090"
+      ],
+      "computeType": "GPU",
+      "cloudType": "SECURE"
+    },
+    "method": "POST",
+    "path": "/pods",
+    "status": 201,
+    "response": {
+      "id": "resource123",
+      "name": "Example"
+    }
+  },
+  {
+    "operation": "list_endpoints",
+    "config": {},
+    "method": "GET",
+    "path": "/endpoints",
+    "status": 200,
+    "response": [
+      {
+        "id": "resource123",
+        "name": "Example"
+      }
+    ]
+  },
+  {
+    "operation": "get_endpoint",
+    "config": {
+      "endpoint_id": "resource123"
+    },
+    "method": "GET",
+    "path": "/endpoints/resource123",
+    "status": 200,
+    "response": {
+      "id": "resource123",
+      "name": "Example"
+    }
+  },
+  {
+    "operation": "update_endpoint",
+    "config": {
+      "endpoint_id": "resource123",
+      "name": "Updated"
+    },
+    "method": "PATCH",
+    "path": "/endpoints/resource123",
+    "body": {
+      "name": "Updated"
+    },
+    "status": 200,
+    "response": {
+      "id": "resource123",
+      "name": "Updated"
+    }
+  },
+  {
+    "operation": "delete_endpoint",
+    "config": {
+      "endpoint_id": "resource123"
+    },
+    "method": "DELETE",
+    "path": "/endpoints/resource123",
+    "status": 204
+  },
+  {
+    "operation": "create_endpoint",
+    "config": {
+      "template_id": "template123",
+      "workers_min": 0,
+      "workers_max": 3
+    },
+    "body": {
+      "templateId": "template123",
+      "workersMin": 0,
+      "workersMax": 3
+    },
+    "method": "POST",
+    "path": "/endpoints",
+    "status": 200,
+    "response": {
+      "id": "resource123",
+      "name": "Example"
+    }
+  },
+  {
+    "operation": "list_templates",
+    "config": {},
+    "method": "GET",
+    "path": "/templates",
+    "status": 200,
+    "response": [
+      {
+        "id": "resource123",
+        "name": "Example"
+      }
+    ]
+  },
+  {
+    "operation": "get_template",
+    "config": {
+      "template_id": "resource123"
+    },
+    "method": "GET",
+    "path": "/templates/resource123",
+    "status": 200,
+    "response": {
+      "id": "resource123",
+      "name": "Example"
+    }
+  },
+  {
+    "operation": "update_template",
+    "config": {
+      "template_id": "resource123",
+      "name": "Updated"
+    },
+    "method": "PATCH",
+    "path": "/templates/resource123",
+    "body": {
+      "name": "Updated"
+    },
+    "status": 200,
+    "response": {
+      "id": "resource123",
+      "name": "Updated"
+    }
+  },
+  {
+    "operation": "delete_template",
+    "config": {
+      "template_id": "resource123"
+    },
+    "method": "DELETE",
+    "path": "/templates/resource123",
+    "status": 204
+  },
+  {
+    "operation": "create_template",
+    "config": {
+      "name": "Example",
+      "image_name": "ubuntu:22.04"
+    },
+    "body": {
+      "name": "Example",
+      "imageName": "ubuntu:22.04",
+      "isServerless": false
+    },
+    "method": "POST",
+    "path": "/templates",
+    "status": 200,
+    "response": {
+      "id": "resource123",
+      "name": "Example"
+    }
+  },
+  {
+    "operation": "list_network_volumes",
+    "config": {},
+    "method": "GET",
+    "path": "/networkvolumes",
+    "status": 200,
+    "response": [
+      {
+        "id": "resource123",
+        "name": "Example"
+      }
+    ]
+  },
+  {
+    "operation": "get_network_volume",
+    "config": {
+      "network_volume_id": "resource123"
+    },
+    "method": "GET",
+    "path": "/networkvolumes/resource123",
+    "status": 200,
+    "response": {
+      "id": "resource123",
+      "name": "Example"
+    }
+  },
+  {
+    "operation": "update_network_volume",
+    "config": {
+      "network_volume_id": "resource123",
+      "name": "Updated"
+    },
+    "method": "PATCH",
+    "path": "/networkvolumes/resource123",
+    "body": {
+      "name": "Updated"
+    },
+    "status": 200,
+    "response": {
+      "id": "resource123",
+      "name": "Updated"
+    }
+  },
+  {
+    "operation": "delete_network_volume",
+    "config": {
+      "network_volume_id": "resource123"
+    },
+    "method": "DELETE",
+    "path": "/networkvolumes/resource123",
+    "status": 204
+  },
+  {
+    "operation": "create_network_volume",
+    "config": {
+      "name": "Example",
+      "size": 50,
+      "data_center_id": "EU-RO-1"
+    },
+    "body": {
+      "name": "Example",
+      "size": 50,
+      "dataCenterId": "EU-RO-1"
+    },
+    "method": "POST",
+    "path": "/networkvolumes",
+    "status": 200,
+    "response": {
+      "id": "resource123",
+      "name": "Example"
+    }
+  },
+  {
+    "operation": "start_pod",
+    "config": {
+      "pod_id": "resource123"
+    },
+    "method": "POST",
+    "path": "/pods/resource123/start",
+    "status": 200
+  },
+  {
+    "operation": "stop_pod",
+    "config": {
+      "pod_id": "resource123"
+    },
+    "method": "POST",
+    "path": "/pods/resource123/stop",
+    "status": 200
+  },
+  {
+    "operation": "reset_pod",
+    "config": {
+      "pod_id": "resource123"
+    },
+    "method": "POST",
+    "path": "/pods/resource123/reset",
+    "status": 200
+  }
+]

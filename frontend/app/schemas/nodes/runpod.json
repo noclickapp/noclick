@@ -1,0 +1,1738 @@
+{
+  "$defs": {
+    "CreateEndpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "template_id": {
+          "minLength": 1,
+          "title": "Template ID",
+          "type": "string"
+        },
+        "gpu_type_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "GPU Types"
+        },
+        "gpu_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "GPU Count"
+        },
+        "workers_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Workers"
+        },
+        "workers_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Workers"
+        },
+        "idle_timeout": {
+          "anyOf": [
+            {
+              "maximum": 3600,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idle Timeout (seconds)"
+        },
+        "execution_timeout_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Execution Timeout (ms)"
+        },
+        "scaler_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "QUEUE_DELAY",
+                "REQUEST_COUNT"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scaler Type",
+          "enum": [
+            "QUEUE_DELAY",
+            "REQUEST_COUNT"
+          ],
+          "x-enum-searchable": true
+        },
+        "scaler_value": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scaler Value"
+        },
+        "flashboot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Flashboot"
+        },
+        "network_volume_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Network Volume ID"
+        },
+        "operation": {
+          "const": "create_endpoint",
+          "default": "create_endpoint",
+          "title": "Create Endpoint",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "CreateEndpoint",
+      "type": "object"
+    },
+    "CreateNetworkVolume": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "size": {
+          "maximum": 4000,
+          "minimum": 0,
+          "title": "Size (GB)",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_network_volume",
+          "default": "create_network_volume",
+          "title": "Create Network Volume",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "data_center_id": {
+          "minLength": 1,
+          "title": "Data Center ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "size",
+        "data_center_id"
+      ],
+      "title": "CreateNetworkVolume",
+      "type": "object"
+    },
+    "CreatePod": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "image_name": {
+          "minLength": 1,
+          "title": "Container Image",
+          "type": "string"
+        },
+        "container_disk_in_gb": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Container Disk (GB)"
+        },
+        "volume_in_gb": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Volume (GB)"
+        },
+        "volume_mount_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Volume Mount Path"
+        },
+        "docker_entrypoint": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Docker Entrypoint"
+        },
+        "docker_start_cmd": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Docker Start Command"
+        },
+        "env": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment Variables"
+        },
+        "ports": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Runpod port strings, for example 8888/http and 22/tcp.",
+          "title": "Exposed Ports"
+        },
+        "locked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locked"
+        },
+        "operation": {
+          "const": "create_pod",
+          "default": "create_pod",
+          "title": "Create Pod",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "compute_type": {
+          "default": "GPU",
+          "enum": [
+            "GPU",
+            "CPU"
+          ],
+          "title": "Compute Type",
+          "type": "string"
+        },
+        "gpu_type_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "GPU Types"
+        },
+        "cpu_flavor_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "CPU Flavors"
+        },
+        "gpu_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "GPU Count"
+        },
+        "vcpu_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "vCPU Count"
+        },
+        "cloud_type": {
+          "default": "SECURE",
+          "enum": [
+            "SECURE",
+            "COMMUNITY"
+          ],
+          "title": "Cloud Type",
+          "type": "string"
+        },
+        "data_center_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Centers"
+        },
+        "network_volume_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Network Volume ID"
+        }
+      },
+      "required": [
+        "image_name"
+      ],
+      "title": "CreatePod",
+      "type": "object"
+    },
+    "CreateTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "image_name": {
+          "minLength": 1,
+          "title": "Container Image",
+          "type": "string"
+        },
+        "container_disk_in_gb": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Container Disk (GB)"
+        },
+        "volume_in_gb": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Volume (GB)"
+        },
+        "volume_mount_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Volume Mount Path"
+        },
+        "docker_entrypoint": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Docker Entrypoint"
+        },
+        "docker_start_cmd": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Docker Start Command"
+        },
+        "env": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment Variables"
+        },
+        "ports": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exposed Ports"
+        },
+        "readme": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Readme"
+        },
+        "is_public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True makes the template public.",
+          "title": "Public Template"
+        },
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Create Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "is_serverless": {
+          "default": false,
+          "title": "Serverless Template",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "image_name"
+      ],
+      "title": "CreateTemplate",
+      "type": "object"
+    },
+    "DeleteEndpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "endpoint_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Endpoint ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_endpoint",
+          "default": "delete_endpoint",
+          "title": "Delete Endpoint",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "DeleteEndpoint",
+      "type": "object"
+    },
+    "DeleteNetworkVolume": {
+      "additionalProperties": false,
+      "properties": {
+        "network_volume_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Network Volume ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_network_volume",
+          "default": "delete_network_volume",
+          "title": "Delete Network Volume",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "network_volume_id"
+      ],
+      "title": "DeleteNetworkVolume",
+      "type": "object"
+    },
+    "DeletePod": {
+      "additionalProperties": false,
+      "properties": {
+        "pod_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Pod ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_pod",
+          "default": "delete_pod",
+          "title": "Delete Pod",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pod_id"
+      ],
+      "title": "DeletePod",
+      "type": "object"
+    },
+    "DeleteTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "template_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Delete Template",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "DeleteTemplate",
+      "type": "object"
+    },
+    "GetEndpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "endpoint_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Endpoint ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_endpoint",
+          "default": "get_endpoint",
+          "title": "Get Endpoint",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "GetEndpoint",
+      "type": "object"
+    },
+    "GetNetworkVolume": {
+      "additionalProperties": false,
+      "properties": {
+        "network_volume_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Network Volume ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_network_volume",
+          "default": "get_network_volume",
+          "title": "Get Network Volume",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "network_volume_id"
+      ],
+      "title": "GetNetworkVolume",
+      "type": "object"
+    },
+    "GetPod": {
+      "additionalProperties": false,
+      "properties": {
+        "pod_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Pod ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_pod",
+          "default": "get_pod",
+          "title": "Get Pod",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pod_id"
+      ],
+      "title": "GetPod",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "template_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get Template",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "ListEndpoints": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_endpoints",
+          "default": "list_endpoints",
+          "title": "List Endpoints",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListEndpoints",
+      "type": "object"
+    },
+    "ListNetworkVolumes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_network_volumes",
+          "default": "list_network_volumes",
+          "title": "List Network Volumes",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListNetworkVolumes",
+      "type": "object"
+    },
+    "ListPods": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_pods",
+          "default": "list_pods",
+          "title": "List Pods",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "compute_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "GPU",
+                "CPU"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compute Type",
+          "enum": [
+            "GPU",
+            "CPU"
+          ],
+          "x-enum-searchable": true
+        },
+        "desired_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "RUNNING",
+                "EXITED",
+                "TERMINATED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Desired Status",
+          "enum": [
+            "RUNNING",
+            "EXITED",
+            "TERMINATED"
+          ],
+          "x-enum-searchable": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "include_workers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Serverless Workers"
+        }
+      },
+      "title": "ListPods",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "ResetPod": {
+      "additionalProperties": false,
+      "properties": {
+        "pod_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Pod ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reset_pod",
+          "default": "reset_pod",
+          "title": "Reset Pod",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pod_id"
+      ],
+      "title": "ResetPod",
+      "type": "object"
+    },
+    "RunpodAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "runpod_api_key",
+          "default": "runpod_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Runpod API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste a Runpod API key from the console Credentials page. Give it read access to Pods for connection verification and read/write access to the resources your workflow uses. NoClick sends it only to rest.runpod.io as a bearer token.",
+      "x-credential-url": "https://console.runpod.io/user/settings"
+    },
+    "StartPod": {
+      "additionalProperties": false,
+      "properties": {
+        "pod_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Pod ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "start_pod",
+          "default": "start_pod",
+          "title": "Start Pod",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pod_id"
+      ],
+      "title": "StartPod",
+      "type": "object"
+    },
+    "StopPod": {
+      "additionalProperties": false,
+      "properties": {
+        "pod_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Pod ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "stop_pod",
+          "default": "stop_pod",
+          "title": "Stop Pod",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pod_id"
+      ],
+      "title": "StopPod",
+      "type": "object"
+    },
+    "UpdateEndpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "endpoint_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Endpoint ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template ID"
+        },
+        "gpu_type_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "GPU Types"
+        },
+        "gpu_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "GPU Count"
+        },
+        "workers_min": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Workers"
+        },
+        "workers_max": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Workers"
+        },
+        "idle_timeout": {
+          "anyOf": [
+            {
+              "maximum": 3600,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idle Timeout (seconds)"
+        },
+        "execution_timeout_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Execution Timeout (ms)"
+        },
+        "scaler_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "QUEUE_DELAY",
+                "REQUEST_COUNT"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scaler Type",
+          "enum": [
+            "QUEUE_DELAY",
+            "REQUEST_COUNT"
+          ],
+          "x-enum-searchable": true
+        },
+        "scaler_value": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scaler Value"
+        },
+        "flashboot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Flashboot"
+        },
+        "network_volume_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Network Volume ID"
+        },
+        "operation": {
+          "const": "update_endpoint",
+          "default": "update_endpoint",
+          "title": "Update Endpoint",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "UpdateEndpoint",
+      "type": "object"
+    },
+    "UpdateNetworkVolume": {
+      "additionalProperties": false,
+      "properties": {
+        "network_volume_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Network Volume ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "maximum": 4000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size (GB)"
+        },
+        "operation": {
+          "const": "update_network_volume",
+          "default": "update_network_volume",
+          "title": "Update Network Volume",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "network_volume_id"
+      ],
+      "title": "UpdateNetworkVolume",
+      "type": "object"
+    },
+    "UpdatePod": {
+      "additionalProperties": false,
+      "properties": {
+        "pod_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Pod ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "image_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Container Image"
+        },
+        "container_disk_in_gb": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Container Disk (GB)"
+        },
+        "volume_in_gb": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Volume (GB)"
+        },
+        "volume_mount_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Volume Mount Path"
+        },
+        "docker_entrypoint": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Docker Entrypoint"
+        },
+        "docker_start_cmd": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Docker Start Command"
+        },
+        "env": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment Variables"
+        },
+        "ports": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Runpod port strings, for example 8888/http and 22/tcp.",
+          "title": "Exposed Ports"
+        },
+        "locked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locked"
+        },
+        "operation": {
+          "const": "update_pod",
+          "default": "update_pod",
+          "title": "Update Pod",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pod_id"
+      ],
+      "title": "UpdatePod",
+      "type": "object"
+    },
+    "UpdateTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "template_id": {
+          "maxLength": 191,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "image_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Container Image"
+        },
+        "container_disk_in_gb": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Container Disk (GB)"
+        },
+        "volume_in_gb": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Volume (GB)"
+        },
+        "volume_mount_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Volume Mount Path"
+        },
+        "docker_entrypoint": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Docker Entrypoint"
+        },
+        "docker_start_cmd": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Docker Start Command"
+        },
+        "env": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment Variables"
+        },
+        "ports": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exposed Ports"
+        },
+        "readme": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Readme"
+        },
+        "is_public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True makes the template public.",
+          "title": "Public Template"
+        },
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "title": "Update Template",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "UpdateTemplate",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_endpoint": "#/$defs/CreateEndpoint",
+          "create_network_volume": "#/$defs/CreateNetworkVolume",
+          "create_pod": "#/$defs/CreatePod",
+          "create_template": "#/$defs/CreateTemplate",
+          "delete_endpoint": "#/$defs/DeleteEndpoint",
+          "delete_network_volume": "#/$defs/DeleteNetworkVolume",
+          "delete_pod": "#/$defs/DeletePod",
+          "delete_template": "#/$defs/DeleteTemplate",
+          "get_endpoint": "#/$defs/GetEndpoint",
+          "get_network_volume": "#/$defs/GetNetworkVolume",
+          "get_pod": "#/$defs/GetPod",
+          "get_template": "#/$defs/GetTemplate",
+          "list_endpoints": "#/$defs/ListEndpoints",
+          "list_network_volumes": "#/$defs/ListNetworkVolumes",
+          "list_pods": "#/$defs/ListPods",
+          "list_templates": "#/$defs/ListTemplates",
+          "reset_pod": "#/$defs/ResetPod",
+          "start_pod": "#/$defs/StartPod",
+          "stop_pod": "#/$defs/StopPod",
+          "update_endpoint": "#/$defs/UpdateEndpoint",
+          "update_network_volume": "#/$defs/UpdateNetworkVolume",
+          "update_pod": "#/$defs/UpdatePod",
+          "update_template": "#/$defs/UpdateTemplate"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListPods"
+        },
+        {
+          "$ref": "#/$defs/GetPod"
+        },
+        {
+          "$ref": "#/$defs/CreatePod"
+        },
+        {
+          "$ref": "#/$defs/UpdatePod"
+        },
+        {
+          "$ref": "#/$defs/DeletePod"
+        },
+        {
+          "$ref": "#/$defs/StartPod"
+        },
+        {
+          "$ref": "#/$defs/StopPod"
+        },
+        {
+          "$ref": "#/$defs/ResetPod"
+        },
+        {
+          "$ref": "#/$defs/ListEndpoints"
+        },
+        {
+          "$ref": "#/$defs/GetEndpoint"
+        },
+        {
+          "$ref": "#/$defs/CreateEndpoint"
+        },
+        {
+          "$ref": "#/$defs/UpdateEndpoint"
+        },
+        {
+          "$ref": "#/$defs/DeleteEndpoint"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        },
+        {
+          "$ref": "#/$defs/CreateTemplate"
+        },
+        {
+          "$ref": "#/$defs/UpdateTemplate"
+        },
+        {
+          "$ref": "#/$defs/DeleteTemplate"
+        },
+        {
+          "$ref": "#/$defs/ListNetworkVolumes"
+        },
+        {
+          "$ref": "#/$defs/GetNetworkVolume"
+        },
+        {
+          "$ref": "#/$defs/CreateNetworkVolume"
+        },
+        {
+          "$ref": "#/$defs/UpdateNetworkVolume"
+        },
+        {
+          "$ref": "#/$defs/DeleteNetworkVolume"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RunpodAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Runpod Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Start my GPU Pod",
+    "Scale a Serverless endpoint",
+    "Create a network volume"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
