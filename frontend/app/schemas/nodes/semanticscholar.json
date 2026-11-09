@@ -1,0 +1,1013 @@
+{
+  "$defs": {
+    "AutocompletePapers": {
+      "additionalProperties": false,
+      "description": "Suggest paper completions for a partial query.",
+      "properties": {
+        "operation": {
+          "const": "autocomplete_papers",
+          "default": "autocomplete_papers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "AutocompletePapers",
+      "type": "object"
+    },
+    "BatchGetAuthors": {
+      "additionalProperties": false,
+      "description": "Retrieve up to 1000 author profiles in one POST read.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "operation": {
+          "const": "batch_get_authors",
+          "default": "batch_get_authors",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ids": {
+          "description": "Numeric author IDs in request order.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "BatchGetAuthors",
+      "type": "object"
+    },
+    "BatchGetPapers": {
+      "additionalProperties": false,
+      "description": "Retrieve up to 500 papers in one POST read; missing papers may be null.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "operation": {
+          "const": "batch_get_papers",
+          "default": "batch_get_papers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ids": {
+          "description": "Paper IDs in request order.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "BatchGetPapers",
+      "type": "object"
+    },
+    "GetAuthor": {
+      "additionalProperties": false,
+      "description": "Retrieve an author's profile and requested research metrics.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "operation": {
+          "const": "get_author",
+          "default": "get_author",
+          "title": "Operation",
+          "type": "string"
+        },
+        "author_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Author Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "author_id"
+      ],
+      "title": "GetAuthor",
+      "type": "object"
+    },
+    "GetAuthorPapers": {
+      "additionalProperties": false,
+      "description": "Retrieve one page of an author's papers.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset; copy the next value returned by the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum number of results on this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_author_papers",
+          "default": "get_author_papers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "author_id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Author Id",
+          "type": "string"
+        },
+        "publicationDateOrYear": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publication date or year"
+        }
+      },
+      "required": [
+        "author_id"
+      ],
+      "title": "GetAuthorPapers",
+      "type": "object"
+    },
+    "GetPaper": {
+      "additionalProperties": false,
+      "description": "Retrieve a paper by Semantic Scholar ID, DOI, arXiv ID or other supported ID.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "operation": {
+          "const": "get_paper",
+          "default": "get_paper",
+          "title": "Operation",
+          "type": "string"
+        },
+        "paper_id": {
+          "description": "Paper ID, for example 649def34f8be52c8b66281af98ae884c09aef38b, DOI:10.1038/nrn3241 or ARXIV:2106.15928.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Paper Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "paper_id"
+      ],
+      "title": "GetPaper",
+      "type": "object"
+    },
+    "GetPaperAuthors": {
+      "additionalProperties": false,
+      "description": "Retrieve one page of a paper's authors.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset; copy the next value returned by the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum number of results on this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_paper_authors",
+          "default": "get_paper_authors",
+          "title": "Operation",
+          "type": "string"
+        },
+        "paper_id": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Paper Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "paper_id"
+      ],
+      "title": "GetPaperAuthors",
+      "type": "object"
+    },
+    "GetPaperCitations": {
+      "additionalProperties": false,
+      "description": "Retrieve one page of papers citing this paper.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset; copy the next value returned by the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum number of results on this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_paper_citations",
+          "default": "get_paper_citations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "paper_id": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Paper Id",
+          "type": "string"
+        },
+        "publicationDateOrYear": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publication date or year"
+        }
+      },
+      "required": [
+        "paper_id"
+      ],
+      "title": "GetPaperCitations",
+      "type": "object"
+    },
+    "GetPaperReferences": {
+      "additionalProperties": false,
+      "description": "Retrieve one page of papers referenced by this paper.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset; copy the next value returned by the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum number of results on this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_paper_references",
+          "default": "get_paper_references",
+          "title": "Operation",
+          "type": "string"
+        },
+        "paper_id": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Paper Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "paper_id"
+      ],
+      "title": "GetPaperReferences",
+      "type": "object"
+    },
+    "MatchPaper": {
+      "additionalProperties": false,
+      "description": "Find the best paper title match.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "publicationTypes": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated publication types, such as Review,JournalArticle.",
+          "title": "Publication types"
+        },
+        "openAccessPdf": {
+          "default": false,
+          "title": "Only papers with a public PDF",
+          "type": "boolean"
+        },
+        "minCitationCount": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum citation count"
+        },
+        "publicationDateOrYear": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive date range, for example 2019:2020 or 2019-03-05:2020-06-06.",
+          "title": "Publication date or year"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Year or range, for example 2019, 2016-2020 or 2010-.",
+          "title": "Year"
+        },
+        "venue": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated publication venues.",
+          "title": "Venue"
+        },
+        "fieldsOfStudy": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields, for example Computer Science,Medicine.",
+          "title": "Fields of study"
+        },
+        "operation": {
+          "const": "match_paper",
+          "default": "match_paper",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "MatchPaper",
+      "type": "object"
+    },
+    "SearchAuthors": {
+      "additionalProperties": false,
+      "description": "Search authors by name.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset; copy the next value returned by the previous page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum number of results on this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_authors",
+          "default": "search_authors",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchAuthors",
+      "type": "object"
+    },
+    "SearchPapers": {
+      "additionalProperties": false,
+      "description": "Search papers by relevance; one page of at most 100 results.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "publicationTypes": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated publication types, such as Review,JournalArticle.",
+          "title": "Publication types"
+        },
+        "openAccessPdf": {
+          "default": false,
+          "title": "Only papers with a public PDF",
+          "type": "boolean"
+        },
+        "minCitationCount": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum citation count"
+        },
+        "publicationDateOrYear": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive date range, for example 2019:2020 or 2019-03-05:2020-06-06.",
+          "title": "Publication date or year"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Year or range, for example 2019, 2016-2020 or 2010-.",
+          "title": "Year"
+        },
+        "venue": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated publication venues.",
+          "title": "Venue"
+        },
+        "fieldsOfStudy": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields, for example Computer Science,Medicine.",
+          "title": "Fields of study"
+        },
+        "operation": {
+          "const": "search_papers",
+          "default": "search_papers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 9999,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchPapers",
+      "type": "object"
+    },
+    "SearchPapersBulk": {
+      "additionalProperties": false,
+      "description": "Retrieve a bulk search page; copy its token for the next page.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated response fields, for example title,year,authors. Omit for provider defaults.",
+          "title": "Fields"
+        },
+        "publicationTypes": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated publication types, such as Review,JournalArticle.",
+          "title": "Publication types"
+        },
+        "openAccessPdf": {
+          "default": false,
+          "title": "Only papers with a public PDF",
+          "type": "boolean"
+        },
+        "minCitationCount": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum citation count"
+        },
+        "publicationDateOrYear": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive date range, for example 2019:2020 or 2019-03-05:2020-06-06.",
+          "title": "Publication date or year"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Year or range, for example 2019, 2016-2020 or 2010-.",
+          "title": "Year"
+        },
+        "venue": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated publication venues.",
+          "title": "Venue"
+        },
+        "fieldsOfStudy": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields, for example Computer Science,Medicine.",
+          "title": "Fields of study"
+        },
+        "operation": {
+          "const": "search_papers_bulk",
+          "default": "search_papers_bulk",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "token": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque token from the previous bulk search response.",
+          "title": "Token"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "paperId:asc",
+                "paperId:desc",
+                "publicationDate:asc",
+                "publicationDate:desc",
+                "citationCount:asc",
+                "citationCount:desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "paperId:asc",
+            "paperId:desc",
+            "publicationDate:asc",
+            "publicationDate:desc",
+            "citationCount:asc",
+            "citationCount:desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchPapersBulk",
+      "type": "object"
+    },
+    "SemanticScholarAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "semanticscholar_api_key",
+          "default": "semanticscholar_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Semantic Scholar API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Semantic Scholar API key. NoClick sends it in the x-api-key header to api.semanticscholar.org. Research data is public; the connection read checks API reachability and does not verify account identity.",
+      "x-credential-url": "https://www.semanticscholar.org/product/api"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "autocomplete_papers": "#/$defs/AutocompletePapers",
+          "batch_get_authors": "#/$defs/BatchGetAuthors",
+          "batch_get_papers": "#/$defs/BatchGetPapers",
+          "get_author": "#/$defs/GetAuthor",
+          "get_author_papers": "#/$defs/GetAuthorPapers",
+          "get_paper": "#/$defs/GetPaper",
+          "get_paper_authors": "#/$defs/GetPaperAuthors",
+          "get_paper_citations": "#/$defs/GetPaperCitations",
+          "get_paper_references": "#/$defs/GetPaperReferences",
+          "match_paper": "#/$defs/MatchPaper",
+          "search_authors": "#/$defs/SearchAuthors",
+          "search_papers": "#/$defs/SearchPapers",
+          "search_papers_bulk": "#/$defs/SearchPapersBulk"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SearchPapers"
+        },
+        {
+          "$ref": "#/$defs/SearchPapersBulk"
+        },
+        {
+          "$ref": "#/$defs/MatchPaper"
+        },
+        {
+          "$ref": "#/$defs/AutocompletePapers"
+        },
+        {
+          "$ref": "#/$defs/GetPaper"
+        },
+        {
+          "$ref": "#/$defs/GetPaperAuthors"
+        },
+        {
+          "$ref": "#/$defs/GetPaperCitations"
+        },
+        {
+          "$ref": "#/$defs/GetPaperReferences"
+        },
+        {
+          "$ref": "#/$defs/BatchGetPapers"
+        },
+        {
+          "$ref": "#/$defs/SearchAuthors"
+        },
+        {
+          "$ref": "#/$defs/GetAuthor"
+        },
+        {
+          "$ref": "#/$defs/GetAuthorPapers"
+        },
+        {
+          "$ref": "#/$defs/BatchGetAuthors"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SemanticScholarAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Semanticscholar Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
