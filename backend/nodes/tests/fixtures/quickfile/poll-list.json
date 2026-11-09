@@ -1,0 +1,6 @@
+{
+  "source": "https://api-beta.quickfile.co.uk/api-docs/v2",
+  "schemas": ["ArrayModelPagingOfClientSearchModel", "ArrayModelPagingOfSupplierSearchModel"],
+  "note": "Schema-shaped synthetic list, not a provider-authored or live-recorded example. created_date copies the schema's published field example.",
+  "body": {"count": 1, "data": [{"id": 1, "company_name": "Existing Business", "created_date": "2024-12-31T12:34:56Z"}]}
+}
