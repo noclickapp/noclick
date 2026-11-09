@@ -1,0 +1,2357 @@
+{
+  "$defs": {
+    "DoorLoopAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "doorloop_api_key",
+          "default": "doorloop_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "DoorLoop API Key",
+      "type": "object",
+      "x-credential-instructions": "In DoorLoop company settings, open Zapier & API Keys and create an API key. Paste only the key. Its access role must allow the resources you use. NoClick reads the user who created the key to verify the connection.",
+      "x-credential-url": "https://api.doorloop.com/reference/authentication"
+    },
+    "DoorLoopCreateNote": {
+      "additionalProperties": false,
+      "description": "Create a note linked to a specific DoorLoop resource.",
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "resource_id": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "resource_type": {
+          "enum": [
+            "TENANT",
+            "OWNER",
+            "VENDOR",
+            "PROPERTY",
+            "UNIT",
+            "LEASE",
+            "LEASE_DRAFT",
+            "TASK",
+            "RENTAL_APPLICATION"
+          ],
+          "title": "Resource Type",
+          "type": "string"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "description": "DoorLoop 24-character resource ID.",
+                "pattern": "^[a-fA-F0-9]{24}$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "title",
+        "resource_id",
+        "resource_type"
+      ],
+      "title": "DoorLoopCreateNote",
+      "type": "object"
+    },
+    "DoorLoopCreateOwner": {
+      "additionalProperties": false,
+      "description": "Create a property owner.",
+      "properties": {
+        "firstName": {
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary email address; mapped to DoorLoop's emails collection.",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mobile phone number.",
+          "title": "Phone"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyname"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "operation": {
+          "const": "create_owner",
+          "default": "create_owner",
+          "title": "Operation",
+          "type": "string"
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName"
+      ],
+      "title": "DoorLoopCreateOwner",
+      "type": "object"
+    },
+    "DoorLoopCreateProspect": {
+      "additionalProperties": false,
+      "description": "Create a prospect, which becomes a tenant when linked to a lease.",
+      "properties": {
+        "firstName": {
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary email address; mapped to DoorLoop's emails collection.",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mobile phone number.",
+          "title": "Phone"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyname"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "operation": {
+          "const": "create_prospect",
+          "default": "create_prospect",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName"
+      ],
+      "title": "DoorLoopCreateProspect",
+      "type": "object"
+    },
+    "DoorLoopCreateTask": {
+      "additionalProperties": false,
+      "description": "Create an internal task with an explicit requesting user.",
+      "properties": {
+        "type": {
+          "const": "INTERNAL_TASK",
+          "default": "INTERNAL_TASK",
+          "description": "Create or update an internal task.",
+          "title": "Type",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "status": {
+          "default": "NOT_STARTED",
+          "enum": [
+            "NOT_STARTED",
+            "RECEIVED",
+            "IN_PROGRESS",
+            "COMPLETED",
+            "ARCHIVED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "requestedByUser": {
+          "description": "DoorLoop user requesting the internal task.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Requestedbyuser",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duedate"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "LOW",
+            "MEDIUM",
+            "HIGH"
+          ],
+          "x-enum-searchable": true
+        },
+        "property": {
+          "anyOf": [
+            {
+              "description": "DoorLoop 24-character resource ID.",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "description": "DoorLoop 24-character resource ID.",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "assignedToUsers": {
+          "anyOf": [
+            {
+              "items": {
+                "description": "DoorLoop 24-character resource ID.",
+                "pattern": "^[a-fA-F0-9]{24}$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignedtousers"
+        },
+        "notifyAssignees": {
+          "default": false,
+          "description": "Notify assigned users when this task is created or updated.",
+          "title": "Notifyassignees",
+          "type": "boolean"
+        },
+        "entryNotes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entrynotes"
+        },
+        "entryPermission": {
+          "anyOf": [
+            {
+              "enum": [
+                "NOT_APPLICABLE",
+                "YES",
+                "NO"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entrypermission",
+          "enum": [
+            "NOT_APPLICABLE",
+            "YES",
+            "NO"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject",
+        "requestedByUser"
+      ],
+      "title": "DoorLoopCreateTask",
+      "type": "object"
+    },
+    "DoorLoopDeleteTask": {
+      "additionalProperties": false,
+      "description": "Delete a task by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "taskId": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Taskid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "DoorLoopDeleteTask",
+      "type": "object"
+    },
+    "DoorLoopGetCurrentUser": {
+      "additionalProperties": false,
+      "description": "Read the user who created this API key.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "DoorLoopGetCurrentUser",
+      "type": "object"
+    },
+    "DoorLoopGetLease": {
+      "additionalProperties": false,
+      "description": "Retrieve one lease.",
+      "properties": {
+        "operation": {
+          "const": "get_lease",
+          "default": "get_lease",
+          "title": "Operation",
+          "type": "string"
+        },
+        "leaseId": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Leaseid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "leaseId"
+      ],
+      "title": "DoorLoopGetLease",
+      "type": "object"
+    },
+    "DoorLoopGetLeasePayment": {
+      "additionalProperties": false,
+      "description": "Retrieve one lease payment.",
+      "properties": {
+        "operation": {
+          "const": "get_lease_payment",
+          "default": "get_lease_payment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "leasePaymentId": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Leasepaymentid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "leasePaymentId"
+      ],
+      "title": "DoorLoopGetLeasePayment",
+      "type": "object"
+    },
+    "DoorLoopGetNote": {
+      "additionalProperties": false,
+      "description": "Retrieve one note.",
+      "properties": {
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "noteId": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Noteid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "noteId"
+      ],
+      "title": "DoorLoopGetNote",
+      "type": "object"
+    },
+    "DoorLoopGetOwner": {
+      "additionalProperties": false,
+      "description": "Retrieve one owner.",
+      "properties": {
+        "operation": {
+          "const": "get_owner",
+          "default": "get_owner",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ownerId": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Ownerid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ownerId"
+      ],
+      "title": "DoorLoopGetOwner",
+      "type": "object"
+    },
+    "DoorLoopGetProperty": {
+      "additionalProperties": false,
+      "description": "Retrieve one property.",
+      "properties": {
+        "operation": {
+          "const": "get_property",
+          "default": "get_property",
+          "title": "Operation",
+          "type": "string"
+        },
+        "propertyId": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Propertyid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "propertyId"
+      ],
+      "title": "DoorLoopGetProperty",
+      "type": "object"
+    },
+    "DoorLoopGetTask": {
+      "additionalProperties": false,
+      "description": "Retrieve one task.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "taskId": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Taskid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "DoorLoopGetTask",
+      "type": "object"
+    },
+    "DoorLoopGetTenant": {
+      "additionalProperties": false,
+      "description": "Retrieve one tenant.",
+      "properties": {
+        "operation": {
+          "const": "get_tenant",
+          "default": "get_tenant",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tenantId": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Tenantid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tenantId"
+      ],
+      "title": "DoorLoopGetTenant",
+      "type": "object"
+    },
+    "DoorLoopGetUnit": {
+      "additionalProperties": false,
+      "description": "Retrieve one unit.",
+      "properties": {
+        "operation": {
+          "const": "get_unit",
+          "default": "get_unit",
+          "title": "Operation",
+          "type": "string"
+        },
+        "unitId": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Unitid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unitId"
+      ],
+      "title": "DoorLoopGetUnit",
+      "type": "object"
+    },
+    "DoorLoopGetVendor": {
+      "additionalProperties": false,
+      "description": "Retrieve one vendor.",
+      "properties": {
+        "operation": {
+          "const": "get_vendor",
+          "default": "get_vendor",
+          "title": "Operation",
+          "type": "string"
+        },
+        "vendorId": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Vendorid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "vendorId"
+      ],
+      "title": "DoorLoopGetVendor",
+      "type": "object"
+    },
+    "DoorLoopListLeasePayments": {
+      "additionalProperties": false,
+      "description": "List one page of lease-payments.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "One-based page number. Each execution retrieves one page.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_lease_payments",
+          "default": "list_lease_payments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter_lease": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Lease Id",
+          "title": "Filter Lease"
+        },
+        "filter_property": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Property Id",
+          "title": "Filter Property"
+        },
+        "filter_paymentMethod": {
+          "anyOf": [
+            {
+              "enum": [
+                "CASH",
+                "CHECK",
+                "CREDIT_CARD",
+                "CASHIERS_CHECK",
+                "MONEY_ORDER",
+                "EFT",
+                "DEBIT_CARD",
+                "OTHER",
+                "EPAY"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Payment Method",
+          "title": "Filter Paymentmethod",
+          "enum": [
+            "CASH",
+            "CHECK",
+            "CREDIT_CARD",
+            "CASHIERS_CHECK",
+            "MONEY_ORDER",
+            "EFT",
+            "DEBIT_CARD",
+            "OTHER",
+            "EPAY"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_owner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Owner Id",
+          "title": "Filter Owner"
+        },
+        "filter_date_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Date (YYYY-MM-DD)",
+          "title": "Filter Date From"
+        },
+        "filter_date_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Date (YYYY-MM-DD)",
+          "title": "Filter Date To"
+        }
+      },
+      "title": "DoorLoopListLeasePayments",
+      "type": "object"
+    },
+    "DoorLoopListLeases": {
+      "additionalProperties": false,
+      "description": "List one page of leases.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "One-based page number. Each execution retrieves one page.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_leases",
+          "default": "list_leases",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter_group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters by Portfolio Id",
+          "title": "Filter Group"
+        },
+        "filter_property": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Property Id",
+          "title": "Filter Property"
+        },
+        "filter_owner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Owner Id",
+          "title": "Filter Owner"
+        },
+        "filter_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Lease Name",
+          "title": "Filter Text"
+        },
+        "filter_start_date_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Start Date (YYYY-MM-DD)",
+          "title": "Filter Start Date From"
+        },
+        "filter_start_date_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Start Date (YYYY-MM-DD)",
+          "title": "Filter Start Date To"
+        },
+        "filter_end_date_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by End Date (YYYY-MM-DD)",
+          "title": "Filter End Date From"
+        },
+        "filter_end_date_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by End Date (YYYY-MM-DD)",
+          "title": "Filter End Date To"
+        },
+        "filter_propertyClass": {
+          "anyOf": [
+            {
+              "enum": [
+                "RESIDENTIAL",
+                "COMMERCIAL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Property Class",
+          "title": "Filter Propertyclass",
+          "enum": [
+            "RESIDENTIAL",
+            "COMMERCIAL"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Unit Id",
+          "title": "Filter Unit"
+        },
+        "filter_tenant": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Tenant Id",
+          "title": "Filter Tenant"
+        },
+        "filter_outstandingBalanceGreaterThan": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Min Outstanding Balance",
+          "title": "Filter Outstandingbalancegreaterthan"
+        },
+        "filter_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "ACTIVE",
+                "INACTIVE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Status",
+          "title": "Filter Status",
+          "enum": [
+            "ACTIVE",
+            "INACTIVE"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_term": {
+          "anyOf": [
+            {
+              "enum": [
+                "Rollover",
+                "AtWill"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Term",
+          "title": "Filter Term",
+          "enum": [
+            "Rollover",
+            "AtWill"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_calculatedStatus": {
+          "anyOf": [
+            {
+              "enum": [
+                "IN_EVICTION",
+                "PAY_OR_QUIT_EXPIRED",
+                "PAY_OR_QUIT_SENT",
+                "EXPIRED",
+                "AT_RISK",
+                "ACTIVE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Collections stage, resolved by priority. NOTE: ACTIVE means active AND not in any collections state - it excludes pay-or-quit, holdover, on-notice and eviction leases, all of which are still occupied and paying. To list current occupants use GET /leases/tenants?filter_status=CURRENT instead.",
+          "title": "Filter Calculatedstatus",
+          "enum": [
+            "IN_EVICTION",
+            "PAY_OR_QUIT_EXPIRED",
+            "PAY_OR_QUIT_SENT",
+            "EXPIRED",
+            "AT_RISK",
+            "ACTIVE"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_situation": {
+          "anyOf": [
+            {
+              "enum": [
+                "BALANCE_DUE",
+                "CREDIT_AVAILABLE",
+                "ZERO_BALANCE",
+                "EXPIRED",
+                "EVICTION"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by lease situation, derived from balance and lifecycle",
+          "title": "Filter Situation",
+          "enum": [
+            "BALANCE_DUE",
+            "CREDIT_AVAILABLE",
+            "ZERO_BALANCE",
+            "EXPIRED",
+            "EVICTION"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_evictionPending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only leases with a pending eviction",
+          "title": "Filter Evictionpending"
+        }
+      },
+      "title": "DoorLoopListLeases",
+      "type": "object"
+    },
+    "DoorLoopListNotes": {
+      "additionalProperties": false,
+      "description": "List one page of notes.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "One-based page number. Each execution retrieves one page.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter_createdAt_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Createdat From"
+        },
+        "filter_createdAt_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Createdat To"
+        },
+        "filter_resourceId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Filter Resourceid"
+        },
+        "filter_createdBy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Filter Createdby"
+        },
+        "filter_tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Filter Tags"
+        },
+        "filter_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Note Title or Body",
+          "title": "Filter Text"
+        }
+      },
+      "title": "DoorLoopListNotes",
+      "type": "object"
+    },
+    "DoorLoopListOwners": {
+      "additionalProperties": false,
+      "description": "List one page of owners.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "One-based page number. Each execution retrieves one page.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_owners",
+          "default": "list_owners",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter_group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Portfolio Id",
+          "title": "Filter Group"
+        },
+        "filter_property": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Property Id",
+          "title": "Filter Property"
+        },
+        "filter_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Active/Inactive",
+          "title": "Filter Active"
+        },
+        "filter_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Owner Name / Email",
+          "title": "Filter Text"
+        },
+        "filter_management_ends_before": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Management Ends Before"
+        },
+        "filter_createdAt_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Createdat From"
+        },
+        "filter_createdAt_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Createdat To"
+        }
+      },
+      "title": "DoorLoopListOwners",
+      "type": "object"
+    },
+    "DoorLoopListProperties": {
+      "additionalProperties": false,
+      "description": "List one page of properties.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "One-based page number. Each execution retrieves one page.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_properties",
+          "default": "list_properties",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Property Name",
+          "title": "Filter Text"
+        },
+        "filter_group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Portfolio Id",
+          "title": "Filter Group"
+        },
+        "filter_class": {
+          "anyOf": [
+            {
+              "enum": [
+                "RESIDENTIAL",
+                "COMMERCIAL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Property Class",
+          "title": "Filter Class",
+          "enum": [
+            "RESIDENTIAL",
+            "COMMERCIAL"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_owner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Property Owner",
+          "title": "Filter Owner"
+        }
+      },
+      "title": "DoorLoopListProperties",
+      "type": "object"
+    },
+    "DoorLoopListTasks": {
+      "additionalProperties": false,
+      "description": "List one page of tasks.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "One-based page number. Each execution retrieves one page.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter_propertyGroup": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Portfolio Id",
+          "title": "Filter Propertygroup"
+        },
+        "filter_property": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Property Id",
+          "title": "Filter Property"
+        },
+        "filter_unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Unit Id",
+          "title": "Filter Unit"
+        },
+        "filter_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "INTERNAL_TASK",
+                "WORK_ORDER",
+                "TENANT_REQUEST",
+                "OWNER_REQUEST"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Task Type",
+          "title": "Filter Type",
+          "enum": [
+            "INTERNAL_TASK",
+            "WORK_ORDER",
+            "TENANT_REQUEST",
+            "OWNER_REQUEST"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "NOT_STARTED",
+                "IN_PROGRESS",
+                "COMPLETED",
+                "NOT_COMPLETED",
+                "RECEIVED",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Task Status",
+          "title": "Filter Status",
+          "enum": [
+            "NOT_STARTED",
+            "IN_PROGRESS",
+            "COMPLETED",
+            "NOT_COMPLETED",
+            "RECEIVED",
+            "ARCHIVED"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_createdAt_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Createdat From"
+        },
+        "filter_createdAt_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Createdat To"
+        },
+        "filter_dueDate_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Duedate From"
+        },
+        "filter_dueDate_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Duedate To"
+        },
+        "filter_completedAt_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Completedat From"
+        },
+        "filter_completedAt_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Completedat To"
+        },
+        "filter_assignedToUser": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by User Id or \"unassigned\"",
+          "title": "Filter Assignedtouser"
+        },
+        "filter_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Subject, Description or Reference",
+          "title": "Filter Text"
+        },
+        "filter_requestedById": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Requested by User, Tenant or Owner Id",
+          "title": "Filter Requestedbyid"
+        }
+      },
+      "title": "DoorLoopListTasks",
+      "type": "object"
+    },
+    "DoorLoopListTenants": {
+      "additionalProperties": false,
+      "description": "List one page of tenants.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "One-based page number. Each execution retrieves one page.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tenants",
+          "default": "list_tenants",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter_group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Portfolio Id",
+          "title": "Filter Group"
+        },
+        "filter_property": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Property Id",
+          "title": "Filter Property"
+        },
+        "filter_lease": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Lease Id",
+          "title": "Filter Lease"
+        },
+        "filter_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Tenant Name / Email",
+          "title": "Filter Text"
+        },
+        "filter_unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Unit Id",
+          "title": "Filter Unit"
+        },
+        "filter_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "LEASE_TENANT",
+                "PROSPECT_TENANT"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Tenant Type",
+          "title": "Filter Type",
+          "enum": [
+            "LEASE_TENANT",
+            "PROSPECT_TENANT"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "DoorLoopListTenants",
+      "type": "object"
+    },
+    "DoorLoopListUnits": {
+      "additionalProperties": false,
+      "description": "List one page of units.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "One-based page number. Each execution retrieves one page.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_units",
+          "default": "list_units",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter_group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters by Portfolio Id",
+          "title": "Filter Group"
+        },
+        "filter_property": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Property Id",
+          "title": "Filter Property"
+        },
+        "filter_owner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Owner Id",
+          "title": "Filter Owner"
+        },
+        "filter_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Unit Name",
+          "title": "Filter Text"
+        },
+        "filter_active": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which units to return by status. Without this parameter only active units are returned. Use all for active and inactive units together, or false for only the inactive ones.",
+          "title": "Filter Active",
+          "enum": [
+            "true",
+            "false",
+            "all"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "DoorLoopListUnits",
+      "type": "object"
+    },
+    "DoorLoopListVendors": {
+      "additionalProperties": false,
+      "description": "List one page of vendors.",
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "One-based page number. Each execution retrieves one page.",
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_vendors",
+          "default": "list_vendors",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter_property": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Property Id",
+          "title": "Filter Property"
+        },
+        "filter_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by Active/Inactive",
+          "title": "Filter Active"
+        },
+        "filter_insurance_expires_before": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Insurance Expires Before"
+        },
+        "filter_openBalance": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, will return only vendors with an open balance",
+          "title": "Filter Openbalance"
+        },
+        "filter_createdAt_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Createdat From"
+        },
+        "filter_createdAt_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format: YYYY-MM-DD",
+          "title": "Filter Createdat To"
+        }
+      },
+      "title": "DoorLoopListVendors",
+      "type": "object"
+    },
+    "DoorLoopUpdateTask": {
+      "additionalProperties": false,
+      "description": "Update an internal task; supply its required type, subject and status.",
+      "properties": {
+        "type": {
+          "const": "INTERNAL_TASK",
+          "default": "INTERNAL_TASK",
+          "description": "Create or update an internal task.",
+          "title": "Type",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "status": {
+          "default": "NOT_STARTED",
+          "enum": [
+            "NOT_STARTED",
+            "RECEIVED",
+            "IN_PROGRESS",
+            "COMPLETED",
+            "ARCHIVED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "requestedByUser": {
+          "description": "DoorLoop user requesting the internal task.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Requestedbyuser",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duedate"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "LOW",
+            "MEDIUM",
+            "HIGH"
+          ],
+          "x-enum-searchable": true
+        },
+        "property": {
+          "anyOf": [
+            {
+              "description": "DoorLoop 24-character resource ID.",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "description": "DoorLoop 24-character resource ID.",
+              "pattern": "^[a-fA-F0-9]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "assignedToUsers": {
+          "anyOf": [
+            {
+              "items": {
+                "description": "DoorLoop 24-character resource ID.",
+                "pattern": "^[a-fA-F0-9]{24}$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignedtousers"
+        },
+        "notifyAssignees": {
+          "default": false,
+          "description": "Notify assigned users when this task is created or updated.",
+          "title": "Notifyassignees",
+          "type": "boolean"
+        },
+        "entryNotes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entrynotes"
+        },
+        "entryPermission": {
+          "anyOf": [
+            {
+              "enum": [
+                "NOT_APPLICABLE",
+                "YES",
+                "NO"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entrypermission",
+          "enum": [
+            "NOT_APPLICABLE",
+            "YES",
+            "NO"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "taskId": {
+          "description": "DoorLoop 24-character resource ID.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Taskid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject",
+        "requestedByUser",
+        "taskId"
+      ],
+      "title": "DoorLoopUpdateTask",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_note": "#/$defs/DoorLoopCreateNote",
+          "create_owner": "#/$defs/DoorLoopCreateOwner",
+          "create_prospect": "#/$defs/DoorLoopCreateProspect",
+          "create_task": "#/$defs/DoorLoopCreateTask",
+          "delete_task": "#/$defs/DoorLoopDeleteTask",
+          "get_current_user": "#/$defs/DoorLoopGetCurrentUser",
+          "get_lease": "#/$defs/DoorLoopGetLease",
+          "get_lease_payment": "#/$defs/DoorLoopGetLeasePayment",
+          "get_note": "#/$defs/DoorLoopGetNote",
+          "get_owner": "#/$defs/DoorLoopGetOwner",
+          "get_property": "#/$defs/DoorLoopGetProperty",
+          "get_task": "#/$defs/DoorLoopGetTask",
+          "get_tenant": "#/$defs/DoorLoopGetTenant",
+          "get_unit": "#/$defs/DoorLoopGetUnit",
+          "get_vendor": "#/$defs/DoorLoopGetVendor",
+          "list_lease_payments": "#/$defs/DoorLoopListLeasePayments",
+          "list_leases": "#/$defs/DoorLoopListLeases",
+          "list_notes": "#/$defs/DoorLoopListNotes",
+          "list_owners": "#/$defs/DoorLoopListOwners",
+          "list_properties": "#/$defs/DoorLoopListProperties",
+          "list_tasks": "#/$defs/DoorLoopListTasks",
+          "list_tenants": "#/$defs/DoorLoopListTenants",
+          "list_units": "#/$defs/DoorLoopListUnits",
+          "list_vendors": "#/$defs/DoorLoopListVendors",
+          "update_task": "#/$defs/DoorLoopUpdateTask"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DoorLoopGetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopListProperties"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopGetProperty"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopListUnits"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopGetUnit"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopListLeases"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopGetLease"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopListTenants"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopGetTenant"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopListTasks"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopGetTask"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopListOwners"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopGetOwner"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopListVendors"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopGetVendor"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopListLeasePayments"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopGetLeasePayment"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopListNotes"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopGetNote"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopCreateProspect"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopCreateOwner"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopCreateTask"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopUpdateTask"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopDeleteTask"
+        },
+        {
+          "$ref": "#/$defs/DoorLoopCreateNote"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DoorLoopAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Doorloop Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
