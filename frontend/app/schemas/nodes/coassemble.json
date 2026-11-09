@@ -1,0 +1,1273 @@
+{
+  "$defs": {
+    "CoassembleAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "coassemble_api_key",
+          "default": "coassemble_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Coassemble API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your workspace API key from Coassemble's developer setup guide. Paste the complete COASSEMBLE:<workspaceId>:<token> value without the Authorization header name. NoClick sends it only to api.coassemble.com. Course access verifies this connection; it does not verify every write permission.",
+      "x-credential-url": "https://coassemble.com/dashboard/developer?tab=overview&setup=1"
+    },
+    "CoassembleCreateCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Create a collection with an ordered list of initial courses.",
+      "properties": {
+        "title": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stable collection owner identifier.",
+          "title": "Identifier"
+        },
+        "client_identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Identifier"
+        },
+        "theme_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Theme Id"
+        },
+        "identified": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Require learner identification on the share link. Does not apply to embeds.",
+          "title": "Identified"
+        },
+        "private": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict the share link to invited emails. Does not apply to embeds.",
+          "title": "Private"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict the share link to approved email domains. Does not apply to embeds.",
+          "title": "Domain"
+        },
+        "domains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domains"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial course IDs in display order.",
+          "title": "Course Ids"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CoassembleCreateCollectionConfig",
+      "type": "object"
+    },
+    "CoassembleDeleteCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Soft-delete a collection. Restore it with restore_collection.",
+      "properties": {
+        "collection_id": {
+          "description": "Coassemble collection ID.",
+          "minimum": 1,
+          "title": "Collection Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_collection",
+          "default": "delete_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "CoassembleDeleteCollectionConfig",
+      "type": "object"
+    },
+    "CoassembleDeleteCourseConfig": {
+      "additionalProperties": false,
+      "description": "Soft-delete a course. Restore it with restore_course.",
+      "properties": {
+        "course_id": {
+          "description": "Coassemble course ID.",
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_course",
+          "default": "delete_course",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "CoassembleDeleteCourseConfig",
+      "type": "object"
+    },
+    "CoassembleDuplicateCourseConfig": {
+      "additionalProperties": false,
+      "description": "Duplicate a course, optionally overriding its owner and client.",
+      "properties": {
+        "course_id": {
+          "description": "Coassemble course ID.",
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "duplicate_course",
+          "default": "duplicate_course",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identifier"
+        },
+        "client_identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Identifier"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "CoassembleDuplicateCourseConfig",
+      "type": "object"
+    },
+    "CoassembleGetClientConfig": {
+      "additionalProperties": false,
+      "description": "Get a client by its stable identifier.",
+      "properties": {
+        "identifier": {
+          "description": "Your stable client identifier. Avoid personal data: this identifier is retained after deletion.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "CoassembleGetClientConfig",
+      "type": "object"
+    },
+    "CoassembleGetCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Get one collection and its courses.",
+      "properties": {
+        "collection_id": {
+          "description": "Coassemble collection ID.",
+          "minimum": 1,
+          "title": "Collection Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "CoassembleGetCollectionConfig",
+      "type": "object"
+    },
+    "CoassembleGetCourseConfig": {
+      "additionalProperties": false,
+      "description": "Get a course with its sections and screens.",
+      "properties": {
+        "course_id": {
+          "description": "Coassemble course ID.",
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_course",
+          "default": "get_course",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identifier"
+        },
+        "client_identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Identifier"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "CoassembleGetCourseConfig",
+      "type": "object"
+    },
+    "CoassembleGetThemeConfig": {
+      "additionalProperties": false,
+      "description": "Get the settings of one workspace theme.",
+      "properties": {
+        "operation": {
+          "const": "get_theme",
+          "default": "get_theme",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "theme_id": {
+          "minimum": 1,
+          "title": "Theme Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "theme_id"
+      ],
+      "title": "CoassembleGetThemeConfig",
+      "type": "object"
+    },
+    "CoassembleGetTrackingConfig": {
+      "additionalProperties": false,
+      "description": "Get one learner tracking record by tracking ID.",
+      "properties": {
+        "operation": {
+          "const": "get_tracking",
+          "default": "get_tracking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tracking_id": {
+          "minimum": 1,
+          "title": "Tracking Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "tracking_id"
+      ],
+      "title": "CoassembleGetTrackingConfig",
+      "type": "object"
+    },
+    "CoassembleGetUserConfig": {
+      "additionalProperties": false,
+      "description": "Get a user by the stable user identifier.",
+      "properties": {
+        "identifier": {
+          "description": "Your stable user identifier.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "CoassembleGetUserConfig",
+      "type": "object"
+    },
+    "CoassembleListClientsConfig": {
+      "additionalProperties": false,
+      "description": "List workspace clients, one page at a time.",
+      "properties": {
+        "length": {
+          "default": 100,
+          "description": "Maximum records on this page (up to 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-indexed page. Use next_page to request another page when this page is full.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CoassembleListClientsConfig",
+      "type": "object"
+    },
+    "CoassembleListCollectionsConfig": {
+      "additionalProperties": false,
+      "description": "List collections with optional owner and client filters.",
+      "properties": {
+        "length": {
+          "default": 100,
+          "description": "Maximum records on this page (up to 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-indexed page. Use next_page to request another page when this page is full.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the owner's stable user identifier.",
+          "title": "Identifier"
+        },
+        "client_identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by stable client identifier.",
+          "title": "Client Identifier"
+        },
+        "deleted": {
+          "default": false,
+          "description": "Include soft-deleted resources.",
+          "title": "Deleted",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CoassembleListCollectionsConfig",
+      "type": "object"
+    },
+    "CoassembleListCoursesConfig": {
+      "additionalProperties": false,
+      "description": "List courses with owner, client and title filters.",
+      "properties": {
+        "length": {
+          "default": 100,
+          "description": "Maximum records on this page (up to 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-indexed page. Use next_page to request another page when this page is full.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the owner's stable user identifier.",
+          "title": "Identifier"
+        },
+        "client_identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by stable client identifier.",
+          "title": "Client Identifier"
+        },
+        "deleted": {
+          "default": false,
+          "description": "Include soft-deleted resources.",
+          "title": "Deleted",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_courses",
+          "default": "list_courses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "title": "CoassembleListCoursesConfig",
+      "type": "object"
+    },
+    "CoassembleListThemesConfig": {
+      "additionalProperties": false,
+      "description": "List available workspace themes up to the requested limit.",
+      "properties": {
+        "operation": {
+          "const": "list_themes",
+          "default": "list_themes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "length": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        }
+      },
+      "title": "CoassembleListThemesConfig",
+      "type": "object"
+    },
+    "CoassembleListTrackingsConfig": {
+      "additionalProperties": false,
+      "description": "List learner tracking records for one course.",
+      "properties": {
+        "length": {
+          "default": 100,
+          "description": "Maximum records on this page (up to 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-indexed page. Use next_page to request another page when this page is full.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_trackings",
+          "default": "list_trackings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identifier"
+        },
+        "client_identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Identifier"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Earliest tracking timestamp, ISO 8601.",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latest tracking timestamp, ISO 8601.",
+          "title": "End"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "CoassembleListTrackingsConfig",
+      "type": "object"
+    },
+    "CoassembleListUsersConfig": {
+      "additionalProperties": false,
+      "description": "List users with an optional client filter.",
+      "properties": {
+        "length": {
+          "default": 100,
+          "description": "Maximum records on this page (up to 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-indexed page. Use next_page to request another page when this page is full.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Identifier"
+        }
+      },
+      "title": "CoassembleListUsersConfig",
+      "type": "object"
+    },
+    "CoassemblePublishCourseConfig": {
+      "additionalProperties": false,
+      "description": "Publish the current draft of a course.",
+      "properties": {
+        "course_id": {
+          "description": "Coassemble course ID.",
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "publish_course",
+          "default": "publish_course",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "CoassemblePublishCourseConfig",
+      "type": "object"
+    },
+    "CoassembleRestoreCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Restore a soft-deleted collection.",
+      "properties": {
+        "collection_id": {
+          "description": "Coassemble collection ID.",
+          "minimum": 1,
+          "title": "Collection Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "restore_collection",
+          "default": "restore_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "CoassembleRestoreCollectionConfig",
+      "type": "object"
+    },
+    "CoassembleRestoreCourseConfig": {
+      "additionalProperties": false,
+      "description": "Restore a soft-deleted course.",
+      "properties": {
+        "course_id": {
+          "description": "Coassemble course ID.",
+          "minimum": 1,
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "restore_course",
+          "default": "restore_course",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "CoassembleRestoreCourseConfig",
+      "type": "object"
+    },
+    "CoassembleUpdateClientConfig": {
+      "additionalProperties": false,
+      "description": "Update metadata attached to a client.",
+      "properties": {
+        "identifier": {
+          "description": "Your stable client identifier. Avoid personal data: this identifier is retained after deletion.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "Metadata to attach to the client.",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "identifier",
+        "metadata"
+      ],
+      "title": "CoassembleUpdateClientConfig",
+      "type": "object"
+    },
+    "CoassembleUpdateCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Update a collection and its share-link access settings.",
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stable collection owner identifier.",
+          "title": "Identifier"
+        },
+        "client_identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Identifier"
+        },
+        "theme_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Theme Id"
+        },
+        "identified": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Require learner identification on the share link. Does not apply to embeds.",
+          "title": "Identified"
+        },
+        "private": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict the share link to invited emails. Does not apply to embeds.",
+          "title": "Private"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict the share link to approved email domains. Does not apply to embeds.",
+          "title": "Domain"
+        },
+        "domains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domains"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "operation": {
+          "const": "update_collection",
+          "default": "update_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_id": {
+          "minimum": 1,
+          "title": "Collection Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "CoassembleUpdateCollectionConfig",
+      "type": "object"
+    },
+    "CoassembleUpdateUserConfig": {
+      "additionalProperties": false,
+      "description": "Update a user profile, metadata or client association.",
+      "properties": {
+        "identifier": {
+          "description": "Your stable user identifier.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "avatar": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Avatar URL.",
+          "title": "Avatar"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "client_identifier": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Identifier"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "CoassembleUpdateUserConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_collection": "#/$defs/CoassembleCreateCollectionConfig",
+          "delete_collection": "#/$defs/CoassembleDeleteCollectionConfig",
+          "delete_course": "#/$defs/CoassembleDeleteCourseConfig",
+          "duplicate_course": "#/$defs/CoassembleDuplicateCourseConfig",
+          "get_client": "#/$defs/CoassembleGetClientConfig",
+          "get_collection": "#/$defs/CoassembleGetCollectionConfig",
+          "get_course": "#/$defs/CoassembleGetCourseConfig",
+          "get_theme": "#/$defs/CoassembleGetThemeConfig",
+          "get_tracking": "#/$defs/CoassembleGetTrackingConfig",
+          "get_user": "#/$defs/CoassembleGetUserConfig",
+          "list_clients": "#/$defs/CoassembleListClientsConfig",
+          "list_collections": "#/$defs/CoassembleListCollectionsConfig",
+          "list_courses": "#/$defs/CoassembleListCoursesConfig",
+          "list_themes": "#/$defs/CoassembleListThemesConfig",
+          "list_trackings": "#/$defs/CoassembleListTrackingsConfig",
+          "list_users": "#/$defs/CoassembleListUsersConfig",
+          "publish_course": "#/$defs/CoassemblePublishCourseConfig",
+          "restore_collection": "#/$defs/CoassembleRestoreCollectionConfig",
+          "restore_course": "#/$defs/CoassembleRestoreCourseConfig",
+          "update_client": "#/$defs/CoassembleUpdateClientConfig",
+          "update_collection": "#/$defs/CoassembleUpdateCollectionConfig",
+          "update_user": "#/$defs/CoassembleUpdateUserConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CoassembleListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleGetClientConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleUpdateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleUpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleListCoursesConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleGetCourseConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleDeleteCourseConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleRestoreCourseConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassemblePublishCourseConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleDuplicateCourseConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleUpdateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleDeleteCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleRestoreCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleListTrackingsConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleGetTrackingConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleListThemesConfig"
+        },
+        {
+          "$ref": "#/$defs/CoassembleGetThemeConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CoassembleAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Coassemble Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
