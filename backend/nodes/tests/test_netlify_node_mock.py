@@ -24,7 +24,7 @@ def test_catalog_covers_pinned_json_rest_actions():
     assert len(CATALOG["operations"]) == 176
     assert len(CATALOG["excluded"]) == 5
     assert set(CONFIG_MODELS) == {op["name"] for op in CATALOG["operations"]} | {
-        "test_connection"
+        "test_connection", "on_deploy_succeeded", "on_deploy_failed", "on_deploy_started", "on_form_submission"
     }
     assert all(item["reason"] == "binary upload" for item in CATALOG["excluded"])
 
@@ -171,3 +171,113 @@ def test_required_query_schema_exposes_the_provider_parameters():
     assert field["contentSchema"]["properties"]["reason"]["type"] == "string"
     with pytest.raises(ValidationError):
         model(path_site_id="site-1")
+
+
+def _webhook_events():
+    from pathlib import Path
+    return json.loads((Path(__file__).parent / "fixtures/netlify/webhook_events.json").read_text())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,event", [
+    ("on_deploy_succeeded", "deploy_created"),
+    ("on_deploy_failed", "deploy_failed"),
+    ("on_deploy_started", "deploy_building"),
+    ("on_form_submission", "submission_created"),
+])
+async def test_webhook_lifecycle_and_agent_event(monkeypatch, operation, event):
+    import hashlib
+    import jwt
+    calls = []
+    secret = None
+
+    def handler(request):
+        nonlocal secret
+        calls.append(request)
+        if request.method == "POST":
+            assert request.url.path == "/api/v1/hooks"
+            assert request.url.params["site_id"] == "0d3a9d2f-ef94-4380-93df-27ee400e2048"
+            body = json.loads(request.content)
+            assert body["type"] == "url"
+            assert body["event"] == event
+            assert body["data"]["url"] == "https://example.hooks.example.test/events"
+            secret = body["data"]["signature_secret"]
+            assert len(secret) >= 32
+            return httpx.Response(201, json={"id": "5636b7a00d61eec2d6001004"})
+        assert request.method == "DELETE"
+        assert request.url.path == "/api/v1/hooks/5636b7a00d61eec2d6001004"
+        return httpx.Response(204)
+
+    _mock_client(monkeypatch, handler)
+    config = {"operation": operation, "site_id": "0d3a9d2f-ef94-4380-93df-27ee400e2048"}
+    credential = {"access_token": "synthetic-netlify-token"}
+    extra = await NetlifyNode._register_external_webhook(
+        webhook_url="https://example.hooks.example.test/events", credential=credential,
+        config=config, node_id="netlify-qa")
+    config.update(extra)
+    assert config["signing_secret"] == secret
+    assert NetlifyNode.registration_fingerprint_fields(config) == {"site_id": config["site_id"]}
+    fixture = _webhook_events()[event]
+    payload = fixture["body"]
+    body = json.dumps(payload).encode()
+    signature = jwt.encode({"iss": "netlify", "sha256": hashlib.sha256(body).hexdigest()}, secret, algorithm="HS256")
+    headers = {**fixture["headers"], "X-Webhook-Signature": signature}
+    assert NetlifyNode.verify_webhook_signature(body, headers, config)
+    assert not NetlifyNode.verify_webhook_signature(body + b" ", headers, config)
+    assert not NetlifyNode.verify_webhook_signature(body, {}, config)
+    assert not NetlifyNode.verify_webhook_signature(body, headers, {})
+    payload = {**payload, "_webhook": {"headers": headers}}
+    assert NetlifyNode.filter_trigger_payload(payload, config)
+    assert not NetlifyNode.filter_trigger_payload({**payload, "_webhook": {"headers": {"x-netlify-event": "other"}}}, config)
+    output = NetlifyNode.resolve_trigger_payload(payload, config)
+    agent_event = NetlifyNode.resolve_agent_event(output)
+    assert agent_event["conversation_key"] == payload["id"]
+    assert payload["id"] in agent_event["text"]
+    assert "Netlify" in agent_event["text"]
+    assert (payload["body"] if event == "submission_created" else payload["deploy_url"]) in agent_event["text"]
+    assert "_webhook" not in agent_event["text"]
+    assert (await _node(operation, {"site_id": config["site_id"]}).execute({}))["status"] == "no_event"
+    await NetlifyNode._unregister_external_webhook(credential=credential, config=config, node_id="netlify-qa")
+    assert len(calls) == 2
+    assert CONFIG_MODELS[operation](**config).signing_secret == secret
+
+
+@pytest.mark.parametrize("claims,algorithm,key", [
+    ({"iss": "attacker", "sha256": "0" * 64}, "HS256", "secret"),
+    ({"iss": "netlify", "sha256": "0" * 64}, "HS512", "secret"),
+    ({"iss": "netlify", "sha256": "0" * 64}, "HS256", "wrong-key"),
+    ({"iss": "netlify"}, "HS256", "secret"),
+    ({"iss": "netlify", "sha256": 1}, "HS256", "secret"),
+    ({"iss": "netlify", "sha256": "é" * 64}, "HS256", "secret"),
+])
+def test_webhook_rejects_forged_jws(claims, algorithm, key):
+    import jwt
+    signature = jwt.encode(claims, key, algorithm=algorithm)
+    assert not NetlifyNode.verify_webhook_signature(b"{}", {"x-webhook-signature": signature}, {"signing_secret": "secret"})
+
+
+@pytest.mark.parametrize("signature", ["bad", "a.b.c", "", "e30.e30."])
+def test_webhook_rejects_malformed_jws(signature):
+    assert not NetlifyNode.verify_webhook_signature(b"{}", {"x-webhook-signature": signature}, {"signing_secret": "secret"})
+
+
+@pytest.mark.asyncio
+async def test_webhook_registration_requires_provider_hook_id(monkeypatch):
+    _mock_client(monkeypatch, lambda request: httpx.Response(201, json={}))
+    with pytest.raises(ValueError, match="hook ID"):
+        await NetlifyNode._register_external_webhook(
+            webhook_url="https://example.hooks.example.test/events", credential={"access_token": "token"},
+            config={"operation": "on_deploy_failed", "site_id": "site"}, node_id="netlify-qa")
+
+
+def test_agent_event_includes_documented_failure_details():
+    from pathlib import Path
+    fixture = json.loads((Path(__file__).parent / "fixtures/netlify/deploy_failed_sdk.json").read_text())
+    payload = fixture["body"]
+    output = NetlifyNode.resolve_trigger_payload(payload, {"operation": "on_deploy_failed", "site_id": payload["site_id"]})
+    event = NetlifyNode.resolve_agent_event(output)
+    assert "Build failed" in event["text"]
+    assert "Branch: main" in event["text"]
+    assert "Site ID: site-abc" in event["text"]
+    assert "Context: production" in event["text"]
+    assert event["conversation_key"] == "deploy-1"

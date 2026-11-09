@@ -7,19 +7,24 @@ binary upload endpoints are deliberately listed as exclusions in the catalog.
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
+import secrets
 import re
 import time
 from typing import Annotated, Any, Literal, Optional, Union
 from urllib.parse import quote
 
 import httpx
+import jwt
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.binary_output import BinaryOutput
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.netlify_operations import CATALOG
 from nodes.scopes.netlify import NETLIFY_SCOPES
 
@@ -117,6 +122,36 @@ def _make_config(op: dict[str, Any]) -> type[BaseModel]:
 
 CONFIG_MODELS = {name: _make_config(op) for name, op in OPERATIONS.items()}
 globals().update({model.__name__: model for model in CONFIG_MODELS.values()})
+# Netlify's own event registry: deploy_created fires when a deploy succeeds.
+# https://github.com/netlify/netlify-mcp/blob/c67980d8f4809b87d52e369e79fe31956c7b0c89/netlify/functions/mcp-server/events/registry.ts
+TRIGGERS = {
+    "on_deploy_succeeded": ("deploy_created", "On Deploy Succeeded"),
+    "on_deploy_failed": ("deploy_failed", "On Deploy Failed"),
+    "on_deploy_started": ("deploy_building", "On Deploy Started"),
+    "on_form_submission": ("submission_created", "On Form Submission"),
+}
+
+
+class NetlifyWebhookConfig(WebhookTriggerConfigBase):
+    site_id: str = Field(..., min_length=1, title="Site ID", description="The Netlify site to watch")
+    webhook_url: Optional[str] = Field(
+        None, title="Webhook URL", description="Registered with Netlify automatically",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True},
+    )
+
+
+for _name, (_event, _label) in TRIGGERS.items():
+    _model = create_model(
+        "Netlify" + "".join(part.title() for part in _name.split("_")) + "Config",
+        __module__=__name__, __base__=NetlifyWebhookConfig,
+        operation=(Literal[_name], Field(_name, title=_label, json_schema_extra={
+            "const": _name, "ui:hidden": True, "x-category": "Triggers",
+            "x-display-name": _label, "x-is-trigger": True,
+        })),
+    )
+    CONFIG_MODELS[_name] = _model
+    globals()[_model.__name__] = _model
+
 NetlifyConfig = Annotated[Union[tuple(CONFIG_MODELS.values())], Discriminator("operation")]
 
 
@@ -136,7 +171,7 @@ def _parse_json(raw: str, label: str, expected: str) -> Any:
     return value
 
 
-class NetlifyNode(WorkflowNode):
+class NetlifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """Execute a documented Netlify REST operation."""
 
     integration_type = "automation-netlify"
@@ -151,6 +186,91 @@ class NetlifyNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return NetlifyNodeConfig
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event, _ = TRIGGERS[config["operation"]]
+        secret = secrets.token_urlsafe(32)
+        # The provider's own hooks client names this field signature_secret.
+        # https://github.com/netlify/netlify-mcp/blob/c67980d8f4809b87d52e369e79fe31956c7b0c89/netlify/functions/mcp-server/events/hooks-api.ts
+        response = await cls._request(credential["access_token"], "create_hook_by_site_id", {
+            "query_json": json.dumps({"site_id": config["site_id"]}),
+            "body_json": json.dumps({"type": "url", "event": event,
+                                     "data": {"url": webhook_url, "signature_secret": secret}}),
+        })
+        hook_id = response["data"].get("id")
+        if not hook_id:
+            raise ValueError("Netlify did not return a hook ID")
+        return {"external_webhook_id": str(hook_id), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        if config.get("external_webhook_id") and credential:
+            await cls._request(credential["access_token"], "delete_hook", {
+                "path_hook_id": config["external_webhook_id"],
+            })
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"site_id": config.get("site_id")}
+
+    @classmethod
+    def verify_webhook_signature(cls, body: bytes, headers: dict[str, str], config: dict[str, Any]) -> bool:
+        # https://docs.netlify.com/deploy/deploy-notifications/#payload-signature
+        secret = config.get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "x-webhook-signature"), None)
+        if not secret or not signature:
+            return False
+        try:
+            claims = jwt.decode(signature, secret, algorithms=["HS256"], issuer="netlify",
+                                options={"require": ["iss", "sha256"]})
+        except jwt.InvalidTokenError:
+            return False
+        digest = claims["sha256"]
+        return (isinstance(digest, str) and re.fullmatch(r"[0-9a-f]{64}", digest) is not None
+                and hmac.compare_digest(digest, hashlib.sha256(body).hexdigest()))
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        if config.get("operation") not in TRIGGERS:
+            return True
+        headers = payload.get("_webhook", {}).get("headers", {})
+        event = next((v for k, v in headers.items() if k.lower() == "x-netlify-event"), None)
+        return event == TRIGGERS[config["operation"]][0]
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if config.get("operation") not in TRIGGERS:
+            return super().resolve_trigger_payload(payload, config)
+        return {"status": "success", "operation": config["operation"],
+                "site_id": config["site_id"], "data": payload}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        operation = output.get("operation") if isinstance(output, dict) else None
+        if operation not in TRIGGERS:
+            return super().resolve_agent_event(output)
+        record = output["data"]
+        if operation == "on_form_submission":
+            lines = [f"Netlify: new form submission from {record.get('name') or record.get('email') or 'a visitor'}.",
+                     f"Email: {record.get('email') or ''}", f"Site: {record.get('site_url') or ''}",
+                     f"Message: {str(record.get('body') or '')[:2000]}",
+                     f"Form fields: {json.dumps(record.get('data') or {}, ensure_ascii=False)[:2000]}",
+                     f"Submission ID: {record.get('id')}"]
+        else:
+            label = TRIGGERS[operation][1].removeprefix("On ")
+            lines = [f"Netlify: {label} for {record.get('name') or 'site'} ({record.get('state') or ''}).",
+                     f"By user: {record.get('user_id') or ''}", f"Deploy URL: {record.get('deploy_url') or ''}",
+                     f"Site URL: {record.get('url') or ''}", f"Updated: {record.get('updated_at') or ''}",
+                     f"Deploy ID: {record.get('id')} — use get_deploy or get_site_deploy to inspect it."]
+        if operation != "on_form_submission":
+            for key, label in (("branch", "Branch"), ("context", "Context"),
+                               ("commit_ref", "Commit"), ("title", "Title"),
+                               ("error_message", "Error")):
+                if key in record and record[key]:
+                    lines.append(f"{label}: {str(record[key])[:2000]}")
+        lines.append(f"Site ID: {output['site_id']}")
+        return {"text": "\n".join(lines), "conversation_key": str(record["id"])}
 
     @staticmethod
     async def _request(token: str, name: str, values: dict[str, Any]) -> dict[str, Any]:
@@ -208,6 +328,8 @@ class NetlifyNode(WorkflowNode):
     async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(self.config, NetlifyNodeConfig) or not self.config.credentials:
             raise ValueError("Connect Netlify before running this action")
+        if self.config.config.operation in TRIGGERS:
+            return self.no_event_output(self.config.config.operation)
         return await self._request(
             self.config.credentials.access_token,
             self.config.config.operation,

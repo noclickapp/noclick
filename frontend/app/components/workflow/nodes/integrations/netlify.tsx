@@ -37,7 +37,7 @@ export const NetlifyNode: NodeDefinition = {
     category: 'cloud-hosting',
     label: 'Netlify',
     description:
-        'Manage sites, deploys, builds, forms, DNS, hooks, and environment variables',
+        'React to deploys and form submissions; manage sites, builds, DNS, and environment variables',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: DIMENSIONS,
