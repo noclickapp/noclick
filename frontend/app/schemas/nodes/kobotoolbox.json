@@ -1,0 +1,853 @@
+{
+  "$defs": {
+    "ClearValidationStatus": {
+      "additionalProperties": false,
+      "description": "Remove the submission validation status.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "submission_id": {
+          "description": "Submission integer ID or rootUuid without the uuid: prefix.",
+          "pattern": "^[A-Za-z0-9-]+$",
+          "title": "Submission Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "clear_validation_status",
+          "default": "clear_validation_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "submission_id"
+      ],
+      "title": "ClearValidationStatus",
+      "type": "object"
+    },
+    "CreateExport": {
+      "additionalProperties": false,
+      "description": "Queue a CSV, XLS, GeoJSON or SPSS labels export; poll Get Export for completion.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_export",
+          "default": "create_export",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "export_format": {
+          "default": "csv",
+          "enum": [
+            "csv",
+            "xls",
+            "geojson",
+            "spss_labels"
+          ],
+          "title": "Export Format",
+          "type": "string"
+        },
+        "fields_from_all_versions": {
+          "default": true,
+          "title": "Fields From All Versions",
+          "type": "boolean"
+        },
+        "group_sep": {
+          "default": "/",
+          "title": "Group Sep",
+          "type": "string"
+        },
+        "hierarchy_in_labels": {
+          "default": true,
+          "title": "Hierarchy In Labels",
+          "type": "boolean"
+        },
+        "lang": {
+          "default": "_xml",
+          "title": "Lang",
+          "type": "string"
+        },
+        "multiple_select": {
+          "default": "both",
+          "enum": [
+            "both",
+            "summary",
+            "details"
+          ],
+          "title": "Multiple Select",
+          "type": "string"
+        },
+        "fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "flatten": {
+          "default": true,
+          "title": "Flatten",
+          "type": "boolean"
+        },
+        "xls_types_as_text": {
+          "default": false,
+          "title": "Xls Types As Text",
+          "type": "boolean"
+        },
+        "include_media_url": {
+          "default": false,
+          "title": "Include Media Url",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "CreateExport",
+      "type": "object"
+    },
+    "CreateProject": {
+      "additionalProperties": false,
+      "description": "Create a draft survey project.",
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "sector": {
+          "default": "",
+          "title": "Sector",
+          "type": "string"
+        },
+        "country": {
+          "default": "",
+          "title": "Country",
+          "type": "string"
+        },
+        "share_metadata": {
+          "default": false,
+          "title": "Share Metadata",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateProject",
+      "type": "object"
+    },
+    "DeleteExport": {
+      "additionalProperties": false,
+      "description": "Delete an export task.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "export_id": {
+          "description": "UID of the export task.",
+          "pattern": "^[A-Za-z0-9]+$",
+          "title": "Export Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_export",
+          "default": "delete_export",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "export_id"
+      ],
+      "title": "DeleteExport",
+      "type": "object"
+    },
+    "DeleteProject": {
+      "additionalProperties": false,
+      "description": "Delete a project and its data permanently.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "DeleteProject",
+      "type": "object"
+    },
+    "DeleteSubmission": {
+      "additionalProperties": false,
+      "description": "Delete one submission permanently.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "submission_id": {
+          "description": "Submission integer ID or rootUuid without the uuid: prefix.",
+          "pattern": "^[A-Za-z0-9-]+$",
+          "title": "Submission Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_submission",
+          "default": "delete_submission",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "submission_id"
+      ],
+      "title": "DeleteSubmission",
+      "type": "object"
+    },
+    "DeployProject": {
+      "additionalProperties": false,
+      "description": "Deploy or redeploy the project form.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "deploy_project",
+          "default": "deploy_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "DeployProject",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Read the authenticated account.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetDeployment": {
+      "additionalProperties": false,
+      "description": "Read the form deployment.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_deployment",
+          "default": "get_deployment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetDeployment",
+      "type": "object"
+    },
+    "GetExport": {
+      "additionalProperties": false,
+      "description": "Read export status and the provider download URL.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "export_id": {
+          "description": "UID of the export task.",
+          "pattern": "^[A-Za-z0-9]+$",
+          "title": "Export Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_export",
+          "default": "get_export",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "export_id"
+      ],
+      "title": "GetExport",
+      "type": "object"
+    },
+    "GetFormContent": {
+      "additionalProperties": false,
+      "description": "Read structured form content.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_form_content",
+          "default": "get_form_content",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetFormContent",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "description": "Read a project asset.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetSubmission": {
+      "additionalProperties": false,
+      "description": "Read one submission.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "submission_id": {
+          "description": "Submission integer ID or rootUuid without the uuid: prefix.",
+          "pattern": "^[A-Za-z0-9-]+$",
+          "title": "Submission Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_submission",
+          "default": "get_submission",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "submission_id"
+      ],
+      "title": "GetSubmission",
+      "type": "object"
+    },
+    "GetValidationStatus": {
+      "additionalProperties": false,
+      "description": "Read the submission validation status.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "submission_id": {
+          "description": "Submission integer ID or rootUuid without the uuid: prefix.",
+          "pattern": "^[A-Za-z0-9-]+$",
+          "title": "Submission Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_validation_status",
+          "default": "get_validation_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "submission_id"
+      ],
+      "title": "GetValidationStatus",
+      "type": "object"
+    },
+    "KobotoolboxAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kobotoolbox_api_token",
+          "default": "kobotoolbox_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "server": {
+          "default": "https://kf.kobotoolbox.org",
+          "enum": [
+            "https://kf.kobotoolbox.org",
+            "https://eu.kobotoolbox.org"
+          ],
+          "title": "KoboToolbox server",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "KoboToolbox API Token",
+      "type": "object",
+      "x-credential-instructions": "In KoboToolbox, open Account Settings > Security > Display API Key. Paste the key and select the server where your account lives. The key can access your account's projects and data; keep it private.",
+      "x-credential-url": "https://support.kobotoolbox.org/api.html#retrieving-your-api-key"
+    },
+    "ListExports": {
+      "additionalProperties": false,
+      "description": "List asynchronous export tasks.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Initial result index; use next_start from the preceding page.",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_exports",
+          "default": "list_exports",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ordering"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListExports",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "description": "List accessible projects and library assets.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Initial result index; use next_start from the preceding page.",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented asset search query, e.g. asset_type:survey.",
+          "title": "Q"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ordering"
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListSubmissions": {
+      "additionalProperties": false,
+      "description": "Read a page of JSON submissions.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Initial result index; use next_start from the preceding page.",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_submissions",
+          "default": "list_submissions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON-encoded Mongo filter query.",
+          "title": "Query"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON-encoded array of field names.",
+          "title": "Fields"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON-encoded sort object, e.g. {\"_id\":-1}.",
+          "title": "Sort"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListSubmissions",
+      "type": "object"
+    },
+    "SetDeploymentActive": {
+      "additionalProperties": false,
+      "description": "Archive or reactivate an existing deployment.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_deployment_active",
+          "default": "set_deployment_active",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "active": {
+          "description": "False archives; true reactivates data collection.",
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "active"
+      ],
+      "title": "SetDeploymentActive",
+      "type": "object"
+    },
+    "SetValidationStatus": {
+      "additionalProperties": false,
+      "description": "Approve, reject or hold a submission for validation.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "submission_id": {
+          "description": "Submission integer ID or rootUuid without the uuid: prefix.",
+          "pattern": "^[A-Za-z0-9-]+$",
+          "title": "Submission Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_validation_status",
+          "default": "set_validation_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "validation_status": {
+          "enum": [
+            "validation_status_approved",
+            "validation_status_not_approved",
+            "validation_status_on_hold"
+          ],
+          "title": "Validation Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "submission_id",
+        "validation_status"
+      ],
+      "title": "SetValidationStatus",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "clear_validation_status": "#/$defs/ClearValidationStatus",
+          "create_export": "#/$defs/CreateExport",
+          "create_project": "#/$defs/CreateProject",
+          "delete_export": "#/$defs/DeleteExport",
+          "delete_project": "#/$defs/DeleteProject",
+          "delete_submission": "#/$defs/DeleteSubmission",
+          "deploy_project": "#/$defs/DeployProject",
+          "get_account": "#/$defs/GetAccount",
+          "get_deployment": "#/$defs/GetDeployment",
+          "get_export": "#/$defs/GetExport",
+          "get_form_content": "#/$defs/GetFormContent",
+          "get_project": "#/$defs/GetProject",
+          "get_submission": "#/$defs/GetSubmission",
+          "get_validation_status": "#/$defs/GetValidationStatus",
+          "list_exports": "#/$defs/ListExports",
+          "list_projects": "#/$defs/ListProjects",
+          "list_submissions": "#/$defs/ListSubmissions",
+          "set_deployment_active": "#/$defs/SetDeploymentActive",
+          "set_validation_status": "#/$defs/SetValidationStatus"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/CreateProject"
+        },
+        {
+          "$ref": "#/$defs/DeleteProject"
+        },
+        {
+          "$ref": "#/$defs/GetFormContent"
+        },
+        {
+          "$ref": "#/$defs/ListSubmissions"
+        },
+        {
+          "$ref": "#/$defs/GetSubmission"
+        },
+        {
+          "$ref": "#/$defs/DeleteSubmission"
+        },
+        {
+          "$ref": "#/$defs/GetValidationStatus"
+        },
+        {
+          "$ref": "#/$defs/SetValidationStatus"
+        },
+        {
+          "$ref": "#/$defs/ClearValidationStatus"
+        },
+        {
+          "$ref": "#/$defs/GetDeployment"
+        },
+        {
+          "$ref": "#/$defs/DeployProject"
+        },
+        {
+          "$ref": "#/$defs/SetDeploymentActive"
+        },
+        {
+          "$ref": "#/$defs/ListExports"
+        },
+        {
+          "$ref": "#/$defs/GetExport"
+        },
+        {
+          "$ref": "#/$defs/CreateExport"
+        },
+        {
+          "$ref": "#/$defs/DeleteExport"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KobotoolboxAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kobotoolbox Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

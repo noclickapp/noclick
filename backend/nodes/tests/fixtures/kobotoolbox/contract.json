@@ -1,0 +1,45 @@
+{
+  "contract": {
+    "file": "openapi.json",
+    "sha256": "b87d781e580f2d0ee6ee52efbe0ab4b0d85c3785ac0014fc473350ac0d8fce83",
+    "version": "2.0.0 (api_v2)",
+    "source_url": "https://kf.kobotoolbox.org/api/v2/schema/?format=json",
+    "node_type": "automation-kobotoolbox",
+    "credential": {
+      "credential_type": "kobotoolbox_api_token",
+      "api_token": "<token>"
+    }
+  },
+  "operations": {
+    "get_account": "GET /me/",
+    "list_projects": "GET /api/v2/assets/",
+    "get_project": "GET /api/v2/assets/{uid_asset}/",
+    "create_project": "POST /api/v2/assets/",
+    "delete_project": "DELETE /api/v2/assets/{uid_asset}/",
+    "get_form_content": "GET /api/v2/assets/{uid_asset}/content/",
+    "list_submissions": "GET /api/v2/assets/{uid_asset}/data/",
+    "get_submission": "GET /api/v2/assets/{uid_asset}/data/{id}/",
+    "delete_submission": "DELETE /api/v2/assets/{uid_asset}/data/{id}/",
+    "get_validation_status": "GET /api/v2/assets/{uid_asset}/data/{id}/validation_status/",
+    "set_validation_status": "PATCH /api/v2/assets/{uid_asset}/data/{id}/validation_status/",
+    "clear_validation_status": "DELETE /api/v2/assets/{uid_asset}/data/{id}/validation_status/",
+    "get_deployment": "GET /api/v2/assets/{uid_asset}/deployment/",
+    "deploy_project": "POST /api/v2/assets/{uid_asset}/deployment/",
+    "set_deployment_active": "PATCH /api/v2/assets/{uid_asset}/deployment/",
+    "list_exports": "GET /api/v2/assets/{uid_asset}/exports/",
+    "get_export": "GET /api/v2/assets/{uid_asset}/exports/{uid_export}/",
+    "create_export": "POST /api/v2/assets/{uid_asset}/exports/",
+    "delete_export": "DELETE /api/v2/assets/{uid_asset}/exports/{uid_export}/"
+  },
+  "spec_defects": [
+    {
+      "operation": "list_submissions",
+      "kind": "d",
+      "failure": "MissingRequiredParameter: Missing required path parameter: id / KeyError: 'id'",
+      "spec_operation": "GET /api/v2/assets/{uid_asset}/data/",
+      "description": "The pinned collection endpoint declares a required path parameter id, although the path contains only uid_asset. The official migration guide documents the collection URL without a submission id; individual-submission reads alone append the id. Sending an id changes the operation to a detail read. The node correctly uses the documented collection route.",
+      "source": "https://support.kobotoolbox.org/migrating_api.html#data-endpoints-submission-data"
+    }
+  ],
+  "evidence": "Offline conformance with full generated responses; no live account or credential used."
+}
