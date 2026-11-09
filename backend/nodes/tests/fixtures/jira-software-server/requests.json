@@ -1,0 +1,573 @@
+[
+  {
+    "config": {
+      "operation": "get_current_user"
+    },
+    "method": "GET",
+    "path": "/api/2/myself",
+    "body": null,
+    "query": {},
+    "status": 200,
+    "response": {
+      "name": "fred",
+      "key": "JIRAUSER10100",
+      "displayName": "Fred F. User"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_issue",
+      "issue_key": "EX-1",
+      "fields": "summary,status",
+      "expand": "changelog"
+    },
+    "method": "GET",
+    "path": "/api/2/issue/EX-1",
+    "body": null,
+    "query": {
+      "fields": "summary,status",
+      "expand": "changelog"
+    },
+    "status": 200,
+    "response": {
+      "id": "10000",
+      "key": "EX-1",
+      "fields": {
+        "summary": "Example bug",
+        "description": "Server text"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "search_issues",
+      "jql": "project = HSP",
+      "start_at": 15,
+      "max_results": 15,
+      "fields": [
+        "summary",
+        "status"
+      ]
+    },
+    "method": "POST",
+    "path": "/api/2/search",
+    "body": {
+      "jql": "project = HSP",
+      "startAt": 15,
+      "maxResults": 15,
+      "fields": [
+        "summary",
+        "status"
+      ]
+    },
+    "query": {},
+    "status": 200,
+    "response": {
+      "issues": [
+        {
+          "key": "EX-1"
+        }
+      ],
+      "total": 41,
+      "startAt": 15,
+      "maxResults": 15
+    }
+  },
+  {
+    "config": {
+      "operation": "create_issue",
+      "project_key": "EX",
+      "issue_type": "Bug",
+      "summary": "Something is wrong",
+      "description": "Server wiki text",
+      "labels": [
+        "bugfix"
+      ],
+      "assignee_name": "fred",
+      "custom_fields": {
+        "customfield_10001": "value"
+      }
+    },
+    "method": "POST",
+    "path": "/api/2/issue",
+    "body": {
+      "fields": {
+        "project": {
+          "key": "EX"
+        },
+        "issuetype": {
+          "name": "Bug"
+        },
+        "summary": "Something is wrong",
+        "description": "Server wiki text",
+        "labels": [
+          "bugfix"
+        ],
+        "assignee": {
+          "name": "fred"
+        },
+        "customfield_10001": "value"
+      }
+    },
+    "query": {},
+    "status": 201,
+    "response": {
+      "id": "10001",
+      "key": "EX-1"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_issue",
+      "issue_key": "EX-1",
+      "fields": {
+        "summary": "Updated",
+        "labels": []
+      },
+      "notify_users": false
+    },
+    "method": "PUT",
+    "path": "/api/2/issue/EX-1",
+    "body": {
+      "fields": {
+        "summary": "Updated",
+        "labels": []
+      }
+    },
+    "query": {
+      "notifyUsers": "false"
+    },
+    "status": 204,
+    "response": {
+      "id": "10001",
+      "key": "EX-1"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_issue",
+      "issue_key": "EX-1",
+      "delete_subtasks": true
+    },
+    "method": "DELETE",
+    "path": "/api/2/issue/EX-1",
+    "body": null,
+    "query": {
+      "deleteSubtasks": "true"
+    },
+    "status": 204,
+    "response": {
+      "id": "10001",
+      "key": "EX-1"
+    }
+  },
+  {
+    "config": {
+      "operation": "assign_issue",
+      "issue_key": "EX-1",
+      "username": "fred"
+    },
+    "method": "PUT",
+    "path": "/api/2/issue/EX-1/assignee",
+    "body": {
+      "name": "fred"
+    },
+    "query": {},
+    "status": 204,
+    "response": {
+      "id": "10001",
+      "key": "EX-1"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_comments",
+      "issue_key": "EX-1",
+      "start_at": 1,
+      "max_results": 20
+    },
+    "method": "GET",
+    "path": "/api/2/issue/EX-1/comment",
+    "body": null,
+    "query": {
+      "startAt": "1",
+      "maxResults": "20"
+    },
+    "status": 200,
+    "response": {
+      "comments": [
+        {
+          "id": "10000",
+          "body": "A comment"
+        }
+      ],
+      "startAt": 1,
+      "maxResults": 20,
+      "total": 55
+    }
+  },
+  {
+    "config": {
+      "operation": "add_comment",
+      "issue_key": "EX-1",
+      "body": "Bug has been fixed."
+    },
+    "method": "POST",
+    "path": "/api/2/issue/EX-1/comment",
+    "body": {
+      "body": "Bug has been fixed."
+    },
+    "query": {},
+    "status": 201,
+    "response": {
+      "id": "10000",
+      "body": "Bug has been fixed."
+    }
+  },
+  {
+    "config": {
+      "operation": "list_transitions",
+      "issue_key": "EX-1"
+    },
+    "method": "GET",
+    "path": "/api/2/issue/EX-1/transitions",
+    "body": null,
+    "query": {},
+    "status": 200,
+    "response": {
+      "transitions": [
+        {
+          "id": "2",
+          "name": "Close Issue"
+        }
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "transition_issue",
+      "issue_key": "EX-1",
+      "transition_id": "2",
+      "fields": {
+        "resolution": {
+          "name": "Fixed"
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/api/2/issue/EX-1/transitions",
+    "body": {
+      "transition": {
+        "id": "2"
+      },
+      "fields": {
+        "resolution": {
+          "name": "Fixed"
+        }
+      }
+    },
+    "query": {},
+    "status": 204,
+    "response": {
+      "id": "10001",
+      "key": "EX-1"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_projects"
+    },
+    "method": "GET",
+    "path": "/api/2/project",
+    "body": null,
+    "query": {},
+    "status": 200,
+    "response": [
+      {
+        "id": "10000",
+        "key": "EX",
+        "name": "Example"
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "get_project",
+      "project_key": "EX"
+    },
+    "method": "GET",
+    "path": "/api/2/project/EX",
+    "body": null,
+    "query": {},
+    "status": 200,
+    "response": {
+      "id": "10000",
+      "key": "EX",
+      "name": "Example"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_issue_types"
+    },
+    "method": "GET",
+    "path": "/api/2/issuetype",
+    "body": null,
+    "query": {},
+    "status": 200,
+    "response": [
+      {
+        "id": "1",
+        "name": "Bug"
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "list_priorities"
+    },
+    "method": "GET",
+    "path": "/api/2/priority",
+    "body": null,
+    "query": {},
+    "status": 200,
+    "response": [
+      {
+        "id": "1",
+        "name": "High"
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "list_worklogs",
+      "issue_key": "EX-1"
+    },
+    "method": "GET",
+    "path": "/api/2/issue/EX-1/worklog",
+    "body": null,
+    "query": {},
+    "status": 200,
+    "response": {
+      "worklogs": [
+        {
+          "id": "100028",
+          "timeSpentSeconds": 12000
+        }
+      ],
+      "startAt": 0,
+      "maxResults": 1,
+      "total": 1
+    }
+  },
+  {
+    "config": {
+      "operation": "add_worklog",
+      "issue_key": "EX-1",
+      "time_spent_seconds": 12000,
+      "started": "2010-07-14T18:23:23.733+0000",
+      "comment": "I did some work here."
+    },
+    "method": "POST",
+    "path": "/api/2/issue/EX-1/worklog",
+    "body": {
+      "timeSpentSeconds": 12000,
+      "started": "2010-07-14T18:23:23.733+0000",
+      "comment": "I did some work here."
+    },
+    "query": {},
+    "status": 201,
+    "response": {
+      "id": "100028",
+      "timeSpentSeconds": 12000
+    }
+  },
+  {
+    "config": {
+      "operation": "list_boards",
+      "name": "Scrum",
+      "project_key": "EX",
+      "start_at": 50
+    },
+    "method": "GET",
+    "path": "/agile/1.0/board",
+    "body": null,
+    "query": {
+      "startAt": "50",
+      "maxResults": "50",
+      "name": "Scrum",
+      "projectKeyOrId": "EX"
+    },
+    "status": 200,
+    "response": {
+      "values": [
+        {
+          "id": 5,
+          "name": "Scrum"
+        }
+      ],
+      "startAt": 50,
+      "maxResults": 50,
+      "isLast": false
+    }
+  },
+  {
+    "config": {
+      "operation": "get_board",
+      "board_id": 5
+    },
+    "method": "GET",
+    "path": "/agile/1.0/board/5",
+    "body": null,
+    "query": {},
+    "status": 200,
+    "response": {
+      "id": 5,
+      "name": "Scrum",
+      "type": "scrum"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_sprints",
+      "board_id": 5
+    },
+    "method": "GET",
+    "path": "/agile/1.0/board/5/sprint",
+    "body": null,
+    "query": {
+      "startAt": "0",
+      "maxResults": "50"
+    },
+    "status": 200,
+    "response": {
+      "values": [
+        {
+          "id": 10001,
+          "name": "Sprint 1"
+        }
+      ],
+      "isLast": true
+    }
+  },
+  {
+    "config": {
+      "operation": "get_sprint",
+      "sprint_id": 10001
+    },
+    "method": "GET",
+    "path": "/agile/1.0/sprint/10001",
+    "body": null,
+    "query": {},
+    "status": 200,
+    "response": {
+      "id": 10001,
+      "name": "Sprint 1",
+      "state": "active"
+    }
+  },
+  {
+    "config": {
+      "operation": "create_sprint",
+      "board_id": 5,
+      "name": "Sprint 1",
+      "start_date": "2015-04-11T15:22:00.000+10:00",
+      "end_date": "2015-04-20T01:22:00.000+10:00",
+      "goal": "Goal for the sprint"
+    },
+    "method": "POST",
+    "path": "/agile/1.0/sprint",
+    "body": {
+      "originBoardId": 5,
+      "name": "Sprint 1",
+      "startDate": "2015-04-11T15:22:00.000+10:00",
+      "endDate": "2015-04-20T01:22:00.000+10:00",
+      "goal": "Goal for the sprint"
+    },
+    "query": {},
+    "status": 201,
+    "response": {
+      "id": 10001,
+      "name": "Sprint 1",
+      "state": "future"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_sprint",
+      "sprint_id": 10001,
+      "name": "Sprint 1",
+      "state": "closed",
+      "goal": "Goal for the sprint"
+    },
+    "method": "POST",
+    "path": "/agile/1.0/sprint/10001",
+    "body": {
+      "name": "Sprint 1",
+      "state": "closed",
+      "goal": "Goal for the sprint"
+    },
+    "query": {},
+    "status": 200,
+    "response": {
+      "id": 10001,
+      "name": "Sprint 1",
+      "state": "closed"
+    }
+  },
+  {
+    "config": {
+      "operation": "move_issues_to_sprint",
+      "sprint_id": 10001,
+      "issues": [
+        "EX-1",
+        "EX-2"
+      ]
+    },
+    "method": "POST",
+    "path": "/agile/1.0/sprint/10001/issue",
+    "body": {
+      "issues": [
+        "EX-1",
+        "EX-2"
+      ]
+    },
+    "query": {},
+    "status": 204,
+    "response": {
+      "id": "10001",
+      "key": "EX-1"
+    }
+  },
+  {
+    "source": "https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-create-issue-7897248/",
+    "config": {
+      "operation": "create_issue",
+      "project_key": "TEST",
+      "issue_type": "Bug",
+      "summary": "REST ye merry gentlemen.",
+      "description": "Creating of an issue using project keys and issue type names using the REST API"
+    },
+    "method": "POST",
+    "path": "/api/2/issue",
+    "query": {},
+    "body": {
+      "fields": {
+        "project": {
+          "key": "TEST"
+        },
+        "summary": "REST ye merry gentlemen.",
+        "description": "Creating of an issue using project keys and issue type names using the REST API",
+        "issuetype": {
+          "name": "Bug"
+        }
+      }
+    },
+    "status": 201,
+    "response": {
+      "id": "39000",
+      "key": "TEST-101",
+      "self": "http://localhost:8090/rest/api/2/issue/39000"
+    }
+  }
+]
