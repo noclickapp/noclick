@@ -19,6 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.agent_events import prune_empty
 from nodes.core.webhook_trigger import (
     ExternalWebhookTriggerMixin,
     WebhookTriggerConfigBase,
@@ -394,7 +395,7 @@ class KommoNode(ExternalWebhookTriggerMixin, WorkflowNode):
                 )
             elif event_type == "add_task":
                 lines.append(
-                    f"Task: {record['text']} (account {record.get('account_id', '')})"
+                    f"Task: {prune_empty(record['text'], max_str=1500)} (account {record.get('account_id', '')})"
                 )
                 lines.append(
                     f"Created by user {record.get('created_user_id', '')}; responsible user {record.get('responsible_user_id', '')}; due {record.get('complete_before', '')}"
@@ -407,7 +408,7 @@ class KommoNode(ExternalWebhookTriggerMixin, WorkflowNode):
                 )
             else:
                 lines.append(
-                    f"Message from {record['author']['type']} {record['author']['id']} via {record['origin']}: {record['text']}"
+                    f"Message from {record['author']['type']} {record['author']['id']} via {record['origin']}: {prune_empty(record['text'], max_str=1500)}"
                 )
                 lines.append(
                     f"Chat {record['chat_id']}; talk {record['talk_id']}; contact {record['contact_id']}; {record['entity_type']} {record['entity_id']}"

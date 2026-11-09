@@ -408,3 +408,15 @@ def test_updated_lead_without_stage_transition_still_reaches_agent():
     event = KommoNode.resolve_agent_event(output)
     assert "Previous stage" not in event["text"]
     assert "get_lead" in event["text"]
+
+
+@pytest.mark.parametrize("event_type", ["add_task", "add_message"])
+def test_agent_event_bounds_content_and_preserves_action_ids(event_type):
+    body = json.loads(json.dumps(EVENTS[event_type]["body"]))
+    record = body["task"]["add"][0] if event_type == "add_task" else body["add"][0]
+    record["text"] = "x" * 10000
+    output = KommoNode.resolve_trigger_payload(body, {"event_type": event_type})
+    event = KommoNode.resolve_agent_event(output)
+    assert record["id"] in event["text"]
+    assert len(event["text"]) < 2500
+    assert "x" * 1501 not in event["text"]
