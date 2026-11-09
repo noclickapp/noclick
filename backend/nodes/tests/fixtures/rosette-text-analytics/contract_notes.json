@@ -1,0 +1,39 @@
+[
+  {
+    "classification": "d",
+    "operations": [
+      "detect_language",
+      "extract_entities",
+      "categorize_text",
+      "extract_events",
+      "analyze_morphology",
+      "extract_relationships",
+      "find_similar_terms",
+      "create_embeddings",
+      "split_sentences",
+      "analyze_sentiment",
+      "parse_dependencies",
+      "tokenize_text",
+      "extract_topics",
+      "transliterate_text"
+    ],
+    "source": "https://developer.babelstreet.com/swagger.yaml",
+    "details": "DocumentRequest.oneOf references ContentString and ContentUri, but neither branch requires its property and both allow additional properties. Every provider-published content-only example therefore validates against both branches and fails oneOf. The node sends the documented content request shapes; adding an invalid contentUri merely to distinguish the schemas would contradict those examples. Request fixtures retain the published examples verbatim."
+  },
+  {
+    "classification": "d",
+    "operations": [
+      "find_similar_terms"
+    ],
+    "source": "https://developer.babelstreet.com/swagger.yaml",
+    "details": "The /semantics/similar JSON String and Options examples supply options.resultLanguages as [\"eng\", \"spa\", \"deu\", \"jpn\"], but SimilarTermsOptions.items references LanguageCode objects. The node uses the documented string-code list."
+  },
+  {
+    "classification": "d",
+    "operations": [
+      "compare_addresses"
+    ],
+    "source": "https://developer.babelstreet.com/swagger.yaml",
+    "details": "The /address-similarity JSON String example supplies address2 as a free-form string, but Address.oneOf permits only AddressFielded or AddressString objects. Ordinary valid fielded/address objects also match both optional-property object branches. The node supports documented free-form address strings and does not invent fields to evade oneOf."
+  }
+]
