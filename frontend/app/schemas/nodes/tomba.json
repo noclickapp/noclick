@@ -1,0 +1,856 @@
+{
+  "$defs": {
+    "CreateLead": {
+      "additionalProperties": false,
+      "description": "Create a lead; duplicate emails create additional leads. May invoke a configured Tomba lead webhook.",
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 55,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 55,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "website_url": {
+          "anyOf": [
+            {
+              "maxLength": 253,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website Url"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead list",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "searchable": false
+          }
+        },
+        "score": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        },
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Create Lead",
+          "type": "string"
+        }
+      },
+      "title": "CreateLead",
+      "type": "object"
+    },
+    "CreateLeadList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_lead_list",
+          "default": "create_lead_list",
+          "title": "Create Lead List",
+          "type": "string"
+        },
+        "name": {
+          "description": "A unique list name.",
+          "maxLength": 40,
+          "minLength": 2,
+          "title": "Name",
+          "type": "string"
+        },
+        "favorite": {
+          "default": false,
+          "title": "Favorite",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateLeadList",
+      "type": "object"
+    },
+    "DeleteLead": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "minimum": 1,
+          "title": "Lead",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_lead",
+          "default": "delete_lead",
+          "title": "Delete Lead",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "DeleteLead",
+      "type": "object"
+    },
+    "DeleteLeadList": {
+      "additionalProperties": false,
+      "description": "Delete a lead list; the leads in it are retained by Tomba.",
+      "properties": {
+        "list_id": {
+          "minimum": 1,
+          "title": "Lead list",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_lead_list",
+          "default": "delete_lead_list",
+          "title": "Delete Lead List",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "DeleteLeadList",
+      "type": "object"
+    },
+    "DomainSearch": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "description": "A bare domain, for example stripe.com.",
+          "maxLength": 253,
+          "minLength": 3,
+          "title": "Company domain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "domain_search",
+          "default": "domain_search",
+          "title": "Search Domain",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Email addresses per page. Each page is one request.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "DomainSearch",
+      "type": "object"
+    },
+    "DomainSuggestions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "domain_suggestions",
+          "default": "domain_suggestions",
+          "title": "Suggest Domains",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Company name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "DomainSuggestions",
+      "type": "object"
+    },
+    "EmailFinder": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "description": "A bare domain, for example stripe.com.",
+          "maxLength": 253,
+          "minLength": 3,
+          "title": "Company domain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "email_finder",
+          "default": "email_finder",
+          "title": "Find Email",
+          "type": "string"
+        },
+        "first_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain",
+        "first_name",
+        "last_name"
+      ],
+      "title": "EmailFinder",
+      "type": "object"
+    },
+    "EmailVerifier": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "email_verifier",
+          "default": "email_verifier",
+          "title": "Verify Email",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "EmailVerifier",
+      "type": "object"
+    },
+    "GetLead": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "minimum": 1,
+          "title": "Lead",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Get Lead",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "GetLead",
+      "type": "object"
+    },
+    "GetLeadList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "minimum": 1,
+          "title": "Lead list",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_lead_list",
+          "default": "get_lead_list",
+          "title": "Get Lead List",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetLeadList",
+      "type": "object"
+    },
+    "ListLeadLists": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_lead_lists",
+          "default": "list_lead_lists",
+          "title": "List Lead Lists",
+          "type": "string"
+        }
+      },
+      "title": "ListLeadLists",
+      "type": "object"
+    },
+    "ListLeads": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "List Leads",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter by lead list",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "searchable": false
+          }
+        }
+      },
+      "title": "ListLeads",
+      "type": "object"
+    },
+    "Technology": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "description": "A bare domain, for example stripe.com.",
+          "maxLength": 253,
+          "minLength": 3,
+          "title": "Company domain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "technology",
+          "default": "technology",
+          "title": "Get Domain Technologies",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "Technology",
+      "type": "object"
+    },
+    "TombaApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "tomba_api_key",
+          "default": "tomba_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Account secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret"
+      ],
+      "title": "Tomba API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key and account secret from Tomba\u2019s API keys page. Both are required. NoClick sends them as X-Tomba-Key and X-Tomba-Secret headers to api.tomba.io. Connecting reads your leads without changing them.",
+      "x-credential-url": "https://app.tomba.io/api"
+    },
+    "UpdateLead": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "minimum": 1,
+          "title": "Lead",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "lead_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 55,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "maxLength": 25,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 55,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "website_url": {
+          "anyOf": [
+            {
+              "maxLength": 253,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website Url"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead list",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "searchable": false
+          }
+        },
+        "score": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        },
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Update Lead",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "UpdateLead",
+      "type": "object"
+    },
+    "UpdateLeadList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "minimum": 1,
+          "title": "Lead list",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_lead_list",
+          "default": "update_lead_list",
+          "title": "Update Lead List",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit when changing only favorite; Tomba rejects the existing name.",
+          "title": "Name"
+        },
+        "favorite": {
+          "description": "Choose explicitly: Tomba always overwrites this flag.",
+          "title": "Favorite",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "list_id",
+        "favorite"
+      ],
+      "title": "UpdateLeadList",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_lead": "#/$defs/CreateLead",
+          "create_lead_list": "#/$defs/CreateLeadList",
+          "delete_lead": "#/$defs/DeleteLead",
+          "delete_lead_list": "#/$defs/DeleteLeadList",
+          "domain_search": "#/$defs/DomainSearch",
+          "domain_suggestions": "#/$defs/DomainSuggestions",
+          "email_finder": "#/$defs/EmailFinder",
+          "email_verifier": "#/$defs/EmailVerifier",
+          "get_lead": "#/$defs/GetLead",
+          "get_lead_list": "#/$defs/GetLeadList",
+          "list_lead_lists": "#/$defs/ListLeadLists",
+          "list_leads": "#/$defs/ListLeads",
+          "technology": "#/$defs/Technology",
+          "update_lead": "#/$defs/UpdateLead",
+          "update_lead_list": "#/$defs/UpdateLeadList"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DomainSearch"
+        },
+        {
+          "$ref": "#/$defs/EmailFinder"
+        },
+        {
+          "$ref": "#/$defs/EmailVerifier"
+        },
+        {
+          "$ref": "#/$defs/DomainSuggestions"
+        },
+        {
+          "$ref": "#/$defs/Technology"
+        },
+        {
+          "$ref": "#/$defs/ListLeads"
+        },
+        {
+          "$ref": "#/$defs/GetLead"
+        },
+        {
+          "$ref": "#/$defs/CreateLead"
+        },
+        {
+          "$ref": "#/$defs/UpdateLead"
+        },
+        {
+          "$ref": "#/$defs/DeleteLead"
+        },
+        {
+          "$ref": "#/$defs/ListLeadLists"
+        },
+        {
+          "$ref": "#/$defs/GetLeadList"
+        },
+        {
+          "$ref": "#/$defs/CreateLeadList"
+        },
+        {
+          "$ref": "#/$defs/UpdateLeadList"
+        },
+        {
+          "$ref": "#/$defs/DeleteLeadList"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TombaApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Tomba Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

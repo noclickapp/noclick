@@ -1,0 +1,17 @@
+{
+  "domain_search": "https://docs.tomba.io/openapi.md",
+  "email_finder": "https://docs.tomba.io/openapi.md",
+  "email_verifier": "https://docs.tomba.io/openapi.md",
+  "domain_suggestions": "https://docs.tomba.io/openapi.md",
+  "technology": "https://docs.tomba.io/openapi.md",
+  "list_leads": "https://docs.tomba.io/openapi.md",
+  "get_lead": "https://docs.tomba.io/openapi.md",
+  "create_lead": "https://docs.tomba.io/openapi.md",
+  "update_lead": "https://docs.tomba.io/openapi.md",
+  "delete_lead": "https://docs.tomba.io/openapi.md",
+  "list_lead_lists": "https://docs.tomba.io/openapi.md",
+  "get_lead_list": "https://docs.tomba.io/openapi.md",
+  "create_lead_list": "https://docs.tomba.io/openapi.md",
+  "update_lead_list": "https://docs.tomba.io/openapi.md",
+  "delete_lead_list": "https://docs.tomba.io/openapi.md"
+}

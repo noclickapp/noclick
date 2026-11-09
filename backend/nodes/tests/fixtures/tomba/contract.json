@@ -1,0 +1,24 @@
+{
+  "source_url": "https://raw.githubusercontent.com/tomba-io/api-specification/master/spec/open-api-3.json",
+  "version": "v1",
+  "sha256": "f08847d2184fff660a47e73b4f24c212e99feba9ec114a5d6d4869e441188a69",
+  "operations": {
+    "domain_search": "GET /domain-search/{domain}",
+    "email_finder": "GET /email-finder/{id}",
+    "email_verifier": "GET /email-verifier/{id}",
+    "domain_suggestions": "GET /domains-suggestion",
+    "technology": "GET /technologies/{domain}",
+    "list_leads": "GET /leads/",
+    "get_lead": "GET /leads/{id}",
+    "create_lead": "POST /leads",
+    "update_lead": "PUT /leads/{id}",
+    "delete_lead": "DELETE /leads/{id}",
+    "list_lead_lists": "GET /leads_lists/",
+    "get_lead_list": "GET /leads_lists/{id}",
+    "create_lead_list": "POST /leads_lists/",
+    "update_lead_list": "PUT /leads_lists/{id}",
+    "delete_lead_list": "DELETE /leads_lists/{id}"
+  },
+  "current_wire_reference": "https://docs.tomba.io/openapi.md",
+  "authentication_reference": "https://docs.tomba.io/authentication"
+}
