@@ -25,7 +25,7 @@ from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
-from nodes.netlify_operations import CATALOG
+from nodes.netlify_operations import BODY_SCHEMAS, CATALOG
 from nodes.scopes.netlify import NETLIFY_SCOPES
 
 BASE_URL = "https://api.netlify.com/api/v1"
@@ -110,9 +110,12 @@ def _make_config(op: dict[str, Any]) -> type[BaseModel]:
             hint += " Required keys: " + ", ".join(op["body_required_fields"]) + "."
         if op["body_fields"]:
             hint += " Documented keys include: " + ", ".join(op["body_fields"][:20]) + "."
+        body_editor = dict(JSON_EDITOR)
+        if name in BODY_SCHEMAS:
+            body_editor.update(contentMediaType="application/json", contentSchema=BODY_SCHEMAS[name])
         fields["body_json"] = (
             str if op["body_required"] else Optional[str],
-            Field(... if op["body_required"] else None, title="Request Body (JSON)", description=hint, json_schema_extra=JSON_EDITOR),
+            Field(... if op["body_required"] else None, title="Request Body (JSON)", description=hint, json_schema_extra=body_editor),
         )
     return create_model(
         "Netlify" + "".join(part.title() for part in name.split("_")) + "Config",

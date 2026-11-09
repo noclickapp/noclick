@@ -281,3 +281,17 @@ def test_agent_event_includes_documented_failure_details():
     assert "Site ID: site-abc" in event["text"]
     assert "Context: production" in event["text"]
     assert event["conversation_key"] == "deploy-1"
+
+
+def test_required_body_editors_expose_the_contract_shape():
+    for operation, required in {
+        "create_env_vars": None,
+        "create_account": ["name", "type_id"],
+        "update_dev_server_state": ["state"],
+        "create_site_database_branch": ["branch_id"],
+    }.items():
+        field = CONFIG_MODELS[operation].model_json_schema()["properties"]["body_json"]
+        assert field["contentMediaType"] == "application/json"
+        assert field["contentSchema"]["type"] == ("array" if required is None else "object")
+        if required:
+            assert field["contentSchema"]["required"] == required

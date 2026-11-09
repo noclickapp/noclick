@@ -2982,3 +2982,140 @@ CATALOG = {'source': 'https://github.com/netlify/open-api/blob/master/swagger.ym
               {'method': 'PUT',
                'path': '/deploys/{deploy_id}/edge_functions/{code_sha}',
                'reason': 'binary upload'}]}
+
+
+# Request editor schemas copied from the pinned Netlify OpenAPI 2.60.0 contract.
+BODY_SCHEMAS = {'create_env_vars': {'type': 'array',
+                     'items': {'type': 'object',
+                               'properties': {'key': {'type': 'string',
+                                                      'description': 'The existing or new name of '
+                                                                     'the key, if you wish to '
+                                                                     'rename it (case-sensitive)'},
+                                              'scopes': {'description': 'The scopes that this '
+                                                                        'environment variable is '
+                                                                        'set to (Pro plans and '
+                                                                        'above)',
+                                                         'type': 'array',
+                                                         'items': {'type': 'string',
+                                                                   'enum': ['builds',
+                                                                            'functions',
+                                                                            'runtime',
+                                                                            'post-processing']}},
+                                              'values': {'type': 'array',
+                                                         'items': {'type': 'object',
+                                                                   'properties': {'id': {'type': 'string',
+                                                                                         'description': 'The '
+                                                                                                        'environment '
+                                                                                                        'variable '
+                                                                                                        "value's "
+                                                                                                        'universally '
+                                                                                                        'unique '
+                                                                                                        'ID',
+                                                                                         'x-faker': 'datatype.uuid'},
+                                                                                  'value': {'type': 'string',
+                                                                                            'description': 'The '
+                                                                                                           'environment '
+                                                                                                           "variable's "
+                                                                                                           'unencrypted '
+                                                                                                           'value',
+                                                                                            'x-faker': 'internet.password'},
+                                                                                  'context': {'type': 'string',
+                                                                                              'enum': ['all',
+                                                                                                       'dev',
+                                                                                                       'dev-server',
+                                                                                                       'branch-deploy',
+                                                                                                       'deploy-preview',
+                                                                                                       'production',
+                                                                                                       'branch'],
+                                                                                              'description': 'The '
+                                                                                                             'deploy '
+                                                                                                             'context '
+                                                                                                             'in '
+                                                                                                             'which '
+                                                                                                             'this '
+                                                                                                             'value '
+                                                                                                             'will '
+                                                                                                             'be '
+                                                                                                             'used. '
+                                                                                                             '`dev` '
+                                                                                                             'refers '
+                                                                                                             'to '
+                                                                                                             'local '
+                                                                                                             'development '
+                                                                                                             'when '
+                                                                                                             'running '
+                                                                                                             '`netlify '
+                                                                                                             'dev`.'},
+                                                                                  'context_parameter': {'type': 'string',
+                                                                                                        'description': 'An '
+                                                                                                                       'additional '
+                                                                                                                       'parameter '
+                                                                                                                       'for '
+                                                                                                                       'custom '
+                                                                                                                       'branches. '
+                                                                                                                       'Currently, '
+                                                                                                                       'this '
+                                                                                                                       'is '
+                                                                                                                       'used '
+                                                                                                                       'for '
+                                                                                                                       'specifying '
+                                                                                                                       'a '
+                                                                                                                       'branch '
+                                                                                                                       'name '
+                                                                                                                       'when '
+                                                                                                                       '`context=branch`.'}},
+                                                                   'description': 'Environment '
+                                                                                  'variable value '
+                                                                                  'model '
+                                                                                  'definition'}},
+                                              'is_secret': {'type': 'boolean',
+                                                            'description': 'Secret values are only '
+                                                                           'readable by code '
+                                                                           "running on Netlify's "
+                                                                           'systems. With secrets, '
+                                                                           'only the local '
+                                                                           'development context '
+                                                                           'values are readable '
+                                                                           'from the UI, API, and '
+                                                                           'CLI. By default, '
+                                                                           'environment variable '
+                                                                           'values are not '
+                                                                           'secret.'}}}},
+ 'create_account': {'type': 'object',
+                    'required': ['name', 'type_id'],
+                    'properties': {'name': {'type': 'string'},
+                                   'type_id': {'type': 'string'},
+                                   'payment_method_id': {'type': 'string'},
+                                   'period': {'type': 'string', 'enum': ['monthly', 'yearly']},
+                                   'extra_seats_block': {'type': 'integer'}}},
+ 'update_dev_server_state': {'type': 'object',
+                             'required': ['state'],
+                             'properties': {'state': {'type': 'string',
+                                                      'enum': ['starting',
+                                                               'live',
+                                                               'error',
+                                                               'done']},
+                                            'task_id': {'type': 'string'},
+                                            'error': {'type': 'string'}}},
+ 'create_site_database_branch': {'type': 'object',
+                                 'description': 'Request body for creating a database branch',
+                                 'required': ['branch_id'],
+                                 'properties': {'parent_branch_id': {'type': 'string',
+                                                                     'description': 'The ID of the '
+                                                                                    'parent branch '
+                                                                                    'to create the '
+                                                                                    'new branch '
+                                                                                    'from. '
+                                                                                    'Defaults to '
+                                                                                    'the '
+                                                                                    'production '
+                                                                                    'branch if not '
+                                                                                    'specified.'},
+                                                'branch_id': {'type': 'string',
+                                                              'description': 'The branch '
+                                                                             'identifier'},
+                                                'metadata': {'type': 'object',
+                                                             'description': 'Arbitrary metadata to '
+                                                                            'associate with the '
+                                                                            'branch',
+                                                             'additionalProperties': True}}}}

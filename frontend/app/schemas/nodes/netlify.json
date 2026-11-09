@@ -235,6 +235,35 @@
           "x-is-trigger": false
         },
         "body_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "type_id": {
+                "type": "string"
+              },
+              "payment_method_id": {
+                "type": "string"
+              },
+              "period": {
+                "enum": [
+                  "monthly",
+                  "yearly"
+                ],
+                "type": "string"
+              },
+              "extra_seats_block": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "name",
+              "type_id"
+            ],
+            "type": "object"
+          },
           "description": "JSON object body. Required keys: name, type_id. Documented keys include: name, type_id, payment_method_id, period, extra_seats_block.",
           "title": "Request Body (JSON)",
           "type": "string",
@@ -554,6 +583,72 @@
               "type": "null"
             }
           ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "properties": {
+                "key": {
+                  "description": "The existing or new name of the key, if you wish to rename it (case-sensitive)",
+                  "type": "string"
+                },
+                "scopes": {
+                  "description": "The scopes that this environment variable is set to (Pro plans and above)",
+                  "items": {
+                    "enum": [
+                      "builds",
+                      "functions",
+                      "runtime",
+                      "post-processing"
+                    ],
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "values": {
+                  "items": {
+                    "description": "Environment variable value model definition",
+                    "properties": {
+                      "id": {
+                        "description": "The environment variable value's universally unique ID",
+                        "type": "string",
+                        "x-faker": "datatype.uuid"
+                      },
+                      "value": {
+                        "description": "The environment variable's unencrypted value",
+                        "type": "string",
+                        "x-faker": "internet.password"
+                      },
+                      "context": {
+                        "description": "The deploy context in which this value will be used. `dev` refers to local development when running `netlify dev`.",
+                        "enum": [
+                          "all",
+                          "dev",
+                          "dev-server",
+                          "branch-deploy",
+                          "deploy-preview",
+                          "production",
+                          "branch"
+                        ],
+                        "type": "string"
+                      },
+                      "context_parameter": {
+                        "description": "An additional parameter for custom branches. Currently, this is used for specifying a branch name when `context=branch`.",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "is_secret": {
+                  "description": "Secret values are only readable by code running on Netlify's systems. With secrets, only the local development context values are readable from the UI, API, and CLI. By default, environment variable values are not secret.",
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
           "default": null,
           "description": "JSON array body.",
           "title": "Request Body (JSON)",
@@ -883,6 +978,29 @@
           "type": "string"
         },
         "body_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "description": "Request body for creating a database branch",
+            "properties": {
+              "parent_branch_id": {
+                "description": "The ID of the parent branch to create the new branch from. Defaults to the production branch if not specified.",
+                "type": "string"
+              },
+              "branch_id": {
+                "description": "The branch identifier",
+                "type": "string"
+              },
+              "metadata": {
+                "additionalProperties": true,
+                "description": "Arbitrary metadata to associate with the branch",
+                "type": "object"
+              }
+            },
+            "required": [
+              "branch_id"
+            ],
+            "type": "object"
+          },
           "description": "JSON object body. Required keys: branch_id. Documented keys include: parent_branch_id, branch_id, metadata.",
           "title": "Request Body (JSON)",
           "type": "string",
@@ -6482,6 +6600,30 @@
           "type": "string"
         },
         "body_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "properties": {
+              "state": {
+                "enum": [
+                  "starting",
+                  "live",
+                  "error",
+                  "done"
+                ],
+                "type": "string"
+              },
+              "task_id": {
+                "type": "string"
+              },
+              "error": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "state"
+            ],
+            "type": "object"
+          },
           "description": "JSON object body. Required keys: state. Documented keys include: state, task_id, error.",
           "title": "Request Body (JSON)",
           "type": "string",

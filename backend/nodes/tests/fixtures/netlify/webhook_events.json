@@ -19,7 +19,8 @@
     "source": "https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/#get-deploy",
     "headers": {
       "X-Netlify-Event": "deploy_created"
-    }
+    },
+    "headers_source": "https://github.com/netlify/netlify-mcp/blob/c67980d8f4809b87d52e369e79fe31956c7b0c89/netlify/functions/events-relay.ts#L125"
   },
   "deploy_failed": {
     "body": {
@@ -41,7 +42,8 @@
     "source": "https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/#get-deploy",
     "headers": {
       "X-Netlify-Event": "deploy_failed"
-    }
+    },
+    "headers_source": "https://github.com/netlify/netlify-mcp/blob/c67980d8f4809b87d52e369e79fe31956c7b0c89/netlify/functions/events-relay.ts#L125"
   },
   "deploy_building": {
     "body": {
@@ -63,7 +65,8 @@
     "source": "https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/#get-deploy",
     "headers": {
       "X-Netlify-Event": "deploy_building"
-    }
+    },
+    "headers_source": "https://github.com/netlify/netlify-mcp/blob/c67980d8f4809b87d52e369e79fe31956c7b0c89/netlify/functions/events-relay.ts#L125"
   },
   "submission_created": {
     "body": {
@@ -88,6 +91,7 @@
     "source": "https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/#get-verified-submissions",
     "headers": {
       "X-Netlify-Event": "submission_created"
-    }
+    },
+    "headers_source": "https://github.com/netlify/netlify-mcp/blob/c67980d8f4809b87d52e369e79fe31956c7b0c89/netlify/functions/events-relay.ts#L125"
   }
 }
