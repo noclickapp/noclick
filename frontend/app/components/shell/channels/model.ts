@@ -1,7 +1,7 @@
 // What the Channels page works out from its data: which workspace a channel
 // sits in, what's unread, who wrote a message, which agent a member is, and
 // how a workspace's name becomes its tile.
-import type { AgentChoice, AgentHue, Channel, ChannelAuthor, ChannelMember, ChannelWorkspace } from './types';
+import type { AgentChoice, AgentHue, Channel, ChannelAuthor, ChannelMember } from './types';
 
 /** You (the account) as a channel shows you: in every channel, though never a member row. */
 export const YOU_ID = 'you';
@@ -79,21 +79,6 @@ export function modeLine(mode: Channel['mode'], agents: Pick<ChannelMember, 'nam
     const listed = agents.length ? new Intl.ListFormat('en', { type: 'conjunction' }).format(agents.map((a) => a.name)) : 'Agents';
     const who = named ? listed : one ? 'It' : 'They';
     return mode === 'all' ? `${who} ${one ? 'reads' : 'read'} every message` : `${who} ${one ? 'answers' : 'answer'} when @-mentioned`;
-}
-
-/** A workspace's open channels, oldest first, as a sidebar lists them. */
-export function channelsIn(workspace: ChannelWorkspace, channels: Channel[]): Channel[] {
-    return channels.filter((c) => c.workspaceId === workspace.id).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-}
-
-/** A workspace's channel by id, else its first. */
-export function channelIn(workspace: ChannelWorkspace, channels: Channel[], channelId?: string | null): Channel | null {
-    const mine = channelsIn(workspace, channels);
-    return mine.find((c) => c.id === channelId) ?? mine[0] ?? null;
-}
-
-export function unreadIn(workspace: ChannelWorkspace, channels: Channel[]): number {
-    return channelsIn(workspace, channels).reduce((sum, c) => sum + c.unread, 0);
 }
 
 /** An agent posting for you: the account's post an agent made (your assistant setting a channel going), never yours. */

@@ -13,7 +13,6 @@
 import { Fragment, useMemo, useRef, useState } from 'react';
 import { ArrowRight, ChevronDown, ChevronRight, EyeOff, Hash, Link2, MessageSquareText, MoreHorizontal, Pin, PinOff, Plug, SmilePlus } from 'lucide-react';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
-import { clockLabel } from '~/components/dashboard/primitives';
 import { LogoMark, MARK_IN_A_SHAPE } from '~/components/shared/LogoMark';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
@@ -48,6 +47,11 @@ function dayLabel(day: string, today: string): string {
     d.setDate(d.getDate() - 1);
     if (day === localDay(d.toISOString())) return 'Yesterday';
     return new Date(`${day}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+}
+
+/** A message's time as Slack writes it: the reader's own clock ("9:24 AM"). */
+export function timeLabel(iso: string): string {
+    return new Date(iso).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
 }
 
 /** A key that says who wrote a message, for grouping. */
@@ -368,7 +372,7 @@ function RepliesBar({ msg, members, user, onOpen }: { msg: ChannelMessage; membe
             </span>
             {thread.unread > 0 && <span className="shrink-0 rounded-full bg-foreground px-1.5 text-[11px] font-semibold leading-[18px] text-background">{thread.unread} new</span>}
             <span className="relative min-w-0 flex-1 truncate text-muted-foreground">
-                <span className="group-hover/replies:hidden group-focus-visible/replies:hidden">{thread.lastAt ? `Last reply ${clockLabel(thread.lastAt)}` : ''}</span>
+                <span className="group-hover/replies:hidden group-focus-visible/replies:hidden">{thread.lastAt ? `Last reply ${timeLabel(thread.lastAt)}` : ''}</span>
                 <span className="hidden group-hover/replies:inline group-focus-visible/replies:inline">View thread</span>
             </span>
             <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity duration-150 group-hover/replies:opacity-100 group-focus-visible/replies:opacity-100" strokeWidth={2} />
@@ -399,7 +403,7 @@ function PinLine({ msg, members, actions }: { msg: ChannelMessage; members: Chan
                 ) : (
                     'a message'
                 )}{' '}
-                to this channel · <time className="tabular-nums">{clockLabel(msg.at)}</time>
+                to this channel · <time className="tabular-nums">{timeLabel(msg.at)}</time>
             </span>
             {actions.onSeePins && (
                 <button type="button" onClick={actions.onSeePins} className={cn(LINKISH, 'ml-auto shrink-0')}>
@@ -471,7 +475,7 @@ export function MessageRow({
             )}
             <div className="w-8 shrink-0 pt-0.5">
                 {continued ? (
-                    <time className="hidden pt-1 text-center text-[10.5px] tabular-nums text-muted-foreground group-hover:block">{clockLabel(msg.at)}</time>
+                    <time className="hidden pt-1 text-center text-[10.5px] tabular-nums text-muted-foreground group-hover:block">{timeLabel(msg.at)}</time>
                 ) : noclick ? (
                     <NoClickAvatar />
                 ) : app ? (
@@ -488,7 +492,7 @@ export function MessageRow({
                         {msg.author.type === 'a2a' && <span className="text-[12.5px] text-muted-foreground">outside agent</span>}
                         {postedForYou(msg.author) && <span className="text-[12.5px] text-muted-foreground">for you</span>}
                         {author?.workflowName && <span className="text-[12.5px] text-muted-foreground">{author.workflowName}</span>}
-                        <time className="text-[12px] tabular-nums text-muted-foreground/80">{msg.pending ? 'Sending…' : clockLabel(msg.at)}</time>
+                        <time className="text-[12px] tabular-nums text-muted-foreground/80">{msg.pending ? 'Sending…' : timeLabel(msg.at)}</time>
                         {msg.ephemeral && (
                             <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
                                 <EyeOff className="h-3.5 w-3.5 self-center" strokeWidth={1.75} />

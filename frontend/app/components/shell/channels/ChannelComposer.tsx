@@ -480,34 +480,39 @@ export function ChannelComposer({
                                             <Plus className="h-[18px] w-[18px]" strokeWidth={1.9} />
                                         </button>
                                     </Tip>
-                                    <Tip label={formatBar ? 'Hide formatting' : 'Show formatting'}>
-                                        <button
-                                            type="button"
-                                            onClick={toggleFormatBar}
-                                            aria-label="Formatting"
-                                            aria-pressed={formatBar}
-                                            data-testid="format-toggle"
-                                            className={cn(ICON_BUTTON, 'ml-1 text-[13.5px] font-semibold', formatBar && 'bg-foreground/[0.08] text-foreground')}
-                                        >
-                                            <span className="underline decoration-[1.5px] underline-offset-[3px]">Aa</span>
-                                        </button>
-                                    </Tip>
-                                    <Tip label="Emoji">
-                                        <PopoverTrigger aria-label="Emoji" data-testid="emoji-button" className={cn(ICON_BUTTON, emojiOpen && 'bg-foreground/[0.08] text-foreground')}>
-                                            <Smile className="h-[18px] w-[18px]" strokeWidth={1.75} />
-                                        </PopoverTrigger>
-                                    </Tip>
-                                    <Tip label="Mention someone">
-                                        <button type="button" onClick={typeMention} aria-label="Mention someone" className={ICON_BUTTON}>
-                                            <AtSign className="h-[18px] w-[18px]" strokeWidth={1.75} />
-                                        </button>
-                                    </Tip>
-                                    <Divider />
-                                    <Tip label="Record a voice clip">
-                                        <button type="button" onClick={() => void voice.start()} aria-label="Record a voice clip" data-testid="voice-button" className={ICON_BUTTON}>
-                                            <Mic className="h-[18px] w-[18px]" strokeWidth={1.75} />
-                                        </button>
-                                    </Tip>
+                                    {/* A narrow column keeps to files: the rest stays a keystroke away (:, @, Markdown). */}
+                                    {!compact && (
+                                        <>
+                                        <Tip label={formatBar ? 'Hide formatting' : 'Show formatting'}>
+                                            <button
+                                                type="button"
+                                                onClick={toggleFormatBar}
+                                                aria-label="Formatting"
+                                                aria-pressed={formatBar}
+                                                data-testid="format-toggle"
+                                                className={cn(ICON_BUTTON, 'ml-1 text-[13.5px] font-semibold', formatBar && 'bg-foreground/[0.08] text-foreground')}
+                                            >
+                                                <span className="underline decoration-[1.5px] underline-offset-[3px]">Aa</span>
+                                            </button>
+                                        </Tip>
+                                        <Tip label="Emoji">
+                                            <PopoverTrigger aria-label="Emoji" data-testid="emoji-button" className={cn(ICON_BUTTON, emojiOpen && 'bg-foreground/[0.08] text-foreground')}>
+                                                <Smile className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                                            </PopoverTrigger>
+                                        </Tip>
+                                        <Tip label="Mention someone">
+                                            <button type="button" onClick={typeMention} aria-label="Mention someone" className={ICON_BUTTON}>
+                                                <AtSign className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                                            </button>
+                                        </Tip>
+                                        <Divider />
+                                        <Tip label="Record a voice clip">
+                                            <button type="button" onClick={() => void voice.start()} aria-label="Record a voice clip" data-testid="voice-button" className={ICON_BUTTON}>
+                                                <Mic className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                                            </button>
+                                        </Tip>
+                                        </>
+                                    )}
                                     {commands && (
                                         <>
                                             <Divider />
