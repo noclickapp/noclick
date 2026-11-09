@@ -1,0 +1,29 @@
+{
+  "source_url": "https://raw.githubusercontent.com/zadarma/openapi/master/spec/v1/openapi.json",
+  "version": "1.2.0",
+  "sha256": "0d5f94ed7feef756dd4febbb42366df625233b56fa83217bdca4ca3eed059b9f",
+  "spec_defects": [
+    {
+      "kind": "d",
+      "component": "components.securitySchemes.ApiKeyAuth",
+      "operations": "all 20 operations",
+      "spec": "type=http, scheme=custom causes HTTP scheme/prefix security validation, rejecting the published header",
+      "documented_contract": "Authorization: userKey:signature, without any HTTP authentication-scheme prefix. The documentation PHP example base64-encodes the hexadecimal SHA1 HMAC of path + RFC1738 parameters + MD5(parameters).",
+      "source": "https://zadarma.com/en/support/api/#intro_authorization",
+      "blocking_failures": [
+        "request: ValueError: Authentication is missing or in the wrong location/scheme",
+        "request: SecurityValidationError: Security not found; ApiKeyAuth"
+      ],
+      "resolution": "Keep the documented userKey:signature header. The OpenAPI security scheme should be type=apiKey, in=header, name=Authorization."
+    },
+    {
+      "kind": "d",
+      "component": "POST /v1/sms/send requestBody.number",
+      "spec": "The form schema declares number as an array.",
+      "documented_contract": "number is a phone-number string; multiple recipients are separated by commas. This integration supports one recipient per request.",
+      "source": "https://zadarma.com/en/support/api/#api_sms_send",
+      "blocking_failures": [],
+      "resolution": "Keep number as a scalar form value, as the provider documentation instructs."
+    }
+  ]
+}

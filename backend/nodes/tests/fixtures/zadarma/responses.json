@@ -1,0 +1,108 @@
+{
+  "source": "https://zadarma.com/en/support/api/",
+  "examples": {
+    "api_callback": {
+      "status": "success",
+      "from": 442037691880,
+      "to": 442037691881,
+      "time": 1435573082
+    },
+    "api_sip_method": {
+      "status": "success",
+      "sips": [
+        {
+          "id": "00001",
+          "display_name": "SIP 1",
+          "lines": 3
+        },
+        {
+          "id": "00002",
+          "display_name": "SIP 2",
+          "lines": 3
+        }
+      ],
+      "left": 3
+    },
+    "api_sip_status": {
+      "status": "success",
+      "sip": "00001",
+      "is_online": "false"
+    },
+    "api_sip_callerid": {
+      "status": "success",
+      "sip": "00001",
+      "new_caller_id": "442037691880"
+    },
+    "api_sip_redirection_put": {
+      "status": "success",
+      "sip": "00001",
+      "current_status": "on"
+    },
+    "api_pbx_internal_status": {
+      "status": "success",
+      "pbx_id": 1234,
+      "number": 100,
+      "is_online": "false"
+    },
+    "api_pbx_internal_info": {
+      "status": "success",
+      "pbx_id": 12345,
+      "number": 100,
+      "name": "Extension 100",
+      "caller_id": "+44000000000",
+      "caller_id_app_change": "true",
+      "caller_id_by_direction": "false",
+      "lines": "3",
+      "ip_restriction": "1.1.1.1",
+      "record_store": "For automatic speech recognition",
+      "record_email": "email@server.com",
+      "supervisor_status": 1
+    },
+    "api_pbx_redirection_post": {
+      "status": "success",
+      "current_status": "on",
+      "pbx_id": "1234",
+      "pbx_name": "100",
+      "type": "phone",
+      "destination": "442037691880",
+      "condition": "noanswer"
+    },
+    "api_sms_send": {
+      "status": "success",
+      "messages": 1,
+      "cost": 0.24,
+      "currency": "USD",
+      "sms_detalization": [
+        {
+          "senderid": "xxxxxxxxxxx",
+          "number": "1234567890",
+          "cost": 0.06
+        }
+      ],
+      "denied_numbers": [
+        {
+          "number": "1234567890",
+          "message": "The reason for the SMS not being sent to the number"
+        }
+      ]
+    },
+    "api_sms_template": {
+      "list": [
+        {
+          "cath_id": "1",
+          "title": "The name of the template category",
+          "templates": [
+            {
+              "id": "1",
+              "text": "The template text with a variable {$var}"
+            },
+            {
+              "id": "2",
+              "text": "Second template text"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
