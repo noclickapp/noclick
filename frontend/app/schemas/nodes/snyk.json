@@ -1,0 +1,980 @@
+{
+  "$defs": {
+    "ActivateProject": {
+      "additionalProperties": false,
+      "description": "Activate project monitoring.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "activate_project",
+          "default": "activate_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id"
+      ],
+      "title": "ActivateProject",
+      "type": "object"
+    },
+    "AddIgnore": {
+      "additionalProperties": false,
+      "description": "Add an ignore rule for an issue.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "issue_id": {
+          "description": "Snyk vulnerability or license issue ID, for example npm:qs:20140806-1.",
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Issue ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_ignore",
+          "default": "add_ignore",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reason_type": {
+          "enum": [
+            "not-vulnerable",
+            "wont-fix",
+            "temporary-ignore"
+          ],
+          "title": "Reason type",
+          "type": "string"
+        },
+        "disregard_if_fixable": {
+          "default": false,
+          "description": "Only ignore when no upgrade or patch is available.",
+          "title": "Disregard If Fixable",
+          "type": "boolean"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "expires": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp when the ignore expires.",
+          "title": "Expires"
+        },
+        "ignore_path": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dependency path to ignore. Omit for all paths (*).",
+          "title": "Ignore Path"
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id",
+        "issue_id",
+        "reason_type"
+      ],
+      "title": "AddIgnore",
+      "type": "object"
+    },
+    "AddProjectTag": {
+      "additionalProperties": false,
+      "description": "Apply a tag to the project.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "key": {
+          "maxLength": 30,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tag key",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 50,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tag value",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_project_tag",
+          "default": "add_project_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id",
+        "key",
+        "value"
+      ],
+      "title": "AddProjectTag",
+      "type": "object"
+    },
+    "DeactivateProject": {
+      "additionalProperties": false,
+      "description": "Deactivate project monitoring.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "deactivate_project",
+          "default": "deactivate_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id"
+      ],
+      "title": "DeactivateProject",
+      "type": "object"
+    },
+    "DeleteIgnore": {
+      "additionalProperties": false,
+      "description": "Delete all ignore rules for the selected issue.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "issue_id": {
+          "description": "Snyk vulnerability or license issue ID, for example npm:qs:20140806-1.",
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Issue ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_ignore",
+          "default": "delete_ignore",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id",
+        "issue_id"
+      ],
+      "title": "DeleteIgnore",
+      "type": "object"
+    },
+    "DeleteProject": {
+      "additionalProperties": false,
+      "description": "Permanently delete the selected project.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id"
+      ],
+      "title": "DeleteProject",
+      "type": "object"
+    },
+    "GetCurrentUser": {
+      "additionalProperties": false,
+      "description": "Read the token owner details.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCurrentUser",
+      "type": "object"
+    },
+    "GetDependencyGraph": {
+      "additionalProperties": false,
+      "description": "Retrieve the project dependency graph.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_dependency_graph",
+          "default": "get_dependency_graph",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id"
+      ],
+      "title": "GetDependencyGraph",
+      "type": "object"
+    },
+    "GetIgnore": {
+      "additionalProperties": false,
+      "description": "Retrieve ignore rules for one issue.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "issue_id": {
+          "description": "Snyk vulnerability or license issue ID, for example npm:qs:20140806-1.",
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Issue ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_ignore",
+          "default": "get_ignore",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id",
+        "issue_id"
+      ],
+      "title": "GetIgnore",
+      "type": "object"
+    },
+    "GetOrganizationSettings": {
+      "additionalProperties": false,
+      "description": "Read organization settings.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_organization_settings",
+          "default": "get_organization_settings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id"
+      ],
+      "title": "GetOrganizationSettings",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "description": "Retrieve a project and its issue counts.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetProjectSettings": {
+      "additionalProperties": false,
+      "description": "Read project-specific settings.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_project_settings",
+          "default": "get_project_settings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id"
+      ],
+      "title": "GetProjectSettings",
+      "type": "object"
+    },
+    "IssueFilters": {
+      "additionalProperties": false,
+      "properties": {
+        "severities": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "critical",
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Severities"
+        },
+        "types": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "vuln",
+                  "license"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Types"
+        },
+        "ignored": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ignored"
+        },
+        "patched": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Patched"
+        }
+      },
+      "title": "IssueFilters",
+      "type": "object"
+    },
+    "ListIgnores": {
+      "additionalProperties": false,
+      "description": "List project ignore rules.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_ignores",
+          "default": "list_ignores",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id"
+      ],
+      "title": "ListIgnores",
+      "type": "object"
+    },
+    "ListIntegrations": {
+      "additionalProperties": false,
+      "description": "List configured source integrations. Requires organization admin access.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_integrations",
+          "default": "list_integrations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id"
+      ],
+      "title": "ListIntegrations",
+      "type": "object"
+    },
+    "ListIssues": {
+      "additionalProperties": false,
+      "description": "List aggregated vulnerability and license issues.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_issues",
+          "default": "list_issues",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_description": {
+          "default": false,
+          "title": "Include Description",
+          "type": "boolean"
+        },
+        "include_introduced_through": {
+          "default": false,
+          "title": "Include Introduced Through",
+          "type": "boolean"
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IssueFilters"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id"
+      ],
+      "title": "ListIssues",
+      "type": "object"
+    },
+    "ListOrganizationMembers": {
+      "additionalProperties": false,
+      "description": "List organization members.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_organization_members",
+          "default": "list_organization_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_group_admins": {
+          "default": false,
+          "description": "Include group administrators with access to the organization.",
+          "title": "Include Group Admins",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "org_id"
+      ],
+      "title": "ListOrganizationMembers",
+      "type": "object"
+    },
+    "ListOrganizations": {
+      "additionalProperties": false,
+      "description": "List organizations accessible to this token.",
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOrganizations",
+      "type": "object"
+    },
+    "RemoveProjectTag": {
+      "additionalProperties": false,
+      "description": "Remove a tag from the project.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "key": {
+          "maxLength": 30,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tag key",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 50,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tag value",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_project_tag",
+          "default": "remove_project_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id",
+        "key",
+        "value"
+      ],
+      "title": "RemoveProjectTag",
+      "type": "object"
+    },
+    "ResetProjectSettings": {
+      "additionalProperties": false,
+      "description": "Remove project-specific settings and inherit integration settings.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reset_project_settings",
+          "default": "reset_project_settings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id"
+      ],
+      "title": "ResetProjectSettings",
+      "type": "object"
+    },
+    "SnykAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "snyk_api_token",
+          "default": "snyk_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Snyk API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing Snyk API token for the US API (api.snyk.io), without the token prefix. API access requires an eligible Snyk plan. Use a service account token for ongoing automation; its permissions control which organizations and actions are available. Get a personal API token from Account settings, or a service account token from your organization administrator.",
+      "x-credential-url": "https://app.snyk.io/account"
+    },
+    "UpdateProject": {
+      "additionalProperties": false,
+      "description": "Change the monitored branch or project owner.",
+      "properties": {
+        "org_id": {
+          "description": "Organization UUID from Snyk or List organizations.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Project UUID from the Snyk project URL or REST API.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "branch": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Branch"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User ID of a member of this organization.",
+          "title": "Owner Id"
+        }
+      },
+      "required": [
+        "org_id",
+        "project_id"
+      ],
+      "title": "UpdateProject",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "activate_project": "#/$defs/ActivateProject",
+          "add_ignore": "#/$defs/AddIgnore",
+          "add_project_tag": "#/$defs/AddProjectTag",
+          "deactivate_project": "#/$defs/DeactivateProject",
+          "delete_ignore": "#/$defs/DeleteIgnore",
+          "delete_project": "#/$defs/DeleteProject",
+          "get_current_user": "#/$defs/GetCurrentUser",
+          "get_dependency_graph": "#/$defs/GetDependencyGraph",
+          "get_ignore": "#/$defs/GetIgnore",
+          "get_organization_settings": "#/$defs/GetOrganizationSettings",
+          "get_project": "#/$defs/GetProject",
+          "get_project_settings": "#/$defs/GetProjectSettings",
+          "list_ignores": "#/$defs/ListIgnores",
+          "list_integrations": "#/$defs/ListIntegrations",
+          "list_issues": "#/$defs/ListIssues",
+          "list_organization_members": "#/$defs/ListOrganizationMembers",
+          "list_organizations": "#/$defs/ListOrganizations",
+          "remove_project_tag": "#/$defs/RemoveProjectTag",
+          "reset_project_settings": "#/$defs/ResetProjectSettings",
+          "update_project": "#/$defs/UpdateProject"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/ListOrganizations"
+        },
+        {
+          "$ref": "#/$defs/GetOrganizationSettings"
+        },
+        {
+          "$ref": "#/$defs/ListOrganizationMembers"
+        },
+        {
+          "$ref": "#/$defs/ListIntegrations"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/UpdateProject"
+        },
+        {
+          "$ref": "#/$defs/ActivateProject"
+        },
+        {
+          "$ref": "#/$defs/DeactivateProject"
+        },
+        {
+          "$ref": "#/$defs/DeleteProject"
+        },
+        {
+          "$ref": "#/$defs/ListIssues"
+        },
+        {
+          "$ref": "#/$defs/GetDependencyGraph"
+        },
+        {
+          "$ref": "#/$defs/ListIgnores"
+        },
+        {
+          "$ref": "#/$defs/GetIgnore"
+        },
+        {
+          "$ref": "#/$defs/AddIgnore"
+        },
+        {
+          "$ref": "#/$defs/DeleteIgnore"
+        },
+        {
+          "$ref": "#/$defs/AddProjectTag"
+        },
+        {
+          "$ref": "#/$defs/RemoveProjectTag"
+        },
+        {
+          "$ref": "#/$defs/GetProjectSettings"
+        },
+        {
+          "$ref": "#/$defs/ResetProjectSettings"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SnykAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Snyk Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
