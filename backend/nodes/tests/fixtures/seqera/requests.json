@@ -1,0 +1,205 @@
+[
+  {
+    "operation": "get_user",
+    "method": "GET",
+    "path": "/user-info",
+    "config": {
+      "operation": "get_user"
+    }
+  },
+  {
+    "operation": "list_organizations",
+    "method": "GET",
+    "path": "/orgs",
+    "config": {
+      "operation": "list_organizations"
+    }
+  },
+  {
+    "operation": "list_workspaces",
+    "method": "GET",
+    "path": "/orgs/42/workspaces",
+    "config": {
+      "operation": "list_workspaces",
+      "org_id": 42
+    }
+  },
+  {
+    "operation": "list_pipelines",
+    "method": "GET",
+    "path": "/pipelines",
+    "config": {
+      "operation": "list_pipelines"
+    }
+  },
+  {
+    "operation": "get_pipeline",
+    "method": "GET",
+    "path": "/pipelines/123",
+    "config": {
+      "operation": "get_pipeline",
+      "pipeline_id": 123
+    }
+  },
+  {
+    "operation": "get_pipeline_launch",
+    "method": "GET",
+    "path": "/pipelines/123/launch",
+    "config": {
+      "operation": "get_pipeline_launch",
+      "pipeline_id": 123
+    }
+  },
+  {
+    "operation": "create_pipeline",
+    "method": "POST",
+    "path": "/pipelines",
+    "config": {
+      "operation": "create_pipeline",
+      "name": "test-resource",
+      "launch": {
+        "pipeline": "https://github.com/nextflow-io/hello",
+        "computeEnvId": "compute-42",
+        "workDir": "s3://my-bucket/work",
+        "paramsText": "{\"greeting\":\"hello\"}"
+      }
+    }
+  },
+  {
+    "operation": "update_pipeline",
+    "method": "PUT",
+    "path": "/pipelines/123",
+    "config": {
+      "operation": "update_pipeline",
+      "pipeline_id": 123,
+      "name": "test-resource"
+    }
+  },
+  {
+    "operation": "delete_pipeline",
+    "method": "DELETE",
+    "path": "/pipelines/123",
+    "config": {
+      "operation": "delete_pipeline",
+      "pipeline_id": 123
+    }
+  },
+  {
+    "operation": "launch_workflow",
+    "method": "POST",
+    "path": "/workflow/launch",
+    "config": {
+      "operation": "launch_workflow",
+      "launch": {
+        "pipeline": "https://github.com/nextflow-io/hello",
+        "computeEnvId": "compute-42",
+        "workDir": "s3://my-bucket/work",
+        "paramsText": "{\"greeting\":\"hello\"}"
+      }
+    }
+  },
+  {
+    "operation": "list_workflows",
+    "method": "GET",
+    "path": "/workflow",
+    "config": {
+      "operation": "list_workflows"
+    }
+  },
+  {
+    "operation": "get_workflow",
+    "method": "GET",
+    "path": "/workflow/workflow-42",
+    "config": {
+      "operation": "get_workflow",
+      "workflow_id": "workflow-42"
+    }
+  },
+  {
+    "operation": "cancel_workflow",
+    "method": "POST",
+    "path": "/workflow/workflow-42/cancel",
+    "config": {
+      "operation": "cancel_workflow",
+      "workflow_id": "workflow-42"
+    }
+  },
+  {
+    "operation": "get_workflow_progress",
+    "method": "GET",
+    "path": "/workflow/workflow-42/progress",
+    "config": {
+      "operation": "get_workflow_progress",
+      "workflow_id": "workflow-42"
+    }
+  },
+  {
+    "operation": "list_workflow_tasks",
+    "method": "GET",
+    "path": "/workflow/workflow-42/tasks",
+    "config": {
+      "operation": "list_workflow_tasks",
+      "workflow_id": "workflow-42"
+    }
+  },
+  {
+    "operation": "list_compute_environments",
+    "method": "GET",
+    "path": "/compute-envs",
+    "config": {
+      "operation": "list_compute_environments"
+    }
+  },
+  {
+    "operation": "get_compute_environment",
+    "method": "GET",
+    "path": "/compute-envs/compute-42",
+    "config": {
+      "operation": "get_compute_environment",
+      "compute_env_id": "compute-42"
+    }
+  },
+  {
+    "operation": "list_datasets",
+    "method": "GET",
+    "path": "/datasets",
+    "config": {
+      "operation": "list_datasets"
+    }
+  },
+  {
+    "operation": "create_dataset",
+    "method": "POST",
+    "path": "/datasets",
+    "config": {
+      "operation": "create_dataset",
+      "name": "test-resource"
+    }
+  },
+  {
+    "operation": "delete_dataset",
+    "method": "DELETE",
+    "path": "/datasets/dataset-42",
+    "config": {
+      "operation": "delete_dataset",
+      "dataset_id": "dataset-42"
+    }
+  },
+  {
+    "operation": "list_labels",
+    "method": "GET",
+    "path": "/labels",
+    "config": {
+      "operation": "list_labels"
+    }
+  },
+  {
+    "operation": "create_label",
+    "method": "POST",
+    "path": "/labels",
+    "config": {
+      "operation": "create_label",
+      "name": "test-resource"
+    }
+  }
+]

@@ -1,0 +1,1214 @@
+{
+  "$defs": {
+    "SeqeraAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "seqera_api_token",
+          "default": "seqera_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Seqera API Token",
+      "type": "object",
+      "x-credential-instructions": "In Seqera Cloud, open your user menu, choose Your tokens and create an access token. Copy it here. NoClick uses the token to read your account and run the operations you select with your permissions. Launching workflows consumes your compute resources.",
+      "x-credential-url": "https://cloud.seqera.io/tokens"
+    },
+    "SeqeraCancelWorkflowConfig": {
+      "additionalProperties": false,
+      "description": "Cancel workflow.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "cancel_workflow",
+          "default": "cancel_workflow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workflow_id": {
+          "minLength": 1,
+          "title": "Workflow Id",
+          "type": "string"
+        },
+        "force": {
+          "default": false,
+          "description": "Also cancel on Platform if the compute provider cannot cancel it.",
+          "title": "Force",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "SeqeraCancelWorkflowConfig",
+      "type": "object"
+    },
+    "SeqeraCreateDatasetConfig": {
+      "additionalProperties": false,
+      "description": "Create dataset.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "create_dataset",
+          "default": "create_dataset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "source_type": {
+          "default": "UPLOADED",
+          "enum": [
+            "UPLOADED",
+            "LINKED"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SeqeraCreateDatasetConfig",
+      "type": "object"
+    },
+    "SeqeraCreateLabelConfig": {
+      "additionalProperties": false,
+      "description": "Create label.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "create_label",
+          "default": "create_label",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SeqeraCreateLabelConfig",
+      "type": "object"
+    },
+    "SeqeraCreatePipelineConfig": {
+      "additionalProperties": false,
+      "description": "Create pipeline.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "create_pipeline",
+          "default": "create_pipeline",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "launch": {
+          "$ref": "#/$defs/SeqeraLaunch"
+        }
+      },
+      "required": [
+        "name",
+        "launch"
+      ],
+      "title": "SeqeraCreatePipelineConfig",
+      "type": "object"
+    },
+    "SeqeraDeleteDatasetConfig": {
+      "additionalProperties": false,
+      "description": "Delete dataset.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "delete_dataset",
+          "default": "delete_dataset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "minLength": 1,
+          "title": "Dataset Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "SeqeraDeleteDatasetConfig",
+      "type": "object"
+    },
+    "SeqeraDeletePipelineConfig": {
+      "additionalProperties": false,
+      "description": "Delete pipeline.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "delete_pipeline",
+          "default": "delete_pipeline",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pipeline_id": {
+          "minimum": 1,
+          "title": "Pipeline Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "pipeline_id"
+      ],
+      "title": "SeqeraDeletePipelineConfig",
+      "type": "object"
+    },
+    "SeqeraGetComputeEnvironmentConfig": {
+      "additionalProperties": false,
+      "description": "Get compute environment.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "get_compute_environment",
+          "default": "get_compute_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "compute_env_id": {
+          "minLength": 1,
+          "title": "Compute Env Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "compute_env_id"
+      ],
+      "title": "SeqeraGetComputeEnvironmentConfig",
+      "type": "object"
+    },
+    "SeqeraGetPipelineConfig": {
+      "additionalProperties": false,
+      "description": "Get pipeline.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "get_pipeline",
+          "default": "get_pipeline",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pipeline_id": {
+          "minimum": 1,
+          "title": "Pipeline Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "pipeline_id"
+      ],
+      "title": "SeqeraGetPipelineConfig",
+      "type": "object"
+    },
+    "SeqeraGetPipelineLaunchConfig": {
+      "additionalProperties": false,
+      "description": "Get pipeline launch.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "get_pipeline_launch",
+          "default": "get_pipeline_launch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pipeline_id": {
+          "minimum": 1,
+          "title": "Pipeline Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "pipeline_id"
+      ],
+      "title": "SeqeraGetPipelineLaunchConfig",
+      "type": "object"
+    },
+    "SeqeraGetUserConfig": {
+      "additionalProperties": false,
+      "description": "Get user.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SeqeraGetUserConfig",
+      "type": "object"
+    },
+    "SeqeraGetWorkflowConfig": {
+      "additionalProperties": false,
+      "description": "Get workflow.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "get_workflow",
+          "default": "get_workflow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workflow_id": {
+          "minLength": 1,
+          "title": "Workflow Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "SeqeraGetWorkflowConfig",
+      "type": "object"
+    },
+    "SeqeraGetWorkflowProgressConfig": {
+      "additionalProperties": false,
+      "description": "Get workflow progress.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "get_workflow_progress",
+          "default": "get_workflow_progress",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workflow_id": {
+          "minLength": 1,
+          "title": "Workflow Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "SeqeraGetWorkflowProgressConfig",
+      "type": "object"
+    },
+    "SeqeraLaunch": {
+      "additionalProperties": false,
+      "properties": {
+        "pipeline": {
+          "description": "Pipeline repository URL or pipeline name.",
+          "minLength": 1,
+          "title": "Pipeline",
+          "type": "string"
+        },
+        "computeEnvId": {
+          "minLength": 1,
+          "title": "Computeenvid",
+          "type": "string"
+        },
+        "workDir": {
+          "description": "Cloud work directory, for example s3://your-bucket/work.",
+          "minLength": 1,
+          "title": "Workdir",
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "runName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Runname"
+        },
+        "paramsText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Nextflow parameters as JSON or YAML text.",
+          "title": "Paramstext"
+        },
+        "configProfiles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Configprofiles"
+        },
+        "configText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Configtext"
+        },
+        "resume": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resume"
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sessionid"
+        },
+        "nextflowVersion": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nextflowversion"
+        }
+      },
+      "required": [
+        "pipeline",
+        "computeEnvId",
+        "workDir"
+      ],
+      "title": "SeqeraLaunch",
+      "type": "object"
+    },
+    "SeqeraLaunchWorkflowConfig": {
+      "additionalProperties": false,
+      "description": "Launch workflow.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "launch_workflow",
+          "default": "launch_workflow",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "launch": {
+          "$ref": "#/$defs/SeqeraLaunch"
+        }
+      },
+      "required": [
+        "launch"
+      ],
+      "title": "SeqeraLaunchWorkflowConfig",
+      "type": "object"
+    },
+    "SeqeraListComputeEnvironmentsConfig": {
+      "additionalProperties": false,
+      "description": "List compute environments.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "list_compute_environments",
+          "default": "list_compute_environments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "title": "SeqeraListComputeEnvironmentsConfig",
+      "type": "object"
+    },
+    "SeqeraListDatasetsConfig": {
+      "additionalProperties": false,
+      "description": "List datasets.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "max_results": {
+          "default": 50,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of records to skip. Increase by the previous page size.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider search query.",
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_datasets",
+          "default": "list_datasets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SeqeraListDatasetsConfig",
+      "type": "object"
+    },
+    "SeqeraListLabelsConfig": {
+      "additionalProperties": false,
+      "description": "List labels.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "max_results": {
+          "default": 50,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of records to skip. Increase by the previous page size.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider search query.",
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SeqeraListLabelsConfig",
+      "type": "object"
+    },
+    "SeqeraListOrganizationsConfig": {
+      "additionalProperties": false,
+      "description": "List organizations.",
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SeqeraListOrganizationsConfig",
+      "type": "object"
+    },
+    "SeqeraListPipelinesConfig": {
+      "additionalProperties": false,
+      "description": "List pipelines.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "max_results": {
+          "default": 50,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of records to skip. Increase by the previous page size.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider search query.",
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_pipelines",
+          "default": "list_pipelines",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SeqeraListPipelinesConfig",
+      "type": "object"
+    },
+    "SeqeraListWorkflowTasksConfig": {
+      "additionalProperties": false,
+      "description": "List workflow tasks.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "max_results": {
+          "default": 50,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of records to skip. Increase by the previous page size.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider search query.",
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_workflow_tasks",
+          "default": "list_workflow_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workflow_id": {
+          "minLength": 1,
+          "title": "Workflow Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "SeqeraListWorkflowTasksConfig",
+      "type": "object"
+    },
+    "SeqeraListWorkflowsConfig": {
+      "additionalProperties": false,
+      "description": "List workflows.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "max_results": {
+          "default": 50,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of records to skip. Increase by the previous page size.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider search query.",
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_workflows",
+          "default": "list_workflows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SeqeraListWorkflowsConfig",
+      "type": "object"
+    },
+    "SeqeraListWorkspacesConfig": {
+      "additionalProperties": false,
+      "description": "List workspaces.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "org_id": {
+          "minimum": 1,
+          "title": "Org Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "org_id"
+      ],
+      "title": "SeqeraListWorkspacesConfig",
+      "type": "object"
+    },
+    "SeqeraUpdatePipelineConfig": {
+      "additionalProperties": false,
+      "description": "Update pipeline.",
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace ID. Omit to use your personal workspace.",
+          "title": "Workspace Id"
+        },
+        "operation": {
+          "const": "update_pipeline",
+          "default": "update_pipeline",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pipeline_id": {
+          "minimum": 1,
+          "title": "Pipeline Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "pipeline_id",
+        "name"
+      ],
+      "title": "SeqeraUpdatePipelineConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_workflow": "#/$defs/SeqeraCancelWorkflowConfig",
+          "create_dataset": "#/$defs/SeqeraCreateDatasetConfig",
+          "create_label": "#/$defs/SeqeraCreateLabelConfig",
+          "create_pipeline": "#/$defs/SeqeraCreatePipelineConfig",
+          "delete_dataset": "#/$defs/SeqeraDeleteDatasetConfig",
+          "delete_pipeline": "#/$defs/SeqeraDeletePipelineConfig",
+          "get_compute_environment": "#/$defs/SeqeraGetComputeEnvironmentConfig",
+          "get_pipeline": "#/$defs/SeqeraGetPipelineConfig",
+          "get_pipeline_launch": "#/$defs/SeqeraGetPipelineLaunchConfig",
+          "get_user": "#/$defs/SeqeraGetUserConfig",
+          "get_workflow": "#/$defs/SeqeraGetWorkflowConfig",
+          "get_workflow_progress": "#/$defs/SeqeraGetWorkflowProgressConfig",
+          "launch_workflow": "#/$defs/SeqeraLaunchWorkflowConfig",
+          "list_compute_environments": "#/$defs/SeqeraListComputeEnvironmentsConfig",
+          "list_datasets": "#/$defs/SeqeraListDatasetsConfig",
+          "list_labels": "#/$defs/SeqeraListLabelsConfig",
+          "list_organizations": "#/$defs/SeqeraListOrganizationsConfig",
+          "list_pipelines": "#/$defs/SeqeraListPipelinesConfig",
+          "list_workflow_tasks": "#/$defs/SeqeraListWorkflowTasksConfig",
+          "list_workflows": "#/$defs/SeqeraListWorkflowsConfig",
+          "list_workspaces": "#/$defs/SeqeraListWorkspacesConfig",
+          "update_pipeline": "#/$defs/SeqeraUpdatePipelineConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SeqeraGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraListOrganizationsConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraListPipelinesConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraGetPipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraGetPipelineLaunchConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraCreatePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraUpdatePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraDeletePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraLaunchWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraListWorkflowsConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraGetWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraCancelWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraGetWorkflowProgressConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraListWorkflowTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraListComputeEnvironmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraGetComputeEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraListDatasetsConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraCreateDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraDeleteDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraListLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/SeqeraCreateLabelConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SeqeraAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Seqera Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
