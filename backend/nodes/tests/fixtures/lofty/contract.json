@@ -1,0 +1,94 @@
+{
+  "source": "https://developer.lofty.com/openapi/openapi.json",
+  "version": "1.0",
+  "routes": {
+    "get_profile": [
+      "GET",
+      "/v1.0/me"
+    ],
+    "list_leads": [
+      "GET",
+      "/v1.0/leads"
+    ],
+    "create_lead": [
+      "POST",
+      "/v1.0/leads"
+    ],
+    "get_lead": [
+      "GET",
+      "/v1.0/leads/{leadId}"
+    ],
+    "update_lead": [
+      "PUT",
+      "/v1.0/leads/{leadId}"
+    ],
+    "delete_lead": [
+      "DELETE",
+      "/v1.0/leads/{leadId}"
+    ],
+    "list_notes": [
+      "GET",
+      "/v1.0/notes"
+    ],
+    "create_note": [
+      "POST",
+      "/v1.0/notes"
+    ],
+    "get_note": [
+      "GET",
+      "/v1.0/notes/{noteId}"
+    ],
+    "update_note": [
+      "PUT",
+      "/v1.0/notes/{noteId}"
+    ],
+    "delete_note": [
+      "DELETE",
+      "/v1.0/notes/{noteId}"
+    ],
+    "list_tasks": [
+      "GET",
+      "/v2.0/tasks"
+    ],
+    "create_task": [
+      "POST",
+      "/v2.0/tasks"
+    ],
+    "get_task": [
+      "GET",
+      "/v2.0/tasks/{taskId}"
+    ],
+    "update_task": [
+      "PUT",
+      "/v2.0/tasks/{taskId}"
+    ],
+    "delete_task": [
+      "DELETE",
+      "/v2.0/tasks/{taskId}"
+    ],
+    "finish_task": [
+      "POST",
+      "/v2.0/tasks/{taskId}/finish"
+    ],
+    "unfinish_task": [
+      "POST",
+      "/v2.0/tasks/{taskId}/unfinish"
+    ],
+    "send_email": [
+      "POST",
+      "/v1.0/message/email/send"
+    ],
+    "send_sms": [
+      "POST",
+      "/v1.0/message/sms/send"
+    ],
+    "list_tags": [
+      "GET",
+      "/v1.0/teamFeatures/listTag"
+    ],
+    "list_members": [
+      "GET",
+      "/v1.0/members"
+    ]
+  }
+}

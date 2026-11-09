@@ -1,0 +1,1391 @@
+{
+  "$defs": {
+    "LoftyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "lofty_api_key",
+          "default": "lofty_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Lofty API Key",
+      "type": "object",
+      "x-credential-instructions": "In Lofty, open Settings \u2192 Integrations \u2192 API and create a personal API key with the VIEW, ADD, EDIT, DEL or RUN permissions needed for your operations. Paste only the key, without the token prefix. NoClick verifies your current-user profile on connect.",
+      "x-credential-url": "https://developer.lofty.com/authentication/api-keys"
+    },
+    "LoftyCreateLead": {
+      "additionalProperties": false,
+      "description": "Create a lead; omitted assignee uses Lofty routing and omitted ownership defaults to the caller.",
+      "properties": {
+        "firstName": {
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "First name",
+          "type": "string"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email addresses"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone numbers"
+        },
+        "leadTypes": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  -1,
+                  1,
+                  2,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Other -1, Seller 1, Buyer 2, Renter 5, Investor 6, Agent 7, Homeowner 8, Landlord 9.",
+          "title": "Lead types"
+        },
+        "assignedUserId": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned user ID"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "maxLength": 19,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replace all existing tags; omit to preserve them.",
+          "title": "Tags"
+        },
+        "tagsAdd": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Append tags while retaining existing tags.",
+          "title": "Tags to add"
+        },
+        "segments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segments"
+        },
+        "cannotText": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cannot text"
+        },
+        "cannotCall": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cannot call"
+        },
+        "cannotEmail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cannot email"
+        },
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "firstName"
+      ],
+      "title": "LoftyCreateLead",
+      "type": "object"
+    },
+    "LoftyCreateNote": {
+      "additionalProperties": false,
+      "description": "Add a note to a lead; returns the note ID, whose read may be briefly delayed.",
+      "properties": {
+        "leadId": {
+          "minimum": 1,
+          "title": "Lead ID",
+          "type": "integer"
+        },
+        "content": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "isPin": {
+          "default": false,
+          "title": "Pin note",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "leadId",
+        "content"
+      ],
+      "title": "LoftyCreateNote",
+      "type": "object"
+    },
+    "LoftyCreateTask": {
+      "additionalProperties": false,
+      "description": "Create a follow-up task or appointment on a lead.",
+      "properties": {
+        "content": {
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "startAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO8601 timestamp with timezone offset.",
+          "title": "Start time"
+        },
+        "endAt": {
+          "description": "ISO8601 timestamp with timezone offset; task deadline.",
+          "title": "End time",
+          "type": "string"
+        },
+        "timeZoneCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA timezone, for example America/Los_Angeles.",
+          "title": "Timezone"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "leadId": {
+          "minimum": 1,
+          "title": "Lead ID",
+          "type": "integer"
+        },
+        "type": {
+          "enum": [
+            "Other",
+            "Call",
+            "Email",
+            "Text",
+            "Appointment"
+          ],
+          "title": "Task type",
+          "type": "string"
+        },
+        "assignedRole": {
+          "enum": [
+            "Agent",
+            "Assistant"
+          ],
+          "title": "Assigned role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "content",
+        "endAt",
+        "leadId",
+        "type",
+        "assignedRole"
+      ],
+      "title": "LoftyCreateTask",
+      "type": "object"
+    },
+    "LoftyDeleteLead": {
+      "additionalProperties": false,
+      "description": "Move a lead to trash.",
+      "properties": {
+        "leadId": {
+          "minimum": 1,
+          "title": "Lead ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_lead",
+          "default": "delete_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reason": {
+          "description": "Reason for moving the lead to trash.",
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "leadId",
+        "reason"
+      ],
+      "title": "LoftyDeleteLead",
+      "type": "object"
+    },
+    "LoftyDeleteNote": {
+      "additionalProperties": false,
+      "description": "Delete a note.",
+      "properties": {
+        "noteId": {
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "noteId"
+      ],
+      "title": "LoftyDeleteNote",
+      "type": "object"
+    },
+    "LoftyDeleteTask": {
+      "additionalProperties": false,
+      "description": "Delete a task or appointment.",
+      "properties": {
+        "taskId": {
+          "minimum": 1,
+          "title": "Task ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "LoftyDeleteTask",
+      "type": "object"
+    },
+    "LoftyFinishTask": {
+      "additionalProperties": false,
+      "description": "Mark a task completed; smart-plan tasks cannot be finished through this API.",
+      "properties": {
+        "taskId": {
+          "minimum": 1,
+          "title": "Task ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "finish_task",
+          "default": "finish_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "LoftyFinishTask",
+      "type": "object"
+    },
+    "LoftyGetLead": {
+      "additionalProperties": false,
+      "description": "Read a lead by its ID.",
+      "properties": {
+        "leadId": {
+          "minimum": 1,
+          "title": "Lead ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "withTrash": {
+          "default": false,
+          "title": "Include trashed lead",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "leadId"
+      ],
+      "title": "LoftyGetLead",
+      "type": "object"
+    },
+    "LoftyGetNote": {
+      "additionalProperties": false,
+      "description": "Read a note by its ID.",
+      "properties": {
+        "noteId": {
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "noteId"
+      ],
+      "title": "LoftyGetNote",
+      "type": "object"
+    },
+    "LoftyGetProfile": {
+      "additionalProperties": false,
+      "description": "Read the profile of the user whose key is connected.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "LoftyGetProfile",
+      "type": "object"
+    },
+    "LoftyGetTask": {
+      "additionalProperties": false,
+      "description": "Read a task or appointment.",
+      "properties": {
+        "taskId": {
+          "minimum": 1,
+          "title": "Task ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "LoftyGetTask",
+      "type": "object"
+    },
+    "LoftyListLeads": {
+      "additionalProperties": false,
+      "description": "Read one page of leads; use offset or the returned scrollId for the next page.",
+      "properties": {
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "scrollId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scroll ID"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "assignedUserId": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned user ID"
+        },
+        "contacted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contacted"
+        },
+        "allTags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag names (AND).",
+          "title": "All tags"
+        },
+        "anyTags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag names (OR).",
+          "title": "Any tags"
+        }
+      },
+      "title": "LoftyListLeads",
+      "type": "object"
+    },
+    "LoftyListMembers": {
+      "additionalProperties": false,
+      "description": "Read one page of team members.",
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "LoftyListMembers",
+      "type": "object"
+    },
+    "LoftyListNotes": {
+      "additionalProperties": false,
+      "description": "List notes on a lead.",
+      "properties": {
+        "leadId": {
+          "minimum": 1,
+          "title": "Lead ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "includeSystemNote": {
+          "default": false,
+          "title": "Include system notes",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "leadId"
+      ],
+      "title": "LoftyListNotes",
+      "type": "object"
+    },
+    "LoftyListTags": {
+      "additionalProperties": false,
+      "description": "List lead tags visible to the caller.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "LoftyListTags",
+      "type": "object"
+    },
+    "LoftyListTasks": {
+      "additionalProperties": false,
+      "description": "List all tasks and appointments on a lead.",
+      "properties": {
+        "leadId": {
+          "minimum": 1,
+          "title": "Lead ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "leadId"
+      ],
+      "title": "LoftyListTasks",
+      "type": "object"
+    },
+    "LoftySendEmail": {
+      "additionalProperties": false,
+      "description": "Send an email using the connected user\u2019s outgoing email configuration.",
+      "properties": {
+        "leadId": {
+          "minimum": 1,
+          "title": "Lead ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "send_email",
+          "default": "send_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subject": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "content": {
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "toEmail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Selects an email on the lead; otherwise Lofty uses the primary email.",
+          "title": "Recipient email"
+        }
+      },
+      "required": [
+        "leadId",
+        "subject",
+        "content"
+      ],
+      "title": "LoftySendEmail",
+      "type": "object"
+    },
+    "LoftySendSMS": {
+      "additionalProperties": false,
+      "description": "Send an SMS from the connected user\u2019s active virtual number.",
+      "properties": {
+        "leadId": {
+          "minimum": 1,
+          "title": "Lead ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "content": {
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone number"
+        },
+        "phoneCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone country code"
+        }
+      },
+      "required": [
+        "leadId",
+        "content"
+      ],
+      "title": "LoftySendSMS",
+      "type": "object"
+    },
+    "LoftyUnfinishTask": {
+      "additionalProperties": false,
+      "description": "Reopen a completed task.",
+      "properties": {
+        "taskId": {
+          "minimum": 1,
+          "title": "Task ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "unfinish_task",
+          "default": "unfinish_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "LoftyUnfinishTask",
+      "type": "object"
+    },
+    "LoftyUpdateLead": {
+      "additionalProperties": false,
+      "description": "Update supplied lead fields; omitted fields remain unchanged.",
+      "properties": {
+        "firstName": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email addresses"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone numbers"
+        },
+        "leadTypes": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  -1,
+                  1,
+                  2,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9
+                ],
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Other -1, Seller 1, Buyer 2, Renter 5, Investor 6, Agent 7, Homeowner 8, Landlord 9.",
+          "title": "Lead types"
+        },
+        "assignedUserId": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned user ID"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "maxLength": 19,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replace all existing tags; omit to preserve them.",
+          "title": "Tags"
+        },
+        "tagsAdd": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Append tags while retaining existing tags.",
+          "title": "Tags to add"
+        },
+        "segments": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segments"
+        },
+        "cannotText": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cannot text"
+        },
+        "cannotCall": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cannot call"
+        },
+        "cannotEmail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cannot email"
+        },
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "leadId": {
+          "minimum": 1,
+          "title": "Lead ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "leadId"
+      ],
+      "title": "LoftyUpdateLead",
+      "type": "object"
+    },
+    "LoftyUpdateNote": {
+      "additionalProperties": false,
+      "description": "Update a note on the specified lead.",
+      "properties": {
+        "leadId": {
+          "minimum": 1,
+          "title": "Lead ID",
+          "type": "integer"
+        },
+        "content": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "isPin": {
+          "default": false,
+          "title": "Pin note",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "noteId": {
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "leadId",
+        "content",
+        "noteId"
+      ],
+      "title": "LoftyUpdateNote",
+      "type": "object"
+    },
+    "LoftyUpdateTask": {
+      "additionalProperties": false,
+      "description": "Update supplied task fields; use finish or unfinish to change completion.",
+      "properties": {
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        },
+        "startAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO8601 timestamp with timezone offset.",
+          "title": "Start time"
+        },
+        "endAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO8601 timestamp with timezone offset; task deadline.",
+          "title": "End time"
+        },
+        "timeZoneCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA timezone, for example America/Los_Angeles.",
+          "title": "Timezone"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "taskId": {
+          "minimum": 1,
+          "title": "Task ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "LoftyUpdateTask",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_lead": "#/$defs/LoftyCreateLead",
+          "create_note": "#/$defs/LoftyCreateNote",
+          "create_task": "#/$defs/LoftyCreateTask",
+          "delete_lead": "#/$defs/LoftyDeleteLead",
+          "delete_note": "#/$defs/LoftyDeleteNote",
+          "delete_task": "#/$defs/LoftyDeleteTask",
+          "finish_task": "#/$defs/LoftyFinishTask",
+          "get_lead": "#/$defs/LoftyGetLead",
+          "get_note": "#/$defs/LoftyGetNote",
+          "get_profile": "#/$defs/LoftyGetProfile",
+          "get_task": "#/$defs/LoftyGetTask",
+          "list_leads": "#/$defs/LoftyListLeads",
+          "list_members": "#/$defs/LoftyListMembers",
+          "list_notes": "#/$defs/LoftyListNotes",
+          "list_tags": "#/$defs/LoftyListTags",
+          "list_tasks": "#/$defs/LoftyListTasks",
+          "send_email": "#/$defs/LoftySendEmail",
+          "send_sms": "#/$defs/LoftySendSMS",
+          "unfinish_task": "#/$defs/LoftyUnfinishTask",
+          "update_lead": "#/$defs/LoftyUpdateLead",
+          "update_note": "#/$defs/LoftyUpdateNote",
+          "update_task": "#/$defs/LoftyUpdateTask"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LoftyGetProfile"
+        },
+        {
+          "$ref": "#/$defs/LoftyListLeads"
+        },
+        {
+          "$ref": "#/$defs/LoftyGetLead"
+        },
+        {
+          "$ref": "#/$defs/LoftyCreateLead"
+        },
+        {
+          "$ref": "#/$defs/LoftyUpdateLead"
+        },
+        {
+          "$ref": "#/$defs/LoftyDeleteLead"
+        },
+        {
+          "$ref": "#/$defs/LoftyListNotes"
+        },
+        {
+          "$ref": "#/$defs/LoftyGetNote"
+        },
+        {
+          "$ref": "#/$defs/LoftyCreateNote"
+        },
+        {
+          "$ref": "#/$defs/LoftyUpdateNote"
+        },
+        {
+          "$ref": "#/$defs/LoftyDeleteNote"
+        },
+        {
+          "$ref": "#/$defs/LoftyListTasks"
+        },
+        {
+          "$ref": "#/$defs/LoftyGetTask"
+        },
+        {
+          "$ref": "#/$defs/LoftyCreateTask"
+        },
+        {
+          "$ref": "#/$defs/LoftyUpdateTask"
+        },
+        {
+          "$ref": "#/$defs/LoftyDeleteTask"
+        },
+        {
+          "$ref": "#/$defs/LoftyFinishTask"
+        },
+        {
+          "$ref": "#/$defs/LoftyUnfinishTask"
+        },
+        {
+          "$ref": "#/$defs/LoftySendEmail"
+        },
+        {
+          "$ref": "#/$defs/LoftySendSMS"
+        },
+        {
+          "$ref": "#/$defs/LoftyListTags"
+        },
+        {
+          "$ref": "#/$defs/LoftyListMembers"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LoftyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Lofty Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
