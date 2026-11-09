@@ -1,7 +1,7 @@
 """Grok automation against xAI's published REST contract (OpenAPI 1.0.0).
 
-API keys are sent only to api.x.ai. Each operation makes one request; callers
-explicitly paginate lists and poll deferred image/video jobs.
+API keys are sent only to api.x.ai. Actions make one request; the new-file
+trigger paginates team files. Callers explicitly poll deferred image/video jobs.
 """
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://api.x.ai"
@@ -190,6 +191,14 @@ class ListFiles(_Operation):
     filter: Optional[str] = Field(None, description="Documented AIP-160 file filter expression.")
 
 
+class OnNewFile(PollTriggerConfigBase):
+    """Watch team files created after activation; existing files form a baseline."""
+    operation: Literal["on_new_file"] = Field("on_new_file", title="On New File", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New File",
+    })
+    filter: Optional[str] = Field(None, description="AIP-160 file filter, for example content_type = \"pdf\". Narrow scopes with 10,000 or more files.")
+
+
 class GetFile(_Operation):
     """Retrieve metadata for one team file."""
     operation: Literal["get_file"] = "get_file"
@@ -219,7 +228,7 @@ Operation = Annotated[Union[
     GetMe, ListModels, ListLanguageModels, GetModel, CreateChatCompletion, CreateResponse, GetResponse,
     DeleteResponse, ListResponseInputs, CreateEmbeddings, GenerateImage,
     GetImageResult, GenerateVideo, GetVideoResult, TokenizeText, ListFiles,
-    GetFile, DeleteFile, CreateFilePublicURL, RevokeFilePublicURL,
+    GetFile, DeleteFile, CreateFilePublicURL, RevokeFilePublicURL, OnNewFile,
 ], Field(discriminator="operation")]
 
 
@@ -262,7 +271,7 @@ def _redact(value, secret):
     return value
 
 
-class GrokNode(WorkflowNode):
+class GrokNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-grok"
     connection_evidence = ConnectionEvidence(
         noun="xAI account", identity_operation="get_me", identity_keys=("team_id", "user_id"),
@@ -272,11 +281,71 @@ class GrokNode(WorkflowNode):
     def get_config_model(cls):
         return GrokNodeConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") == "on_new_file":
+            return bool(output.get("new_file_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        files = output.get("files") if isinstance(output, dict) else None
+        if not isinstance(files, list):
+            return super().resolve_agent_event(output)
+        if not files:
+            return None
+        lines = [f"- {file['filename']} (file ID {file['id']}, {file['bytes']} bytes, created {file['created_at']})"
+                 for file in files[:10]]
+        if len(files) > 10:
+            lines.append(f"- … and {len(files) - 10} more")
+        return {"text": f"Grok: {len(files)} new file(s) in your xAI team storage:\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_new_files(self, op, secret):
+        files = {}
+        cursor = None
+        cursors = set()
+        for _ in range(100):
+            result = await self._request(ListFiles(limit=100, order="desc", sort_by="created_at",
+                                                  pagination_token=cursor, filter=op.filter), secret)
+            if result["status"] != "success":
+                raise ValueError(f"Grok file poll failed: {_redact(result['error'], secret)}")
+            body = result["data"]
+            page = body.get("data")
+            if not isinstance(page, list) or any(
+                not isinstance(file, dict) or not isinstance(file.get("id"), str) or not file["id"]
+                or not isinstance(file.get("filename"), str)
+                or type(file.get("bytes")) is not int or type(file.get("created_at")) is not int
+                for file in page
+            ):
+                raise ValueError("Grok returned invalid file metadata")
+            files.update((file["id"], file) for file in page)
+            # xAI always returns a token, even on the final (short) page.
+            if len(page) < 100:
+                break
+            cursor = body.get("pagination_token")
+            if not isinstance(cursor, str) or not cursor or cursor in cursors:
+                raise ValueError("Grok returned an invalid or repeated pagination token")
+            cursors.add(cursor)
+        else:
+            raise ValueError("Grok file poll reached 10,000 files; narrow the file filter")
+        fresh = await self._filter_unseen(list(reversed(files.values())), lambda file: file["id"])
+        return {"files": fresh, "new_file_count": len(fresh)}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Grok API key")
         op = self.config.config
         secret = self.config.credentials.api_key
+        if isinstance(op, OnNewFile):
+            result = await self._poll_new_files(op, secret)
+        else:
+            result = await self._request(op, secret)
+        result = _redact(result, secret)
+        await self.emit(result)
+        return result
+
+    async def _request(self, op, secret):
         method, path = ROUTES[op.operation]
         fields = op.model_dump(exclude={"operation"}, exclude_none=True)
         for key in list(fields):
@@ -300,8 +369,6 @@ class GrokNode(WorkflowNode):
             result = {"status": "error", "error": "Grok request did not complete", "write_outcome": "unknown" if method != "GET" else None}
         else:
             result = self._result(response, op)
-        result = _redact(result, secret)
-        await self.emit(result)
         return result
 
     @staticmethod
@@ -318,7 +385,7 @@ class GrokNode(WorkflowNode):
             return {"status": "error", "http_status": code, "error": message or "Grok rejected the request", "write_outcome": "unknown" if code >= 500 and ROUTES[op.operation][0] != "GET" else None}
         if not isinstance(body, dict) or not body:
             raise ValueError("Grok returned an invalid JSON object")
-        if body.get("error") or body.get("status") == "failed":
+        if op.operation != "list_files" and (body.get("error") or body.get("status") == "failed"):
             return {"status": "error", "http_status": code, "error": body.get("error") or "Grok generation failed", "data": body}
         if op.operation == "get_me":
             if not all(isinstance(body.get(k), str) and body[k] for k in ("user_id", "team_id")) or type(body.get("team_blocked")) is not bool:

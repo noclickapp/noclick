@@ -111,3 +111,99 @@ def test_credential_manual_defaults_and_mutually_exclusive_context():
         native.CreateResponse(model="latest", input="hello", instructions="test", previous_response_id="r-1")
     with pytest.raises(ValidationError):
         native.GenerateImage(model="grok-imagine-image", prompt="cat", response_format="b64_json")
+
+
+FILE_LIST = next(e["response"] for e in EXAMPLES if e["config"]["operation"] == "list_files")
+
+
+def poll_state(monkeypatch, instance):
+    state = {}
+
+    async def update(mutator, **kwargs):
+        updated, result = mutator(state.copy())
+        if updated is not None:
+            state.clear()
+            state.update(updated)
+        return result
+
+    monkeypatch.setattr(instance, "_update_node_state", update)
+    return state
+
+
+@pytest.mark.asyncio
+async def test_file_trigger_baselines_detects_new_deduplicates_and_repoints(monkeypatch):
+    instance = node({"operation": "on_new_file"})
+    state = poll_state(monkeypatch, instance)
+    transport(monkeypatch, {"data": [], "pagination_token": ""})
+    baseline = await instance.execute({})
+    assert baseline == {"files": [], "new_file_count": 0}
+    assert instance.trigger_produced_no_event(baseline)
+    assert native.GrokNode.resolve_agent_event(baseline) is None
+
+    calls = transport(monkeypatch, FILE_LIST)
+    fresh = await instance.execute({})
+    assert fresh == {"files": FILE_LIST["data"], "new_file_count": len(FILE_LIST["data"])}
+    assert len(calls) == 1  # A short page ends pagination even with a nonempty token.
+    assert dict(calls[0].url.params) == {"limit": "100", "order": "desc", "sort_by": "created_at"}
+    assert instance.trigger_emitted_event(fresh)
+    assert native.GrokNode.should_propagate_output(fresh, {"operation": "on_new_file"})
+    text = native.GrokNode.resolve_agent_event(fresh)["text"]
+    for file in FILE_LIST["data"]:
+        assert file["filename"] in text and file["id"] in text
+    assert (await instance.execute({}))["new_file_count"] == 0
+
+    repointed = node({"operation": "on_new_file", "filter": 'content_type = "pdf"'})
+    async def update(mutator, **kwargs):
+        updated, result = mutator(state.copy())
+        if updated is not None:
+            state.update(updated)
+        return result
+    monkeypatch.setattr(repointed, "_update_node_state", update)
+    assert (await repointed.execute({}))["files"] == []
+    assert calls[-1].url.params["filter"] == 'content_type = "pdf"'
+
+
+@pytest.mark.asyncio
+async def test_existing_files_are_not_emitted_when_armed(monkeypatch):
+    instance = node({"operation": "on_new_file"})
+    state = poll_state(monkeypatch, instance)
+    transport(monkeypatch, FILE_LIST)
+    assert (await instance.execute({}))["files"] == []
+    assert state["seen_ids"] == [file["id"] for file in reversed(FILE_LIST["data"])]
+
+
+@pytest.mark.asyncio
+async def test_file_trigger_paginates_before_updating_seen_state(monkeypatch):
+    instance = node({"operation": "on_new_file"})
+    state = poll_state(monkeypatch, instance)
+    pages = iter([
+        {"data": FILE_LIST["data"] * 100, "pagination_token": FILE_LIST["pagination_token"]},
+        {"data": [], "pagination_token": FILE_LIST["pagination_token"]},
+    ])
+    calls = []
+    def respond(request):
+        calls.append(request)
+        assert not state
+        return httpx.Response(200, json=next(pages))
+    monkeypatch.setattr(native, "guarded_async_client", lambda **kw: httpx.AsyncClient(
+        transport=httpx.MockTransport(respond), **kw))
+    assert (await instance.execute({}))["files"] == []
+    assert len(calls) == 2
+    assert calls[1].url.params["pagination_token"] == FILE_LIST["pagination_token"]
+    assert len(state["seen_ids"]) == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body,status,match", [
+    ({"error": "Denied"}, 403, "file poll failed"),
+    ({"data": [{}]}, 200, "invalid file metadata"),
+    ({"data": []}, 500, "file poll failed"),
+    ({"data": FILE_LIST["data"] * 100, "pagination_token": FILE_LIST["pagination_token"]}, 200, "repeated pagination"),
+])
+async def test_failed_file_poll_never_advances_state(monkeypatch, body, status, match):
+    instance = node({"operation": "on_new_file"})
+    state = poll_state(monkeypatch, instance)
+    transport(monkeypatch, body, status)
+    with pytest.raises(ValueError, match=match):
+        await instance.execute({})
+    assert state == {}

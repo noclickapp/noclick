@@ -11,7 +11,7 @@ const GrokIcon = ({ className, style }: { className?: string; style?: CSSPropert
 
 export const GrokNode: NodeDefinition = {
     type: 'automation-grok', category: 'ai', label: 'Grok', keywords: ['xAI'],
-    description: 'Generate text, embeddings, images and videos with xAI, and manage stored responses and files',
+    description: 'Generate text, embeddings, images and videos with xAI, manage stored responses and files, and trigger on new team files',
     Icon: GrokIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={GrokIcon} iconColor="" />),
