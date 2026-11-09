@@ -1,0 +1,5 @@
+{
+  "source": "https://raw.githubusercontent.com/karbonhq/karbon-api-reference/master/KarbonAPI.json",
+  "version": "v3",
+  "description": "Provider-authored GET /v3/Notes/{NoteID} example copied without changes."
+}
