@@ -1,0 +1,899 @@
+{
+  "$defs": {
+    "AddContactComment": {
+      "additionalProperties": false,
+      "description": "Add a comment to the selected contact.",
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "add_contact_comment",
+          "default": "add_contact_comment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "comment": {
+          "minLength": 1,
+          "title": "Comment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "comment"
+      ],
+      "title": "AddContactComment",
+      "type": "object"
+    },
+    "AddContactTags": {
+      "additionalProperties": false,
+      "description": "Add tags to a contact; tag changes can start campaigns.",
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "add_contact_tags",
+          "default": "add_contact_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag_ids": {
+          "description": "Tag IDs to send to Quentn's PUT contact terms endpoint.",
+          "items": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Tag Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_ids"
+      ],
+      "title": "AddContactTags",
+      "type": "object"
+    },
+    "ContactData": {
+      "additionalProperties": true,
+      "description": "Built-in fields plus provider-defined field_ custom field names.",
+      "properties": {
+        "mail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Primary Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "family_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Family Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "terms": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag IDs; changing tags may start campaigns.",
+          "title": "Terms"
+        }
+      },
+      "title": "ContactData",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "description": "Create or merge a contact using the documented duplicate policy.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact": {
+          "$ref": "#/$defs/ContactData"
+        },
+        "duplicate_check_method": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "email",
+            "none"
+          ],
+          "title": "Duplicate Check Method",
+          "type": "string"
+        },
+        "duplicate_merge_method": {
+          "default": "update_add",
+          "enum": [
+            "update_add",
+            "update",
+            "add"
+          ],
+          "title": "Duplicate Merge Method",
+          "type": "string"
+        },
+        "return_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Fields"
+        }
+      },
+      "required": [
+        "contact"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateTag": {
+      "additionalProperties": false,
+      "description": "Create a tag for contact segmentation and campaigns.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "description": "Permanently delete the selected contact.",
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteContactComments": {
+      "additionalProperties": false,
+      "description": "Delete only the specified contact comments.",
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_contact_comments",
+          "default": "delete_contact_comments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "comment_ids": {
+          "items": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Comment Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_id",
+        "comment_ids"
+      ],
+      "title": "DeleteContactComments",
+      "type": "object"
+    },
+    "DeleteTag": {
+      "additionalProperties": false,
+      "description": "Delete the selected tag; Quentn may block tags used by campaigns.",
+      "properties": {
+        "term_id": {
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "term_id"
+      ],
+      "title": "DeleteTag",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "description": "Read a contact by its numeric ID.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact field names to return. Omit to use Quentn's defaults.",
+          "title": "Fields"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetContactByEmail": {
+      "additionalProperties": false,
+      "description": "Read a contact by primary email.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact field names to return. Omit to use Quentn's defaults.",
+          "title": "Fields"
+        },
+        "operation": {
+          "const": "get_contact_by_email",
+          "default": "get_contact_by_email",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "pattern": "^[^\\s@/]+@[^\\s@/]+\\.[^\\s@/]+$",
+          "title": "Primary Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "GetContactByEmail",
+      "type": "object"
+    },
+    "GetContactTags": {
+      "additionalProperties": false,
+      "description": "List the selected contact's tags.",
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact_tags",
+          "default": "get_contact_tags",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContactTags",
+      "type": "object"
+    },
+    "GetCustomField": {
+      "additionalProperties": false,
+      "description": "Read a custom field definition by numeric ID.",
+      "properties": {
+        "operation": {
+          "const": "get_custom_field",
+          "default": "get_custom_field",
+          "title": "Operation",
+          "type": "string"
+        },
+        "field_id": {
+          "minimum": 1,
+          "title": "Field Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "field_id"
+      ],
+      "title": "GetCustomField",
+      "type": "object"
+    },
+    "GetTag": {
+      "additionalProperties": false,
+      "description": "Read one tag by ID.",
+      "properties": {
+        "term_id": {
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "term_id"
+      ],
+      "title": "GetTag",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Read a user by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListContactComments": {
+      "additionalProperties": false,
+      "description": "Read one range of contact comments.",
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contact_comments",
+          "default": "list_contact_comments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "range": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Range",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ListContactComments",
+      "type": "object"
+    },
+    "ListCustomFields": {
+      "additionalProperties": false,
+      "description": "Read custom field definitions and their machine names.",
+      "properties": {
+        "operation": {
+          "const": "list_custom_fields",
+          "default": "list_custom_fields",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCustomFields",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "description": "Read one page of account tags, with an explicit offset.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "description": "Read one range of users in this Quentn system.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        },
+        "range": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Range",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort",
+          "type": "string"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "QuentnAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "quentn_api_key",
+          "default": "quentn_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_base_url": {
+          "description": "Your system URL, for example https://example.s1.quentn.com/public/api/v1.",
+          "title": "API URL",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_base_url",
+        "api_key"
+      ],
+      "title": "Quentn API Key",
+      "type": "object",
+      "x-credential-instructions": "In Quentn, open My account \u2192 API info. Copy the API URL and an API key into the fields below. API access requires a Basic account or higher. Use a separate key for NoClick.",
+      "x-credential-url": "https://help.quentn.com/hc/en-150/articles/4470019659793-Where-can-I-find-the-API"
+    },
+    "RemoveContactTags": {
+      "additionalProperties": false,
+      "description": "Remove only the specified tags from a contact.",
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "remove_contact_tags",
+          "default": "remove_contact_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag_ids": {
+          "items": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Tag Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_ids"
+      ],
+      "title": "RemoveContactTags",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "description": "Update supplied contact fields; omitted fields are not sent.",
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact": {
+          "$ref": "#/$defs/ContactData"
+        },
+        "return_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Fields"
+        }
+      },
+      "required": [
+        "contact_id",
+        "contact"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateContactComment": {
+      "additionalProperties": false,
+      "description": "Update one comment on the selected contact.",
+      "properties": {
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_contact_comment",
+          "default": "update_contact_comment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "comment_id": {
+          "minimum": 1,
+          "title": "Comment Id",
+          "type": "integer"
+        },
+        "comment": {
+          "minLength": 1,
+          "title": "Comment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "comment_id",
+        "comment"
+      ],
+      "title": "UpdateContactComment",
+      "type": "object"
+    },
+    "UpdateTag": {
+      "additionalProperties": false,
+      "description": "Update a tag's name or description.",
+      "properties": {
+        "term_id": {
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "term_id"
+      ],
+      "title": "UpdateTag",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_comment": "#/$defs/AddContactComment",
+          "add_contact_tags": "#/$defs/AddContactTags",
+          "create_contact": "#/$defs/CreateContact",
+          "create_tag": "#/$defs/CreateTag",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_contact_comments": "#/$defs/DeleteContactComments",
+          "delete_tag": "#/$defs/DeleteTag",
+          "get_contact": "#/$defs/GetContact",
+          "get_contact_by_email": "#/$defs/GetContactByEmail",
+          "get_contact_tags": "#/$defs/GetContactTags",
+          "get_custom_field": "#/$defs/GetCustomField",
+          "get_tag": "#/$defs/GetTag",
+          "get_user": "#/$defs/GetUser",
+          "list_contact_comments": "#/$defs/ListContactComments",
+          "list_custom_fields": "#/$defs/ListCustomFields",
+          "list_tags": "#/$defs/ListTags",
+          "list_users": "#/$defs/ListUsers",
+          "remove_contact_tags": "#/$defs/RemoveContactTags",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_contact_comment": "#/$defs/UpdateContactComment",
+          "update_tag": "#/$defs/UpdateTag"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/GetContactByEmail"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/GetContactTags"
+        },
+        {
+          "$ref": "#/$defs/AddContactTags"
+        },
+        {
+          "$ref": "#/$defs/RemoveContactTags"
+        },
+        {
+          "$ref": "#/$defs/ListContactComments"
+        },
+        {
+          "$ref": "#/$defs/AddContactComment"
+        },
+        {
+          "$ref": "#/$defs/UpdateContactComment"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactComments"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/GetTag"
+        },
+        {
+          "$ref": "#/$defs/UpdateTag"
+        },
+        {
+          "$ref": "#/$defs/DeleteTag"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/ListCustomFields"
+        },
+        {
+          "$ref": "#/$defs/GetCustomField"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QuentnAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Quentn Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

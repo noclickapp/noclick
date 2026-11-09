@@ -1,0 +1,107 @@
+{
+  "source": "https://quentn.com/assets/api/api-v1.yaml",
+  "contact": {
+    "id": 123,
+    "first_name": "John",
+    "family_name": "Doe",
+    "mail": "johndoe@example.com",
+    "mail_status": 3
+  },
+  "tags": [
+    {
+      "id": 123,
+      "name": "Tag 1",
+      "description": "Example description",
+      "deletion_blocked": false
+    },
+    {
+      "id": 124,
+      "name": "Tag 2",
+      "description": "Example description",
+      "deletion_blocked": true
+    }
+  ],
+  "users": {
+    "number_users": 12,
+    "range": 1,
+    "limit": 10,
+    "sort": "desc",
+    "number_ranges": 2,
+    "users": [
+      {
+        "uid": 2,
+        "mail": "user@example.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "timezone": "Europe/Berlin",
+        "language": "de",
+        "created": 1627980505,
+        "changed": 1627980505,
+        "roles": [
+          {
+            "rid": 2,
+            "name": "Editor"
+          },
+          {
+            "rid": 4,
+            "name": "Writer"
+          }
+        ]
+      },
+      {
+        "uid": 5,
+        "mail": "jon-doe@example.com",
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "timezone": "Europe/London",
+        "language": "en",
+        "created": 1627980505,
+        "changed": 1627980505,
+        "roles": [
+          {
+            "rid": 2,
+            "name": "Editor"
+          },
+          {
+            "rid": 3,
+            "name": "Staff Member"
+          }
+        ]
+      }
+    ]
+  },
+  "custom_fields": [
+    {
+      "field_id": 123,
+      "field_name": "field_customer_id",
+      "label": "Customer ID",
+      "description": "Example description",
+      "type": "text_textfield",
+      "field_type": "text",
+      "required": false
+    },
+    {
+      "field_id": 156,
+      "field_name": "field_confirmation",
+      "label": "Cookie confirmation",
+      "description": "Example description",
+      "type": "checkbox_confirmation",
+      "field_type": "checkbox_confirmation",
+      "required": true
+    }
+  ],
+  "contact_api_source": "https://help.quentn.com/hc/en-150/articles/4517835330961-Contact-API",
+  "success_response": {
+    "success": "true"
+  },
+  "email_response": [
+    {
+      "id": 123,
+      "mail": "johndoe@example.com"
+    },
+    {
+      "id": 124,
+      "mail": "johndoe@example.com"
+    }
+  ]
+}
