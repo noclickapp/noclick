@@ -1,0 +1,118 @@
+{
+  "get_calendar_configuration": {
+    "operation": "get_calendar_configuration"
+  },
+  "list_events": {
+    "operation": "list_events",
+    "start_date": "2026-11-09",
+    "end_date": "2026-11-10",
+    "timezone": "Europe/Zurich",
+    "notes_format": "markdown"
+  },
+  "create_event": {
+    "operation": "create_event",
+    "start_dt": "2026-11-09T10:00:00+00:00",
+    "end_dt": "2026-11-09T11:00:00+00:00",
+    "subcalendar_ids": [
+      123
+    ],
+    "title": "Project planning"
+  },
+  "get_event": {
+    "operation": "get_event",
+    "event_id": "123456"
+  },
+  "update_event": {
+    "operation": "update_event",
+    "start_dt": "2026-11-09T10:00:00+00:00",
+    "end_dt": "2026-11-09T11:00:00+00:00",
+    "subcalendar_ids": [
+      123
+    ],
+    "title": "Project planning",
+    "event_id": "123456",
+    "attachments": [
+      {
+        "id": "01ATTACHMENT",
+        "deleted": false
+      }
+    ],
+    "version": "abcd"
+  },
+  "delete_event": {
+    "operation": "delete_event",
+    "event_id": "123456",
+    "version": "abcd"
+  },
+  "get_event_auxiliary": {
+    "operation": "get_event_auxiliary",
+    "event_id": "123456"
+  },
+  "create_comment": {
+    "operation": "create_comment",
+    "event_id": "123456",
+    "message": "Please bring a projector",
+    "name": "Peter",
+    "email": "peter@example.com",
+    "input_format": "markdown"
+  },
+  "update_comment": {
+    "operation": "update_comment",
+    "event_id": "123456",
+    "comment_id": "789012",
+    "message": "A projector is available"
+  },
+  "delete_comment": {
+    "operation": "delete_comment",
+    "event_id": "123456",
+    "comment_id": "789012"
+  },
+  "list_signups": {
+    "operation": "list_signups",
+    "event_id": "123456"
+  },
+  "create_signup": {
+    "operation": "create_signup",
+    "event_id": "123456",
+    "name": "Mark Doe",
+    "email": "mark@example.org"
+  },
+  "update_signup": {
+    "operation": "update_signup",
+    "event_id": "123456",
+    "signup_id": "654321",
+    "name": "Mark Doe",
+    "email": "mark@example.org"
+  },
+  "delete_signup": {
+    "operation": "delete_signup",
+    "event_id": "123456",
+    "signup_id": "654321"
+  },
+  "list_subcalendars": {
+    "operation": "list_subcalendars",
+    "include_inactive": true,
+    "offset": 100,
+    "limit": 2,
+    "filter_by": "Peter's"
+  },
+  "create_subcalendar": {
+    "operation": "create_subcalendar",
+    "name": "Peter's Schedule",
+    "color": 17
+  },
+  "get_subcalendar": {
+    "operation": "get_subcalendar",
+    "subcalendar_id": "123"
+  },
+  "update_subcalendar": {
+    "operation": "update_subcalendar",
+    "subcalendar_id": "123",
+    "name": "Peter's Schedule",
+    "active": false
+  },
+  "delete_subcalendar": {
+    "operation": "delete_subcalendar",
+    "subcalendar_id": "123"
+  }
+}

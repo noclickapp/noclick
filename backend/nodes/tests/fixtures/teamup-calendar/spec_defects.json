@@ -1,0 +1,23 @@
+[
+  {
+    "operation": "list_events",
+    "kind": "d",
+    "docs": [
+      "https://stoplight.io/api/v1/projects/teamup/api/nodes/reference/generated_docs_public.yaml"
+    ],
+    "pointer": "#/components/parameters/event_notes_format/schema/oneOf",
+    "detail": "The format parameter documents html and markdown and gives examples for both. Its oneOf repeats the string branch twice and the array branch twice, so every documented value matches multiple alternatives and is rejected.",
+    "source": "https://stoplight.io/api/v1/projects/teamup/api/nodes/reference/generated_docs_public.yaml"
+  },
+  {
+    "operation": "create_event",
+    "kind": "d",
+    "docs": [
+      "https://stoplight.io/api/v1/projects/teamup/api/nodes/reference/generated_docs_public.yaml",
+      "https://www.teamup.com/teamup-zapier-integration/"
+    ],
+    "pointer": "#/paths/~1{calendarKeyOrId}~1events/post/requestBody/content/application~1json/schema/oneOf",
+    "detail": "The request body oneOf references Event.create and Event.createRecurring. They have identical required fields, recurrence rrule is optional, and neither forbids additional properties. The documented non-recurring event payload matches both schemas, making oneOf reject it.",
+    "source": "https://stoplight.io/api/v1/projects/teamup/api/nodes/reference/generated_docs_public.yaml"
+  }
+]
