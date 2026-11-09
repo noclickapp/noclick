@@ -1,0 +1,18 @@
+{
+  "contract": {
+    "source_url": "https://raw.githubusercontent.com/APIs-guru/unofficial_openapi_specs/master/stackexchange.com/2.0/openapi.yaml",
+    "version": "2.0",
+    "sha256": "c8370badded7a051494a69a64c90b0ec89dc39498d4898a527a1b86284105fa3"
+  },
+  "spec_defects": [
+    {
+      "description": "The pinned successful read responses describe bare resource arrays (and /me describes a bare user). The provider documents a common object wrapper with an items array, has_more and quota fields for all responses. Generated bare-array witnesses are rejected intentionally; the node retains the documented wrapper.",
+      "docs": ["https://api.stackexchange.com/docs/wrapper", "https://api.stackexchange.com/docs/me"]
+    }
+  ],
+  "auth_evidence": {
+    "description": "The spec does not attach security requirements to the selected operations. Offline route tests independently assert key and access_token query placement from the updated provider authentication guide. Credentials are existing user-supplied values; this integration does not implement OAuth sign-in.",
+    "docs": ["https://stackapps.com/help/api-authentication", "https://api.stackexchange.com/docs/create-comment", "https://api.stackexchange.com/docs/me-notifications"]
+  },
+  "fixtures": "wrapper.json is a synthetic offline test fixture using the documented wrapper fields, not a claimed provider-authored response."
+}
