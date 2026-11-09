@@ -1,0 +1,847 @@
+{
+  "source": "https://api-public.salesql.com/openapi.json",
+  "version": "3.14.2",
+  "operations": {
+    "enrichOrganization": {
+      "method": "GET",
+      "path": "/organizations/enrich",
+      "status": 200,
+      "body": {
+        "founded_year": 1977,
+        "linkedin_url": "https://linkedin.com/company/oracle",
+        "name": "Oracle",
+        "number_of_employees": "10001+",
+        "type": "public",
+        "uuid": "d8c05cf9-b330-4794-87a8-7dbc65567227",
+        "website": "http://www.oracle.com",
+        "website_domain": "oracle.com"
+      }
+    },
+    "bulkEnrichOrganizations": {
+      "method": "POST",
+      "path": "/organizations/enrich/bulk",
+      "status": 200,
+      "body": [
+        {
+          "founded_year": 1977,
+          "linkedin_url": "https://linkedin.com/company/oracle",
+          "name": "Oracle",
+          "number_of_employees": "10001+",
+          "type": "public",
+          "uuid": "d8c05cf9-b330-4794-87a8-7dbc65567227",
+          "website": "http://www.oracle.com",
+          "website_domain": "oracle.com"
+        },
+        {
+          "error": "Organization not found"
+        }
+      ]
+    },
+    "enrichPersonByLinkedInURL": {
+      "method": "GET",
+      "path": "/persons/enrich",
+      "status": 200,
+      "body": {
+        "uuid": "f5efe1a7-10f4-4173-8bf3-8a3c3bc64b3f",
+        "first_name": "Bob",
+        "last_name": "Christiaanse",
+        "full_name": "Bob Christiaanse",
+        "linkedin_url": "https://linkedin.com/in/bob-christiaanse",
+        "title": "Lead Account Director",
+        "headline": "Lead Account Director @ LinkedIn | Public Sector Lead for Benelux region",
+        "emails": [
+          {
+            "email": "b**************e@g***l.com",
+            "type": "Direct",
+            "status": "Valid"
+          },
+          {
+            "email": "b***********e@l******n.com",
+            "type": "Work",
+            "status": "Valid"
+          }
+        ],
+        "phones": [
+          {
+            "phone": "+1 ****-**62",
+            "type": "Work",
+            "country_code": "US",
+            "is_valid": true
+          }
+        ],
+        "organization": {
+          "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+          "name": "LinkedIn",
+          "website": "https://careers.linkedin.com",
+          "website_domain": "linkedin.com",
+          "linkedin_url": "https://linkedin.com/company/linkedin",
+          "founded_year": 2003,
+          "number_of_employees": "10001+",
+          "type": "public"
+        },
+        "work_experience": [
+          {
+            "title": "Lead Account Director",
+            "timestamp_start": 1680307200000,
+            "is_current": true,
+            "organization": {
+              "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+              "name": "LinkedIn",
+              "website": "https://careers.linkedin.com",
+              "website_domain": "linkedin.com",
+              "linkedin_url": "https://linkedin.com/company/linkedin",
+              "logo": "https://salesql.s3.amazonaws.com/company/9473d991-87ad-43f6-91ee-a42bb54898f4-linkedin.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2666564ff83251cbb127be3288464ada1bfc8659b2b2e69670c59eaf85aada57",
+              "founded_year": 2003,
+              "number_of_employees": "10001+",
+              "type": "public"
+            }
+          },
+          {
+            "title": "Senior Account Director",
+            "timestamp_start": 1661990400000,
+            "timestamp_end": 1680307200000,
+            "is_current": false,
+            "organization": {
+              "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+              "name": "LinkedIn",
+              "website": "https://careers.linkedin.com",
+              "website_domain": "linkedin.com",
+              "linkedin_url": "https://linkedin.com/company/linkedin",
+              "logo": "https://salesql.s3.amazonaws.com/company/9473d991-87ad-43f6-91ee-a42bb54898f4-linkedin.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2666564ff83251cbb127be3288464ada1bfc8659b2b2e69670c59eaf85aada57",
+              "founded_year": 2003,
+              "number_of_employees": "10001+",
+              "type": "public"
+            }
+          },
+          {
+            "title": "Account Director",
+            "timestamp_start": 1559347200000,
+            "timestamp_end": 1659312000000,
+            "is_current": false,
+            "organization": {
+              "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+              "name": "LinkedIn",
+              "website": "https://careers.linkedin.com",
+              "website_domain": "linkedin.com",
+              "linkedin_url": "https://linkedin.com/company/linkedin",
+              "logo": "https://salesql.s3.amazonaws.com/company/9473d991-87ad-43f6-91ee-a42bb54898f4-linkedin.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2666564ff83251cbb127be3288464ada1bfc8659b2b2e69670c59eaf85aada57",
+              "founded_year": 2003,
+              "number_of_employees": "10001+",
+              "type": "public"
+            }
+          },
+          {
+            "title": "Managing Director",
+            "timestamp_start": 1519862400000,
+            "timestamp_end": 1554076800000,
+            "is_current": false,
+            "organization": {
+              "uuid": "13447daa-37df-4b16-8f35-dd5c6ace5ffe",
+              "name": "The Next Ad",
+              "website": "https://www.thenextad.com",
+              "website_domain": "thenextad.com",
+              "linkedin_url": "https://linkedin.com/company/the-next-ad",
+              "logo": "https://salesql.s3.amazonaws.com/company/13447daa-37df-4b16-8f35-dd5c6ace5ffe-the-next-ad.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=42259a61d58ef8569a07e8f20f6847b0556cb8e4a2d626a4e42f82a8b2001f45",
+              "founded_year": 2014,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Account Director EMEA",
+            "timestamp_start": 1477958400000,
+            "timestamp_end": 1517443200000,
+            "is_current": false,
+            "organization": {
+              "uuid": "13447daa-37df-4b16-8f35-dd5c6ace5ffe",
+              "name": "The Next Ad",
+              "website": "https://www.thenextad.com",
+              "website_domain": "thenextad.com",
+              "linkedin_url": "https://linkedin.com/company/the-next-ad",
+              "logo": "https://salesql.s3.amazonaws.com/company/13447daa-37df-4b16-8f35-dd5c6ace5ffe-the-next-ad.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=42259a61d58ef8569a07e8f20f6847b0556cb8e4a2d626a4e42f82a8b2001f45",
+              "founded_year": 2014,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Head of Client Services",
+            "timestamp_start": 1417392000000,
+            "timestamp_end": 1475280000000,
+            "is_current": false,
+            "organization": {
+              "uuid": "13447daa-37df-4b16-8f35-dd5c6ace5ffe",
+              "name": "The Next Ad",
+              "website": "https://www.thenextad.com",
+              "website_domain": "thenextad.com",
+              "linkedin_url": "https://linkedin.com/company/the-next-ad",
+              "logo": "https://salesql.s3.amazonaws.com/company/13447daa-37df-4b16-8f35-dd5c6ace5ffe-the-next-ad.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=42259a61d58ef8569a07e8f20f6847b0556cb8e4a2d626a4e42f82a8b2001f45",
+              "founded_year": 2014,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Head of Client Services",
+            "timestamp_start": 1391212800000,
+            "timestamp_end": 1512086400000,
+            "is_current": false,
+            "organization": {
+              "uuid": "141742ad-d911-4e1e-bee4-24b6a03c071a",
+              "name": "Media Injection",
+              "website": "http://www.mediainjection.com",
+              "website_domain": "mediainjection.com",
+              "linkedin_url": "https://linkedin.com/company/media-injection",
+              "logo": "https://salesql.s3.amazonaws.com/company/141742ad-d911-4e1e-bee4-24b6a03c071a-media-injection.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2b5f31e95167e17c97a1918f3db8c8e1c23c15dc5f7880336a2712afd26f4e64",
+              "founded_year": 2009,
+              "number_of_employees": "1 - 10",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Business Consultant",
+            "timestamp_start": 1314835200000,
+            "timestamp_end": 1388534400000,
+            "is_current": false,
+            "organization": {
+              "uuid": "141742ad-d911-4e1e-bee4-24b6a03c071a",
+              "name": "Media Injection",
+              "website": "http://www.mediainjection.com",
+              "website_domain": "mediainjection.com",
+              "linkedin_url": "https://linkedin.com/company/media-injection",
+              "logo": "https://salesql.s3.amazonaws.com/company/141742ad-d911-4e1e-bee4-24b6a03c071a-media-injection.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2b5f31e95167e17c97a1918f3db8c8e1c23c15dc5f7880336a2712afd26f4e64",
+              "founded_year": 2009,
+              "number_of_employees": "1 - 10",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Project Manager",
+            "timestamp_start": 1306886400000,
+            "timestamp_end": 1314835200000,
+            "is_current": false,
+            "organization": {
+              "uuid": "6596eeb3-1070-4bf4-aef1-5818827edf86",
+              "name": "Alira Health (previously CMC Consulting Group)",
+              "website": "http://alirahealth.com",
+              "website_domain": "alirahealth.com",
+              "linkedin_url": "https://linkedin.com/company/cmc-consulting-group",
+              "logo": "https://salesql.s3.amazonaws.com/company/6596eeb3-1070-4bf4-aef1-5818827edf86-alira-health-previously-cmc-consulting-group.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=476b87293de0c202d6b04248cd60ee931fe37ba203592457a380342bf95eb229",
+              "founded_year": 1999,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Project Manager (Internship)",
+            "timestamp_start": 1296518400000,
+            "timestamp_end": 1306886400000,
+            "is_current": false,
+            "organization": {
+              "uuid": "6596eeb3-1070-4bf4-aef1-5818827edf86",
+              "name": "Alira Health (previously CMC Consulting Group)",
+              "website": "http://alirahealth.com",
+              "website_domain": "alirahealth.com",
+              "linkedin_url": "https://linkedin.com/company/cmc-consulting-group",
+              "logo": "https://salesql.s3.amazonaws.com/company/6596eeb3-1070-4bf4-aef1-5818827edf86-alira-health-previously-cmc-consulting-group.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=476b87293de0c202d6b04248cd60ee931fe37ba203592457a380342bf95eb229",
+              "founded_year": 1999,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Project Manager",
+            "timestamp_start": 1280620800000,
+            "timestamp_end": 1293840000000,
+            "is_current": false,
+            "organization": {
+              "uuid": "763f62ee-fe12-46f6-a2be-b9d076eeaa22",
+              "name": "Talenbureau Lexicon BV",
+              "website": "http://www.lexicon.nl",
+              "website_domain": "lexicon.nl",
+              "linkedin_url": "https://linkedin.com/company/lexicon-trainingen",
+              "logo": "https://salesql.s3.amazonaws.com/company/763f62ee-fe12-46f6-a2be-b9d076eeaa22-talenbureau-lexicon-bv.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=18b4435ca68e16e3b92d093aa1691924de9072ec15941bfe23c491e689f26da0",
+              "founded_year": 1994,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Trainee",
+            "timestamp_start": 1264982400000,
+            "timestamp_end": 1280620800000,
+            "is_current": false,
+            "organization": {
+              "uuid": "763f62ee-fe12-46f6-a2be-b9d076eeaa22",
+              "name": "Talenbureau Lexicon BV",
+              "website": "http://www.lexicon.nl",
+              "website_domain": "lexicon.nl",
+              "linkedin_url": "https://linkedin.com/company/lexicon-trainingen",
+              "logo": "https://salesql.s3.amazonaws.com/company/763f62ee-fe12-46f6-a2be-b9d076eeaa22-talenbureau-lexicon-bv.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=18b4435ca68e16e3b92d093aa1691924de9072ec15941bfe23c491e689f26da0",
+              "founded_year": 1994,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          }
+        ],
+        "timestamp_work_experience_start": 1264982400000
+      }
+    },
+    "emailLookupPerson": {
+      "method": "GET",
+      "path": "/persons/email_lookup",
+      "status": 200,
+      "body": {
+        "uuid": "f5efe1a7-10f4-4173-8bf3-8a3c3bc64b3f",
+        "first_name": "Bob",
+        "last_name": "Christiaanse",
+        "full_name": "Bob Christiaanse",
+        "linkedin_url": "https://linkedin.com/in/bob-christiaanse",
+        "title": "Lead Account Director",
+        "headline": "Lead Account Director @ LinkedIn | Public Sector Lead for Benelux region",
+        "emails": [
+          {
+            "email": "b**************e@g***l.com",
+            "type": "Direct",
+            "status": "Valid"
+          },
+          {
+            "email": "b***********e@l******n.com",
+            "type": "Work",
+            "status": "Valid"
+          }
+        ],
+        "phones": [
+          {
+            "phone": "+1 ****-**62",
+            "type": "Work",
+            "country_code": "US",
+            "is_valid": true
+          }
+        ],
+        "organization": {
+          "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+          "name": "LinkedIn",
+          "website": "https://careers.linkedin.com",
+          "website_domain": "linkedin.com",
+          "linkedin_url": "https://linkedin.com/company/linkedin",
+          "founded_year": 2003,
+          "number_of_employees": "10001+",
+          "type": "public"
+        },
+        "work_experience": [
+          {
+            "title": "Lead Account Director",
+            "timestamp_start": 1680307200000,
+            "is_current": true,
+            "organization": {
+              "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+              "name": "LinkedIn",
+              "website": "https://careers.linkedin.com",
+              "website_domain": "linkedin.com",
+              "linkedin_url": "https://linkedin.com/company/linkedin",
+              "logo": "https://salesql.s3.amazonaws.com/company/9473d991-87ad-43f6-91ee-a42bb54898f4-linkedin.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2666564ff83251cbb127be3288464ada1bfc8659b2b2e69670c59eaf85aada57",
+              "founded_year": 2003,
+              "number_of_employees": "10001+",
+              "type": "public"
+            }
+          },
+          {
+            "title": "Senior Account Director",
+            "timestamp_start": 1661990400000,
+            "timestamp_end": 1680307200000,
+            "is_current": false,
+            "organization": {
+              "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+              "name": "LinkedIn",
+              "website": "https://careers.linkedin.com",
+              "website_domain": "linkedin.com",
+              "linkedin_url": "https://linkedin.com/company/linkedin",
+              "logo": "https://salesql.s3.amazonaws.com/company/9473d991-87ad-43f6-91ee-a42bb54898f4-linkedin.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2666564ff83251cbb127be3288464ada1bfc8659b2b2e69670c59eaf85aada57",
+              "founded_year": 2003,
+              "number_of_employees": "10001+",
+              "type": "public"
+            }
+          },
+          {
+            "title": "Account Director",
+            "timestamp_start": 1559347200000,
+            "timestamp_end": 1659312000000,
+            "is_current": false,
+            "organization": {
+              "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+              "name": "LinkedIn",
+              "website": "https://careers.linkedin.com",
+              "website_domain": "linkedin.com",
+              "linkedin_url": "https://linkedin.com/company/linkedin",
+              "logo": "https://salesql.s3.amazonaws.com/company/9473d991-87ad-43f6-91ee-a42bb54898f4-linkedin.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2666564ff83251cbb127be3288464ada1bfc8659b2b2e69670c59eaf85aada57",
+              "founded_year": 2003,
+              "number_of_employees": "10001+",
+              "type": "public"
+            }
+          },
+          {
+            "title": "Managing Director",
+            "timestamp_start": 1519862400000,
+            "timestamp_end": 1554076800000,
+            "is_current": false,
+            "organization": {
+              "uuid": "13447daa-37df-4b16-8f35-dd5c6ace5ffe",
+              "name": "The Next Ad",
+              "website": "https://www.thenextad.com",
+              "website_domain": "thenextad.com",
+              "linkedin_url": "https://linkedin.com/company/the-next-ad",
+              "logo": "https://salesql.s3.amazonaws.com/company/13447daa-37df-4b16-8f35-dd5c6ace5ffe-the-next-ad.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=42259a61d58ef8569a07e8f20f6847b0556cb8e4a2d626a4e42f82a8b2001f45",
+              "founded_year": 2014,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Account Director EMEA",
+            "timestamp_start": 1477958400000,
+            "timestamp_end": 1517443200000,
+            "is_current": false,
+            "organization": {
+              "uuid": "13447daa-37df-4b16-8f35-dd5c6ace5ffe",
+              "name": "The Next Ad",
+              "website": "https://www.thenextad.com",
+              "website_domain": "thenextad.com",
+              "linkedin_url": "https://linkedin.com/company/the-next-ad",
+              "logo": "https://salesql.s3.amazonaws.com/company/13447daa-37df-4b16-8f35-dd5c6ace5ffe-the-next-ad.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=42259a61d58ef8569a07e8f20f6847b0556cb8e4a2d626a4e42f82a8b2001f45",
+              "founded_year": 2014,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Head of Client Services",
+            "timestamp_start": 1417392000000,
+            "timestamp_end": 1475280000000,
+            "is_current": false,
+            "organization": {
+              "uuid": "13447daa-37df-4b16-8f35-dd5c6ace5ffe",
+              "name": "The Next Ad",
+              "website": "https://www.thenextad.com",
+              "website_domain": "thenextad.com",
+              "linkedin_url": "https://linkedin.com/company/the-next-ad",
+              "logo": "https://salesql.s3.amazonaws.com/company/13447daa-37df-4b16-8f35-dd5c6ace5ffe-the-next-ad.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=42259a61d58ef8569a07e8f20f6847b0556cb8e4a2d626a4e42f82a8b2001f45",
+              "founded_year": 2014,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Head of Client Services",
+            "timestamp_start": 1391212800000,
+            "timestamp_end": 1512086400000,
+            "is_current": false,
+            "organization": {
+              "uuid": "141742ad-d911-4e1e-bee4-24b6a03c071a",
+              "name": "Media Injection",
+              "website": "http://www.mediainjection.com",
+              "website_domain": "mediainjection.com",
+              "linkedin_url": "https://linkedin.com/company/media-injection",
+              "logo": "https://salesql.s3.amazonaws.com/company/141742ad-d911-4e1e-bee4-24b6a03c071a-media-injection.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2b5f31e95167e17c97a1918f3db8c8e1c23c15dc5f7880336a2712afd26f4e64",
+              "founded_year": 2009,
+              "number_of_employees": "1 - 10",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Business Consultant",
+            "timestamp_start": 1314835200000,
+            "timestamp_end": 1388534400000,
+            "is_current": false,
+            "organization": {
+              "uuid": "141742ad-d911-4e1e-bee4-24b6a03c071a",
+              "name": "Media Injection",
+              "website": "http://www.mediainjection.com",
+              "website_domain": "mediainjection.com",
+              "linkedin_url": "https://linkedin.com/company/media-injection",
+              "logo": "https://salesql.s3.amazonaws.com/company/141742ad-d911-4e1e-bee4-24b6a03c071a-media-injection.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2b5f31e95167e17c97a1918f3db8c8e1c23c15dc5f7880336a2712afd26f4e64",
+              "founded_year": 2009,
+              "number_of_employees": "1 - 10",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Project Manager",
+            "timestamp_start": 1306886400000,
+            "timestamp_end": 1314835200000,
+            "is_current": false,
+            "organization": {
+              "uuid": "6596eeb3-1070-4bf4-aef1-5818827edf86",
+              "name": "Alira Health (previously CMC Consulting Group)",
+              "website": "http://alirahealth.com",
+              "website_domain": "alirahealth.com",
+              "linkedin_url": "https://linkedin.com/company/cmc-consulting-group",
+              "logo": "https://salesql.s3.amazonaws.com/company/6596eeb3-1070-4bf4-aef1-5818827edf86-alira-health-previously-cmc-consulting-group.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=476b87293de0c202d6b04248cd60ee931fe37ba203592457a380342bf95eb229",
+              "founded_year": 1999,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Project Manager (Internship)",
+            "timestamp_start": 1296518400000,
+            "timestamp_end": 1306886400000,
+            "is_current": false,
+            "organization": {
+              "uuid": "6596eeb3-1070-4bf4-aef1-5818827edf86",
+              "name": "Alira Health (previously CMC Consulting Group)",
+              "website": "http://alirahealth.com",
+              "website_domain": "alirahealth.com",
+              "linkedin_url": "https://linkedin.com/company/cmc-consulting-group",
+              "logo": "https://salesql.s3.amazonaws.com/company/6596eeb3-1070-4bf4-aef1-5818827edf86-alira-health-previously-cmc-consulting-group.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=476b87293de0c202d6b04248cd60ee931fe37ba203592457a380342bf95eb229",
+              "founded_year": 1999,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Project Manager",
+            "timestamp_start": 1280620800000,
+            "timestamp_end": 1293840000000,
+            "is_current": false,
+            "organization": {
+              "uuid": "763f62ee-fe12-46f6-a2be-b9d076eeaa22",
+              "name": "Talenbureau Lexicon BV",
+              "website": "http://www.lexicon.nl",
+              "website_domain": "lexicon.nl",
+              "linkedin_url": "https://linkedin.com/company/lexicon-trainingen",
+              "logo": "https://salesql.s3.amazonaws.com/company/763f62ee-fe12-46f6-a2be-b9d076eeaa22-talenbureau-lexicon-bv.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=18b4435ca68e16e3b92d093aa1691924de9072ec15941bfe23c491e689f26da0",
+              "founded_year": 1994,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          },
+          {
+            "title": "Trainee",
+            "timestamp_start": 1264982400000,
+            "timestamp_end": 1280620800000,
+            "is_current": false,
+            "organization": {
+              "uuid": "763f62ee-fe12-46f6-a2be-b9d076eeaa22",
+              "name": "Talenbureau Lexicon BV",
+              "website": "http://www.lexicon.nl",
+              "website_domain": "lexicon.nl",
+              "linkedin_url": "https://linkedin.com/company/lexicon-trainingen",
+              "logo": "https://salesql.s3.amazonaws.com/company/763f62ee-fe12-46f6-a2be-b9d076eeaa22-talenbureau-lexicon-bv.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=18b4435ca68e16e3b92d093aa1691924de9072ec15941bfe23c491e689f26da0",
+              "founded_year": 1994,
+              "number_of_employees": "11 - 50",
+              "type": "privately-held"
+            }
+          }
+        ],
+        "timestamp_work_experience_start": 1264982400000
+      }
+    },
+    "bulkEnrichPersons": {
+      "method": "POST",
+      "path": "/persons/enrich/bulk",
+      "status": 200,
+      "body": [
+        {
+          "uuid": "f5efe1a7-10f4-4173-8bf3-8a3c3bc64b3f",
+          "first_name": "Bob",
+          "last_name": "Christiaanse",
+          "full_name": "Bob Christiaanse",
+          "linkedin_url": "https://linkedin.com/in/bob-christiaanse",
+          "title": "Lead Account Director",
+          "headline": "Lead Account Director @ LinkedIn | Public Sector Lead for Benelux region",
+          "emails": [
+            {
+              "email": "b**************e@g***l.com",
+              "type": "Direct",
+              "status": "Valid"
+            },
+            {
+              "email": "b***********e@l******n.com",
+              "type": "Work",
+              "status": "Valid"
+            }
+          ],
+          "phones": [
+            {
+              "phone": "+1 ****-**62",
+              "type": "Work",
+              "country_code": "US",
+              "is_valid": true
+            }
+          ],
+          "organization": {
+            "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+            "name": "LinkedIn",
+            "website": "https://careers.linkedin.com",
+            "website_domain": "linkedin.com",
+            "linkedin_url": "https://linkedin.com/company/linkedin",
+            "founded_year": 2003,
+            "number_of_employees": "10001+",
+            "type": "public"
+          },
+          "work_experience": [
+            {
+              "title": "Lead Account Director",
+              "timestamp_start": 1680307200000,
+              "is_current": true,
+              "organization": {
+                "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+                "name": "LinkedIn",
+                "website": "https://careers.linkedin.com",
+                "website_domain": "linkedin.com",
+                "linkedin_url": "https://linkedin.com/company/linkedin",
+                "logo": "https://salesql.s3.amazonaws.com/company/9473d991-87ad-43f6-91ee-a42bb54898f4-linkedin.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2666564ff83251cbb127be3288464ada1bfc8659b2b2e69670c59eaf85aada57",
+                "founded_year": 2003,
+                "number_of_employees": "10001+",
+                "type": "public"
+              }
+            },
+            {
+              "title": "Senior Account Director",
+              "timestamp_start": 1661990400000,
+              "timestamp_end": 1680307200000,
+              "is_current": false,
+              "organization": {
+                "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+                "name": "LinkedIn",
+                "website": "https://careers.linkedin.com",
+                "website_domain": "linkedin.com",
+                "linkedin_url": "https://linkedin.com/company/linkedin",
+                "logo": "https://salesql.s3.amazonaws.com/company/9473d991-87ad-43f6-91ee-a42bb54898f4-linkedin.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2666564ff83251cbb127be3288464ada1bfc8659b2b2e69670c59eaf85aada57",
+                "founded_year": 2003,
+                "number_of_employees": "10001+",
+                "type": "public"
+              }
+            },
+            {
+              "title": "Account Director",
+              "timestamp_start": 1559347200000,
+              "timestamp_end": 1659312000000,
+              "is_current": false,
+              "organization": {
+                "uuid": "9473d991-87ad-43f6-91ee-a42bb54898f4",
+                "name": "LinkedIn",
+                "website": "https://careers.linkedin.com",
+                "website_domain": "linkedin.com",
+                "linkedin_url": "https://linkedin.com/company/linkedin",
+                "logo": "https://salesql.s3.amazonaws.com/company/9473d991-87ad-43f6-91ee-a42bb54898f4-linkedin.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2666564ff83251cbb127be3288464ada1bfc8659b2b2e69670c59eaf85aada57",
+                "founded_year": 2003,
+                "number_of_employees": "10001+",
+                "type": "public"
+              }
+            },
+            {
+              "title": "Managing Director",
+              "timestamp_start": 1519862400000,
+              "timestamp_end": 1554076800000,
+              "is_current": false,
+              "organization": {
+                "uuid": "13447daa-37df-4b16-8f35-dd5c6ace5ffe",
+                "name": "The Next Ad",
+                "website": "https://www.thenextad.com",
+                "website_domain": "thenextad.com",
+                "linkedin_url": "https://linkedin.com/company/the-next-ad",
+                "logo": "https://salesql.s3.amazonaws.com/company/13447daa-37df-4b16-8f35-dd5c6ace5ffe-the-next-ad.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=42259a61d58ef8569a07e8f20f6847b0556cb8e4a2d626a4e42f82a8b2001f45",
+                "founded_year": 2014,
+                "number_of_employees": "11 - 50",
+                "type": "privately-held"
+              }
+            },
+            {
+              "title": "Account Director EMEA",
+              "timestamp_start": 1477958400000,
+              "timestamp_end": 1517443200000,
+              "is_current": false,
+              "organization": {
+                "uuid": "13447daa-37df-4b16-8f35-dd5c6ace5ffe",
+                "name": "The Next Ad",
+                "website": "https://www.thenextad.com",
+                "website_domain": "thenextad.com",
+                "linkedin_url": "https://linkedin.com/company/the-next-ad",
+                "logo": "https://salesql.s3.amazonaws.com/company/13447daa-37df-4b16-8f35-dd5c6ace5ffe-the-next-ad.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=42259a61d58ef8569a07e8f20f6847b0556cb8e4a2d626a4e42f82a8b2001f45",
+                "founded_year": 2014,
+                "number_of_employees": "11 - 50",
+                "type": "privately-held"
+              }
+            },
+            {
+              "title": "Head of Client Services",
+              "timestamp_start": 1417392000000,
+              "timestamp_end": 1475280000000,
+              "is_current": false,
+              "organization": {
+                "uuid": "13447daa-37df-4b16-8f35-dd5c6ace5ffe",
+                "name": "The Next Ad",
+                "website": "https://www.thenextad.com",
+                "website_domain": "thenextad.com",
+                "linkedin_url": "https://linkedin.com/company/the-next-ad",
+                "logo": "https://salesql.s3.amazonaws.com/company/13447daa-37df-4b16-8f35-dd5c6ace5ffe-the-next-ad.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=42259a61d58ef8569a07e8f20f6847b0556cb8e4a2d626a4e42f82a8b2001f45",
+                "founded_year": 2014,
+                "number_of_employees": "11 - 50",
+                "type": "privately-held"
+              }
+            },
+            {
+              "title": "Head of Client Services",
+              "timestamp_start": 1391212800000,
+              "timestamp_end": 1512086400000,
+              "is_current": false,
+              "organization": {
+                "uuid": "141742ad-d911-4e1e-bee4-24b6a03c071a",
+                "name": "Media Injection",
+                "website": "http://www.mediainjection.com",
+                "website_domain": "mediainjection.com",
+                "linkedin_url": "https://linkedin.com/company/media-injection",
+                "logo": "https://salesql.s3.amazonaws.com/company/141742ad-d911-4e1e-bee4-24b6a03c071a-media-injection.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2b5f31e95167e17c97a1918f3db8c8e1c23c15dc5f7880336a2712afd26f4e64",
+                "founded_year": 2009,
+                "number_of_employees": "1 - 10",
+                "type": "privately-held"
+              }
+            },
+            {
+              "title": "Business Consultant",
+              "timestamp_start": 1314835200000,
+              "timestamp_end": 1388534400000,
+              "is_current": false,
+              "organization": {
+                "uuid": "141742ad-d911-4e1e-bee4-24b6a03c071a",
+                "name": "Media Injection",
+                "website": "http://www.mediainjection.com",
+                "website_domain": "mediainjection.com",
+                "linkedin_url": "https://linkedin.com/company/media-injection",
+                "logo": "https://salesql.s3.amazonaws.com/company/141742ad-d911-4e1e-bee4-24b6a03c071a-media-injection.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2b5f31e95167e17c97a1918f3db8c8e1c23c15dc5f7880336a2712afd26f4e64",
+                "founded_year": 2009,
+                "number_of_employees": "1 - 10",
+                "type": "privately-held"
+              }
+            },
+            {
+              "title": "Project Manager",
+              "timestamp_start": 1306886400000,
+              "timestamp_end": 1314835200000,
+              "is_current": false,
+              "organization": {
+                "uuid": "6596eeb3-1070-4bf4-aef1-5818827edf86",
+                "name": "Alira Health (previously CMC Consulting Group)",
+                "website": "http://alirahealth.com",
+                "website_domain": "alirahealth.com",
+                "linkedin_url": "https://linkedin.com/company/cmc-consulting-group",
+                "logo": "https://salesql.s3.amazonaws.com/company/6596eeb3-1070-4bf4-aef1-5818827edf86-alira-health-previously-cmc-consulting-group.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=476b87293de0c202d6b04248cd60ee931fe37ba203592457a380342bf95eb229",
+                "founded_year": 1999,
+                "number_of_employees": "11 - 50",
+                "type": "privately-held"
+              }
+            },
+            {
+              "title": "Project Manager (Internship)",
+              "timestamp_start": 1296518400000,
+              "timestamp_end": 1306886400000,
+              "is_current": false,
+              "organization": {
+                "uuid": "6596eeb3-1070-4bf4-aef1-5818827edf86",
+                "name": "Alira Health (previously CMC Consulting Group)",
+                "website": "http://alirahealth.com",
+                "website_domain": "alirahealth.com",
+                "linkedin_url": "https://linkedin.com/company/cmc-consulting-group",
+                "logo": "https://salesql.s3.amazonaws.com/company/6596eeb3-1070-4bf4-aef1-5818827edf86-alira-health-previously-cmc-consulting-group.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=476b87293de0c202d6b04248cd60ee931fe37ba203592457a380342bf95eb229",
+                "founded_year": 1999,
+                "number_of_employees": "11 - 50",
+                "type": "privately-held"
+              }
+            },
+            {
+              "title": "Project Manager",
+              "timestamp_start": 1280620800000,
+              "timestamp_end": 1293840000000,
+              "is_current": false,
+              "organization": {
+                "uuid": "763f62ee-fe12-46f6-a2be-b9d076eeaa22",
+                "name": "Talenbureau Lexicon BV",
+                "website": "http://www.lexicon.nl",
+                "website_domain": "lexicon.nl",
+                "linkedin_url": "https://linkedin.com/company/lexicon-trainingen",
+                "logo": "https://salesql.s3.amazonaws.com/company/763f62ee-fe12-46f6-a2be-b9d076eeaa22-talenbureau-lexicon-bv.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=18b4435ca68e16e3b92d093aa1691924de9072ec15941bfe23c491e689f26da0",
+                "founded_year": 1994,
+                "number_of_employees": "11 - 50",
+                "type": "privately-held"
+              }
+            },
+            {
+              "title": "Trainee",
+              "timestamp_start": 1264982400000,
+              "timestamp_end": 1280620800000,
+              "is_current": false,
+              "organization": {
+                "uuid": "763f62ee-fe12-46f6-a2be-b9d076eeaa22",
+                "name": "Talenbureau Lexicon BV",
+                "website": "http://www.lexicon.nl",
+                "website_domain": "lexicon.nl",
+                "linkedin_url": "https://linkedin.com/company/lexicon-trainingen",
+                "logo": "https://salesql.s3.amazonaws.com/company/763f62ee-fe12-46f6-a2be-b9d076eeaa22-talenbureau-lexicon-bv.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20260527%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20260527T094319Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=18b4435ca68e16e3b92d093aa1691924de9072ec15941bfe23c491e689f26da0",
+                "founded_year": 1994,
+                "number_of_employees": "11 - 50",
+                "type": "privately-held"
+              }
+            }
+          ],
+          "timestamp_work_experience_start": 1264982400000,
+          "organization_name": "LinkedIn"
+        },
+        {
+          "error": "Person not found"
+        }
+      ]
+    },
+    "verifyEmail": {
+      "method": "POST",
+      "path": "/emails/verify",
+      "status": 200,
+      "body": {
+        "email": "catherine.kent@acme.com",
+        "status": "valid",
+        "is_catchall": false,
+        "mx_problematic": false,
+        "valid_mx": true,
+        "email_type": "work",
+        "from_cache": false
+      }
+    },
+    "bulkVerifyEmails": {
+      "method": "POST",
+      "path": "/emails/verify/bulk",
+      "status": 202,
+      "body": {
+        "job_id": "3f0c7a7e-2b6d-4a1e-9c3b-0d5e6f7a8b9c",
+        "status": "queued",
+        "n_emails": 2
+      }
+    },
+    "getBulkVerificationJob": {
+      "method": "GET",
+      "path": "/emails/verify/bulk/{job_id}",
+      "status": 200,
+      "body": {
+        "job_id": "3f0c7a7e-2b6d-4a1e-9c3b-0d5e6f7a8b9c",
+        "status": "completed",
+        "n_emails": 2,
+        "n_verified_emails": 1,
+        "n_unverified_emails": 1,
+        "n_failed_emails": 0,
+        "credits_charged": 2,
+        "results": [
+          {
+            "email": "catherine.kent@acme.com",
+            "status": "valid",
+            "email_type": "work"
+          },
+          {
+            "email": "john.doe@gmail.com",
+            "status": "unknown",
+            "email_type": "personal"
+          }
+        ]
+      }
+    }
+  }
+}
