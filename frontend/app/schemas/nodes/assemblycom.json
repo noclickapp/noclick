@@ -1,0 +1,2070 @@
+{
+  "$defs": {
+    "Address": {
+      "additionalProperties": false,
+      "properties": {
+        "addressLine1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline1"
+        },
+        "addressLine2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addressline2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "fullAddress": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fulladdress"
+        },
+        "postalCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postalcode"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        }
+      },
+      "title": "Address",
+      "type": "object"
+    },
+    "AssemblyComAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "assemblycom_api_key",
+          "default": "assemblycom_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Assembly.com API Key",
+      "type": "object",
+      "x-credential-instructions": "In your Assembly workspace, copy an API key and paste it here. NoClick sends it in the X-API-KEY header to api.assembly.com. Use a key with permissions for your selected actions; Tasks operations also need the Tasks app installed.",
+      "x-credential-url": "https://assembly.com/docs/api-reference/introduction"
+    },
+    "AssemblyComCreateClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "givenName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Givenname",
+          "type": "string"
+        },
+        "familyName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Familyname",
+          "type": "string"
+        },
+        "companyId": {
+          "description": "Company association required by Assembly",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Companyid",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "company_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required unless your workspace allows clients without an email",
+          "title": "Email"
+        },
+        "customFields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "$ref": "#/$defs/Address"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customfields"
+        },
+        "sendInvite": {
+          "default": false,
+          "description": "Explicitly send the client an invitation email",
+          "title": "Sendinvite",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "givenName",
+        "familyName",
+        "companyId"
+      ],
+      "title": "AssemblyComCreateClientConfig",
+      "type": "object"
+    },
+    "AssemblyComCreateCompanyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_company",
+          "default": "create_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "customFields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "$ref": "#/$defs/Address"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customfields"
+        },
+        "isPlaceholder": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isplaceholder"
+        },
+        "fallbackColor": {
+          "anyOf": [
+            {
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fallbackcolor"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "AssemblyComCreateCompanyConfig",
+      "type": "object"
+    },
+    "AssemblyComCreateMessageChannelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_message_channel",
+          "default": "create_message_channel",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "membershipType": {
+          "enum": [
+            "company",
+            "individual",
+            "group"
+          ],
+          "title": "Membershiptype",
+          "type": "string"
+        },
+        "membershipEntityId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Membershipentityid"
+        },
+        "clientId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clientid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "client_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "companyId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "company_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "memberIds": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+                "type": "string"
+              },
+              "maxItems": 100,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memberids"
+        }
+      },
+      "required": [
+        "membershipType"
+      ],
+      "title": "AssemblyComCreateMessageChannelConfig",
+      "type": "object"
+    },
+    "AssemblyComCreateNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Entityid",
+          "type": "string"
+        },
+        "entityType": {
+          "enum": [
+            "client",
+            "company"
+          ],
+          "title": "Entitytype",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        }
+      },
+      "required": [
+        "entityId",
+        "entityType",
+        "title"
+      ],
+      "title": "AssemblyComCreateNoteConfig",
+      "type": "object"
+    },
+    "AssemblyComCreateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "todo",
+                "inProgress",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "todo",
+            "inProgress",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duedate"
+        },
+        "clientId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clientid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "client_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "companyId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "company_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "internalUserId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Internaluserid"
+        },
+        "parentTaskId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parenttaskid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "task_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "isArchived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isarchived"
+        },
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "templateId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Templateid"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "AssemblyComCreateTaskConfig",
+      "type": "object"
+    },
+    "AssemblyComDeleteNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Note Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "note_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "AssemblyComDeleteNoteConfig",
+      "type": "object"
+    },
+    "AssemblyComDeleteTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Task Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "task_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "AssemblyComDeleteTaskConfig",
+      "type": "object"
+    },
+    "AssemblyComGetClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Client Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "client_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "AssemblyComGetClientConfig",
+      "type": "object"
+    },
+    "AssemblyComGetCompanyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Company Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "company_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "AssemblyComGetCompanyConfig",
+      "type": "object"
+    },
+    "AssemblyComGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "AssemblyComGetCurrentUserConfig",
+      "type": "object"
+    },
+    "AssemblyComGetNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Note Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "note_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "AssemblyComGetNoteConfig",
+      "type": "object"
+    },
+    "AssemblyComGetTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Task Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "task_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "AssemblyComGetTaskConfig",
+      "type": "object"
+    },
+    "AssemblyComListClientsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Return one page, up to 100 items. Pass nextToken from the previous response for the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor returned by Assembly; leave empty for the first page.",
+          "title": "Nexttoken"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "companyId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "company_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "givenName": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Givenname"
+        },
+        "familyName": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Familyname"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "AssemblyComListClientsConfig",
+      "type": "object"
+    },
+    "AssemblyComListCompaniesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Return one page, up to 100 items. Pass nextToken from the previous response for the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor returned by Assembly; leave empty for the first page.",
+          "title": "Nexttoken"
+        },
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "isPlaceholder": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isplaceholder"
+        }
+      },
+      "title": "AssemblyComListCompaniesConfig",
+      "type": "object"
+    },
+    "AssemblyComListMessageChannelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Return one page, up to 100 items. Pass nextToken from the previous response for the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor returned by Assembly; leave empty for the first page.",
+          "title": "Nexttoken"
+        },
+        "operation": {
+          "const": "list_message_channels",
+          "default": "list_message_channels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "clientId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clientid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "client_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "companyId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "company_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "membershipEntityId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Membershipentityid"
+        },
+        "memberId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memberid"
+        },
+        "membershipType": {
+          "anyOf": [
+            {
+              "enum": [
+                "company",
+                "individual",
+                "group"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Membershiptype",
+          "enum": [
+            "company",
+            "individual",
+            "group"
+          ],
+          "x-enum-searchable": true
+        },
+        "includeUnread": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includeunread"
+        }
+      },
+      "title": "AssemblyComListMessageChannelsConfig",
+      "type": "object"
+    },
+    "AssemblyComListMessagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Return one page, up to 100 items. Pass nextToken from the previous response for the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor returned by Assembly; leave empty for the first page.",
+          "title": "Nexttoken"
+        },
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channelId": {
+          "description": "Bare channel UUID without the messaging: prefix",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Channelid",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "channel_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "channelId"
+      ],
+      "title": "AssemblyComListMessagesConfig",
+      "type": "object"
+    },
+    "AssemblyComListNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Return one page, up to 100 items. Pass nextToken from the previous response for the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor returned by Assembly; leave empty for the first page.",
+          "title": "Nexttoken"
+        },
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "entityId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entityid"
+        },
+        "entityType": {
+          "anyOf": [
+            {
+              "enum": [
+                "client",
+                "company"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entitytype",
+          "enum": [
+            "client",
+            "company"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "AssemblyComListNotesConfig",
+      "type": "object"
+    },
+    "AssemblyComListTasksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Return one page, up to 100 items. Pass nextToken from the previous response for the next page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor returned by Assembly; leave empty for the first page.",
+          "title": "Nexttoken"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "createdBy": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Createdby"
+        },
+        "parentTaskId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parenttaskid"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "todo",
+                "inProgress",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "todo",
+            "inProgress",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        },
+        "clientId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clientid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "client_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "internalUserId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Internaluserid"
+        },
+        "companyId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "company_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        }
+      },
+      "title": "AssemblyComListTasksConfig",
+      "type": "object"
+    },
+    "AssemblyComSendMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channelId": {
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Channelid",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "channel_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "text": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "senderId": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional channel member UUID; leave empty to use the authenticated user",
+          "title": "Senderid"
+        }
+      },
+      "required": [
+        "channelId",
+        "text"
+      ],
+      "title": "AssemblyComSendMessageConfig",
+      "type": "object"
+    },
+    "AssemblyComUpdateClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Client Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "client_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "givenName": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Givenname"
+        },
+        "familyName": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Familyname"
+        },
+        "companyId": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "company_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only adds a first email; cannot change an existing email",
+          "title": "Email"
+        },
+        "customFields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "$ref": "#/$defs/Address"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customfields"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "archived",
+                "active"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Archive or restore, sent alone without other profile edits",
+          "title": "Status",
+          "enum": [
+            "archived",
+            "active"
+          ],
+          "x-enum-searchable": true
+        },
+        "sendInvite": {
+          "default": false,
+          "description": "Explicitly send or resend an invitation email",
+          "title": "Sendinvite",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "AssemblyComUpdateClientConfig",
+      "type": "object"
+    },
+    "AssemblyComUpdateCompanyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_company",
+          "default": "update_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Company Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "company_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "customFields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "$ref": "#/$defs/Address"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customfields"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "AssemblyComUpdateCompanyConfig",
+      "type": "object"
+    },
+    "AssemblyComUpdateNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Note Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "note_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "AssemblyComUpdateNoteConfig",
+      "type": "object"
+    },
+    "AssemblyComUpdateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "todo",
+                "inProgress",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "todo",
+            "inProgress",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duedate"
+        },
+        "clientId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clientid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "client_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "companyId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "company_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "internalUserId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Internaluserid"
+        },
+        "parentTaskId": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parenttaskid",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "task_id",
+            "placeholder": "Choose a resource",
+            "searchable": false
+          }
+        },
+        "isArchived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isarchived"
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Task Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste the Assembly ID",
+            "field_name": "task_id",
+            "placeholder": "Choose a resource",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "AssemblyComUpdateTaskConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_client": "#/$defs/AssemblyComCreateClientConfig",
+          "create_company": "#/$defs/AssemblyComCreateCompanyConfig",
+          "create_message_channel": "#/$defs/AssemblyComCreateMessageChannelConfig",
+          "create_note": "#/$defs/AssemblyComCreateNoteConfig",
+          "create_task": "#/$defs/AssemblyComCreateTaskConfig",
+          "delete_note": "#/$defs/AssemblyComDeleteNoteConfig",
+          "delete_task": "#/$defs/AssemblyComDeleteTaskConfig",
+          "get_client": "#/$defs/AssemblyComGetClientConfig",
+          "get_company": "#/$defs/AssemblyComGetCompanyConfig",
+          "get_current_user": "#/$defs/AssemblyComGetCurrentUserConfig",
+          "get_note": "#/$defs/AssemblyComGetNoteConfig",
+          "get_task": "#/$defs/AssemblyComGetTaskConfig",
+          "list_clients": "#/$defs/AssemblyComListClientsConfig",
+          "list_companies": "#/$defs/AssemblyComListCompaniesConfig",
+          "list_message_channels": "#/$defs/AssemblyComListMessageChannelsConfig",
+          "list_messages": "#/$defs/AssemblyComListMessagesConfig",
+          "list_notes": "#/$defs/AssemblyComListNotesConfig",
+          "list_tasks": "#/$defs/AssemblyComListTasksConfig",
+          "send_message": "#/$defs/AssemblyComSendMessageConfig",
+          "update_client": "#/$defs/AssemblyComUpdateClientConfig",
+          "update_company": "#/$defs/AssemblyComUpdateCompanyConfig",
+          "update_note": "#/$defs/AssemblyComUpdateNoteConfig",
+          "update_task": "#/$defs/AssemblyComUpdateTaskConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AssemblyComGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComGetClientConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComCreateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComUpdateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComListCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComGetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComCreateCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComUpdateCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComDeleteTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComGetNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComUpdateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComDeleteNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComListMessageChannelsConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComCreateMessageChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/AssemblyComSendMessageConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AssemblyComAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Assemblycom Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
