@@ -1,0 +1,152 @@
+[
+  {
+    "operation": "get_profile",
+    "contract_operation": "GET /v1/profiles/{id}",
+    "classification": "d",
+    "description": "The required resource path parameter schema is marked readOnly (both branches for profile ID/UUID). OpenAPI request validation rejects even the published example ID. The node supplies the required ID in the documented endpoint path.",
+    "docs": [
+      "https://www.quiltt.dev/api/profiles#rest-operations"
+    ],
+    "source_url": "https://api.quiltt.io/latest/rest.yaml",
+    "failures": [
+      "request: InvalidParameter: Invalid path parameter: id / InvalidSchemaValue: Value p_1hyoxpVVFib1HngGwKAzIr not valid for schema of type any: (<ValidationError: \"'p_1hyoxpVVFib1HngGwKAzIr' is not valid under any of the given schemas\">,)"
+    ]
+  },
+  {
+    "operation": "update_profile",
+    "contract_operation": "PATCH /v1/profiles/{id}",
+    "classification": "d",
+    "description": "The required resource path parameter schema is marked readOnly (both branches for profile ID/UUID). OpenAPI request validation rejects even the published example ID. The node supplies the required ID in the documented endpoint path.",
+    "docs": [
+      "https://www.quiltt.dev/api/profiles#rest-operations"
+    ],
+    "source_url": "https://api.quiltt.io/latest/rest.yaml",
+    "failures": [
+      "request: InvalidParameter: Invalid path parameter: id / InvalidSchemaValue: Value p_1hyoxpVVFib1HngGwKAzIr not valid for schema of type any: (<ValidationError: \"'p_1hyoxpVVFib1HngGwKAzIr' is not valid under any of the given schemas\">,)"
+    ]
+  },
+  {
+    "operation": "delete_profile",
+    "contract_operation": "DELETE /v1/profiles/{id}",
+    "classification": "d",
+    "description": "The required resource path parameter schema is marked readOnly (both branches for profile ID/UUID). OpenAPI request validation rejects even the published example ID. The node supplies the required ID in the documented endpoint path.",
+    "docs": [
+      "https://www.quiltt.dev/api/profiles#rest-operations"
+    ],
+    "source_url": "https://api.quiltt.io/latest/rest.yaml",
+    "failures": [
+      "request: InvalidParameter: Invalid path parameter: id / InvalidSchemaValue: Value p_1hyoxpVVFib1HngGwKAzIr not valid for schema of type any: (<ValidationError: \"'p_1hyoxpVVFib1HngGwKAzIr' is not valid under any of the given schemas\">,)"
+    ]
+  },
+  {
+    "operation": "get_subscription",
+    "contract_operation": "GET /v1/webhooks/subscriptions/{id}",
+    "classification": "d",
+    "description": "The required resource path parameter schema is marked readOnly (both branches for profile ID/UUID). OpenAPI request validation rejects even the published example ID. The node supplies the required ID in the documented endpoint path.",
+    "docs": [
+      "https://www.quiltt.dev/api-reference/rest#tag/Subscriptions",
+      "https://www.quiltt.dev/webhooks/setup"
+    ],
+    "source_url": "https://api.quiltt.io/latest/rest.yaml",
+    "failures": [
+      "request: InvalidParameter: Invalid path parameter: id / InvalidSchemaValue: Value wh_12NTX5Ay3V1NlEwCnCWqhm8 not valid for schema of type string: (<ValidationError: 'Tried to write read-only property with wh_12NTX5Ay3V1NlEwCnCWqhm8'>,)"
+    ]
+  },
+  {
+    "operation": "update_subscription",
+    "contract_operation": "PATCH /v1/webhooks/subscriptions/{id}",
+    "classification": "d",
+    "description": "The required resource path parameter schema is marked readOnly (both branches for profile ID/UUID). OpenAPI request validation rejects even the published example ID. The node supplies the required ID in the documented endpoint path.",
+    "docs": [
+      "https://www.quiltt.dev/api-reference/rest#tag/Subscriptions",
+      "https://www.quiltt.dev/webhooks/setup"
+    ],
+    "source_url": "https://api.quiltt.io/latest/rest.yaml",
+    "failures": [
+      "request: InvalidParameter: Invalid path parameter: id / InvalidSchemaValue: Value wh_12NTX5Ay3V1NlEwCnCWqhm8 not valid for schema of type string: (<ValidationError: 'Tried to write read-only property with wh_12NTX5Ay3V1NlEwCnCWqhm8'>,)"
+    ]
+  },
+  {
+    "operation": "delete_subscription",
+    "contract_operation": "DELETE /v1/webhooks/subscriptions/{id}",
+    "classification": "d",
+    "description": "The required resource path parameter schema is marked readOnly (both branches for profile ID/UUID). OpenAPI request validation rejects even the published example ID. The node supplies the required ID in the documented endpoint path.",
+    "docs": [
+      "https://www.quiltt.dev/api-reference/rest#tag/Subscriptions",
+      "https://www.quiltt.dev/webhooks/setup"
+    ],
+    "source_url": "https://api.quiltt.io/latest/rest.yaml",
+    "failures": [
+      "request: InvalidParameter: Invalid path parameter: id / InvalidSchemaValue: Value wh_12NTX5Ay3V1NlEwCnCWqhm8 not valid for schema of type string: (<ValidationError: 'Tried to write read-only property with wh_12NTX5Ay3V1NlEwCnCWqhm8'>,)"
+    ]
+  },
+  {
+    "operation": "import_mx_connection",
+    "contract_operation": "POST /v1/profiles/{profileId}/connections/import/mx",
+    "classification": "d",
+    "description": "The required resource path parameter schema is marked readOnly (both branches for profile ID/UUID). OpenAPI request validation rejects even the published example ID. The node supplies the required ID in the documented endpoint path.",
+    "docs": [
+      "https://www.quiltt.dev/get-started/migration-guide",
+      "https://www.quiltt.dev/api-reference/rest#tag/Connections"
+    ],
+    "source_url": "https://api.quiltt.io/latest/rest.yaml",
+    "failures": [
+      "request: InvalidParameter: Invalid path parameter: profileId / InvalidSchemaValue: Value p_1hyoxpVVFib1HngGwKAzIr not valid for schema of type string: (<ValidationError: 'Tried to write read-only property with p_1hyoxpVVFib1HngGwKAzIr'>,)"
+    ]
+  },
+  {
+    "operation": "import_plaid_connection",
+    "contract_operation": "POST /v1/profiles/{profileId}/connections/import/plaid",
+    "classification": "d",
+    "description": "The required resource path parameter schema is marked readOnly (both branches for profile ID/UUID). OpenAPI request validation rejects even the published example ID. The node supplies the required ID in the documented endpoint path.",
+    "docs": [
+      "https://www.quiltt.dev/get-started/migration-guide",
+      "https://www.quiltt.dev/api-reference/rest#tag/Connections"
+    ],
+    "source_url": "https://api.quiltt.io/latest/rest.yaml",
+    "failures": [
+      "request: InvalidParameter: Invalid path parameter: profileId / InvalidSchemaValue: Value p_1hyoxpVVFib1HngGwKAzIr not valid for schema of type string: (<ValidationError: 'Tried to write read-only property with p_1hyoxpVVFib1HngGwKAzIr'>,)"
+    ]
+  },
+  {
+    "operation": "export_connection",
+    "contract_operation": "GET /v1/profiles/{profileId}/connections/{connectionId}/export",
+    "classification": "d",
+    "description": "The required resource path parameter schema is marked readOnly (both branches for profile ID/UUID). OpenAPI request validation rejects even the published example ID. The node supplies the required ID in the documented endpoint path.",
+    "docs": [
+      "https://www.quiltt.dev/api-reference/rest#tag/Connections"
+    ],
+    "source_url": "https://api.quiltt.io/latest/rest.yaml",
+    "failures": [
+      "request: InvalidParameter: Invalid path parameter: profileId / InvalidSchemaValue: Value p_1hyoxpVVFib1HngGwKAzIr not valid for schema of type string: (<ValidationError: 'Tried to write read-only property with p_1hyoxpVVFib1HngGwKAzIr'>,)",
+      "request: InvalidParameter: Invalid path parameter: connectionId / InvalidSchemaValue: Value conn_14TJiFDKRJlPiBHuukUIlXZ not valid for schema of type string: (<ValidationError: 'Tried to write read-only property with conn_14TJiFDKRJlPiBHuukUIlXZ'>,)"
+    ]
+  },
+  {
+    "operation": "refresh_balance",
+    "contract_operation": "POST /v1/accounts/{accountId}/balances/refresh",
+    "classification": "d",
+    "description": "The OpenAPI security requirement puts APISecretBearerAuth and ProcessorTokenBasicAuth in one object (AND), requiring incompatible Authorization header schemes simultaneously. The balance refresh guide shows a Bearer API secret alone, which the node sends.",
+    "docs": [
+      "https://www.quiltt.dev/api/account-balances#trigger-a-balance-refresh"
+    ],
+    "source_url": "https://api.quiltt.io/latest/rest.yaml",
+    "failures": [
+      "request: ValueError: Authentication is missing or in the wrong location/scheme",
+      "request: SecurityValidationError: SecurityValidationError: Security not found. Schemes not valid for any requirement: [['APISecretBearerAuth', 'ProcessorTokenBasicAuth']] / SecurityNotFound: Security not found. Schemes not valid for any requirement: [['APISecretBearerAuth', 'ProcessorTokenBasicAuth']]"
+    ]
+  },
+  {
+    "operation": "refresh_transactions",
+    "contract_operation": "POST /v1/connections/{connectionId}/transactions/refresh",
+    "classification": "d",
+    "description": "The required resource path parameter schema is marked readOnly (both branches for profile ID/UUID). OpenAPI request validation rejects even the published example ID. The node supplies the required ID in the documented endpoint path.",
+    "docs": [
+      "https://www.quiltt.dev/api-reference/rest#tag/Connections"
+    ],
+    "source_url": "https://api.quiltt.io/latest/rest.yaml",
+    "failures": [
+      "request: InvalidParameter: Invalid path parameter: connectionId / InvalidSchemaValue: Value conn_14TJiFDKRJlPiBHuukUIlXZ not valid for schema of type string: (<ValidationError: 'Tried to write read-only property with conn_14TJiFDKRJlPiBHuukUIlXZ'>,)"
+    ]
+  }
+]

@@ -1,0 +1,373 @@
+[
+  {
+    "operation": "list_profiles",
+    "config": {
+      "operation": "list_profiles"
+    },
+    "method": "GET",
+    "path": "/v1/profiles",
+    "status": 200,
+    "body": [
+      {
+        "id": "p_111sXqFUjvlL5jQZ8gsf9KI",
+        "uuid": "21da60c9-a6a8-453b-bb0d-54fc4ba57866",
+        "metadata": null,
+        "at": "2024-08-26T02:06:41Z",
+        "email": "tardis@example.com",
+        "phone": "+16358126489",
+        "name": "Tardis",
+        "names": null,
+        "dateOfBirth": "1970-01-01",
+        "address": null,
+        "createdAt": "2024-08-26T02:06:41Z",
+        "updatedAt": "2024-08-26T02:06:41Z"
+      },
+      {
+        "id": "p_15PGCp4JWVzjkN5hjCO1vm0",
+        "uuid": "b1abea01-98c1-45e9-9e70-d73d3a35e33c",
+        "metadata": null,
+        "at": "2024-07-26T02:04:37Z",
+        "email": "the_doctor@example.com",
+        "phone": "+15089883522",
+        "name": "The Doctor",
+        "names": null,
+        "dateOfBirth": "1980-05-21",
+        "address": null,
+        "createdAt": "2024-07-26T02:04:37Z",
+        "updatedAt": "2024-07-26T02:04:37Z"
+      }
+    ],
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/profiles"
+  },
+  {
+    "operation": "get_profile",
+    "config": {
+      "operation": "get_profile",
+      "profile_id": "p_1hyoxpVVFib1HngGwKAzIr"
+    },
+    "method": "GET",
+    "path": "/v1/profiles/p_1hyoxpVVFib1HngGwKAzIr",
+    "status": 200,
+    "body": {
+      "id": "p_1hyoxpVVFib1HngGwKAzIr",
+      "uuid": "174ec567-2492-4498-a706-504a79437235",
+      "metadata": {
+        "favoriteMode": "plaid"
+      },
+      "at": "2024-09-01T21:41:44Z",
+      "email": "elon@example.com",
+      "phone": "+12125550180",
+      "name": "Elon Musk",
+      "names": null,
+      "dateOfBirth": null,
+      "address": null,
+      "createdAt": "2024-09-01T21:41:44Z"
+    },
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/profiles/{id}"
+  },
+  {
+    "operation": "create_profile",
+    "config": {
+      "operation": "create_profile",
+      "email": "tardis@example.com",
+      "name": "The Doctor",
+      "dateOfBirth": "1970-01-01",
+      "phone": "+16358126489"
+    },
+    "method": "POST",
+    "path": "/v1/profiles",
+    "status": 201,
+    "body": {
+      "id": "p_12VnSaRRxyP12Sl9rLZg8n1",
+      "uuid": "52909e05-e1cb-4e45-b273-2b7b5d1f9bff",
+      "metadata": null,
+      "at": "2024-07-26T02:04:37Z",
+      "email": "tardis@example.com",
+      "phone": "+15089883522",
+      "name": "The Doctor",
+      "names": null,
+      "dateOfBirth": "1970-01-01",
+      "address": null,
+      "createdAt": "2024-07-26T02:04:37Z"
+    },
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/profiles"
+  },
+  {
+    "operation": "update_profile",
+    "config": {
+      "operation": "update_profile",
+      "profile_id": "p_1hyoxpVVFib1HngGwKAzIr",
+      "email": "new_email_who_dis@example.com",
+      "metadata": {
+        "favoriteMode": "ludicrous"
+      }
+    },
+    "method": "PATCH",
+    "path": "/v1/profiles/p_1hyoxpVVFib1HngGwKAzIr",
+    "status": 200,
+    "body": {
+      "id": "p_1hyoxpVVFib1HngGwKAzIr",
+      "uuid": "174ec567-2492-4498-a706-504a79437235",
+      "metadata": {
+        "favoriteMode": "ludicrous"
+      },
+      "at": "2024-09-07T21:59:01Z",
+      "email": "new_email_who_dis@example.com",
+      "phone": "+12125550180",
+      "name": "Elon Musk",
+      "names": null,
+      "dateOfBirth": null,
+      "address": null,
+      "createdAt": "2024-09-01T21:41:44Z"
+    },
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/profiles/{id}"
+  },
+  {
+    "operation": "delete_profile",
+    "config": {
+      "operation": "delete_profile",
+      "profile_id": "p_1hyoxpVVFib1HngGwKAzIr"
+    },
+    "method": "DELETE",
+    "path": "/v1/profiles/p_1hyoxpVVFib1HngGwKAzIr",
+    "status": 204,
+    "body": null,
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/profiles/{id}"
+  },
+  {
+    "operation": "list_subscriptions",
+    "config": {
+      "operation": "list_subscriptions"
+    },
+    "method": "GET",
+    "path": "/v1/webhooks/subscriptions",
+    "status": 200,
+    "body": [
+      {
+        "id": "wh_11RaL0HsGQlLjANWkCQNr2z",
+        "name": "ACME Webhook 2",
+        "targetUrl": "https://example.com/webhooks/quiltt",
+        "eventTypes": [
+          "connection.created"
+        ],
+        "disabled": false,
+        "createdAt": "2023-09-26T19:13:43Z",
+        "updatedAt": "2023-09-26T19:13:43Z"
+      },
+      {
+        "id": "wh_12NTX5Ay3V1NlEwCnCWqhm8",
+        "name": "ACME Webhook",
+        "targetUrl": "https://example.com/my_webhook",
+        "eventTypes": [
+          "profile.created",
+          "profile.deleted"
+        ],
+        "disabled": false,
+        "createdAt": "2023-07-26T02:04:37Z",
+        "updatedAt": "2023-07-26T02:04:37Z"
+      }
+    ],
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/webhooks/subscriptions"
+  },
+  {
+    "operation": "get_subscription",
+    "config": {
+      "operation": "get_subscription",
+      "subscription_id": "wh_12NTX5Ay3V1NlEwCnCWqhm8"
+    },
+    "method": "GET",
+    "path": "/v1/webhooks/subscriptions/wh_12NTX5Ay3V1NlEwCnCWqhm8",
+    "status": 200,
+    "body": {
+      "id": "wh_12NTX5Ay3V1NlEwCnCWqhm8",
+      "name": "ACME Webhook",
+      "targetUrl": "https://example.com/my_webhook",
+      "eventTypes": [
+        "profile.created",
+        "profile.deleted"
+      ],
+      "disabled": false,
+      "createdAt": "2023-07-26T02:04:37Z",
+      "updatedAt": "2023-07-26T02:04:37Z"
+    },
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/webhooks/subscriptions/{id}"
+  },
+  {
+    "operation": "create_subscription",
+    "config": {
+      "operation": "create_subscription",
+      "name": "ACME Webhook",
+      "targetUrl": "https://example.com/webhooks/quiltt",
+      "eventTypes": [
+        "profile.created"
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/webhooks/subscriptions",
+    "status": 201,
+    "body": {
+      "id": "wh_14OYtCKXE7UeehJCdfPuV6e",
+      "name": "ACME Webhook",
+      "targetUrl": "https://example.com/webhooks/quiltt",
+      "eventTypes": [
+        "profile.created"
+      ],
+      "disabled": false,
+      "createdAt": "2024-07-26T02:04:37Z",
+      "updatedAt": "2024-07-26T02:04:37Z"
+    },
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/webhooks/subscriptions"
+  },
+  {
+    "operation": "update_subscription",
+    "config": {
+      "operation": "update_subscription",
+      "subscription_id": "wh_12NTX5Ay3V1NlEwCnCWqhm8",
+      "eventTypes": [
+        "profile.created"
+      ]
+    },
+    "method": "PATCH",
+    "path": "/v1/webhooks/subscriptions/wh_12NTX5Ay3V1NlEwCnCWqhm8",
+    "status": 200,
+    "body": {
+      "id": "wh_12NTX5Ay3V1NlEwCnCWqhm8",
+      "name": "ACME Webhook",
+      "targetUrl": "https://example.com/my_webhook",
+      "eventTypes": [
+        "profile.created"
+      ],
+      "disabled": false,
+      "createdAt": "2023-07-26T02:04:37Z",
+      "updatedAt": "2023-09-01T04:00:31Z"
+    },
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/webhooks/subscriptions/{id}"
+  },
+  {
+    "operation": "delete_subscription",
+    "config": {
+      "operation": "delete_subscription",
+      "subscription_id": "wh_12NTX5Ay3V1NlEwCnCWqhm8"
+    },
+    "method": "DELETE",
+    "path": "/v1/webhooks/subscriptions/wh_12NTX5Ay3V1NlEwCnCWqhm8",
+    "status": 204,
+    "body": null,
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/webhooks/subscriptions/{id}"
+  },
+  {
+    "operation": "import_mx_connection",
+    "config": {
+      "operation": "import_mx_connection",
+      "profile_id": "p_1hyoxpVVFib1HngGwKAzIr",
+      "memberGuid": "MBR-7c6f361b-e582-15b6-60c0-358f12466b4b",
+      "userGuid": "USR-fa7537f3-48aa-a683-a02a-b18940482f54",
+      "externallyManaged": true
+    },
+    "method": "POST",
+    "path": "/v1/profiles/p_1hyoxpVVFib1HngGwKAzIr/connections/import/mx",
+    "status": 201,
+    "body": {
+      "id": "conn_12xjHzSngHp5gmxtb8LgpR",
+      "provider": "MX",
+      "at": "2026-08-25T03:32:47Z",
+      "products": [
+        "ACCOUNT_BALANCE_REFRESHES",
+        "ACCOUNT_BALANCES_AND_TRANSACTIONS",
+        "ACCOUNT_TRANSACTIONS_REFRESHES",
+        "INVESTMENTS",
+        "LIABILITIES"
+      ],
+      "status": "INITIALIZING",
+      "metadata": null
+    },
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/profiles/{profileId}/connections/import/mx"
+  },
+  {
+    "operation": "import_plaid_connection",
+    "config": {
+      "operation": "import_plaid_connection",
+      "profile_id": "p_1hyoxpVVFib1HngGwKAzIr",
+      "accessToken": "access-sandbox-560d5d7e-b4c4-4b13-8e39-1cb9370051d3",
+      "externallyManaged": true
+    },
+    "method": "POST",
+    "path": "/v1/profiles/p_1hyoxpVVFib1HngGwKAzIr/connections/import/plaid",
+    "status": 201,
+    "body": {
+      "id": "conn_12xjHzSngHp5gmxtb8LgpR",
+      "provider": "PLAID",
+      "at": "2024-08-26T02:04:37Z",
+      "products": [
+        "ACCOUNT_BALANCE_REFRESHES",
+        "ACCOUNT_BALANCES_AND_TRANSACTIONS",
+        "ACCOUNT_TRANSACTIONS_REFRESHES"
+      ],
+      "status": "INITIALIZING",
+      "metadata": null
+    },
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/profiles/{profileId}/connections/import/plaid"
+  },
+  {
+    "operation": "export_connection",
+    "config": {
+      "operation": "export_connection",
+      "profile_id": "p_1hyoxpVVFib1HngGwKAzIr",
+      "connection_id": "conn_14TJiFDKRJlPiBHuukUIlXZ"
+    },
+    "method": "GET",
+    "path": "/v1/profiles/p_1hyoxpVVFib1HngGwKAzIr/connections/conn_14TJiFDKRJlPiBHuukUIlXZ/export",
+    "status": 200,
+    "body": {
+      "id": "conn_12xjHzSngHp5gmxtb8LgpR",
+      "provider": "MX",
+      "profileId": "p_12wKKn68cfbRE8EQYDzryn",
+      "apiKey": [
+        "USR-fa7537f3-48aa-a683-a02a-b18940482f54",
+        "MBR-7c6f361b-e582-15b6-60c0-358f12466b4b"
+      ]
+    },
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/profiles/{profileId}/connections/{connectionId}/export"
+  },
+  {
+    "operation": "refresh_balance",
+    "config": {
+      "operation": "refresh_balance",
+      "account_id": "acct_12Hz9Dz7vEAuljYvhmPcvM9"
+    },
+    "method": "POST",
+    "path": "/v1/accounts/acct_12Hz9Dz7vEAuljYvhmPcvM9/balances/refresh",
+    "status": 202,
+    "body": null,
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/accounts/{accountId}/balances/refresh"
+  },
+  {
+    "operation": "refresh_transactions",
+    "config": {
+      "operation": "refresh_transactions",
+      "connection_id": "conn_14TJiFDKRJlPiBHuukUIlXZ"
+    },
+    "method": "POST",
+    "path": "/v1/connections/conn_14TJiFDKRJlPiBHuukUIlXZ/transactions/refresh",
+    "status": 202,
+    "body": null,
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/connections/{connectionId}/transactions/refresh"
+  },
+  {
+    "operation": "search_institutions",
+    "config": {
+      "operation": "search_institutions",
+      "routingNumber": "021000021"
+    },
+    "method": "GET",
+    "path": "/v1/institutions",
+    "status": 200,
+    "body": [
+      {
+        "name": "Chase",
+        "logoUrl": "https://cdn.quiltt.io/institutions/inst_15vzU43JrPuWZgSOnCxRa3N/logo.png"
+      }
+    ],
+    "source": "https://api.quiltt.io/latest/rest.yaml#/paths//v1/institutions"
+  }
+]
