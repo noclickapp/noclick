@@ -1,0 +1,36 @@
+{
+  "config": {
+    "operation": "list_available_dates"
+  },
+  "response": {
+    "data": [
+      {
+        "date": "2021-01-01",
+        "is_available": true
+      },
+      {
+        "date": "2021-01-01",
+        "is_available": true
+      }
+    ],
+    "meta": {
+      "per_page": 15,
+      "path": "https://api.aryeo.com/v1/{path}",
+      "total": 50,
+      "last_page": 4,
+      "from": 1,
+      "to": 15,
+      "current_page": 1
+    },
+    "links": {
+      "next": "https://api.aryeo.com/v1/{path}?page=3",
+      "last": "https://api.aryeo.com/v1/{path}?page=10",
+      "prev": "https://api.aryeo.com/v1/{path}?page=2",
+      "first": "https://api.aryeo.com/v1/{path}?page=1"
+    },
+    "status": "success"
+  },
+  "method": "GET",
+  "path": "/scheduling/available-dates",
+  "status": 200
+}

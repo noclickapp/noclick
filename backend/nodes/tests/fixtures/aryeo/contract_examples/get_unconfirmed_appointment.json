@@ -1,0 +1,42 @@
+{
+  "config": {
+    "operation": "get_unconfirmed_appointment",
+    "unconfirmed_appointment_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "response": {
+    "data": {
+      "duration": 60,
+      "preference_type": "TIME",
+      "preferred_start_at_day": "2021-06-30T00:00:00.000+0000",
+      "preferred_start_at_time_of_day": "AFTERNOON",
+      "description": "Customer: John Doe\nOrder Details: Order #123",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "title": "Appointment title",
+      "preferred_start_at": "2021-06-30T20:30:00Z",
+      "users": [
+        {
+          "avatar_url": "https://via.placeholder.com/300.jpg",
+          "phone": "123456789",
+          "last_name": "Doe",
+          "id": "00000000-0000-4000-8000-000000000000",
+          "relationship": "owner",
+          "first_name": "John",
+          "email": "john.doe@gmail.com"
+        },
+        {
+          "avatar_url": "https://via.placeholder.com/300.jpg",
+          "phone": "123456789",
+          "last_name": "Doe",
+          "id": "00000000-0000-4000-8000-000000000000",
+          "relationship": "owner",
+          "first_name": "John",
+          "email": "john.doe@gmail.com"
+        }
+      ]
+    },
+    "status": "success"
+  },
+  "method": "GET",
+  "path": "/unconfirmed-appointments/{unconfirmed_appointment_id}",
+  "status": 200
+}

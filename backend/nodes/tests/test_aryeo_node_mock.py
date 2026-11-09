@@ -13,9 +13,12 @@ import pytest
 from nodes import aryeo_node as native
 from nodes.core.registry import NodeFactory
 
-EXAMPLES = json.loads(
-    (Path(__file__).parent / "fixtures/aryeo/contract_examples.json").read_text()
-)
+EXAMPLES = {
+    path.stem: json.loads(path.read_text())
+    for path in sorted(
+        (Path(__file__).parent / "fixtures/aryeo/contract_examples").glob("*.json")
+    )
+}
 TOKEN = "synthetic-aryeo-token-for-tests"
 ID = "00000000-0000-4000-8000-000000000000"
 
