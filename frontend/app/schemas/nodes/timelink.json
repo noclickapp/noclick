@@ -1,0 +1,2099 @@
+{
+  "$defs": {
+    "CreateClientConfig": {
+      "additionalProperties": false,
+      "description": "Create new client.",
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "ext_tool_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ext Tool Id"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "acronym": {
+          "anyOf": [
+            {
+              "maxLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acronym"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateClientConfig",
+      "type": "object"
+    },
+    "CreateProjectConfig": {
+      "additionalProperties": false,
+      "description": "Create a new project.",
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "ext_tool_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ext Tool Id"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "ext_client_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ext Client Id"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "acronym": {
+          "anyOf": [
+            {
+              "maxLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acronym"
+        },
+        "budget_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "rate",
+                "hours"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget Type",
+          "enum": [
+            "rate",
+            "hours"
+          ],
+          "x-enum-searchable": true
+        },
+        "available_budget": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Available Budget"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateProjectConfig",
+      "type": "object"
+    },
+    "CreateServiceConfig": {
+      "additionalProperties": false,
+      "description": "Create a new service.",
+      "properties": {
+        "operation": {
+          "const": "create_service",
+          "default": "create_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "acronym": {
+          "anyOf": [
+            {
+              "maxLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acronym"
+        },
+        "ext_tool_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ext Tool Id"
+        },
+        "default_time_entry_description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Time Entry Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateServiceConfig",
+      "type": "object"
+    },
+    "CreateTimeEntryConfig": {
+      "additionalProperties": false,
+      "description": "Create a new time entry.",
+      "properties": {
+        "operation": {
+          "const": "create_time_entry",
+          "default": "create_time_entry",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "service_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "ended_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ended At"
+        },
+        "ext_tool_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ext Tool Id"
+        },
+        "temp_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temp Id"
+        },
+        "billed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billed At"
+        },
+        "is_interrupt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Interrupt"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "temp_id_should_be_unique": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temp Id Should Be Unique"
+        }
+      },
+      "required": [
+        "user_id",
+        "started_at"
+      ],
+      "title": "CreateTimeEntryConfig",
+      "type": "object"
+    },
+    "DeleteClientConfig": {
+      "additionalProperties": false,
+      "description": "Delete a client.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_client",
+          "default": "delete_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteClientConfig",
+      "type": "object"
+    },
+    "DeleteProjectConfig": {
+      "additionalProperties": false,
+      "description": "Delete a project.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteProjectConfig",
+      "type": "object"
+    },
+    "DeleteServiceConfig": {
+      "additionalProperties": false,
+      "description": "Delete a service.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_service",
+          "default": "delete_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteServiceConfig",
+      "type": "object"
+    },
+    "DeleteTimeEntryConfig": {
+      "additionalProperties": false,
+      "description": "Delete a time entry.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_time_entry",
+          "default": "delete_time_entry",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteTimeEntryConfig",
+      "type": "object"
+    },
+    "GetClientConfig": {
+      "additionalProperties": false,
+      "description": "Get Client.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetClientConfig",
+      "type": "object"
+    },
+    "GetCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Get all company details.",
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCompanyConfig",
+      "type": "object"
+    },
+    "GetProjectConfig": {
+      "additionalProperties": false,
+      "description": "Get a Project.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetProjectConfig",
+      "type": "object"
+    },
+    "GetServiceConfig": {
+      "additionalProperties": false,
+      "description": "Get a Service.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetServiceConfig",
+      "type": "object"
+    },
+    "GetTimeEntryConfig": {
+      "additionalProperties": false,
+      "description": "Get a Time Entry.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_time_entry",
+          "default": "get_time_entry",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTimeEntryConfig",
+      "type": "object"
+    },
+    "GetTokenConfig": {
+      "additionalProperties": false,
+      "description": "Get details to your token..",
+      "properties": {
+        "operation": {
+          "const": "get_token",
+          "default": "get_token",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetTokenConfig",
+      "type": "object"
+    },
+    "GetUserConfig": {
+      "additionalProperties": false,
+      "description": "Get a User.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetUserConfig",
+      "type": "object"
+    },
+    "ListActiveTimeEntriesConfig": {
+      "additionalProperties": false,
+      "description": "Get all active time entries..",
+      "properties": {
+        "operation": {
+          "const": "list_active_time_entries",
+          "default": "list_active_time_entries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "withRelations": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Withrelations"
+        }
+      },
+      "title": "ListActiveTimeEntriesConfig",
+      "type": "object"
+    },
+    "ListClientsConfig": {
+      "additionalProperties": false,
+      "description": "Get all clients.",
+      "properties": {
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "withLimitedPartOfProjects": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Withlimitedpartofprojects"
+        },
+        "projectsLimit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Projectslimit"
+        }
+      },
+      "title": "ListClientsConfig",
+      "type": "object"
+    },
+    "ListProjectsConfig": {
+      "additionalProperties": false,
+      "description": "Get all projects.",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        }
+      },
+      "title": "ListProjectsConfig",
+      "type": "object"
+    },
+    "ListServicesConfig": {
+      "additionalProperties": false,
+      "description": "Get all services.",
+      "properties": {
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        }
+      },
+      "title": "ListServicesConfig",
+      "type": "object"
+    },
+    "ListTimeEntriesConfig": {
+      "additionalProperties": false,
+      "description": "Get all time entries.",
+      "properties": {
+        "operation": {
+          "const": "list_time_entries",
+          "default": "list_time_entries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "withRelations": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Withrelations"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "onlyDeleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Onlydeleted"
+        },
+        "isInterrupt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isinterrupt"
+        },
+        "isBilled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isbilled"
+        },
+        "isBillable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isbillable"
+        },
+        "searchInDescription": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Searchindescription"
+        },
+        "clientId": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clientid"
+        },
+        "projectId": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Projectid"
+        },
+        "serviceId": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Serviceid"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userid"
+        },
+        "extToolId": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exttoolid"
+        },
+        "exact": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exact"
+        }
+      },
+      "title": "ListTimeEntriesConfig",
+      "type": "object"
+    },
+    "ListUsersConfig": {
+      "additionalProperties": false,
+      "description": "Get all users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        }
+      },
+      "title": "ListUsersConfig",
+      "type": "object"
+    },
+    "TimelinkTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "timelink_api_token",
+          "default": "timelink_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Timelink API Token",
+      "type": "object",
+      "x-credential-instructions": "Create an API token under My Account > API Tokens in Timelink and paste it here. Grant access to the resources your workflow uses. NoClick sends it as a bearer token to api.timelink.io. Client reads verify the connection; other permissions depend on the token.",
+      "x-credential-url": "https://docs.timelink.io/api"
+    },
+    "UpdateClientConfig": {
+      "additionalProperties": false,
+      "description": "Update Client.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "ext_tool_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ext Tool Id"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "acronym": {
+          "anyOf": [
+            {
+              "maxLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acronym"
+        },
+        "demo_flag": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Demo Flag"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateClientConfig",
+      "type": "object"
+    },
+    "UpdateProjectConfig": {
+      "additionalProperties": false,
+      "description": "Update Project.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "ext_tool_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ext Tool Id"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "ext_client_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ext Client Id"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "acronym": {
+          "anyOf": [
+            {
+              "maxLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acronym"
+        },
+        "demo_flag": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Demo Flag"
+        },
+        "budget_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "rate",
+                "hours"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget Type",
+          "enum": [
+            "rate",
+            "hours"
+          ],
+          "x-enum-searchable": true
+        },
+        "available_budget": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Available Budget"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateProjectConfig",
+      "type": "object"
+    },
+    "UpdateServiceConfig": {
+      "additionalProperties": false,
+      "description": "Update Service.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_service",
+          "default": "update_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "acronym": {
+          "anyOf": [
+            {
+              "maxLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acronym"
+        },
+        "ext_tool_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ext Tool Id"
+        },
+        "default_time_entry_description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Time Entry Description"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateServiceConfig",
+      "type": "object"
+    },
+    "UpdateTimeEntryConfig": {
+      "additionalProperties": false,
+      "description": "Update Time Entry.",
+      "properties": {
+        "id": {
+          "description": "Timelink resource ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_time_entry",
+          "default": "update_time_entry",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "service_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "started_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Started At"
+        },
+        "ended_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ended At"
+        },
+        "ext_tool_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ext Tool Id"
+        },
+        "temp_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temp Id"
+        },
+        "billed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billed At"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "is_interrupt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Interrupt"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateTimeEntryConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_client": "#/$defs/CreateClientConfig",
+          "create_project": "#/$defs/CreateProjectConfig",
+          "create_service": "#/$defs/CreateServiceConfig",
+          "create_time_entry": "#/$defs/CreateTimeEntryConfig",
+          "delete_client": "#/$defs/DeleteClientConfig",
+          "delete_project": "#/$defs/DeleteProjectConfig",
+          "delete_service": "#/$defs/DeleteServiceConfig",
+          "delete_time_entry": "#/$defs/DeleteTimeEntryConfig",
+          "get_client": "#/$defs/GetClientConfig",
+          "get_company": "#/$defs/GetCompanyConfig",
+          "get_project": "#/$defs/GetProjectConfig",
+          "get_service": "#/$defs/GetServiceConfig",
+          "get_time_entry": "#/$defs/GetTimeEntryConfig",
+          "get_token": "#/$defs/GetTokenConfig",
+          "get_user": "#/$defs/GetUserConfig",
+          "list_active_time_entries": "#/$defs/ListActiveTimeEntriesConfig",
+          "list_clients": "#/$defs/ListClientsConfig",
+          "list_projects": "#/$defs/ListProjectsConfig",
+          "list_services": "#/$defs/ListServicesConfig",
+          "list_time_entries": "#/$defs/ListTimeEntriesConfig",
+          "list_users": "#/$defs/ListUsersConfig",
+          "update_client": "#/$defs/UpdateClientConfig",
+          "update_project": "#/$defs/UpdateProjectConfig",
+          "update_service": "#/$defs/UpdateServiceConfig",
+          "update_time_entry": "#/$defs/UpdateTimeEntryConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/ListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetClientConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteClientConfig"
+        },
+        {
+          "$ref": "#/$defs/ListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ListServicesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTimeEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTimeEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateTimeEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateTimeEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteTimeEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/ListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ListActiveTimeEntriesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimelinkTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Timelink Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
