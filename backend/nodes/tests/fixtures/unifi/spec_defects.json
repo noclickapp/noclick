@@ -1,0 +1,21 @@
+[
+  {
+    "kind": "d",
+    "operations": [
+      "connector_get",
+      "connector_post",
+      "connector_put",
+      "connector_patch",
+      "connector_delete"
+    ],
+    "contract_path": "/v1/connector/consoles/{id}/*path",
+    "issue": "The published OpenAPI uses a router-style *path suffix and declares a required path parameter named path without an OpenAPI {path} placeholder. A standards-based matcher treats *path literally, so it cannot match the documented concrete application URLs. The node sends /v1/connector/consoles/{id}/network|protect|innerspace/integration/vN/... as described in the provider connector documentation; it must not send the literal *path suffix.",
+    "source": "https://developer.ui.com/site-manager/v1.0.0/openapi.json",
+    "docs": [
+      "https://developer.ui.com/site-manager/v1.0.0/openapi.json",
+      "https://developer.ui.com/network/v10.6.106/connectorget",
+      "https://developer.ui.com/network/v10.6.106/connectorpost"
+    ],
+    "evidence": "ConnectorGet description explicitly gives GET /v1/connector/consoles/{id}/network/integration/v1/sites and GET /v1/connector/consoles/{id}/protect/integration/v1/meta/info. All five methods describe forwarding to the application path; POST/PATCH/PUT document JSON object payloads. The same invalid route key remains in the current published v1.0.0 JSON."
+  }
+]

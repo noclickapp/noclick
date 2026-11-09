@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/unifi.png",
+  "source": "https://developer.ui.com/favicon.ico?favicon.0_rdcer4-pvb-.ico",
+  "license": "Ubiquiti trademark; used to identify the UniFi integration",
+  "sha256": "006d82fb51f8f83d96c4f00515bf23c483f6c184b74498e84230decd2469454b",
+  "transformation": "Converted the official 32x32 ICO bitmap to PNG without changing its pixels."
+}
