@@ -1,0 +1,1467 @@
+{
+  "search_articles": {
+    "status": 200,
+    "numResults": 10000,
+    "articles": [
+      {
+        "url": "https://www.breitbart.com/news/south-koreas-lee-trump-to-hold-summit-at-white-house-on-aug-25/",
+        "authorsByline": "UPI",
+        "articleId": "97dce2f1bdcd441c99360e58d38e811d",
+        "clusterId": "87f8c1cdc02f41e0b6fc818f86239c7f",
+        "source": {
+          "domain": "breitbart.com",
+          "paywall": false,
+          "location": null
+        },
+        "imageUrl": "https://media.breitbart.com/media/2025/08/wi/upi/south-koreas-lee-trump-hold-summit-at-white-house-aug-25-south-korea-lee-trump-hold-summit-at-white.jpg",
+        "country": "us",
+        "language": "en",
+        "pubDate": "2025-08-12T02:40:08+00:00",
+        "addDate": "2025-08-12T09:50:33.647613+00:00",
+        "refreshDate": "2025-08-12T09:50:33.647614+00:00",
+        "score": 1.0,
+        "title": "South Korea's Lee, Trump to hold summit at White House on Aug. 25",
+        "description": "SEOUL, Aug. 12 (UPI) -- South Korean President Lee Jae Myung will travel to Washington to hold a summit with U.S. President Donald Trump on Aug. 25, Lee's",
+        "content": "SEOUL, Aug. 12 (UPI) \u2014 South Korean President Lee Jae Myung will travel to Washington to hold a summit with U.S. President Donald Trump on Aug. 25, Lee\u2019s office said Tuesday, with trade and defense issues expected to be at the top of the agenda.\n\nThe three-day visit will be Lee\u2019s first trip to the United States since taking office in June, presidential spokeswoman Kang Yu-jung said at a press briefing.\n\n\u201cThe two leaders plan to discuss ways to develop the Korea-U.S. alliance into a future comprehensive strategic alliance in response to the changing international security and economic environment,\u201d Kang said.\n\n\u201cThey will also discuss ways to further strengthen the robust South Korea-U.S. combined defense posture and to cooperate to establish peace and achieve denuclearization on the Korean Peninsula,\u201d she added.\n\nThe summit comes weeks after Seoul and Washington struck a trade deal that lowered Trump\u2019s threatened 25% tariffs on South Korean goods to 15%. As part of the package, South Korea pledged to invest $350 billion in the United States and to purchase $100 billion in U.S. energy.\n\nBased on the tariff deal, Trump and Lee will consult on economic cooperation in semiconductors, batteries and shipbuilding, as well as partnerships in advanced technologies and key minerals, Kang said.\n\nThe future of the decades-old South Korea-U.S. military alliance is also expected to be in the spotlight as the two countries prepare to kick off their annual Ulchi Freedom Shield joint exercise on Monday.\n\nDuring his previous term in office, Trump called for massive increases in Seoul\u2019s financial contribution for the 28,500 U.S. forces stationed in Korea.\n\nSeoul signed a new five-year cost-sharing agreement with Washington in October, but Trump has suggested he would look to renegotiate the terms of the deal amid calls for allies to increase their defense spending.\n\n\u201cSouth Korea is making a lot of money, and they\u2019re very good,\u201d Trump told reporters at a Cabinet meeting in the White House last month. \u201cThey\u2019re very good, but, you know, they should be paying for their own military.\u201d\n\nOn Friday, Gen. Xavier Brunson, commander of U.S. Forces Korea, discussed the need to restructure the military alliance in response to an evolving regional security environment.\n\n\u201cAlliance modernization \u2026 reflects the recognition that the world\u2019s changed around us,\u201d Brunson told local reporters at a press briefing in Pyeongtaek. \u201cWe have a nuclear-armed adversary who\u2019s north of the border. We have increasing involvement of Russia, along with the DPRK, and we also have the Chinese and the threat that they pose to a free and open Indo-Pacific.\u201d\n\nThe Democratic People\u2019s Republic of Korea is the official name of North Korea.\n\nBrunson avoided the question of a potential of U.S. troop reduction on the peninsula, stressing military capabilities and strategic flexibility over numbers ahead of the Lee-Trump summit.\n\n\u201cWe\u2019re going to have two chief executives sitting down together to discuss not only the security situation in the region, but the security situation in the world,\u201d he said. \u201cFor us, it\u2019s about the capabilities. We want to have the right capabilities resident on the Peninsula.\u201d\n\nLee will be in the United States from Aug. 24-26 for his summit with Trump. In response to local media reports that Lee may also stop in Japan around the time of his U.S. trip, presidential spokeswoman Kang said that nothing had been confirmed.",
+        "medium": "Article",
+        "links": [],
+        "labels": [],
+        "matchedAuthors": [],
+        "claim": "",
+        "verdict": "",
+        "keywords": [
+          {
+            "name": "U.S. Forces Korea",
+            "weight": 0.09803479
+          },
+          {
+            "name": "U.S. President Donald Trump",
+            "weight": 0.09388354
+          },
+          {
+            "name": "South Korea",
+            "weight": 0.08868486
+          },
+          {
+            "name": "U.S.",
+            "weight": 0.077976175
+          },
+          {
+            "name": "North Korea",
+            "weight": 0.077027455
+          },
+          {
+            "name": "U.S. troop reduction",
+            "weight": 0.07701537
+          },
+          {
+            "name": "Korea",
+            "weight": 0.076576516
+          },
+          {
+            "name": "U.S. energy",
+            "weight": 0.0765642
+          },
+          {
+            "name": "Donald Trump",
+            "weight": 0.07466888
+          },
+          {
+            "name": "Trump",
+            "weight": 0.07382798
+          }
+        ],
+        "topics": [],
+        "categories": [
+          {
+            "name": "Politics"
+          }
+        ],
+        "taxonomies": [
+          {
+            "name": "/News/Politics/Other",
+            "score": 0.98291015625
+          },
+          {
+            "name": "/Law & Government/Government/Executive Branch",
+            "score": 0.96337890625
+          },
+          {
+            "name": "/People & Society/Social Sciences/Political Science",
+            "score": 0.8974609375
+          }
+        ],
+        "entities": [
+          {
+            "data": "South Korea's",
+            "type": "GPE",
+            "mentions": 7
+          },
+          {
+            "data": "SEOUL",
+            "type": "GPE",
+            "mentions": 1
+          },
+          {
+            "data": "Washington",
+            "type": "GPE",
+            "mentions": 3
+          },
+          {
+            "data": "U.S.",
+            "type": "GPE",
+            "mentions": 7
+          },
+          {
+            "data": "the United States",
+            "type": "GPE",
+            "mentions": 3
+          },
+          {
+            "data": "Seoul",
+            "type": "GPE",
+            "mentions": 3
+          },
+          {
+            "data": "Pyeongtaek",
+            "type": "GPE",
+            "mentions": 1
+          },
+          {
+            "data": "Russia",
+            "type": "GPE",
+            "mentions": 1
+          },
+          {
+            "data": "DPRK",
+            "type": "GPE",
+            "mentions": 1
+          },
+          {
+            "data": "The Democratic People\u2019s Republic of Korea",
+            "type": "GPE",
+            "mentions": 2
+          },
+          {
+            "data": "Japan",
+            "type": "GPE",
+            "mentions": 1
+          },
+          {
+            "data": "Lee",
+            "type": "PERSON",
+            "mentions": 8
+          },
+          {
+            "data": "Trump",
+            "type": "PERSON",
+            "mentions": 8
+          },
+          {
+            "data": "Kang Yu-jung",
+            "type": "PERSON",
+            "mentions": 4
+          },
+          {
+            "data": "Xavier Brunson",
+            "type": "PERSON",
+            "mentions": 3
+          },
+          {
+            "data": "White House",
+            "type": "ORG",
+            "mentions": 1
+          },
+          {
+            "data": "Cabinet",
+            "type": "ORG",
+            "mentions": 1
+          },
+          {
+            "data": "U.S. Forces Korea",
+            "type": "ORG",
+            "mentions": 1
+          },
+          {
+            "data": "South Korean",
+            "type": "NORP",
+            "mentions": 2
+          },
+          {
+            "data": "Chinese",
+            "type": "NORP",
+            "mentions": 1
+          },
+          {
+            "data": "the Korean Peninsula",
+            "type": "LOC",
+            "mentions": 2
+          },
+          {
+            "data": "Indo",
+            "type": "LOC",
+            "mentions": 1
+          },
+          {
+            "data": "-",
+            "type": "LOC",
+            "mentions": 1
+          },
+          {
+            "data": "Pacific",
+            "type": "LOC",
+            "mentions": 1
+          },
+          {
+            "data": "Ulchi Freedom Shield",
+            "type": "PRODUCT",
+            "mentions": 1
+          },
+          {
+            "data": "the White House",
+            "type": "FAC",
+            "mentions": 1
+          }
+        ],
+        "companies": [],
+        "sentiment": {
+          "positive": 0.655995,
+          "negative": 0.103086375,
+          "neutral": 0.24091867
+        },
+        "summary": "South Korean President Lee Jae Myung is set to meet with U.S. President Donald Trump on Aug. 25, this will be his first trip to the United States since taking office in June. The summit will focus on trade and defense issues, with the two leaders expected to discuss ways to develop the Korea-U.S.-Korea alliance into a future comprehensive strategic alliance. They will also discuss strengthening the robust South Korea-US combined defense posture and cooperating to establish peace and achieve denuclearization on the Korean Peninsula. The future of the decades-old military alliance is also expected to be in the spotlight as the two countries prepare to participate in their annual Ulchi Freedom Shield joint exercise.",
+        "shortSummary": "South Korean President Lee Jae Myung will hold a summit with U.S. President Donald Trump in Washington, focusing on strengthening the South Korea-U.S alliance and establishing peace and denuclearization.",
+        "translation": "",
+        "translatedTitle": "",
+        "translatedDescription": "",
+        "translatedSummary": "",
+        "locations": [
+          {
+            "country": "kr"
+          },
+          {
+            "country": "kr",
+            "state": "11",
+            "city": "Seoul"
+          }
+        ],
+        "reprint": true,
+        "reprintGroupId": "4e4bf19e89984af1baee7d04776bb9cd",
+        "places": [],
+        "people": [
+          {
+            "wikidataId": "Q22686",
+            "name": "Donald Trump"
+          },
+          {
+            "wikidataId": "Q12612463",
+            "name": "Lee Jae Myung"
+          }
+        ]
+      }
+    ]
+  },
+  "search_stories": {
+    "status": 200,
+    "numResults": 10000,
+    "results": [
+      {
+        "createdAt": "2025-08-12T09:26:15.861525+00:00",
+        "updatedAt": "2025-08-12T09:47:42.780519+00:00",
+        "initializedAt": "2025-08-12T09:43:09.364043+00:00",
+        "id": "c9b6bebef14943edb6269c80b1cb51c5",
+        "name": "Red Bull Completes Newcastle Rugby Takeover, Rebrands Club",
+        "summary": "Red Bull has completed a takeover of the Premiership Rugby club Newcastle Falcons, rebranding the team as Newcastle Red Bulls while keeping them at Kingston Park. The acquisition marks Red Bull's first significant involvement in rugby union and brings fresh investment aimed at elevating the club's competitive potential domestically and in Europe. Steve Diamond will remain as director of rugby, ensuring continuity as the club seeks to compete for trophies in the coming years. Red Bull plans to develop local rugby talent through an enhanced academy program and enhance the fan experience by applying their innovative approach from global sports initiatives. Premiership Rugby CEO Simon Massie-Taylor hailed the takeover as a landmark moment that will add value to both Newcastle and the league, emphasizing Red Bull's expertise in high-performance sports and marketing. The club, established in 1877 and historically known as Newcastle Falcons, aims to leverage Red Bull's global sports portfolio, which includes Formula 1 and various football clubs, to grow its fanbase and player pathway in the North East.",
+        "shortSummary": "Energy drink giant Red Bull has completed a takeover of Newcastle Falcons rugby club, rebranding it as Newcastle Red Bulls and keeping it at Kingston Park with Steve Diamond remaining as director of rugby. Red Bull aims to elevate the club's competitive potential, develop local talent through an enhanced academy, and leverage their global sports expertise to boost both the club and the Gallagher Premiership.",
+        "summaryReferences": [
+          "66c3a007e2374ffdbbaa70ee5e251693",
+          "e32349ed5e084f71be1e28733755ed7e",
+          "558dc91a9ab04630908404ca4221d2fb",
+          "f73d2117e50d4cfb8740ed3384b2b330",
+          "c1c65a3e5bc34ab1ab9f049986a53cc1"
+        ],
+        "keyPoints": [
+          {
+            "point": "The previous owner Semore Kurdi had put the club up for sale at a nominal price of \u00a31 due to financial struggles, signaling the club was on the brink of a financial crisis before Red Bull's takeover.",
+            "references": []
+          },
+          {
+            "point": "Newcastle Rugby Ltd highlighted the club\u2019s long history, originally established in 1877 as Gosforth Football Club and undergoing several name changes before becoming Newcastle Falcons in 1996, and now Newcastle Red Bulls in 2025.",
+            "references": []
+          },
+          {
+            "point": "Newcastle Falcons have a decorated history, having won five major titles including the Premiership in 1998 and four domestic cups in 1976, 1977, 2001, and 2004.",
+            "references": []
+          },
+          {
+            "point": "Red Bull's global sports portfolio includes ownership stakes in multiple football clubs such as RB Leipzig, New York Red Bulls, Red Bull Salzburg, Red Bull Bragantino, and minority stakes in Paris FC and Leeds United, illustrating their extensive experience in sports ownership and management.",
+            "references": []
+          },
+          {
+            "point": "Red Bull has a history of working with prominent rugby players such as Springboks captain Siya Kolisi and former England international Jack Nowell, indicating their prior engagement with rugby despite this being their first significant club ownership in rugby union.",
+            "references": []
+          }
+        ],
+        "sentiment": {
+          "positive": 0.6500967,
+          "negative": 0.112720154,
+          "neutral": 0.23718315
+        },
+        "uniqueCount": 6,
+        "reprintCount": 3,
+        "totalCount": 9,
+        "countries": [
+          {
+            "name": "gb",
+            "count": 5
+          },
+          {
+            "name": "ca",
+            "count": 3
+          },
+          {
+            "name": "za",
+            "count": 1
+          }
+        ],
+        "topCountries": [
+          "gb"
+        ],
+        "topics": [
+          {
+            "name": "Rugby",
+            "count": 2
+          }
+        ],
+        "topTopics": [
+          {
+            "name": "Rugby"
+          }
+        ],
+        "categories": [
+          {
+            "name": "Sports",
+            "count": 5
+          }
+        ],
+        "topCategories": [
+          {
+            "name": "Sports"
+          }
+        ],
+        "taxonomies": [
+          {
+            "name": "/News/Sports News",
+            "count": 8
+          },
+          {
+            "name": "/Sports/Team Sports/Rugby",
+            "count": 8
+          }
+        ],
+        "topTaxonomies": [
+          {
+            "name": "/News/Sports News"
+          },
+          {
+            "name": "/Sports/Team Sports/Rugby"
+          }
+        ],
+        "people": [
+          {
+            "wikidataId": "Q15837487",
+            "name": "Oliver Mintzlaff",
+            "count": 8
+          },
+          {
+            "wikidataId": "Q7612382",
+            "name": "Steve Diamond",
+            "count": 5
+          },
+          {
+            "wikidataId": "Q7533339",
+            "name": "Siya Kolisi",
+            "count": 2
+          },
+          {
+            "wikidataId": "Q15731077",
+            "name": "Jack Nowell",
+            "count": 2
+          },
+          {
+            "wikidataId": "Q7612383",
+            "name": "Steve Diamond",
+            "count": 3
+          },
+          {
+            "wikidataId": "Q5229992",
+            "name": "Dave Thompson",
+            "count": 1
+          },
+          {
+            "wikidataId": "Q104535295",
+            "name": "Jamie Blamire",
+            "count": 2
+          },
+          {
+            "wikidataId": "Q50124849",
+            "name": "Callum Chick",
+            "count": 2
+          },
+          {
+            "wikidataId": "Q74698940",
+            "name": "Tom Christie",
+            "count": 2
+          },
+          {
+            "wikidataId": "Q19519831",
+            "name": "Max Clark",
+            "count": 1
+          }
+        ],
+        "topPeople": [
+          {
+            "wikidataId": "Q15837487",
+            "name": "Oliver Mintzlaff"
+          },
+          {
+            "wikidataId": "Q7612382",
+            "name": "Steve Diamond"
+          }
+        ],
+        "companies": [
+          {
+            "id": "d19eef21be0343e4b96c73b85f5afed9",
+            "name": "Premiership Rugby",
+            "domains": [
+              "premiershiprugby.com"
+            ],
+            "symbols": [],
+            "count": 7
+          },
+          {
+            "id": "c28c867e3ec84f569eb0c2c202ffec20",
+            "name": "Red Bull GmbH",
+            "domains": [
+              "redbull.com"
+            ],
+            "symbols": [],
+            "count": 7
+          },
+          {
+            "id": "1986c4e2c8b54e81af4fbae3e8fbb870",
+            "name": "The Raine Group",
+            "domains": [
+              "raine.com"
+            ],
+            "symbols": [],
+            "count": 2
+          },
+          {
+            "id": "d79a8b400c5c4f12bbbda5b4ac95d882",
+            "name": "TNT Sports",
+            "domains": [
+              "wbd.com",
+              "discoverysports.com"
+            ],
+            "symbols": [],
+            "count": 4
+          },
+          {
+            "id": "932cd2db2347407fbda9386cb18307dc",
+            "name": "Deloitte",
+            "domains": [
+              "deloitte.com"
+            ],
+            "symbols": [],
+            "count": 2
+          },
+          {
+            "id": "b40dc389506141a4bcd5ba94f64592f6",
+            "name": "Red Bull",
+            "domains": [
+              "redbullracing.com"
+            ],
+            "symbols": [],
+            "count": 6
+          },
+          {
+            "id": "f1e3e2243cd142408136bd8f43282c4a",
+            "name": "City A.M.",
+            "domains": [
+              "cityam.com"
+            ],
+            "symbols": [],
+            "count": 1
+          },
+          {
+            "id": "c4800bcde1c940d6b13e2022836c10cd",
+            "name": "Getty Images Holdings, Inc.",
+            "domains": [
+              "gettyimages.com"
+            ],
+            "symbols": [
+              "GETY"
+            ],
+            "count": 2
+          },
+          {
+            "id": "1bc09603d6cd4aeba01c8c7762d8cda6",
+            "name": "Reuters",
+            "domains": [
+              "reuters.com"
+            ],
+            "symbols": [],
+            "count": 1
+          },
+          {
+            "id": "fb9806c8e362406ea89d48d31dcf50a7",
+            "name": "Formula One Group",
+            "domains": [
+              "libertymedia.com"
+            ],
+            "symbols": [
+              "0JUJ.L",
+              "FWONA",
+              "FWONB",
+              "FWONK"
+            ],
+            "count": 1
+          },
+          {
+            "id": "01a4555587844344a5b0eef0854ee0ad",
+            "name": "Guardian Media Group",
+            "domains": [
+              "theguardian.com"
+            ],
+            "symbols": [],
+            "count": 1
+          }
+        ],
+        "topCompanies": [
+          {
+            "id": "d19eef21be0343e4b96c73b85f5afed9",
+            "name": "Premiership Rugby",
+            "domains": [
+              "premiershiprugby.com"
+            ],
+            "symbols": []
+          },
+          {
+            "id": "c28c867e3ec84f569eb0c2c202ffec20",
+            "name": "Red Bull GmbH",
+            "domains": [
+              "redbull.com"
+            ],
+            "symbols": []
+          },
+          {
+            "id": "b40dc389506141a4bcd5ba94f64592f6",
+            "name": "Red Bull",
+            "domains": [
+              "redbullracing.com"
+            ],
+            "symbols": []
+          }
+        ],
+        "locations": [
+          {
+            "state": "ENG",
+            "city": "Newcastle upon Tyne",
+            "count": 2
+          }
+        ],
+        "topLocations": [
+          {
+            "state": "ENG",
+            "city": "Newcastle upon Tyne"
+          }
+        ]
+      }
+    ]
+  },
+  "search_sources": {
+    "status": 200,
+    "numResults": 10000,
+    "results": [
+      {
+        "id": "372f1eb953ba4c9cbd3830c47db3342a",
+        "domain": "cnn.com",
+        "name": "CNN",
+        "updatedAt": "2025-08-10T00:30:03.716477+00:00",
+        "altNames": [
+          "CNN.com",
+          "CNN News",
+          "anderson",
+          "anderson cooper",
+          "CNN .com",
+          "wolf blitzer",
+          "erin burnett",
+          "don lemon",
+          "chris cuomo",
+          "jake tapper",
+          "brooke baldwin",
+          "dana bash",
+          "democrat",
+          "democratic",
+          "liberal"
+        ],
+        "description": "CNN is a major U.S.-based media organization that provides coverage of world news, weather, entertainment, politics, and health.",
+        "avgMonthlyPosts": 3129,
+        "paywall": false,
+        "location": {
+          "country": "us",
+          "state": "NY",
+          "city": "New York",
+          "coordinates": {
+            "lat": 40.7127281,
+            "lon": -74.0060152
+          }
+        },
+        "topCategories": [
+          {
+            "name": "Politics",
+            "count": 1218
+          },
+          {
+            "name": "General",
+            "count": 801
+          },
+          {
+            "name": "Entertainment",
+            "count": 545
+          },
+          {
+            "name": "Lifestyle",
+            "count": 239
+          },
+          {
+            "name": "Business",
+            "count": 237
+          },
+          {
+            "name": "Sports",
+            "count": 233
+          },
+          {
+            "name": "World",
+            "count": 209
+          },
+          {
+            "name": "Health",
+            "count": 147
+          },
+          {
+            "name": "Travel",
+            "count": 135
+          },
+          {
+            "name": "Tech",
+            "count": 101
+          }
+        ],
+        "topTopics": [
+          {
+            "name": "TV",
+            "count": 331
+          },
+          {
+            "name": "Podcasts",
+            "count": 328
+          },
+          {
+            "name": "Russia-Ukraine War",
+            "count": 151
+          },
+          {
+            "name": "US Politics",
+            "count": 142
+          },
+          {
+            "name": "Crime",
+            "count": 126
+          },
+          {
+            "name": "Media",
+            "count": 91
+          },
+          {
+            "name": "Social Issues",
+            "count": 85
+          },
+          {
+            "name": "Markets",
+            "count": 69
+          },
+          {
+            "name": "Middle East",
+            "count": 68
+          },
+          {
+            "name": "Epstein Case",
+            "count": 61
+          }
+        ],
+        "topCountries": [
+          {
+            "name": "us",
+            "count": 3153
+          }
+        ],
+        "topLabels": [
+          {
+            "name": "Non-news",
+            "count": 394
+          },
+          {
+            "name": "Roundup",
+            "count": 327
+          },
+          {
+            "name": "Paid News",
+            "count": 183
+          },
+          {
+            "name": "Opinion",
+            "count": 127
+          },
+          {
+            "name": "Feed",
+            "count": 41
+          },
+          {
+            "name": "Pop Culture",
+            "count": 32
+          },
+          {
+            "name": "Low Content",
+            "count": 29
+          },
+          {
+            "name": "Fact Check",
+            "count": 4
+          }
+        ],
+        "avgBiasRating": "leansLeft",
+        "adFontesBiasRating": "Leans Left",
+        "allSidesBiasRating": "Leans Left",
+        "mbfcBiasRating": "Left",
+        "monthlyVisits": 471591456,
+        "globalRank": 86,
+        "logoLarge": {
+          "url": "https://storage.googleapis.com/dev-dispatch-276213.appspot.com/CNN_Reg_1d0c9bc5eb/CNN-Reg_CNN_Reg_1d0c9bc5eb.png"
+        },
+        "logoFavIcon": {
+          "url": "https://storage.googleapis.com/dev-dispatch-276213.appspot.com/CNN_Fav_Icon_5d54dfad8c/CNN-FavIcon_CNN_Fav_Icon_5d54dfad8c.png"
+        },
+        "logoSquare": {
+          "url": "https://storage.googleapis.com/dev-dispatch-276213.appspot.com/CNN_Square_e9ef9ce7a8/CNN-Square_CNN_Square_e9ef9ce7a8.png"
+        }
+      }
+    ]
+  },
+  "search_companies": {
+    "status": 200,
+    "numResults": 89660,
+    "results": [
+      {
+        "id": "eeee660a046242b8bf99f45fdc95cc32",
+        "name": "Tesla, Inc.",
+        "updatedAt": "2025-08-02T06:28:15.799842+00:00",
+        "altNames": [
+          "Tesla"
+        ],
+        "domains": [
+          "tesla.com"
+        ],
+        "monthlyVisits": 24914157,
+        "globalRank": 1322,
+        "description": "Tesla, Inc. designs, develops, manufactures, leases, and sells electric vehicles, and energy generation and storage systems in the United States, China, and internationally. It operates in two segments, Automotive, and Energy Generation and Storage. The Automotive segment offers electric vehicles, as well as sells automotive regulatory credits; and non-warranty after-sales vehicle, used vehicles, retail merchandise, and vehicle insurance services. This segment also provides sedans and sport utility vehicles through direct and used vehicle sales, a network of Tesla Superchargers, and in-app upgrades; purchase financing and leasing services; services for electric vehicles through its company-owned service locations and Tesla mobile service technicians; and vehicle limited warranties and extended service plans. The Energy Generation and Storage segment engages in the design, manufacture, installation, sale, and leasing of solar energy generation and energy storage products, and related services to residential, commercial, and industrial customers and utilities through its website, stores, and galleries, as well as through a network of channel partners; and provision of service and repairs to its energy product customers, including under warranty, as well as various financing options to its solar customers. The company was formerly known as Tesla Motors, Inc. and changed its name to Tesla, Inc. in February 2017. Tesla, Inc. was incorporated in 2003 and is headquartered in Austin, Texas.",
+        "ceo": "Elon R. Musk",
+        "industry": "Auto - Manufacturers",
+        "sector": "Consumer Cyclical",
+        "country": "us",
+        "fullTimeEmployees": 125665,
+        "address": "1 Tesla Road",
+        "city": "Austin",
+        "state": "TX",
+        "zip": "78725",
+        "logo": "https://company-api-assets.s3.us-east-2.amazonaws.com/images/TSLA.jpg",
+        "favicon": "https://company-api-assets.s3.us-east-2.amazonaws.com/favicons/eeee660a046242b8bf99f45fdc95cc32.ico",
+        "isEtf": false,
+        "isActivelyTrading": true,
+        "isFund": false,
+        "isAdr": false,
+        "symbols": [
+          {
+            "symbol": "TSLA",
+            "exchange": "NASDAQ Global Select",
+            "exchangeShortName": "NASDAQ",
+            "ipoDate": "2010-06-29"
+          },
+          {
+            "symbol": "TL0.DE",
+            "exchange": "XETRA",
+            "exchangeShortName": "XETRA",
+            "ipoDate": "2010-06-29"
+          }
+        ],
+        "naics": "8111",
+        "sic": "7538",
+        "yearFounded": 2003,
+        "revenue": "over-1b",
+        "webResources": {
+          "careers": null,
+          "about": null,
+          "blog": null,
+          "events": null,
+          "sitemap": null,
+          "updates": null,
+          "linkedin": "https://www.linkedin.com/company/15564",
+          "facebook": "https://www.facebook.com/tesla/",
+          "instagram": null,
+          "medium": null,
+          "reddit": null,
+          "threads": null,
+          "tiktok": null,
+          "x": "http://www.twitter.com/tesla",
+          "wellfound": "http://angel.co/tesla-motors",
+          "youtube": null,
+          "wikipedia": null
+        }
+      }
+    ]
+  },
+  "search_people": {
+    "status": 200,
+    "numResults": 773198,
+    "results": [
+      {
+        "wikidataId": "Q317521",
+        "updatedAt": "2025-08-06T05:17:13.358689+00:00",
+        "name": "Elon Musk",
+        "gender": {
+          "wikidataId": "Q6581097",
+          "label": "male"
+        },
+        "dateOfBirth": {
+          "time": "1971-06-28T00:00:00+00:00",
+          "precision": "day"
+        },
+        "dateOfDeath": null,
+        "description": "South African-Canadian-American businessman, engineer, inventor and political figure",
+        "aliases": [
+          "Elon Reeve Musk"
+        ],
+        "occupation": [
+          {
+            "wikidataId": "Q5482740",
+            "label": "programmer"
+          },
+          {
+            "wikidataId": "Q81096",
+            "label": "engineer"
+          },
+          {
+            "wikidataId": "Q131524",
+            "label": "entrepreneur"
+          },
+          {
+            "wikidataId": "Q557880",
+            "label": "investor"
+          },
+          {
+            "wikidataId": "Q43845",
+            "label": "businessperson"
+          },
+          {
+            "wikidataId": "Q82955",
+            "label": "politician"
+          },
+          {
+            "wikidataId": "Q212238",
+            "label": "civil servant"
+          },
+          {
+            "wikidataId": "Q133253419",
+            "label": "technology entrepreneur"
+          },
+          {
+            "wikidataId": "Q205375",
+            "label": "inventor"
+          }
+        ],
+        "position": [
+          {
+            "wikidataId": "Q484876",
+            "label": "chief executive officer",
+            "startTime": {
+              "time": "2002-01-01T00:00:00+00:00",
+              "precision": "year"
+            },
+            "endTime": null,
+            "employer": null
+          },
+          {
+            "wikidataId": "Q140686",
+            "label": "chairperson",
+            "startTime": {
+              "time": "2008-01-01T00:00:00+00:00",
+              "precision": "year"
+            },
+            "endTime": {
+              "time": "2018-11-01T00:00:00+00:00",
+              "precision": "month"
+            },
+            "employer": null
+          },
+          {
+            "wikidataId": "Q484876",
+            "label": "chief executive officer",
+            "startTime": {
+              "time": "2008-10-01T00:00:00+00:00",
+              "precision": "month"
+            },
+            "endTime": null,
+            "employer": null
+          },
+          {
+            "wikidataId": "Q105490190",
+            "label": "co-president",
+            "startTime": {
+              "time": "2016-07-01T00:00:00+00:00",
+              "precision": "month"
+            },
+            "endTime": null,
+            "employer": null
+          },
+          {
+            "wikidataId": "Q484876",
+            "label": "chief executive officer",
+            "startTime": {
+              "time": "2022-10-28T00:00:00+00:00",
+              "precision": "day"
+            },
+            "endTime": {
+              "time": "2023-06-05T00:00:00+00:00",
+              "precision": "day"
+            },
+            "employer": null
+          },
+          {
+            "wikidataId": "Q7450652",
+            "label": "Senior Advisor to the President of the United States",
+            "startTime": {
+              "time": "2025-01-20T00:00:00+00:00",
+              "precision": "day"
+            },
+            "endTime": {
+              "time": "2025-05-30T00:00:00+00:00",
+              "precision": "day"
+            },
+            "employer": null
+          }
+        ],
+        "politicalParty": [
+          {
+            "wikidataId": "Q135219011",
+            "label": "America Party",
+            "startTime": null,
+            "endTime": null
+          }
+        ],
+        "image": {
+          "url": "https://people-api-assets.s3.amazonaws.com/images/wikidata/Q317521.jpg"
+        },
+        "abstract": "Elon Reeve Musk is a businessman. He is known for his leadership of Tesla, SpaceX, X, and the Department of Government Efficiency (DOGE). Musk has been considered the wealthiest person in the world since 2021; as of May\u00a02025, Forbes estimates his net worth to be US$424.7 billion."
+      }
+    ]
+  },
+  "search_journalists": {
+    "status": 200,
+    "numResults": 10000,
+    "results": [
+      {
+        "id": "dd9518041aa146e8bb46bedd30a5d985",
+        "name": "Matt Levine",
+        "fullName": "Matt Levine",
+        "headline": "Columnist at Bloomberg Opinion",
+        "description": "I do not read or respond to LinkedIn messages.",
+        "title": "Columnist",
+        "locations": [],
+        "updatedAt": "2025-08-03T05:58:29.174946+00:00",
+        "topTopics": [
+          {
+            "name": "NHL",
+            "count": 629
+          },
+          {
+            "name": "NBA",
+            "count": 599
+          },
+          {
+            "name": "Basketball",
+            "count": 432
+          },
+          {
+            "name": "Sports Figures",
+            "count": 300
+          },
+          {
+            "name": "Hockey",
+            "count": 165
+          },
+          {
+            "name": "Edmonton Oilers",
+            "count": 140
+          },
+          {
+            "name": "Los Angeles Lakers",
+            "count": 120
+          },
+          {
+            "name": "New York Knicks",
+            "count": 54
+          },
+          {
+            "name": "Stanley Cup",
+            "count": 53
+          },
+          {
+            "name": "MLB",
+            "count": 50
+          }
+        ],
+        "topSources": [
+          {
+            "name": "yardbarker.com",
+            "count": 411
+          },
+          {
+            "name": "athlonsports.com",
+            "count": 395
+          },
+          {
+            "name": "sports.yahoo.com",
+            "count": 189
+          },
+          {
+            "name": "newsweek.com",
+            "count": 188
+          },
+          {
+            "name": "twsn.net",
+            "count": 185
+          },
+          {
+            "name": "si.com",
+            "count": 174
+          },
+          {
+            "name": "wenatcheeworld.com",
+            "count": 63
+          },
+          {
+            "name": "bloomberg.com",
+            "count": 50
+          },
+          {
+            "name": "news.bloomberglaw.com",
+            "count": 50
+          },
+          {
+            "name": "dodgersnation.com",
+            "count": 4
+          }
+        ],
+        "topCategories": [
+          {
+            "name": "Sports",
+            "count": 1530
+          },
+          {
+            "name": "Finance",
+            "count": 30
+          },
+          {
+            "name": "Tech",
+            "count": 11
+          },
+          {
+            "name": "Entertainment",
+            "count": 10
+          },
+          {
+            "name": "Politics",
+            "count": 9
+          },
+          {
+            "name": "Business",
+            "count": 6
+          },
+          {
+            "name": "Auto",
+            "count": 3
+          },
+          {
+            "name": "Health",
+            "count": 3
+          },
+          {
+            "name": "General",
+            "count": 2
+          },
+          {
+            "name": "Lifestyle",
+            "count": 1
+          }
+        ],
+        "topLabels": [
+          {
+            "name": "Non-news",
+            "count": 447
+          },
+          {
+            "name": "Low Content",
+            "count": 67
+          },
+          {
+            "name": "Opinion",
+            "count": 53
+          },
+          {
+            "name": "Roundup",
+            "count": 3
+          },
+          {
+            "name": "Pop Culture",
+            "count": 2
+          }
+        ],
+        "topCountries": [
+          {
+            "name": "us",
+            "count": 1550
+          },
+          {
+            "name": "si",
+            "count": 162
+          }
+        ],
+        "avgMonthlyPosts": 570,
+        "twitterHandle": "matt_levine",
+        "twitterBio": "lunch valuation analyst",
+        "imageUrl": "https://journalists-api-assets.s3.amazonaws.com/images/dd9518041aa146e8bb46bedd30a5d985.jpg",
+        "linkedinUrl": "https://linkedin.com/in/mattlevine2",
+        "linkedinConnections": 1291,
+        "linkedinFollowers": 10197,
+        "facebookUrl": "https://www.facebook.com/mslevine",
+        "instagramUrl": "https://www.instagram.com/matt_levine_51/",
+        "websiteUrl": "https://t.co/QdrnCc9VfL",
+        "blogUrl": null,
+        "tumblrUrl": "http://itsathingandyoucandoit.tumblr.com",
+        "youtubeUrl": null
+      }
+    ]
+  },
+  "search_topics": {
+    "total": 901,
+    "data": [
+      {
+        "id": 42,
+        "createdAt": "2023-12-15T13:54:06.556208Z",
+        "updatedAt": "2023-12-15T13:54:06.556213Z",
+        "name": "AI",
+        "labels": {
+          "category": "Broad",
+          "subcategory": "Tech"
+        }
+      }
+    ]
+  },
+  "get_limits": {
+    "data": {
+      "organizationName": "Acme Research",
+      "requestsUsed": 12450,
+      "requestLimit": 100000,
+      "maxPageSize": 100,
+      "paginationLimit": 10000,
+      "articleContentTruncation": null,
+      "since": "2025-08-01T00:00:00Z",
+      "lastMadeAt": "2025-08-12T15:42:11Z",
+      "resetAt": "2025-09-01T00:00:00Z",
+      "subscriptionCancelAt": null,
+      "keyStatuses": [
+        {
+          "keyPreview": "abc...def",
+          "valid": true,
+          "enabled": true,
+          "subscriptionActive": true,
+          "requestCount": 320
+        }
+      ]
+    }
+  },
+  "list_source_groups": {
+    "total": 1,
+    "data": [
+      {
+        "id": 17,
+        "createdAt": "2025-05-10T08:00:00.000Z",
+        "updatedAt": "2025-07-20T12:45:00.000Z",
+        "name": "tier-1-tech",
+        "displayName": "Tier 1 Tech",
+        "description": "Major technology news outlets.",
+        "domains": [
+          "reuters.com",
+          "apnews.com",
+          "bbc.com",
+          "cnn.com"
+        ],
+        "organizationId": 1001,
+        "visible": true
+      }
+    ]
+  },
+  "create_source_group": {
+    "data": {
+      "id": 17,
+      "createdAt": "2025-05-10T08:00:00.000Z",
+      "updatedAt": "2025-07-20T12:45:00.000Z",
+      "name": "tier-1-tech",
+      "displayName": "Tier 1 Tech",
+      "description": "Major technology news outlets.",
+      "domains": [
+        "reuters.com",
+        "apnews.com",
+        "bbc.com",
+        "cnn.com"
+      ],
+      "organizationId": 1001,
+      "visible": true
+    }
+  },
+  "resolve_source_groups": {
+    "data": [
+      {
+        "id": 17,
+        "createdAt": "2025-05-10T08:00:00.000Z",
+        "updatedAt": "2025-07-20T12:45:00.000Z",
+        "name": "tier-1-tech",
+        "displayName": "Tier 1 Tech",
+        "description": "Major technology news outlets.",
+        "domains": [
+          "reuters.com",
+          "apnews.com",
+          "bbc.com",
+          "cnn.com"
+        ],
+        "organizationId": 1001,
+        "visible": true
+      }
+    ]
+  },
+  "get_source_group": {
+    "data": {
+      "id": 17,
+      "createdAt": "2025-05-10T08:00:00.000Z",
+      "updatedAt": "2025-07-20T12:45:00.000Z",
+      "name": "tier-1-tech",
+      "displayName": "Tier 1 Tech",
+      "description": "Major technology news outlets.",
+      "domains": [
+        "reuters.com",
+        "apnews.com",
+        "bbc.com",
+        "cnn.com"
+      ],
+      "organizationId": 1001,
+      "visible": true
+    }
+  },
+  "update_source_group": {
+    "data": {
+      "id": 17,
+      "createdAt": "2025-05-10T08:00:00.000Z",
+      "updatedAt": "2025-07-20T12:45:00.000Z",
+      "name": "tier-1-tech",
+      "displayName": "Tier 1 Tech",
+      "description": "Major technology news outlets.",
+      "domains": [
+        "reuters.com",
+        "apnews.com",
+        "bbc.com",
+        "cnn.com"
+      ],
+      "organizationId": 1001,
+      "visible": true
+    }
+  },
+  "delete_source_group": {
+    "data": {
+      "id": 17,
+      "createdAt": "2025-05-10T08:00:00.000Z",
+      "updatedAt": "2025-07-20T12:45:00.000Z",
+      "name": "tier-1-tech",
+      "displayName": "Tier 1 Tech",
+      "description": "Major technology news outlets.",
+      "domains": [
+        "reuters.com",
+        "apnews.com",
+        "bbc.com",
+        "cnn.com"
+      ],
+      "organizationId": 1001,
+      "visible": true
+    }
+  },
+  "list_watchlists": {
+    "total": 1,
+    "data": [
+      {
+        "id": 42,
+        "createdAt": "2025-06-01T09:00:00.000Z",
+        "updatedAt": "2025-08-01T16:30:00.000Z",
+        "name": "ai-executives",
+        "displayName": "AI Executives",
+        "description": "Leadership at major AI companies.",
+        "people": [],
+        "companies": [],
+        "organizationId": 1001,
+        "visible": true
+      }
+    ]
+  },
+  "create_watchlist": {
+    "data": {
+      "id": 42,
+      "createdAt": "2025-06-01T09:00:00.000Z",
+      "updatedAt": "2025-08-01T16:30:00.000Z",
+      "name": "ai-executives",
+      "displayName": "AI Executives",
+      "description": "Leadership at major AI companies.",
+      "people": [
+        {
+          "name": "Sam Altman",
+          "description": "CEO of OpenAI",
+          "wikidataId": "Q7411063",
+          "aliases": []
+        }
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "description": "AI research company",
+          "id": "openai",
+          "domain": "openai.com",
+          "aliases": []
+        }
+      ],
+      "organizationId": 1001,
+      "visible": true
+    }
+  },
+  "resolve_watchlists": {
+    "data": [
+      {
+        "id": 42,
+        "createdAt": "2025-06-01T09:00:00.000Z",
+        "updatedAt": "2025-08-01T16:30:00.000Z",
+        "name": "ai-executives",
+        "displayName": "AI Executives",
+        "description": "Leadership at major AI companies.",
+        "people": [],
+        "companies": [],
+        "organizationId": 1001,
+        "visible": true
+      }
+    ]
+  },
+  "get_watchlist": {
+    "data": {
+      "id": 42,
+      "createdAt": "2025-06-01T09:00:00.000Z",
+      "updatedAt": "2025-08-01T16:30:00.000Z",
+      "name": "ai-executives",
+      "displayName": "AI Executives",
+      "description": "Leadership at major AI companies.",
+      "people": [
+        {
+          "name": "Sam Altman",
+          "description": "CEO of OpenAI",
+          "wikidataId": "Q7411063",
+          "aliases": []
+        }
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "description": "AI research company",
+          "id": "openai",
+          "domain": "openai.com",
+          "aliases": []
+        }
+      ],
+      "organizationId": 1001,
+      "visible": true
+    }
+  },
+  "update_watchlist": {
+    "data": {
+      "id": 42,
+      "createdAt": "2025-06-01T09:00:00.000Z",
+      "updatedAt": "2025-08-01T16:30:00.000Z",
+      "name": "ai-executives",
+      "displayName": "AI Executives",
+      "description": "Leadership at major AI companies.",
+      "people": [
+        {
+          "name": "Sam Altman",
+          "description": "CEO of OpenAI",
+          "wikidataId": "Q7411063",
+          "aliases": []
+        }
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "description": "AI research company",
+          "id": "openai",
+          "domain": "openai.com",
+          "aliases": []
+        }
+      ],
+      "organizationId": 1001,
+      "visible": true
+    }
+  },
+  "delete_watchlist": {
+    "data": {
+      "id": 42,
+      "createdAt": "2025-06-01T09:00:00.000Z",
+      "updatedAt": "2025-08-01T16:30:00.000Z",
+      "name": "ai-executives",
+      "displayName": "AI Executives",
+      "description": "Leadership at major AI companies.",
+      "people": [
+        {
+          "name": "Sam Altman",
+          "description": "CEO of OpenAI",
+          "wikidataId": "Q7411063",
+          "aliases": []
+        }
+      ],
+      "companies": [
+        {
+          "name": "OpenAI",
+          "description": "AI research company",
+          "id": "openai",
+          "domain": "openai.com",
+          "aliases": []
+        }
+      ],
+      "organizationId": 1001,
+      "visible": true
+    }
+  }
+}

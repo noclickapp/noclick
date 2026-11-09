@@ -1,0 +1,1877 @@
+{
+  "$defs": {
+    "CreateSourceGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_source_group",
+          "default": "create_source_group",
+          "title": "Create source group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "displayName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "domains": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Domains",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "name",
+        "domains"
+      ],
+      "title": "CreateSourceGroupConfig",
+      "type": "object"
+    },
+    "CreateWatchlistConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_watchlist",
+          "default": "create_watchlist",
+          "title": "Create watchlist",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Unique name for the watchlist within the organization",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "displayName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name for the watchlist",
+          "title": "Display Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the watchlist",
+          "title": "Description"
+        },
+        "people": {
+          "description": "List of people to include in the watchlist",
+          "items": {
+            "$ref": "#/$defs/WatchlistPerson"
+          },
+          "maxItems": 100,
+          "minItems": 0,
+          "placeholder": "[{\"name\": \"Sam Altman\", \"wikidataId\": \"Q7411063\"}]",
+          "title": "People",
+          "type": "array",
+          "ui:widget": "state_editor"
+        },
+        "companies": {
+          "description": "List of companies to include in the watchlist",
+          "items": {
+            "$ref": "#/$defs/WatchlistCompany"
+          },
+          "maxItems": 100,
+          "minItems": 0,
+          "placeholder": "[{\"name\": \"OpenAI\", \"domain\": \"openai.com\"}]",
+          "title": "Companies",
+          "type": "array",
+          "ui:widget": "state_editor"
+        },
+        "visible": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the watchlist is visible in the UI",
+          "title": "Visible"
+        }
+      },
+      "required": [
+        "name",
+        "people",
+        "companies"
+      ],
+      "title": "CreateWatchlistConfig",
+      "type": "object"
+    },
+    "DeleteSourceGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_source_group",
+          "default": "delete_source_group",
+          "title": "Delete source group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteSourceGroupConfig",
+      "type": "object"
+    },
+    "DeleteWatchlistConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_watchlist",
+          "default": "delete_watchlist",
+          "title": "Delete watchlist",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteWatchlistConfig",
+      "type": "object"
+    },
+    "GetLimitsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_limits",
+          "default": "get_limits",
+          "title": "Limits",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetLimitsConfig",
+      "type": "object"
+    },
+    "GetSourceGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_source_group",
+          "default": "get_source_group",
+          "title": "Get source group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetSourceGroupConfig",
+      "type": "object"
+    },
+    "GetWatchlistConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_watchlist",
+          "default": "get_watchlist",
+          "title": "Get watchlist",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetWatchlistConfig",
+      "type": "object"
+    },
+    "ListSourceGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_source_groups",
+          "default": "list_source_groups",
+          "title": "List source groups",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        },
+        "sortBy": {
+          "default": "id",
+          "enum": [
+            "id",
+            "createdAt",
+            "updatedAt",
+            "name"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number to retrieve. Defaults to 0.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "description": "Number of results per page. Must be between 1 and 100; defaults to 10.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "sortOrder": {
+          "default": "asc",
+          "description": "Required direction used to sort results. Accepts asc or desc.",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "nulls": {
+          "anyOf": [
+            {
+              "enum": [
+                "first",
+                "last"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Placement of null values in sorted results. Accepts first or last.",
+          "title": "Nulls",
+          "enum": [
+            "first",
+            "last"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListSourceGroupsConfig",
+      "type": "object"
+    },
+    "ListWatchlistsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_watchlists",
+          "default": "list_watchlists",
+          "title": "List watchlists",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "sortBy": {
+          "default": "id",
+          "enum": [
+            "id",
+            "createdAt",
+            "updatedAt",
+            "name"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page number to retrieve. Defaults to 0.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "description": "Number of results per page. Must be between 1 and 100; defaults to 10.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "sortOrder": {
+          "default": "asc",
+          "description": "Required direction used to sort results. Accepts asc or desc.",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "nulls": {
+          "anyOf": [
+            {
+              "enum": [
+                "first",
+                "last"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Placement of null values in sorted results. Accepts first or last.",
+          "title": "Nulls",
+          "enum": [
+            "first",
+            "last"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListWatchlistsConfig",
+      "type": "object"
+    },
+    "PerigonApiKeyCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "perigon_api_key",
+          "default": "perigon_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Paste your Perigon API key without the Bearer prefix.",
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Perigon API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from your Perigon account and paste it below. Your subscription controls available endpoints.",
+      "x-credential-url": "https://perigon.io/docs/api/authentication"
+    },
+    "ResolveSourceGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "resolve_source_groups",
+          "default": "resolve_source_groups",
+          "title": "Resolve source groups",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "minItems": 0,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name",
+          "ui:widget": "list"
+        }
+      },
+      "title": "ResolveSourceGroupsConfig",
+      "type": "object"
+    },
+    "ResolveWatchlistsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "resolve_watchlists",
+          "default": "resolve_watchlists",
+          "title": "Resolve watchlists",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "minItems": 0,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name",
+          "ui:widget": "list"
+        }
+      },
+      "title": "ResolveWatchlistsConfig",
+      "type": "object"
+    },
+    "SearchArticlesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_articles",
+          "default": "search_articles",
+          "title": "All Articles",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Query"
+        },
+        "articleId": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Article IDs",
+          "ui:widget": "list"
+        },
+        "clusterId": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Story IDs",
+          "ui:widget": "list"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "relevance",
+                "date",
+                "reverseDate",
+                "reverseAddDate",
+                "addDate",
+                "pubDate",
+                "refreshDate"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "relevance",
+            "date",
+            "reverseDate",
+            "reverseAddDate",
+            "addDate",
+            "pubDate",
+            "refreshDate"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "ui:widget": "list"
+        },
+        "sourceGroup": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Group",
+          "ui:widget": "list"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language",
+          "ui:widget": "list"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category",
+          "ui:widget": "list"
+        },
+        "topic": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topic",
+          "ui:widget": "list"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country",
+          "ui:widget": "list"
+        }
+      },
+      "title": "SearchArticlesConfig",
+      "type": "object"
+    },
+    "SearchCompaniesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_companies",
+          "default": "search_companies",
+          "title": "Companies",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id",
+          "ui:widget": "list"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain",
+          "ui:widget": "list"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country",
+          "ui:widget": "list"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Query"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "SearchCompaniesConfig",
+      "type": "object"
+    },
+    "SearchJournalistsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_journalists",
+          "default": "search_journalists",
+          "title": "Journalists",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id",
+          "ui:widget": "list"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Query"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "avgMonthlyPosts",
+                "linkedinConnections",
+                "linkedinFollowers"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "avgMonthlyPosts",
+            "linkedinConnections",
+            "linkedinFollowers"
+          ],
+          "x-enum-searchable": true
+        },
+        "size": {
+          "default": 10,
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "ui:widget": "list"
+        },
+        "topic": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topic",
+          "ui:widget": "list"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category",
+          "ui:widget": "list"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country",
+          "ui:widget": "list"
+        }
+      },
+      "title": "SearchJournalistsConfig",
+      "type": "object"
+    },
+    "SearchPeopleConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_people",
+          "default": "search_people",
+          "title": "People",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "SearchPeopleConfig",
+      "type": "object"
+    },
+    "SearchSourcesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_sources",
+          "default": "search_sources",
+          "title": "Sources",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain",
+          "ui:widget": "list"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "sourceGroup": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Group"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "globalRank",
+                "relevance",
+                "monthlyVisits",
+                "avgMonthlyPosts"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "globalRank",
+            "relevance",
+            "monthlyVisits",
+            "avgMonthlyPosts"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country",
+          "ui:widget": "list"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category",
+          "ui:widget": "list"
+        },
+        "topic": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topic",
+          "ui:widget": "list"
+        }
+      },
+      "title": "SearchSourcesConfig",
+      "type": "object"
+    },
+    "SearchStoriesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_stories",
+          "default": "search_stories",
+          "title": "Stories",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Query"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "clusterId": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Story IDs",
+          "ui:widget": "list"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "createdAt",
+                "updatedAt",
+                "relevance",
+                "count",
+                "totalCount"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "createdAt",
+            "updatedAt",
+            "relevance",
+            "count",
+            "totalCount"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        },
+        "from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To"
+        },
+        "topic": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topic",
+          "ui:widget": "list"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category",
+          "ui:widget": "list"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source",
+          "ui:widget": "list"
+        },
+        "sourceGroup": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Group",
+          "ui:widget": "list"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country",
+          "ui:widget": "list"
+        }
+      },
+      "title": "SearchStoriesConfig",
+      "type": "object"
+    },
+    "SearchTopicsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_topics",
+          "default": "search_topics",
+          "title": "Topics",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "SearchTopicsConfig",
+      "type": "object"
+    },
+    "UpdateSourceGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_source_group",
+          "default": "update_source_group",
+          "title": "Update source group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique name for the source group within the organization",
+          "title": "Name"
+        },
+        "displayName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name for the source group",
+          "title": "Display Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the source group",
+          "title": "Description"
+        },
+        "domains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 5000,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of domains included in the source group",
+          "title": "Domains",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateSourceGroupConfig",
+      "type": "object"
+    },
+    "UpdateWatchlistConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_watchlist",
+          "default": "update_watchlist",
+          "title": "Update watchlist",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the watchlist",
+          "title": "Name"
+        },
+        "displayName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New display name for the watchlist",
+          "title": "Display Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New description for the watchlist",
+          "title": "Description"
+        },
+        "people": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/WatchlistPerson"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated list of people to include in the watchlist",
+          "placeholder": "[{\"name\": \"Sam Altman\", \"wikidataId\": \"Q7411063\"}]",
+          "title": "People",
+          "ui:widget": "state_editor"
+        },
+        "companies": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/WatchlistCompany"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated list of companies to include in the watchlist",
+          "placeholder": "[{\"name\": \"OpenAI\", \"domain\": \"openai.com\"}]",
+          "title": "Companies",
+          "ui:widget": "state_editor"
+        },
+        "visible": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the watchlist is visible in the UI",
+          "title": "Visible"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateWatchlistConfig",
+      "type": "object"
+    },
+    "WatchlistCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        },
+        "aliases": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aliases",
+          "ui:widget": "list"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "WatchlistCompany",
+      "type": "object"
+    },
+    "WatchlistPerson": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "aliases": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aliases",
+          "ui:widget": "list"
+        },
+        "wikidataId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wikidata ID"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "WatchlistPerson",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_source_group": "#/$defs/CreateSourceGroupConfig",
+          "create_watchlist": "#/$defs/CreateWatchlistConfig",
+          "delete_source_group": "#/$defs/DeleteSourceGroupConfig",
+          "delete_watchlist": "#/$defs/DeleteWatchlistConfig",
+          "get_limits": "#/$defs/GetLimitsConfig",
+          "get_source_group": "#/$defs/GetSourceGroupConfig",
+          "get_watchlist": "#/$defs/GetWatchlistConfig",
+          "list_source_groups": "#/$defs/ListSourceGroupsConfig",
+          "list_watchlists": "#/$defs/ListWatchlistsConfig",
+          "resolve_source_groups": "#/$defs/ResolveSourceGroupsConfig",
+          "resolve_watchlists": "#/$defs/ResolveWatchlistsConfig",
+          "search_articles": "#/$defs/SearchArticlesConfig",
+          "search_companies": "#/$defs/SearchCompaniesConfig",
+          "search_journalists": "#/$defs/SearchJournalistsConfig",
+          "search_people": "#/$defs/SearchPeopleConfig",
+          "search_sources": "#/$defs/SearchSourcesConfig",
+          "search_stories": "#/$defs/SearchStoriesConfig",
+          "search_topics": "#/$defs/SearchTopicsConfig",
+          "update_source_group": "#/$defs/UpdateSourceGroupConfig",
+          "update_watchlist": "#/$defs/UpdateWatchlistConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SearchArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchStoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchSourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchPeopleConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchJournalistsConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchTopicsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetLimitsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSourceGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateSourceGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/ResolveSourceGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSourceGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateSourceGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteSourceGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/ListWatchlistsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateWatchlistConfig"
+        },
+        {
+          "$ref": "#/$defs/ResolveWatchlistsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetWatchlistConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateWatchlistConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteWatchlistConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PerigonApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Perigon Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
