@@ -1,0 +1,7 @@
+{
+  "me": {"id": 123, "email": "user@example.com", "fullName": "John Doe"},
+  "person": {"id": 1234, "firstName": "Jane", "lastName": "Doe"},
+  "company": {"id": 1234, "name": "Amazon", "dataType": "company"},
+  "project": {"id": 1234, "title": "Chief Technology Officer - London", "label": "assignment"},
+  "task": {"id": 1234, "title": "Arrange meeting for Thursday", "done": true, "pinned": true}
+}
