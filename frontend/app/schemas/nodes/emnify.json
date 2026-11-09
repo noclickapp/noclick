@@ -1,0 +1,839 @@
+{
+  "$defs": {
+    "EMnifyApplicationTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "emnify_application_token",
+          "default": "emnify_application_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "application_token": {
+          "minLength": 1,
+          "title": "Application token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "application_token"
+      ],
+      "title": "Emnify Application Token",
+      "type": "object",
+      "x-credential-instructions": "In the EMnify Portal, open Integrations \u2192 Application tokens, create a token and copy it here. NoClick exchanges it for an authentication token before each operation. The token needs permission for the selected operation. Connection verification reads your organisation.",
+      "x-credential-url": "https://portal.emnify.com/integrations#application-tokens"
+    },
+    "EMnifyCancelSmsConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "sms_id": {
+          "description": "Numeric EMnify SMS ID",
+          "exclusiveMinimum": 0,
+          "title": "Sms Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "cancel_sms",
+          "default": "cancel_sms",
+          "title": "Cancel Sms",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id",
+        "sms_id"
+      ],
+      "title": "EMnifyCancelSmsConfig",
+      "type": "object"
+    },
+    "EMnifyDeleteEndpointConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_endpoint",
+          "default": "delete_endpoint",
+          "title": "Delete Endpoint",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "EMnifyDeleteEndpointConfig",
+      "type": "object"
+    },
+    "EMnifyGetConnectivityConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_connectivity",
+          "default": "get_connectivity",
+          "title": "Get Connectivity",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "EMnifyGetConnectivityConfig",
+      "type": "object"
+    },
+    "EMnifyGetDailyUsageConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "End Date"
+        },
+        "operation": {
+          "const": "get_daily_usage",
+          "default": "get_daily_usage",
+          "title": "Get Daily Usage",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "EMnifyGetDailyUsageConfig",
+      "type": "object"
+    },
+    "EMnifyGetDataQuotaConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_data_quota",
+          "default": "get_data_quota",
+          "title": "Get Data Quota",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "EMnifyGetDataQuotaConfig",
+      "type": "object"
+    },
+    "EMnifyGetEndpointConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_endpoint",
+          "default": "get_endpoint",
+          "title": "Get Endpoint",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "EMnifyGetEndpointConfig",
+      "type": "object"
+    },
+    "EMnifyGetOrganisationConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_organisation",
+          "default": "get_organisation",
+          "title": "Get Organisation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "EMnifyGetOrganisationConfig",
+      "type": "object"
+    },
+    "EMnifyGetSimConfig": {
+      "properties": {
+        "sim_id": {
+          "description": "Numeric EMnify SIM ID",
+          "exclusiveMinimum": 0,
+          "title": "Sim Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_sim",
+          "default": "get_sim",
+          "title": "Get Sim",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "sim_id"
+      ],
+      "title": "EMnifyGetSimConfig",
+      "type": "object"
+    },
+    "EMnifyGetSmsConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "sms_id": {
+          "description": "Numeric EMnify SMS ID",
+          "exclusiveMinimum": 0,
+          "title": "Sms Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_sms",
+          "default": "get_sms",
+          "title": "Get Sms",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id",
+        "sms_id"
+      ],
+      "title": "EMnifyGetSmsConfig",
+      "type": "object"
+    },
+    "EMnifyGetSmsQuotaConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_sms_quota",
+          "default": "get_sms_quota",
+          "title": "Get Sms Quota",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "EMnifyGetSmsQuotaConfig",
+      "type": "object"
+    },
+    "EMnifyListEndpointsConfig": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; returns one page only",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_endpoints",
+          "default": "list_endpoints",
+          "title": "List Endpoints",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "EMnifyListEndpointsConfig",
+      "type": "object"
+    },
+    "EMnifyListSimsConfig": {
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; returns one page only",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_sims",
+          "default": "list_sims",
+          "title": "List Sims",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "EMnifyListSimsConfig",
+      "type": "object"
+    },
+    "EMnifyListSmsConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_sms",
+          "default": "list_sms",
+          "title": "List Sms",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "EMnifyListSmsConfig",
+      "type": "object"
+    },
+    "EMnifyRemoveDataQuotaConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "remove_data_quota",
+          "default": "remove_data_quota",
+          "title": "Remove Data Quota",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "EMnifyRemoveDataQuotaConfig",
+      "type": "object"
+    },
+    "EMnifyRemoveSmsQuotaConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "remove_sms_quota",
+          "default": "remove_sms_quota",
+          "title": "Remove Sms Quota",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "EMnifyRemoveSmsQuotaConfig",
+      "type": "object"
+    },
+    "EMnifyResetConnectivityConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "reset": {
+          "default": "all",
+          "description": "Reset network location, data session, or both; may interrupt connectivity",
+          "enum": [
+            "all",
+            "network",
+            "data"
+          ],
+          "title": "Reset",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reset_connectivity",
+          "default": "reset_connectivity",
+          "title": "Reset Connectivity",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "EMnifyResetConnectivityConfig",
+      "type": "object"
+    },
+    "EMnifySendSmsConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "source_address": {
+          "description": "Sender number",
+          "minLength": 1,
+          "title": "Source Address",
+          "type": "string"
+        },
+        "payload": {
+          "description": "SMS text to send to the endpoint; provider charges may apply",
+          "minLength": 1,
+          "title": "Payload",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Send Sms",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id",
+        "source_address",
+        "payload"
+      ],
+      "title": "EMnifySendSmsConfig",
+      "type": "object"
+    },
+    "EMnifySetDataQuotaConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "volume": {
+          "description": "Data quota volume in MB",
+          "minimum": 0,
+          "title": "Volume",
+          "type": "number"
+        },
+        "expiry_date": {
+          "description": "UTC expiry: YYYY-MM-DD HH:MM:SS",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$",
+          "title": "Expiry Date",
+          "type": "string"
+        },
+        "status_id": {
+          "default": 1,
+          "enum": [
+            1,
+            2,
+            3
+          ],
+          "title": "Status Id",
+          "type": "integer"
+        },
+        "auto_refill": {
+          "default": 0,
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Auto Refill",
+          "type": "integer"
+        },
+        "threshold_percentage": {
+          "default": 15,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Threshold Percentage",
+          "type": "number"
+        },
+        "operation": {
+          "const": "set_data_quota",
+          "default": "set_data_quota",
+          "title": "Set Data Quota",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id",
+        "volume",
+        "expiry_date"
+      ],
+      "title": "EMnifySetDataQuotaConfig",
+      "type": "object"
+    },
+    "EMnifySetSmsQuotaConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "volume": {
+          "description": "Number of SMS messages",
+          "minimum": 0,
+          "title": "Volume",
+          "type": "integer"
+        },
+        "expiry_date": {
+          "description": "UTC expiry as an ISO 8601 date-time",
+          "title": "Expiry Date",
+          "type": "string"
+        },
+        "status_id": {
+          "default": 1,
+          "enum": [
+            1,
+            2,
+            3
+          ],
+          "title": "Status Id",
+          "type": "integer"
+        },
+        "auto_refill": {
+          "default": false,
+          "title": "Auto Refill",
+          "type": "boolean"
+        },
+        "threshold_percentage": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Threshold Percentage",
+          "type": "number"
+        },
+        "operation": {
+          "const": "set_sms_quota",
+          "default": "set_sms_quota",
+          "title": "Set Sms Quota",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id",
+        "volume",
+        "expiry_date"
+      ],
+      "title": "EMnifySetSmsQuotaConfig",
+      "type": "object"
+    },
+    "EMnifyUpdateEndpointConfig": {
+      "properties": {
+        "endpoint_id": {
+          "description": "Numeric EMnify endpoint ID",
+          "exclusiveMinimum": 0,
+          "title": "Endpoint Id",
+          "type": "integer"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Comma-separated endpoint tags",
+          "title": "Tags",
+          "type": "string"
+        },
+        "imei": {
+          "description": "Device IMEI",
+          "title": "Imei",
+          "type": "string"
+        },
+        "imei_lock": {
+          "title": "Imei Lock",
+          "type": "boolean"
+        },
+        "ip_address": {
+          "title": "Ip Address",
+          "type": "string"
+        },
+        "service_profile_id": {
+          "exclusiveMinimum": 0,
+          "title": "Service Profile Id",
+          "type": "integer"
+        },
+        "tariff_profile_id": {
+          "exclusiveMinimum": 0,
+          "title": "Tariff Profile Id",
+          "type": "integer"
+        },
+        "status_id": {
+          "description": "0 enabled; 1 disabled",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Status Id",
+          "type": "integer"
+        },
+        "ip_address_space_id": {
+          "exclusiveMinimum": 0,
+          "title": "Ip Address Space Id",
+          "type": "integer"
+        },
+        "sim_id": {
+          "exclusiveMinimum": 0,
+          "title": "Sim Id",
+          "type": "integer"
+        },
+        "sim_status_id": {
+          "minimum": 0,
+          "title": "Sim Status Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_endpoint",
+          "default": "update_endpoint",
+          "title": "Update Endpoint",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "endpoint_id",
+        "name",
+        "tags",
+        "imei",
+        "imei_lock",
+        "ip_address",
+        "service_profile_id",
+        "tariff_profile_id",
+        "status_id",
+        "ip_address_space_id",
+        "sim_id",
+        "sim_status_id"
+      ],
+      "title": "EMnifyUpdateEndpointConfig",
+      "type": "object"
+    },
+    "EMnifyUpdateSimConfig": {
+      "properties": {
+        "sim_id": {
+          "description": "Numeric EMnify SIM ID",
+          "exclusiveMinimum": 0,
+          "title": "Sim Id",
+          "type": "integer"
+        },
+        "issuer_org_id": {
+          "exclusiveMinimum": 0,
+          "title": "Issuer Org Id",
+          "type": "integer"
+        },
+        "reseller_org_id": {
+          "exclusiveMinimum": 0,
+          "title": "Reseller Org Id",
+          "type": "integer"
+        },
+        "customer_org_id": {
+          "exclusiveMinimum": 0,
+          "title": "Customer Org Id",
+          "type": "integer"
+        },
+        "status_id": {
+          "minimum": 0,
+          "title": "Status Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_sim",
+          "default": "update_sim",
+          "title": "Update Sim",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "sim_id",
+        "issuer_org_id",
+        "reseller_org_id",
+        "customer_org_id",
+        "status_id"
+      ],
+      "title": "EMnifyUpdateSimConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_sms": "#/$defs/EMnifyCancelSmsConfig",
+          "delete_endpoint": "#/$defs/EMnifyDeleteEndpointConfig",
+          "get_connectivity": "#/$defs/EMnifyGetConnectivityConfig",
+          "get_daily_usage": "#/$defs/EMnifyGetDailyUsageConfig",
+          "get_data_quota": "#/$defs/EMnifyGetDataQuotaConfig",
+          "get_endpoint": "#/$defs/EMnifyGetEndpointConfig",
+          "get_organisation": "#/$defs/EMnifyGetOrganisationConfig",
+          "get_sim": "#/$defs/EMnifyGetSimConfig",
+          "get_sms": "#/$defs/EMnifyGetSmsConfig",
+          "get_sms_quota": "#/$defs/EMnifyGetSmsQuotaConfig",
+          "list_endpoints": "#/$defs/EMnifyListEndpointsConfig",
+          "list_sims": "#/$defs/EMnifyListSimsConfig",
+          "list_sms": "#/$defs/EMnifyListSmsConfig",
+          "remove_data_quota": "#/$defs/EMnifyRemoveDataQuotaConfig",
+          "remove_sms_quota": "#/$defs/EMnifyRemoveSmsQuotaConfig",
+          "reset_connectivity": "#/$defs/EMnifyResetConnectivityConfig",
+          "send_sms": "#/$defs/EMnifySendSmsConfig",
+          "set_data_quota": "#/$defs/EMnifySetDataQuotaConfig",
+          "set_sms_quota": "#/$defs/EMnifySetSmsQuotaConfig",
+          "update_endpoint": "#/$defs/EMnifyUpdateEndpointConfig",
+          "update_sim": "#/$defs/EMnifyUpdateSimConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/EMnifyGetOrganisationConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyListEndpointsConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyGetEndpointConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyUpdateEndpointConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyDeleteEndpointConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyGetConnectivityConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyResetConnectivityConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyListSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifySendSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyGetSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyCancelSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyGetDataQuotaConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifySetDataQuotaConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyRemoveDataQuotaConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyGetSmsQuotaConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifySetSmsQuotaConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyRemoveSmsQuotaConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyListSimsConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyGetSimConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyUpdateSimConfig"
+        },
+        {
+          "$ref": "#/$defs/EMnifyGetDailyUsageConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EMnifyApplicationTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Emnify Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

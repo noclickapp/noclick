@@ -1,0 +1,283 @@
+{
+  "organisation": {
+    "body": {
+      "id": 1234,
+      "name": "My org name",
+      "ext_reference": "Salesrep",
+      "type": {
+        "id": 4,
+        "description": "Enterprise"
+      },
+      "class": {
+        "id": 0,
+        "description": "Commercial"
+      },
+      "country": {
+        "id": 74,
+        "name": "Germany",
+        "country_code": "49",
+        "mcc": "262",
+        "iso_code": "de"
+      },
+      "status": {
+        "id": 0,
+        "description": "Enabled"
+      },
+      "relation": {
+        "id": 718,
+        "type": {
+          "id": 0,
+          "description": "Customer of"
+        }
+      },
+      "monthly_cost_limit": 2000,
+      "currency": {
+        "id": 1,
+        "code": "EUR",
+        "symbol": "\u20ac"
+      },
+      "created": "2016-07-28T08:10:58.000+0000",
+      "verification_type": {
+        "id": 3,
+        "description": "ID Card"
+      },
+      "verification": null
+    },
+    "source": "https://cdn.emnify.net/api/doc/apis/enterprise.yaml",
+    "path": "/api/v1/organisation/my"
+  },
+  "endpoint": {
+    "body": {
+      "id": 1,
+      "name": "arduino01",
+      "tags": "arduino, meter, temp",
+      "created": "2019-08-01T15:48:34.000+0000",
+      "last_updated": "2020-11-23T15:14:27.000+0000",
+      "status": {
+        "id": 0,
+        "description": "Enabled"
+      },
+      "service_profile": {
+        "id": 1,
+        "name": "Smart Meter"
+      },
+      "tariff_profile": {
+        "id": 3,
+        "name": "Domestic only"
+      },
+      "sim": {
+        "id": 788,
+        "iccid": "7368267364738297362",
+        "iccid_with_luhn": "73682673647382973621",
+        "eid": "89049011803455664400046832584675",
+        "status": {
+          "id": 1,
+          "description": "Activated"
+        },
+        "imsi": "901991234567890",
+        "msisdn": "88563748761"
+      },
+      "runtime_data": {
+        "msc": "491790802121",
+        "sgsn": "491752345678",
+        "sgsn_ip_address": "82.113.96.21"
+      },
+      "imei": "8643456788893212",
+      "imei_with_luhn": "864345678889324",
+      "ip_address": "10.203.23.75",
+      "ip_address_space": {
+        "id": 2,
+        "ip_address_space": "10.203.23.0/24",
+        "ip_address_version": 4
+      },
+      "imei_lock": false
+    },
+    "source": "https://cdn.emnify.net/api/doc/apis/enterprise.yaml",
+    "path": "/api/v1/endpoint/{endpoint_id}"
+  },
+  "sim": {
+    "body": {
+      "id": 788,
+      "iccid": "7368267364732297736",
+      "iccid_with_luhn": "73682673647322977362",
+      "eid": "89049011803455664400046832584675",
+      "production_date": "2019-08-01T11:49:46.000+0000",
+      "activation_date": "2019-08-21T18:49:46.000+0000",
+      "status": {
+        "id": 1,
+        "description": "Activated"
+      },
+      "customer_org": {
+        "id": 42,
+        "name": "Another Enterprise",
+        "country": {
+          "id": 74,
+          "name": "Germany"
+        }
+      },
+      "issuer_org": {
+        "id": 11,
+        "name": "MNO",
+        "country": {
+          "id": 205,
+          "name": "United Kingdom"
+        }
+      },
+      "reseller_org": {
+        "id": 22,
+        "name": "Reseller",
+        "country": {
+          "id": 205,
+          "name": "United Kingdom"
+        }
+      },
+      "endpoint": {
+        "id": 23,
+        "name": "arduino02",
+        "imei": null,
+        "created": "2019-03-29T07:26:47.000+0000",
+        "last_updated": "2019-04-19T13:36:37.000+0000",
+        "organisation_id": 42,
+        "service_profile_id": 1,
+        "tariff_profile_id": 1,
+        "tags": null,
+        "ip_address": "10.1.2.2",
+        "ip_address_space_id": 123
+      },
+      "imsi": "123451234567811",
+      "msisdn": "88563748762",
+      "model": {
+        "id": 1,
+        "description": "Java smartcard",
+        "memory_size": 64,
+        "formfactor": {
+          "id": 1,
+          "name": "2FF"
+        },
+        "manufacturer": {
+          "id": 1,
+          "name": "Motorola"
+        }
+      },
+      "profile_type": {
+        "id": 1,
+        "description": "UICC"
+      },
+      "satellite_capable": false
+    },
+    "source": "https://cdn.emnify.net/api/doc/apis/enterprise.yaml",
+    "path": "/api/v1/sim/{sim_id}"
+  },
+  "sms": {
+    "body": {
+      "submit_date": "2019-10-05T13:56:59.000Z",
+      "delivery_date": "2019-10-05T13:56:59.000Z",
+      "expiry_date": "2019-10-06T13:56:59.000Z",
+      "final_date": "2019-10-05T13:57:03.000Z",
+      "retry_date": null,
+      "last_delivery_attempt": "2019-10-05T13:57:00.000Z",
+      "retry_count": 0,
+      "gsm_map_error": null,
+      "dcs": 0,
+      "pid": 0,
+      "source_address": 1234567890,
+      "endpoint": {
+        "id": 166,
+        "name": "Your Endpoint"
+      },
+      "sim_id": 625,
+      "iccid": 8988303000000001000,
+      "msisdn": "883XXXXXXXXXXXX",
+      "imsi": "901XXXXXXXXXXXX",
+      "msc": 491600190000,
+      "udh": "",
+      "payload": "test",
+      "id": 590,
+      "status": {
+        "description": "DELIVERED",
+        "id": 4
+      },
+      "sms_type": {
+        "description": "MT",
+        "id": 1
+      },
+      "source_address_type": {
+        "description": "National",
+        "id": 161
+      }
+    },
+    "source": "https://cdn.emnify.net/api/doc/apis/enterprise.yaml",
+    "path": "/api/v1/endpoint/{endpoint_id}/sms/{sms_id}"
+  },
+  "connectivity": {
+    "body": {
+      "status": {
+        "description": "ONLINE"
+      },
+      "location": {
+        "iccid": 8988303010000000000,
+        "imsi": 901439999999999,
+        "last_updated": "2019-12-03T07:06:04.000Z",
+        "last_updated_gprs": "2019-12-30T14:55:35.000Z",
+        "sgsn_number": 491770695700,
+        "vlr_number": 491770940000,
+        "msc": 491770940000,
+        "operator": {
+          "id": 4,
+          "name": "EPlus",
+          "country": {
+            "id": 74,
+            "name": "Germany"
+          }
+        },
+        "country": {
+          "country_id": 74,
+          "name": "Germany",
+          "country_code": 49,
+          "mcc": 262,
+          "iso_code": "de"
+        },
+        "sgsn_ip_address": "212.23.107.88"
+      },
+      "pdp_context": {
+        "pdp_context_id": 92415,
+        "endpoint_id": 166,
+        "tariff_profile_id": 35,
+        "tariff_id": 54,
+        "ratezone_id": 70,
+        "organisation_id": 2,
+        "imsi_id": 627,
+        "imsi": 901439999999999,
+        "sim_id": 625,
+        "teid_data_plane": 7116,
+        "teid_control_plane": 7116,
+        "gtp_version": 1,
+        "nsapi": 5,
+        "sgsn_control_plane_ip_address": "212.23.107.89",
+        "sgsn_data_plane_ip_address": "212.23.107.89",
+        "ggsn_control_plane_ip_address": "185.57.216.35",
+        "ggsn_data_plane_ip_address": "185.57.216.35",
+        "created": "2019-12-04T08:12:02.000Z",
+        "mcc": 262,
+        "mnc": 3,
+        "operator_id": 4,
+        "lac": 40217,
+        "ci": null,
+        "sac": 42937,
+        "rac": null,
+        "ue_ip_address": "10.199.5.223",
+        "imeisv": 3526510721968301,
+        "rat_type": {
+          "rat_type_id": 1,
+          "description": "3G"
+        },
+        "duration": "00:00:04"
+      },
+      "services": [
+        "GPRS"
+      ]
+    },
+    "source": "https://cdn.emnify.net/api/doc/apis/enterprise.yaml",
+    "path": "/api/v1/endpoint/{endpoint_id}/connectivity"
+  }
+}
