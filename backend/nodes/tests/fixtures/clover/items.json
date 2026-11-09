@@ -1,0 +1,85 @@
+{
+  "elements": [
+    {
+      "id": "HX1WAVXZN004T",
+      "hidden": false,
+      "available": true,
+      "autoManage": false,
+      "name": "Fresh orange juice",
+      "price": 1500,
+      "priceType": "FIXED",
+      "defaultTaxRates": true,
+      "cost": 0,
+      "isRevenue": true,
+      "stockCount": -7,
+      "itemStock": {
+        "item": {
+          "id": "HX1WAVXZN004T"
+        },
+        "stockCount": -7,
+        "quantity": -7.0,
+        "modifiedTime": 1738104185000,
+        "stockAlertThreshold": 0
+      },
+      "modifiedTime": 1726854407000,
+      "deleted": false,
+      "type": "Regular",
+      "onlineName": "Fresh orange juice",
+      "enabledOnline": false
+    },
+    {
+      "id": "3NG4Y96XVJGTP",
+      "hidden": false,
+      "available": true,
+      "autoManage": false,
+      "name": "Pulpy orange",
+      "price": 1500,
+      "priceType": "FIXED",
+      "defaultTaxRates": true,
+      "cost": 0,
+      "isRevenue": true,
+      "stockCount": 0,
+      "itemStock": {
+        "item": {
+          "id": "3NG4Y96XVJGTP"
+        },
+        "stockCount": 3,
+        "quantity": 3.0,
+        "modifiedTime": 1738185213000,
+        "stockAlertThreshold": 3
+      },
+      "modifiedTime": 1724971410000,
+      "deleted": false,
+      "type": "REGULAR",
+      "onlineName": "Pulpy orange",
+      "enabledOnline": false
+    },
+    {
+      "id": "HRSV0WC2DMABW",
+      "hidden": false,
+      "available": true,
+      "autoManage": false,
+      "name": "Orange crush",
+      "price": 1500,
+      "priceType": "FIXED",
+      "defaultTaxRates": true,
+      "cost": 0,
+      "isRevenue": true,
+      "stockCount": 0,
+      "itemStock": {
+        "item": {
+          "id": "HRSV0WC2DMABW"
+        },
+        "stockCount": 3,
+        "quantity": 3.0,
+        "modifiedTime": 1738104180000,
+        "stockAlertThreshold": 4
+      },
+      "modifiedTime": 1724816344000,
+      "deleted": false,
+      "type": "REGULAR",
+      "onlineName": "Orange crush",
+      "enabledOnline": false
+    }
+  ]
+}

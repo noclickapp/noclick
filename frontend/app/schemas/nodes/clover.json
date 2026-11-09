@@ -1,0 +1,3588 @@
+{
+  "$defs": {
+    "CloverAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "clover_api_token",
+          "default": "clover_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "merchant_id": {
+          "title": "Merchant ID",
+          "type": "string"
+        },
+        "api_token": {
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "sandbox",
+          "enum": [
+            "sandbox",
+            "north_america",
+            "europe",
+            "latin_america"
+          ],
+          "title": "Clover region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "merchant_id",
+        "api_token"
+      ],
+      "title": "Clover API Token",
+      "type": "object",
+      "x-credential-instructions": "Use a Clover sandbox merchant API token, or a merchant access token issued for your own Clover app. Choose the matching region.",
+      "x-credential-url": "https://www.clover.com/developers"
+    },
+    "CloverCashGetAllCashEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "cash_get_all_cash_events",
+          "default": "cash_get_all_cash_events",
+          "description": "Retrieve all cash events for this merchant. Cash events can also be consumed by registering a Webhook callback. See https://docs.clover.com/build/webhooks/",
+          "title": "Get all cash events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cash",
+          "x-display-name": "Get all cash events",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields: [employee.id, note, amountChange, employee.name, type, device.id, timestamp]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [employee, device]",
+          "title": "expand"
+        }
+      },
+      "title": "CloverCashGetAllCashEventsConfig",
+      "type": "object"
+    },
+    "CloverCategoryCreateCategoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "category_create_category",
+          "default": "category_create_category",
+          "description": "Create an item category",
+          "title": "Create an item category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Create an item category",
+          "x-is-trigger": false
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable field: [items]",
+          "title": "expand"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "CloverCategoryCreateCategoryConfig",
+      "type": "object"
+    },
+    "CloverCategoryGetCategoriesConfig": {
+      "properties": {
+        "operation": {
+          "const": "category_get_categories",
+          "default": "category_get_categories",
+          "description": "Retrieves all categories. Items display on the Register app within categories in the order in which they are added to a category. Items may be associated with one or more categories or may not be associated with any category. Categories display in the Register app based on the sort order value for each category.",
+          "title": "Get all categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get all categories",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, deleted, sortOrder, name, colorCode, id]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information provided as an expanded response: [items]",
+          "title": "expand"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "title": "CloverCategoryGetCategoriesConfig",
+      "type": "object"
+    },
+    "CloverCategoryGetCategoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "category_get_category",
+          "default": "category_get_category",
+          "description": "Get a category",
+          "title": "Get a category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get a category",
+          "x-is-trigger": false
+        },
+        "path_catid": {
+          "description": "Clover catId from the API.",
+          "title": "catId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable field: [items]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_catid"
+      ],
+      "title": "CloverCategoryGetCategoryConfig",
+      "type": "object"
+    },
+    "CloverCategoryGetCategoryItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "category_get_category_items",
+          "default": "category_get_category_items",
+          "description": "Retrieves all items in a category.",
+          "title": "Get all items in a single category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get all items in a single category",
+          "x-is-trigger": false
+        },
+        "path_catid": {
+          "description": "Clover catId from the API.",
+          "title": "catId",
+          "type": "string"
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, deleted, sortOrder, name, colorCode, id]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [categories, itemStock, modifierRates, options, tags, taxRates]",
+          "title": "expand"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "required": [
+        "path_catid"
+      ],
+      "title": "CloverCategoryGetCategoryItemsConfig",
+      "type": "object"
+    },
+    "CloverCategoryGetItemCategoriesConfig": {
+      "properties": {
+        "operation": {
+          "const": "category_get_item_categories",
+          "default": "category_get_item_categories",
+          "description": "Retrieves all categories of an item.",
+          "title": "Get all categories of a single item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get all categories of a single item",
+          "x-is-trigger": false
+        },
+        "path_itemid": {
+          "description": "Clover itemId from the API.",
+          "title": "itemId",
+          "type": "string"
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, deleted, sortOrder, name, colorCode, id]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [items]",
+          "title": "expand"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "required": [
+        "path_itemid"
+      ],
+      "title": "CloverCategoryGetItemCategoriesConfig",
+      "type": "object"
+    },
+    "CloverCategoryUpdateCategoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "category_update_category",
+          "default": "category_update_category",
+          "description": "Update a category",
+          "title": "Update a category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Update a category",
+          "x-is-trigger": false
+        },
+        "path_catid": {
+          "description": "Clover catId from the API.",
+          "title": "catId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable field: [items]",
+          "title": "expand"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_catid",
+        "body_json"
+      ],
+      "title": "CloverCategoryUpdateCategoryConfig",
+      "type": "object"
+    },
+    "CloverCustomersCreateCustomerConfig": {
+      "properties": {
+        "operation": {
+          "const": "customers_create_customer",
+          "default": "customers_create_customer",
+          "description": "Creates customer record for a merchant. Note that the request body cannot be null.",
+          "title": "Create a customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Create a customer",
+          "x-is-trigger": false
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [addresses, emailAddresses, phoneNumbers, cards, metadata]",
+          "title": "expand"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "CloverCustomersCreateCustomerConfig",
+      "type": "object"
+    },
+    "CloverCustomersDeleteCustomerConfig": {
+      "properties": {
+        "operation": {
+          "const": "customers_delete_customer",
+          "default": "customers_delete_customer",
+          "description": "Deletes a single customer from a merchant.",
+          "title": "Delete a customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Delete a customer",
+          "x-is-trigger": false
+        },
+        "path_customerid": {
+          "description": "Clover customerId from the API.",
+          "title": "customerId",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_customerid"
+      ],
+      "title": "CloverCustomersDeleteCustomerConfig",
+      "type": "object"
+    },
+    "CloverCustomersGetCustomerConfig": {
+      "properties": {
+        "operation": {
+          "const": "customers_get_customer",
+          "default": "customers_get_customer",
+          "description": "Returns information for a single customer.",
+          "title": "Get a single customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Get a single customer",
+          "x-is-trigger": false
+        },
+        "path_customerid": {
+          "description": "Clover customerId from the API.",
+          "title": "customerId",
+          "type": "string"
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields: [customerSince, firstName, lastName, emailAddress, phoneNumber, marketingAllowed, fullName, id, deletedTime]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [addresses, emailAddresses, phoneNumbers, cards, metadata]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_customerid"
+      ],
+      "title": "CloverCustomersGetCustomerConfig",
+      "type": "object"
+    },
+    "CloverCustomersGetCustomersConfig": {
+      "properties": {
+        "operation": {
+          "const": "customers_get_customers",
+          "default": "customers_get_customers",
+          "description": "Gives information for every customer of a merchant by default.",
+          "title": "Get a list of customers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Get a list of customers",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields: [customerSince, firstName, lastName, emailAddress, phoneNumber, marketingAllowed, fullName, id, deletedTime]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [addresses, emailAddresses, phoneNumbers, cards, metadata]",
+          "title": "expand"
+        }
+      },
+      "title": "CloverCustomersGetCustomersConfig",
+      "type": "object"
+    },
+    "CloverCustomersUpdateCustomerConfig": {
+      "properties": {
+        "operation": {
+          "const": "customers_update_customer",
+          "default": "customers_update_customer",
+          "description": "Updates information for a single customer.",
+          "title": "Update a customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Update a customer",
+          "x-is-trigger": false
+        },
+        "path_customerid": {
+          "description": "Clover customerId from the API.",
+          "title": "customerId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [addresses, emailAddresses, phoneNumbers, cards, metadata]",
+          "title": "expand"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_customerid",
+        "body_json"
+      ],
+      "title": "CloverCustomersUpdateCustomerConfig",
+      "type": "object"
+    },
+    "CloverEmployeeGetEmployeeConfig": {
+      "properties": {
+        "operation": {
+          "const": "employee_get_employee",
+          "default": "employee_get_employee",
+          "description": "Returns information for a single employee. Accepts optional expand query parameters",
+          "title": "Get a single employee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Get a single employee",
+          "x-is-trigger": false
+        },
+        "path_empid": {
+          "description": "Clover empId from the API.",
+          "title": "empId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [roles, shifts]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_empid"
+      ],
+      "title": "CloverEmployeeGetEmployeeConfig",
+      "type": "object"
+    },
+    "CloverEmployeeGetEmployeeShiftsConfig": {
+      "properties": {
+        "operation": {
+          "const": "employee_get_employee_shifts",
+          "default": "employee_get_employee_shifts",
+          "description": "Get all shifts for an employee",
+          "title": "Get all shifts for an employee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Get all shifts for an employee",
+          "x-is-trigger": false
+        },
+        "path_empid": {
+          "description": "Clover empId from the API.",
+          "title": "empId",
+          "type": "string"
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields: [employee.id, out_time, in_time, employee.name, in_and_override_time, out_and_override_time, id, has_in_time, override_in_time, deletedTime, server_banking]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [employee, overrideInEmployee, overrideOutEmployee]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_empid"
+      ],
+      "title": "CloverEmployeeGetEmployeeShiftsConfig",
+      "type": "object"
+    },
+    "CloverEmployeeGetEmployeesConfig": {
+      "properties": {
+        "operation": {
+          "const": "employee_get_employees",
+          "default": "employee_get_employees",
+          "description": "Retrieves information about employees associated with a merchant.",
+          "title": "Get all employees",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Get all employees",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, role, role.id, customId, name, nickname, id, deletedTime, deleted_time, email]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [roles, shifts]",
+          "title": "expand"
+        }
+      },
+      "title": "CloverEmployeeGetEmployeesConfig",
+      "type": "object"
+    },
+    "CloverGetMerchantConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_merchant",
+          "default": "get_merchant",
+          "description": "Get a single merchant",
+          "title": "Get a single merchant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merchants",
+          "x-display-name": "Get a single merchant",
+          "x-is-trigger": false
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [employees, bankProcessing, externalMerchant, merchantBoarding, merchantL3Prerequisite, deviceBoarding, programExpress, hierarchy, shifts, orders, address, logos, owner, items, tags, tenders",
+          "title": "expand"
+        }
+      },
+      "title": "CloverGetMerchantConfig",
+      "type": "object"
+    },
+    "CloverInventoryCreateDiscountConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_create_discount",
+          "default": "inventory_create_discount",
+          "description": "Create a discount",
+          "title": "Create a discount",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Create a discount",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "CloverInventoryCreateDiscountConfig",
+      "type": "object"
+    },
+    "CloverInventoryCreateItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_create_item",
+          "default": "inventory_create_item",
+          "description": "Creates an inventory item.",
+          "title": "Create an inventory item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Create an inventory item",
+          "x-is-trigger": false
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [tags, categories, taxRates, modifierGroups, itemStock, options, ageRestricted]",
+          "title": "expand"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "CloverInventoryCreateItemConfig",
+      "type": "object"
+    },
+    "CloverInventoryCreateItemGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_create_item_group",
+          "default": "inventory_create_item_group",
+          "description": "Create an item group",
+          "title": "Create an item group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Create an item group",
+          "x-is-trigger": false
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [items, attributes]",
+          "title": "expand"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "CloverInventoryCreateItemGroupConfig",
+      "type": "object"
+    },
+    "CloverInventoryCreateItemStockConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_create_item_stock",
+          "default": "inventory_create_item_stock",
+          "description": "Create a stock count for a single item.",
+          "title": "Create item stock",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Create item stock",
+          "x-is-trigger": false
+        },
+        "path_itemid": {
+          "description": "Clover itemId from the API.",
+          "title": "itemId",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_itemid",
+        "body_json"
+      ],
+      "title": "CloverInventoryCreateItemStockConfig",
+      "type": "object"
+    },
+    "CloverInventoryDeleteItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_delete_item",
+          "default": "inventory_delete_item",
+          "description": "Delete an inventory item",
+          "title": "Delete an inventory item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Delete an inventory item",
+          "x-is-trigger": false
+        },
+        "path_itemid": {
+          "description": "Clover itemId from the API.",
+          "title": "itemId",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_itemid"
+      ],
+      "title": "CloverInventoryDeleteItemConfig",
+      "type": "object"
+    },
+    "CloverInventoryGetDiscountConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_get_discount",
+          "default": "inventory_get_discount",
+          "description": "Get a single discount",
+          "title": "Get a single discount",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get a single discount",
+          "x-is-trigger": false
+        },
+        "path_discountid": {
+          "description": "Clover discountId from the API.",
+          "title": "discountId",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_discountid"
+      ],
+      "title": "CloverInventoryGetDiscountConfig",
+      "type": "object"
+    },
+    "CloverInventoryGetDiscountsConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_get_discounts",
+          "default": "inventory_get_discounts",
+          "description": "Retrieves all discounts associated with an inventory item.",
+          "title": "Get all discounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get all discounts",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [amount, modifiedtime, percentage, id]",
+          "title": "filter"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "title": "CloverInventoryGetDiscountsConfig",
+      "type": "object"
+    },
+    "CloverInventoryGetItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_get_item",
+          "default": "inventory_get_item",
+          "description": "Retrieves an existing inventory item.",
+          "title": "Get a single inventory item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get a single inventory item",
+          "x-is-trigger": false
+        },
+        "path_itemid": {
+          "description": "Clover itemId from the API.",
+          "title": "itemId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information provided as an expanded response: [tags, categories, taxRates, modifierGroups, itemStock, options]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_itemid"
+      ],
+      "title": "CloverInventoryGetItemConfig",
+      "type": "object"
+    },
+    "CloverInventoryGetItemGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_get_item_group",
+          "default": "inventory_get_item_group",
+          "description": "Get a single item group",
+          "title": "Get a single item group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get a single item group",
+          "x-is-trigger": false
+        },
+        "path_itemgroupid": {
+          "description": "Clover itemGroupId from the API.",
+          "title": "itemGroupId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [items, attributes]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_itemgroupid"
+      ],
+      "title": "CloverInventoryGetItemGroupConfig",
+      "type": "object"
+    },
+    "CloverInventoryGetItemGroupsConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_get_item_groups",
+          "default": "inventory_get_item_groups",
+          "description": "Retrieves item groups that allow merchants to create and manage large groups of related items, also known as **Item with variants**. `For example:` A merchant sells a T-shirt that is available in various sizes and colors. Each of the T-shirt variations is an item within the T-shirt item group. When an item group is created, it appears in the Regist",
+          "title": "Get all item groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get all item groups",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, name, id, deletedTime]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information provided as an expanded response: [items, attributes]",
+          "title": "expand"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "title": "CloverInventoryGetItemGroupsConfig",
+      "type": "object"
+    },
+    "CloverInventoryGetItemStockConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_get_item_stock",
+          "default": "inventory_get_item_stock",
+          "description": "Get the stock of an inventory item",
+          "title": "Get the stock of an inventory item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get the stock of an inventory item",
+          "x-is-trigger": false
+        },
+        "path_itemid": {
+          "description": "Clover itemId from the API.",
+          "title": "itemId",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_itemid"
+      ],
+      "title": "CloverInventoryGetItemStockConfig",
+      "type": "object"
+    },
+    "CloverInventoryGetItemStocksConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_get_item_stocks",
+          "default": "inventory_get_item_stocks",
+          "description": "Get the stock of all inventory items",
+          "title": "Get the stock of all inventory items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get the stock of all inventory items",
+          "x-is-trigger": false
+        }
+      },
+      "title": "CloverInventoryGetItemStocksConfig",
+      "type": "object"
+    },
+    "CloverInventoryGetItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_get_items",
+          "default": "inventory_get_items",
+          "description": "Displays line items for each category in the inventory for an order.",
+          "title": "Get all inventory items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get all inventory items",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [lowStock, modifiedTime, hidden, itemCode, available, option.id, modifierGroup.id, autoManage, price, id, sku, defaultTaxRates, tags.id, alternateName, isRevenue, tags.name, deleted, item.id, name, itemStock.q",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information provided as an expanded response: [tags, categories, taxRates, modifierGroups, itemStock, options, ageRestricted]",
+          "title": "expand"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "title": "CloverInventoryGetItemsConfig",
+      "type": "object"
+    },
+    "CloverInventoryUpdateItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_update_item",
+          "default": "inventory_update_item",
+          "description": "Updates an existing inventory item. Use the POST HTTP method to create an inventory item.<br><br><b>Note:</b> This endpoint cannot be used to update an item's stock quantity. To create or update stock for an item, you must use the <a href='https://docs.clover.com/dev/reference/inventoryupdateitemstock'>Update item stock</a> endpoint.",
+          "title": "Update an existing inventory item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Update an existing inventory item",
+          "x-is-trigger": false
+        },
+        "path_itemid": {
+          "description": "Clover itemId from the API.",
+          "title": "itemId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information provided as an expanded response: [tags, categories, taxRates, modifierGroups, itemStock, options, ageRestricted]",
+          "title": "expand"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_itemid",
+        "body_json"
+      ],
+      "title": "CloverInventoryUpdateItemConfig",
+      "type": "object"
+    },
+    "CloverInventoryUpdateItemGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_update_item_group",
+          "default": "inventory_update_item_group",
+          "description": "Update an item group",
+          "title": "Update an item group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Update an item group",
+          "x-is-trigger": false
+        },
+        "path_itemgroupid": {
+          "description": "Clover itemGroupId from the API.",
+          "title": "itemGroupId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [items, attributes]",
+          "title": "expand"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_itemgroupid",
+        "body_json"
+      ],
+      "title": "CloverInventoryUpdateItemGroupConfig",
+      "type": "object"
+    },
+    "CloverInventoryUpdateItemStockConfig": {
+      "properties": {
+        "operation": {
+          "const": "inventory_update_item_stock",
+          "default": "inventory_update_item_stock",
+          "description": "Update the stock of an inventory item",
+          "title": "Update the stock of an inventory item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Update the stock of an inventory item",
+          "x-is-trigger": false
+        },
+        "path_itemid": {
+          "description": "Clover itemId from the API.",
+          "title": "itemId",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_itemid",
+        "body_json"
+      ],
+      "title": "CloverInventoryUpdateItemStockConfig",
+      "type": "object"
+    },
+    "CloverMerchantGetAllShiftsConfig": {
+      "properties": {
+        "operation": {
+          "const": "merchant_get_all_shifts",
+          "default": "merchant_get_all_shifts",
+          "description": "Get all shifts",
+          "title": "Get all shifts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Get all shifts",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields: [employee.id, out_time, in_time, employee.name, in_and_override_time, out_and_override_time, id, has_in_time, override_in_time, deletedTime, server_banking]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [employee, overrideInEmployee, overrideOutEmployee]",
+          "title": "expand"
+        }
+      },
+      "title": "CloverMerchantGetAllShiftsConfig",
+      "type": "object"
+    },
+    "CloverMerchantGetMerchantAddressConfig": {
+      "properties": {
+        "operation": {
+          "const": "merchant_get_merchant_address",
+          "default": "merchant_get_merchant_address",
+          "description": "Get a merchant's address",
+          "title": "Get a merchant's address",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merchants",
+          "x-display-name": "Get a merchant's address",
+          "x-is-trigger": false
+        }
+      },
+      "title": "CloverMerchantGetMerchantAddressConfig",
+      "type": "object"
+    },
+    "CloverMerchantGetMerchantPropertiesConfig": {
+      "properties": {
+        "operation": {
+          "const": "merchant_get_merchant_properties",
+          "default": "merchant_get_merchant_properties",
+          "description": "Get a merchant's properties",
+          "title": "Get a merchant's properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merchants",
+          "x-display-name": "Get a merchant's properties",
+          "x-is-trigger": false
+        }
+      },
+      "title": "CloverMerchantGetMerchantPropertiesConfig",
+      "type": "object"
+    },
+    "CloverMerchantGetOrderTypesConfig": {
+      "properties": {
+        "operation": {
+          "const": "merchant_get_order_types",
+          "default": "merchant_get_order_types",
+          "description": "Retrieves all order types for a merchant. Merchants can create custom order types using the [Clover Setup App](https://www.clover.com/setupapp). These custom order types can be associated with a system order type. See [Return a list of system order types](https://docs.clover.com/reference/merchantgetsystemordertypes). Custom order types can support",
+          "title": "Get all order types for a merchant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merchants",
+          "x-display-name": "Get all order types for a merchant",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [id, deletedTime]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [hours, attributes, categories]",
+          "title": "expand"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "title": "CloverMerchantGetOrderTypesConfig",
+      "type": "object"
+    },
+    "CloverModifierGetModifierGroupsConfig": {
+      "properties": {
+        "operation": {
+          "const": "modifier_get_modifier_groups",
+          "default": "modifier_get_modifier_groups",
+          "description": "Retrieves all modifier groups. Modifier groupings are the categories to which different modifiers belong. Modifier groups can be made available for specific inventory Items by creating an item to a modifier group association.",
+          "title": "Get all modifier groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get all modifier groups",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, category.id, negativeSortOrder, item.id, sortOrder, name, id, showByDefault]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [modifiers, items]",
+          "title": "expand"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "title": "CloverModifierGetModifierGroupsConfig",
+      "type": "object"
+    },
+    "CloverModifierGetModifiersConfig": {
+      "properties": {
+        "operation": {
+          "const": "modifier_get_modifiers",
+          "default": "modifier_get_modifiers",
+          "description": "Retrieves all modifiers from all modifier groups.",
+          "title": "Get all modifiers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get all modifiers",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, price, name, alternateName, id, modifierGroup.id]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [modifierGroup]",
+          "title": "expand"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "title": "CloverModifierGetModifiersConfig",
+      "type": "object"
+    },
+    "CloverOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "clover_oauth",
+          "default": "clover_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "merchant_id": {
+          "title": "Merchant ID",
+          "type": "string"
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "clover_domain": {
+          "default": "clover.com",
+          "description": "clover.com for North America, eu.clover.com for Europe, la.clover.com for Latin America.",
+          "enum": [
+            "clover.com",
+            "eu.clover.com",
+            "la.clover.com"
+          ],
+          "title": "Clover Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "merchant_id",
+        "access_token",
+        "refresh_token"
+      ],
+      "title": "Clover OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://www.clover.com/developers",
+      "x-oauth-provider": "clover",
+      "x-oauth-scopes": []
+    },
+    "CloverOnNewOrUpdatedItemConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_item",
+          "default": "on_new_or_updated_item",
+          "title": "On New or Updated Inventory Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Inventory Items",
+          "x-is-trigger": true
+        },
+        "lookback_minutes": {
+          "default": 60,
+          "description": "Check changes within this window; choose a window longer than the polling interval (maximum 90 days).",
+          "maximum": 129600,
+          "minimum": 1,
+          "title": "Lookback Minutes",
+          "type": "integer"
+        }
+      },
+      "title": "CloverOnNewOrUpdatedItemConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CloverOnNewOrUpdatedOrderConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_order",
+          "default": "on_new_or_updated_order",
+          "title": "On New or Updated Orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Orders",
+          "x-is-trigger": true
+        },
+        "lookback_minutes": {
+          "default": 60,
+          "description": "Check changes within this window; choose a window longer than the polling interval (maximum 90 days).",
+          "maximum": 129600,
+          "minimum": 1,
+          "title": "Lookback Minutes",
+          "type": "integer"
+        }
+      },
+      "title": "CloverOnNewOrUpdatedOrderConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CloverOrderCreateLineItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "order_create_line_item",
+          "default": "order_create_line_item",
+          "description": "Creates a new line item for an order. Requests must include either a `price` or an `item` object with an inventory item `id`. **Note:** To ensure platform stability, an order is limited to a maximum of 3,000 line items. If this call would cause the order to exceed this limit, the request will fail with a `400 Bad Request` error.",
+          "title": "Create a new line item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Create a new line item",
+          "x-is-trigger": false
+        },
+        "path_orderid": {
+          "description": "Clover orderId from the API.",
+          "title": "orderId",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_orderid",
+        "body_json"
+      ],
+      "title": "CloverOrderCreateLineItemConfig",
+      "type": "object"
+    },
+    "CloverOrderCreateOrderConfig": {
+      "properties": {
+        "operation": {
+          "const": "order_create_order",
+          "default": "order_create_order",
+          "description": "**Description:** Creates or updates orders with a non-Clover inventory and dynamically calculates taxes. Valid fields are: taxRemoved, note, title, state, testMode, manualTransaction, groupLineItems, and orderType. Use separate API calls to add line items. <br> **Tip:** Use the [create an atomic order](https://docs.clover.com/dev/reference/ordercre",
+          "title": "Create custom orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Create custom orders",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "CloverOrderCreateOrderConfig",
+      "type": "object"
+    },
+    "CloverOrderDeleteOrderConfig": {
+      "properties": {
+        "operation": {
+          "const": "order_delete_order",
+          "default": "order_delete_order",
+          "description": "Deletes a single order. See https://docs.clover.com/build/working-with-orders/ for more details.",
+          "title": "Delete an order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Delete an order",
+          "x-is-trigger": false
+        },
+        "path_orderid": {
+          "description": "Clover orderId from the API.",
+          "title": "orderId",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_orderid"
+      ],
+      "title": "CloverOrderDeleteOrderConfig",
+      "type": "object"
+    },
+    "CloverOrderGetOrderConfig": {
+      "properties": {
+        "operation": {
+          "const": "order_get_order",
+          "default": "order_get_order",
+          "description": "Returns a single order. See https://docs.clover.com/build/working-with-orders/ for more details.",
+          "title": "Get a single order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Get a single order",
+          "x-is-trigger": false
+        },
+        "path_orderid": {
+          "description": "Clover orderId from the API.",
+          "title": "orderId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [lineItems, serviceCharge, discounts, credits, payments, customers, orderFulfillmentEvent, refunds]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_orderid"
+      ],
+      "title": "CloverOrderGetOrderConfig",
+      "type": "object"
+    },
+    "CloverOrderGetOrderLineItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "order_get_order_line_item",
+          "default": "order_get_order_line_item",
+          "description": "Returns a line item for an order.",
+          "title": "Get a line item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Get a line item",
+          "x-is-trigger": false
+        },
+        "path_orderid": {
+          "description": "Clover orderId from the API.",
+          "title": "orderId",
+          "type": "string"
+        },
+        "path_lineitemid": {
+          "description": "Clover lineItemId from the API.",
+          "title": "lineItemId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [employee, orderType, discounts, modifications, taxRates, payments]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_orderid",
+        "path_lineitemid"
+      ],
+      "title": "CloverOrderGetOrderLineItemConfig",
+      "type": "object"
+    },
+    "CloverOrderGetOrderLineItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "order_get_order_line_items",
+          "default": "order_get_order_line_items",
+          "description": "Returns all line items for an order.",
+          "title": "Get all line items for an order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Get all line items for an order",
+          "x-is-trigger": false
+        },
+        "path_orderid": {
+          "description": "Clover orderId from the API.",
+          "title": "orderId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [employee, orderType, discounts, modifications, taxRates, payments]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_orderid"
+      ],
+      "title": "CloverOrderGetOrderLineItemsConfig",
+      "type": "object"
+    },
+    "CloverOrderGetOrdersConfig": {
+      "properties": {
+        "operation": {
+          "const": "order_get_orders",
+          "default": "order_get_orders",
+          "description": "Displays a list of orders. See [Manage orders data](https://docs.clover.com/build/working-with-orders/) for more details.",
+          "title": "Gets a list of orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Gets a list of orders",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [employee.id, note, modifiedTime, orderType, touched, cardTransaction.last4, manualTransaction, employee.name, title, device.id, externalReferenceId, clientCreatedTime, total, payType, testMode, createdTime, i",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information provided as an expanded response: [employee, payments, refunds, credits, voids, payment.tender, payment.cardTransaction, lineItems, customers, serviceCharge, discounts, orderType, lineItems.discounts, lineItems.modifications]",
+          "title": "expand"
+        }
+      },
+      "title": "CloverOrderGetOrdersConfig",
+      "type": "object"
+    },
+    "CloverOrderUpdateOrderConfig": {
+      "properties": {
+        "operation": {
+          "const": "order_update_order",
+          "default": "order_update_order",
+          "description": "Updates a single order. See [working-with-orders](https://docs.clover.com/build/working-with-orders/) for more details.",
+          "title": "Update an order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Update an order",
+          "x-is-trigger": false
+        },
+        "path_orderid": {
+          "description": "Clover orderId from the API.",
+          "title": "orderId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information provided as an expanded response: [lineItems, serviceCharge, discounts, credits, payments, customers, orderFulfillmentEvent, refunds]",
+          "title": "expand"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_orderid",
+        "body_json"
+      ],
+      "title": "CloverOrderUpdateOrderConfig",
+      "type": "object"
+    },
+    "CloverOrderUpdateOrderLineItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "order_update_order_line_item",
+          "default": "order_update_order_line_item",
+          "description": "Updates a line item for an order.",
+          "title": "Update a line item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Update a line item",
+          "x-is-trigger": false
+        },
+        "path_orderid": {
+          "description": "Clover orderId from the API.",
+          "title": "orderId",
+          "type": "string"
+        },
+        "path_lineitemid": {
+          "description": "Clover lineItemId from the API.",
+          "title": "lineItemId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information provided as an expanded response: [employee, orderType, discounts, modifications, taxRates, payments]",
+          "title": "expand"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_orderid",
+        "path_lineitemid",
+        "body_json"
+      ],
+      "title": "CloverOrderUpdateOrderLineItemConfig",
+      "type": "object"
+    },
+    "CloverPayGetMerchantTendersConfig": {
+      "properties": {
+        "operation": {
+          "const": "pay_get_merchant_tenders",
+          "default": "pay_get_merchant_tenders",
+          "description": "Retrieves all tenders for a merchant.",
+          "title": "Get all tenders for a merchant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merchants",
+          "x-display-name": "Get all tenders for a merchant",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, visible, merchantId, instruction, systemTenderId, label, id, labelKey, opensCashDrawer, deletedTime, enabled]",
+          "title": "filter"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "title": "CloverPayGetMerchantTendersConfig",
+      "type": "object"
+    },
+    "CloverPayGetOrderPaymentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "pay_get_order_payments",
+          "default": "pay_get_order_payments",
+          "description": "Displays payment information, including the total amount, tip amount, tax amount, and result status for an `order`.",
+          "title": "Get all payments for an order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Get all payments for an order",
+          "x-is-trigger": false
+        },
+        "path_orderid": {
+          "description": "Clover orderId from the API.",
+          "title": "orderId",
+          "type": "string"
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, device.id, externalReferenceId, result, offline, createdTime, externalPaymentId, voided, id, tender.id, employee.id, order.modifiedTime, amount, cardType, clientCreatedTime]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [tender, germanInfo, lineItemPayments, cardTransaction, dccInfo, employee, refunds, transactionInfo, externalReferenceId, oceanGatewayInfo, taxRates, additionalCharges, appTracking, paymentA",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_orderid"
+      ],
+      "title": "CloverPayGetOrderPaymentsConfig",
+      "type": "object"
+    },
+    "CloverPayGetPaymentConfig": {
+      "properties": {
+        "operation": {
+          "const": "pay_get_payment",
+          "default": "pay_get_payment",
+          "description": "Retrieve a single payment information, including the total amount, tip amount, tax amount, and result status.",
+          "title": "Get a single payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Get a single payment",
+          "x-is-trigger": false
+        },
+        "path_payid": {
+          "description": "Clover payId from the API.",
+          "title": "payId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [tender, germanInfo, lineItemPayments, cardTransaction, dccInfo, employee, refunds, transactionInfo, externalReferenceId, oceanGatewayInfo, taxRates, additionalCharges, appTracking, paymentAttributes, order]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_payid"
+      ],
+      "title": "CloverPayGetPaymentConfig",
+      "type": "object"
+    },
+    "CloverPayGetPaymentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "pay_get_payments",
+          "default": "pay_get_payments",
+          "description": "Retrieves payment information, including the total amount, tip amount, tax amount, and result status.",
+          "title": "Get all payments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Get all payments",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, device.id, externalReferenceId, result, offline, createdTime, externalPaymentId, voided, id, tender.id, employee.id, order.modifiedTime, amount, cardType, clientCreatedTime]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [tender, germanInfo, lineItemPayments, cardTransaction, dccInfo, refunds, transactionInfo, externalReferenceId, oceanGatewayInfo, taxRates, additionalCharges, appTracking, paymentAttributes,",
+          "title": "expand"
+        }
+      },
+      "title": "CloverPayGetPaymentsConfig",
+      "type": "object"
+    },
+    "CloverPayGetRefundConfig": {
+      "properties": {
+        "operation": {
+          "const": "pay_get_refund",
+          "default": "pay_get_refund",
+          "description": "Displays a single refund associated with a payment, including taxes and tips.",
+          "title": "Get a single refund",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Get a single refund",
+          "x-is-trigger": false
+        },
+        "path_refundid": {
+          "description": "Clover refundId from the API.",
+          "title": "refundId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields that display when the list is expanded: [payment, germanInfo, appTracking, employee, overrideMerchantTender, serviceCharge, lineItems, transactionInfo, oceanGatewayInfo]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_refundid"
+      ],
+      "title": "CloverPayGetRefundConfig",
+      "type": "object"
+    },
+    "CloverPayGetRefundsConfig": {
+      "properties": {
+        "operation": {
+          "const": "pay_get_refunds",
+          "default": "pay_get_refunds",
+          "description": "Retrieves refunds for a merchant, including associated taxes and tips. **Data Retrieval Rules:** * **90-Day Limit:** This endpoint returns a maximum of 90 days of refund data. * **Automatic Time-Filter Adjustment:** If a query's time-based filter (e.g., `createdTime` or `clientCreatedTime`) spans more than 90 days, the server automatically adjusts ",
+          "title": "Get all refunds for a merchant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Get all refunds for a merchant",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters the results based on a set of criteria. For detailed syntax, see the [API filtering documentation](https://docs.clover.com/dev/docs/applying-filters).\n\nFilter fields to display search results: [id, voided, createdTime, clientCreatedTime, orde",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields that display when the list is expanded: [payment, germanInfo, appTracking, employee, overrideMerchantTender, serviceCharge, lineItems, transactionInfo, oceanGatewayInfo]",
+          "title": "expand"
+        }
+      },
+      "title": "CloverPayGetRefundsConfig",
+      "type": "object"
+    },
+    "CloverRoleGetRolesConfig": {
+      "properties": {
+        "operation": {
+          "const": "role_get_roles",
+          "default": "role_get_roles",
+          "description": "Retrieves all system and employee roles for a merchant's business.",
+          "title": "Get all roles for a merchant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merchants",
+          "x-display-name": "Get all roles for a merchant",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, systemRole, name, id, deletedTime]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields to display additional nested information: [employees]",
+          "title": "expand"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "title": "CloverRoleGetRolesConfig",
+      "type": "object"
+    },
+    "CloverTagCreateTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "tag_create_tag",
+          "default": "tag_create_tag",
+          "description": "Create a tag",
+          "title": "Create a tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Create a tag",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "CloverTagCreateTagConfig",
+      "type": "object"
+    },
+    "CloverTagGetTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "tag_get_tag",
+          "default": "tag_get_tag",
+          "description": "Get a single tag",
+          "title": "Get a single tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get a single tag",
+          "x-is-trigger": false
+        },
+        "path_tagid": {
+          "description": "Clover tagId from the API.",
+          "title": "tagId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [items, printers]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_tagid"
+      ],
+      "title": "CloverTagGetTagConfig",
+      "type": "object"
+    },
+    "CloverTagGetTagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "tag_get_tags",
+          "default": "tag_get_tags",
+          "description": "Retrieves all tags for an order. `Note:` In the REST API, a merchant uses two types of tags: 1. Tags, also known as item labels, are used to keep track of these items in reports. 2. Tags associated with the printer work as a printer label. `Example:` If a tag is associated with both an item and a printer, when the order is printed, the tagged items",
+          "title": "Get all tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get all tags",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [modifiedTime, deleted, name, showInReporting, id]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information provided as an expanded response: [items, printers]",
+          "title": "expand"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "title": "CloverTagGetTagsConfig",
+      "type": "object"
+    },
+    "CloverTagUpdateTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "tag_update_tag",
+          "default": "tag_update_tag",
+          "description": "Update a single tag",
+          "title": "Update a single tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Update a single tag",
+          "x-is-trigger": false
+        },
+        "path_tagid": {
+          "description": "Clover tagId from the API.",
+          "title": "tagId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [items, printers]",
+          "title": "expand"
+        },
+        "body_json": {
+          "description": "JSON object accepted by this Clover endpoint.",
+          "title": "Request body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_tagid",
+        "body_json"
+      ],
+      "title": "CloverTagUpdateTagConfig",
+      "type": "object"
+    },
+    "CloverTaxrateGetTaxRateConfig": {
+      "properties": {
+        "operation": {
+          "const": "taxrate_get_tax_rate",
+          "default": "taxrate_get_tax_rate",
+          "description": "Get a single tax rate",
+          "title": "Get a single tax rate",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get a single tax rate",
+          "x-is-trigger": false
+        },
+        "path_taxid": {
+          "description": "Clover taxId from the API.",
+          "title": "taxId",
+          "type": "string"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expandable fields: [items]",
+          "title": "expand"
+        }
+      },
+      "required": [
+        "path_taxid"
+      ],
+      "title": "CloverTaxrateGetTaxRateConfig",
+      "type": "object"
+    },
+    "CloverTaxrateGetTaxRatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "taxrate_get_tax_rates",
+          "default": "taxrate_get_tax_rates",
+          "description": "Retrieves all tax rates applicable on an order. A tax rate is a percentage or a flat fee at which an item is taxed.",
+          "title": "Get all tax rates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inventory",
+          "x-display-name": "Get all tax rates",
+          "x-is-trigger": false
+        },
+        "query_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter fields to display search results: [isDefault, rate, items.id, name, id, taxAmount, taxType]",
+          "title": "filter"
+        },
+        "query_expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information provided as an expanded response: [items]",
+          "title": "expand"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position of the first line item returned in the search results. Indicates the number of line items that are excluded from the search results.",
+          "title": "offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of line items returned in the search result.\n Default: 100 \n Maximum limit: 1000",
+          "title": "limit"
+        }
+      },
+      "title": "CloverTaxrateGetTaxRatesConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cash_get_all_cash_events": "#/$defs/CloverCashGetAllCashEventsConfig",
+          "category_create_category": "#/$defs/CloverCategoryCreateCategoryConfig",
+          "category_get_categories": "#/$defs/CloverCategoryGetCategoriesConfig",
+          "category_get_category": "#/$defs/CloverCategoryGetCategoryConfig",
+          "category_get_category_items": "#/$defs/CloverCategoryGetCategoryItemsConfig",
+          "category_get_item_categories": "#/$defs/CloverCategoryGetItemCategoriesConfig",
+          "category_update_category": "#/$defs/CloverCategoryUpdateCategoryConfig",
+          "customers_create_customer": "#/$defs/CloverCustomersCreateCustomerConfig",
+          "customers_delete_customer": "#/$defs/CloverCustomersDeleteCustomerConfig",
+          "customers_get_customer": "#/$defs/CloverCustomersGetCustomerConfig",
+          "customers_get_customers": "#/$defs/CloverCustomersGetCustomersConfig",
+          "customers_update_customer": "#/$defs/CloverCustomersUpdateCustomerConfig",
+          "employee_get_employee": "#/$defs/CloverEmployeeGetEmployeeConfig",
+          "employee_get_employee_shifts": "#/$defs/CloverEmployeeGetEmployeeShiftsConfig",
+          "employee_get_employees": "#/$defs/CloverEmployeeGetEmployeesConfig",
+          "get_merchant": "#/$defs/CloverGetMerchantConfig",
+          "inventory_create_discount": "#/$defs/CloverInventoryCreateDiscountConfig",
+          "inventory_create_item": "#/$defs/CloverInventoryCreateItemConfig",
+          "inventory_create_item_group": "#/$defs/CloverInventoryCreateItemGroupConfig",
+          "inventory_create_item_stock": "#/$defs/CloverInventoryCreateItemStockConfig",
+          "inventory_delete_item": "#/$defs/CloverInventoryDeleteItemConfig",
+          "inventory_get_discount": "#/$defs/CloverInventoryGetDiscountConfig",
+          "inventory_get_discounts": "#/$defs/CloverInventoryGetDiscountsConfig",
+          "inventory_get_item": "#/$defs/CloverInventoryGetItemConfig",
+          "inventory_get_item_group": "#/$defs/CloverInventoryGetItemGroupConfig",
+          "inventory_get_item_groups": "#/$defs/CloverInventoryGetItemGroupsConfig",
+          "inventory_get_item_stock": "#/$defs/CloverInventoryGetItemStockConfig",
+          "inventory_get_item_stocks": "#/$defs/CloverInventoryGetItemStocksConfig",
+          "inventory_get_items": "#/$defs/CloverInventoryGetItemsConfig",
+          "inventory_update_item": "#/$defs/CloverInventoryUpdateItemConfig",
+          "inventory_update_item_group": "#/$defs/CloverInventoryUpdateItemGroupConfig",
+          "inventory_update_item_stock": "#/$defs/CloverInventoryUpdateItemStockConfig",
+          "merchant_get_all_shifts": "#/$defs/CloverMerchantGetAllShiftsConfig",
+          "merchant_get_merchant_address": "#/$defs/CloverMerchantGetMerchantAddressConfig",
+          "merchant_get_merchant_properties": "#/$defs/CloverMerchantGetMerchantPropertiesConfig",
+          "merchant_get_order_types": "#/$defs/CloverMerchantGetOrderTypesConfig",
+          "modifier_get_modifier_groups": "#/$defs/CloverModifierGetModifierGroupsConfig",
+          "modifier_get_modifiers": "#/$defs/CloverModifierGetModifiersConfig",
+          "on_new_or_updated_item": "#/$defs/CloverOnNewOrUpdatedItemConfig",
+          "on_new_or_updated_order": "#/$defs/CloverOnNewOrUpdatedOrderConfig",
+          "order_create_line_item": "#/$defs/CloverOrderCreateLineItemConfig",
+          "order_create_order": "#/$defs/CloverOrderCreateOrderConfig",
+          "order_delete_order": "#/$defs/CloverOrderDeleteOrderConfig",
+          "order_get_order": "#/$defs/CloverOrderGetOrderConfig",
+          "order_get_order_line_item": "#/$defs/CloverOrderGetOrderLineItemConfig",
+          "order_get_order_line_items": "#/$defs/CloverOrderGetOrderLineItemsConfig",
+          "order_get_orders": "#/$defs/CloverOrderGetOrdersConfig",
+          "order_update_order": "#/$defs/CloverOrderUpdateOrderConfig",
+          "order_update_order_line_item": "#/$defs/CloverOrderUpdateOrderLineItemConfig",
+          "pay_get_merchant_tenders": "#/$defs/CloverPayGetMerchantTendersConfig",
+          "pay_get_order_payments": "#/$defs/CloverPayGetOrderPaymentsConfig",
+          "pay_get_payment": "#/$defs/CloverPayGetPaymentConfig",
+          "pay_get_payments": "#/$defs/CloverPayGetPaymentsConfig",
+          "pay_get_refund": "#/$defs/CloverPayGetRefundConfig",
+          "pay_get_refunds": "#/$defs/CloverPayGetRefundsConfig",
+          "role_get_roles": "#/$defs/CloverRoleGetRolesConfig",
+          "tag_create_tag": "#/$defs/CloverTagCreateTagConfig",
+          "tag_get_tag": "#/$defs/CloverTagGetTagConfig",
+          "tag_get_tags": "#/$defs/CloverTagGetTagsConfig",
+          "tag_update_tag": "#/$defs/CloverTagUpdateTagConfig",
+          "taxrate_get_tax_rate": "#/$defs/CloverTaxrateGetTaxRateConfig",
+          "taxrate_get_tax_rates": "#/$defs/CloverTaxrateGetTaxRatesConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CloverCashGetAllCashEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverCategoryCreateCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverCategoryGetCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverCategoryGetCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverCategoryGetCategoryItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverCategoryGetItemCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverCategoryUpdateCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverCustomersCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverCustomersDeleteCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverCustomersGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverCustomersGetCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverCustomersUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverEmployeeGetEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverEmployeeGetEmployeeShiftsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverEmployeeGetEmployeesConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryCreateDiscountConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryCreateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryCreateItemGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryCreateItemStockConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryDeleteItemConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryGetDiscountConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryGetDiscountsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryGetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryGetItemGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryGetItemGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryGetItemStockConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryGetItemStocksConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryGetItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryUpdateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryUpdateItemGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverInventoryUpdateItemStockConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverMerchantGetAllShiftsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverGetMerchantConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverMerchantGetMerchantAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverMerchantGetMerchantPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverMerchantGetOrderTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverModifierGetModifierGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverModifierGetModifiersConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverOrderCreateLineItemConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverOrderCreateOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverOrderDeleteOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverOrderGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverOrderGetOrderLineItemConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverOrderGetOrderLineItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverOrderGetOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverOrderUpdateOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverOrderUpdateOrderLineItemConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverPayGetMerchantTendersConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverPayGetOrderPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverPayGetPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverPayGetPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverPayGetRefundConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverPayGetRefundsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverRoleGetRolesConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverTagCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverTagGetTagConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverTagGetTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverTagUpdateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverTaxrateGetTaxRateConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverTaxrateGetTaxRatesConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverOnNewOrUpdatedOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/CloverOnNewOrUpdatedItemConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CloverAPIKeyCredential"
+        },
+        {
+          "$ref": "#/$defs/CloverOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Clover Node Configuration",
+  "type": "object",
+  "x-agent-tool-provider": true,
+  "x-edit-examples": [
+    "List my Clover inventory items",
+    "Create a Clover customer",
+    "Find recent Clover orders",
+    "Check a Clover item's stock"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
