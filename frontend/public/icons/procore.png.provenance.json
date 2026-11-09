@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/procore.png",
+  "source": "https://www.procore.com/images/apple-touch-icon-180x180.png (official apple-touch-icon linked by https://www.procore.com/)",
+  "license": "Procore brand mark used nominatively to identify the connected service. Trademark rights remain with Procore.",
+  "sha256": "0fd5f6a971f83c381b3c834d8f0b8ae084d0d4ae4901fd84695331f050a33010"
+}
