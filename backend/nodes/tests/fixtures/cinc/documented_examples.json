@@ -1,0 +1,859 @@
+{
+  "get_me": {
+    "config": {
+      "operation": "get_me"
+    },
+    "method": "GET",
+    "path": "/site/me",
+    "response": {
+      "body": {
+        "id": "AGENT0",
+        "username": "buum@cu.com",
+        "roles": [
+          "client",
+          "broker"
+        ]
+      },
+      "header": {
+        "x-rate-limit-limit": 100,
+        "x-rate-limit-remaining": 91,
+        "x-rate-limit-reset": 1677130510
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#get-site-me",
+    "status": 200
+  },
+  "list_agents": {
+    "config": {
+      "operation": "list_agents",
+      "offset": 0,
+      "limit": 2
+    },
+    "method": "GET",
+    "path": "/site/agents",
+    "response": {
+      "body": {
+        "paging": {
+          "offset": 0,
+          "next": 8,
+          "limit": 2,
+          "count": 2
+        },
+        "agents": [
+          {
+            "id": "AGENT0",
+            "logged_in_date": "2023-05-11T22:27:25.258Z",
+            "registered_date": "2022-12-18T20:27:25.258Z",
+            "username": "jane.doe@email.com",
+            "info": {
+              "status": "active",
+              "contact": {
+                "first_name": "Janis",
+                "last_name": "A. Doe",
+                "phone_numbers": {
+                  "cell_phone": "4044041234"
+                },
+                "email": "jane.doe@email.com"
+              },
+              "updated_date": "2023-05-11T22:27:25.258Z",
+              "url": "test.com/dashboard/spa#settings/profile/profile/AGENT0"
+            },
+            "subscriptions": {
+              "email": {
+                "can_receive_emails": false
+              },
+              "text": {
+                "can_receive_texts": true
+              }
+            },
+            "roles": [
+              "agent",
+              "team_lead"
+            ],
+            "company": {
+              "name": "This company"
+            }
+          },
+          {
+            "id": "AGENT1",
+            "logged_in_date": "2023-05-11T22:27:25.987Z",
+            "registered_date": "2022-01-11T09:32:05.987Z",
+            "username": "pume@efpu.bj",
+            "info": {
+              "status": "active",
+              "contact": {
+                "first_name": "Eddie",
+                "last_name": "Mellor",
+                "phone_numbers": {
+                  "cell_phone": "4628874518",
+                  "office_phone": "5555555555"
+                },
+                "email": "pume@efpu.bj"
+              },
+              "updated_date": "2023-01-11T09:32:05.987Z",
+              "url": "https://test.com/dashboard/spa#settings/profile/profile/AGENT1"
+            },
+            "subscriptions": {
+              "email": {
+                "can_receive_emails": true
+              },
+              "text": {
+                "can_receive_texts": true
+              }
+            },
+            "roles": [
+              "agent"
+            ],
+            "company": {
+              "name": "that company"
+            }
+          }
+        ]
+      },
+      "header": {
+        "x-rate-limit-limit": 100,
+        "x-rate-limit-remaining": 91,
+        "x-rate-limit-reset": 1653051600
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#get-site-agents",
+    "status": 200
+  },
+  "get_agent": {
+    "config": {
+      "operation": "get_agent",
+      "agent_id": "AGENT0"
+    },
+    "method": "GET",
+    "path": "/site/agents/AGENT0",
+    "response": {
+      "body": {
+        "agent": {
+          "id": "AGENT0",
+          "logged_in_date": "2023-05-11T22:27:25.258Z",
+          "registered_date": "2022-12-18T20:27:25.258Z",
+          "username": "jane.doe@email.com",
+          "info": {
+            "status": "active",
+            "contact": {
+              "first_name": "Janis",
+              "last_name": "A. Doe",
+              "phone_numbers": {
+                "cell_phone": "4044041234"
+              },
+              "email": "jane.doe@email.com"
+            },
+            "updated_date": "2023-05-11T22:27:25.258Z",
+            "url": "test.com/dashboard/spa#settings/profile/profile/AGENT0"
+          },
+          "subscriptions": {
+            "email": {
+              "can_receive_emails": false
+            },
+            "text": {
+              "can_receive_texts": true
+            }
+          },
+          "roles": [
+            "agent",
+            "team_lead"
+          ],
+          "company": {
+            "name": "This company"
+          }
+        }
+      },
+      "header": {
+        "x-rate-limit-limit": 100,
+        "x-rate-limit-remaining": 91,
+        "x-rate-limit-reset": 1653051600
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#get-site-agents-agent_id-2",
+    "status": 200
+  },
+  "list_leads": {
+    "config": {
+      "operation": "list_leads",
+      "offset": 0,
+      "limit": 2
+    },
+    "method": "GET",
+    "path": "/site/leads",
+    "response": {
+      "body": {
+        "paging": {
+          "offset": 0,
+          "next": "9",
+          "limit": 2,
+          "count": 2
+        },
+        "leads": [
+          {
+            "id": "LEAD_ID0",
+            "logged_in_date": "2023-07-15T01:02:18.173Z",
+            "username": "anaheard@capi.test",
+            "registered_date": "2023-01-18T20:27:25.589Z",
+            "info": {
+              "is_partial": false,
+              "is_buyer": false,
+              "is_seller": true,
+              "seller": {
+                "timeline": "1-3 months"
+              },
+              "source": "Facebook",
+              "status": "unworked",
+              "contact": {
+                "first_name": "Ana",
+                "last_name": "Heard",
+                "phone_numbers": {
+                  "cell_phone": "4706996288"
+                },
+                "email": "anaheard@capi.test",
+                "is_validated_email": true
+              },
+              "updated_date": "2023-05-31T18:42:21.640Z",
+              "url": "test.com/dashboard/spa#leads/details/LEADID0"
+            },
+            "pipeline": {
+              "stage": "New Lead",
+              "history": [
+                {
+                  "stage": "New Lead",
+                  "staged_date": "2023-01-18T20:27:25.244Z"
+                }
+              ]
+            },
+            "assigned_agents": {
+              "primary_agent": {
+                "id": "AGENT1"
+              },
+              "listing_agent": {
+                "id": "AGENT4"
+              },
+              "partner": {
+                "id": "AGENT9"
+              }
+            },
+            "toupp": {
+              "is_external": false,
+              "is_cinc": true
+            },
+            "regulations": {
+              "allows_phone_automation": false
+            },
+            "subscriptions": {
+              "email": {
+                "can_receive_emails": true,
+                "can_receive_property_alerts": false,
+                "can_receive_favorite_updates": false
+              },
+              "text": {
+                "can_receive_texts": true,
+                "has_ai_conversations_on": true
+              }
+            }
+          },
+          {
+            "id": "LEAD0",
+            "logged_in_date": "2023-07-15T01:02:18.173Z",
+            "username": "mo@rijegmo.fk",
+            "registered_date": "2022-11-06T21:41:00.345Z",
+            "info": {
+              "is_partial": false,
+              "is_buyer": true,
+              "buyer": {
+                "median_price": 0.0,
+                "average_price": 250000.0,
+                "favorite_city": "Dallas",
+                "timeline": "1-3 months",
+                "is_first_time": false,
+                "is_pre_qualified": true
+              },
+              "is_seller": false,
+              "source": "Facebook",
+              "status": "unworked",
+              "contact": {
+                "first_name": "Devin",
+                "last_name": "Norton",
+                "phone_numbers": {
+                  "cell_phone": "3703089435"
+                },
+                "email": "mo@rijegmo.fk",
+                "is_validated_email": true
+              },
+              "updated_date": "2021-07-22T09:23:10.547Z"
+            },
+            "assigned_agents": {
+              "primary_agent": {
+                "id": "AGENT3"
+              },
+              "listing_agent": {
+                "id": "AGENT5"
+              },
+              "partner": {
+                "id": "AGENT7"
+              }
+            },
+            "toupp": {
+              "is_external": false,
+              "is_cinc": true
+            },
+            "regulations": {
+              "allows_phone_automation": false
+            },
+            "subscriptions": {
+              "email": {
+                "can_receive_emails": true,
+                "can_receive_property_alerts": false,
+                "can_receive_favorite_updates": false
+              },
+              "text": {
+                "can_receive_texts": true,
+                "has_ai_conversations_on": true
+              }
+            }
+          }
+        ]
+      },
+      "header": {
+        "x-rate-limit-limit": 100,
+        "x-rate-limit-remaining": 91,
+        "x-rate-limit-reset": 1653051600
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#get-site-leads-2",
+    "status": 200
+  },
+  "get_lead": {
+    "config": {
+      "operation": "get_lead",
+      "lead_id": "LEAD0"
+    },
+    "method": "GET",
+    "path": "/site/leads/LEAD0",
+    "response": {
+      "body": {
+        "lead": {
+          "id": "LEAD_MDID0",
+          "logged_in_date": "2023-07-15T01:02:18.173Z",
+          "username": "89yguibnjokl@iuy87.com",
+          "registered_date": "2023-03-22T13:24:07.543Z",
+          "verification": {
+            "status": "unprompted"
+          },
+          "info": {
+            "is_partial": false,
+            "is_buyer": false,
+            "is_seller": true,
+            "seller": {
+              "properties": [
+                {
+                  "address": {
+                    "street": "15151 San Fernando Mission Boulevard",
+                    "city": "Los Angeles",
+                    "state": "CA",
+                    "postal_or_zip": "91345"
+                  },
+                  "created_date": "2025-06-27T18:06:15.175Z",
+                  "total_beds": 0,
+                  "total_baths": 0
+                },
+                {
+                  "address": {
+                    "street": "15151 San Fernando Mission Road",
+                    "city": "Los Angeles",
+                    "state": "CA",
+                    "postal_or_zip": "91345"
+                  },
+                  "created_date": "2025-06-27T18:06:18.175Z",
+                  "total_beds": 0,
+                  "total_baths": 0
+                }
+              ]
+            },
+            "source": "www.test.com",
+            "status": "unworked",
+            "contact": {
+              "first_name": "Devin",
+              "last_name": "Norton",
+              "phone_numbers": {
+                "cell_phone": "12312312333"
+              },
+              "email": "89yguibnjokl@iuy87.com",
+              "is_validated_email": true
+            },
+            "updated_date": "2023-07-15T01:02:18.173Z",
+            "url": "https://test.com/dashboard/spa#leads/details/LEAD_MDID0"
+          },
+          "pipeline": {
+            "stage": "Attempted Contact",
+            "history": [
+              {
+                "stage": "Attempted Contact",
+                "staged_date": "2023-07-15T01:02:18.300Z"
+              },
+              {
+                "stage": "New Lead",
+                "staged_date": "2023-07-15T01:02:18.300Z"
+              }
+            ]
+          },
+          "listings": {
+            "favorited": [
+              {
+                "mls_number": "11123",
+                "price": 59900.0,
+                "favorited_date": "2023-09-20T14:17:20.940Z",
+                "id": "P05",
+                "address": {
+                  "street": "139 Arlington Park Drive",
+                  "city": "Hot Springs",
+                  "state": "AR",
+                  "postal_or_zip": "71901",
+                  "county": "Garland"
+                },
+                "total_beds": 2,
+                "total_baths": 5
+              },
+              {
+                "mls_number": "11124",
+                "price": 59900.0,
+                "favorited_date": "2023-09-22T14:17:20.940Z",
+                "id": "P04",
+                "address": {
+                  "street": "209 Arlington Park Drive",
+                  "city": "Hot Springs",
+                  "state": "AR",
+                  "postal_or_zip": "71901",
+                  "county": "Garland"
+                },
+                "total_beds": 1,
+                "total_baths": 4
+              }
+            ],
+            "recommended": [
+              {
+                "mls_number": "11125",
+                "price": 59900.0,
+                "recommended_by": "AGENT0",
+                "recommended_date": "2023-09-20T14:17:20.950Z",
+                "id": "P05",
+                "address": {
+                  "street": "123 Arlington Park Drive",
+                  "city": "Hot Springs",
+                  "state": "AR",
+                  "postal_or_zip": "71901",
+                  "county": "Garland"
+                },
+                "total_beds": 2,
+                "total_baths": 5
+              },
+              {
+                "mls_number": "11126",
+                "price": 59900.0,
+                "recommended_by": "AGENT1",
+                "recommended_date": "2023-09-20T14:17:20.943Z",
+                "id": "P04",
+                "address": {
+                  "street": "789 Arlington Park Drive",
+                  "city": "Hot Springs",
+                  "state": "AR",
+                  "postal_or_zip": "71901",
+                  "county": "Garland"
+                },
+                "total_beds": 1,
+                "total_baths": 4
+              }
+            ]
+          },
+          "labels": [
+            {
+              "id": "LDID0",
+              "name": "Chimichanga",
+              "color": "#0B5C7A",
+              "created_by": "AGENT_MDID0",
+              "applied_date": "2023-07-15T01:02:18.320Z"
+            },
+            {
+              "id": "LDID1",
+              "name": "Guacamole",
+              "color": "#0B5C7A",
+              "created_by": "AGENT_MDID0",
+              "applied_date": "2023-07-15T01:02:18.323Z"
+            }
+          ],
+          "assigned_agents": {
+            "primary_agent": {
+              "id": "AGENT_MDID0"
+            },
+            "agent": {
+              "id": "AGENT_MDID1"
+            }
+          },
+          "toupp": {
+            "is_external": false,
+            "is_cinc": false
+          },
+          "regulations": {
+            "allows_phone_automation": true
+          },
+          "subscriptions": {
+            "email": {
+              "can_receive_emails": true,
+              "can_receive_property_alerts": false,
+              "can_receive_favorite_updates": true
+            },
+            "text": {
+              "can_receive_texts": true,
+              "has_ai_conversations_on": true
+            }
+          }
+        }
+      },
+      "header": {
+        "x-rate-limit-limit": 100,
+        "x-rate-limit-remaining": 91,
+        "x-rate-limit-reset": 1653051600
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#get-site-leads-lead_id",
+    "status": 200
+  },
+  "upsert_lead": {
+    "config": {
+      "operation": "upsert_lead",
+      "body": {
+        "info": {
+          "contact": {
+            "first_name": "Janis",
+            "last_name": "A. Doe",
+            "email": "jane.doe@email.com"
+          }
+        }
+      }
+    },
+    "method": "POST",
+    "path": "/site/leads",
+    "response": {
+      "body": {
+        "id": "LEAD0"
+      },
+      "header": {
+        "x-rate-limit-limit": 100,
+        "x-rate-limit-remaining": 91,
+        "x-rate-limit-reset": 1677130510
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#post-site-leads-2",
+    "status": 201
+  },
+  "list_lead_notes": {
+    "config": {
+      "operation": "list_lead_notes",
+      "lead_id": "LEAD0"
+    },
+    "method": "GET",
+    "path": "/site/leads/LEAD0/notes",
+    "response": {
+      "body": {
+        "paging": {
+          "limit": 500,
+          "count": 5,
+          "offset": 0
+        },
+        "notes": [
+          {
+            "id": "LN0001",
+            "category": "call",
+            "created_by": "agentid",
+            "created_date": "2023-04-14T19:44:14.576Z",
+            "is_pinned": true
+          },
+          {
+            "id": "LN0002",
+            "category": "info",
+            "created_by": "agentid",
+            "created_date": "2023-04-14T19:44:14.576Z",
+            "is_pinned": true
+          },
+          {
+            "id": "LN0003",
+            "category": "general",
+            "created_by": "agentid",
+            "created_date": "2023-04-14T19:44:14.576Z",
+            "is_pinned": true
+          },
+          {
+            "id": "LN0004",
+            "category": "call",
+            "created_by": "agentid",
+            "created_date": "2023-04-14T19:44:14.576Z",
+            "is_pinned": true
+          },
+          {
+            "id": "LN0005",
+            "category": "email",
+            "created_by": "agentid",
+            "created_date": "2023-04-14T19:44:14.576Z",
+            "is_pinned": true
+          }
+        ]
+      },
+      "header": {
+        "x-rate-limit-limit": 100,
+        "x-rate-limit-remaining": 91,
+        "x-rate-limit-reset": 1653051600
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#get-site-leads-lead_id-notes-2",
+    "status": 200
+  },
+  "get_lead_note": {
+    "config": {
+      "operation": "get_lead_note",
+      "note_id": "LN0001"
+    },
+    "method": "GET",
+    "path": "/site/leads/notes/LN0001",
+    "response": {
+      "body": {
+        "note": {
+          "id": "LN0001",
+          "content": "Nipugima rohubo uhebece revme acodeucu pecpuehi viok ugivepsuw ime ucho ja gefa kafhega tiwe. Zitatuwo dawvumka onzesda zuwek fuw ji hegmor med ohi lu tachobev lehlu fohiki no raduvu ta mulgot gofowo. Vutehnow re corhezte hepba zokozhih tot pujvuc badraiko rif pid vunujku onsiv otu subuka pa.",
+          "category": "call",
+          "created_by": "agentid",
+          "created_date": "2023-04-14T19:44:14.286Z",
+          "is_pinned": true
+        }
+      },
+      "header": {
+        "x-rate-limit-limit": 100,
+        "x-rate-limit-remaining": 91,
+        "x-rate-limit-reset": 1653051600
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#get-site-leads-notes-note_id-2",
+    "status": 200
+  },
+  "list_labels": {
+    "config": {
+      "operation": "list_labels"
+    },
+    "method": "GET",
+    "path": "/site/leads/labels",
+    "response": {
+      "body": {
+        "paging": {
+          "limit": 500,
+          "count": 5,
+          "offset": 0
+        },
+        "labels": [
+          {
+            "id": "LDID0",
+            "created_date": "2023-06-01T10:02:12.297Z",
+            "updated_date": "2023-06-11T14:19:16.000Z",
+            "name": "Chimichanga",
+            "color": "#0B5C7A",
+            "created_by": "AGENT_MDID0",
+            "group": {
+              "id": "LGDID0",
+              "name": "Buyer Labels",
+              "created_date": "2022-01-13T23:28:25.803Z",
+              "created_by": "AGENT_MDID0",
+              "updated_date": "2022-01-13T23:28:25.803Z"
+            }
+          },
+          {
+            "id": "LDID1",
+            "created_date": "2023-06-01T10:02:12.297Z",
+            "updated_date": "2023-06-11T14:19:16.000Z",
+            "name": "Guacamole",
+            "color": "#0B5C7A",
+            "created_by": "AGENT_MDID0",
+            "group": {
+              "id": "LGDID0",
+              "name": "Buyer Labels",
+              "created_date": "2022-01-13T23:28:25.803Z",
+              "created_by": "AGENT_MDID0",
+              "updated_date": "2022-01-13T23:28:25.803Z"
+            }
+          },
+          {
+            "id": "LDID2",
+            "created_date": "2023-06-01T10:02:12.297Z",
+            "updated_date": "2023-06-11T14:19:16.000Z",
+            "name": "Horchata",
+            "color": "#0B5C7A",
+            "created_by": "AGENT_MDID0",
+            "group": {
+              "id": "LGDID0",
+              "name": "Buyer Labels",
+              "created_date": "2022-01-13T23:28:25.803Z",
+              "created_by": "AGENT_MDID0",
+              "updated_date": "2022-01-13T23:28:25.803Z"
+            }
+          },
+          {
+            "id": "LDID3",
+            "created_date": "2023-06-01T10:02:12.297Z",
+            "updated_date": "2023-06-11T14:19:16.000Z",
+            "name": "Churros",
+            "color": "#0B5C7A",
+            "created_by": "AGENT_MDID0",
+            "group": {
+              "id": "LGDID0",
+              "name": "Buyer Labels",
+              "created_date": "2022-01-13T23:28:25.803Z",
+              "created_by": "AGENT_MDID0",
+              "updated_date": "2022-01-13T23:28:25.803Z"
+            }
+          },
+          {
+            "id": "LDID4",
+            "created_date": "2023-06-01T10:02:12.323Z",
+            "updated_date": "2023-06-11T14:19:16.000Z",
+            "name": "Chicken Biryani",
+            "color": "#0B5C7A",
+            "created_by": "AGENT_MDID0"
+          }
+        ]
+      },
+      "header": {
+        "x-rate-limit-limit": 100,
+        "x-rate-limit-remaining": 91,
+        "x-rate-limit-reset": 1653051600
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#get-site-leads-labels-all-2",
+    "status": 200
+  },
+  "get_label": {
+    "config": {
+      "operation": "get_label",
+      "label_id": "LDID0"
+    },
+    "method": "GET",
+    "path": "/site/leads/labels/LDID0",
+    "response": {
+      "body": {
+        "label": {
+          "id": "LDID0",
+          "created_date": "2023-06-01T10:02:12.297Z",
+          "updated_date": "2023-06-21T10:02:12.297Z",
+          "name": "Chimichanga",
+          "color": "#0B5C7A",
+          "created_by": "AGENT_MDID0",
+          "is_deleted": false,
+          "group": {
+            "id": "LGDID0",
+            "name": "Buyer Labels",
+            "created_date": "2022-01-13T23:28:25.803Z",
+            "created_by": "AGENT_MDID0",
+            "updated_date": "2022-01-13T23:28:25.803Z"
+          }
+        }
+      },
+      "header": {
+        "x-rate-limit-limit": 100,
+        "x-rate-limit-remaining": 91,
+        "x-rate-limit-reset": 1653051600
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#get-site-leads-labels-label_id-2",
+    "status": 200
+  },
+  "create_label": {
+    "config": {
+      "operation": "create_label",
+      "body": {
+        "name": "VALUE",
+        "color": "#DB0A5B"
+      }
+    },
+    "method": "POST",
+    "path": "/site/leads/labels",
+    "response": {
+      "body": {
+        "id": "LDID0"
+      },
+      "header": {
+        "x-rate-limit-limit": 100,
+        "x-rate-limit-remaining": 91,
+        "x-rate-limit-reset": 1677130510
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#post-site-leads-labels-2",
+    "status": 201
+  },
+  "delete_label": {
+    "config": {
+      "operation": "delete_label",
+      "label_id": "LDID0"
+    },
+    "method": "DELETE",
+    "path": "/site/leads/labels/LDID0",
+    "response": {
+      "message": "The label LDID0 was deleted successfully."
+    },
+    "source": "https://public.cincapi.com/v2/docs/#delete-site-leads-labels-label_id",
+    "status": 200
+  },
+  "apply_lead_labels": {
+    "config": {
+      "operation": "apply_lead_labels",
+      "lead_id": "LEAD_MDID0",
+      "body": {
+        "labels": [
+          {
+            "id": "LDID0"
+          },
+          {
+            "id": "LDID1"
+          },
+          {
+            "id": "LDID2"
+          }
+        ]
+      }
+    },
+    "method": "POST",
+    "path": "/site/leads/LEAD_MDID0/labels/apply",
+    "response": {
+      "body": {
+        "message": "All given labels have been applied on leadid LEAD_MDID0"
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#post-site-leads-lead_id-labels-apply",
+    "status": 200
+  },
+  "remove_lead_labels": {
+    "config": {
+      "operation": "remove_lead_labels",
+      "lead_id": "LEAD_MDID0",
+      "body": {
+        "labels": [
+          {
+            "id": "LDID0"
+          },
+          {
+            "id": "LDID1"
+          },
+          {
+            "id": "LDID2"
+          }
+        ]
+      }
+    },
+    "method": "POST",
+    "path": "/site/leads/LEAD_MDID0/labels/remove",
+    "response": {
+      "body": {
+        "message": "All given labels have been removed on leadid LEAD_MDID0"
+      }
+    },
+    "source": "https://public.cincapi.com/v2/docs/#post-site-leads-lead_id-labels-remove",
+    "status": 200
+  }
+}
