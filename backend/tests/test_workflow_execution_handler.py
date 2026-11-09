@@ -2069,12 +2069,16 @@ class TestConcurrentExecution:
         assert "C:start" in execution_log
         assert "C:end" in execution_log
 
-    async def test_max_concurrency_limits_parallel_execution(self, handler):
+    async def test_max_concurrency_limits_parallel_execution(self, handler, monkeypatch):
         """
         Test that max_concurrency limits how many nodes run in parallel.
 
         With max_concurrency=2 and 4 independent nodes, at most 2 should run at once.
         """
+        # Past 3 GB RSS the executor runs a full gc.collect after each node: about 1s in a
+        # test worker that has imported every integration, longer than the waits below.
+        import wss.handlers.workflow_execution_handler as execution_handler
+        monkeypatch.setattr(execution_handler, "get_rss_mb", lambda: 0)
         active_count = 0
         max_active_seen = 0
         lock = asyncio.Lock()
