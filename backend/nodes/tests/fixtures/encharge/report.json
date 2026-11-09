@@ -1,0 +1,519 @@
+[
+  {
+    "provider": "encharge",
+    "node_type": "automation-encharge",
+    "checked": 13,
+    "passed": 0,
+    "failed": 13,
+    "fixture_errors": 0,
+    "response_checked": 13,
+    "auth_checked": 13,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 13,
+      "total": 15
+    },
+    "operations": [
+      {
+        "operation": "get_people",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.encharge.io/v1/people?people%5B0%5D%5Bid%5D=1&people%5B0%5D%5BuserId%5D=1&people%5B0%5D%5Bemail%5D=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /people",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "1380e64bd95fd15e240c25d54e51dc8643f5dc2a1cd626d2f1b731c854ed1243"
+          }
+        ],
+        "failures": [
+          "request: KeyError: 'apiKey'"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "people": "[{\"id\": \"1\", \"userId\": \"1\", \"email\": \"1\"}]",
+          "operation": "get_people"
+        },
+        "passed": false
+      },
+      {
+        "operation": "upsert_people",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.encharge.io/v1/people",
+            "content_type": "application/json",
+            "body": "[{\"id\":\"1\",\"userId\":\"1\",\"email\":\"1\",\"name\":\"1\",\"firstName\":\"1\",\"lastName\":\"1\"}]",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "79",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /people",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "1380e64bd95fd15e240c25d54e51dc8643f5dc2a1cd626d2f1b731c854ed1243"
+          }
+        ],
+        "failures": [
+          "request: KeyError: 'apiKey'"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "upsert_people",
+          "people": "[{\"id\": \"1\", \"userId\": \"1\", \"email\": \"1\", \"name\": \"1\", \"firstName\": \"1\", \"lastName\": \"1\"}]"
+        },
+        "passed": false
+      },
+      {
+        "operation": "archive_people",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api.encharge.io/v1/people?people%5B0%5D%5Bid%5D=1&people%5B0%5D%5BuserId%5D=1&people%5B0%5D%5Bemail%5D=1&force=false",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /people",
+            "security_declared": true,
+            "response_status": 204,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [
+          "request: KeyError: 'apiKey'"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "people": "[{\"id\": \"1\", \"userId\": \"1\", \"email\": \"1\"}]",
+          "operation": "archive_people",
+          "force": false
+        },
+        "passed": false
+      },
+      {
+        "operation": "get_account",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.encharge.io/v1/accounts/info",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /accounts/info",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "aadf0b0e8028e717ba5c011738893a72a96909d5f05957c5280ec375a7be3633"
+          }
+        ],
+        "failures": [
+          "request: ValueError: Authentication is missing or in the wrong location/scheme"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_account"
+        },
+        "passed": false
+      },
+      {
+        "operation": "list_fields",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.encharge.io/v1/fields",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /fields",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "fe6c253a80189c4aed03f8e3b1c8d415e34bb916bc326e98271607b3c9cad4ef"
+          }
+        ],
+        "failures": [
+          "request: ValueError: Authentication is missing or in the wrong location/scheme"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_fields"
+        },
+        "passed": false
+      },
+      {
+        "operation": "create_fields",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.encharge.io/v1/fields",
+            "content_type": "application/json",
+            "body": "[{\"name\":\"1\",\"title\":\"1\",\"type\":\"string\",\"format\":\"date\",\"readOnly\":false,\"array\":false,\"tooltip\":\"1\",\"icon\":\"1\",\"canMapFrom\":false,\"firstClassField\":false,\"createdBy\":\"1\"}]",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "173",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /fields",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "fe6c253a80189c4aed03f8e3b1c8d415e34bb916bc326e98271607b3c9cad4ef"
+          }
+        ],
+        "failures": [
+          "request: ValueError: Authentication is missing or in the wrong location/scheme"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_fields",
+          "fields": "[{\"name\": \"1\", \"title\": \"1\", \"type\": \"string\", \"format\": \"date\", \"readOnly\": false, \"array\": false, \"tooltip\": \"1\", \"icon\": \"1\", \"canMapFrom\": false, \"firstClassField\": false, \"createdBy\": \"1\"}]"
+        },
+        "passed": false
+      },
+      {
+        "operation": "update_field",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PATCH",
+            "url": "https://api.encharge.io/v1/fields/1",
+            "content_type": "application/json",
+            "body": "{\"name\":\"1\",\"title\":\"1\",\"type\":\"string\",\"format\":\"date\",\"readOnly\":false,\"array\":false,\"tooltip\":\"1\",\"icon\":\"1\",\"canMapFrom\":false,\"firstClassField\":false,\"createdBy\":\"1\"}",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "171",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PATCH /fields/{fieldName}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "87e9cd0621d80dcc1d516592e029d255b1b8f29fa98d6d39414ffb979fc7a029"
+          }
+        ],
+        "failures": [
+          "request: ValueError: Authentication is missing or in the wrong location/scheme"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "field_name": "1",
+          "operation": "update_field",
+          "field": "{\"name\": \"1\", \"title\": \"1\", \"type\": \"string\", \"format\": \"date\", \"readOnly\": false, \"array\": false, \"tooltip\": \"1\", \"icon\": \"1\", \"canMapFrom\": false, \"firstClassField\": false, \"createdBy\": \"1\"}"
+        },
+        "passed": false
+      },
+      {
+        "operation": "delete_field",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api.encharge.io/v1/fields/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /fields/{fieldName}",
+            "security_declared": true,
+            "response_status": 204,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [
+          "request: ValueError: Authentication is missing or in the wrong location/scheme"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "field_name": "1",
+          "operation": "delete_field"
+        },
+        "passed": false
+      },
+      {
+        "operation": "list_segments",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.encharge.io/v1/segments",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /segments",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "cf84482b9efdd9291a36643471c6e09c79a69623f87a7b61265b660e54e69eaf"
+          }
+        ],
+        "failures": [
+          "request: ValueError: Authentication is missing or in the wrong location/scheme"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_segments"
+        },
+        "passed": false
+      },
+      {
+        "operation": "list_segment_people",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.encharge.io/v1/segments/1/people?limit=100&offset=0&attributes=1&sort=1&order=asc",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /segments/{segmentId}/people",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "6fcad929e803ce894e2aa7d6b64a6f84b3bb50ee62d8ba80b1cc080b40ff9e44"
+          }
+        ],
+        "failures": [
+          "request: ValueError: Authentication is missing or in the wrong location/scheme"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_segment_people",
+          "segment_id": 1,
+          "limit": 100,
+          "offset": 0,
+          "attributes": "1",
+          "sort": "1",
+          "order": "asc"
+        },
+        "passed": false
+      },
+      {
+        "operation": "add_tags",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.encharge.io/v1/tags",
+            "content_type": "application/json",
+            "body": "{\"id\":\"1\",\"userId\":\"1\",\"email\":\"1\",\"tag\":\"1\"}",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "45",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /tags",
+            "security_declared": true,
+            "response_status": 201,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [
+          "request: ValueError: Authentication is missing or in the wrong location/scheme"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "id": "1",
+          "userId": "1",
+          "email": "1",
+          "operation": "add_tags",
+          "tag": "1"
+        },
+        "passed": false
+      },
+      {
+        "operation": "remove_tags",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api.encharge.io/v1/tags",
+            "content_type": "application/json",
+            "body": "{\"id\":\"1\",\"userId\":\"1\",\"email\":\"1\",\"tag\":\"1\"}",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "45",
+              "content-type": "application/json"
+            },
+            "spec_operation": "DELETE /tags",
+            "security_declared": true,
+            "response_status": 204,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [
+          "request: ValueError: Authentication is missing or in the wrong location/scheme"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "id": "1",
+          "userId": "1",
+          "email": "1",
+          "operation": "remove_tags",
+          "tag": "1"
+        },
+        "passed": false
+      },
+      {
+        "operation": "unsubscribe_person",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.encharge.io/v1/people/unsubscribe?id=1&userId=1&email=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.encharge.io",
+              "content-length": "0",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-encharge-token": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "POST /people/unsubscribe",
+            "security_declared": true,
+            "response_status": 204,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [
+          "request: ValueError: Authentication is missing or in the wrong location/scheme"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "id": "1",
+          "userId": "1",
+          "email": "1",
+          "operation": "unsubscribe_person"
+        },
+        "passed": false
+      }
+    ]
+  }
+]

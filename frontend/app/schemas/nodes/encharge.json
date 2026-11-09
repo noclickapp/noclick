@@ -1,0 +1,869 @@
+{
+  "$defs": {
+    "AddTags": {
+      "additionalProperties": false,
+      "description": "Add one or more comma-separated tags to an existing person.",
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userid"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "operation": {
+          "const": "add_tags",
+          "default": "add_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag": {
+          "description": "Tag name, or comma-separated tag names.",
+          "minLength": 1,
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag"
+      ],
+      "title": "AddTags",
+      "type": "object"
+    },
+    "ArchivePeople": {
+      "additionalProperties": false,
+      "description": "Archive people, or permanently delete their data when explicitly requested.",
+      "properties": {
+        "people": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/PersonIdentifier"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "type": "array"
+          },
+          "description": "JSON array of people identified by id, userId or email, for example [{\"email\":\"slav@encharge.io\"}].",
+          "title": "People",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "archive_people",
+          "default": "archive_people",
+          "title": "Operation",
+          "type": "string"
+        },
+        "force": {
+          "default": false,
+          "description": "Permanently delete all person data for GDPR removal instead of archiving.",
+          "title": "Force",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "people"
+      ],
+      "title": "ArchivePeople",
+      "type": "object"
+    },
+    "CreateFields": {
+      "additionalProperties": false,
+      "description": "Create person field definitions.",
+      "properties": {
+        "operation": {
+          "const": "create_fields",
+          "default": "create_fields",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fields": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/PersonField"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "description": "JSON array of person field definitions with name and type. readOnly and array default to false.",
+          "title": "Fields",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "title": "CreateFields",
+      "type": "object"
+    },
+    "DeleteField": {
+      "additionalProperties": false,
+      "description": "Delete a person field definition.",
+      "properties": {
+        "field_name": {
+          "description": "Unique person field name, not its display title.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Field Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_field",
+          "default": "delete_field",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_name"
+      ],
+      "title": "DeleteField",
+      "type": "object"
+    },
+    "EnchargeAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "encharge_api_key",
+          "default": "encharge_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Encharge API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste the API key from your Encharge Account page to automate your own account. NoClick sends it in the X-Encharge-Token header.",
+      "x-credential-url": "https://app.encharge.io/account/info"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Read account name, site, timezone and people count.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetPeople": {
+      "additionalProperties": false,
+      "description": "Retrieve specific people by their identifiers.",
+      "properties": {
+        "people": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/PersonIdentifier"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "type": "array"
+          },
+          "description": "JSON array of people identified by id, userId or email, for example [{\"email\":\"slav@encharge.io\"}].",
+          "title": "People",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "get_people",
+          "default": "get_people",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "people"
+      ],
+      "title": "GetPeople",
+      "type": "object"
+    },
+    "ListFields": {
+      "additionalProperties": false,
+      "description": "List the account's person fields.",
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFields",
+      "type": "object"
+    },
+    "ListSegmentPeople": {
+      "additionalProperties": false,
+      "description": "Read one page of people in a dynamic segment.",
+      "properties": {
+        "operation": {
+          "const": "list_segment_people",
+          "default": "list_segment_people",
+          "title": "Operation",
+          "type": "string"
+        },
+        "segment_id": {
+          "minimum": 1,
+          "title": "Segment Id",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated person field names to retrieve.",
+          "title": "Attributes"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "ListSegmentPeople",
+      "type": "object"
+    },
+    "ListSegments": {
+      "additionalProperties": false,
+      "description": "List dynamic segments in the account.",
+      "properties": {
+        "operation": {
+          "const": "list_segments",
+          "default": "list_segments",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSegments",
+      "type": "object"
+    },
+    "Person": {
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userid"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        }
+      },
+      "title": "Person",
+      "type": "object"
+    },
+    "PersonField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "type": {
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "integer",
+            "any"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "enum": [
+                "date",
+                "date-time"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format",
+          "enum": [
+            "date",
+            "date-time"
+          ],
+          "x-enum-searchable": true
+        },
+        "readOnly": {
+          "default": false,
+          "title": "Readonly",
+          "type": "boolean"
+        },
+        "array": {
+          "default": false,
+          "title": "Array",
+          "type": "boolean"
+        },
+        "tooltip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tooltip"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Icon"
+        },
+        "canMapFrom": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canmapfrom"
+        },
+        "firstClassField": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstclassfield"
+        },
+        "createdBy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Createdby"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "title": "PersonField",
+      "type": "object"
+    },
+    "PersonIdentifier": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userid"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "PersonIdentifier",
+      "type": "object"
+    },
+    "RemoveTags": {
+      "additionalProperties": false,
+      "description": "Remove one or more comma-separated tags from an existing person.",
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userid"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "operation": {
+          "const": "remove_tags",
+          "default": "remove_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag": {
+          "description": "Tag name, or comma-separated tag names.",
+          "minLength": 1,
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag"
+      ],
+      "title": "RemoveTags",
+      "type": "object"
+    },
+    "UnsubscribePerson": {
+      "additionalProperties": false,
+      "description": "Unsubscribe a person from receiving further emails.",
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Userid"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "operation": {
+          "const": "unsubscribe_person",
+          "default": "unsubscribe_person",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "UnsubscribePerson",
+      "type": "object"
+    },
+    "UpdateField": {
+      "additionalProperties": false,
+      "description": "Modify a person field using its complete definition.",
+      "properties": {
+        "field_name": {
+          "description": "Unique person field name, not its display title.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Field Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_field",
+          "default": "update_field",
+          "title": "Operation",
+          "type": "string"
+        },
+        "field": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "$ref": "#/$defs/PersonField"
+          },
+          "description": "JSON field definition; name must match the selected field name.",
+          "title": "Field",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "field_name",
+        "field"
+      ],
+      "title": "UpdateField",
+      "type": "object"
+    },
+    "UpsertPeople": {
+      "additionalProperties": false,
+      "description": "Create people or update those with matching identifiers and custom fields.",
+      "properties": {
+        "operation": {
+          "const": "upsert_people",
+          "default": "upsert_people",
+          "title": "Operation",
+          "type": "string"
+        },
+        "people": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/Person"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "type": "array"
+          },
+          "description": "JSON array of people, each with id, userId or email. Include names and custom person fields as needed.",
+          "title": "People",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "people"
+      ],
+      "title": "UpsertPeople",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_tags": "#/$defs/AddTags",
+          "archive_people": "#/$defs/ArchivePeople",
+          "create_fields": "#/$defs/CreateFields",
+          "delete_field": "#/$defs/DeleteField",
+          "get_account": "#/$defs/GetAccount",
+          "get_people": "#/$defs/GetPeople",
+          "list_fields": "#/$defs/ListFields",
+          "list_segment_people": "#/$defs/ListSegmentPeople",
+          "list_segments": "#/$defs/ListSegments",
+          "remove_tags": "#/$defs/RemoveTags",
+          "unsubscribe_person": "#/$defs/UnsubscribePerson",
+          "update_field": "#/$defs/UpdateField",
+          "upsert_people": "#/$defs/UpsertPeople"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetPeople"
+        },
+        {
+          "$ref": "#/$defs/UpsertPeople"
+        },
+        {
+          "$ref": "#/$defs/ArchivePeople"
+        },
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListFields"
+        },
+        {
+          "$ref": "#/$defs/CreateFields"
+        },
+        {
+          "$ref": "#/$defs/UpdateField"
+        },
+        {
+          "$ref": "#/$defs/DeleteField"
+        },
+        {
+          "$ref": "#/$defs/ListSegments"
+        },
+        {
+          "$ref": "#/$defs/ListSegmentPeople"
+        },
+        {
+          "$ref": "#/$defs/AddTags"
+        },
+        {
+          "$ref": "#/$defs/RemoveTags"
+        },
+        {
+          "$ref": "#/$defs/UnsubscribePerson"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EnchargeAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Encharge Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
