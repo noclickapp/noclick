@@ -1,0 +1,195 @@
+{
+  "run_full_sync": {
+    "config": {
+      "operation": "run_full_sync"
+    },
+    "method": "POST",
+    "path": "/sync/run-full",
+    "contract_operation_id": "trigger_full_pipeline_sync_run_full_post"
+  },
+  "run_banner_sync": {
+    "config": {
+      "operation": "run_banner_sync"
+    },
+    "method": "POST",
+    "path": "/sync/banner",
+    "contract_operation_id": "trigger_banner_sync_sync_banner_post"
+  },
+  "run_backfills": {
+    "config": {
+      "operation": "run_backfills",
+      "mode": "incremental"
+    },
+    "method": "POST",
+    "path": "/sync/backfill/all",
+    "contract_operation_id": "trigger_all_backfills_sync_backfill_all_post"
+  },
+  "run_mapping_sync": {
+    "config": {
+      "operation": "run_mapping_sync"
+    },
+    "method": "POST",
+    "path": "/sync/mapping",
+    "contract_operation_id": "trigger_mapping_sync_sync_mapping_post"
+  },
+  "run_reconciliation": {
+    "config": {
+      "operation": "run_reconciliation"
+    },
+    "method": "POST",
+    "path": "/sync/reconcile",
+    "contract_operation_id": "trigger_reconciliation_sync_reconcile_post"
+  },
+  "run_gap_detection": {
+    "config": {
+      "operation": "run_gap_detection"
+    },
+    "method": "POST",
+    "path": "/sync/gap-detection",
+    "contract_operation_id": "trigger_gap_detection_sync_gap_detection_post"
+  },
+  "get_mapping_suggestions": {
+    "config": {
+      "operation": "get_mapping_suggestions",
+      "qbo_customer_id": "123"
+    },
+    "method": "GET",
+    "path": "/mapping/{qbo_customer_id}/suggestions",
+    "contract_operation_id": "get_suggestions_mapping__qbo_customer_id__suggestions_get"
+  },
+  "get_sync_status": {
+    "config": {
+      "operation": "get_sync_status"
+    },
+    "method": "GET",
+    "path": "/admin/sync-status",
+    "contract_operation_id": "admin_sync_status_admin_sync_status_get"
+  },
+  "get_gap_summary": {
+    "config": {
+      "operation": "get_gap_summary"
+    },
+    "method": "GET",
+    "path": "/admin/gap-summary",
+    "contract_operation_id": "admin_gap_summary_admin_gap_summary_get"
+  },
+  "get_learning_insights": {
+    "config": {
+      "operation": "get_learning_insights"
+    },
+    "method": "GET",
+    "path": "/admin/learning/data",
+    "contract_operation_id": "admin_learning_data_admin_learning_data_get"
+  },
+  "list_logs": {
+    "config": {
+      "operation": "list_logs",
+      "max_lines": 1000,
+      "level": ""
+    },
+    "method": "GET",
+    "path": "/admin/logs/raw",
+    "contract_operation_id": "admin_logs_raw_admin_logs_raw_get"
+  },
+  "assign_mapping": {
+    "config": {
+      "operation": "assign_mapping",
+      "qbo_customer_id": "123",
+      "sf_account": "123",
+      "match_method": "manual",
+      "redirect_to": "/admin/unmatched"
+    },
+    "method": "POST",
+    "path": "/admin/assign",
+    "contract_operation_id": "admin_assign_mapping_admin_assign_post"
+  },
+  "mark_paid": {
+    "config": {
+      "operation": "mark_paid",
+      "sf_account": "123",
+      "redirect_to": "/admin/mappings"
+    },
+    "method": "POST",
+    "path": "/admin/mark-paid",
+    "contract_operation_id": "admin_mark_paid_admin_mark_paid_post"
+  },
+  "unmark_paid": {
+    "config": {
+      "operation": "unmark_paid",
+      "sf_account": "123",
+      "redirect_to": "/admin/mappings"
+    },
+    "method": "POST",
+    "path": "/admin/unmark-paid",
+    "contract_operation_id": "admin_unmark_paid_admin_unmark_paid_post"
+  },
+  "resolve_gap": {
+    "config": {
+      "operation": "resolve_gap",
+      "gap_id": 1,
+      "resolution": "false_alarm"
+    },
+    "method": "POST",
+    "path": "/admin/gap/{gap_id}/resolve",
+    "contract_operation_id": "admin_resolve_gap_admin_gap__gap_id__resolve_post"
+  },
+  "resolve_all_gaps": {
+    "config": {
+      "operation": "resolve_all_gaps",
+      "gap_type": "123",
+      "resolution": "false_alarm"
+    },
+    "method": "POST",
+    "path": "/admin/gaps/resolve-all",
+    "contract_operation_id": "admin_resolve_all_gaps_admin_gaps_resolve_all_post"
+  },
+  "get_banner_audit_status": {
+    "config": {
+      "operation": "get_banner_audit_status"
+    },
+    "method": "GET",
+    "path": "/admin/banner-audit/status",
+    "contract_operation_id": "admin_banner_audit_status_admin_banner_audit_status_get"
+  },
+  "get_banner_audit": {
+    "config": {
+      "operation": "get_banner_audit",
+      "limit": 0
+    },
+    "method": "GET",
+    "path": "/admin/banner-audit/json",
+    "contract_operation_id": "admin_banner_audit_json_admin_banner_audit_json_get"
+  },
+  "adjust_mapping_confidence": {
+    "config": {
+      "operation": "adjust_mapping_confidence"
+    },
+    "method": "POST",
+    "path": "/admin/learning/adjust-confidence",
+    "contract_operation_id": "admin_adjust_confidence_admin_learning_adjust_confidence_post"
+  },
+  "acknowledge_review": {
+    "config": {
+      "operation": "acknowledge_review",
+      "sf_account": "123",
+      "qbo_customer_id": "",
+      "reason": "",
+      "finding_type": "owner_mismatch",
+      "redirect_to": "/admin/sf-validation"
+    },
+    "method": "POST",
+    "path": "/admin/review/acknowledge",
+    "contract_operation_id": "admin_acknowledge_review_admin_review_acknowledge_post"
+  },
+  "revoke_review": {
+    "config": {
+      "operation": "revoke_review",
+      "sf_account": "123",
+      "finding_type": "owner_mismatch",
+      "redirect_to": "/admin/sf-validation"
+    },
+    "method": "POST",
+    "path": "/admin/review/revoke",
+    "contract_operation_id": "admin_revoke_review_admin_review_revoke_post"
+  }
+}
