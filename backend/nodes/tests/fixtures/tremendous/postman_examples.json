@@ -1,0 +1,4244 @@
+{
+  "source": "https://www.postman.com/collections/29175162-cc75288d-4d68-426b-a4fd-6cc5e071843d",
+  "sha256": "618db8d1930d9b2a2179f1831ac8413ea3c8cb62f967a4ac130365aa846abfa3",
+  "operations": {
+    "list_rewards": {
+      "name": "List rewards",
+      "id": "e38757c7-b01f-438f-8407-c405ff5075e5",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/rewards?offset=<integer>",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "rewards"
+          ],
+          "query": [
+            {
+              "description": "Offsets the returned list by the given number of rewards. The returned rewards are ordered (and offsetted) by their creation date (DESC).",
+              "key": "offset",
+              "value": "<integer>"
+            }
+          ]
+        },
+        "description": "Retrieve a list of all created rewards\n"
+      },
+      "response": [
+        {
+          "id": "271f1d0e-f51d-47fe-8257-acbe2710d4c1",
+          "name": "List of existing rewards. Ordered by creation date (DESC).",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards?offset=<integer>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards"
+              ],
+              "query": [
+                {
+                  "description": "Offsets the returned list by the given number of rewards. The returned rewards are ordered (and offsetted) by their creation date (DESC).",
+                  "key": "offset",
+                  "value": "<integer>"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"rewards\": [\n    {\n      \"id\": \"ZRJPHROXV16C\",\n      \"order_id\": \"5D8FSRB2P1UT\",\n      \"created_at\": \"<dateTime>\",\n      \"campaign_id\": \"NCB22IRVQVMP\",\n      \"products\": [\n        \"RRI4DTMDSMLM\"\n      ],\n      \"value\": {\n        \"denomination\": \"<double>\",\n        \"currency_code\": \"EGP\"\n      },\n      \"recipient\": {\n        \"name\": \"<string>\",\n        \"email\": \"<email>\",\n        \"phone\": \"939-751-3800\"\n      },\n      \"custom_fields\": [\n        {\n          \"id\": \"85ZCLYV5UWW8\",\n          \"value\": \"<string>\"\n        },\n        {\n          \"id\": \"GYMXDBDRHOOJ\",\n          \"value\": \"<string>\"\n        }\n      ],\n      \"delivery\": {\n        \"method\": \"LINK\",\n        \"status\": \"SCHEDULED\"\n      }\n    },\n    {\n      \"id\": \"FET1AIEGD8XX\",\n      \"order_id\": \"GTJW39T407Z1\",\n      \"created_at\": \"<dateTime>\",\n      \"campaign_id\": \"8HY9PZ4Z8MXG\",\n      \"products\": [\n        \"T71OOCTR9B0M\"\n      ],\n      \"value\": {\n        \"denomination\": \"<double>\",\n        \"currency_code\": \"NOK\"\n      },\n      \"recipient\": {\n        \"name\": \"<string>\",\n        \"email\": \"<email>\",\n        \"phone\": \"744-099-6567\"\n      },\n      \"custom_fields\": [\n        {\n          \"id\": \"4FDHCFI82DVH\",\n          \"value\": \"<string>\"\n        },\n        {\n          \"id\": \"W74WJQJBFJQL\",\n          \"value\": \"<string>\"\n        }\n      ],\n      \"delivery\": {\n        \"method\": \"EMAIL\",\n        \"status\": \"SUCCEEDED\"\n      }\n    }\n  ],\n  \"total_count\": \"<integer>\"\n}"
+        },
+        {
+          "id": "1c1cc8d2-6090-4ae9-af02-58047028ed56",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards?offset=<integer>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards"
+              ],
+              "query": [
+                {
+                  "description": "Offsets the returned list by the given number of rewards. The returned rewards are ordered (and offsetted) by their creation date (DESC).",
+                  "key": "offset",
+                  "value": "<integer>"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "9b22ee38-584e-493f-b9fd-f8ac95d79121",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards?offset=<integer>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards"
+              ],
+              "query": [
+                {
+                  "description": "Offsets the returned list by the given number of rewards. The returned rewards are ordered (and offsetted) by their creation date (DESC).",
+                  "key": "offset",
+                  "value": "<integer>"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "get_reward": {
+      "name": "Retrieve single reward",
+      "id": "44575f70-e031-40f3-9716-fdc770afc88e",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/rewards/:id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "rewards",
+            ":id"
+          ],
+          "variable": [
+            {
+              "id": "1d04820b-d3fc-49e3-8c37-4ce199208512",
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        },
+        "description": "Retrieve the reward, identified by the given `id` in the URL\n"
+      },
+      "response": [
+        {
+          "id": "b00ce218-78fc-45cd-825d-59ca62e78edd",
+          "name": "A reward (to be overwritten in specific reponses)",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"reward\": {\n    \"id\": \"VCM03RQBVQ3A\",\n    \"order_id\": \"DCU06MDP4CP2\",\n    \"created_at\": \"<dateTime>\",\n    \"campaign_id\": \"BWMHMU5SU6XX\",\n    \"products\": [\n      \"ZGRQGEVR5PQF\"\n    ],\n    \"value\": {\n      \"denomination\": \"<double>\",\n      \"currency_code\": \"DKK\"\n    },\n    \"recipient\": {\n      \"name\": \"<string>\",\n      \"email\": \"<email>\",\n      \"phone\": \"612-796-6786\"\n    },\n    \"custom_fields\": [\n      {\n        \"id\": \"LGVRCQMDRUWX\",\n        \"value\": \"<string>\"\n      },\n      {\n        \"id\": \"9TE7GRAVULUP\",\n        \"value\": \"<string>\"\n      }\n    ],\n    \"delivery\": {\n      \"method\": \"EMAIL\",\n      \"status\": \"SUCCEEDED\"\n    }\n  }\n}"
+        },
+        {
+          "id": "6d5b8e86-f1c3-4544-8bc8-de6d89b15032",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "0c573315-aaee-41f5-a997-4453e40d077b",
+          "name": "No resource could be found for the provided ID",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "09f60b9d-4ddf-4668-aada-72ad74f74fdd",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "resend_reward": {
+      "name": "Resend reward",
+      "id": "50ff7293-5ac2-4d5e-bd1e-90f705c9f56f",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/rewards/:id/resend",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "rewards",
+            ":id",
+            "resend"
+          ],
+          "variable": [
+            {
+              "id": "f3af6e07-5a66-4c66-a099-2e6876e50c1c",
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        },
+        "description": "Resends a reward, identified by the given `id` in the URL, to its recipient.\n"
+      },
+      "response": [
+        {
+          "id": "caaf2e0d-db24-4415-93c0-a9a9976f2b7f",
+          "name": "The request has succeeded.",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id/resend",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id",
+                "resend"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{}"
+        },
+        {
+          "id": "294d7212-c0c3-4165-8700-8b1fd6095563",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id/resend",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id",
+                "resend"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "b182e918-1cbe-4ad4-86fe-1a3cd50d81d6",
+          "name": "No resource could be found for the provided ID",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id/resend",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id",
+                "resend"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "defa7f52-6694-44a9-bbf3-53989c26160b",
+          "name": "Validation error of the sent parameters or request body",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id/resend",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id",
+                "resend"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+          "code": 422,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "4389ec9c-6591-4c1a-b8e5-2d1f3cb5297c",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id/resend",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id",
+                "resend"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "generate_reward_link": {
+      "name": "Generate a reward URL",
+      "id": "fc4ed8d5-c9c7-413e-b4c1-6d0de0091082",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/rewards/:id/generate_link",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "rewards",
+            ":id",
+            "generate_link"
+          ],
+          "variable": [
+            {
+              "id": "405d5063-bd37-49ca-8ed4-32af35a0a056",
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        },
+        "description": "Generate a redemption link for the reward identified by the `id` in the URL\n"
+      },
+      "response": [
+        {
+          "id": "22c8b2ac-cc49-45d9-b462-9bb353e5f5f8",
+          "name": "A redemption link for a reward",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id/generate_link",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id",
+                "generate_link"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"reward\": {\n    \"id\": \"TVEPS44EEAR2\",\n    \"link\": \"<string>\"\n  }\n}"
+        },
+        {
+          "id": "82fbb734-8c48-4ef1-9c1a-5dc37d42f05b",
+          "name": "Operation not permitted; only rewards that are of type link support this operation",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id/generate_link",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id",
+                "generate_link"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Forbidden",
+          "code": 403,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "949a5018-4909-41ad-86f0-37497749664d",
+          "name": "No resource could be found for the provided ID",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rewards/:id/generate_link",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                ":id",
+                "generate_link"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "list_orders": {
+      "name": "List orders",
+      "id": "171787e9-9d4f-458e-950a-547923913056",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/orders",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "orders"
+          ],
+          "query": [
+            {
+              "key": "offset",
+              "value": "",
+              "description": "Offsets the returned list by the given number of orders. The returned orders are ordered (and offsetted) by their creation date (DESC).",
+              "disabled": true
+            },
+            {
+              "key": "campaign_id",
+              "value": "",
+              "description": "Only return results with a matching campaign_id.",
+              "disabled": true
+            },
+            {
+              "key": "external_id",
+              "value": "",
+              "description": "Only return results with a matching external_id.",
+              "disabled": true
+            },
+            {
+              "key": "created_at[gte]",
+              "value": "",
+              "description": "Only return results where the created_at field is greater than or equal to the supplied value. The string needs to be an ISO 8601 datetime.",
+              "disabled": true
+            },
+            {
+              "key": "created_at[lte]",
+              "value": "",
+              "description": "Only return results where the created_at field is less than or equal to the supplied value. The string needs to be an ISO 8601 datetime.",
+              "disabled": true
+            }
+          ]
+        },
+        "description": "Retrieve a list of orders\n"
+      },
+      "response": [
+        {
+          "id": "22769005-1553-4192-9246-8fae375f5d1a",
+          "name": "List of existing orders. Ordered by creation date (DESC).",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders?offset=<integer>&campaign_id=<string>&external_id=<string>&created_at[gte]=<string>&created_at[lte]=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "description": "Offsets the returned list by the given number of orders. The returned orders are ordered (and offsetted) by their creation date (DESC).",
+                  "key": "offset",
+                  "value": "<integer>"
+                },
+                {
+                  "description": "Only return results with a matching campaign_id.",
+                  "key": "campaign_id",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Only return results with a matching external_id.",
+                  "key": "external_id",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Only return results where the created_at field is greater than or equal to the supplied value. The string needs to be an ISO 8601 datetime.",
+                  "key": "created_at[gte]",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Only return results where the created_at field is less than or equal to the supplied value. The string needs to be an ISO 8601 datetime.",
+                  "key": "created_at[lte]",
+                  "value": "<string>"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"orders\": [\n    {\n      \"id\": \"F99O9RNO0DGR\",\n      \"created_at\": \"<dateTime>\",\n      \"status\": \"CART\",\n      \"payment\": {\n        \"subtotal\": \"<double>\",\n        \"total\": \"<double>\",\n        \"fees\": \"<double>\",\n        \"funding_source_id\": \"BRQ1QCG4646S\",\n        \"refund\": {\n          \"total\": \"<double>\"\n        },\n        \"channel\": \"QUALTRICS\"\n      },\n      \"external_id\": \"<string>\",\n      \"campaign_id\": \"2IFP59ASIRFM\",\n      \"invoice_id\": \"<string>\",\n      \"reward\": {\n        \"id\": \"UMPV0DKLTJRE\",\n        \"order_id\": \"HVPWMENFE68G\",\n        \"created_at\": \"<dateTime>\",\n        \"campaign_id\": \"2LD63P9PSUOH\",\n        \"products\": [\n          \"F4JHY1V8H9CU\"\n        ],\n        \"value\": {\n          \"denomination\": \"<double>\",\n          \"currency_code\": \"PYG\"\n        },\n        \"recipient\": {\n          \"name\": \"<string>\",\n          \"email\": \"<email>\",\n          \"phone\": \"850-506-9436\"\n        },\n        \"custom_fields\": [\n          {\n            \"id\": \"6IGPDZEMTK4E\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"id\": \"11PTP7YOITYZ\",\n            \"value\": \"<string>\"\n          }\n        ],\n        \"delivery\": {\n          \"method\": \"LINK\",\n          \"status\": \"FAILED\"\n        }\n      }\n    },\n    {\n      \"id\": \"CZGXH6M2N8X6\",\n      \"created_at\": \"<dateTime>\",\n      \"status\": \"CART\",\n      \"payment\": {\n        \"subtotal\": \"<double>\",\n        \"total\": \"<double>\",\n        \"fees\": \"<double>\",\n        \"funding_source_id\": \"X1IYI7U2XRPD\",\n        \"refund\": {\n          \"total\": \"<double>\"\n        },\n        \"channel\": \"DECIPHER\"\n      },\n      \"external_id\": \"<string>\",\n      \"campaign_id\": \"QVLVON7XKU54\",\n      \"invoice_id\": \"<string>\",\n      \"reward\": {\n        \"id\": \"97KABJ86CON3\",\n        \"order_id\": \"G1NH68XLWVQK\",\n        \"created_at\": \"<dateTime>\",\n        \"campaign_id\": \"23DT18RTALHS\",\n        \"products\": [\n          \"Z3CE81NW5FRD\"\n        ],\n        \"value\": {\n          \"denomination\": \"<double>\",\n          \"currency_code\": \"PLN\"\n        },\n        \"recipient\": {\n          \"name\": \"<string>\",\n          \"email\": \"<email>\",\n          \"phone\": \"478-386-9357\"\n        },\n        \"custom_fields\": [\n          {\n            \"id\": \"DBR85B2X9HX0\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"id\": \"3PG973N44RA4\",\n            \"value\": \"<string>\"\n          }\n        ],\n        \"delivery\": {\n          \"method\": \"PHONE\",\n          \"status\": \"SCHEDULED\"\n        }\n      }\n    }\n  ],\n  \"total_count\": \"<integer>\"\n}"
+        },
+        {
+          "id": "62be040a-568c-48d2-8f4f-0c71e91ead9a",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders?offset=<integer>&campaign_id=<string>&external_id=<string>&created_at[gte]=<string>&created_at[lte]=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "description": "Offsets the returned list by the given number of orders. The returned orders are ordered (and offsetted) by their creation date (DESC).",
+                  "key": "offset",
+                  "value": "<integer>"
+                },
+                {
+                  "description": "Only return results with a matching campaign_id.",
+                  "key": "campaign_id",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Only return results with a matching external_id.",
+                  "key": "external_id",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Only return results where the created_at field is greater than or equal to the supplied value. The string needs to be an ISO 8601 datetime.",
+                  "key": "created_at[gte]",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Only return results where the created_at field is less than or equal to the supplied value. The string needs to be an ISO 8601 datetime.",
+                  "key": "created_at[lte]",
+                  "value": "<string>"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "bd4a830c-0bd8-4af8-bb53-669882099139",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders?offset=<integer>&campaign_id=<string>&external_id=<string>&created_at[gte]=<string>&created_at[lte]=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "description": "Offsets the returned list by the given number of orders. The returned orders are ordered (and offsetted) by their creation date (DESC).",
+                  "key": "offset",
+                  "value": "<integer>"
+                },
+                {
+                  "description": "Only return results with a matching campaign_id.",
+                  "key": "campaign_id",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Only return results with a matching external_id.",
+                  "key": "external_id",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Only return results where the created_at field is greater than or equal to the supplied value. The string needs to be an ISO 8601 datetime.",
+                  "key": "created_at[gte]",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Only return results where the created_at field is less than or equal to the supplied value. The string needs to be an ISO 8601 datetime.",
+                  "key": "created_at[lte]",
+                  "value": "<string>"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "get_order": {
+      "name": "Retrieve order",
+      "id": "bc4fb6ce-e567-4bcc-aad2-452408824e88",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/orders/:id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "orders",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        },
+        "description": "Retrieve the order, identified by the given `id` in the URL\n"
+      },
+      "response": [
+        {
+          "id": "fdcbc0a2-fbf0-4c62-92fc-b3fc87975896",
+          "name": "An order (to be overwritten in specific reponses)",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"order\": {\n    \"id\": \"HVNFVQRPDWUM\",\n    \"created_at\": \"<dateTime>\",\n    \"status\": \"FAILED\",\n    \"payment\": {\n      \"subtotal\": \"<double>\",\n      \"total\": \"<double>\",\n      \"fees\": \"<double>\",\n      \"funding_source_id\": \"MSXLEOM7RDNW\",\n      \"refund\": {\n        \"total\": \"<double>\"\n      },\n      \"channel\": \"QUALTRICS\"\n    },\n    \"external_id\": \"<string>\",\n    \"campaign_id\": \"6Z24ORP3FMB3\",\n    \"invoice_id\": \"<string>\",\n    \"reward\": {\n      \"id\": \"EYHJL7J3Q8BV\",\n      \"order_id\": \"U9AOTQCHL2OO\",\n      \"created_at\": \"<dateTime>\",\n      \"campaign_id\": \"WMQ3MPQNS0Q1\",\n      \"products\": [\n        \"6OHEGF348QQ0\"\n      ],\n      \"value\": {\n        \"denomination\": \"<double>\",\n        \"currency_code\": \"XOF\"\n      },\n      \"recipient\": {\n        \"name\": \"<string>\",\n        \"email\": \"<email>\",\n        \"phone\": \"805-340-6200\"\n      },\n      \"custom_fields\": [\n        {\n          \"id\": \"FU8VYB8F38XJ\",\n          \"value\": \"<string>\"\n        },\n        {\n          \"id\": \"LJDRZFQDHU6Z\",\n          \"value\": \"<string>\"\n        }\n      ],\n      \"delivery\": {\n        \"method\": \"LINK\",\n        \"status\": \"SCHEDULED\"\n      }\n    }\n  }\n}"
+        },
+        {
+          "id": "ed7ef72d-9e55-41b7-a7ad-9759ac7bc1fb",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "44d105b6-78fd-4e8e-82e6-12a4ceea53cf",
+          "name": "No resource could be found for the provided ID",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "11730bee-533a-4126-b48a-18b8374d2dea",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "create_order": {
+      "name": "Create order",
+      "id": "8450f82c-ee82-4560-b714-01a1ad0a0746",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"payment\": {\n    \"subtotal\": \"<double>\",\n    \"total\": \"<double>\",\n    \"fees\": \"<double>\",\n    \"funding_source_id\": \"T1FE6ZMMKC42\",\n    \"refund\": {\n      \"total\": \"<double>\"\n    },\n    \"channel\": \"TYPEFORM\"\n  },\n  \"external_id\": \"<string>\",\n  \"campaign_id\": \"Q1QJERZWCUR6\",\n  \"invoice_id\": \"<string>\",\n  \"reward\": {\n    \"id\": \"E8CPLCTO2JSG\",\n    \"order_id\": \"S7WWQ9QM5A0B\",\n    \"created_at\": \"<dateTime>\",\n    \"campaign_id\": \"H7JUIKNSDN7X\",\n    \"products\": [\n      \"EW6HMKQEI5EO\"\n    ],\n    \"value\": {\n      \"denomination\": \"<double>\",\n      \"currency_code\": \"CVE\"\n    },\n    \"recipient\": {\n      \"name\": \"<string>\",\n      \"email\": \"<email>\",\n      \"phone\": \"932-163-0559\"\n    },\n    \"custom_fields\": [\n      {\n        \"id\": \"N6U73ACXGALE\",\n        \"value\": \"<string>\"\n      },\n      {\n        \"id\": \"0EHT3VOG39E8\",\n        \"value\": \"<string>\"\n      }\n    ],\n    \"delivery\": {\n      \"method\": \"PHONE\",\n      \"status\": \"SUCCEEDED\"\n    }\n  }\n}",
+          "options": {
+            "raw": {
+              "headerFamily": "json",
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/orders",
+        "description": "Every time you want to send out a reward through Tremendous you need to create an order for it.\n\n## Request body\n\n[Order schema](https://developers.tremendous.com/reference/obj-schema-orders)\n\n### Funding sources\n\nThere are different ways to pay for gift cards and rewards on Tremendous. Every payment mechanism is called a \"funding source\".\n\nYou can retrieve a list of all available funding sources by using the [Funding sources API endpoint](https://tremendous.readme.io/reference/core-funding-source-index).\n\nThe Tremendous API sandbox environment comes with a single funding source that allows you to spend up to $5,000 in _fake money_ to test the API. [Learn more about the sandbox environment](https://tremendous.readme.io/reference/sandbox).\n\nThe HTTP status code `200` on the response will be used to indicate success.\n\nAfter processing successfully the reward gets queued to be delivered to it's recipient  \n(for delivery method `EMAIL` and `PHONE`). Delivery will happen asynchronously, after the response  \nhas been sent.\n\n### Idempotence\n\nRequests issued with the same external_id are idempotent.\n\nSubmitting an order with an already existing `external_id`, will result in a `201` response code.  \nIn this case the response will return a representation of the already existing order in the response body."
+      },
+      "response": [
+        {
+          "id": "78848089-7b5f-42ce-b06f-263eec2e85b1",
+          "name": "An order (to be overwritten in specific reponses)",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment\": {\n    \"subtotal\": \"<double>\",\n    \"total\": \"<double>\",\n    \"fees\": \"<double>\",\n    \"funding_source_id\": \"T1FE6ZMMKC42\",\n    \"refund\": {\n      \"total\": \"<double>\"\n    },\n    \"channel\": \"TYPEFORM\"\n  },\n  \"external_id\": \"<string>\",\n  \"campaign_id\": \"Q1QJERZWCUR6\",\n  \"invoice_id\": \"<string>\",\n  \"reward\": {\n    \"id\": \"E8CPLCTO2JSG\",\n    \"order_id\": \"S7WWQ9QM5A0B\",\n    \"created_at\": \"<dateTime>\",\n    \"campaign_id\": \"H7JUIKNSDN7X\",\n    \"products\": [\n      \"EW6HMKQEI5EO\"\n    ],\n    \"value\": {\n      \"denomination\": \"<double>\",\n      \"currency_code\": \"CVE\"\n    },\n    \"recipient\": {\n      \"name\": \"<string>\",\n      \"email\": \"<email>\",\n      \"phone\": \"932-163-0559\"\n    },\n    \"custom_fields\": [\n      {\n        \"id\": \"N6U73ACXGALE\",\n        \"value\": \"<string>\"\n      },\n      {\n        \"id\": \"0EHT3VOG39E8\",\n        \"value\": \"<string>\"\n      }\n    ],\n    \"delivery\": {\n      \"method\": \"PHONE\",\n      \"status\": \"SUCCEEDED\"\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/orders"
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"order\": {\n    \"id\": \"EAXGFU13M41F\",\n    \"created_at\": \"<dateTime>\",\n    \"status\": \"CART\",\n    \"payment\": {\n      \"subtotal\": \"<double>\",\n      \"total\": \"<double>\",\n      \"fees\": \"<double>\",\n      \"funding_source_id\": \"MD5IU6IOKPQE\",\n      \"refund\": {\n        \"total\": \"<double>\"\n      },\n      \"channel\": \"QUALTRICS\"\n    },\n    \"rewards\": [\n      {\n        \"id\": \"68DDG6D50D93\",\n        \"order_id\": \"5IB73M8W1PZX\",\n        \"created_at\": \"<dateTime>\",\n        \"campaign_id\": \"RNNAYQ74QPYC\",\n        \"products\": [\n          \"FXJXWKN4653Z\"\n        ],\n        \"value\": {\n          \"denomination\": \"<double>\",\n          \"currency_code\": \"HNL\"\n        },\n        \"recipient\": {\n          \"name\": \"<string>\",\n          \"email\": \"<email>\",\n          \"phone\": \"971-254-8091\"\n        },\n        \"custom_fields\": [\n          {\n            \"id\": \"QT9L2NLA00NF\",\n            \"value\": \"<string>\"\n          },\n          {\n            \"id\": \"1P5ATCO3DZ6Z\",\n            \"value\": \"<string>\"\n          }\n        ],\n        \"delivery\": {\n          \"method\": \"EMAIL\",\n          \"status\": \"SCHEDULED\",\n          \"link\": \"<string>\"\n        }\n      }\n    ],\n    \"external_id\": \"<string>\",\n    \"campaign_id\": \"RO3PP5F0XAN5\",\n    \"invoice_id\": \"<string>\"\n  }\n}"
+        },
+        {
+          "id": "cac46c14-8e1e-483e-81f2-0933751257c8",
+          "name": "Validation error of the sent parameters or request body",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment\": {\n    \"subtotal\": \"<double>\",\n    \"total\": \"<double>\",\n    \"fees\": \"<double>\",\n    \"funding_source_id\": \"T1FE6ZMMKC42\",\n    \"refund\": {\n      \"total\": \"<double>\"\n    },\n    \"channel\": \"TYPEFORM\"\n  },\n  \"external_id\": \"<string>\",\n  \"campaign_id\": \"Q1QJERZWCUR6\",\n  \"invoice_id\": \"<string>\",\n  \"reward\": {\n    \"id\": \"E8CPLCTO2JSG\",\n    \"order_id\": \"S7WWQ9QM5A0B\",\n    \"created_at\": \"<dateTime>\",\n    \"campaign_id\": \"H7JUIKNSDN7X\",\n    \"products\": [\n      \"EW6HMKQEI5EO\"\n    ],\n    \"value\": {\n      \"denomination\": \"<double>\",\n      \"currency_code\": \"CVE\"\n    },\n    \"recipient\": {\n      \"name\": \"<string>\",\n      \"email\": \"<email>\",\n      \"phone\": \"932-163-0559\"\n    },\n    \"custom_fields\": [\n      {\n        \"id\": \"N6U73ACXGALE\",\n        \"value\": \"<string>\"\n      },\n      {\n        \"id\": \"0EHT3VOG39E8\",\n        \"value\": \"<string>\"\n      }\n    ],\n    \"delivery\": {\n      \"method\": \"PHONE\",\n      \"status\": \"SUCCEEDED\"\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/orders"
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "98b5e8bb-1d94-430b-9640-2cd4a7703371",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment\": {\n    \"subtotal\": \"<double>\",\n    \"total\": \"<double>\",\n    \"fees\": \"<double>\",\n    \"funding_source_id\": \"T1FE6ZMMKC42\",\n    \"refund\": {\n      \"total\": \"<double>\"\n    },\n    \"channel\": \"TYPEFORM\"\n  },\n  \"external_id\": \"<string>\",\n  \"campaign_id\": \"Q1QJERZWCUR6\",\n  \"invoice_id\": \"<string>\",\n  \"reward\": {\n    \"id\": \"E8CPLCTO2JSG\",\n    \"order_id\": \"S7WWQ9QM5A0B\",\n    \"created_at\": \"<dateTime>\",\n    \"campaign_id\": \"H7JUIKNSDN7X\",\n    \"products\": [\n      \"EW6HMKQEI5EO\"\n    ],\n    \"value\": {\n      \"denomination\": \"<double>\",\n      \"currency_code\": \"CVE\"\n    },\n    \"recipient\": {\n      \"name\": \"<string>\",\n      \"email\": \"<email>\",\n      \"phone\": \"932-163-0559\"\n    },\n    \"custom_fields\": [\n      {\n        \"id\": \"N6U73ACXGALE\",\n        \"value\": \"<string>\"\n      },\n      {\n        \"id\": \"0EHT3VOG39E8\",\n        \"value\": \"<string>\"\n      }\n    ],\n    \"delivery\": {\n      \"method\": \"PHONE\",\n      \"status\": \"SUCCEEDED\"\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/orders"
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "1d23a4ca-c70e-4a22-a172-29f756938dd9",
+          "name": "Not enough funds to carry out the request. Please top-up your account",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment\": {\n    \"subtotal\": \"<double>\",\n    \"total\": \"<double>\",\n    \"fees\": \"<double>\",\n    \"funding_source_id\": \"T1FE6ZMMKC42\",\n    \"refund\": {\n      \"total\": \"<double>\"\n    },\n    \"channel\": \"TYPEFORM\"\n  },\n  \"external_id\": \"<string>\",\n  \"campaign_id\": \"Q1QJERZWCUR6\",\n  \"invoice_id\": \"<string>\",\n  \"reward\": {\n    \"id\": \"E8CPLCTO2JSG\",\n    \"order_id\": \"S7WWQ9QM5A0B\",\n    \"created_at\": \"<dateTime>\",\n    \"campaign_id\": \"H7JUIKNSDN7X\",\n    \"products\": [\n      \"EW6HMKQEI5EO\"\n    ],\n    \"value\": {\n      \"denomination\": \"<double>\",\n      \"currency_code\": \"CVE\"\n    },\n    \"recipient\": {\n      \"name\": \"<string>\",\n      \"email\": \"<email>\",\n      \"phone\": \"932-163-0559\"\n    },\n    \"custom_fields\": [\n      {\n        \"id\": \"N6U73ACXGALE\",\n        \"value\": \"<string>\"\n      },\n      {\n        \"id\": \"0EHT3VOG39E8\",\n        \"value\": \"<string>\"\n      }\n    ],\n    \"delivery\": {\n      \"method\": \"PHONE\",\n      \"status\": \"SUCCEEDED\"\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/orders"
+          },
+          "status": "Payment Required",
+          "code": 402,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "08fff654-03ae-47e9-9986-d29306eff75e",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment\": {\n    \"subtotal\": \"<double>\",\n    \"total\": \"<double>\",\n    \"fees\": \"<double>\",\n    \"funding_source_id\": \"T1FE6ZMMKC42\",\n    \"refund\": {\n      \"total\": \"<double>\"\n    },\n    \"channel\": \"TYPEFORM\"\n  },\n  \"external_id\": \"<string>\",\n  \"campaign_id\": \"Q1QJERZWCUR6\",\n  \"invoice_id\": \"<string>\",\n  \"reward\": {\n    \"id\": \"E8CPLCTO2JSG\",\n    \"order_id\": \"S7WWQ9QM5A0B\",\n    \"created_at\": \"<dateTime>\",\n    \"campaign_id\": \"H7JUIKNSDN7X\",\n    \"products\": [\n      \"EW6HMKQEI5EO\"\n    ],\n    \"value\": {\n      \"denomination\": \"<double>\",\n      \"currency_code\": \"CVE\"\n    },\n    \"recipient\": {\n      \"name\": \"<string>\",\n      \"email\": \"<email>\",\n      \"phone\": \"932-163-0559\"\n    },\n    \"custom_fields\": [\n      {\n        \"id\": \"N6U73ACXGALE\",\n        \"value\": \"<string>\"\n      },\n      {\n        \"id\": \"0EHT3VOG39E8\",\n        \"value\": \"<string>\"\n      }\n    ],\n    \"delivery\": {\n      \"method\": \"PHONE\",\n      \"status\": \"SUCCEEDED\"\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/orders"
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "approve_order": {
+      "name": "Approve order",
+      "id": "ebb169fc-da11-4926-9ac9-e78a5c7a9b2c",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/order_approvals/:id/approve",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "order_approvals",
+            ":id",
+            "approve"
+          ],
+          "variable": [
+            {
+              "id": "6759b852-cc1e-46e3-bceb-26826e734718",
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        },
+        "description": "Approves an order that is pending review, identified by the given\u00a0`id`\u00a0in the URL.\n\nApprovals is a feature that requires orders to be approved by an organization admin  \nbefore they are sent out. To enable approvals for your organization, please enable  \n'Allow approvals via API' via the organization''s 'Order Approvals' settings from the Tremendous dashboard."
+      },
+      "response": [
+        {
+          "id": "5bd08345-a553-494a-9a2b-be27654757b9",
+          "name": "An order (to be overwritten in specific reponses)",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order_approvals/:id/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order_approvals",
+                ":id",
+                "approve"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n    \"order\": {\n        \"id\": \"TQGAIK2QNJMD\",\n        \"external_id\": \"postman-collection-test\",\n        \"campaign_id\": \"8658HD9ILRHD\",\n        \"created_at\": \"2024-01-24T07:30:25.284Z\",\n        \"status\": \"EXECUTED\",\n        \"channel\": \"API\",\n        \"payment\": {\n            \"subtotal\": 5.5,\n            \"total\": 5.75,\n            \"fees\": 0.25\n        },\n        \"rewards\": [\n            {\n                \"id\": \"9QQ19TD9VLJ2\",\n                \"order_id\": \"TQGAIK2QNJMD\",\n                \"created_at\": \"2024-01-24T07:30:25.308Z\",\n                \"value\": {\n                    \"denomination\": 5.5,\n                    \"currency_code\": \"USD\"\n                },\n                \"delivery\": {\n                    \"method\": \"EMAIL\",\n                    \"status\": \"PENDING\"\n                },\n                \"recipient\": {\n                    \"email\": \"yash@tremendous.com\",\n                    \"name\": \"yash\",\n                    \"phone\": \"\"\n                }\n            }\n        ]\n    }\n}"
+        },
+        {
+          "id": "f17b1a2d-d805-4a6a-a220-05679d659fb0",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order_approvals/:id/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order_approvals",
+                ":id",
+                "approve"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "6c07f08f-36ce-4744-b9ea-b3101d99c672",
+          "name": "Not enough funds to carry out the request. Please top-up your account",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order_approvals/:id/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order_approvals",
+                ":id",
+                "approve"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "b5ac02a7-5a43-43ce-9fc7-260011664a22",
+          "name": "API approvals are not enabled",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order_approvals/:id/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order_approvals",
+                ":id",
+                "approve"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "0e250a39-1806-4771-a43f-851004280a03",
+          "name": "No resource could be found for the provided ID",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order_approvals/:id/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order_approvals",
+                ":id",
+                "approve"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "9c72707c-b441-4964-bed3-4fc24e836fc1",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order_approvals/:id/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order_approvals",
+                ":id",
+                "approve"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "reject_order": {
+      "name": "Reject order",
+      "id": "b16cadf7-67e2-41db-9af5-35b3c3b65bc3",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/order_approvals/:id/reject",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "order_approvals",
+            ":id",
+            "reject"
+          ],
+          "variable": [
+            {
+              "id": "6759b852-cc1e-46e3-bceb-26826e734718",
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        },
+        "description": "Rejects an order that is pending review, identified by the given\u00a0`id`\u00a0in the URL.\n\nApprovals is a feature that requires orders to be approved by an organization admin  \nbefore they are sent out. To enable approvals for your organization, please enable  \n'Allow approvals via API' via the organization''s 'Order Approvals' settings from the Tremendous dashboard."
+      },
+      "response": [
+        {
+          "id": "4969d50c-55bf-4605-af13-254d7180adc8",
+          "name": "An order (to be overwritten in specific reponses)",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order_approvals/:id/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order_approvals",
+                ":id",
+                "reject"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n    \"order\": {\n        \"id\": \"79PMC99TTVT0\",\n        \"external_id\": \"postman-collection-test\",\n        \"campaign_id\": \"8658HD9ILRHD\",\n        \"created_at\": \"2024-01-24T07:18:45.692Z\",\n        \"status\": \"CANCELED\",\n        \"channel\": \"API\"\n    }\n}"
+        },
+        {
+          "id": "62544d69-4485-43ce-9891-31a1e3a634b2",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order_approvals/:id/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order_approvals",
+                ":id",
+                "reject"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "53d546aa-0316-4d45-a589-1b53841b2bf2",
+          "name": "API approvals are not enabled",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order_approvals/:id/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order_approvals",
+                ":id",
+                "reject"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "38ed56c0-6b08-4fb7-84d6-fad19917c056",
+          "name": "No resource could be found for the provided ID",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order_approvals/:id/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order_approvals",
+                ":id",
+                "reject"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "5c250212-2fea-4993-89af-d46fad1a5c76",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/order_approvals/:id/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order_approvals",
+                ":id",
+                "reject"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "list_products": {
+      "name": "List products",
+      "id": "39bfe691-2956-4b0b-b23a-7e8692e31676",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/products?country=US&currency=USD",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "products"
+          ],
+          "query": [
+            {
+              "key": "country",
+              "value": "US",
+              "description": "Comma-separated list of [Alpha-2 country codes](https://www.iban.com/country-codes), used to only retrieve products available in the provided countries"
+            },
+            {
+              "key": "currency",
+              "value": "USD",
+              "description": "Comma-separated list of [currency codes](https://www.iban.com/currency-codes), used to only retrieve products available in the provided currencies"
+            }
+          ]
+        },
+        "description": "Retrieve a list of available products"
+      },
+      "response": [
+        {
+          "id": "720bf295-16df-4466-910d-9532b6a3ede7",
+          "name": "List of available products.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer <token>",
+                "description": "Added as a part of security scheme: bearer"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/products?country=<string>&currency=<string>&subcategory=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "country",
+                  "value": "<string>",
+                  "description": "Comma-separated list of [Alpha-2 country codes](https://www.iban.com/country-codes), used to only retrieve products available in the provided countries"
+                },
+                {
+                  "key": "currency",
+                  "value": "<string>",
+                  "description": "Comma-separated list of [currency codes](https://www.iban.com/currency-codes), used to only retrieve products available in the provided currencies"
+                },
+                {
+                  "key": "subcategory",
+                  "value": "<string>",
+                  "description": "Comma-separated list of subcategories, used to only retrieve products available in the provided subcategories"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"products\": [\n    {\n      \"id\": \"LZWFENP8L3E5\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"category\": \"paypal\",\n      \"disclosure\": \"<string>\",\n      \"currency_codes\": \"NOK\",\n      \"countries\": [\n        {\n          \"abbr\": \"<string>\"\n        }\n      ],\n      \"images\": [\n        {\n          \"src\": \"<uri>\",\n          \"type\": \"logo\"\n        },\n        {\n          \"src\": \"<uri>\",\n          \"type\": \"logo\"\n        }\n      ],\n      \"skus\": [\n        {\n          \"min\": \"<number>\",\n          \"max\": \"<number>\"\n        },\n        {\n          \"min\": \"<number>\",\n          \"max\": \"<number>\"\n        }\n      ]\n    },\n    {\n      \"id\": \"ZSBTKKCYWKKX\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"category\": \"charities\",\n      \"disclosure\": \"<string>\",\n      \"currency_codes\": \"DKK\",\n      \"countries\": [\n        {\n          \"abbr\": \"<string>\"\n        }\n      ],\n      \"images\": [\n        {\n          \"src\": \"<uri>\",\n          \"type\": \"card\"\n        },\n        {\n          \"src\": \"<uri>\",\n          \"type\": \"card\"\n        }\n      ],\n      \"skus\": [\n        {\n          \"min\": \"<number>\",\n          \"max\": \"<number>\"\n        },\n        {\n          \"min\": \"<number>\",\n          \"max\": \"<number>\"\n        }\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "86ec8640-c951-4549-a3b0-40a60b3e4da1",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/products?country=<string>&currency=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "description": "Comma-separated list of [Alpha-2 country codes](https://www.iban.com/country-codes), used to only retrieve products available in the provided countries",
+                  "key": "country",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Comma-separated list of [currency codes](https://www.iban.com/currency-codes), used to only retrieve products available in the provided currencies",
+                  "key": "currency",
+                  "value": "<string>"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "f74738dd-7508-4150-bf58-d4fad9d45182",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/products?country=<string>&currency=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ],
+              "query": [
+                {
+                  "description": "Comma-separated list of [Alpha-2 country codes](https://www.iban.com/country-codes), used to only retrieve products available in the provided countries",
+                  "key": "country",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Comma-separated list of [currency codes](https://www.iban.com/currency-codes), used to only retrieve products available in the provided currencies",
+                  "key": "currency",
+                  "value": "<string>"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "get_product": {
+      "name": "Retrieve product",
+      "id": "2f17c454-9fd6-4fdd-9bdb-12c01bd4c902",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/products/:id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "products",
+            ":id"
+          ],
+          "variable": [
+            {
+              "id": "ebe2b887-3772-4905-b857-49eddf1823f8",
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        },
+        "description": "Retrieve a product, identified by the given `id` in the URL\n"
+      },
+      "response": [
+        {
+          "id": "2131c8b4-24dd-4b6a-a96e-c4550921d9a8",
+          "name": "Requested product",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer <token>",
+                "description": "Added as a part of security scheme: bearer"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/products/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"product\": {\n    \"id\": \"VRYQJ5US6QEH\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"category\": \"merchant_card\",\n    \"subcategory\": \"electronics\",\n    \"disclosure\": \"<string>\",\n    \"currency_codes\": \"UGX\",\n    \"countries\": [\n      {\n        \"abbr\": \"<string>\"\n      }\n    ],\n    \"images\": [\n      {\n        \"src\": \"<uri>\",\n        \"type\": \"card\"\n      },\n      {\n        \"src\": \"<uri>\",\n        \"type\": \"card\"\n      }\n    ],\n    \"skus\": [\n      {\n        \"min\": \"<number>\",\n        \"max\": \"<number>\"\n      },\n      {\n        \"min\": \"<number>\",\n        \"max\": \"<number>\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "id": "25b1effd-9984-4307-98f1-3db2c83d9603",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/products/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "b10cf5d2-eec6-45af-80fe-50de6042322f",
+          "name": "No resource could be found for the provided ID",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/products/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "296d0ced-665b-47c7-864c-7a340c1308b3",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/products/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "list_campaigns": {
+      "name": "List campaigns",
+      "id": "322ececd-5ba2-4cc8-a5e3-f00f0f0598a1",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/campaigns",
+        "description": "Retrieve a list of all campaigns created in your account\n"
+      },
+      "response": [
+        {
+          "id": "6f3fae0d-86ae-46ab-bac1-5ab328f4001e",
+          "name": "List of all campaigns in your organization's account.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": "{{baseUrl}}/campaigns"
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"campaigns\": [\n    {\n      \"id\": \"8OIYSIXCJ5KK\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"products\": [\n        \"RMONLXDGWMU0\",\n        \"Z9TC24IIYATR\"\n      ]\n    },\n    {\n      \"id\": \"UPGO339SB9NE\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"products\": [\n        \"J8TSXAFQQGAR\",\n        \"M3GBAW2U8T5M\"\n      ]\n    }\n  ]\n}"
+        },
+        {
+          "id": "177f449c-a880-42ce-a04f-46b5b51b94cc",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": "{{baseUrl}}/campaigns"
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "29457038-ff64-4508-bd9f-ba3b5bd00898",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": "{{baseUrl}}/campaigns"
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "get_campaign": {
+      "name": "Retrieve campaign",
+      "id": "5f707d4a-d7a1-4209-a1e5-213f884f4cc4",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/campaigns/:id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "campaigns",
+            ":id"
+          ],
+          "variable": [
+            {
+              "id": "481fd906-c9f7-4235-b6c0-d4443f4f7512",
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        },
+        "description": "Retrieve a campaign, identified by the given `id` in the URL\n"
+      },
+      "response": [
+        {
+          "id": "92403cae-15cf-4305-91cb-46ce311a5e40",
+          "name": "Requested campaign",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/campaigns/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "campaigns",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"campaign\": {\n    \"id\": \"09XUQ0TMYBYL\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"products\": [\n      \"LGVNUI7LVQAW\",\n      \"HG484OQLCG3Z\"\n    ]\n  }\n}"
+        },
+        {
+          "id": "a2d73d84-0c67-4af0-bd28-96a6c081e7f4",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/campaigns/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "campaigns",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "df74c432-adef-432b-a15b-d067978ad67f",
+          "name": "No resource could be found for the provided ID",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/campaigns/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "campaigns",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "b4c14787-a4c9-4059-8ff8-aa6abf58f779",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/campaigns/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "campaigns",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "list_funding_sources": {
+      "name": "List funding sources",
+      "id": "4e520a37-3b88-4002-93ae-2b58ad5945a2",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/funding_sources",
+        "description": "Retrieve a list of all funding sources available for ordering through the API in your organization's account.\n"
+      },
+      "response": [
+        {
+          "id": "382793b9-01eb-450c-8117-f2872e5819bf",
+          "name": "List of all funding sources available in your organization's account.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": "{{baseUrl}}/funding_sources"
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"funding_sources\": [\n    {\n      \"id\": \"HX0SR9II3T0F\",\n      \"method\": \"credit_card\",\n      \"meta\": {\n        \"available_cents\": \"<integer>\",\n        \"pending_cents\": \"<integer>\",\n        \"accountholder_name\": \"<string>\",\n        \"account_type\": \"checking\",\n        \"bank_name\": \"<string>\",\n        \"account_number_mask\": \"4321\",\n        \"account_routing_mask\": \"4360\",\n        \"refundable\": \"<boolean>\",\n        \"network\": \"laser\",\n        \"last4\": \"6212\",\n        \"expired\": \"<boolean>\",\n        \"last_payment_failed_at\": \"<dateTime>\"\n      },\n      \"type\": \"prefunding_only\"\n    },\n    {\n      \"id\": \"QY5T3UUP78ZI\",\n      \"method\": \"bank_account\",\n      \"meta\": {\n        \"available_cents\": \"<integer>\",\n        \"pending_cents\": \"<integer>\",\n        \"accountholder_name\": \"<string>\",\n        \"account_type\": \"savings\",\n        \"bank_name\": \"<string>\",\n        \"account_number_mask\": \"4736\",\n        \"account_routing_mask\": \"6178\",\n        \"refundable\": \"<boolean>\",\n        \"network\": \"visa\",\n        \"last4\": \"0161\",\n        \"expired\": \"<boolean>\",\n        \"last_payment_failed_at\": \"<dateTime>\"\n      },\n      \"type\": \"prefunding_only\"\n    }\n  ]\n}"
+        },
+        {
+          "id": "01f4a3cc-62f4-4f25-8146-626ebfbbbd01",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": "{{baseUrl}}/funding_sources"
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "29ea2ac4-d4c7-48a4-b792-32b1a97a2845",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": "{{baseUrl}}/funding_sources"
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "get_funding_source": {
+      "name": "Retrieve funding source",
+      "id": "07da5e31-4891-4961-9ca4-b049577c8cf5",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/funding_sources/:id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "funding_sources",
+            ":id"
+          ],
+          "variable": [
+            {
+              "id": "3730ae4f-8d1e-4fa8-8e6e-cb2279c92fe8",
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        },
+        "description": "Retrieve a funding source, identified by the given `id` in the URL\n"
+      },
+      "response": [
+        {
+          "id": "56aea48f-29a8-41d9-ad46-8464701ebc66",
+          "name": "Requested funding source",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/funding_sources/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "funding_sources",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"funding_source\": {\n    \"id\": \"02KWOTGGJC5P\",\n    \"method\": \"balance\",\n    \"meta\": {\n      \"available_cents\": \"<integer>\",\n      \"pending_cents\": \"<integer>\",\n      \"accountholder_name\": \"<string>\",\n      \"account_type\": \"savings\",\n      \"bank_name\": \"<string>\",\n      \"account_number_mask\": \"6941\",\n      \"account_routing_mask\": \"5434\",\n      \"refundable\": \"<boolean>\",\n      \"network\": \"elo\",\n      \"last4\": \"7452\",\n      \"expired\": \"<boolean>\",\n      \"last_payment_failed_at\": \"<dateTime>\"\n    },\n    \"type\": \"pro_forma\"\n  }\n}"
+        },
+        {
+          "id": "3b31eed2-a198-42a2-a943-4e41da2b0f84",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/funding_sources/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "funding_sources",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "6ad22ef3-3e1a-43e0-9b20-088109ef6170",
+          "name": "No resource could be found for the provided ID",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/funding_sources/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "funding_sources",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "bbb010b9-8d57-49a5-8bb7-aa904823d81a",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/funding_sources/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "funding_sources",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "list_invoices": {
+      "name": "List invoices",
+      "id": "b0e7e654-46c4-436d-bb8c-994d9b70d927",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/invoices?offset=<integer>&limit=<integer>",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "invoices"
+          ],
+          "query": [
+            {
+              "description": "Offsets the returned list by the given number of invoices. The returned invoices are ordered (and offsetted) by their creation date (DESC).",
+              "key": "offset",
+              "value": "<integer>"
+            },
+            {
+              "description": "Limits the number of invoices listed. The maximum and default value is 10.",
+              "key": "limit",
+              "value": "<integer>"
+            }
+          ]
+        },
+        "description": "Fetch a list of all invoices on your account.\n\n> \ud83d\udea7 Deleted invoices are omitted\n>\n> The response does not include any previously deleted invoices.\n"
+      },
+      "response": [
+        {
+          "id": "6fc1c469-e83c-4dc3-b5ce-57f90e64f26c",
+          "name": "List of all invoices in state `PAID` or `PENDING`",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/invoices?offset=<integer>&limit=<integer>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "invoices"
+              ],
+              "query": [
+                {
+                  "description": "Offsets the returned list by the given number of invoices. The returned invoices are ordered (and offsetted) by their creation date (DESC).",
+                  "key": "offset",
+                  "value": "<integer>"
+                },
+                {
+                  "description": "Limits the number of invoices listed. The maximum and default value is 10.",
+                  "key": "limit",
+                  "value": "<integer>"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"invoices\": [\n    {\n      \"id\": \"OXU0QSLBY8GU\",\n      \"amount\": \"<double>\",\n      \"status\": \"DELETED\",\n      \"po_number\": \"<string>\",\n      \"orders\": [\n        \"8RYKGO3BDKIM\",\n        \"E1F0WSLSQ3SF\"\n      ],\n      \"created_at\": \"<date>\",\n      \"paid_at\": \"<date>\"\n    },\n    {\n      \"id\": \"TE06VJU74UBF\",\n      \"amount\": \"<double>\",\n      \"status\": \"PAID\",\n      \"po_number\": \"<string>\",\n      \"orders\": [\n        \"8F9U52MGCZ6G\",\n        \"OC5TG7ADHZPL\"\n      ],\n      \"created_at\": \"<date>\",\n      \"paid_at\": \"<date>\"\n    }\n  ],\n  \"total_count\": \"<integer>\"\n}"
+        },
+        {
+          "id": "65b2af32-4a5f-425c-869a-af058a8cde26",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/invoices?offset=<integer>&limit=<integer>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "invoices"
+              ],
+              "query": [
+                {
+                  "description": "Offsets the returned list by the given number of invoices. The returned invoices are ordered (and offsetted) by their creation date (DESC).",
+                  "key": "offset",
+                  "value": "<integer>"
+                },
+                {
+                  "description": "Limits the number of invoices listed. The maximum and default value is 10.",
+                  "key": "limit",
+                  "value": "<integer>"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "08d4012d-0681-41b0-8ad5-ddffc94ad28d",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/invoices?offset=<integer>&limit=<integer>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "invoices"
+              ],
+              "query": [
+                {
+                  "description": "Offsets the returned list by the given number of invoices. The returned invoices are ordered (and offsetted) by their creation date (DESC).",
+                  "key": "offset",
+                  "value": "<integer>"
+                },
+                {
+                  "description": "Limits the number of invoices listed. The maximum and default value is 10.",
+                  "key": "limit",
+                  "value": "<integer>"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "get_invoice": {
+      "name": "Retrieve invoice",
+      "id": "599e0517-e9ab-4c26-8cf3-bdc904d1b3bc",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/invoices/:id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "invoices",
+            ":id"
+          ],
+          "variable": [
+            {
+              "id": "212465c7-c3c0-48d0-943a-11756556de8c",
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        },
+        "description": "Retrieve an invoice, identified by the given `id` in the URL\n\n> \ud83d\udcd8 Deleted Invoices\n>\n> This endpoint can be used to retrieve details on deleted invoices\n> that the list of invoices omits.\n"
+      },
+      "response": [
+        {
+          "id": "1ce3944c-ce3d-4d32-ad4e-2f665da4cd0f",
+          "name": "An invoice (to be overwritten in specific reponses)",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/invoices/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "invoices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"invoices\": {\n    \"id\": \"2UQ9RWV7AMFR\",\n    \"amount\": \"<double>\",\n    \"status\": \"PENDING\",\n    \"po_number\": \"<string>\",\n    \"orders\": [\n      \"E3MNKYVQQXKS\",\n      \"MVS2XI13GMO7\"\n    ],\n    \"created_at\": \"<date>\",\n    \"paid_at\": \"<date>\"\n  }\n}"
+        },
+        {
+          "id": "0a00280c-aeca-462f-bbae-1c42fa7f6d28",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/invoices/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "invoices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "cdda9a7f-56e0-423b-8f86-7354ff095d2e",
+          "name": "No resource could be found for the provided ID",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/invoices/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "invoices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "c173bab8-52b3-4220-9861-8c41b9bb64cf",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/invoices/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "invoices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "create_invoice": {
+      "name": "Create invoice",
+      "id": "814a1f1f-3199-40e7-804a-666c9db634b4",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": \"<double>\",\n  \"po_number\": \"<string>\",\n  \"orders\": [\n    \"YQMR8LS64MVW\",\n    \"8QX0WM3QL709\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "headerFamily": "json",
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/invoices",
+        "description": "Creating an invoice is the way for your organization to fund your account's balance.\n\n1. Create an invoice\n2. Pay the invoice\n3. Funds get added to your account's balance\n    \n\n## Request body\n\n[Invoice schema](https://developers.tremendous.com/reference/obj-schema-invoices)"
+      },
+      "response": [
+        {
+          "id": "21844fbe-fa00-4b2b-b908-d203e2502648",
+          "name": "An invoice (to be overwritten in specific reponses)",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": \"<double>\",\n  \"po_number\": \"<string>\",\n  \"orders\": [\n    \"YQMR8LS64MVW\",\n    \"8QX0WM3QL709\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/invoices"
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"invoices\": {\n    \"id\": \"2UQ9RWV7AMFR\",\n    \"amount\": \"<double>\",\n    \"status\": \"PENDING\",\n    \"po_number\": \"<string>\",\n    \"orders\": [\n      \"E3MNKYVQQXKS\",\n      \"MVS2XI13GMO7\"\n    ],\n    \"created_at\": \"<date>\",\n    \"paid_at\": \"<date>\"\n  }\n}"
+        }
+      ]
+    },
+    "delete_invoice": {
+      "name": "Delete invoice",
+      "id": "9ccc478b-e0cd-438f-bc40-a732cb64b6b3",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/invoices/:id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "invoices",
+            ":id"
+          ],
+          "variable": [
+            {
+              "id": "a110290d-3fd6-4507-8912-b66b06774938",
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        },
+        "description": "Removes an invoice. This has no further consequences but is a rather cosmetic operation.\n"
+      },
+      "response": [
+        {
+          "id": "7fdd34be-758c-426e-b08f-1e28206ee5d9",
+          "name": "An invoice (to be overwritten in specific reponses)",
+          "originalRequest": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/invoices/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "invoices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"invoices\": {\n    \"id\": \"2UQ9RWV7AMFR\",\n    \"amount\": \"<double>\",\n    \"status\": \"PENDING\",\n    \"po_number\": \"<string>\",\n    \"orders\": [\n      \"E3MNKYVQQXKS\",\n      \"MVS2XI13GMO7\"\n    ],\n    \"created_at\": \"<date>\",\n    \"paid_at\": \"<date>\"\n  }\n}"
+        }
+      ]
+    },
+    "list_organizations": {
+      "name": "List organizations",
+      "id": "eb6d7b68-316f-4436-905e-60d0e142b684",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/organizations",
+        "description": "The returned list always contains all sub-organizations of the current root organization, as well as the root organization itself.\n\nThe root organization is the organization to which the API key belongs to, that is used for the request.\n"
+      },
+      "response": [
+        {
+          "id": "43f273f5-0a16-4690-bcd2-80b6bb8f2f45",
+          "name": "List of all organizations",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer <token>",
+                "description": "Added as a part of security scheme: bearer"
+              }
+            ],
+            "url": "{{baseUrl}}/organizations"
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"organizations\": [\n    {\n      \"name\": \"<string>\",\n      \"website\": \"<uri>\",\n      \"id\": \"WGHVMR9FXG45\",\n      \"status\": \"PENDING\",\n      \"created_at\": \"<date>\",\n      \"timezone\": \"America/New_York\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"website\": \"<uri>\",\n      \"id\": \"KZ51P3NBAF4M\",\n      \"status\": \"REJECTED\",\n      \"created_at\": \"<date>\",\n      \"timezone\": \"America/New_York\"\n    }\n  ]\n}"
+        },
+        {
+          "id": "6e1c5676-ba10-4394-a96b-1f4b5f00a113",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": "{{baseUrl}}/organizations"
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "53aa1f65-d358-4305-87af-4f92ce5a4549",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": "{{baseUrl}}/organizations"
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "get_organization": {
+      "name": "Retrieve organization",
+      "id": "b09fee6c-0f84-4dcb-b17a-55a7d7f9e932",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/organizations/:id",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "organizations",
+            ":id"
+          ],
+          "variable": [
+            {
+              "id": "c61ef21b-5432-49a8-aa66-20e44e11b648",
+              "key": "id",
+              "value": "NNS4ZRIYF71F"
+            }
+          ]
+        }
+      },
+      "response": [
+        {
+          "id": "fc553b01-8588-4a14-93e5-5173abe7b5ec",
+          "name": "An organization (to be overwritten in specific responses)",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer <token>",
+                "description": "Added as a part of security scheme: bearer"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/organizations/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "organizations",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"organization\": {\n    \"name\": \"<string>\",\n    \"website\": \"<uri>\",\n    \"id\": \"GFB508YGRS4D\",\n    \"status\": \"APPROVED\",\n    \"created_at\": \"<date>\",\n    \"timezone\": \"America/New_York\"\n  }\n}"
+        },
+        {
+          "id": "2d8b7ab0-70cc-4667-b182-3b0fb63ee160",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/organizations/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "organizations",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "77d89250-49a0-4e74-81c2-2a0af8aeca37",
+          "name": "No resource could be found for the provided ID",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/organizations/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "organizations",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "e355270e-d8b2-4992-ac24-2ab51de437ba",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/organizations/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "organizations",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    },
+    "list_fields": {
+      "name": "List fields",
+      "id": "dd191b91-b5ed-48dc-919f-f514ac79919f",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/fields",
+        "description": "For reporting and analytics purposes, custom fields can be associated with rewards generated through the API. Custom fields must be first added by members of your admin team through the Tremendous Dashboard.\n"
+      },
+      "response": [
+        {
+          "id": "6c293790-c58f-4373-af01-62d5e228a6c3",
+          "name": "List of all fields",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": "{{baseUrl}}/fields"
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"fields\": [\n    {\n      \"id\": \"ME1LOBUIJCP7\",\n      \"label\": \"<string>\",\n      \"data_type\": \"<string>\",\n      \"data\": \"<string>\",\n      \"required\": \"<boolean>\",\n      \"scope\": \"<string>\"\n    },\n    {\n      \"id\": \"HF2FPPYC362Q\",\n      \"label\": \"<string>\",\n      \"data_type\": \"<string>\",\n      \"data\": \"<string>\",\n      \"required\": \"<boolean>\",\n      \"scope\": \"<string>\"\n    }\n  ]\n}"
+        },
+        {
+          "id": "f6ba7531-b563-4084-af8d-5775acc849c1",
+          "name": "Authorization error e.g. due to an invalid or missing API key.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": "{{baseUrl}}/fields"
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        },
+        {
+          "id": "e3dfaa02-c0fd-49fc-939e-dfede881bcb1",
+          "name": "Rate limit exceeded, this request was not processed. Future requests may not be processed, until your account drops below the rate limit threshold, again.",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "description": "Added as a part of security scheme: bearer",
+                "key": "Authorization",
+                "value": "Bearer <token>"
+              }
+            ],
+            "url": "{{baseUrl}}/fields"
+          },
+          "status": "Too Many Requests",
+          "code": 429,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "cookie": [],
+          "responseTime": null,
+          "body": "{\n  \"errors\": {\n    \"message\": \"<string>\",\n    \"payload\": {}\n  }\n}"
+        }
+      ]
+    }
+  }
+}
