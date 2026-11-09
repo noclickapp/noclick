@@ -1,0 +1,1578 @@
+{
+  "$defs": {
+    "CronEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "cron": {
+          "description": "Five-field cron expression",
+          "minLength": 1,
+          "title": "Cron",
+          "type": "string"
+        },
+        "timeZone": {
+          "minLength": 1,
+          "title": "Time Zone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cron",
+        "timeZone"
+      ],
+      "title": "CronEntry",
+      "type": "object"
+    },
+    "Geofence": {
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "title": "Lon",
+          "type": "number"
+        },
+        "radius": {
+          "title": "Radius",
+          "type": "number"
+        },
+        "radiusUnits": {
+          "enum": [
+            "meters",
+            "kilometers",
+            "miles"
+          ],
+          "title": "Radiusunits",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "enter",
+            "exit"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "timeThrottle": {
+          "default": "0",
+          "title": "Timethrottle",
+          "type": "string"
+        },
+        "subscribable": {
+          "default": "yes",
+          "enum": [
+            "yes",
+            "no"
+          ],
+          "title": "Subscribable",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "radius",
+        "radiusUnits",
+        "type"
+      ],
+      "title": "Geofence",
+      "type": "object"
+    },
+    "TriggerSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "crons": {
+          "items": {
+            "$ref": "#/$defs/CronEntry"
+          },
+          "title": "Crons",
+          "type": "array"
+        }
+      },
+      "title": "TriggerSettings",
+      "type": "object"
+    },
+    "VybitCreateReminderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_reminder",
+          "default": "create_reminder",
+          "title": "Create Reminder",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "cron": {
+          "description": "Cron expression naming the one date the reminder fires.\nFormat: minute hour day month dayOfWeek, with a numeric day and month\nand `*` for dayOfWeek.\n",
+          "minLength": 1,
+          "pattern": "^\\S+\\s+\\S+\\s+\\d{1,2}\\s+\\d{1,2}\\s+\\*$",
+          "title": "Cron",
+          "type": "string"
+        },
+        "time_zone": {
+          "default": "UTC",
+          "description": "IANA timezone identifier",
+          "title": "Time Zone",
+          "type": "string"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Year for the reminder (defaults to current year). Used for one-time reminders \u2014 expired reminders are automatically garbage-collected.",
+          "title": "Year"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notification message for this reminder (max 1024 characters)",
+          "title": "Message"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "pattern": "\\.(jpe?g|png|gif)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Image URL for this reminder's notification (max 512 characters). Must link to a JPG, PNG, or GIF image. URLs without a protocol will have https:// prepended.",
+          "format": "uri",
+          "title": "Image Url"
+        },
+        "link_url": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Link URL for this reminder's notification (max 512 characters). URLs without a protocol will have https:// prepended.",
+          "format": "uri",
+          "title": "Link Url"
+        },
+        "log": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Log content for this reminder's notification (max 10,000 characters)",
+          "title": "Log"
+        }
+      },
+      "required": [
+        "key",
+        "cron"
+      ],
+      "title": "VybitCreateReminderConfig",
+      "type": "object"
+    },
+    "VybitCreateSubscriptionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_subscription",
+          "default": "create_subscription",
+          "title": "Subscribe to Vybit",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitCreateSubscriptionConfig",
+      "type": "object"
+    },
+    "VybitCreateVybitConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_vybit",
+          "default": "create_vybit",
+          "title": "Create Vybit",
+          "type": "string"
+        },
+        "name": {
+          "description": "Vybit display name",
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "description": "Detailed vybit description",
+          "maxLength": 512,
+          "title": "Description",
+          "type": "string"
+        },
+        "sound_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Key of the sound to play (must be an available sound from /sounds endpoint)",
+          "title": "Sound Key"
+        },
+        "status": {
+          "default": "on",
+          "description": "Vybit status (on = active, off = disabled)",
+          "enum": [
+            "on",
+            "off"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "trigger_type": {
+          "default": "webhook",
+          "description": "How this vybit is triggered",
+          "enum": [
+            "webhook",
+            "schedule",
+            "geofence",
+            "integration",
+            "reminders"
+          ],
+          "title": "Trigger Type",
+          "type": "string"
+        },
+        "trigger_settings": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TriggerSettings"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Configuration for scheduled triggers.\nRequired when triggerType is \"schedule\", null otherwise.\nFor triggerType \"reminders\", reminders are managed only via the Reminders endpoints; any sent here are ignored.\n"
+        },
+        "access": {
+          "default": "private",
+          "description": "Vybit visibility and access control",
+          "enum": [
+            "public",
+            "private",
+            "unlisted"
+          ],
+          "title": "Access",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default message displayed with notifications (max 1024 characters)",
+          "title": "Message"
+        },
+        "log": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Plain-text default log saved with each notification (max 10,000 characters).\nWhen sent it is escaped, its line breaks are kept, and its http(s) URLs are\nlinked. A trigger's own `log` replaces it.\n",
+          "title": "Log"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "pattern": "\\.(jpe?g|png|gif)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default image URL for notifications. Must link to a JPG, PNG, or GIF image.",
+          "format": "uri",
+          "title": "Image Url"
+        },
+        "link_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default URL to open when notification is tapped",
+          "format": "uri",
+          "title": "Link Url"
+        },
+        "geofence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Geofence"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Geofence configuration. Required when triggerType is \"geofence\", null otherwise.\n"
+        },
+        "send_permissions": {
+          "default": "owner_subs",
+          "description": "Who can trigger and receive notifications:\n- owner_subs: owner triggers \u2192 subscribers receive (one-way)\n- subs_owner: owner \u2194 subscribers (two-way between owner and each subscriber)\n- subs_group: subscribers trigger \u2192 all subscribers receive (group broadcast)\n",
+          "enum": [
+            "owner_subs",
+            "subs_owner",
+            "subs_group"
+          ],
+          "title": "Send Permissions",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "VybitCreateVybitConfig",
+      "type": "object"
+    },
+    "VybitDeleteReminderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_reminder",
+          "default": "delete_reminder",
+          "title": "Delete Reminder",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "reminder_id": {
+          "minLength": 1,
+          "title": "Reminder Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "reminder_id"
+      ],
+      "title": "VybitDeleteReminderConfig",
+      "type": "object"
+    },
+    "VybitDeleteSubscriptionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_subscription",
+          "default": "delete_subscription",
+          "title": "Unsubscribe from Vybit",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitDeleteSubscriptionConfig",
+      "type": "object"
+    },
+    "VybitDeleteVybitConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_vybit",
+          "default": "delete_vybit",
+          "title": "Delete Vybit",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitDeleteVybitConfig",
+      "type": "object"
+    },
+    "VybitGetLogConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_log",
+          "default": "get_log",
+          "title": "Get Log Entry",
+          "type": "string"
+        },
+        "log_key": {
+          "minLength": 1,
+          "title": "Log Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "log_key"
+      ],
+      "title": "VybitGetLogConfig",
+      "type": "object"
+    },
+    "VybitGetMeterConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_meter",
+          "default": "get_meter",
+          "title": "Get Usage Metrics",
+          "type": "string"
+        }
+      },
+      "title": "VybitGetMeterConfig",
+      "type": "object"
+    },
+    "VybitGetProfileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Get User Profile",
+          "type": "string"
+        }
+      },
+      "title": "VybitGetProfileConfig",
+      "type": "object"
+    },
+    "VybitGetPublicVybitConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_public_vybit",
+          "default": "get_public_vybit",
+          "title": "Get Public Vybit by Subscription Key",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitGetPublicVybitConfig",
+      "type": "object"
+    },
+    "VybitGetSoundConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_sound",
+          "default": "get_sound",
+          "title": "Get Sound Details",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitGetSoundConfig",
+      "type": "object"
+    },
+    "VybitGetSubscriptionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Get Subscription Following",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitGetSubscriptionConfig",
+      "type": "object"
+    },
+    "VybitGetVybitConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_vybit",
+          "default": "get_vybit",
+          "title": "Get Vybit",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitGetVybitConfig",
+      "type": "object"
+    },
+    "VybitListLogsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_logs",
+          "default": "list_logs",
+          "title": "List All Logs",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "VybitListLogsConfig",
+      "type": "object"
+    },
+    "VybitListPublicVybitsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_public_vybits",
+          "default": "list_public_vybits",
+          "title": "List Public Vybits",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "VybitListPublicVybitsConfig",
+      "type": "object"
+    },
+    "VybitListRemindersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_reminders",
+          "default": "list_reminders",
+          "title": "List Reminders",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitListRemindersConfig",
+      "type": "object"
+    },
+    "VybitListSubscriptionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "List Vybit Subscriptions",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "VybitListSubscriptionsConfig",
+      "type": "object"
+    },
+    "VybitListVybitLogsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_vybit_logs",
+          "default": "list_vybit_logs",
+          "title": "List Logs for Owned Vybit",
+          "type": "string"
+        },
+        "vyb_key": {
+          "minLength": 1,
+          "title": "Vyb Key",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "vyb_key"
+      ],
+      "title": "VybitListVybitLogsConfig",
+      "type": "object"
+    },
+    "VybitListVybitsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_vybits",
+          "default": "list_vybits",
+          "title": "List Vybits",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "VybitListVybitsConfig",
+      "type": "object"
+    },
+    "VybitNotificationsCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "vybit_notifications_api_key",
+          "default": "vybit_notifications_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Vybit developer API key. Sent in the X-API-Key header.",
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Vybit Notifications API Key",
+      "type": "object",
+      "x-credential-instructions": "Generate an API key in your Vybit developer dashboard and paste it here.",
+      "x-credential-url": "https://developer.vybit.net"
+    },
+    "VybitSearchSoundsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_sounds",
+          "default": "search_sounds",
+          "title": "Search Sounds",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "VybitSearchSoundsConfig",
+      "type": "object"
+    },
+    "VybitSendToGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_to_group",
+          "default": "send_to_group",
+          "title": "Send Notification to Group",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notification message",
+          "title": "Message"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "pattern": "\\.(jpe?g|png|gif)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom image URL. Must link to a JPG, PNG, or GIF image.",
+          "format": "uri",
+          "title": "Image Url"
+        },
+        "link_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom link URL",
+          "format": "uri",
+          "title": "Link Url"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitSendToGroupConfig",
+      "type": "object"
+    },
+    "VybitSendToOwnerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_to_owner",
+          "default": "send_to_owner",
+          "title": "Send Notification to Owner",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notification message",
+          "title": "Message"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "pattern": "\\.(jpe?g|png|gif)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom image URL. Must link to a JPG, PNG, or GIF image.",
+          "format": "uri",
+          "title": "Image Url"
+        },
+        "link_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom link URL",
+          "format": "uri",
+          "title": "Link Url"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitSendToOwnerConfig",
+      "type": "object"
+    },
+    "VybitTriggerVybitConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "trigger_vybit",
+          "default": "trigger_vybit",
+          "title": "Trigger Vybit Notification",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom notification message",
+          "title": "Message"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "pattern": "\\.(jpe?g|png|gif)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom image URL. Must link to a JPG, PNG, or GIF image; non-image URLs are silently ignored.",
+          "format": "uri",
+          "title": "Image Url"
+        },
+        "link_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom link URL",
+          "format": "uri",
+          "title": "Link Url"
+        },
+        "log": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Log entry saved with this notification; replaces the vybit's default `log`.\nA log over 10,000 characters is truncated to 10,000 (ending in an ellipsis)\nrather than refused.\n",
+          "title": "Log"
+        },
+        "run_once": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, the vybit is automatically disabled (status set to \"off\") after this trigger fires. For schedule trigger types, the scheduled job is also paused.",
+          "title": "Run Once"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitTriggerVybitConfig",
+      "type": "object"
+    },
+    "VybitUpdateReminderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_reminder",
+          "default": "update_reminder",
+          "title": "Update Reminder",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "reminder_id": {
+          "minLength": 1,
+          "title": "Reminder Id",
+          "type": "string"
+        },
+        "cron": {
+          "anyOf": [
+            {
+              "pattern": "^\\S+\\s+\\S+\\s+\\d{1,2}\\s+\\d{1,2}\\s+\\*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated cron expression naming one date (minute hour day month dayOfWeek, with a numeric day and month and * for dayOfWeek)",
+          "title": "Cron"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated IANA timezone",
+          "title": "Time Zone"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated notification message (max 1024 characters)",
+          "title": "Message"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "pattern": "\\.(jpe?g|png|gif)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated image URL (max 512 characters). Must link to a JPG, PNG, or GIF image. URLs without a protocol will have https:// prepended.",
+          "format": "uri",
+          "title": "Image Url"
+        },
+        "link_url": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated link URL (max 512 characters). URLs without a protocol will have https:// prepended.",
+          "format": "uri",
+          "title": "Link Url"
+        },
+        "log": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated log content (max 10,000 characters)",
+          "title": "Log"
+        }
+      },
+      "required": [
+        "key",
+        "reminder_id"
+      ],
+      "title": "VybitUpdateReminderConfig",
+      "type": "object"
+    },
+    "VybitUpdateVybitPartialConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_vybit_partial",
+          "default": "update_vybit_partial",
+          "title": "Update Vybit (Partial)",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "sound_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sound Key"
+        },
+        "trigger_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "webhook",
+                "schedule",
+                "geofence",
+                "integration",
+                "reminders"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Type",
+          "enum": [
+            "webhook",
+            "schedule",
+            "geofence",
+            "integration",
+            "reminders"
+          ],
+          "x-enum-searchable": true
+        },
+        "trigger_settings": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TriggerSettings"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Configuration for scheduled triggers. The crons array replaces the\nexisting array entirely \u2014 to remove a cron entry, send the array without it.\nRemoved entries have their scheduled jobs automatically deleted.\n`reminders` is managed only via the Reminders endpoints and is ignored here.\n"
+        },
+        "access": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "private",
+                "unlisted"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access",
+          "enum": [
+            "public",
+            "private",
+            "unlisted"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "on",
+                "off"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vybit status (on = active, off = disabled)",
+          "title": "Status",
+          "enum": [
+            "on",
+            "off"
+          ],
+          "x-enum-searchable": true
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default message displayed with notifications (max 1024 characters)",
+          "title": "Message"
+        },
+        "log": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Plain-text default log saved with each notification (max 10,000 characters).\nWhen sent it is escaped, its line breaks are kept, and its http(s) URLs are\nlinked. A trigger's own `log` replaces it.\n",
+          "title": "Log"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "pattern": "\\.(jpe?g|png|gif)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default image URL for notifications. Must link to a JPG, PNG, or GIF image.",
+          "format": "uri",
+          "title": "Image Url"
+        },
+        "link_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Link Url"
+        },
+        "geofence": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Geofence"
+        },
+        "send_permissions": {
+          "anyOf": [
+            {
+              "enum": [
+                "owner_subs",
+                "subs_owner",
+                "subs_group"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Send Permissions",
+          "enum": [
+            "owner_subs",
+            "subs_owner",
+            "subs_group"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VybitUpdateVybitPartialConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_reminder": "#/$defs/VybitCreateReminderConfig",
+          "create_subscription": "#/$defs/VybitCreateSubscriptionConfig",
+          "create_vybit": "#/$defs/VybitCreateVybitConfig",
+          "delete_reminder": "#/$defs/VybitDeleteReminderConfig",
+          "delete_subscription": "#/$defs/VybitDeleteSubscriptionConfig",
+          "delete_vybit": "#/$defs/VybitDeleteVybitConfig",
+          "get_log": "#/$defs/VybitGetLogConfig",
+          "get_meter": "#/$defs/VybitGetMeterConfig",
+          "get_profile": "#/$defs/VybitGetProfileConfig",
+          "get_public_vybit": "#/$defs/VybitGetPublicVybitConfig",
+          "get_sound": "#/$defs/VybitGetSoundConfig",
+          "get_subscription": "#/$defs/VybitGetSubscriptionConfig",
+          "get_vybit": "#/$defs/VybitGetVybitConfig",
+          "list_logs": "#/$defs/VybitListLogsConfig",
+          "list_public_vybits": "#/$defs/VybitListPublicVybitsConfig",
+          "list_reminders": "#/$defs/VybitListRemindersConfig",
+          "list_subscriptions": "#/$defs/VybitListSubscriptionsConfig",
+          "list_vybit_logs": "#/$defs/VybitListVybitLogsConfig",
+          "list_vybits": "#/$defs/VybitListVybitsConfig",
+          "search_sounds": "#/$defs/VybitSearchSoundsConfig",
+          "send_to_group": "#/$defs/VybitSendToGroupConfig",
+          "send_to_owner": "#/$defs/VybitSendToOwnerConfig",
+          "trigger_vybit": "#/$defs/VybitTriggerVybitConfig",
+          "update_reminder": "#/$defs/VybitUpdateReminderConfig",
+          "update_vybit_partial": "#/$defs/VybitUpdateVybitPartialConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VybitGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitGetMeterConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitListVybitsConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitGetVybitConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitUpdateVybitPartialConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitDeleteVybitConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitTriggerVybitConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitCreateReminderConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitListRemindersConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitUpdateReminderConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitDeleteReminderConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitCreateVybitConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitListPublicVybitsConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitGetPublicVybitConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitCreateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitListSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitGetSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitDeleteSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitSendToOwnerConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitSendToGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitSearchSoundsConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitGetSoundConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitListLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitGetLogConfig"
+        },
+        {
+          "$ref": "#/$defs/VybitListVybitLogsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VybitNotificationsCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Vybit-notifications Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

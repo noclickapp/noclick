@@ -1,0 +1,680 @@
+{
+  "source": "https://gitlab.com/flatirontek/vybit-sdk",
+  "contract": "https://raw.githubusercontent.com/flatirontek/vybit-sdk/main/docs/openapi/developer-api.yaml",
+  "cases": [
+    {
+      "operation": "get_profile",
+      "config": {},
+      "method": "GET",
+      "path": "/profile",
+      "status": 200,
+      "body": {
+        "key": "abc123def456",
+        "name": "John Doe",
+        "email": "john@example.com",
+        "tier_id": 1,
+        "tier": "Free"
+      }
+    },
+    {
+      "operation": "get_meter",
+      "config": {},
+      "method": "GET",
+      "path": "/meter",
+      "status": 200,
+      "body": {
+        "tier_id": 1,
+        "tier": "Free",
+        "cap_vybits": 50,
+        "cap_daily": 500,
+        "cap_monthly": 7500,
+        "number_vybits": 12,
+        "count_daily": 127,
+        "count_monthly": 3421,
+        "monthly_reset_dts": "2025-12-01T00:00:00Z"
+      }
+    },
+    {
+      "operation": "list_vybits",
+      "config": {
+        "offset": 0,
+        "limit": 30,
+        "search": "notification"
+      },
+      "method": "GET",
+      "path": "/vybits",
+      "status": 200,
+      "body": [
+        {
+          "key": "vybit123abc456",
+          "name": "Server Alert",
+          "description": "Notification for critical server errors",
+          "soundKey": "sound123abc",
+          "status": "on",
+          "triggerKey": "trigger123abc456",
+          "subscriptionKey": "sub123abc456",
+          "triggerType": "webhook",
+          "triggerSettings": {
+            "crons": [
+              {
+                "cron": "0 9 * * *",
+                "timeZone": "America/Denver"
+              }
+            ]
+          },
+          "access": "private",
+          "message": "Server is down!",
+          "log": "Runbook: https://example.com/runbook",
+          "imageUrl": "https://example.com/alert.jpg",
+          "linkUrl": "https://status.example.com",
+          "geofence": {
+            "id": "6nq1h6h4lj8elimg",
+            "lat": 40.0458744,
+            "lon": -105.2654336,
+            "radius": 100,
+            "radiusUnits": "meters",
+            "displayRadius": "100",
+            "type": "enter",
+            "timeThrottle": "0",
+            "subscribable": "yes"
+          },
+          "numberFollowers": 15,
+          "sendPermissions": "owner_subs",
+          "following": false,
+          "createdAt": "2024-01-15T10:30:00Z",
+          "updatedAt": "2024-01-20T14:45:00Z"
+        }
+      ]
+    },
+    {
+      "operation": "get_vybit",
+      "config": {
+        "key": "abc123def456"
+      },
+      "method": "GET",
+      "path": "/vybit/{key}",
+      "status": 200,
+      "body": {
+        "key": "vybit123abc456",
+        "name": "Server Alert",
+        "description": "Notification for critical server errors",
+        "soundKey": "sound123abc",
+        "status": "on",
+        "triggerKey": "trigger123abc456",
+        "subscriptionKey": "sub123abc456",
+        "triggerType": "webhook",
+        "triggerSettings": {
+          "crons": [
+            {
+              "cron": "0 9 * * *",
+              "timeZone": "America/Denver"
+            }
+          ]
+        },
+        "access": "private",
+        "message": "Server is down!",
+        "log": "Runbook: https://example.com/runbook",
+        "imageUrl": "https://example.com/alert.jpg",
+        "linkUrl": "https://status.example.com",
+        "geofence": {
+          "id": "6nq1h6h4lj8elimg",
+          "lat": 40.0458744,
+          "lon": -105.2654336,
+          "radius": 100,
+          "radiusUnits": "meters",
+          "displayRadius": "100",
+          "type": "enter",
+          "timeThrottle": "0",
+          "subscribable": "yes"
+        },
+        "numberFollowers": 15,
+        "sendPermissions": "owner_subs",
+        "following": false,
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-20T14:45:00Z"
+      }
+    },
+    {
+      "operation": "update_vybit_partial",
+      "config": {
+        "key": "abc123def456",
+        "name": "Updated Alert Name",
+        "description": "Updated description",
+        "sound_key": "newsound123",
+        "trigger_type": "schedule",
+        "trigger_settings": {
+          "crons": [
+            {
+              "cron": "0 9 * * *",
+              "timeZone": "America/Denver"
+            }
+          ]
+        },
+        "access": "public",
+        "status": "on",
+        "message": "New message",
+        "log": "Runbook: https://example.com/runbook",
+        "image_url": "https://example.com/newimage.jpg",
+        "link_url": "https://example.com/newlink",
+        "send_permissions": "subs_owner"
+      },
+      "method": "PATCH",
+      "path": "/vybit/{key}",
+      "status": 200,
+      "body": {
+        "key": "vybit123abc456",
+        "name": "Server Alert",
+        "description": "Notification for critical server errors",
+        "soundKey": "sound123abc",
+        "status": "on",
+        "triggerKey": "trigger123abc456",
+        "subscriptionKey": "sub123abc456",
+        "triggerType": "webhook",
+        "triggerSettings": {
+          "crons": [
+            {
+              "cron": "0 9 * * *",
+              "timeZone": "America/Denver"
+            }
+          ]
+        },
+        "access": "private",
+        "message": "Server is down!",
+        "log": "Runbook: https://example.com/runbook",
+        "imageUrl": "https://example.com/alert.jpg",
+        "linkUrl": "https://status.example.com",
+        "geofence": {
+          "id": "6nq1h6h4lj8elimg",
+          "lat": 40.0458744,
+          "lon": -105.2654336,
+          "radius": 100,
+          "radiusUnits": "meters",
+          "displayRadius": "100",
+          "type": "enter",
+          "timeThrottle": "0",
+          "subscribable": "yes"
+        },
+        "numberFollowers": 15,
+        "sendPermissions": "owner_subs",
+        "following": false,
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-20T14:45:00Z"
+      }
+    },
+    {
+      "operation": "delete_vybit",
+      "config": {
+        "key": "abc123def456"
+      },
+      "method": "DELETE",
+      "path": "/vybit/{key}",
+      "status": 200,
+      "body": {
+        "result": 1,
+        "success": true,
+        "message": "Vybit deleted"
+      }
+    },
+    {
+      "operation": "trigger_vybit",
+      "config": {
+        "key": "abc123def456",
+        "message": "System maintenance complete",
+        "image_url": "https://example.com/image.jpg",
+        "link_url": "https://example.com/status",
+        "log": "Triggered via API",
+        "run_once": false
+      },
+      "method": "POST",
+      "path": "/vybit/{key}/trigger",
+      "status": 200,
+      "body": {
+        "result": 1,
+        "plk": "log123abc456"
+      }
+    },
+    {
+      "operation": "create_reminder",
+      "config": {
+        "key": "abc123def456",
+        "cron": "30 14 20 2 *",
+        "time_zone": "America/Denver",
+        "year": 2026,
+        "message": "Don't forget the meeting",
+        "image_url": "https://example.com/image.jpg",
+        "link_url": "https://example.com/meeting",
+        "log": null
+      },
+      "method": "POST",
+      "path": "/vybit/{key}/reminders",
+      "status": 201,
+      "body": {
+        "result": 1
+      }
+    },
+    {
+      "operation": "list_reminders",
+      "config": {
+        "key": "abc123def456"
+      },
+      "method": "GET",
+      "path": "/vybit/{key}/reminders",
+      "status": 200,
+      "body": {
+        "result": 1
+      }
+    },
+    {
+      "operation": "update_reminder",
+      "config": {
+        "key": "abc123def456",
+        "reminder_id": "a3f2b1c9d0e4",
+        "cron": "0 15 20 2 *",
+        "time_zone": "America/New_York",
+        "message": "Meeting in 30 minutes"
+      },
+      "method": "PATCH",
+      "path": "/vybit/{key}/reminders/{reminderId}",
+      "status": 200,
+      "body": {
+        "result": 1
+      }
+    },
+    {
+      "operation": "delete_reminder",
+      "config": {
+        "key": "abc123def456",
+        "reminder_id": "a3f2b1c9d0e4"
+      },
+      "method": "DELETE",
+      "path": "/vybit/{key}/reminders/{reminderId}",
+      "status": 200,
+      "body": {
+        "result": 1,
+        "success": true,
+        "message": "Vybit deleted"
+      }
+    },
+    {
+      "operation": "create_vybit",
+      "config": {
+        "name": "Server Alert",
+        "description": "Notification for critical server errors",
+        "sound_key": "sound123abc",
+        "status": "on",
+        "trigger_type": "webhook",
+        "access": "private",
+        "message": "Alert triggered!",
+        "log": "Runbook: https://example.com/runbook",
+        "image_url": "https://example.com/image.jpg",
+        "link_url": "https://example.com",
+        "send_permissions": "owner_subs"
+      },
+      "method": "POST",
+      "path": "/vybit",
+      "status": 200,
+      "body": {
+        "key": "vybit123abc456",
+        "name": "Server Alert",
+        "description": "Notification for critical server errors",
+        "soundKey": "sound123abc",
+        "status": "on",
+        "triggerKey": "trigger123abc456",
+        "subscriptionKey": "sub123abc456",
+        "triggerType": "webhook",
+        "triggerSettings": {
+          "crons": [
+            {
+              "cron": "0 9 * * *",
+              "timeZone": "America/Denver"
+            }
+          ]
+        },
+        "access": "private",
+        "message": "Server is down!",
+        "log": "Runbook: https://example.com/runbook",
+        "imageUrl": "https://example.com/alert.jpg",
+        "linkUrl": "https://status.example.com",
+        "geofence": {
+          "id": "6nq1h6h4lj8elimg",
+          "lat": 40.0458744,
+          "lon": -105.2654336,
+          "radius": 100,
+          "radiusUnits": "meters",
+          "displayRadius": "100",
+          "type": "enter",
+          "timeThrottle": "0",
+          "subscribable": "yes"
+        },
+        "numberFollowers": 15,
+        "sendPermissions": "owner_subs",
+        "following": false,
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-20T14:45:00Z"
+      }
+    },
+    {
+      "operation": "list_public_vybits",
+      "config": {
+        "offset": 0,
+        "limit": 30,
+        "search": "notification"
+      },
+      "method": "GET",
+      "path": "/subscriptions/public",
+      "status": 200,
+      "body": [
+        {
+          "key": "sub123abc456",
+          "name": "Server Alert",
+          "description": "Notification for critical server errors",
+          "soundKey": "sound123abc",
+          "soundType": "mp3",
+          "imageUrl": "https://example.com/alert.jpg",
+          "linkUrl": "https://status.example.com",
+          "ownerName": "Jane Smith",
+          "following": true,
+          "createdAt": "2024-01-15T10:30:00Z",
+          "updatedAt": "2024-01-20T14:45:00Z"
+        }
+      ]
+    },
+    {
+      "operation": "get_public_vybit",
+      "config": {
+        "key": "sub123abc456"
+      },
+      "method": "GET",
+      "path": "/subscription/{key}",
+      "status": 200,
+      "body": {
+        "key": "sub123abc456",
+        "name": "Server Alert",
+        "description": "Notification for critical server errors",
+        "soundKey": "sound123abc",
+        "soundType": "mp3",
+        "imageUrl": "https://example.com/alert.jpg",
+        "linkUrl": "https://status.example.com",
+        "ownerName": "Jane Smith",
+        "following": true,
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-20T14:45:00Z"
+      }
+    },
+    {
+      "operation": "create_subscription",
+      "config": {
+        "key": "sub123abc456"
+      },
+      "method": "POST",
+      "path": "/subscription/{key}",
+      "status": 200,
+      "body": {
+        "result": 1,
+        "message": "subscribed",
+        "followingKey": "follow123abc",
+        "key": "follow123abc",
+        "logKey": "log123abc"
+      }
+    },
+    {
+      "operation": "list_subscriptions",
+      "config": {
+        "offset": 0,
+        "limit": 30,
+        "search": "notification"
+      },
+      "method": "GET",
+      "path": "/subscriptions/following",
+      "status": 200,
+      "body": [
+        {
+          "followingKey": "follow123abc456",
+          "vybName": "Server Alert",
+          "description": "Critical server notifications",
+          "soundKey": "sound123abc",
+          "soundType": "mp3",
+          "ownerName": "Jane Smith",
+          "status": "on",
+          "accessStatus": "public",
+          "subscriptionKey": "sub123abc",
+          "access": "public",
+          "geofence": {
+            "id": "6nq1h6h4lj8elimg",
+            "lat": 40.0458744,
+            "lon": -105.2654336,
+            "radius": 100,
+            "radiusUnits": "meters",
+            "displayRadius": "100",
+            "type": "enter",
+            "timeThrottle": "0",
+            "subscribable": "yes"
+          },
+          "message": "Alert!",
+          "imageUrl": "https://example.com/image.jpg",
+          "linkUrl": "https://example.com",
+          "sendPermissions": "owner_subs",
+          "createdAt": "2024-01-15T10:30:00Z",
+          "updatedAt": "2024-01-20T14:45:00Z"
+        }
+      ]
+    },
+    {
+      "operation": "get_subscription",
+      "config": {
+        "key": "follow123abc"
+      },
+      "method": "GET",
+      "path": "/subscription/following/{key}",
+      "status": 200,
+      "body": {
+        "followingKey": "follow123abc456",
+        "vybName": "Server Alert",
+        "description": "Critical server notifications",
+        "soundKey": "sound123abc",
+        "soundType": "mp3",
+        "ownerName": "Jane Smith",
+        "status": "on",
+        "accessStatus": "public",
+        "subscriptionKey": "sub123abc",
+        "access": "public",
+        "geofence": {
+          "id": "6nq1h6h4lj8elimg",
+          "lat": 40.0458744,
+          "lon": -105.2654336,
+          "radius": 100,
+          "radiusUnits": "meters",
+          "displayRadius": "100",
+          "type": "enter",
+          "timeThrottle": "0",
+          "subscribable": "yes"
+        },
+        "message": "Alert!",
+        "imageUrl": "https://example.com/image.jpg",
+        "linkUrl": "https://example.com",
+        "sendPermissions": "owner_subs",
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-20T14:45:00Z"
+      }
+    },
+    {
+      "operation": "delete_subscription",
+      "config": {
+        "key": "follow123abc"
+      },
+      "method": "DELETE",
+      "path": "/subscription/following/{key}",
+      "status": 200,
+      "body": {
+        "result": 1,
+        "success": true,
+        "message": "Vybit deleted"
+      }
+    },
+    {
+      "operation": "send_to_owner",
+      "config": {
+        "key": "follow123abc",
+        "message": "Server is back online",
+        "image_url": "https://example.com/status-ok.jpg",
+        "link_url": "https://example.com/dashboard"
+      },
+      "method": "POST",
+      "path": "/subscription/following/{key}/send-to-owner",
+      "status": 200,
+      "body": {
+        "result": 1,
+        "plk": "log123abc456"
+      }
+    },
+    {
+      "operation": "send_to_group",
+      "config": {
+        "key": "follow123abc",
+        "message": "Emergency alert: Check the group chat",
+        "image_url": "https://example.com/alert.jpg",
+        "link_url": "https://example.com/chat"
+      },
+      "method": "POST",
+      "path": "/subscription/following/{key}/send-to-group",
+      "status": 200,
+      "body": {
+        "result": 1,
+        "plk": "log123abc456"
+      }
+    },
+    {
+      "operation": "search_sounds",
+      "config": {
+        "search": "notification",
+        "offset": 0,
+        "limit": 30
+      },
+      "method": "GET",
+      "path": "/sounds",
+      "status": 200,
+      "body": [
+        {
+          "key": "sound123abc",
+          "name": "Notification Bell",
+          "description": "Clean notification sound",
+          "type": "mp3",
+          "status": "public",
+          "proxyUrl": "https://api.vybit.net/v1/sound/sound123abc/play",
+          "vybitKey": "vybit456def",
+          "meta": null
+        },
+        {
+          "key": "sound789xyz",
+          "name": "Alert Chime",
+          "description": "Gentle alert sound",
+          "type": "mp3",
+          "status": "public",
+          "proxyUrl": "https://api.vybit.net/v1/sound/sound789xyz/play",
+          "vybitKey": null,
+          "meta": null
+        }
+      ]
+    },
+    {
+      "operation": "get_sound",
+      "config": {
+        "key": "sound123abc"
+      },
+      "method": "GET",
+      "path": "/sound/{key}",
+      "status": 200,
+      "body": {
+        "key": "sound123abc456",
+        "name": "Notification Bell",
+        "description": "Clean notification sound",
+        "type": "mp3",
+        "status": "public",
+        "proxyUrl": "https://api.vybit.net/v1/sound/sound123abc/play",
+        "vybitKey": "vybit456def",
+        "meta": null
+      }
+    },
+    {
+      "operation": "list_logs",
+      "config": {
+        "offset": 0,
+        "limit": 30,
+        "search": "notification"
+      },
+      "method": "GET",
+      "path": "/logs",
+      "status": 200,
+      "body": [
+        {
+          "key": "log123abc456",
+          "vybKey": "vybit123abc",
+          "vybName": "Server Alert",
+          "createdAt": "2024-01-20T15:30:00Z",
+          "vybDescription": "Alerts when server CPU exceeds 80%",
+          "soundKey": "sound123abc",
+          "vybfollowKey": "follow123abc",
+          "ownerName": "John Doe",
+          "senderName": "Jane Smith",
+          "notification": "Server CPU usage critical: 95%",
+          "log": "Triggered by monitoring script",
+          "imageUrl": "https://example.com/alert.png",
+          "linkUrl": "https://dashboard.example.com/server-status"
+        }
+      ]
+    },
+    {
+      "operation": "get_log",
+      "config": {
+        "log_key": "log123abc456"
+      },
+      "method": "GET",
+      "path": "/log/{logKey}",
+      "status": 200,
+      "body": {
+        "key": "log123abc456",
+        "vybKey": "vybit123abc",
+        "vybName": "Server Alert",
+        "createdAt": "2024-01-20T15:30:00Z",
+        "vybDescription": "Alerts when server CPU exceeds 80%",
+        "soundKey": "sound123abc",
+        "vybfollowKey": "follow123abc",
+        "ownerName": "John Doe",
+        "senderName": "Jane Smith",
+        "notification": "Server CPU usage critical: 95%",
+        "log": "Triggered by monitoring script",
+        "imageUrl": "https://example.com/alert.png",
+        "linkUrl": "https://dashboard.example.com/server-status"
+      }
+    },
+    {
+      "operation": "list_vybit_logs",
+      "config": {
+        "vyb_key": "vybit123abc",
+        "offset": 0,
+        "limit": 30,
+        "search": "error"
+      },
+      "method": "GET",
+      "path": "/logs/vybit/{vybKey}",
+      "status": 200,
+      "body": [
+        {
+          "key": "log123abc456",
+          "vybKey": "vybit123abc",
+          "vybName": "Server Alert",
+          "createdAt": "2024-01-20T15:30:00Z",
+          "vybDescription": "Alerts when server CPU exceeds 80%",
+          "soundKey": "sound123abc",
+          "vybfollowKey": "follow123abc",
+          "ownerName": "John Doe",
+          "senderName": "Jane Smith",
+          "notification": "Server CPU usage critical: 95%",
+          "log": "Triggered by monitoring script",
+          "imageUrl": "https://example.com/alert.png",
+          "linkUrl": "https://dashboard.example.com/server-status"
+        }
+      ]
+    }
+  ]
+}
