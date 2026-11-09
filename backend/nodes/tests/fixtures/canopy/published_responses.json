@@ -1,0 +1,168 @@
+{
+  "GET /clients": {
+    "clients": [
+      {
+        "external_id": null,
+        "id": 96552,
+        "is_business": false,
+        "name": "John Smith",
+        "type": "CLIENT"
+      },
+      {
+        "external_id": "ext-acme-001",
+        "id": 106062,
+        "is_business": true,
+        "name": "Acme Corporation",
+        "type": "CLIENT"
+      }
+    ],
+    "next_cursor": "VjEwNjA2Mg=="
+  },
+  "GET /clients/{client_id}": {
+    "client": {
+      "addresses": [
+        {
+          "address_1": "8900 Oceanside",
+          "country": "US",
+          "is_primary": true,
+          "locality": "San Diego",
+          "postal_code": "576223",
+          "region": "CA",
+          "type": "WORK"
+        },
+        {
+          "address_1": "1 downtown",
+          "country": "US",
+          "is_primary": false,
+          "locality": "Boston",
+          "postal_code": "126223",
+          "region": "MA",
+          "type": "OTHER"
+        }
+      ],
+      "archived_at": null,
+      "client_connections": null,
+      "client_since": "2019-12-10",
+      "client_sources": [
+        {
+          "id": "D2T4G",
+          "name": "Mailer"
+        }
+      ],
+      "contacts": null,
+      "created_at": "2019-12-10T09:28:16",
+      "custom_fields": [
+        {
+          "dropdown_values": [
+            {
+              "id": "KLRX",
+              "value": "Dachshund"
+            }
+          ],
+          "field_id": "DQ4V",
+          "field_name": "Favorite Dog",
+          "type": "dropdown"
+        }
+      ],
+      "deleted_at": null,
+      "display_name": "Freddy Mercury",
+      "emails": [
+        {
+          "email": "freddy@mercury.com",
+          "is_primary": true,
+          "type": "OTHER"
+        },
+        {
+          "email": "other@notused.com",
+          "is_primary": false,
+          "type": "OTHER"
+        }
+      ],
+      "external_id": "frdymrcry",
+      "filing_status": "NOT_SELECTED",
+      "id": 96552,
+      "is_active": true,
+      "is_archived": false,
+      "is_business": false,
+      "is_deleted": false,
+      "notes": "big range",
+      "phones": [
+        {
+          "extension": null,
+          "is_primary": true,
+          "number": "5555555555",
+          "type": "OTHER"
+        },
+        {
+          "extension": "123",
+          "is_primary": false,
+          "number": "4444444444321",
+          "type": "OTHER"
+        }
+      ],
+      "primary_contact": null,
+      "tags": [
+        {
+          "id": "DQ4V",
+          "name": "high_roller"
+        }
+      ],
+      "tin": "123456789",
+      "type": "CLIENT",
+      "updated_at": "2019-12-18T13:39:55"
+    }
+  },
+  "GET /contacts/{contact_id}": {
+    "contact": {
+      "addresses": [
+        {
+          "address_1": "123 Main St",
+          "address_2": "Apt 4B",
+          "country": "US",
+          "is_primary": true,
+          "locality": "San Francisco",
+          "postal_code": "94102",
+          "region": "CA",
+          "type": "MAILING"
+        }
+      ],
+      "archived_at": null,
+      "birthdate": "1985-06-15",
+      "clients": [
+        {
+          "external_id": null,
+          "id": 96552,
+          "is_business": false,
+          "name": "John Doe",
+          "type": "CLIENT"
+        }
+      ],
+      "created_at": "2020-01-15T10:30:00Z",
+      "deleted_at": null,
+      "emails": [
+        {
+          "email": "john.doe@example.com",
+          "is_primary": true,
+          "type": "WORK"
+        }
+      ],
+      "employer": "Acme Corp",
+      "first_name": "John",
+      "id": "X9K2P",
+      "is_archived": false,
+      "last_name": "Doe",
+      "middle_name": "A",
+      "occupation": "Software Engineer",
+      "phones": [
+        {
+          "extension": "123",
+          "is_primary": true,
+          "number": "555-123-4567",
+          "type": "MOBILE"
+        }
+      ],
+      "tin": "123-45-6789",
+      "updated_at": "2023-03-20T14:45:30Z"
+    }
+  }
+}

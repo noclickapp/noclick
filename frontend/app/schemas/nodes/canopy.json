@@ -1,0 +1,1698 @@
+{
+  "$defs": {
+    "BusinessClient": {
+      "additionalProperties": false,
+      "properties": {
+        "is_business": {
+          "const": true,
+          "default": true,
+          "title": "Is Business",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "business_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Business Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "CLIENT",
+          "enum": [
+            "CLIENT",
+            "PROSPECT",
+            "OTHER"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Email"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        }
+      },
+      "required": [
+        "name",
+        "business_name"
+      ],
+      "title": "BusinessClient",
+      "type": "object"
+    },
+    "CanopyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "canopy_api_key",
+          "default": "canopy_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Canopy API Key",
+      "type": "object",
+      "x-credential-instructions": "In Canopy, open Settings > API Management and copy your API key. API access requires Plus or Premium. Paste the key alone. NoClick uses the published Canopy v4 API server and sends it in the x-canopy-api-key header.",
+      "x-credential-url": "https://support.getcanopy.com/en/articles/9376222-how-do-i-access-and-use-the-canopy-api"
+    },
+    "CanopyCreateClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client": {
+          "discriminator": {
+            "mapping": {
+              "False": "#/$defs/IndividualClient",
+              "True": "#/$defs/BusinessClient"
+            },
+            "propertyName": "is_business"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/IndividualClient"
+            },
+            {
+              "$ref": "#/$defs/BusinessClient"
+            }
+          ],
+          "title": "Client"
+        }
+      },
+      "required": [
+        "client"
+      ],
+      "title": "CanopyCreateClientConfig",
+      "type": "object"
+    },
+    "CanopyCreateClientNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_client_note",
+          "default": "create_client_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "minimum": 1,
+          "title": "Client Id",
+          "type": "integer"
+        },
+        "notes": {
+          "$ref": "#/$defs/NoteFields"
+        }
+      },
+      "required": [
+        "client_id",
+        "notes"
+      ],
+      "title": "CanopyCreateClientNoteConfig",
+      "type": "object"
+    },
+    "CanopyCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact": {
+          "$ref": "#/$defs/ContactFields"
+        }
+      },
+      "required": [
+        "contact"
+      ],
+      "title": "CanopyCreateContactConfig",
+      "type": "object"
+    },
+    "CanopyCreateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tasks": {
+          "$ref": "#/$defs/TaskFields"
+        }
+      },
+      "required": [
+        "tasks"
+      ],
+      "title": "CanopyCreateTaskConfig",
+      "type": "object"
+    },
+    "CanopyGetClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "CanopyGetClientConfig",
+      "type": "object"
+    },
+    "CanopyGetClientNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_client_note",
+          "default": "get_client_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "minimum": 1,
+          "title": "Client Id",
+          "type": "integer"
+        },
+        "note_id": {
+          "minimum": 1,
+          "title": "Note Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "client_id",
+        "note_id"
+      ],
+      "title": "CanopyGetClientNoteConfig",
+      "type": "object"
+    },
+    "CanopyGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "CanopyGetContactConfig",
+      "type": "object"
+    },
+    "CanopyGetTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "CanopyGetTaskConfig",
+      "type": "object"
+    },
+    "CanopyGetTaskTemplateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_task_template",
+          "default": "get_task_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "CanopyGetTaskTemplateConfig",
+      "type": "object"
+    },
+    "CanopyListClientNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_client_notes",
+          "default": "list_client_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "minimum": 1,
+          "title": "Client Id",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "only_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Only Archived"
+        },
+        "only_pinned": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Only Pinned"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "CanopyListClientNotesConfig",
+      "type": "object"
+    },
+    "CanopyListClientsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum records in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_cursor from the previous response. Omit for the first page.",
+          "title": "Next Cursor"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider updated_at filter for incremental sync.",
+          "title": "Updated At"
+        }
+      },
+      "title": "CanopyListClientsConfig",
+      "type": "object"
+    },
+    "CanopyListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum records in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_cursor from the previous response. Omit for the first page.",
+          "title": "Next Cursor"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider updated_at filter for incremental sync.",
+          "title": "Updated At"
+        }
+      },
+      "title": "CanopyListContactsConfig",
+      "type": "object"
+    },
+    "CanopyListTaskStatusesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_task_statuses",
+          "default": "list_task_statuses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CanopyListTaskStatusesConfig",
+      "type": "object"
+    },
+    "CanopyListTaskTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_task_tags",
+          "default": "list_task_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort_count": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Count",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_name": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Name",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "CanopyListTaskTagsConfig",
+      "type": "object"
+    },
+    "CanopyListTaskTemplatesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_task_templates",
+          "default": "list_task_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CanopyListTaskTemplatesConfig",
+      "type": "object"
+    },
+    "CanopyListTasksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "name_filter": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name Filter"
+        },
+        "is_client_request": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Client Request"
+        },
+        "service_type": {
+          "default": "generic",
+          "enum": [
+            "generic",
+            "notice",
+            "tax_return"
+          ],
+          "title": "Service Type",
+          "type": "string"
+        }
+      },
+      "title": "CanopyListTasksConfig",
+      "type": "object"
+    },
+    "CanopySearchClientsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum records in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_cursor from the previous response. Omit for the first page.",
+          "title": "Next Cursor"
+        },
+        "operation": {
+          "const": "search_clients",
+          "default": "search_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "query_field": {
+          "enum": [
+            "name",
+            "email",
+            "phone"
+          ],
+          "title": "Query Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q",
+        "query_field"
+      ],
+      "title": "CanopySearchClientsConfig",
+      "type": "object"
+    },
+    "CanopySearchContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum records in this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_cursor from the previous response. Omit for the first page.",
+          "title": "Next Cursor"
+        },
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "query_field": {
+          "enum": [
+            "name",
+            "email",
+            "phone"
+          ],
+          "title": "Query Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q",
+        "query_field"
+      ],
+      "title": "CanopySearchContactsConfig",
+      "type": "object"
+    },
+    "CanopyUpdateClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "client": {
+          "$ref": "#/$defs/ClientChanges"
+        }
+      },
+      "required": [
+        "client_id",
+        "client"
+      ],
+      "title": "CanopyUpdateClientConfig",
+      "type": "object"
+    },
+    "CanopyUpdateClientNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_client_note",
+          "default": "update_client_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "minimum": 1,
+          "title": "Client Id",
+          "type": "integer"
+        },
+        "note_id": {
+          "minimum": 1,
+          "title": "Note Id",
+          "type": "integer"
+        },
+        "notes": {
+          "$ref": "#/$defs/NoteChanges"
+        }
+      },
+      "required": [
+        "client_id",
+        "note_id",
+        "notes"
+      ],
+      "title": "CanopyUpdateClientNoteConfig",
+      "type": "object"
+    },
+    "CanopyUpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "contact": {
+          "$ref": "#/$defs/ContactChanges"
+        }
+      },
+      "required": [
+        "contact_id",
+        "contact"
+      ],
+      "title": "CanopyUpdateContactConfig",
+      "type": "object"
+    },
+    "CanopyUpdateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "task": {
+          "$ref": "#/$defs/TaskChanges",
+          "description": "Fields are sent directly in the PATCH body, as required by Canopy.",
+          "title": "Task changes"
+        }
+      },
+      "required": [
+        "task_id",
+        "task"
+      ],
+      "title": "CanopyUpdateTaskConfig",
+      "type": "object"
+    },
+    "ClientChanges": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "business_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Name"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        },
+        "is_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Archived"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "CLIENT",
+                "PROSPECT",
+                "OTHER"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "CLIENT",
+            "PROSPECT",
+            "OTHER"
+          ],
+          "x-enum-searchable": true
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Email"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        }
+      },
+      "title": "ClientChanges",
+      "type": "object"
+    },
+    "ClientContact": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "is_primary": {
+          "title": "Is Primary",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "is_primary"
+      ],
+      "title": "ClientContact",
+      "type": "object"
+    },
+    "ContactChanges": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "middle_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Middle Name"
+        },
+        "employer": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Employer"
+        },
+        "occupation": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Occupation"
+        },
+        "is_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Archived"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactEmail"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        }
+      },
+      "title": "ContactChanges",
+      "type": "object"
+    },
+    "ContactEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Value",
+          "type": "string"
+        },
+        "is_primary": {
+          "default": false,
+          "title": "Is Primary",
+          "type": "boolean"
+        },
+        "key": {
+          "default": "WORK",
+          "enum": [
+            "PERSONAL",
+            "WORK",
+            "OTHER"
+          ],
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "ContactEmail",
+      "type": "object"
+    },
+    "ContactFields": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "middle_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Middle Name"
+        },
+        "employer": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Employer"
+        },
+        "occupation": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Occupation"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactEmail"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "ContactFields",
+      "type": "object"
+    },
+    "Email": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "is_primary": {
+          "default": false,
+          "title": "Is Primary",
+          "type": "boolean"
+        },
+        "type": {
+          "default": "WORK",
+          "enum": [
+            "PERSONAL",
+            "WORK",
+            "OTHER"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "Email",
+      "type": "object"
+    },
+    "IndividualClient": {
+      "additionalProperties": false,
+      "properties": {
+        "is_business": {
+          "const": false,
+          "default": false,
+          "title": "Is Business",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "contacts": {
+          "items": {
+            "$ref": "#/$defs/ClientContact"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Contacts",
+          "type": "array"
+        },
+        "type": {
+          "default": "CLIENT",
+          "enum": [
+            "CLIENT",
+            "PROSPECT",
+            "OTHER"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Email"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        }
+      },
+      "required": [
+        "name",
+        "contacts"
+      ],
+      "title": "IndividualClient",
+      "type": "object"
+    },
+    "NoteChanges": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 30000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 2000000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "is_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Archived"
+        },
+        "is_pinned": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Pinned"
+        }
+      },
+      "title": "NoteChanges",
+      "type": "object"
+    },
+    "NoteFields": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 30000,
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 2000000,
+          "title": "Body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "body"
+      ],
+      "title": "NoteFields",
+      "type": "object"
+    },
+    "TaskChanges": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use an ID from List Task Statuses. WITH_CLIENT can re-notify a client on an already sent request.",
+          "title": "Status Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Can only set a client on a task that has none; an existing client cannot be changed.",
+          "title": "Client Id"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "Low",
+                "Medium",
+                "High"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "x-enum-searchable": true
+        },
+        "budgeted_hours": {
+          "anyOf": [
+            {
+              "maximum": 99999,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budgeted Hours"
+        }
+      },
+      "title": "TaskChanges",
+      "type": "object"
+    },
+    "TaskFields": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[^\\s]+(\\s+[^\\s]+)*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "status_id": {
+          "description": "Use an ID from List Task Statuses.",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Status Id",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "maxLength": 500000,
+          "title": "Description",
+          "type": "string"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "Low",
+                "Medium",
+                "High"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "status_id"
+      ],
+      "title": "TaskFields",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_client": "#/$defs/CanopyCreateClientConfig",
+          "create_client_note": "#/$defs/CanopyCreateClientNoteConfig",
+          "create_contact": "#/$defs/CanopyCreateContactConfig",
+          "create_task": "#/$defs/CanopyCreateTaskConfig",
+          "get_client": "#/$defs/CanopyGetClientConfig",
+          "get_client_note": "#/$defs/CanopyGetClientNoteConfig",
+          "get_contact": "#/$defs/CanopyGetContactConfig",
+          "get_task": "#/$defs/CanopyGetTaskConfig",
+          "get_task_template": "#/$defs/CanopyGetTaskTemplateConfig",
+          "list_client_notes": "#/$defs/CanopyListClientNotesConfig",
+          "list_clients": "#/$defs/CanopyListClientsConfig",
+          "list_contacts": "#/$defs/CanopyListContactsConfig",
+          "list_task_statuses": "#/$defs/CanopyListTaskStatusesConfig",
+          "list_task_tags": "#/$defs/CanopyListTaskTagsConfig",
+          "list_task_templates": "#/$defs/CanopyListTaskTemplatesConfig",
+          "list_tasks": "#/$defs/CanopyListTasksConfig",
+          "search_clients": "#/$defs/CanopySearchClientsConfig",
+          "search_contacts": "#/$defs/CanopySearchContactsConfig",
+          "update_client": "#/$defs/CanopyUpdateClientConfig",
+          "update_client_note": "#/$defs/CanopyUpdateClientNoteConfig",
+          "update_contact": "#/$defs/CanopyUpdateContactConfig",
+          "update_task": "#/$defs/CanopyUpdateTaskConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CanopyListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopySearchClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyGetClientConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyCreateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyUpdateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopySearchContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyListClientNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyGetClientNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyCreateClientNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyUpdateClientNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyListTaskStatusesConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyListTaskTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyListTaskTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/CanopyGetTaskTemplateConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CanopyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Canopy Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
