@@ -1,0 +1,1067 @@
+{
+  "$defs": {
+    "CreateAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Create appointment.",
+      "properties": {
+        "operation": {
+          "const": "create_appointment",
+          "default": "create_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cal_event_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cal Event Id"
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "scheduler_event_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduler Event Id"
+        },
+        "time": {
+          "format": "date-time",
+          "title": "Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id",
+        "time"
+      ],
+      "title": "CreateAppointmentConfig",
+      "type": "object"
+    },
+    "CreateContactConfig": {
+      "additionalProperties": false,
+      "description": "Create contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "CreateContactConfig",
+      "type": "object"
+    },
+    "CreateLeadConfig": {
+      "additionalProperties": false,
+      "description": "Create lead with relationships.",
+      "properties": {
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "assignee_id": {
+          "format": "uuid",
+          "title": "Assignee Id",
+          "type": "string"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "lead_status_id": {
+          "format": "uuid",
+          "title": "Lead Status Id",
+          "type": "string"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "street1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street1"
+        },
+        "street2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street2"
+        },
+        "team_id": {
+          "format": "uuid",
+          "title": "Team Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "assignee_id",
+        "lead_status_id",
+        "team_id"
+      ],
+      "title": "CreateLeadConfig",
+      "type": "object"
+    },
+    "CreateLeadNoteConfig": {
+      "additionalProperties": false,
+      "description": "Create lead note.",
+      "properties": {
+        "operation": {
+          "const": "create_lead_note",
+          "default": "create_lead_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "profile_id": {
+          "format": "uuid",
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id",
+        "profile_id",
+        "text"
+      ],
+      "title": "CreateLeadNoteConfig",
+      "type": "object"
+    },
+    "DeleteAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Delete appointment.",
+      "properties": {
+        "operation": {
+          "const": "delete_appointment",
+          "default": "delete_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteAppointmentConfig",
+      "type": "object"
+    },
+    "DeleteContactConfig": {
+      "additionalProperties": false,
+      "description": "Delete contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteContactConfig",
+      "type": "object"
+    },
+    "DeleteLeadConfig": {
+      "additionalProperties": false,
+      "description": "Delete lead.",
+      "properties": {
+        "operation": {
+          "const": "delete_lead",
+          "default": "delete_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteLeadConfig",
+      "type": "object"
+    },
+    "DeleteLeadNoteConfig": {
+      "additionalProperties": false,
+      "description": "Delete lead note.",
+      "properties": {
+        "operation": {
+          "const": "delete_lead_note",
+          "default": "delete_lead_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteLeadNoteConfig",
+      "type": "object"
+    },
+    "GetAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Get appointment by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_appointment",
+          "default": "get_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetAppointmentConfig",
+      "type": "object"
+    },
+    "GetContactConfig": {
+      "additionalProperties": false,
+      "description": "Get contact by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetContactConfig",
+      "type": "object"
+    },
+    "GetLeadConfig": {
+      "additionalProperties": false,
+      "description": "Get lead by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetLeadConfig",
+      "type": "object"
+    },
+    "GetLeadNoteConfig": {
+      "additionalProperties": false,
+      "description": "Get lead note by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_lead_note",
+          "default": "get_lead_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetLeadNoteConfig",
+      "type": "object"
+    },
+    "ListAreasConfig": {
+      "additionalProperties": false,
+      "description": "Get areas.",
+      "properties": {
+        "operation": {
+          "const": "list_areas",
+          "default": "list_areas",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 25,
+          "description": "Results per page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Page offset; use next_offset from the prior page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "ListAreasConfig",
+      "type": "object"
+    },
+    "ListLeadStatusesConfig": {
+      "additionalProperties": false,
+      "description": "Get statuses.",
+      "properties": {
+        "operation": {
+          "const": "list_lead_statuses",
+          "default": "list_lead_statuses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 25,
+          "description": "Results per page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Page offset; use next_offset from the prior page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "ListLeadStatusesConfig",
+      "type": "object"
+    },
+    "ListLeadsConfig": {
+      "additionalProperties": false,
+      "description": "Get leads.",
+      "properties": {
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 25,
+          "description": "Results per page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Page offset; use next_offset from the prior page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "ListLeadsConfig",
+      "type": "object"
+    },
+    "ListProfilesConfig": {
+      "additionalProperties": false,
+      "description": "Get profiles.",
+      "properties": {
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 25,
+          "description": "Results per page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Page offset; use next_offset from the prior page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "ListProfilesConfig",
+      "type": "object"
+    },
+    "ListTeamsConfig": {
+      "additionalProperties": false,
+      "description": "Get teams.",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 25,
+          "description": "Results per page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Page offset; use next_offset from the prior page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "ListTeamsConfig",
+      "type": "object"
+    },
+    "SalesRabbitAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "salesrabbit_api_key",
+          "default": "salesrabbit_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "US",
+          "enum": [
+            "US",
+            "Ireland"
+          ],
+          "title": "Data region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "SalesRabbit API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from SalesRabbit account settings and paste it here. Choose your account's data region. NoClick sends it as a Bearer token to SalesRabbit only.",
+      "x-credential-url": "https://developers.salesrabbit.com/"
+    },
+    "UpdateAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Update appointment.",
+      "properties": {
+        "operation": {
+          "const": "update_appointment",
+          "default": "update_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "cal_event_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cal Event Id"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Id"
+        },
+        "scheduler_event_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduler Event Id"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateAppointmentConfig",
+      "type": "object"
+    },
+    "UpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "Update contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateContactConfig",
+      "type": "object"
+    },
+    "UpdateLeadConfig": {
+      "additionalProperties": false,
+      "description": "Update lead with relationships.",
+      "properties": {
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee Id"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "lead_status_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Status Id"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "street1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street1"
+        },
+        "street2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street2"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateLeadConfig",
+      "type": "object"
+    },
+    "UpdateLeadNoteConfig": {
+      "additionalProperties": false,
+      "description": "Update lead note.",
+      "properties": {
+        "operation": {
+          "const": "update_lead_note",
+          "default": "update_lead_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Id"
+        },
+        "profile_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Id"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateLeadNoteConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_appointment": "#/$defs/CreateAppointmentConfig",
+          "create_contact": "#/$defs/CreateContactConfig",
+          "create_lead": "#/$defs/CreateLeadConfig",
+          "create_lead_note": "#/$defs/CreateLeadNoteConfig",
+          "delete_appointment": "#/$defs/DeleteAppointmentConfig",
+          "delete_contact": "#/$defs/DeleteContactConfig",
+          "delete_lead": "#/$defs/DeleteLeadConfig",
+          "delete_lead_note": "#/$defs/DeleteLeadNoteConfig",
+          "get_appointment": "#/$defs/GetAppointmentConfig",
+          "get_contact": "#/$defs/GetContactConfig",
+          "get_lead": "#/$defs/GetLeadConfig",
+          "get_lead_note": "#/$defs/GetLeadNoteConfig",
+          "list_areas": "#/$defs/ListAreasConfig",
+          "list_lead_statuses": "#/$defs/ListLeadStatusesConfig",
+          "list_leads": "#/$defs/ListLeadsConfig",
+          "list_profiles": "#/$defs/ListProfilesConfig",
+          "list_teams": "#/$defs/ListTeamsConfig",
+          "update_appointment": "#/$defs/UpdateAppointmentConfig",
+          "update_contact": "#/$defs/UpdateContactConfig",
+          "update_lead": "#/$defs/UpdateLeadConfig",
+          "update_lead_note": "#/$defs/UpdateLeadNoteConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/GetAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/GetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/GetLeadNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateLeadNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateLeadNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteLeadNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLeadStatusesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListAreasConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SalesRabbitAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Salesrabbit Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
