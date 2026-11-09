@@ -1,0 +1,1646 @@
+{
+  "$defs": {
+    "ContactExists": {
+      "additionalProperties": false,
+      "description": "Check if a contact exists.",
+      "properties": {
+        "operation": {
+          "const": "contact_exists",
+          "default": "contact_exists",
+          "title": "Contact Exists",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Contact identifier value (meaning depends on `by`)",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "by": {
+          "description": "Identify by `ContactId`, `Email`, `Cellphone`, or `ExternalId`",
+          "enum": [
+            "ContactId",
+            "Email",
+            "CellPhone",
+            "ExternalId"
+          ],
+          "title": "By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "by"
+      ],
+      "title": "ContactExists",
+      "type": "object"
+    },
+    "CreateCommunication": {
+      "additionalProperties": false,
+      "description": "Create a CRM communication log entry.",
+      "properties": {
+        "operation": {
+          "const": "create_communication",
+          "default": "create_communication",
+          "title": "Create Communication",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Contact",
+          "type": "string"
+        },
+        "communicator": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Communicator",
+          "type": "string"
+        },
+        "initiator": {
+          "enum": [
+            "You",
+            "Customer"
+          ],
+          "title": "Initiator",
+          "type": "string"
+        },
+        "date": {
+          "description": "Communication date in dd/mm/yyyy format.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Date",
+          "type": "string"
+        },
+        "time": {
+          "description": "Communication time in hh:mm format.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Time",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "Phone",
+            "Email",
+            "Meeting",
+            "Comment",
+            "Website",
+            "SMS",
+            "PostMail",
+            "Other"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        },
+        "by": {
+          "default": "ContactId",
+          "description": "How to resolve `Contact`: `ContactId` (default), `Email`, `CellPhone`, or `ExternalId`",
+          "enum": [
+            "ContactId",
+            "Email",
+            "CellPhone",
+            "ExternalId"
+          ],
+          "title": "By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact",
+        "communicator",
+        "initiator",
+        "date",
+        "time",
+        "type"
+      ],
+      "title": "CreateCommunication",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "description": "Create or update a contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externalid"
+        },
+        "email": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "cellPhone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cellphone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "dateOfBirth": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dateofbirth"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "canReceiveEmails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canreceiveemails"
+        },
+        "canReceiveSmsMessages": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canreceivesmsmessages"
+        },
+        "canReceiveWhatsappMessages": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canreceivewhatsappmessages"
+        },
+        "lists_ToSubscribe": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing list IDs to subscribe this contact to. May trigger Smoove automations.",
+          "title": "Lists Tosubscribe"
+        },
+        "lists_ToUnsubscribe": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing list IDs to remove this contact from.",
+          "title": "Lists Tounsubscribe"
+        },
+        "customFields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customfields"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Options"
+        },
+        "campaignSource": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaignsource"
+        },
+        "updateIfExists": {
+          "default": false,
+          "description": "`true` to update an existing matching contact instead of failing on duplicate",
+          "title": "Updateifexists",
+          "type": "boolean"
+        },
+        "restoreIfDeleted": {
+          "default": false,
+          "description": "`true` to restore the contact if it was deleted",
+          "title": "Restoreifdeleted",
+          "type": "boolean"
+        },
+        "restoreIfUnsubscribed": {
+          "default": false,
+          "description": "`true` to restore the contact if it was unsubscribed",
+          "title": "Restoreifunsubscribed",
+          "type": "boolean"
+        },
+        "overrideNullableValue": {
+          "default": false,
+          "description": "Controls whether null/empty values clear existing custom field values",
+          "title": "Overridenullablevalue",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateList": {
+      "additionalProperties": false,
+      "description": "Create a new list.",
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "publicName": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publicname"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "publicDescription": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publicdescription"
+        },
+        "permissions": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Permissions"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateList",
+      "type": "object"
+    },
+    "GetCampaignStatistics": {
+      "additionalProperties": false,
+      "description": "Get an email campaign's aggregated report.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign_statistics",
+          "default": "get_campaign_statistics",
+          "title": "Get Campaign Statistics",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Campaign id (or external id when `by=ExternalId`)",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "by": {
+          "default": "CampaignId",
+          "description": "Identify campaign by `CampaignId` (default) or `ExternalId`",
+          "enum": [
+            "CampaignId",
+            "ExternalId"
+          ],
+          "title": "By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCampaignStatistics",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "description": "Get a contact by identifier.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Contact identifier value (meaning depends on `by`)",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "by": {
+          "default": "ContactId",
+          "description": "Identify by `ContactId` (default), `Email`, `Cellphone`, or `ExternalId`",
+          "enum": [
+            "ContactId",
+            "Email",
+            "CellPhone",
+            "ExternalId"
+          ],
+          "title": "By",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated contact fields to return",
+          "title": "Fields"
+        },
+        "includeCustomFields": {
+          "default": false,
+          "description": "`true` to include contact custom fields",
+          "title": "Includecustomfields",
+          "type": "boolean"
+        },
+        "includeLinkedLists": {
+          "default": false,
+          "description": "`true` to include contact linked list ids",
+          "title": "Includelinkedlists",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetContactStatus": {
+      "additionalProperties": false,
+      "description": "Get a contact status by identifier.",
+      "properties": {
+        "operation": {
+          "const": "get_contact_status",
+          "default": "get_contact_status",
+          "title": "Get Contact Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Contact identifier value (meaning depends on `by`)",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "by": {
+          "default": "ContactId",
+          "description": "Identify by `ContactId` (default), `Email`, `Cellphone`, or `ExternalId`",
+          "enum": [
+            "ContactId",
+            "Email",
+            "CellPhone",
+            "ExternalId"
+          ],
+          "title": "By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetContactStatus",
+      "type": "object"
+    },
+    "GetLandingPage": {
+      "additionalProperties": false,
+      "description": "Get a landing page by id.",
+      "properties": {
+        "operation": {
+          "const": "get_landing_page",
+          "default": "get_landing_page",
+          "title": "Get Landing Page",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Landing page id",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetLandingPage",
+      "type": "object"
+    },
+    "GetList": {
+      "additionalProperties": false,
+      "description": "Get a list by id.",
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Get List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "List id",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to return (e.g. `name,publicName,description`)",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetList",
+      "type": "object"
+    },
+    "ListCampaignRecipients": {
+      "additionalProperties": false,
+      "description": "Get email campaign recipients and their responses.",
+      "properties": {
+        "operation": {
+          "const": "list_campaign_recipients",
+          "default": "list_campaign_recipients",
+          "title": "List Campaign Recipients",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Campaign id (or external id when `by=ExternalId`)",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "by": {
+          "default": "CampaignId",
+          "description": "Identify campaign by `CampaignId` (default) or `ExternalId`",
+          "enum": [
+            "CampaignId",
+            "ExternalId"
+          ],
+          "title": "By",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "1-based page index (default: 1)",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "itemsPerPage": {
+          "default": 100,
+          "description": "Number of records per page (default: 100, max: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Itemsperpage",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListCampaignRecipients",
+      "type": "object"
+    },
+    "ListCampaignTemplates": {
+      "additionalProperties": false,
+      "description": "Get custom email campaign templates.",
+      "properties": {
+        "operation": {
+          "const": "list_campaign_templates",
+          "default": "list_campaign_templates",
+          "title": "List Campaign Templates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fields": {
+          "default": "id,name",
+          "description": "Comma-separated fields to return (`id`, `name`, `imageUrl`, `timeStamp`)",
+          "maxLength": 10000,
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "title": "ListCampaignTemplates",
+      "type": "object"
+    },
+    "ListContactFields": {
+      "additionalProperties": false,
+      "description": "Get account contact fields (system and custom).",
+      "properties": {
+        "operation": {
+          "const": "list_contact_fields",
+          "default": "list_contact_fields",
+          "title": "List Contact Fields",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContactFields",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "description": "Get active contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fields": {
+          "default": "id,externalid,email,cellphone,firstname,lastname,timestampSignup,lastChanged",
+          "description": "Comma-separated contact fields to return",
+          "maxLength": 10000,
+          "title": "Fields",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "1-based page index (default: 1)",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "itemsPerPage": {
+          "default": 100,
+          "description": "Number of records per page (default: 100, max: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Itemsperpage",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "-id",
+          "description": "Sort fields (prefix `-` for descending), e.g. `-id`",
+          "maxLength": 10000,
+          "title": "Sort",
+          "type": "string"
+        },
+        "includeCustomFields": {
+          "default": false,
+          "description": "`true` to include contact custom fields",
+          "title": "Includecustomfields",
+          "type": "boolean"
+        },
+        "includeLinkedLists": {
+          "default": false,
+          "description": "`true` to include contact linked list ids",
+          "title": "Includelinkedlists",
+          "type": "boolean"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListLandingPageRecipients": {
+      "additionalProperties": false,
+      "description": "Get contacts who subscribed via a landing page.",
+      "properties": {
+        "operation": {
+          "const": "list_landing_page_recipients",
+          "default": "list_landing_page_recipients",
+          "title": "List Landing Page Recipients",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Landing page id",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "fields": {
+          "default": "id,externalid,email,cellphone,firstname,lastname,timestampSignup",
+          "description": "Comma-separated contact fields to return (e.g. `id,externalid,email,cellphone,firstname`)",
+          "maxLength": 10000,
+          "title": "Fields",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "1-based page index (default: 1)",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "itemsPerPage": {
+          "default": 100,
+          "description": "Number of records per page (default: 100, max: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Itemsperpage",
+          "type": "integer"
+        },
+        "includeCustomFields": {
+          "default": false,
+          "description": "`true` to include contact custom fields",
+          "title": "Includecustomfields",
+          "type": "boolean"
+        },
+        "includeLinkedLists": {
+          "default": false,
+          "description": "`true` to include contact linked list ids",
+          "title": "Includelinkedlists",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListLandingPageRecipients",
+      "type": "object"
+    },
+    "ListLandingPages": {
+      "additionalProperties": false,
+      "description": "Get active landing pages.",
+      "properties": {
+        "operation": {
+          "const": "list_landing_pages",
+          "default": "list_landing_pages",
+          "title": "List Landing Pages",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "default": "ALL",
+          "description": "Page type filter: `All` (default), `Facebook`, `LandingPage`, `Mobile`, `Embed`, or `Popup`",
+          "enum": [
+            "ALL",
+            "Facebook",
+            "LandingPage",
+            "Mobile",
+            "Embed",
+            "Popup"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "ListLandingPages",
+      "type": "object"
+    },
+    "ListListContacts": {
+      "additionalProperties": false,
+      "description": "Get contacts in a list.",
+      "properties": {
+        "operation": {
+          "const": "list_list_contacts",
+          "default": "list_list_contacts",
+          "title": "List List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "List id",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "fields": {
+          "default": "id,externalid,email,cellphone,firstname,lastname,timestampSignup",
+          "description": "Comma-separated contact fields to return",
+          "maxLength": 10000,
+          "title": "Fields",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "1-based page index (default: 1)",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "itemsPerPage": {
+          "default": 100,
+          "description": "Number of records per page (default: 100, max: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Itemsperpage",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "-id",
+          "description": "Sort fields (prefix `-` for descending), e.g. `-id`",
+          "maxLength": 10000,
+          "title": "Sort",
+          "type": "string"
+        },
+        "includeCustomFields": {
+          "default": false,
+          "description": "`true` to include contact custom fields",
+          "title": "Includecustomfields",
+          "type": "boolean"
+        },
+        "includeLinkedLists": {
+          "default": false,
+          "description": "`true` to include contact linked list ids",
+          "title": "Includelinkedlists",
+          "type": "boolean"
+        },
+        "includeListAssociationTime": {
+          "default": false,
+          "description": "`true` to include when the contact was associated with this list",
+          "title": "Includelistassociationtime",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListListContacts",
+      "type": "object"
+    },
+    "ListLists": {
+      "additionalProperties": false,
+      "description": "Get all lists.",
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "List Lists",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fields": {
+          "default": "id,name",
+          "description": "Comma-separated fields to return (e.g. `id,name,publicName,description`)",
+          "maxLength": 10000,
+          "title": "Fields",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "1-based page index (default: 1)",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "itemsPerPage": {
+          "default": 100,
+          "description": "Number of records per page (default: 100; higher max allowed when `includeContactsCount` is false)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Itemsperpage",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "name",
+          "description": "Sort fields (prefix `-` for descending), e.g. `name` or `-id`",
+          "maxLength": 10000,
+          "title": "Sort",
+          "type": "string"
+        },
+        "includeContactsCount": {
+          "default": false,
+          "description": "`true` to include member/contact count per list",
+          "title": "Includecontactscount",
+          "type": "boolean"
+        }
+      },
+      "title": "ListLists",
+      "type": "object"
+    },
+    "ListUnsubscribedContacts": {
+      "additionalProperties": false,
+      "description": "Get unsubscribed contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_unsubscribed_contacts",
+          "default": "list_unsubscribed_contacts",
+          "title": "List Unsubscribed Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fields": {
+          "default": "id,externalid,email,cellphone,firstname,lastname,timestampSignup,lastChanged,timestampUnsubscribed,unsubscribeReasonType,unsubscribeReasonComment",
+          "description": "Comma-separated contact fields to return",
+          "maxLength": 10000,
+          "title": "Fields",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "1-based page index (default: 1)",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "itemsPerPage": {
+          "default": 100,
+          "description": "Number of records per page (default: 100, max: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Itemsperpage",
+          "type": "integer"
+        },
+        "sort": {
+          "default": "-timestampUnsubscribed",
+          "description": "Sort fields (prefix `-` for descending), e.g. `-timestampUnsubscribed`",
+          "maxLength": 10000,
+          "title": "Sort",
+          "type": "string"
+        },
+        "includeCustomFields": {
+          "default": false,
+          "description": "`true` to include contact custom fields",
+          "title": "Includecustomfields",
+          "type": "boolean"
+        },
+        "includeLinkedLists": {
+          "default": false,
+          "description": "`true` to include contact linked list ids",
+          "title": "Includelinkedlists",
+          "type": "boolean"
+        }
+      },
+      "title": "ListUnsubscribedContacts",
+      "type": "object"
+    },
+    "SmooveAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "smoove_api_key",
+          "default": "smoove_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Smoove API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in Smoove's API settings and paste it here without the Bearer prefix. Listing your lists verifies account access. The key needs AccountMembersRead for reads, AccountSubscriptions for contact updates, AccountAdmin for creating lists, and AccountCrm for CRM notes; provider role alternatives are documented per endpoint.",
+      "x-credential-url": "https://rest.smoove.io/"
+    },
+    "UnsubscribeContact": {
+      "additionalProperties": false,
+      "description": "Unsubscribe a contact.",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_contact",
+          "default": "unsubscribe_contact",
+          "title": "Unsubscribe Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "id": {
+          "description": "Contact identifier value (meaning depends on `by`)",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "by": {
+          "description": "Identify by `ContactId`, `Email`, `Cellphone`, or `ExternalId`",
+          "enum": [
+            "ContactId",
+            "Email",
+            "CellPhone",
+            "ExternalId"
+          ],
+          "title": "By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "by"
+      ],
+      "title": "UnsubscribeContact",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "description": "Update a contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externalid"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "cellPhone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cellphone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "dateOfBirth": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dateofbirth"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "canReceiveEmails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canreceiveemails"
+        },
+        "canReceiveSmsMessages": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canreceivesmsmessages"
+        },
+        "canReceiveWhatsappMessages": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Canreceivewhatsappmessages"
+        },
+        "lists_ToSubscribe": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing list IDs to subscribe this contact to. May trigger Smoove automations.",
+          "title": "Lists Tosubscribe"
+        },
+        "lists_ToUnsubscribe": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing list IDs to remove this contact from.",
+          "title": "Lists Tounsubscribe"
+        },
+        "customFields": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customfields"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Options"
+        },
+        "campaignSource": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaignsource"
+        },
+        "id": {
+          "description": "Contact identifier value (meaning depends on `by`)",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "by": {
+          "default": "ContactId",
+          "description": "Identify by `ContactId` (default), `Email`, `Cellphone`, or `ExternalId`",
+          "enum": [
+            "ContactId",
+            "Email",
+            "CellPhone",
+            "ExternalId"
+          ],
+          "title": "By",
+          "type": "string"
+        },
+        "restoreIfDeleted": {
+          "default": false,
+          "description": "`true` to restore the contact if it was deleted",
+          "title": "Restoreifdeleted",
+          "type": "boolean"
+        },
+        "restoreIfUnsubscribed": {
+          "default": false,
+          "description": "`true` to restore the contact if it was unsubscribed",
+          "title": "Restoreifunsubscribed",
+          "type": "boolean"
+        },
+        "overrideNullableValue": {
+          "default": false,
+          "description": "Controls whether null/empty values clear existing custom field values",
+          "title": "Overridenullablevalue",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "contact_exists": "#/$defs/ContactExists",
+          "create_communication": "#/$defs/CreateCommunication",
+          "create_contact": "#/$defs/CreateContact",
+          "create_list": "#/$defs/CreateList",
+          "get_campaign_statistics": "#/$defs/GetCampaignStatistics",
+          "get_contact": "#/$defs/GetContact",
+          "get_contact_status": "#/$defs/GetContactStatus",
+          "get_landing_page": "#/$defs/GetLandingPage",
+          "get_list": "#/$defs/GetList",
+          "list_campaign_recipients": "#/$defs/ListCampaignRecipients",
+          "list_campaign_templates": "#/$defs/ListCampaignTemplates",
+          "list_contact_fields": "#/$defs/ListContactFields",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_landing_page_recipients": "#/$defs/ListLandingPageRecipients",
+          "list_landing_pages": "#/$defs/ListLandingPages",
+          "list_list_contacts": "#/$defs/ListListContacts",
+          "list_lists": "#/$defs/ListLists",
+          "list_unsubscribed_contacts": "#/$defs/ListUnsubscribedContacts",
+          "unsubscribe_contact": "#/$defs/UnsubscribeContact",
+          "update_contact": "#/$defs/UpdateContact"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/ContactExists"
+        },
+        {
+          "$ref": "#/$defs/UnsubscribeContact"
+        },
+        {
+          "$ref": "#/$defs/GetContactStatus"
+        },
+        {
+          "$ref": "#/$defs/ListUnsubscribedContacts"
+        },
+        {
+          "$ref": "#/$defs/ListContactFields"
+        },
+        {
+          "$ref": "#/$defs/ListLists"
+        },
+        {
+          "$ref": "#/$defs/CreateList"
+        },
+        {
+          "$ref": "#/$defs/GetList"
+        },
+        {
+          "$ref": "#/$defs/ListListContacts"
+        },
+        {
+          "$ref": "#/$defs/ListLandingPages"
+        },
+        {
+          "$ref": "#/$defs/GetLandingPage"
+        },
+        {
+          "$ref": "#/$defs/ListLandingPageRecipients"
+        },
+        {
+          "$ref": "#/$defs/ListCampaignTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignStatistics"
+        },
+        {
+          "$ref": "#/$defs/ListCampaignRecipients"
+        },
+        {
+          "$ref": "#/$defs/CreateCommunication"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SmooveAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Smoove Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
