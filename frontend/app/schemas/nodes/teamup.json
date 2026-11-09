@@ -1,0 +1,894 @@
+{
+  "$defs": {
+    "TeamUpCancelCustomerMembershipConfig": {
+      "additionalProperties": false,
+      "description": "Cancel a customer membership; provider cancellation and billing rules apply.",
+      "properties": {
+        "operation": {
+          "const": "cancel_customer_membership",
+          "default": "cancel_customer_membership",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_membership_id": {
+          "exclusiveMinimum": 0,
+          "title": "Customer Membership Id",
+          "type": "integer"
+        },
+        "forced_expiration_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional final expiration date. Omit to use TeamUp cancellation rules.",
+          "title": "Forced Expiration Date"
+        }
+      },
+      "required": [
+        "customer_membership_id"
+      ],
+      "title": "TeamUpCancelCustomerMembershipConfig",
+      "type": "object"
+    },
+    "TeamUpConfirmAttendanceConfig": {
+      "additionalProperties": false,
+      "description": "Mark a customer as attended.",
+      "properties": {
+        "customer": {
+          "exclusiveMinimum": 0,
+          "title": "Customer ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "confirm_attendance",
+          "default": "confirm_attendance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "customer",
+        "event_id"
+      ],
+      "title": "TeamUpConfirmAttendanceConfig",
+      "type": "object"
+    },
+    "TeamUpCreateCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Create a customer; an invitation is sent only when explicitly enabled.",
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "maxLength": 150,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 150,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "minLength": 3,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "send_invitation_email": {
+          "default": false,
+          "description": "When enabled, TeamUp emails the customer an invitation.",
+          "title": "Send Invitation Email",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "TeamUpCreateCustomerConfig",
+      "type": "object"
+    },
+    "TeamUpCreateCustomerMembershipConfig": {
+      "additionalProperties": false,
+      "description": "Assign a membership to a customer; TeamUp applies its configured billing rules.",
+      "properties": {
+        "customer": {
+          "exclusiveMinimum": 0,
+          "title": "Customer ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_customer_membership",
+          "default": "create_customer_membership",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "membership": {
+          "exclusiveMinimum": 0,
+          "title": "Membership ID",
+          "type": "integer"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "payment_plan": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Plan"
+        }
+      },
+      "required": [
+        "customer",
+        "membership"
+      ],
+      "title": "TeamUpCreateCustomerMembershipConfig",
+      "type": "object"
+    },
+    "TeamUpGetAttendanceConfig": {
+      "additionalProperties": false,
+      "description": "Read one attendance.",
+      "properties": {
+        "operation": {
+          "const": "get_attendance",
+          "default": "get_attendance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "attendance_id": {
+          "exclusiveMinimum": 0,
+          "title": "Attendance ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "attendance_id"
+      ],
+      "title": "TeamUpGetAttendanceConfig",
+      "type": "object"
+    },
+    "TeamUpGetCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Read one customer.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "exclusiveMinimum": 0,
+          "title": "Customer ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "TeamUpGetCustomerConfig",
+      "type": "object"
+    },
+    "TeamUpGetCustomerMembershipConfig": {
+      "additionalProperties": false,
+      "description": "Read one customer membership.",
+      "properties": {
+        "operation": {
+          "const": "get_customer_membership",
+          "default": "get_customer_membership",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_membership_id": {
+          "exclusiveMinimum": 0,
+          "title": "Customer Membership ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_membership_id"
+      ],
+      "title": "TeamUpGetCustomerMembershipConfig",
+      "type": "object"
+    },
+    "TeamUpGetEventConfig": {
+      "additionalProperties": false,
+      "description": "Read one event.",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "TeamUpGetEventConfig",
+      "type": "object"
+    },
+    "TeamUpGetMembershipConfig": {
+      "additionalProperties": false,
+      "description": "Read one membership.",
+      "properties": {
+        "operation": {
+          "const": "get_membership",
+          "default": "get_membership",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "membership_id": {
+          "exclusiveMinimum": 0,
+          "title": "Membership ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "membership_id"
+      ],
+      "title": "TeamUpGetMembershipConfig",
+      "type": "object"
+    },
+    "TeamUpGetProviderConfig": {
+      "additionalProperties": false,
+      "description": "Read one provider.",
+      "properties": {
+        "operation": {
+          "const": "get_provider",
+          "default": "get_provider",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider_id": {
+          "exclusiveMinimum": 0,
+          "title": "Provider ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider_id"
+      ],
+      "title": "TeamUpGetProviderConfig",
+      "type": "object"
+    },
+    "TeamUpGetVenueConfig": {
+      "additionalProperties": false,
+      "description": "Read one venue.",
+      "properties": {
+        "operation": {
+          "const": "get_venue",
+          "default": "get_venue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "venue_id": {
+          "exclusiveMinimum": 0,
+          "title": "Venue ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "venue_id"
+      ],
+      "title": "TeamUpGetVenueConfig",
+      "type": "object"
+    },
+    "TeamUpListAttendancesConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of attendances.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read. Use next_page from the previous result; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_attendances",
+          "default": "list_attendances",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer ID"
+        }
+      },
+      "title": "TeamUpListAttendancesConfig",
+      "type": "object"
+    },
+    "TeamUpListCustomerMembershipsConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of customer memberships.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read. Use next_page from the previous result; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customer_memberships",
+          "default": "list_customer_memberships",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer ID"
+        }
+      },
+      "title": "TeamUpListCustomerMembershipsConfig",
+      "type": "object"
+    },
+    "TeamUpListCustomersConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of customers.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read. Use next_page from the previous result; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search customers by name or email.",
+          "title": "Query"
+        }
+      },
+      "title": "TeamUpListCustomersConfig",
+      "type": "object"
+    },
+    "TeamUpListEventsConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of events.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read. Use next_page from the previous result; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "starts_at_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starts At Gte"
+        },
+        "starts_at_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starts At Lte"
+        }
+      },
+      "title": "TeamUpListEventsConfig",
+      "type": "object"
+    },
+    "TeamUpListMembershipsConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of memberships.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read. Use next_page from the previous result; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_memberships",
+          "default": "list_memberships",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name_contains": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name Contains"
+        }
+      },
+      "title": "TeamUpListMembershipsConfig",
+      "type": "object"
+    },
+    "TeamUpListProvidersConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of providers.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read. Use next_page from the previous result; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_providers",
+          "default": "list_providers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TeamUpListProvidersConfig",
+      "type": "object"
+    },
+    "TeamUpListVenuesConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of venues.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read. Use next_page from the previous result; each run fetches one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_venues",
+          "default": "list_venues",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TeamUpListVenuesConfig",
+      "type": "object"
+    },
+    "TeamUpM2MTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "teamup_m2m_token",
+          "default": "teamup_m2m_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "description": "Paste the M2M token only, without an Authorization prefix or your application client secret.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "M2M token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "provider_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business ID from your TeamUp customer site URL. Set this when the token can access multiple providers.",
+          "title": "Provider ID"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "TeamUp M2M Token",
+      "type": "object",
+      "x-credential-instructions": "In TeamUp Business Dashboard, open Settings \u2192 Integrations \u2192 API Integration \u2192 Options \u2192 View and Update Applications. Create an M2M token with the permissions your operations need and paste it here. Read-only tokens support reads only. Replace expired or revoked tokens here. This connection acts in provider mode; it does not sign in as a customer.",
+      "x-credential-url": "https://support.goteamup.com/en/articles/14819895-creating-a-machine-to-machine-m2m-token"
+    },
+    "TeamUpMarkNoShowConfig": {
+      "additionalProperties": false,
+      "description": "Mark a registered customer as a no-show; provider-configured penalties may apply.",
+      "properties": {
+        "customer": {
+          "exclusiveMinimum": 0,
+          "title": "Customer ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "mark_no_show",
+          "default": "mark_no_show",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "customer",
+        "event_id"
+      ],
+      "title": "TeamUpMarkNoShowConfig",
+      "type": "object"
+    },
+    "TeamUpRegisterCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Register a customer for a class, consuming membership usage unless comped.",
+      "properties": {
+        "customer": {
+          "exclusiveMinimum": 0,
+          "title": "Customer ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "register_customer",
+          "default": "register_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_membership": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Membership"
+        },
+        "comped": {
+          "default": false,
+          "description": "Register without charging a membership use.",
+          "title": "Comped",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "customer",
+        "event_id"
+      ],
+      "title": "TeamUpRegisterCustomerConfig",
+      "type": "object"
+    },
+    "TeamUpUnregisterCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Remove a registration; late cancellation can incur provider-configured penalties.",
+      "properties": {
+        "customer": {
+          "exclusiveMinimum": 0,
+          "title": "Customer ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "unregister_customer",
+          "default": "unregister_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "is_late_cancel": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Late Cancel"
+        }
+      },
+      "required": [
+        "customer",
+        "event_id"
+      ],
+      "title": "TeamUpUnregisterCustomerConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_customer_membership": "#/$defs/TeamUpCancelCustomerMembershipConfig",
+          "confirm_attendance": "#/$defs/TeamUpConfirmAttendanceConfig",
+          "create_customer": "#/$defs/TeamUpCreateCustomerConfig",
+          "create_customer_membership": "#/$defs/TeamUpCreateCustomerMembershipConfig",
+          "get_attendance": "#/$defs/TeamUpGetAttendanceConfig",
+          "get_customer": "#/$defs/TeamUpGetCustomerConfig",
+          "get_customer_membership": "#/$defs/TeamUpGetCustomerMembershipConfig",
+          "get_event": "#/$defs/TeamUpGetEventConfig",
+          "get_membership": "#/$defs/TeamUpGetMembershipConfig",
+          "get_provider": "#/$defs/TeamUpGetProviderConfig",
+          "get_venue": "#/$defs/TeamUpGetVenueConfig",
+          "list_attendances": "#/$defs/TeamUpListAttendancesConfig",
+          "list_customer_memberships": "#/$defs/TeamUpListCustomerMembershipsConfig",
+          "list_customers": "#/$defs/TeamUpListCustomersConfig",
+          "list_events": "#/$defs/TeamUpListEventsConfig",
+          "list_memberships": "#/$defs/TeamUpListMembershipsConfig",
+          "list_providers": "#/$defs/TeamUpListProvidersConfig",
+          "list_venues": "#/$defs/TeamUpListVenuesConfig",
+          "mark_no_show": "#/$defs/TeamUpMarkNoShowConfig",
+          "register_customer": "#/$defs/TeamUpRegisterCustomerConfig",
+          "unregister_customer": "#/$defs/TeamUpUnregisterCustomerConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TeamUpListProvidersConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpGetProviderConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpListAttendancesConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpGetAttendanceConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpListMembershipsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpGetMembershipConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpListCustomerMembershipsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpGetCustomerMembershipConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpListVenuesConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpGetVenueConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpRegisterCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpUnregisterCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpConfirmAttendanceConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpMarkNoShowConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpCreateCustomerMembershipConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamUpCancelCustomerMembershipConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TeamUpM2MTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Teamup Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
