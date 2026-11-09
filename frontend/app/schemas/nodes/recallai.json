@@ -1,0 +1,1038 @@
+{
+  "$defs": {
+    "CreateBot": {
+      "additionalProperties": false,
+      "description": "Send a bot now or schedule it to join a meeting; requires meeting recording consent.",
+      "properties": {
+        "operation": {
+          "const": "create_bot",
+          "default": "create_bot",
+          "title": "Operation",
+          "type": "string"
+        },
+        "meeting_url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Meeting Url",
+          "type": "string"
+        },
+        "bot_name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the provider default: Meeting Notetaker.",
+          "title": "Bot Name"
+        },
+        "join_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 time. Schedule at least 10 minutes ahead for production reliability; omit to join now.",
+          "title": "Join At"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "meeting_url"
+      ],
+      "title": "CreateBot",
+      "type": "object"
+    },
+    "DeleteBot": {
+      "additionalProperties": false,
+      "description": "Delete a scheduled bot before it joins.",
+      "properties": {
+        "bot_id": {
+          "format": "uuid",
+          "title": "Bot ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_bot",
+          "default": "delete_bot",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bot_id"
+      ],
+      "title": "DeleteBot",
+      "type": "object"
+    },
+    "DeleteCalendar": {
+      "additionalProperties": false,
+      "description": "Delete an existing calendar connection.",
+      "properties": {
+        "calendar_id": {
+          "format": "uuid",
+          "title": "Calendar ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_calendar",
+          "default": "delete_calendar",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "DeleteCalendar",
+      "type": "object"
+    },
+    "DeleteRecording": {
+      "additionalProperties": false,
+      "description": "Permanently delete a recording and its artifacts.",
+      "properties": {
+        "recording_id": {
+          "format": "uuid",
+          "title": "Recording ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_recording",
+          "default": "delete_recording",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "DeleteRecording",
+      "type": "object"
+    },
+    "DeleteTranscript": {
+      "additionalProperties": false,
+      "description": "Permanently delete a transcript artifact.",
+      "properties": {
+        "transcript_id": {
+          "format": "uuid",
+          "title": "Transcript ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_transcript",
+          "default": "delete_transcript",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transcript_id"
+      ],
+      "title": "DeleteTranscript",
+      "type": "object"
+    },
+    "GetBot": {
+      "additionalProperties": false,
+      "description": "Retrieve a bot on demand. Use provider webhooks for ongoing status changes.",
+      "properties": {
+        "bot_id": {
+          "format": "uuid",
+          "title": "Bot ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_bot",
+          "default": "get_bot",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bot_id"
+      ],
+      "title": "GetBot",
+      "type": "object"
+    },
+    "GetCalendar": {
+      "additionalProperties": false,
+      "description": "Get a linked calendar's metadata and sync status.",
+      "properties": {
+        "calendar_id": {
+          "format": "uuid",
+          "title": "Calendar ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_calendar",
+          "default": "get_calendar",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "GetCalendar",
+      "type": "object"
+    },
+    "GetCalendarEvent": {
+      "additionalProperties": false,
+      "description": "Get the meeting details of a calendar event.",
+      "properties": {
+        "operation": {
+          "const": "get_calendar_event",
+          "default": "get_calendar_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "event_id": {
+          "format": "uuid",
+          "title": "Calendar event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetCalendarEvent",
+      "type": "object"
+    },
+    "GetRecording": {
+      "additionalProperties": false,
+      "description": "Get recording metadata and artifact download links without downloading media.",
+      "properties": {
+        "recording_id": {
+          "format": "uuid",
+          "title": "Recording ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_recording",
+          "default": "get_recording",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "GetRecording",
+      "type": "object"
+    },
+    "GetTranscript": {
+      "additionalProperties": false,
+      "description": "Retrieve transcript artifact metadata and its download URL, not transcript text.",
+      "properties": {
+        "transcript_id": {
+          "format": "uuid",
+          "title": "Transcript ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_transcript",
+          "default": "get_transcript",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transcript_id"
+      ],
+      "title": "GetTranscript",
+      "type": "object"
+    },
+    "LeaveCall": {
+      "additionalProperties": false,
+      "description": "Remove the bot from its current call.",
+      "properties": {
+        "bot_id": {
+          "format": "uuid",
+          "title": "Bot ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "leave_call",
+          "default": "leave_call",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bot_id"
+      ],
+      "title": "LeaveCall",
+      "type": "object"
+    },
+    "ListBots": {
+      "additionalProperties": false,
+      "description": "List one page of workspace bots; do not use this to poll lifecycle status.",
+      "properties": {
+        "operation": {
+          "const": "list_bots",
+          "default": "list_bots",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "meeting_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meeting Url"
+        },
+        "join_at_after": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Join At After"
+        },
+        "join_at_before": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Join At Before"
+        }
+      },
+      "title": "ListBots",
+      "type": "object"
+    },
+    "ListCalendarEvents": {
+      "additionalProperties": false,
+      "description": "List one linked calendar's events.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from the previous page's next_cursor output.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_calendar_events",
+          "default": "list_calendar_events",
+          "title": "Operation",
+          "type": "string"
+        },
+        "calendar_id": {
+          "format": "uuid",
+          "title": "Calendar ID",
+          "type": "string"
+        },
+        "ical_uid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ical Uid"
+        },
+        "is_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Deleted"
+        },
+        "start_time__gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Time  Gte"
+        },
+        "start_time__lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Time  Lte"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "ListCalendarEvents",
+      "type": "object"
+    },
+    "ListCalendars": {
+      "additionalProperties": false,
+      "description": "List calendar connections already linked in the Recall.ai workspace.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from the previous page's next_cursor output.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_calendars",
+          "default": "list_calendars",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "enum": [
+                "google_calendar",
+                "microsoft_outlook"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Platform",
+          "enum": [
+            "google_calendar",
+            "microsoft_outlook"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "connected",
+                "connecting",
+                "disconnected"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "connected",
+            "connecting",
+            "disconnected"
+          ],
+          "x-enum-searchable": true
+        },
+        "created_at__gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created At  Gte"
+        }
+      },
+      "title": "ListCalendars",
+      "type": "object"
+    },
+    "ListRecordings": {
+      "additionalProperties": false,
+      "description": "List recording artifacts, optionally filtered by bot and creation time.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from the previous page's next_cursor output.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_recordings",
+          "default": "list_recordings",
+          "title": "Operation",
+          "type": "string"
+        },
+        "bot_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bot Id"
+        },
+        "created_at_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created At After"
+        },
+        "created_at_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created At Before"
+        },
+        "status_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "done",
+                "failed",
+                "paused",
+                "processing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Code",
+          "enum": [
+            "done",
+            "failed",
+            "paused",
+            "processing"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListRecordings",
+      "type": "object"
+    },
+    "ListTranscripts": {
+      "additionalProperties": false,
+      "description": "List transcript artifacts and their status, optionally filtered by recording.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from the previous page's next_cursor output.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_transcripts",
+          "default": "list_transcripts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "recording_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recording Id"
+        },
+        "created_at_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created At After"
+        },
+        "created_at_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created At Before"
+        },
+        "status_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "done",
+                "failed",
+                "processing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Code",
+          "enum": [
+            "done",
+            "failed",
+            "processing"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListTranscripts",
+      "type": "object"
+    },
+    "PauseRecording": {
+      "additionalProperties": false,
+      "description": "Pause a bot's ongoing recording.",
+      "properties": {
+        "bot_id": {
+          "format": "uuid",
+          "title": "Bot ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "pause_recording",
+          "default": "pause_recording",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bot_id"
+      ],
+      "title": "PauseRecording",
+      "type": "object"
+    },
+    "RecallaiAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "recallai_api_key",
+          "default": "recallai_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "us-east-1",
+          "enum": [
+            "us-east-1",
+            "us-west-2",
+            "eu-central-1",
+            "ap-northeast-1"
+          ],
+          "title": "Workspace region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Recall.ai API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Recall.ai workspace API key and select the region shown in your Recall.ai dashboard. NoClick sends Token authorization only to that region. Keys are workspace-scoped; this connection does not identify an individual user.",
+      "x-credential-url": "https://docs.recall.ai/reference/authentication"
+    },
+    "ResumeRecording": {
+      "additionalProperties": false,
+      "description": "Resume a bot's paused recording.",
+      "properties": {
+        "bot_id": {
+          "format": "uuid",
+          "title": "Bot ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "resume_recording",
+          "default": "resume_recording",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bot_id"
+      ],
+      "title": "ResumeRecording",
+      "type": "object"
+    },
+    "SendChatMessage": {
+      "additionalProperties": false,
+      "description": "Send one meeting chat message. Only Zoom supports recipients other than everyone.",
+      "properties": {
+        "bot_id": {
+          "format": "uuid",
+          "title": "Bot ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_chat_message",
+          "default": "send_chat_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to send to everyone.",
+          "title": "To"
+        },
+        "pin": {
+          "default": false,
+          "title": "Pin",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "bot_id",
+        "message"
+      ],
+      "title": "SendChatMessage",
+      "type": "object"
+    },
+    "UpdateBot": {
+      "additionalProperties": false,
+      "description": "Update a scheduled bot before it joins a call.",
+      "properties": {
+        "bot_id": {
+          "format": "uuid",
+          "title": "Bot ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_bot",
+          "default": "update_bot",
+          "title": "Operation",
+          "type": "string"
+        },
+        "meeting_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meeting Url"
+        },
+        "bot_name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bot Name"
+        },
+        "join_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Join At"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "bot_id"
+      ],
+      "title": "UpdateBot",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_bot": "#/$defs/CreateBot",
+          "delete_bot": "#/$defs/DeleteBot",
+          "delete_calendar": "#/$defs/DeleteCalendar",
+          "delete_recording": "#/$defs/DeleteRecording",
+          "delete_transcript": "#/$defs/DeleteTranscript",
+          "get_bot": "#/$defs/GetBot",
+          "get_calendar": "#/$defs/GetCalendar",
+          "get_calendar_event": "#/$defs/GetCalendarEvent",
+          "get_recording": "#/$defs/GetRecording",
+          "get_transcript": "#/$defs/GetTranscript",
+          "leave_call": "#/$defs/LeaveCall",
+          "list_bots": "#/$defs/ListBots",
+          "list_calendar_events": "#/$defs/ListCalendarEvents",
+          "list_calendars": "#/$defs/ListCalendars",
+          "list_recordings": "#/$defs/ListRecordings",
+          "list_transcripts": "#/$defs/ListTranscripts",
+          "pause_recording": "#/$defs/PauseRecording",
+          "resume_recording": "#/$defs/ResumeRecording",
+          "send_chat_message": "#/$defs/SendChatMessage",
+          "update_bot": "#/$defs/UpdateBot"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListBots"
+        },
+        {
+          "$ref": "#/$defs/GetBot"
+        },
+        {
+          "$ref": "#/$defs/CreateBot"
+        },
+        {
+          "$ref": "#/$defs/UpdateBot"
+        },
+        {
+          "$ref": "#/$defs/DeleteBot"
+        },
+        {
+          "$ref": "#/$defs/LeaveCall"
+        },
+        {
+          "$ref": "#/$defs/PauseRecording"
+        },
+        {
+          "$ref": "#/$defs/ResumeRecording"
+        },
+        {
+          "$ref": "#/$defs/SendChatMessage"
+        },
+        {
+          "$ref": "#/$defs/ListRecordings"
+        },
+        {
+          "$ref": "#/$defs/GetRecording"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecording"
+        },
+        {
+          "$ref": "#/$defs/ListTranscripts"
+        },
+        {
+          "$ref": "#/$defs/GetTranscript"
+        },
+        {
+          "$ref": "#/$defs/DeleteTranscript"
+        },
+        {
+          "$ref": "#/$defs/ListCalendars"
+        },
+        {
+          "$ref": "#/$defs/GetCalendar"
+        },
+        {
+          "$ref": "#/$defs/DeleteCalendar"
+        },
+        {
+          "$ref": "#/$defs/ListCalendarEvents"
+        },
+        {
+          "$ref": "#/$defs/GetCalendarEvent"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RecallaiAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Recallai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
