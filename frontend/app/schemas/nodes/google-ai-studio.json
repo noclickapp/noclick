@@ -1,0 +1,1071 @@
+{
+  "$defs": {
+    "BatchEmbedContents": {
+      "properties": {
+        "model": {
+          "description": "Model ID, without models/. Discover available IDs with List models.",
+          "title": "Model",
+          "type": "string"
+        },
+        "operation": {
+          "const": "batch_embed_contents",
+          "default": "batch_embed_contents",
+          "title": "Operation",
+          "type": "string"
+        },
+        "requests": {
+          "items": {
+            "$ref": "#/$defs/EmbeddingRequest"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Requests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "model",
+        "requests"
+      ],
+      "title": "BatchEmbedContents",
+      "type": "object"
+    },
+    "Content": {
+      "properties": {
+        "role": {
+          "default": "user",
+          "enum": [
+            "user",
+            "model"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "parts": {
+          "items": {
+            "$ref": "#/$defs/Part"
+          },
+          "minItems": 1,
+          "title": "Parts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "parts"
+      ],
+      "title": "Content",
+      "type": "object"
+    },
+    "CountTokens": {
+      "properties": {
+        "model": {
+          "description": "Model ID, without models/. Discover available IDs with List models.",
+          "title": "Model",
+          "type": "string"
+        },
+        "operation": {
+          "const": "count_tokens",
+          "default": "count_tokens",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contents": {
+          "items": {
+            "$ref": "#/$defs/Content"
+          },
+          "minItems": 1,
+          "title": "Contents",
+          "type": "array"
+        }
+      },
+      "required": [
+        "model",
+        "contents"
+      ],
+      "title": "CountTokens",
+      "type": "object"
+    },
+    "CreateCache": {
+      "properties": {
+        "model": {
+          "description": "Model ID, without models/. Discover available IDs with List models.",
+          "title": "Model",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_cache",
+          "default": "create_cache",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contents": {
+          "items": {
+            "$ref": "#/$defs/Content"
+          },
+          "minItems": 1,
+          "title": "Contents",
+          "type": "array"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "ttl": {
+          "default": "3600s",
+          "pattern": "^[1-9][0-9]*(?:\\.[0-9]{1,9})?s$",
+          "title": "Ttl",
+          "type": "string"
+        },
+        "system_instruction": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Content"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "model",
+        "contents"
+      ],
+      "title": "CreateCache",
+      "type": "object"
+    },
+    "CreateStore": {
+      "properties": {
+        "operation": {
+          "const": "create_store",
+          "default": "create_store",
+          "title": "Operation",
+          "type": "string"
+        },
+        "display_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "display_name"
+      ],
+      "title": "CreateStore",
+      "type": "object"
+    },
+    "DeleteCache": {
+      "properties": {
+        "operation": {
+          "const": "delete_cache",
+          "default": "delete_cache",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cache_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Cache Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cache_id"
+      ],
+      "title": "DeleteCache",
+      "type": "object"
+    },
+    "DeleteDocument": {
+      "properties": {
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Operation",
+          "type": "string"
+        },
+        "store_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Store Id",
+          "type": "string"
+        },
+        "document_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Document Id",
+          "type": "string"
+        },
+        "force": {
+          "default": false,
+          "description": "Also delete contained chunks/documents, as documented by Google.",
+          "title": "Force",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "store_id",
+        "document_id"
+      ],
+      "title": "DeleteDocument",
+      "type": "object"
+    },
+    "DeleteFile": {
+      "properties": {
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "description": "ID without the collection prefix.",
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "DeleteFile",
+      "type": "object"
+    },
+    "DeleteStore": {
+      "properties": {
+        "operation": {
+          "const": "delete_store",
+          "default": "delete_store",
+          "title": "Operation",
+          "type": "string"
+        },
+        "store_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Store Id",
+          "type": "string"
+        },
+        "force": {
+          "default": false,
+          "description": "Also delete contained chunks/documents, as documented by Google.",
+          "title": "Force",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "store_id"
+      ],
+      "title": "DeleteStore",
+      "type": "object"
+    },
+    "EmbedContent": {
+      "properties": {
+        "model": {
+          "description": "Model ID, without models/. Discover available IDs with List models.",
+          "title": "Model",
+          "type": "string"
+        },
+        "operation": {
+          "const": "embed_content",
+          "default": "embed_content",
+          "title": "Operation",
+          "type": "string"
+        },
+        "content": {
+          "$ref": "#/$defs/Content"
+        },
+        "task_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "RETRIEVAL_QUERY",
+                "RETRIEVAL_DOCUMENT",
+                "SEMANTIC_SIMILARITY",
+                "CLASSIFICATION",
+                "CLUSTERING",
+                "QUESTION_ANSWERING",
+                "FACT_VERIFICATION",
+                "CODE_RETRIEVAL_QUERY"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Type",
+          "enum": [
+            "RETRIEVAL_QUERY",
+            "RETRIEVAL_DOCUMENT",
+            "SEMANTIC_SIMILARITY",
+            "CLASSIFICATION",
+            "CLUSTERING",
+            "QUESTION_ANSWERING",
+            "FACT_VERIFICATION",
+            "CODE_RETRIEVAL_QUERY"
+          ],
+          "x-enum-searchable": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "output_dimensionality": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Dimensionality"
+        }
+      },
+      "required": [
+        "model",
+        "content"
+      ],
+      "title": "EmbedContent",
+      "type": "object"
+    },
+    "EmbeddingRequest": {
+      "properties": {
+        "model": {
+          "pattern": "^models/[A-Za-z0-9_.-]+$",
+          "title": "Model",
+          "type": "string"
+        },
+        "content": {
+          "$ref": "#/$defs/Content"
+        },
+        "taskType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tasktype"
+        },
+        "outputDimensionality": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Outputdimensionality"
+        }
+      },
+      "required": [
+        "model",
+        "content"
+      ],
+      "title": "EmbeddingRequest",
+      "type": "object"
+    },
+    "FileData": {
+      "properties": {
+        "fileUri": {
+          "minLength": 1,
+          "title": "Fileuri",
+          "type": "string"
+        },
+        "mimeType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mimetype"
+        }
+      },
+      "required": [
+        "fileUri"
+      ],
+      "title": "FileData",
+      "type": "object"
+    },
+    "GenerateContent": {
+      "properties": {
+        "model": {
+          "description": "Model ID, without models/. Discover available IDs with List models.",
+          "title": "Model",
+          "type": "string"
+        },
+        "operation": {
+          "const": "generate_content",
+          "default": "generate_content",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contents": {
+          "items": {
+            "$ref": "#/$defs/Content"
+          },
+          "minItems": 1,
+          "title": "Contents",
+          "type": "array"
+        },
+        "system_instruction": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Content"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "generation_config": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Gemini GenerationConfig, e.g. temperature, maxOutputTokens, responseMimeType, responseJsonSchema.",
+          "title": "Generation Config"
+        },
+        "safety_settings": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/SafetySetting"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Safety Settings"
+        },
+        "tools": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Gemini Tool objects, e.g. googleSearch or fileSearch.",
+          "title": "Tools"
+        },
+        "cached_content": {
+          "anyOf": [
+            {
+              "pattern": "^cachedContents/[A-Za-z0-9_.-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cached Content"
+        }
+      },
+      "required": [
+        "model",
+        "contents"
+      ],
+      "title": "GenerateContent",
+      "type": "object"
+    },
+    "GetCache": {
+      "properties": {
+        "operation": {
+          "const": "get_cache",
+          "default": "get_cache",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cache_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Cache Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cache_id"
+      ],
+      "title": "GetCache",
+      "type": "object"
+    },
+    "GetDocument": {
+      "properties": {
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Operation",
+          "type": "string"
+        },
+        "store_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Store Id",
+          "type": "string"
+        },
+        "document_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Document Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "store_id",
+        "document_id"
+      ],
+      "title": "GetDocument",
+      "type": "object"
+    },
+    "GetFile": {
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "description": "ID without the collection prefix.",
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFile",
+      "type": "object"
+    },
+    "GetImportOperation": {
+      "properties": {
+        "operation": {
+          "const": "get_import_operation",
+          "default": "get_import_operation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "store_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Store Id",
+          "type": "string"
+        },
+        "operation_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Operation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "store_id",
+        "operation_id"
+      ],
+      "title": "GetImportOperation",
+      "type": "object"
+    },
+    "GetModel": {
+      "properties": {
+        "model": {
+          "description": "Model ID, without models/. Discover available IDs with List models.",
+          "title": "Model",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_model",
+          "default": "get_model",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model"
+      ],
+      "title": "GetModel",
+      "type": "object"
+    },
+    "GetStore": {
+      "properties": {
+        "operation": {
+          "const": "get_store",
+          "default": "get_store",
+          "title": "Operation",
+          "type": "string"
+        },
+        "store_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Store Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "store_id"
+      ],
+      "title": "GetStore",
+      "type": "object"
+    },
+    "GoogleAIStudioAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "google_ai_studio_api_key",
+          "default": "google_ai_studio_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Google AI Studio API Key",
+      "type": "object",
+      "x-credential-instructions": "Create a Gemini API key in Google AI Studio, then paste it here. Use an authorization key or a standard key restricted to the Generative Language API. NoClick sends it only to generativelanguage.googleapis.com. Listing your project's files checks read access; model availability, billing and write permissions may differ.",
+      "x-credential-url": "https://aistudio.google.com/apikey"
+    },
+    "ImportFile": {
+      "properties": {
+        "operation": {
+          "const": "import_file",
+          "default": "import_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "store_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Store Id",
+          "type": "string"
+        },
+        "file_name": {
+          "description": "Existing uploaded File resource name.",
+          "pattern": "^files/[A-Za-z0-9_.-]+$",
+          "title": "File Name",
+          "type": "string"
+        },
+        "custom_metadata": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Metadata"
+        },
+        "chunking_config": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chunking Config"
+        }
+      },
+      "required": [
+        "store_id",
+        "file_name"
+      ],
+      "title": "ImportFile",
+      "type": "object"
+    },
+    "ListCaches": {
+      "properties": {
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nextPageToken from the previous response; keep the same operation and parent.",
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_caches",
+          "default": "list_caches",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCaches",
+      "type": "object"
+    },
+    "ListDocuments": {
+      "properties": {
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nextPageToken from the previous response; keep the same operation and parent.",
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string"
+        },
+        "store_id": {
+          "description": "ID without the collection prefix.",
+          "title": "Store Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "store_id"
+      ],
+      "title": "ListDocuments",
+      "type": "object"
+    },
+    "ListFiles": {
+      "properties": {
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nextPageToken from the previous response; keep the same operation and parent.",
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFiles",
+      "type": "object"
+    },
+    "ListModels": {
+      "properties": {
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nextPageToken from the previous response; keep the same operation and parent.",
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_models",
+          "default": "list_models",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListModels",
+      "type": "object"
+    },
+    "ListStores": {
+      "properties": {
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nextPageToken from the previous response; keep the same operation and parent.",
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_stores",
+          "default": "list_stores",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListStores",
+      "type": "object"
+    },
+    "Part": {
+      "properties": {
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "fileData": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileData"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Gemini fileUri and mimeType for previously uploaded media."
+        }
+      },
+      "title": "Part",
+      "type": "object"
+    },
+    "SafetySetting": {
+      "properties": {
+        "category": {
+          "title": "Category",
+          "type": "string"
+        },
+        "threshold": {
+          "title": "Threshold",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category",
+        "threshold"
+      ],
+      "title": "SafetySetting",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "batch_embed_contents": "#/$defs/BatchEmbedContents",
+          "count_tokens": "#/$defs/CountTokens",
+          "create_cache": "#/$defs/CreateCache",
+          "create_store": "#/$defs/CreateStore",
+          "delete_cache": "#/$defs/DeleteCache",
+          "delete_document": "#/$defs/DeleteDocument",
+          "delete_file": "#/$defs/DeleteFile",
+          "delete_store": "#/$defs/DeleteStore",
+          "embed_content": "#/$defs/EmbedContent",
+          "generate_content": "#/$defs/GenerateContent",
+          "get_cache": "#/$defs/GetCache",
+          "get_document": "#/$defs/GetDocument",
+          "get_file": "#/$defs/GetFile",
+          "get_import_operation": "#/$defs/GetImportOperation",
+          "get_model": "#/$defs/GetModel",
+          "get_store": "#/$defs/GetStore",
+          "import_file": "#/$defs/ImportFile",
+          "list_caches": "#/$defs/ListCaches",
+          "list_documents": "#/$defs/ListDocuments",
+          "list_files": "#/$defs/ListFiles",
+          "list_models": "#/$defs/ListModels",
+          "list_stores": "#/$defs/ListStores"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GenerateContent"
+        },
+        {
+          "$ref": "#/$defs/CountTokens"
+        },
+        {
+          "$ref": "#/$defs/EmbedContent"
+        },
+        {
+          "$ref": "#/$defs/BatchEmbedContents"
+        },
+        {
+          "$ref": "#/$defs/CreateCache"
+        },
+        {
+          "$ref": "#/$defs/ListModels"
+        },
+        {
+          "$ref": "#/$defs/GetModel"
+        },
+        {
+          "$ref": "#/$defs/ListFiles"
+        },
+        {
+          "$ref": "#/$defs/GetFile"
+        },
+        {
+          "$ref": "#/$defs/DeleteFile"
+        },
+        {
+          "$ref": "#/$defs/ListCaches"
+        },
+        {
+          "$ref": "#/$defs/GetCache"
+        },
+        {
+          "$ref": "#/$defs/DeleteCache"
+        },
+        {
+          "$ref": "#/$defs/CreateStore"
+        },
+        {
+          "$ref": "#/$defs/ListStores"
+        },
+        {
+          "$ref": "#/$defs/GetStore"
+        },
+        {
+          "$ref": "#/$defs/DeleteStore"
+        },
+        {
+          "$ref": "#/$defs/ListDocuments"
+        },
+        {
+          "$ref": "#/$defs/GetDocument"
+        },
+        {
+          "$ref": "#/$defs/DeleteDocument"
+        },
+        {
+          "$ref": "#/$defs/ImportFile"
+        },
+        {
+          "$ref": "#/$defs/GetImportOperation"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleAIStudioAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-ai-studio Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
