@@ -1,0 +1,805 @@
+{
+  "list_contacts": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "GET",
+    "path": "/contacts",
+    "status": 200,
+    "body": {
+      "data": [
+        {
+          "id": "44210",
+          "type": "contact",
+          "name": "Jane Doe",
+          "title": "Head of Procurement",
+          "company": "Acme Inc.",
+          "industry": "Manufacturing",
+          "website": "https://acme.example.com",
+          "address": "1 Market Street",
+          "city": "San Francisco",
+          "state": "CA",
+          "zip": "94105",
+          "country": {
+            "code": "US",
+            "name": "United States"
+          },
+          "phones": [
+            "+12025550143",
+            "+13105550166"
+          ],
+          "emails": [
+            "jane.doe@example.com"
+          ],
+          "tags": [
+            {
+              "id": "123",
+              "name": "vip",
+              "readOnly": false
+            }
+          ],
+          "customFields": {
+            "Segment": "enterprise"
+          },
+          "favoriteUserId": "7",
+          "source": "api",
+          "createdAt": "2026-08-17T09:34:21Z",
+          "updatedAt": "2026-10-02T14:05:11Z",
+          "dashboardUrl": "https://dashboard.cloudtalk.io/menu/contacts/details/44210"
+        }
+      ],
+      "pagination": {
+        "limit": 20,
+        "next": "djE6NDQyMDk"
+      },
+      "requestId": "c9856b94-db55-402b-a6ba-adb130351158"
+    }
+  },
+  "create_contact": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "POST",
+    "path": "/contacts",
+    "status": 200,
+    "body": {
+      "id": "44190",
+      "type": "lead",
+      "name": "Sam Rivera",
+      "title": "Purchasing Manager",
+      "company": "Northwind",
+      "industry": null,
+      "website": null,
+      "address": null,
+      "city": "London",
+      "state": null,
+      "zip": null,
+      "country": {
+        "code": "GB",
+        "name": "United Kingdom"
+      },
+      "phones": [
+        "+447700900123"
+      ],
+      "emails": [
+        "sam.rivera@example.com"
+      ],
+      "tags": [
+        {
+          "id": "131",
+          "name": "webinar",
+          "readOnly": false
+        }
+      ],
+      "customFields": {
+        "Segment": "smb"
+      },
+      "favoriteUserId": null,
+      "source": "api",
+      "createdAt": "2026-09-14T08:30:00Z",
+      "updatedAt": "2026-11-02T10:00:00Z",
+      "dashboardUrl": "https://dashboard.cloudtalk.io/menu/contacts/details/44190"
+    }
+  },
+  "get_contact": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "GET",
+    "path": "/contacts/{contactId}",
+    "status": 200,
+    "body": {
+      "id": "44210",
+      "type": "contact",
+      "name": "Jane Doe",
+      "title": "Head of Procurement",
+      "company": "Acme Inc.",
+      "industry": "Manufacturing",
+      "website": "https://acme.example.com",
+      "address": "1 Market Street",
+      "city": "San Francisco",
+      "state": "CA",
+      "zip": "94105",
+      "country": {
+        "code": "US",
+        "name": "United States"
+      },
+      "phones": [
+        "+12025550143",
+        "+13105550166"
+      ],
+      "emails": [
+        "jane.doe@example.com"
+      ],
+      "tags": [
+        {
+          "id": "123",
+          "name": "vip",
+          "readOnly": false
+        }
+      ],
+      "customFields": {
+        "Segment": "enterprise"
+      },
+      "favoriteUserId": "7",
+      "source": "api",
+      "createdAt": "2026-08-17T09:34:21Z",
+      "updatedAt": "2026-10-02T14:05:11Z",
+      "dashboardUrl": "https://dashboard.cloudtalk.io/menu/contacts/details/44210"
+    }
+  },
+  "update_contact": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "PATCH",
+    "path": "/contacts/{contactId}",
+    "status": 200,
+    "body": {
+      "id": "44210",
+      "type": "contact",
+      "name": "Jane Doe",
+      "title": "VP Procurement",
+      "company": "Acme Inc.",
+      "industry": "Manufacturing",
+      "website": null,
+      "address": "1 Market Street",
+      "city": "San Francisco",
+      "state": "CA",
+      "zip": "94105",
+      "country": {
+        "code": "US",
+        "name": "United States"
+      },
+      "phones": [
+        "+12025550143",
+        "+13105550166"
+      ],
+      "emails": [
+        "jane.doe@example.com"
+      ],
+      "tags": [
+        {
+          "id": "123",
+          "name": "vip",
+          "readOnly": false
+        }
+      ],
+      "customFields": {
+        "Segment": "mid-market"
+      },
+      "favoriteUserId": "7",
+      "source": "api",
+      "createdAt": "2026-08-17T09:34:21Z",
+      "updatedAt": "2026-11-02T10:20:00Z",
+      "dashboardUrl": "https://dashboard.cloudtalk.io/menu/contacts/details/44210"
+    }
+  },
+  "delete_contact": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "DELETE",
+    "path": "/contacts/{contactId}",
+    "status": 204,
+    "body": null
+  },
+  "add_contact_tags": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "POST",
+    "path": "/contacts/{contactId}/tags",
+    "status": 200,
+    "body": {
+      "id": "44210",
+      "type": "contact",
+      "name": "Jane Doe",
+      "title": "Head of Procurement",
+      "company": "Acme Inc.",
+      "industry": "Manufacturing",
+      "website": "https://acme.example.com",
+      "address": "1 Market Street",
+      "city": "San Francisco",
+      "state": "CA",
+      "zip": "94105",
+      "country": {
+        "code": "US",
+        "name": "United States"
+      },
+      "phones": [
+        "+12025550143",
+        "+13105550166"
+      ],
+      "emails": [
+        "jane.doe@example.com"
+      ],
+      "tags": [
+        {
+          "id": "123",
+          "name": "vip",
+          "readOnly": false
+        },
+        {
+          "id": "131",
+          "name": "webinar",
+          "readOnly": false
+        }
+      ],
+      "customFields": {
+        "Segment": "enterprise"
+      },
+      "favoriteUserId": "7",
+      "source": "api",
+      "createdAt": "2026-08-17T09:34:21Z",
+      "updatedAt": "2026-11-02T10:25:00Z",
+      "dashboardUrl": "https://dashboard.cloudtalk.io/menu/contacts/details/44210"
+    }
+  },
+  "remove_contact_tags": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "DELETE",
+    "path": "/contacts/{contactId}/tags",
+    "status": 200,
+    "body": {
+      "id": "44210",
+      "type": "contact",
+      "name": "Jane Doe",
+      "title": "Head of Procurement",
+      "company": "Acme Inc.",
+      "industry": "Manufacturing",
+      "website": "https://acme.example.com",
+      "address": "1 Market Street",
+      "city": "San Francisco",
+      "state": "CA",
+      "zip": "94105",
+      "country": {
+        "code": "US",
+        "name": "United States"
+      },
+      "phones": [
+        "+12025550143",
+        "+13105550166"
+      ],
+      "emails": [
+        "jane.doe@example.com"
+      ],
+      "tags": [],
+      "customFields": {
+        "Segment": "enterprise"
+      },
+      "favoriteUserId": "7",
+      "source": "api",
+      "createdAt": "2026-08-17T09:34:21Z",
+      "updatedAt": "2026-11-02T10:30:00Z",
+      "dashboardUrl": "https://dashboard.cloudtalk.io/menu/contacts/details/44210"
+    }
+  },
+  "list_contact_tags": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "GET",
+    "path": "/contact-tags",
+    "status": 200,
+    "body": {
+      "data": [
+        {
+          "id": "140",
+          "name": "Newsletter",
+          "type": "integration",
+          "integrationName": "hubspot",
+          "readOnly": true,
+          "createdAt": "2025-05-12T11:20:00Z"
+        },
+        {
+          "id": "123",
+          "name": "vip",
+          "type": "contact",
+          "integrationName": null,
+          "readOnly": false,
+          "createdAt": "2025-03-01T08:00:00Z"
+        }
+      ],
+      "pagination": {
+        "limit": 20,
+        "next": null
+      },
+      "requestId": "c9856b94-db55-402b-a6ba-adb130351158"
+    }
+  },
+  "create_contact_tag": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "POST",
+    "path": "/contact-tags",
+    "status": 200,
+    "body": {
+      "id": "152",
+      "name": "renewal-q1",
+      "type": "contact",
+      "integrationName": null,
+      "readOnly": false,
+      "createdAt": "2026-11-02T10:10:00Z"
+    }
+  },
+  "rename_contact_tag": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "PATCH",
+    "path": "/contact-tags/{tagId}",
+    "status": 200,
+    "body": {
+      "id": "152",
+      "name": "renewal-2027-q1",
+      "type": "contact",
+      "integrationName": null,
+      "readOnly": false,
+      "createdAt": "2026-11-02T10:10:00Z"
+    }
+  },
+  "delete_contact_tag": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "DELETE",
+    "path": "/contact-tags/{tagId}",
+    "status": 204,
+    "body": null
+  },
+  "list_contact_fields": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "GET",
+    "path": "/contact-fields",
+    "status": 200,
+    "body": {
+      "data": [
+        {
+          "id": "9",
+          "name": "Segment",
+          "createdAt": "2025-01-10T09:00:00Z",
+          "updatedAt": "2025-01-10T09:00:00Z"
+        }
+      ],
+      "pagination": {
+        "limit": 20,
+        "next": null
+      },
+      "requestId": "c9856b94-db55-402b-a6ba-adb130351158"
+    }
+  },
+  "list_agents": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "GET",
+    "path": "/agents/index.json",
+    "status": 200,
+    "body": {
+      "responseData": {
+        "itemsCount": 3,
+        "pageCount": 1,
+        "pageNumber": 1,
+        "limit": 3,
+        "data": [
+          {
+            "Agent": {
+              "id": "99",
+              "name": "123456",
+              "firstname": "John",
+              "lastname": "Doe",
+              "email": "joh.doe@phoonio.com",
+              "is_daily_limit_ok": true,
+              "status_outbound": true,
+              "availability_status": "online",
+              "extension": "1001",
+              "call_number_id": 36,
+              "default_number": "+421123456789",
+              "associated_numbers": [
+                "+421123456789",
+                "+421987654321"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "list_groups": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "GET",
+    "path": "/groups/index.json",
+    "status": 200,
+    "body": {
+      "responseData": {
+        "itemsCount": 9,
+        "pageCount": 1,
+        "pageNumber": 1,
+        "limit": 9,
+        "data": [
+          {
+            "Group": {
+              "id": "568",
+              "internal_name": "Oper\u00e1tori"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "list_numbers": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "GET",
+    "path": "/numbers/index.json",
+    "status": 200,
+    "body": {
+      "responseData": {
+        "itemsCount": 3,
+        "pageCount": 1,
+        "pageNumber": 1,
+        "limit": 3,
+        "data": [
+          {
+            "CallNumber": {
+              "id": "123",
+              "country_code": "44",
+              "area_code": "20",
+              "internal_name": "Sales support",
+              "caller_id_e164": 442012345678,
+              "is_redirected": false,
+              "connected_to": "1",
+              "source_id": "4"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "list_notes": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "GET",
+    "path": "/notes/index.json",
+    "status": 200,
+    "body": {
+      "responseData": {
+        "itemsCount": 3,
+        "pageCount": 1,
+        "pageNumber": 1,
+        "limit": 3,
+        "data": [
+          {
+            "ContactNote": {
+              "id": "1234",
+              "contact_id": "567",
+              "user_id": "456",
+              "note": "Note content...",
+              "created": "2018-05-01T12:12:12.000Z"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "add_note": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "PUT",
+    "path": "/notes/add/{contactId}.json",
+    "status": 201,
+    "body": {
+      "responseData": {
+        "status": 201,
+        "data": {
+          "id": "12345"
+        }
+      }
+    }
+  },
+  "list_calls": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "GET",
+    "path": "/calls/index.json",
+    "status": 200,
+    "body": {
+      "responseData": {
+        "itemsCount": 3,
+        "pageCount": 1,
+        "pageNumber": 1,
+        "limit": 3,
+        "data": [
+          {
+            "Cdr": {
+              "id": "27",
+              "billsec": "0",
+              "type": "outgoing",
+              "country_code": "421",
+              "public_external": 421904247371,
+              "public_internal": 421221291400,
+              "recorded": true,
+              "is_voicemail": false,
+              "fax_email": "0",
+              "is_redirected": "0",
+              "redirected_from": "",
+              "is_local": true,
+              "user_id": "1234",
+              "talking_time": "21",
+              "started_at": "2017-10-04T06:33:37.000Z",
+              "answered_at": "2017-10-04T06:33:37.000Z",
+              "ended_at": "2017-10-04T06:33:49.000Z",
+              "waiting_time": 2,
+              "wrapup_time": 5,
+              "recording_link": "https://analytics.cloudtalk.io/call-details/27"
+            },
+            "Contact": {
+              "id": "1234",
+              "name": "Jon Doe",
+              "title": "title",
+              "company": "First ltd.",
+              "industry": "IT",
+              "address": "8th Avenue",
+              "city": "London",
+              "zip": "838298",
+              "state": "England",
+              "type": "contact",
+              "tags": [
+                {
+                  "id": "615",
+                  "name": "VIP"
+                },
+                {
+                  "id": "609",
+                  "name": "Security"
+                }
+              ],
+              "external_urls": [
+                {
+                  "external_system": "CloudTalk",
+                  "external_url": "https://my.cloudtalk.io/c/show/1234"
+                }
+              ],
+              "contact_numbers": [
+                18884871675
+              ],
+              "contact_emails": [
+                "jon.doe@first.com"
+              ],
+              "custom_fields": [
+                {
+                  "key": "age",
+                  "value": "33"
+                }
+              ],
+              "favorite_agent": {
+                "id": "1234",
+                "firstname": "Max",
+                "lastname": "Yellow",
+                "fullname": "Max Yellow",
+                "email": "max.yellow@cloudtalk.io",
+                "language": "en",
+                "role": "Admin",
+                "status": "online",
+                "default_outbound_number": 442012345678,
+                "associated_numbers": [
+                  442012345678
+                ],
+                "groups": [
+                  "sales",
+                  "support"
+                ]
+              }
+            },
+            "CallNumber": {
+              "id": "12345",
+              "internal_name": "Sales support",
+              "caller_id_e164": 442012345678,
+              "country_code": "44",
+              "area_code": "20"
+            },
+            "BillingCall": {
+              "price": "0.000000"
+            },
+            "Agent": {
+              "id": "1234",
+              "firstname": "Max",
+              "lastname": "Yellow",
+              "fullname": "Max Yellow",
+              "email": "max.yellow@cloudtalk.io",
+              "language": "en",
+              "role": "Admin",
+              "status": "online",
+              "default_outbound_number": 442012345678,
+              "associated_numbers": [
+                442012345678
+              ],
+              "groups": [
+                "sales",
+                "support"
+              ]
+            },
+            "Notes": [
+              {
+                "id": "23",
+                "note": "Call later"
+              }
+            ],
+            "Tags": [
+              {
+                "id": "123",
+                "name": "Missed"
+              },
+              {
+                "id": "124",
+                "name": "VIP"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "get_call": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "GET",
+    "path": "/calls/{callId}",
+    "status": 200,
+    "body": {
+      "cdr_id": 12345,
+      "uuid": "aaaa-bbbb-cccc-dddd",
+      "company_id": 100123,
+      "date": "2022-02-07T13:00:00.000Z",
+      "contact": {
+        "id": 1,
+        "name": "John Doe",
+        "country": "CZ",
+        "number": "+420123123123"
+      },
+      "call_tags": [
+        {
+          "id": 5,
+          "label": "Lead"
+        }
+      ],
+      "call_rating": 3,
+      "internal_number": {
+        "id": 1,
+        "name": "Europe Sales",
+        "number": "+421456456456"
+      },
+      "call_times": {
+        "talking_time": 60,
+        "wrap_up_time": 10,
+        "ringing_time": 10,
+        "total_time": 80,
+        "waiting_time": 20,
+        "holding_time": 5
+      },
+      "direction": "incoming",
+      "type": "regular",
+      "status": "answered",
+      "call_steps": [
+        {
+          "type": "ivr",
+          "id": 1,
+          "date": "2022-02-07T13:00:00.000Z",
+          "total_time": 10,
+          "option": "1"
+        },
+        {
+          "type": "queue",
+          "id": 10,
+          "name": "Queue10",
+          "date": "2022-02-07T13:00:10.000Z",
+          "call_times": {
+            "talking_time": 60,
+            "wrap_up_time": 10,
+            "ringing_time": 10,
+            "total_time": 80,
+            "waiting_time": 10,
+            "holding_time": 3
+          },
+          "status": "answered",
+          "reason": null,
+          "resolved_by": null,
+          "resolved_by_call": {
+            "id": null,
+            "date": null,
+            "agent": {
+              "id": null,
+              "name": null
+            }
+          },
+          "strategy": "rrmemory",
+          "agent_calls": [
+            {
+              "type": "agent",
+              "id": 12,
+              "name": "Agent12",
+              "group_ids": [
+                10,
+                20
+              ],
+              "date": "2022-02-07T13:00:10.000Z",
+              "call_times": {
+                "talking_time": null,
+                "wrap_up_time": null,
+                "ringing_time": 5,
+                "total_time": 5,
+                "holding_time": null
+              },
+              "status": "missed",
+              "reason": "offline",
+              "resolved_by": null,
+              "resolved_by_call": {
+                "id": null,
+                "date": null,
+                "agent": {
+                  "id": null,
+                  "name": null
+                }
+              }
+            },
+            {
+              "type": "agent",
+              "id": 11,
+              "name": "Agent11",
+              "group_ids": [
+                10,
+                20
+              ],
+              "date": "2022-02-07T13:00:15.000Z",
+              "call_times": {
+                "talking_time": 60,
+                "wrap_up_time": 10,
+                "ringing_time": 5,
+                "total_time": 75,
+                "holding_time": 2
+              },
+              "status": "answered",
+              "reason": null,
+              "resolved_by": null,
+              "resolved_by_call": {
+                "id": null,
+                "date": null,
+                "agent": {
+                  "id": null,
+                  "name": null
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "string"
+      ],
+      "recorded": true,
+      "out_of_office": false
+    }
+  },
+  "send_sms": {
+    "source": "Synthetic successful SMS response following the documented boolean success schema; the published example is pseudocode.",
+    "method": "POST",
+    "path": "/sms/send.json",
+    "status": 200,
+    "body": {
+      "responseData": {
+        "success": true,
+        "data": {
+          "recipient": "+421123456789",
+          "sender": "+421987654321",
+          "message": "Test message"
+        }
+      }
+    }
+  },
+  "make_call": {
+    "source": "https://help.cloudtalk.io/api-reference/openapi.json",
+    "method": "POST",
+    "path": "/calls/create.json",
+    "status": 200,
+    "body": {
+      "responseData": {
+        "status": 200
+      }
+    }
+  }
+}

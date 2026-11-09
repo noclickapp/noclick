@@ -1,0 +1,1639 @@
+{
+  "$defs": {
+    "AddContactTags": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_contact_tags",
+          "default": "add_contact_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tagIds": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Tagids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tagIds"
+      ],
+      "title": "AddContactTags",
+      "type": "object"
+    },
+    "AddNote": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_note",
+          "default": "add_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "note": {
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        }
+      },
+      "required": [
+        "contact_id",
+        "note"
+      ],
+      "title": "AddNote",
+      "type": "object"
+    },
+    "CloudTalkAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "cloudtalk_api_key",
+          "default": "cloudtalk_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_key_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Access Key ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "access_key_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Access Key Secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_key_id",
+        "access_key_secret"
+      ],
+      "title": "CloudTalk API Key",
+      "type": "object",
+      "x-credential-instructions": "In CloudTalk, open Account \u2192 Settings \u2192 API Keys. Paste the API Access Key ID and Access Key Secret. An administrator can generate these keys. NoClick uses HTTP Basic authentication and reads your account's agents to check the connection.",
+      "x-credential-url": "https://dashboard.cloudtalk.io/menu/account/settings/API-keys"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industry"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip"
+        },
+        "countryCode": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Countrycode"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "pattern": "^\\+[1-9][0-9]{6,14}$",
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the whole phone list on update; [] clears it.",
+          "title": "Phones"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the whole email list on update; [] clears it.",
+          "title": "Emails"
+        },
+        "favoriteUserId": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Favoriteuserid"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 150,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "contact",
+          "enum": [
+            "contact",
+            "lead"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "tagIds": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 128,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "type": "string"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tagids"
+        },
+        "customFields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "maxLength": 255,
+                "type": "string"
+              },
+              "maxProperties": 100,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customfields"
+        },
+        "matchBy": {
+          "default": "none",
+          "description": "Matching can update an existing contact instead of creating one.",
+          "enum": [
+            "none",
+            "phone",
+            "email",
+            "emailOrPhone"
+          ],
+          "title": "Matchby",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key header. Reuse the same key only for an identical create request.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateContactTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact_tag",
+          "default": "create_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateContactTag",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteContactTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_contact_tag",
+          "default": "delete_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag_id": {
+          "description": "Deleting a tag also removes it from contacts and automation targeting. This cannot be undone.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "DeleteContactTag",
+      "type": "object"
+    },
+    "GetCall": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_call",
+          "default": "get_call",
+          "title": "Operation",
+          "type": "string"
+        },
+        "call_id": {
+          "minimum": 1,
+          "title": "Call Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "call_id"
+      ],
+      "title": "GetCall",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "ListAgents": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "Read one page; pass next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_agents",
+          "default": "list_agents",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "associated_number": {
+          "anyOf": [
+            {
+              "pattern": "^\\+[1-9][0-9]{6,14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Associated Number"
+        }
+      },
+      "title": "ListAgents",
+      "type": "object"
+    },
+    "ListCalls": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "Read one page; pass next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_calls",
+          "default": "list_calls",
+          "title": "Operation",
+          "type": "string"
+        },
+        "public_internal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Internal"
+        },
+        "public_external": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public External"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date To"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "agent_extension": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agent Extension"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "incoming",
+                "outgoing",
+                "internal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "incoming",
+            "outgoing",
+            "internal"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "missed",
+                "answered"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "missed",
+            "answered"
+          ],
+          "x-enum-searchable": true
+        },
+        "tag_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag Id"
+        },
+        "call_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Call Id"
+        }
+      },
+      "title": "ListCalls",
+      "type": "object"
+    },
+    "ListContactFields": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass pagination.next unchanged with the same filters. Read one page per execution.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_contact_fields",
+          "default": "list_contact_fields",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListContactFields",
+      "type": "object"
+    },
+    "ListContactTags": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass pagination.next unchanged with the same filters. Read one page per execution.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_contact_tags",
+          "default": "list_contact_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListContactTags",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass pagination.next unchanged with the same filters. Read one page per execution.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "tagIds": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1 to 20 comma-separated contact tag IDs.",
+          "title": "Tagids"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "contact",
+                "lead"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "contact",
+            "lead"
+          ],
+          "x-enum-searchable": true
+        },
+        "updatedSince": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updatedsince"
+        },
+        "customField": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customfield"
+        },
+        "customFieldValue": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customfieldvalue"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "Read one page; pass next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "ListNotes": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "Read one page; pass next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        }
+      },
+      "title": "ListNotes",
+      "type": "object"
+    },
+    "ListNumbers": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "Read one page; pass next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_numbers",
+          "default": "list_numbers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "area_code": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area Code"
+        },
+        "connected_to": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Connected To"
+        },
+        "is_free": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Free"
+        }
+      },
+      "title": "ListNumbers",
+      "type": "object"
+    },
+    "MakeCall": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "make_call",
+          "default": "make_call",
+          "title": "Operation",
+          "type": "string"
+        },
+        "agent_id": {
+          "minimum": 1,
+          "title": "Agent Id",
+          "type": "integer"
+        },
+        "callee_number": {
+          "description": "Calls the agent first, then this number. Acknowledgement does not confirm the callee answered.",
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "Callee Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id",
+        "callee_number"
+      ],
+      "title": "MakeCall",
+      "type": "object"
+    },
+    "RemoveContactTags": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_contact_tags",
+          "default": "remove_contact_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tagIds": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Tagids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tagIds"
+      ],
+      "title": "RemoveContactTags",
+      "type": "object"
+    },
+    "RenameContactTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rename_contact_tag",
+          "default": "rename_contact_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tag Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id",
+        "name"
+      ],
+      "title": "RenameContactTag",
+      "type": "object"
+    },
+    "SendSMS": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string"
+        },
+        "recipient": {
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "Recipient",
+          "type": "string"
+        },
+        "sender": {
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "Sender",
+          "type": "string"
+        },
+        "message": {
+          "description": "One SMS to one recipient; acceptance does not confirm delivery.",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        }
+      },
+      "required": [
+        "recipient",
+        "sender",
+        "message"
+      ],
+      "title": "SendSMS",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industry"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip"
+        },
+        "countryCode": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Countrycode"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "pattern": "^\\+[1-9][0-9]{6,14}$",
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the whole phone list on update; [] clears it.",
+          "title": "Phones"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the whole email list on update; [] clears it.",
+          "title": "Emails"
+        },
+        "favoriteUserId": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Favoriteuserid"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "const": "contact",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "customFields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "maxLength": 255,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxProperties": 100,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Merge by key; null removes a key.",
+          "title": "Customfields"
+        },
+        "clear_fields": {
+          "description": "Explicitly clear nullable fields. Other unset fields stay unchanged.",
+          "items": {
+            "enum": [
+              "title",
+              "company",
+              "industry",
+              "website",
+              "address",
+              "city",
+              "state",
+              "zip",
+              "favoriteUserId"
+            ],
+            "type": "string"
+          },
+          "title": "Clear Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_tags": "#/$defs/AddContactTags",
+          "add_note": "#/$defs/AddNote",
+          "create_contact": "#/$defs/CreateContact",
+          "create_contact_tag": "#/$defs/CreateContactTag",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_contact_tag": "#/$defs/DeleteContactTag",
+          "get_call": "#/$defs/GetCall",
+          "get_contact": "#/$defs/GetContact",
+          "list_agents": "#/$defs/ListAgents",
+          "list_calls": "#/$defs/ListCalls",
+          "list_contact_fields": "#/$defs/ListContactFields",
+          "list_contact_tags": "#/$defs/ListContactTags",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_groups": "#/$defs/ListGroups",
+          "list_notes": "#/$defs/ListNotes",
+          "list_numbers": "#/$defs/ListNumbers",
+          "make_call": "#/$defs/MakeCall",
+          "remove_contact_tags": "#/$defs/RemoveContactTags",
+          "rename_contact_tag": "#/$defs/RenameContactTag",
+          "send_sms": "#/$defs/SendSMS",
+          "update_contact": "#/$defs/UpdateContact"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/AddContactTags"
+        },
+        {
+          "$ref": "#/$defs/RemoveContactTags"
+        },
+        {
+          "$ref": "#/$defs/ListContactTags"
+        },
+        {
+          "$ref": "#/$defs/CreateContactTag"
+        },
+        {
+          "$ref": "#/$defs/RenameContactTag"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactTag"
+        },
+        {
+          "$ref": "#/$defs/ListContactFields"
+        },
+        {
+          "$ref": "#/$defs/ListAgents"
+        },
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/ListNumbers"
+        },
+        {
+          "$ref": "#/$defs/ListNotes"
+        },
+        {
+          "$ref": "#/$defs/AddNote"
+        },
+        {
+          "$ref": "#/$defs/ListCalls"
+        },
+        {
+          "$ref": "#/$defs/GetCall"
+        },
+        {
+          "$ref": "#/$defs/SendSMS"
+        },
+        {
+          "$ref": "#/$defs/MakeCall"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CloudTalkAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cloudtalk Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
