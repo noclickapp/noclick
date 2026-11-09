@@ -1,0 +1,1133 @@
+{
+  "$defs": {
+    "AssignSessionTopic": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "assign_session_topic",
+          "default": "assign_session_topic",
+          "title": "Assign Session to Topic",
+          "type": "string"
+        },
+        "topic_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to unassign this cloud-synced session from its topic.",
+          "title": "Topic Id"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "AssignSessionTopic",
+      "type": "object"
+    },
+    "CreateContext": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        },
+        "is_default": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Setting true unsets any existing default context.",
+          "title": "Is Default"
+        },
+        "operation": {
+          "const": "create_context",
+          "default": "create_context",
+          "description": "Free accounts are limited to one context.",
+          "title": "Create Session Context",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateContext",
+      "type": "object"
+    },
+    "CreateTopic": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "pattern": "^#?[0-9a-fA-F]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "icon_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Icon codepoint, e.g. 59475 or 0xe853.",
+          "title": "Icon Name"
+        },
+        "topic_context": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topic Context"
+        },
+        "dominant_session_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "business_meetings",
+                "lecture_class",
+                "coaching_mentoring",
+                "recruitment_call",
+                "job_interview_candidate",
+                "negotiation",
+                "sales_meeting",
+                "journalism",
+                "spiritual_teaching",
+                "solo_brainstorm",
+                "group_brainstorm",
+                "personal_conversation",
+                "medical_consultation"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dominant Session Type",
+          "enum": [
+            "business_meetings",
+            "lecture_class",
+            "coaching_mentoring",
+            "recruitment_call",
+            "job_interview_candidate",
+            "negotiation",
+            "sales_meeting",
+            "journalism",
+            "spiritual_teaching",
+            "solo_brainstorm",
+            "group_brainstorm",
+            "personal_conversation",
+            "medical_consultation"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "create_topic",
+          "default": "create_topic",
+          "title": "Create Topic",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateTopic",
+      "type": "object"
+    },
+    "DeleteContext": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_context",
+          "default": "delete_context",
+          "description": "Deleting the default promotes the most recently updated remaining context.",
+          "title": "Delete Session Context",
+          "type": "string"
+        },
+        "context_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Context Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "context_id"
+      ],
+      "title": "DeleteContext",
+      "type": "object"
+    },
+    "DeleteTopic": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_topic",
+          "default": "delete_topic",
+          "description": "Unlinks all associated sessions; the sessions themselves remain.",
+          "title": "Delete Topic",
+          "type": "string"
+        },
+        "topic_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Topic Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "topic_id"
+      ],
+      "title": "DeleteTopic",
+      "type": "object"
+    },
+    "GetContext": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_context",
+          "default": "get_context",
+          "title": "Get Session Context",
+          "type": "string"
+        },
+        "context_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Context Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "context_id"
+      ],
+      "title": "GetContext",
+      "type": "object"
+    },
+    "GetHighlight": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_highlight",
+          "default": "get_highlight",
+          "title": "Get Highlight",
+          "type": "string"
+        },
+        "highlight_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Highlight Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "highlight_id"
+      ],
+      "title": "GetHighlight",
+      "type": "object"
+    },
+    "GetProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Get My Profile",
+          "type": "string"
+        }
+      },
+      "title": "GetProfile",
+      "type": "object"
+    },
+    "GetSession": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_session",
+          "default": "get_session",
+          "title": "Get Session Details",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSession",
+      "type": "object"
+    },
+    "GetTodo": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_todo",
+          "default": "get_todo",
+          "title": "Get Session To-Do",
+          "type": "string"
+        },
+        "todo_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Todo Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "todo_id"
+      ],
+      "title": "GetTodo",
+      "type": "object"
+    },
+    "GetTopic": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_topic",
+          "default": "get_topic",
+          "title": "Get Topic",
+          "type": "string"
+        },
+        "topic_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Topic Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "topic_id"
+      ],
+      "title": "GetTopic",
+      "type": "object"
+    },
+    "GetVocabulary": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_vocabulary",
+          "default": "get_vocabulary",
+          "title": "Get Custom Vocabulary",
+          "type": "string"
+        }
+      },
+      "title": "GetVocabulary",
+      "type": "object"
+    },
+    "HedyAPICredential": {
+      "properties": {
+        "credential_type": {
+          "const": "hedy_api_key",
+          "default": "hedy_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "us",
+          "enum": [
+            "us",
+            "eu"
+          ],
+          "title": "Account region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Hedy API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Hedy API key from Account Settings \u2192 API Access. An active Pro subscription is required. Choose the region where your account is stored. NoClick verifies the key by reading your own profile.",
+      "x-credential-url": "https://www.hedy.ai/help/hedy-api/"
+    },
+    "ListContexts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contexts",
+          "default": "list_contexts",
+          "title": "List Session Contexts",
+          "type": "string"
+        }
+      },
+      "title": "ListContexts",
+      "type": "object"
+    },
+    "ListHighlights": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use pagination.next from the preceding response.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_highlights",
+          "default": "list_highlights",
+          "title": "List Highlights",
+          "type": "string"
+        }
+      },
+      "title": "ListHighlights",
+      "type": "object"
+    },
+    "ListSessionHighlights": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_session_highlights",
+          "default": "list_session_highlights",
+          "title": "List Session Highlights",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ListSessionHighlights",
+      "type": "object"
+    },
+    "ListSessionTodos": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_session_todos",
+          "default": "list_session_todos",
+          "title": "List Session To-Dos",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ListSessionTodos",
+      "type": "object"
+    },
+    "ListSessions": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use pagination.next from the preceding response.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "description": "Only cloud-synced sessions are returned, newest first.",
+          "title": "List Sessions",
+          "type": "string"
+        }
+      },
+      "title": "ListSessions",
+      "type": "object"
+    },
+    "ListTodos": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_todos",
+          "default": "list_todos",
+          "description": "Eventually consistent across sessions; changes may be delayed, especially for large EU sessions.",
+          "title": "List All To-Dos",
+          "type": "string"
+        }
+      },
+      "title": "ListTodos",
+      "type": "object"
+    },
+    "ListTopicSessions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_topic_sessions",
+          "default": "list_topic_sessions",
+          "title": "List Topic Sessions",
+          "type": "string"
+        },
+        "topic_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Topic Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "start_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use data.pagination.nextCursor from the preceding response.",
+          "title": "Start After"
+        }
+      },
+      "required": [
+        "topic_id"
+      ],
+      "title": "ListTopicSessions",
+      "type": "object"
+    },
+    "ListTopics": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_topics",
+          "default": "list_topics",
+          "title": "List Topics",
+          "type": "string"
+        }
+      },
+      "title": "ListTopics",
+      "type": "object"
+    },
+    "ReplaceSessionSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "replace_session_summary",
+          "default": "replace_session_summary",
+          "title": "Replace Session Summary",
+          "type": "string"
+        },
+        "recap": {
+          "anyOf": [
+            {
+              "maxLength": 60000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Complete replacement recap. Omit to preserve.",
+          "title": "Recap"
+        },
+        "meeting_minutes": {
+          "anyOf": [
+            {
+              "maxLength": 60000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Complete replacement Details text. Omit to preserve. Session Notes cannot be edited.",
+          "title": "Meeting Minutes"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ReplaceSessionSummary",
+      "type": "object"
+    },
+    "ReplaceVocabulary": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "replace_vocabulary",
+          "default": "replace_vocabulary",
+          "title": "Replace Custom Vocabulary",
+          "type": "string"
+        },
+        "terms": {
+          "description": "Complete replacement list; omitted terms are removed. An empty list removes all terms.",
+          "items": {
+            "maxLength": 50,
+            "minLength": 2,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Terms",
+          "type": "array"
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to preserve whether vocabulary matching is enabled.",
+          "title": "Enabled"
+        }
+      },
+      "required": [
+        "terms"
+      ],
+      "title": "ReplaceVocabulary",
+      "type": "object"
+    },
+    "UpdateContext": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        },
+        "is_default": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Setting true unsets any existing default context.",
+          "title": "Is Default"
+        },
+        "operation": {
+          "const": "update_context",
+          "default": "update_context",
+          "title": "Update Session Context",
+          "type": "string"
+        },
+        "context_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Context Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "context_id"
+      ],
+      "title": "UpdateContext",
+      "type": "object"
+    },
+    "UpdateTodo": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_todo",
+          "default": "update_todo",
+          "title": "Update To-Do State",
+          "type": "string"
+        },
+        "todo_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Todo Id",
+          "type": "string"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        },
+        "clear_due_date": {
+          "default": false,
+          "description": "Clear the due date. Cannot be combined with a due date.",
+          "title": "Clear Due Date",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "session_id",
+        "todo_id"
+      ],
+      "title": "UpdateTodo",
+      "type": "object"
+    },
+    "UpdateTopic": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "pattern": "^#?[0-9a-fA-F]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "icon_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Icon codepoint, e.g. 59475 or 0xe853.",
+          "title": "Icon Name"
+        },
+        "topic_context": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Topic Context"
+        },
+        "dominant_session_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "business_meetings",
+                "lecture_class",
+                "coaching_mentoring",
+                "recruitment_call",
+                "job_interview_candidate",
+                "negotiation",
+                "sales_meeting",
+                "journalism",
+                "spiritual_teaching",
+                "solo_brainstorm",
+                "group_brainstorm",
+                "personal_conversation",
+                "medical_consultation"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dominant Session Type",
+          "enum": [
+            "business_meetings",
+            "lecture_class",
+            "coaching_mentoring",
+            "recruitment_call",
+            "job_interview_candidate",
+            "negotiation",
+            "sales_meeting",
+            "journalism",
+            "spiritual_teaching",
+            "solo_brainstorm",
+            "group_brainstorm",
+            "personal_conversation",
+            "medical_consultation"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "update_topic",
+          "default": "update_topic",
+          "title": "Update Topic",
+          "type": "string"
+        },
+        "topic_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Topic Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "clear_topic_context": {
+          "default": false,
+          "title": "Clear Topic Context",
+          "type": "boolean"
+        },
+        "clear_dominant_session_type": {
+          "default": false,
+          "title": "Clear Dominant Session Type",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "topic_id"
+      ],
+      "title": "UpdateTopic",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "assign_session_topic": "#/$defs/AssignSessionTopic",
+          "create_context": "#/$defs/CreateContext",
+          "create_topic": "#/$defs/CreateTopic",
+          "delete_context": "#/$defs/DeleteContext",
+          "delete_topic": "#/$defs/DeleteTopic",
+          "get_context": "#/$defs/GetContext",
+          "get_highlight": "#/$defs/GetHighlight",
+          "get_profile": "#/$defs/GetProfile",
+          "get_session": "#/$defs/GetSession",
+          "get_todo": "#/$defs/GetTodo",
+          "get_topic": "#/$defs/GetTopic",
+          "get_vocabulary": "#/$defs/GetVocabulary",
+          "list_contexts": "#/$defs/ListContexts",
+          "list_highlights": "#/$defs/ListHighlights",
+          "list_session_highlights": "#/$defs/ListSessionHighlights",
+          "list_session_todos": "#/$defs/ListSessionTodos",
+          "list_sessions": "#/$defs/ListSessions",
+          "list_todos": "#/$defs/ListTodos",
+          "list_topic_sessions": "#/$defs/ListTopicSessions",
+          "list_topics": "#/$defs/ListTopics",
+          "replace_session_summary": "#/$defs/ReplaceSessionSummary",
+          "replace_vocabulary": "#/$defs/ReplaceVocabulary",
+          "update_context": "#/$defs/UpdateContext",
+          "update_todo": "#/$defs/UpdateTodo",
+          "update_topic": "#/$defs/UpdateTopic"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetProfile"
+        },
+        {
+          "$ref": "#/$defs/GetVocabulary"
+        },
+        {
+          "$ref": "#/$defs/ReplaceVocabulary"
+        },
+        {
+          "$ref": "#/$defs/ListSessions"
+        },
+        {
+          "$ref": "#/$defs/GetSession"
+        },
+        {
+          "$ref": "#/$defs/ReplaceSessionSummary"
+        },
+        {
+          "$ref": "#/$defs/AssignSessionTopic"
+        },
+        {
+          "$ref": "#/$defs/ListHighlights"
+        },
+        {
+          "$ref": "#/$defs/GetHighlight"
+        },
+        {
+          "$ref": "#/$defs/ListTodos"
+        },
+        {
+          "$ref": "#/$defs/ListSessionTodos"
+        },
+        {
+          "$ref": "#/$defs/ListSessionHighlights"
+        },
+        {
+          "$ref": "#/$defs/GetTodo"
+        },
+        {
+          "$ref": "#/$defs/UpdateTodo"
+        },
+        {
+          "$ref": "#/$defs/ListTopicSessions"
+        },
+        {
+          "$ref": "#/$defs/ListTopics"
+        },
+        {
+          "$ref": "#/$defs/CreateTopic"
+        },
+        {
+          "$ref": "#/$defs/GetTopic"
+        },
+        {
+          "$ref": "#/$defs/UpdateTopic"
+        },
+        {
+          "$ref": "#/$defs/DeleteTopic"
+        },
+        {
+          "$ref": "#/$defs/ListContexts"
+        },
+        {
+          "$ref": "#/$defs/CreateContext"
+        },
+        {
+          "$ref": "#/$defs/GetContext"
+        },
+        {
+          "$ref": "#/$defs/UpdateContext"
+        },
+        {
+          "$ref": "#/$defs/DeleteContext"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HedyAPICredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hedy Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
