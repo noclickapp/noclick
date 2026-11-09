@@ -1,0 +1,224 @@
+[
+  {
+    "config": {
+      "operation": "list_customers"
+    },
+    "method": "GET",
+    "path": "/customers"
+  },
+  {
+    "config": {
+      "operation": "create_customer",
+      "name": "John Doe",
+      "email": "user@example.org"
+    },
+    "method": "POST",
+    "path": "/customers",
+    "body": {
+      "name": "John Doe",
+      "email": "user@example.org"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_customer",
+      "customer_id": "123"
+    },
+    "method": "GET",
+    "path": "/customers/123"
+  },
+  {
+    "config": {
+      "operation": "update_customer",
+      "customer_id": "123",
+      "name": "John Doe"
+    },
+    "method": "PUT",
+    "path": "/customers/123",
+    "body": {
+      "name": "John Doe"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_accesses",
+      "customer_id": "123"
+    },
+    "method": "GET",
+    "path": "/customers/123/accesses"
+  },
+  {
+    "config": {
+      "operation": "grant_access",
+      "customer_id": "123",
+      "product_id": 987,
+      "product_type": "fixed_price"
+    },
+    "method": "POST",
+    "path": "/customers/123/accesses",
+    "body": {
+      "product_id": 987,
+      "product_type": "fixed_price"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_access",
+      "customer_id": "123",
+      "access_id": "789"
+    },
+    "method": "GET",
+    "path": "/customers/123/accesses/789"
+  },
+  {
+    "config": {
+      "operation": "revoke_access",
+      "customer_id": "123",
+      "access_id": "789"
+    },
+    "method": "DELETE",
+    "path": "/customers/123/accesses/789"
+  },
+  {
+    "config": {
+      "operation": "get_subscription",
+      "customer_id": "123"
+    },
+    "method": "GET",
+    "path": "/customers/123/subscription"
+  },
+  {
+    "config": {
+      "operation": "create_subscription",
+      "customer_id": "123",
+      "product_id": 987
+    },
+    "method": "POST",
+    "path": "/customers/123/subscription",
+    "body": {
+      "product_id": 987
+    }
+  },
+  {
+    "config": {
+      "operation": "cancel_subscription",
+      "customer_id": "123"
+    },
+    "method": "DELETE",
+    "path": "/customers/123/subscription"
+  },
+  {
+    "config": {
+      "operation": "list_invoices"
+    },
+    "method": "GET",
+    "path": "/invoices"
+  },
+  {
+    "config": {
+      "operation": "get_invoice",
+      "invoice_id": "123"
+    },
+    "method": "GET",
+    "path": "/invoices/123"
+  },
+  {
+    "config": {
+      "operation": "list_offers"
+    },
+    "method": "GET",
+    "path": "/offers"
+  },
+  {
+    "config": {
+      "operation": "get_offer",
+      "offer_id": "123"
+    },
+    "method": "GET",
+    "path": "/offers/123"
+  },
+  {
+    "config": {
+      "operation": "list_contents"
+    },
+    "method": "GET",
+    "path": "/contents"
+  },
+  {
+    "config": {
+      "operation": "get_content",
+      "content_id": "123"
+    },
+    "method": "GET",
+    "path": "/contents/123"
+  },
+  {
+    "config": {
+      "operation": "list_playlist_items",
+      "content_id": "123"
+    },
+    "method": "GET",
+    "path": "/contents/123/playlist_items"
+  },
+  {
+    "config": {
+      "operation": "publish_content",
+      "content_id": "123"
+    },
+    "method": "POST",
+    "path": "/contents/123/visibility/publish"
+  },
+  {
+    "config": {
+      "operation": "unpublish_content",
+      "content_id": "123"
+    },
+    "method": "POST",
+    "path": "/contents/123/visibility/unpublish"
+  },
+  {
+    "config": {
+      "operation": "list_groups"
+    },
+    "method": "GET",
+    "path": "/groups"
+  },
+  {
+    "config": {
+      "operation": "list_group_members",
+      "group_id": 123
+    },
+    "method": "GET",
+    "path": "/groups/123/members"
+  },
+  {
+    "config": {
+      "operation": "add_group_member",
+      "group_id": 123,
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "role": "member"
+    },
+    "method": "POST",
+    "path": "/groups/123/members",
+    "body": {
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "role": "member"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_video_views"
+    },
+    "method": "GET",
+    "path": "/analytics/videos/views"
+  },
+  {
+    "config": {
+      "operation": "get_total_watch_time"
+    },
+    "method": "GET",
+    "path": "/analytics/videos/views/total_watch_time"
+  }
+]
