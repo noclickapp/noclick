@@ -1,0 +1,1189 @@
+{
+  "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download",
+  "version": "1.0.0",
+  "requests": {
+    "create_contact": {
+      "config": {
+        "operation": "create_contact",
+        "firstName": "Jane",
+        "lastName": "Doe",
+        "email": "jane.doe@example.com",
+        "phoneNumber": "+15551234567",
+        "status": "POTENTIAL",
+        "tag": "lead-2024",
+        "joinedTime": "2024-01-15T10:00:00.000Z",
+        "linkPrefix": "product-demo",
+        "utm": "utm_source=google&utm_medium=cpc",
+        "country": "US",
+        "timeZone": "America/New_York",
+        "ipAddress": "192.168.1.1",
+        "referrerUrl": "https://example.com/signup"
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "update_contact": {
+      "config": {
+        "operation": "update_contact",
+        "id": 123,
+        "firstName": "Jane",
+        "lastName": "Doe",
+        "email": "jane.doe.updated@example.com",
+        "secondary_email": "jane.secondary@example.com",
+        "phoneNumber": "+15559876543",
+        "secondary_phoneNumber": "+15551112222",
+        "status": "QUALIFIED",
+        "referrerUrl": "https://example.com/referral"
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "create_contact_note": {
+      "config": {
+        "operation": "create_contact_note",
+        "contactId": 2,
+        "note": "Follow-up call scheduled for next week."
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "create_deal": {
+      "config": {
+        "operation": "create_deal",
+        "eventCallId": 5,
+        "productId": 1,
+        "value": 100,
+        "time": "2026-06-15T15:00:00.000Z",
+        "transactionType": "WON"
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "update_deal": {
+      "config": {
+        "operation": "update_deal",
+        "id": 1,
+        "value": 150,
+        "recurring": false,
+        "transactionType": "WON"
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "create_call": {
+      "config": {
+        "operation": "create_call",
+        "eventId": 1,
+        "contactId": 42,
+        "dateTime": "2026-03-15T14:00:00.000Z",
+        "timeZone": "America/New_York",
+        "conditionalUsers": "101,102",
+        "routingGroupIds": "10",
+        "secondaryQuestionsAnswer": [
+          {
+            "customFieldId": 1,
+            "answer": [
+              "No"
+            ]
+          },
+          {
+            "customFieldId": 2,
+            "answer": [
+              "31"
+            ]
+          },
+          {
+            "customFieldId": 3,
+            "answer": [
+              "Option A",
+              "Option B"
+            ]
+          }
+        ],
+        "additionalGuests": [
+          {
+            "email": "colleague@example.com",
+            "name": "Alex Guest"
+          }
+        ]
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "reschedule_call": {
+      "config": {
+        "operation": "reschedule_call",
+        "id": 1001,
+        "dateTime": "2026-07-24T16:45:00.000Z",
+        "timeZone": "America/New_York",
+        "rescheduleReason": "Client requested a different time",
+        "notes": "Internal note for the reschedule",
+        "userId": 101,
+        "additionalGuests": [
+          {
+            "email": "colleague@example.com",
+            "name": "Alex Guest"
+          }
+        ]
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "cancel_call": {
+      "config": {
+        "operation": "cancel_call",
+        "id": 1001,
+        "cancelReason": "Client requested cancellation"
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "update_event_status": {
+      "config": {
+        "operation": "update_event_status",
+        "id": 4,
+        "status": "ACTIVATED"
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "create_product": {
+      "config": {
+        "operation": "create_product",
+        "name": "Premium Plan",
+        "description": "Annual subscription tier"
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "update_product": {
+      "config": {
+        "operation": "update_product",
+        "productId": 4,
+        "name": "Premium Plan",
+        "description": "Updated product description"
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "create_transaction": {
+      "config": {
+        "operation": "create_transaction",
+        "name": "John Doe",
+        "phoneNumber": "+15551234567",
+        "description": "Test transaction",
+        "email": "user@example.com",
+        "value": 0,
+        "source": "Zapier"
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    },
+    "update_transaction": {
+      "config": {
+        "operation": "update_transaction",
+        "id": 1,
+        "name": "John Doe",
+        "phoneNumber": "+15551234567",
+        "description": "Test transaction",
+        "email": "user@example.com",
+        "value": 0,
+        "source": "Zapier"
+      },
+      "source": "https://developer.iclosed.io/_bundle/openapi/v1/openapi.json?download"
+    }
+  },
+  "responses": {
+    "list_contacts": {
+      "method": "GET",
+      "path": "/v1/contacts",
+      "status": 200,
+      "body": {
+        "data": {
+          "count": 1,
+          "contacts": [
+            {
+              "id": 2,
+              "email": "jane.doe@example.com",
+              "firstName": "Jane",
+              "lastName": "Doe",
+              "status": "STRATEGY_CALL_BOOKED",
+              "phoneNumber": "+15551234567",
+              "secondary_email": null,
+              "secondary_phoneNumber": null,
+              "previewId": "contact_examplePreviewId",
+              "blockedId": null,
+              "country": null,
+              "timeZone": "America/New_York",
+              "createdAt": "12/10/2025",
+              "ContactEvents": [
+                {
+                  "id": 2,
+                  "name": "Phone Call"
+                }
+              ],
+              "user": {
+                "id": 5,
+                "firstName": "Alex",
+                "lastName": "Closer",
+                "email": "closer@example.com"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "create_contact": {
+      "method": "POST",
+      "path": "/v1/contacts",
+      "status": 201,
+      "body": {
+        "data": {
+          "contact": {
+            "id": 139,
+            "accountId": 4,
+            "userId": null,
+            "email": "jane.doe.updated@example.com",
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "status": "QUALIFIED",
+            "phoneNumber": "+15551234567",
+            "previewId": "contact_exampleUpdatedId",
+            "tagId": 7,
+            "blockedByRecaptcha": false,
+            "joinedTime": "2026-03-04T20:38:06.409Z",
+            "country": "US",
+            "timeZone": "America/New_York",
+            "blockedId": null,
+            "referrerUrl": "https://example.com/referral",
+            "createdAt": "2026-03-04T20:38:06.410Z",
+            "updatedAt": "2026-03-05T09:41:22.614Z",
+            "deletedAt": null
+          }
+        }
+      }
+    },
+    "update_contact": {
+      "method": "PUT",
+      "path": "/v1/contacts",
+      "status": 200,
+      "body": {
+        "data": {
+          "contact": {
+            "id": 139,
+            "accountId": 4,
+            "userId": null,
+            "email": "jane.doe.updated@example.com",
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "status": "QUALIFIED",
+            "phoneNumber": "+15551234567",
+            "previewId": "contact_exampleUpdatedId",
+            "tagId": 7,
+            "blockedByRecaptcha": false,
+            "joinedTime": "2026-03-04T20:38:06.409Z",
+            "country": "US",
+            "timeZone": "America/New_York",
+            "blockedId": null,
+            "referrerUrl": "https://example.com/referral",
+            "createdAt": "2026-03-04T20:38:06.410Z",
+            "updatedAt": "2026-03-05T09:41:22.614Z",
+            "deletedAt": null
+          }
+        }
+      }
+    },
+    "get_contact": {
+      "method": "GET",
+      "path": "/v1/contacts/detail",
+      "status": 200,
+      "body": {
+        "data": {
+          "id": 2,
+          "firstName": "Jane",
+          "lastName": "Doe",
+          "email": "jane.doe@example.com",
+          "phoneNumber": "+15551234567",
+          "secondary_email": null,
+          "secondary_phoneNumber": null,
+          "status": "STRATEGY_CALL_BOOKED",
+          "joinedTime": "2025-12-10T10:08:28.566Z",
+          "createdAt": "2025-12-10T10:08:28.568Z",
+          "updatedAt": "2025-12-26T11:44:32.799Z",
+          "referrerUrl": "https://example.com/e/company/phone-call",
+          "previewId": "contact_examplePreviewId",
+          "timeZone": "America/New_York",
+          "user": {
+            "id": 5,
+            "firstName": "Alex",
+            "lastName": "Closer",
+            "email": "closer@example.com"
+          },
+          "ContactEvents": [
+            {
+              "id": 2,
+              "name": "Phone Call",
+              "location": "PHONE_CALL",
+              "color": "#0099FF"
+            }
+          ],
+          "ContactStats": {
+            "initialStatus": "QUALIFIED",
+            "statusUpdatedAt": "2025-12-26T11:44:32.796Z",
+            "lastInteractionStatus": "NEW_CONTACT_NOTE",
+            "lastInteractionType": "NEW_CONTACT_NOTE",
+            "totalCallsBooked": 3,
+            "strategyCallsBooked": 3,
+            "discoveryCallsBooked": 0,
+            "income": 223
+          },
+          "pastCallsCount": 3,
+          "upcomingCallsCount": 0,
+          "utms": [
+            {
+              "eventCallId": 54,
+              "utmKey": "utm_source",
+              "utmValue": "google"
+            },
+            {
+              "eventCallId": 54,
+              "utmKey": "utm_medium",
+              "utmValue": "cpc"
+            }
+          ],
+          "CustomFieldAssociation": [
+            {
+              "customField": {
+                "id": 248,
+                "name": "Set by",
+                "type": "CALL",
+                "inputType": "USER",
+                "identifier": "set_by"
+              },
+              "CustomFieldAnswer": [
+                {
+                  "inputType": "USER",
+                  "answer": null,
+                  "date": null,
+                  "number": null,
+                  "customFieldOptionId": null,
+                  "user": {
+                    "id": 5,
+                    "firstName": "Alex",
+                    "lastName": "Closer"
+                  }
+                }
+              ]
+            },
+            {
+              "customField": {
+                "id": 11,
+                "name": "Number",
+                "type": "CONTACT",
+                "inputType": "NUMBER",
+                "identifier": "number-1"
+              },
+              "CustomFieldAnswer": [
+                {
+                  "inputType": "NUMBER",
+                  "answer": null,
+                  "date": null,
+                  "number": 3434,
+                  "customFieldOptionId": null,
+                  "user": null
+                }
+              ]
+            },
+            {
+              "customField": {
+                "id": 243,
+                "name": "Objection",
+                "type": "CALL",
+                "inputType": "SINGLE_SELECT",
+                "identifier": "objection"
+              },
+              "CustomFieldAnswer": [
+                {
+                  "inputType": "SINGLE_SELECT",
+                  "answer": "MONEY",
+                  "date": null,
+                  "number": null,
+                  "customFieldOptionId": 283,
+                  "user": null
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "list_contact_notes": {
+      "method": "GET",
+      "path": "/v1/contacts/notes",
+      "status": 200,
+      "body": {
+        "count": 2,
+        "data": [
+          {
+            "id": 101,
+            "text": "Follow-up call scheduled for next week.",
+            "createdAt": "2026-04-01T10:00:00.000Z",
+            "updatedAt": "2026-04-01T10:00:00.000Z",
+            "type": "NOTE",
+            "user": {
+              "firstName": "Alex",
+              "lastName": "Closer"
+            }
+          },
+          {
+            "id": 102,
+            "text": "Sent pricing deck.",
+            "createdAt": "2026-04-02T14:30:00.000Z",
+            "updatedAt": "2026-04-02T14:30:00.000Z",
+            "type": "NOTE",
+            "user": {
+              "firstName": "Alex",
+              "lastName": "Closer"
+            }
+          }
+        ]
+      }
+    },
+    "create_contact_note": {
+      "method": "POST",
+      "path": "/v1/contacts/notes",
+      "status": 201,
+      "body": {
+        "message": "Note created successfully",
+        "status": 201
+      }
+    },
+    "list_deals": {
+      "method": "GET",
+      "path": "/v1/deals",
+      "status": 200,
+      "body": {
+        "data": {
+          "count": 6,
+          "deals": [
+            {
+              "id": 1,
+              "productId": 1,
+              "contactId": 2,
+              "eventCallId": 5,
+              "userId": 5,
+              "value": 100,
+              "time": "2025-12-10 19:23:01.299",
+              "recurring": false,
+              "transactionType": "WON",
+              "createdAt": "2025-12-10 19:23:40.076",
+              "updatedAt": "2025-12-10 19:23:40.076",
+              "user": {
+                "id": 5,
+                "firstName": "Alex",
+                "lastName": "Closer",
+                "email": "closer@example.com"
+              },
+              "event": {
+                "name": "Email Only",
+                "color": "#0099FF",
+                "eventType": "STRATEGY_EVENT"
+              },
+              "contact": {
+                "id": 2,
+                "firstName": "Jane",
+                "lastName": "Doe",
+                "email": "jane.doe@example.com",
+                "phoneNumber": "+15551234567",
+                "secondary_email": null,
+                "secondary_phoneNumber": null,
+                "timeZone": "America/New_York",
+                "status": "STRATEGY_CALL_BOOKED",
+                "joinedTime": "2025-12-10 15:08:54.913",
+                "previewId": "contact_examplePreviewId",
+                "createdVia": "SCHEDULING_WIDGET",
+                "createdAt": "2025-12-10 15:08:54.915",
+                "updatedAt": "2025-12-26 16:44:32.799"
+              },
+              "tag": {
+                "id": 2,
+                "name": "mobile"
+              },
+              "product": {
+                "id": 1,
+                "name": "Mobile",
+                "createdAt": "2025-12-10T10:57:41.205Z"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "create_deal": {
+      "method": "POST",
+      "path": "/v1/deals",
+      "status": 201,
+      "body": {
+        "data": {
+          "id": 1,
+          "productId": 1,
+          "contactId": 1,
+          "eventCallId": 1,
+          "userId": 1,
+          "tagId": 1,
+          "value": 100,
+          "time": "2026-03-05T10:21:59.645Z",
+          "recurring": false,
+          "transactionType": "WON",
+          "createdAt": "2026-03-05T10:25:17.249Z",
+          "updatedAt": "2026-03-05T10:25:17.249Z",
+          "product": {
+            "name": "Mobile"
+          },
+          "eventCall": {
+            "id": 1,
+            "userId": 1,
+            "eventId": 1,
+            "previewId": "call_examplePreviewId",
+            "callType": "STRATEGY_EVENT",
+            "dateTime": "2025-12-16T05:45:00.000Z",
+            "user": {
+              "id": 1,
+              "firstName": "Alex",
+              "lastName": "Closer",
+              "email": "closer@example.com",
+              "phoneNumber": null
+            },
+            "contact": {
+              "id": 1,
+              "firstName": "Jane",
+              "lastName": "Doe",
+              "email": "jane.doe@example.com",
+              "phoneNumber": "+15551234567"
+            },
+            "event": {
+              "id": 1,
+              "eventType": "STRATEGY_EVENT",
+              "name": "Phone Call",
+              "color": "#0099FF",
+              "duration": 30,
+              "durationUnit": "MINUTES"
+            }
+          },
+          "transaction": []
+        }
+      }
+    },
+    "update_deal": {
+      "method": "PUT",
+      "path": "/v1/deals",
+      "status": 200,
+      "body": {
+        "data": {
+          "id": 1,
+          "productId": 1,
+          "contactId": 1,
+          "eventCallId": 1,
+          "userId": 1,
+          "tagId": 1,
+          "value": 100,
+          "time": "2026-03-05T10:21:59.645Z",
+          "recurring": false,
+          "transactionType": "WON",
+          "createdAt": "2026-03-05T10:25:17.249Z",
+          "updatedAt": "2026-03-05T10:25:17.249Z",
+          "product": {
+            "name": "Mobile"
+          },
+          "eventCall": {
+            "id": 1,
+            "userId": 1,
+            "eventId": 1,
+            "previewId": "call_examplePreviewId",
+            "callType": "STRATEGY_EVENT",
+            "dateTime": "2025-12-16T05:45:00.000Z",
+            "user": {
+              "id": 1,
+              "firstName": "Alex",
+              "lastName": "Closer",
+              "email": "closer@example.com",
+              "phoneNumber": null
+            },
+            "contact": {
+              "id": 1,
+              "firstName": "Jane",
+              "lastName": "Doe",
+              "email": "jane.doe@example.com",
+              "phoneNumber": "+15551234567"
+            },
+            "event": {
+              "id": 1,
+              "eventType": "STRATEGY_EVENT",
+              "name": "Phone Call",
+              "color": "#0099FF",
+              "duration": 30,
+              "durationUnit": "MINUTES"
+            }
+          },
+          "transaction": []
+        }
+      }
+    },
+    "create_call": {
+      "method": "POST",
+      "path": "/v1/eventCalls",
+      "status": 201,
+      "body": {
+        "data": {
+          "eventCall": {
+            "message": "Event call created successfully",
+            "status": 200,
+            "data": {
+              "startTime": "2026-03-15T14:00:00.000Z",
+              "endTime": "2026-03-15T14:15:00.000Z",
+              "id": 1001,
+              "closerId": 101,
+              "timeZone": "America/New_York",
+              "guestEmail": "jane.doe@example.com",
+              "token": "exampleEncryptedConfirmationToken",
+              "closerName": "Alex Closer",
+              "previewId": "call_examplePreviewId",
+              "closerEmail": "closer@example.com",
+              "confirmationLink": "https://example.com/c/call_examplePreviewId"
+            }
+          }
+        }
+      }
+    },
+    "list_calls": {
+      "method": "GET",
+      "path": "/v1/eventCalls",
+      "status": 201,
+      "body": {
+        "data": {
+          "eventCalls": [
+            {
+              "id": 4,
+              "eventId": 2,
+              "dateTime": "2025-12-16 10:15:00.000",
+              "userId": 5,
+              "location": "PHONE_CALL",
+              "notes": null,
+              "isCalendarConnected": false,
+              "isZoomConnected": false,
+              "cancelReason": null,
+              "locationLink": null,
+              "locationLinkInvitee": null,
+              "rescheduledBy": null,
+              "rescheduleReason": null,
+              "cancelledBy": null,
+              "callType": "STRATEGY_EVENT",
+              "overBooked": 0,
+              "totalOverBooked": 0,
+              "duration": 30,
+              "durationUnit": "MINUTES",
+              "breakBefore": 0,
+              "breakAfter": 0,
+              "createdAt": "2025-12-10T13:53:59.235Z",
+              "updatedAt": "2025-12-10T13:54:00.951Z",
+              "googleResponseStatus": null,
+              "additionalGuests": null,
+              "isSlotFree": false,
+              "contactId": 2,
+              "user": {
+                "id": 5,
+                "firstName": "Alex",
+                "lastName": "Closer",
+                "email": "closer@example.com"
+              },
+              "callId": 4,
+              "deals": [
+                {
+                  "id": 3,
+                  "value": "123",
+                  "time": "2026-01-21T05:47:37.918Z",
+                  "transactionType": "WON",
+                  "product": {
+                    "id": 1,
+                    "name": "Mobile"
+                  },
+                  "Transaction": []
+                }
+              ],
+              "task": [
+                {
+                  "id": 4,
+                  "completed": true,
+                  "outcome": "WON",
+                  "noSaleReason": null,
+                  "objection": "MONEY",
+                  "notes": "<!DOCTYPE quill-output-html><p>hello</p>"
+                }
+              ],
+              "inviteTimeZone": "America/New_York",
+              "dateTimeUTC": "2025-12-16T15:15:00.000Z",
+              "inviteeEmail": "jane.doe@example.com",
+              "inviteeName": "Jane Doe",
+              "phoneNumber": "+15551234567",
+              "questions": [
+                {
+                  "statement": "Phone Number",
+                  "answer": "+15551234567"
+                },
+                {
+                  "statement": "Full Name",
+                  "answer": "Jane Doe"
+                }
+              ],
+              "secondaryAnswers": [
+                {
+                  "customFieldId": 1,
+                  "customFieldIdentifier": "set-by",
+                  "statement": "Set by",
+                  "isSecondaryQuestion": false,
+                  "answer": [
+                    {
+                      "inputType": "USER",
+                      "answer": null,
+                      "date": null,
+                      "userId": 5,
+                      "number": null,
+                      "user": {
+                        "firstName": "Alex",
+                        "lastName": "Closer"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "customFieldId": 2,
+                  "customFieldIdentifier": "objection",
+                  "statement": "Objection",
+                  "isSecondaryQuestion": false,
+                  "answer": [
+                    {
+                      "inputType": "SINGLE_SELECT",
+                      "answer": "MONEY",
+                      "date": null,
+                      "userId": null,
+                      "number": null,
+                      "user": null
+                    }
+                  ]
+                },
+                {
+                  "customFieldId": 3,
+                  "customFieldIdentifier": "call-outcome",
+                  "statement": "Call Outcome",
+                  "isSecondaryQuestion": false,
+                  "answer": [
+                    {
+                      "inputType": "SINGLE_SELECT",
+                      "answer": "WON",
+                      "date": null,
+                      "userId": null,
+                      "number": null,
+                      "user": null
+                    }
+                  ]
+                }
+              ],
+              "eventType": "PAST",
+              "utm": [
+                {
+                  "utmKey": "string",
+                  "utmValue": ""
+                },
+                {
+                  "utmKey": "utm_source",
+                  "utmValue": "google"
+                },
+                {
+                  "utmKey": "utm_medium",
+                  "utmValue": "cpc"
+                }
+              ],
+              "contact": {
+                "email": "jane.doe@example.com",
+                "phoneNumber": "+15551234567",
+                "previewId": "contact_examplePreviewId",
+                "secondary_email": null,
+                "secondary_phoneNumber": null
+              },
+              "event": {
+                "allowInviteeAdditionalGuests": false,
+                "allowReschedule": true,
+                "color": "#0099FF",
+                "duration": 30,
+                "durationUnit": "MINUTES",
+                "eventType": "STRATEGY_EVENT",
+                "internalDescription": "",
+                "linkPrefix": "company/phone-call",
+                "location": "PHONE_CALL",
+                "name": "Phone Call"
+              }
+            }
+          ],
+          "count": 8
+        }
+      }
+    },
+    "reschedule_call": {
+      "method": "PUT",
+      "path": "/v1/eventCalls/reschedule",
+      "status": 200,
+      "body": {
+        "message": "Event call updated successfully",
+        "status": 200,
+        "data": {
+          "closerName": "Alex Closer",
+          "closerEmail": "closer@example.com",
+          "dateTime": "2026-07-24T16:45:00.000Z",
+          "duration": 15,
+          "durationUnit": "MINUTES",
+          "name": "Discovery Call",
+          "location": "GOOGLE_MEET",
+          "inviteeEmail": "jane.doe@example.com",
+          "inviteeName": "Jane Doe",
+          "previewId": "call_examplePreviewId",
+          "userId": 101
+        }
+      }
+    },
+    "cancel_call": {
+      "method": "PUT",
+      "path": "/v1/eventCalls/cancel",
+      "status": 200,
+      "body": {
+        "data": {
+          "eventCall": {
+            "message": "Call cancelled successfully",
+            "status": 200
+          }
+        }
+      }
+    },
+    "list_events": {
+      "method": "GET",
+      "path": "/v1/events",
+      "status": 200,
+      "body": {
+        "count": 2,
+        "totalCount": 2,
+        "hasVisibleEvents": true,
+        "data": [
+          {
+            "id": 1,
+            "userId": 101,
+            "duration": 15,
+            "durationUnit": "MINUTES",
+            "location": "GOOGLE_MEET",
+            "dateRangeType": "DEFINITE",
+            "dateRangeUnit": "CALENDAR_DAYS",
+            "linkPrefix": "company/discovery-call",
+            "status": "ACTIVATED",
+            "allowReschedule": true,
+            "phonePreferred": true,
+            "splitFullName": true,
+            "businessEmail": false,
+            "disableDuplicateBooking": false,
+            "lockHostOnReschedule": false,
+            "dateRangeDays": 13,
+            "bypassQuestion": false
+          },
+          {
+            "id": 2,
+            "name": "Discovery Call",
+            "color": "#0099FF",
+            "eventType": "STRATEGY_EVENT",
+            "description": "<p>Introductory call for new leads.</p>",
+            "internalDescription": "Introductory call for new leads.",
+            "deletedAt": null,
+            "language": "ENGLISH",
+            "emailValidationEnabled": true,
+            "phoneNumberValidationEnabled": true,
+            "creditCheck": {
+              "type": "CREDIT_CHECK_DTI_RATIO",
+              "toggle": true
+            },
+            "userId": 101,
+            "duration": 15,
+            "durationUnit": "MINUTES",
+            "location": "GOOGLE_MEET",
+            "dateRangeType": "DEFINITE",
+            "dateRangeUnit": "CALENDAR_DAYS",
+            "linkPrefix": "company/phone-call",
+            "status": "ACTIVATED",
+            "allowReschedule": true,
+            "phonePreferred": false,
+            "splitFullName": true,
+            "businessEmail": false,
+            "disableDuplicateBooking": false,
+            "lockHostOnReschedule": false,
+            "dateRangeDays": 14,
+            "bypassQuestion": false
+          }
+        ]
+      }
+    },
+    "get_event": {
+      "method": "GET",
+      "path": "/v1/events/detail",
+      "status": 200,
+      "body": {
+        "data": {
+          "id": 4,
+          "linkPrefix": "company/discovery-call",
+          "name": "new-event",
+          "color": "#0099FF",
+          "eventType": "STRATEGY_EVENT",
+          "status": "ACTIVATED",
+          "userId": 2,
+          "duration": 30,
+          "durationUnit": "MINUTES",
+          "location": "PHONE_CALL",
+          "allowReschedule": true,
+          "phonePreferred": true,
+          "splitFullName": true,
+          "dateRangeType": "DEFINITE",
+          "dateRangeUnit": "CALENDAR_DAYS",
+          "dateRangeDays": 14,
+          "hasTextReminderWorkflows": false
+        }
+      }
+    },
+    "update_event_status": {
+      "method": "PUT",
+      "path": "/v1/events/status",
+      "status": 200,
+      "body": {
+        "message": "Event status updated successfully",
+        "status": 200
+      }
+    },
+    "list_products": {
+      "method": "GET",
+      "path": "/v1/products",
+      "status": 200,
+      "body": {
+        "data": {
+          "count": 3,
+          "products": [
+            {
+              "id": 3,
+              "tagId": 9,
+              "name": "Laptop2",
+              "description": "",
+              "createdAt": "2026-03-04T21:28:18.027Z",
+              "updatedAt": "2026-03-04T21:28:18.027Z",
+              "tag": {
+                "id": 9,
+                "name": "laptop2",
+                "createdAt": "2026-03-04T21:28:18.029Z"
+              },
+              "_count": {
+                "deals": 0
+              }
+            },
+            {
+              "id": 4,
+              "tagId": 10,
+              "name": "testset",
+              "description": "",
+              "createdAt": "2026-03-05T10:37:28.306Z",
+              "updatedAt": "2026-03-05T10:37:28.306Z",
+              "tag": {
+                "id": 10,
+                "name": "testset",
+                "createdAt": "2026-03-05T10:37:28.307Z"
+              },
+              "_count": {
+                "deals": 0
+              }
+            },
+            {
+              "id": 5,
+              "tagId": 11,
+              "name": "Phone",
+              "description": "",
+              "createdAt": "2026-03-05T12:00:00.000Z",
+              "updatedAt": "2026-03-05T12:00:00.000Z",
+              "tag": {
+                "id": 11,
+                "name": "phone",
+                "createdAt": "2026-03-05T12:00:00.010Z"
+              },
+              "_count": {
+                "deals": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    "create_product": {
+      "method": "POST",
+      "path": "/v1/products",
+      "status": 201,
+      "body": {
+        "data": {
+          "product": {
+            "id": 4,
+            "tagId": 10,
+            "name": "testset",
+            "createdAt": "2026-03-05T10:37:28.306Z",
+            "updatedAt": "2026-03-05T10:37:28.306Z"
+          }
+        }
+      }
+    },
+    "update_product": {
+      "method": "PUT",
+      "path": "/v1/products",
+      "status": 200,
+      "body": {
+        "data": {
+          "product": {
+            "id": 4,
+            "tagId": 10,
+            "name": "testset",
+            "createdAt": "2026-03-05T10:37:28.306Z",
+            "updatedAt": "2026-03-05T10:37:28.306Z"
+          }
+        }
+      }
+    },
+    "list_transactions": {
+      "method": "GET",
+      "path": "/v1/transactions",
+      "status": 200,
+      "body": {
+        "count": 2,
+        "data": [
+          {
+            "id": 1,
+            "accountId": 1,
+            "name": "Jane Doe",
+            "email": "jane.doe@example.com",
+            "phoneNumber": "+15551234567",
+            "description": "Test zapier ",
+            "value": 300.56,
+            "currency": null,
+            "source": "Zapier",
+            "updatedBy": "Zapier",
+            "createdAt": "2026-03-10T08:11:15.963Z",
+            "updatedAt": "2026-03-10T08:11:15.963Z",
+            "syncedDeal": null,
+            "deal": null
+          },
+          {
+            "id": 1,
+            "accountId": 1,
+            "name": "Jane Doe",
+            "email": "jane23.doe@example.com",
+            "phoneNumber": "+15551234567",
+            "description": "Test zapier ",
+            "value": 300.56,
+            "currency": null,
+            "source": "Zapier",
+            "updatedBy": "Zapier",
+            "createdAt": "2026-03-09T14:30:53.751Z",
+            "updatedAt": "2026-03-09T14:30:53.751Z",
+            "syncedDeal": null,
+            "deal": null
+          }
+        ]
+      }
+    },
+    "create_transaction": {
+      "method": "POST",
+      "path": "/v1/transactions",
+      "status": 201,
+      "body": {
+        "message": "Transaction added successfully",
+        "status": 200,
+        "data": {
+          "transaction": {
+            "id": 1,
+            "accountId": 1,
+            "syncedDeal": 0,
+            "name": "Jane Doe",
+            "email": "jane23.doe@example.com",
+            "phoneNumber": "+15551234567",
+            "description": "Test zapier ",
+            "value": "0",
+            "currency": "usd",
+            "source": "Zapier",
+            "updatedBy": "User",
+            "createdAt": "2026-03-10T13:30:07.851Z",
+            "updatedAt": "2026-03-10T13:30:07.851Z",
+            "deletedAt": null
+          }
+        }
+      }
+    },
+    "update_transaction": {
+      "method": "PUT",
+      "path": "/v1/transactions",
+      "status": 200,
+      "body": {
+        "data": {
+          "transaction": {
+            "id": 1,
+            "accountId": 1,
+            "syncedDeal": 0,
+            "name": "Example Name",
+            "email": "user@example.com",
+            "phoneNumber": "+15551234567",
+            "description": "Test transaction",
+            "value": "0",
+            "currency": "usd",
+            "source": "Zapier",
+            "updatedBy": "User",
+            "createdAt": "2026-03-10T13:30:07.851Z",
+            "updatedAt": "2026-03-10T13:34:11.812Z",
+            "deletedAt": null
+          }
+        }
+      }
+    },
+    "delete_transaction": {
+      "method": "DELETE",
+      "path": "/v1/transactions",
+      "status": 200,
+      "body": {
+        "message": "Transaction deleted successfully",
+        "status": 200
+      }
+    },
+    "list_users": {
+      "method": "GET",
+      "path": "/v1/users",
+      "status": 200,
+      "body": {
+        "data": {
+          "users": [
+            {
+              "id": 101,
+              "firstName": "Alex",
+              "lastName": "Closer",
+              "email": "closer@example.com",
+              "phoneNumber": "+15551234567",
+              "timeZone": "America/New_York",
+              "createdAt": "2024-12-10T10:04:34.743Z",
+              "deletedAt": null,
+              "role": "user",
+              "integrations": []
+            },
+            {
+              "id": 102,
+              "firstName": "Sam",
+              "lastName": "Admin",
+              "email": "admin@example.com",
+              "phoneNumber": "+15559876543",
+              "timeZone": "America/New_York",
+              "createdAt": "2025-04-04T14:33:26.258Z",
+              "deletedAt": "2025-06-01T12:00:00.000Z",
+              "role": "admin",
+              "integrations": [
+                {
+                  "name": "googleCalendar",
+                  "platform_id": "admin@example.com"
+                }
+              ]
+            }
+          ],
+          "count": 2
+        }
+      }
+    }
+  }
+}
