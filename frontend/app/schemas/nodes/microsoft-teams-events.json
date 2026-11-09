@@ -1,0 +1,704 @@
+{
+  "$defs": {
+    "TeamsEventsCreatePresenterConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_presenter",
+          "default": "create_presenter",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "Create Presenter",
+          "x-is-trigger": false
+        },
+        "webinar_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Webinar Id",
+          "type": "string"
+        },
+        "user_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "tenant_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Tenant Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webinar_id",
+        "user_id",
+        "tenant_id"
+      ],
+      "title": "TeamsEventsCreatePresenterConfig",
+      "type": "object"
+    },
+    "TeamsEventsCreateRegistrationQuestionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_registration_question",
+          "default": "create_registration_question",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "Create Registration Question",
+          "x-is-trigger": false
+        },
+        "webinar_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Webinar Id",
+          "type": "string"
+        },
+        "display_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "answer_input_type": {
+          "default": "text",
+          "enum": [
+            "text",
+            "multilineText",
+            "singleChoice",
+            "multiChoice",
+            "boolean"
+          ],
+          "title": "Answer type",
+          "type": "string"
+        },
+        "answer_choices": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Answer choices",
+          "type": "array"
+        },
+        "is_required": {
+          "default": false,
+          "title": "Required answer",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "webinar_id",
+        "display_name"
+      ],
+      "title": "TeamsEventsCreateRegistrationQuestionConfig",
+      "type": "object"
+    },
+    "TeamsEventsCreateWebinarConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_webinar",
+          "default": "create_webinar",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "Create Webinar",
+          "x-is-trigger": false
+        },
+        "display_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "start_time": {
+          "description": "Local ISO 8601 date and time, for example 2026-12-01T10:00:00",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "Local ISO 8601 date and time after the start",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "End Time",
+          "type": "string"
+        },
+        "time_zone": {
+          "description": "Windows time zone, for example Pacific Standard Time",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Time Zone",
+          "type": "string"
+        },
+        "audience": {
+          "default": "organization",
+          "enum": [
+            "everyone",
+            "organization"
+          ],
+          "title": "Audience",
+          "type": "string"
+        }
+      },
+      "required": [
+        "display_name",
+        "description",
+        "start_time",
+        "end_time",
+        "time_zone"
+      ],
+      "title": "TeamsEventsCreateWebinarConfig",
+      "type": "object"
+    },
+    "TeamsEventsDeleteRegistrationQuestionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_registration_question",
+          "default": "delete_registration_question",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "Delete Registration Question",
+          "x-is-trigger": false
+        },
+        "webinar_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Webinar Id",
+          "type": "string"
+        },
+        "question_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Question Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webinar_id",
+        "question_id"
+      ],
+      "title": "TeamsEventsDeleteRegistrationQuestionConfig",
+      "type": "object"
+    },
+    "TeamsEventsGetAccountConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TeamsEventsGetAccountConfig",
+      "type": "object"
+    },
+    "TeamsEventsGetRegistrationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_registration",
+          "default": "get_registration",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "Get Registration",
+          "x-is-trigger": false
+        },
+        "webinar_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Webinar Id",
+          "type": "string"
+        },
+        "registration_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Registration Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webinar_id",
+        "registration_id"
+      ],
+      "title": "TeamsEventsGetRegistrationConfig",
+      "type": "object"
+    },
+    "TeamsEventsGetRegistrationConfigurationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_registration_configuration",
+          "default": "get_registration_configuration",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "Get Registration Configuration",
+          "x-is-trigger": false
+        },
+        "webinar_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Webinar Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webinar_id"
+      ],
+      "title": "TeamsEventsGetRegistrationConfigurationConfig",
+      "type": "object"
+    },
+    "TeamsEventsGetSessionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_session",
+          "default": "get_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "Get Session",
+          "x-is-trigger": false
+        },
+        "webinar_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Webinar Id",
+          "type": "string"
+        },
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webinar_id",
+        "session_id"
+      ],
+      "title": "TeamsEventsGetSessionConfig",
+      "type": "object"
+    },
+    "TeamsEventsGetWebinarConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_webinar",
+          "default": "get_webinar",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "Get Webinar",
+          "x-is-trigger": false
+        },
+        "webinar_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Webinar Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webinar_id"
+      ],
+      "title": "TeamsEventsGetWebinarConfig",
+      "type": "object"
+    },
+    "TeamsEventsListMyWebinarsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_my_webinars",
+          "default": "list_my_webinars",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "List My Webinars",
+          "x-is-trigger": false
+        },
+        "role": {
+          "default": "organizer",
+          "enum": [
+            "organizer",
+            "coOrganizer"
+          ],
+          "title": "Your role",
+          "type": "string"
+        },
+        "next_link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_link returned by this operation for the same webinar and role.",
+          "title": "Next page link"
+        }
+      },
+      "title": "TeamsEventsListMyWebinarsConfig",
+      "type": "object"
+    },
+    "TeamsEventsListRegistrationQuestionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_registration_questions",
+          "default": "list_registration_questions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "List Registration Questions",
+          "x-is-trigger": false
+        },
+        "webinar_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Webinar Id",
+          "type": "string"
+        },
+        "next_link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_link returned by this operation for the same webinar and role.",
+          "title": "Next page link"
+        }
+      },
+      "required": [
+        "webinar_id"
+      ],
+      "title": "TeamsEventsListRegistrationQuestionsConfig",
+      "type": "object"
+    },
+    "TeamsEventsListSessionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "List Sessions",
+          "x-is-trigger": false
+        },
+        "webinar_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Webinar Id",
+          "type": "string"
+        },
+        "next_link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_link returned by this operation for the same webinar and role.",
+          "title": "Next page link"
+        }
+      },
+      "required": [
+        "webinar_id"
+      ],
+      "title": "TeamsEventsListSessionsConfig",
+      "type": "object"
+    },
+    "TeamsEventsOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "microsoft_teams_events_oauth",
+          "default": "microsoft_teams_events_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "default": "",
+          "title": "Refresh token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "default": "",
+          "description": "ISO 8601 timestamp, if known.",
+          "title": "Token expiry",
+          "type": "string"
+        },
+        "email": {
+          "default": "",
+          "title": "Account email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Microsoft Teams Events OAuth",
+      "type": "object",
+      "x-credential-instructions": "Connect your Microsoft work or school account. Teams webinars require an eligible Teams license and organizer or coorganizer access. Only the Microsoft global cloud is supported.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+      "x-oauth-provider": "microsoft",
+      "x-oauth-scopes": [
+        "https://graph.microsoft.com/User.Read",
+        "https://graph.microsoft.com/VirtualEvent.Read",
+        "https://graph.microsoft.com/VirtualEvent.ReadWrite",
+        "offline_access"
+      ]
+    },
+    "TeamsEventsUpdatePresenterConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_presenter",
+          "default": "update_presenter",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "Update Presenter",
+          "x-is-trigger": false
+        },
+        "webinar_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Webinar Id",
+          "type": "string"
+        },
+        "presenter_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Presenter Id",
+          "type": "string"
+        },
+        "bio": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Bio",
+          "type": "string"
+        },
+        "company": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Company",
+          "type": "string"
+        },
+        "job_title": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Job Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webinar_id",
+        "presenter_id",
+        "bio",
+        "company",
+        "job_title"
+      ],
+      "title": "TeamsEventsUpdatePresenterConfig",
+      "type": "object"
+    },
+    "TeamsEventsUpdateWebinarConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_webinar",
+          "default": "update_webinar",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webinars",
+          "x-display-name": "Update Webinar",
+          "x-is-trigger": false
+        },
+        "webinar_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Webinar Id",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "webinar_id"
+      ],
+      "title": "TeamsEventsUpdateWebinarConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_presenter": "#/$defs/TeamsEventsCreatePresenterConfig",
+          "create_registration_question": "#/$defs/TeamsEventsCreateRegistrationQuestionConfig",
+          "create_webinar": "#/$defs/TeamsEventsCreateWebinarConfig",
+          "delete_registration_question": "#/$defs/TeamsEventsDeleteRegistrationQuestionConfig",
+          "get_account": "#/$defs/TeamsEventsGetAccountConfig",
+          "get_registration": "#/$defs/TeamsEventsGetRegistrationConfig",
+          "get_registration_configuration": "#/$defs/TeamsEventsGetRegistrationConfigurationConfig",
+          "get_session": "#/$defs/TeamsEventsGetSessionConfig",
+          "get_webinar": "#/$defs/TeamsEventsGetWebinarConfig",
+          "list_my_webinars": "#/$defs/TeamsEventsListMyWebinarsConfig",
+          "list_registration_questions": "#/$defs/TeamsEventsListRegistrationQuestionsConfig",
+          "list_sessions": "#/$defs/TeamsEventsListSessionsConfig",
+          "update_presenter": "#/$defs/TeamsEventsUpdatePresenterConfig",
+          "update_webinar": "#/$defs/TeamsEventsUpdateWebinarConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TeamsEventsGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsListMyWebinarsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsGetWebinarConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsCreateWebinarConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsUpdateWebinarConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsCreatePresenterConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsUpdatePresenterConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsGetRegistrationConfigurationConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsListRegistrationQuestionsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsCreateRegistrationQuestionConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsDeleteRegistrationQuestionConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsGetRegistrationConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsListSessionsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsEventsGetSessionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TeamsEventsOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Microsoft-teams-events Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a Teams webinar",
+    "Find webinars I organize",
+    "Add a webinar presenter",
+    "Read a webinar registration or session"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
