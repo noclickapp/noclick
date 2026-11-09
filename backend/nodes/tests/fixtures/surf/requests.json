@@ -1,0 +1,138 @@
+{
+  "source": "https://api.asksurf.ai/gateway/openapi.json",
+  "version": "sha-6a07471",
+  "configs": {
+    "get_fear_greed": {
+      "operation": "get_fear_greed",
+      "from_": "2026-01-01",
+      "to": "2026-03-01"
+    },
+    "get_price_history": {
+      "operation": "get_price_history",
+      "symbol": "BTC",
+      "time_range": "30d",
+      "from_": "2025-01-01",
+      "to": "2025-03-01",
+      "currency": "usd"
+    },
+    "list_token_rankings": {
+      "operation": "list_token_rankings",
+      "sort_by": "market_cap",
+      "order": "desc",
+      "category": "MEME",
+      "limit": 20,
+      "offset": 0
+    },
+    "get_credits": {
+      "operation": "get_credits"
+    },
+    "get_news": {
+      "operation": "get_news",
+      "id": "e54e0ac4-1ef8-44d2-928e-52df465e2c81"
+    },
+    "list_news": {
+      "operation": "list_news",
+      "source": "coindesk",
+      "project": "bitcoin,ethereum",
+      "from_": "2024-01-01",
+      "to": "2024-02-01",
+      "sort_by": "recency",
+      "limit": 20,
+      "offset": 0
+    },
+    "get_gas_price": {
+      "operation": "get_gas_price",
+      "chain": "ethereum"
+    },
+    "create_sql_job": {
+      "operation": "create_sql_job",
+      "max_rows": 1000,
+      "sql": "SELECT block_date, project, symbol, apy FROM agent.ethereum_yields_daily WHERE block_date >= today() - 30 ORDER BY apy DESC"
+    },
+    "cancel_sql_job": {
+      "operation": "cancel_sql_job",
+      "job_id": "a59a252b-2b25-4a72-90d5-6c2f88a6ea10"
+    },
+    "get_sql_job": {
+      "operation": "get_sql_job",
+      "job_id": "a59a252b-2b25-4a72-90d5-6c2f88a6ea10"
+    },
+    "preflight_sql": {
+      "operation": "preflight_sql",
+      "max_rows": 1000,
+      "sql": "SELECT block_date, project, apy, tvl_usd FROM agent.ethereum_yields_daily WHERE block_date >= today() - 7 LIMIT 100"
+    },
+    "get_defi_metrics": {
+      "operation": "get_defi_metrics",
+      "id": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7",
+      "q": "uniswap",
+      "metric": "tvl",
+      "from_": "2024-01-01",
+      "to": "2024-02-01",
+      "chain": "ethereum",
+      "limit": 20,
+      "offset": 0
+    },
+    "get_project": {
+      "operation": "get_project",
+      "id": "25c6612a-395c-4974-94eb-3b5f9f4b2ed7",
+      "x_id": "984188226826010624",
+      "handle": "uniswap",
+      "q": "ethereum",
+      "fields": "overview,token_info,funding"
+    },
+    "search_projects": {
+      "operation": "search_projects",
+      "q": "bitcoin",
+      "limit": 20,
+      "offset": 0
+    },
+    "search_tokens": {
+      "operation": "search_tokens",
+      "q": "USDC",
+      "chain": "solana",
+      "limit": 20,
+      "offset": 0
+    },
+    "search_web": {
+      "operation": "search_web",
+      "q": "bitcoin price prediction 2026",
+      "limit": 20,
+      "offset": 0,
+      "site": "coindesk.com,cointelegraph.com",
+      "include_content": false
+    },
+    "list_token_holders": {
+      "operation": "list_token_holders",
+      "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "chain": "ethereum",
+      "limit": 20,
+      "offset": 0,
+      "include": "labels"
+    },
+    "get_wallet": {
+      "operation": "get_wallet",
+      "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+      "chain": "ethereum",
+      "fields": "balance,labels,approvals"
+    },
+    "list_wallet_transfers": {
+      "operation": "list_wallet_transfers",
+      "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+      "chain": "ethereum",
+      "flow": "in",
+      "token": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "limit": 20,
+      "offset": 0,
+      "include": "labels"
+    },
+    "fetch_web_page": {
+      "operation": "fetch_web_page",
+      "url": "https://ethereum.org",
+      "target_selector": "article.main-content",
+      "remove_selector": "nav,footer,.ads",
+      "wait_for_selector": ".content-loaded",
+      "timeout": 5000
+    }
+  }
+}

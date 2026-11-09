@@ -1,0 +1,1591 @@
+{
+  "$defs": {
+    "SurfApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "surf_api_key",
+          "default": "surf_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Surf API Key",
+      "type": "object",
+      "x-credential-instructions": "Generate an API key in the Surf Dashboard and paste it here without the Bearer prefix. The free credit balance read verifies the key. Data calls spend Surf credits; SQL job submission starts a query and cancellation may be pending.",
+      "x-credential-url": "https://agents.asksurf.ai"
+    },
+    "SurfCancelSqlJobConfig": {
+      "additionalProperties": false,
+      "description": "Cancel Asynchronous Blockchain SQL Job",
+      "properties": {
+        "operation": {
+          "const": "cancel_sql_job",
+          "default": "cancel_sql_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "Asynchronous SQL job identifier",
+          "format": "uuid",
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "SurfCancelSqlJobConfig",
+      "type": "object"
+    },
+    "SurfCreateSqlJobConfig": {
+      "additionalProperties": false,
+      "description": "Submit Asynchronous Blockchain SQL Job",
+      "properties": {
+        "operation": {
+          "const": "create_sql_job",
+          "default": "create_sql_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "Idempotency-Key": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stable client-generated key. Reusing it returns the existing job without starting another query.",
+          "title": "Idempotency-Key"
+        },
+        "max_rows": {
+          "default": 1000,
+          "description": "Maximum number of result rows to retain",
+          "examples": [
+            1000
+          ],
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "sql": {
+          "description": "Exact read-only ClickHouse SQL to execute asynchronously. The submitted SQL and date range are preserved.",
+          "examples": [
+            "SELECT block_date, project, symbol, apy FROM agent.ethereum_yields_daily WHERE block_date >= today() - 30 ORDER BY apy DESC"
+          ],
+          "minLength": 1,
+          "title": "Sql",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sql"
+      ],
+      "title": "SurfCreateSqlJobConfig",
+      "type": "object"
+    },
+    "SurfFetchWebPageConfig": {
+      "additionalProperties": false,
+      "description": "Web Page Fetch",
+      "properties": {
+        "operation": {
+          "const": "fetch_web_page",
+          "default": "fetch_web_page",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "URL to fetch and parse",
+          "examples": [
+            "https://ethereum.org"
+          ],
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "target_selector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSS selector to extract specific content",
+          "examples": [
+            "article.main-content"
+          ],
+          "title": "Target Selector"
+        },
+        "remove_selector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSS selector to remove unwanted elements",
+          "examples": [
+            "nav,footer,.ads"
+          ],
+          "title": "Remove Selector"
+        },
+        "wait_for_selector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSS selector to wait for before extracting",
+          "examples": [
+            ".content-loaded"
+          ],
+          "title": "Wait For Selector"
+        },
+        "timeout": {
+          "default": 30000,
+          "description": "Request timeout in milliseconds",
+          "examples": [
+            5000
+          ],
+          "maximum": 60000,
+          "minimum": 1000,
+          "title": "Timeout",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SurfFetchWebPageConfig",
+      "type": "object"
+    },
+    "SurfGetCreditsConfig": {
+      "additionalProperties": false,
+      "description": "Credit Balance",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SurfGetCreditsConfig",
+      "type": "object"
+    },
+    "SurfGetDefiMetricsConfig": {
+      "additionalProperties": false,
+      "description": "Project DeFi Metrics",
+      "properties": {
+        "operation": {
+          "const": "get_defi_metrics",
+          "default": "get_defi_metrics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Surf project UUID. PREFERRED \u2014 always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.",
+          "examples": [
+            "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+          ],
+          "title": "Id"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.",
+          "examples": [
+            "uniswap"
+          ],
+          "title": "Q"
+        },
+        "metric": {
+          "default": "tvl",
+          "description": "Metric to query. Can be `volume`, `fees` (or `fee` alias), `revenue`, `tvl`, or `users`. Defaults to tvl.",
+          "enum": [
+            "volume",
+            "fee",
+            "fees",
+            "revenue",
+            "tvl",
+            "users"
+          ],
+          "examples": [
+            "tvl"
+          ],
+          "title": "Metric",
+          "type": "string"
+        },
+        "from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start of time range. Accepts Unix seconds (`1704067200`) or date string (`2024-01-01`)",
+          "examples": [
+            "2024-01-01"
+          ],
+          "title": "From"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End of time range. Accepts Unix seconds (`1706745600`) or date string (`2024-02-01`)",
+          "examples": [
+            "2024-02-01"
+          ],
+          "title": "To"
+        },
+        "chain": {
+          "anyOf": [
+            {
+              "enum": [
+                "ethereum",
+                "polygon",
+                "bsc",
+                "arbitrum",
+                "optimism",
+                "base",
+                "avalanche",
+                "fantom",
+                "solana"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by chain. Can be `ethereum`, `polygon`, `bsc`, `arbitrum`, `optimism`, `base`, `avalanche`, `fantom`, or `solana`.",
+          "examples": [
+            "ethereum"
+          ],
+          "title": "Chain",
+          "enum": [
+            "ethereum",
+            "polygon",
+            "bsc",
+            "arbitrum",
+            "optimism",
+            "base",
+            "avalanche",
+            "fantom",
+            "solana"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 20,
+          "description": "Results per page",
+          "examples": [
+            20
+          ],
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset",
+          "examples": [
+            0
+          ],
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "SurfGetDefiMetricsConfig",
+      "type": "object"
+    },
+    "SurfGetFearGreedConfig": {
+      "additionalProperties": false,
+      "description": "Fear & Greed Index History",
+      "properties": {
+        "operation": {
+          "const": "get_fear_greed",
+          "default": "get_fear_greed",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start of time range. Accepts Unix seconds or date string (YYYY-MM-DD)",
+          "examples": [
+            "2026-01-01"
+          ],
+          "title": "From"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End of time range. Accepts Unix seconds or date string (YYYY-MM-DD)",
+          "examples": [
+            "2026-03-01"
+          ],
+          "title": "To"
+        }
+      },
+      "title": "SurfGetFearGreedConfig",
+      "type": "object"
+    },
+    "SurfGetGasPriceConfig": {
+      "additionalProperties": false,
+      "description": "Current Gas Price",
+      "properties": {
+        "operation": {
+          "const": "get_gas_price",
+          "default": "get_gas_price",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "chain": {
+          "description": "Chain. Can be `ethereum`, `polygon`, `bsc`, `arbitrum`, `optimism`, `base`, `avalanche`, `fantom`, `linea`, or `cyber`.",
+          "enum": [
+            "ethereum",
+            "polygon",
+            "bsc",
+            "arbitrum",
+            "optimism",
+            "base",
+            "avalanche",
+            "fantom",
+            "linea",
+            "cyber"
+          ],
+          "examples": [
+            "ethereum"
+          ],
+          "minLength": 1,
+          "title": "Chain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chain"
+      ],
+      "title": "SurfGetGasPriceConfig",
+      "type": "object"
+    },
+    "SurfGetNewsConfig": {
+      "additionalProperties": false,
+      "description": "News Article Detail",
+      "properties": {
+        "operation": {
+          "const": "get_news",
+          "default": "get_news",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Article ID (returned as id in feed/search results)",
+          "examples": [
+            "e54e0ac4-1ef8-44d2-928e-52df465e2c81"
+          ],
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SurfGetNewsConfig",
+      "type": "object"
+    },
+    "SurfGetPriceHistoryConfig": {
+      "additionalProperties": false,
+      "description": "Token Price History",
+      "properties": {
+        "operation": {
+          "const": "get_price_history",
+          "default": "get_price_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbol": {
+          "description": "Single token ticker symbol like `BTC`, `ETH`, or `SOL` (multi-symbol not supported)",
+          "examples": [
+            "BTC"
+          ],
+          "minLength": 1,
+          "title": "Symbol",
+          "type": "string"
+        },
+        "time_range": {
+          "default": "30d",
+          "description": "Window of historical data to return: `1d`, `7d`, `14d`, `30d`, `90d`, `180d`, `365d`, or `max`. Ignored when `from`/`to` are set. This endpoint uses `time_range` only \u2014 it does NOT accept `interval`; bucket granularity is chosen server-side based on the window size.",
+          "enum": [
+            "1d",
+            "7d",
+            "14d",
+            "30d",
+            "90d",
+            "180d",
+            "365d",
+            "max"
+          ],
+          "examples": [
+            "30d"
+          ],
+          "title": "Time Range",
+          "type": "string"
+        },
+        "from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start of custom date range (Unix timestamp or YYYY-MM-DD). Must be used together with `to`. Overrides `time_range` when set.",
+          "examples": [
+            "2025-01-01"
+          ],
+          "title": "From"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End of custom date range (Unix timestamp or YYYY-MM-DD). Must be used together with `from`. Overrides `time_range` when set.",
+          "examples": [
+            "2025-03-01"
+          ],
+          "title": "To"
+        },
+        "currency": {
+          "default": "usd",
+          "description": "Quote currency like `usd`, `eur`, or `btc`",
+          "examples": [
+            "usd"
+          ],
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "SurfGetPriceHistoryConfig",
+      "type": "object"
+    },
+    "SurfGetProjectConfig": {
+      "additionalProperties": false,
+      "description": "Aggregated Project Detail",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Surf project UUID. PREFERRED \u2014 always use this when available from a previous response (e.g. project_id from /fund/portfolio or id from /search/project). Takes priority over q.",
+          "examples": [
+            "25c6612a-395c-4974-94eb-3b5f9f4b2ed7"
+          ],
+          "title": "Id"
+        },
+        "x_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric X (Twitter) account ID. Resolves to the associated project.",
+          "examples": [
+            "984188226826010624"
+          ],
+          "title": "X Id"
+        },
+        "handle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X (Twitter) handle without @. Resolves to the associated project via twitter account lookup.",
+          "examples": [
+            "uniswap"
+          ],
+          "title": "Handle"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fuzzy entity name search. Only use when 'id' is not available. May return unexpected results for ambiguous names.",
+          "examples": [
+            "ethereum"
+          ],
+          "title": "Q"
+        },
+        "fields": {
+          "default": "overview,token_info,tokenomics,funding,team,contracts,social,tge_status",
+          "description": "Comma-separated sub-resources to include. Can be `overview`, `token_info`, `tokenomics`, `funding`, `team`, `contracts`, `social`, or `tge_status`.",
+          "examples": [
+            "overview,token_info,funding"
+          ],
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "title": "SurfGetProjectConfig",
+      "type": "object"
+    },
+    "SurfGetSqlJobConfig": {
+      "additionalProperties": false,
+      "description": "Get Asynchronous Blockchain SQL Job",
+      "properties": {
+        "operation": {
+          "const": "get_sql_job",
+          "default": "get_sql_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "Asynchronous SQL job identifier",
+          "format": "uuid",
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "SurfGetSqlJobConfig",
+      "type": "object"
+    },
+    "SurfGetWalletConfig": {
+      "additionalProperties": false,
+      "description": "Aggregated Wallet Detail",
+      "properties": {
+        "operation": {
+          "const": "get_wallet",
+          "default": "get_wallet",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "description": "Wallet address (0x hex for EVM, base58 for Solana)",
+          "examples": [
+            "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+          ],
+          "minLength": 1,
+          "title": "Address",
+          "type": "string"
+        },
+        "chain": {
+          "anyOf": [
+            {
+              "enum": [
+                "ethereum",
+                "polygon",
+                "bsc",
+                "arbitrum",
+                "optimism",
+                "base",
+                "avalanche",
+                "fantom",
+                "solana"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Chain filter for `tokens`, `nft`, and `approvals`. When omitted, inferred from address format: 0x addresses query all EVM chains, base58 addresses query Solana.",
+          "examples": [
+            "ethereum"
+          ],
+          "title": "Chain",
+          "enum": [
+            "ethereum",
+            "polygon",
+            "bsc",
+            "arbitrum",
+            "optimism",
+            "base",
+            "avalanche",
+            "fantom",
+            "solana"
+          ],
+          "x-enum-searchable": true
+        },
+        "fields": {
+          "default": "balance,tokens,labels,nft",
+          "description": "Comma-separated sub-resources to include. Valid: `balance`, `tokens`, `labels`, `nft`, `approvals`. The `active_chains` field is always returned. `approvals` is opt-in (not in default) as it triggers additional upstream calls.",
+          "examples": [
+            "balance,labels,approvals"
+          ],
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "SurfGetWalletConfig",
+      "type": "object"
+    },
+    "SurfListNewsConfig": {
+      "additionalProperties": false,
+      "description": "Crypto News Feed",
+      "properties": {
+        "operation": {
+          "const": "list_news",
+          "default": "list_news",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "coindesk",
+                "cointelegraph",
+                "theblock",
+                "decrypt",
+                "dlnews",
+                "blockbeats",
+                "bitcoincom",
+                "coinpedia",
+                "ambcrypto",
+                "cryptodaily",
+                "cryptopotato",
+                "phemex",
+                "panews",
+                "odaily",
+                "tradingview",
+                "chaincatcher",
+                "techflow"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by news source",
+          "examples": [
+            "coindesk"
+          ],
+          "title": "Source",
+          "enum": [
+            "coindesk",
+            "cointelegraph",
+            "theblock",
+            "decrypt",
+            "dlnews",
+            "blockbeats",
+            "bitcoincom",
+            "coinpedia",
+            "ambcrypto",
+            "cryptodaily",
+            "cryptopotato",
+            "phemex",
+            "panews",
+            "odaily",
+            "tradingview",
+            "chaincatcher",
+            "techflow"
+          ],
+          "x-enum-searchable": true
+        },
+        "project": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated project names to filter by",
+          "examples": [
+            "bitcoin,ethereum"
+          ],
+          "title": "Project"
+        },
+        "from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter articles published on or after this time. Accepts Unix seconds or date string (2024-01-01)",
+          "examples": [
+            "2024-01-01"
+          ],
+          "title": "From"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter articles published on or before this time. Accepts Unix seconds or date string (2024-02-01)",
+          "examples": [
+            "2024-02-01"
+          ],
+          "title": "To"
+        },
+        "sort_by": {
+          "default": "recency",
+          "description": "Sort order: recency (newest first) or trending (deterministic newest-first alias until engagement ranking is available)",
+          "enum": [
+            "recency",
+            "trending"
+          ],
+          "examples": [
+            "recency"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Results per page (max 50)",
+          "examples": [
+            20
+          ],
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset",
+          "examples": [
+            0
+          ],
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "SurfListNewsConfig",
+      "type": "object"
+    },
+    "SurfListTokenHoldersConfig": {
+      "additionalProperties": false,
+      "description": "Token Holders",
+      "properties": {
+        "operation": {
+          "const": "list_token_holders",
+          "default": "list_token_holders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "description": "Token CONTRACT ADDRESS \u2014 0x-prefixed hex for EVM chains, base58 for Solana. This is NOT a ticker symbol (e.g. do NOT pass `USDC` or `BTC`). To resolve a ticker symbol to a contract address, call GET /v1/search/token?q={symbol}&chain={chain} and use the `address` whose `chain` is supported by this endpoint. This endpoint has no `symbol` parameter.",
+          "examples": [
+            "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+          ],
+          "minLength": 1,
+          "title": "Address",
+          "type": "string"
+        },
+        "chain": {
+          "description": "Chain. Can be `ethereum`, `polygon`, `bsc`, `solana`, `avalanche`, `arbitrum`, `optimism`, or `base`.",
+          "enum": [
+            "ethereum",
+            "polygon",
+            "bsc",
+            "solana",
+            "avalanche",
+            "arbitrum",
+            "optimism",
+            "base"
+          ],
+          "examples": [
+            "ethereum"
+          ],
+          "minLength": 1,
+          "title": "Chain",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Results per page",
+          "examples": [
+            20
+          ],
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset",
+          "examples": [
+            0
+          ],
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated enrichments to attach to each holder. Currently valid: `labels` \u2014 adds a full `label` record alongside the flat `entity_name` / `entity_type` fields.",
+          "examples": [
+            "labels"
+          ],
+          "title": "Include"
+        }
+      },
+      "required": [
+        "address",
+        "chain"
+      ],
+      "title": "SurfListTokenHoldersConfig",
+      "type": "object"
+    },
+    "SurfListTokenRankingsConfig": {
+      "additionalProperties": false,
+      "description": "Token Rankings",
+      "properties": {
+        "operation": {
+          "const": "list_token_rankings",
+          "default": "list_token_rankings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort_by": {
+          "default": "market_cap",
+          "description": "Field to sort by. `market_cap` sorts by total market capitalisation, `change_24h` sorts by 24-hour price change percentage (fetches top 250 by market cap then sorts client-side), `volume_24h` sorts by 24-hour trading volume.",
+          "enum": [
+            "market_cap",
+            "change_24h",
+            "volume_24h"
+          ],
+          "examples": [
+            "market_cap"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "order": {
+          "default": "desc",
+          "description": "Sort order: `desc` (default, highest first) or `asc` (lowest first).",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "examples": [
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "MEME",
+                "AI",
+                "AI_AGENTS",
+                "L1",
+                "L2",
+                "DEFI",
+                "GAMING",
+                "STABLECOIN",
+                "RWA",
+                "DEPIN",
+                "SOL_ECO",
+                "BASE_ECO",
+                "LST"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional token category filter. When provided, results are limited to coins in that category. Supported values: MEME, AI, AI_AGENTS, L1, L2, DEFI, GAMING, STABLECOIN, RWA, DEPIN, SOL_ECO, BASE_ECO, LST.",
+          "examples": [
+            "MEME"
+          ],
+          "title": "Category",
+          "enum": [
+            "MEME",
+            "AI",
+            "AI_AGENTS",
+            "L1",
+            "L2",
+            "DEFI",
+            "GAMING",
+            "STABLECOIN",
+            "RWA",
+            "DEPIN",
+            "SOL_ECO",
+            "BASE_ECO",
+            "LST"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 20,
+          "description": "Results per page",
+          "examples": [
+            20
+          ],
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset",
+          "examples": [
+            0
+          ],
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "SurfListTokenRankingsConfig",
+      "type": "object"
+    },
+    "SurfListWalletTransfersConfig": {
+      "additionalProperties": false,
+      "description": "Wallet Transfer History",
+      "properties": {
+        "operation": {
+          "const": "list_wallet_transfers",
+          "default": "list_wallet_transfers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "description": "Wallet address \u2014 must be a raw address (0x-prefixed hex for EVM, base58 for Solana). ENS names like `vitalik.eth` are not supported; resolve to a 0x address first.",
+          "examples": [
+            "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+          ],
+          "minLength": 1,
+          "title": "Address",
+          "type": "string"
+        },
+        "chain": {
+          "default": "ethereum",
+          "description": "Chain. Can be `ethereum`, `base`, `solana`, `tron`, `bsc`, or `arbitrum`.",
+          "enum": [
+            "ethereum",
+            "base",
+            "solana",
+            "tron",
+            "bsc",
+            "arbitrum"
+          ],
+          "examples": [
+            "ethereum"
+          ],
+          "title": "Chain",
+          "type": "string"
+        },
+        "flow": {
+          "anyOf": [
+            {
+              "enum": [
+                "in",
+                "out"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by transfer direction relative to the queried wallet. `in` for incoming, `out` for outgoing. Omit for both directions.",
+          "examples": [
+            "in"
+          ],
+          "title": "Flow",
+          "enum": [
+            "in",
+            "out"
+          ],
+          "x-enum-searchable": true
+        },
+        "token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by token contract address. Use `0x0000000000000000000000000000000000000000` for native token transfers. Omit for all tokens.",
+          "examples": [
+            "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+          ],
+          "title": "Token"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Results per page. Default 20, max 100. NOTE: Solana (`chain=solana`) is hard-capped at 40 per call by the upstream Solscan API \u2014 values above 40 return at most 40 items. Check `meta.has_more` and paginate with `offset` to fetch beyond the first page.",
+          "examples": [
+            20
+          ],
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset. For Solana, this maps to Solscan's 1-indexed `page` parameter (page = offset/page_size + 1).",
+          "examples": [
+            0
+          ],
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated enrichments to attach to each transfer. Currently valid: `labels` \u2014 adds `from_label` and `to_label` fields with entity information for each counterparty address.",
+          "examples": [
+            "labels"
+          ],
+          "title": "Include"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "SurfListWalletTransfersConfig",
+      "type": "object"
+    },
+    "SurfPreflightSqlConfig": {
+      "additionalProperties": false,
+      "description": "Preflight Blockchain SQL Query",
+      "properties": {
+        "operation": {
+          "const": "preflight_sql",
+          "default": "preflight_sql",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "max_rows": {
+          "default": 1000,
+          "description": "Maximum result rows in the final server-bounded execution plan",
+          "examples": [
+            1000
+          ],
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "sql": {
+          "description": "Read-only ClickHouse SELECT/WITH query to validate and estimate without executing it",
+          "examples": [
+            "SELECT block_date, project, apy, tvl_usd FROM agent.ethereum_yields_daily WHERE block_date >= today() - 7 LIMIT 100"
+          ],
+          "minLength": 1,
+          "title": "Sql",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sql"
+      ],
+      "title": "SurfPreflightSqlConfig",
+      "type": "object"
+    },
+    "SurfSearchProjectsConfig": {
+      "additionalProperties": false,
+      "description": "Project Search",
+      "properties": {
+        "operation": {
+          "const": "search_projects",
+          "default": "search_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "description": "Search keyword \u2014 project name or ticker like `uniswap`, `bitcoin`, or `ETH`",
+          "examples": [
+            "bitcoin"
+          ],
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Results per page",
+          "examples": [
+            20
+          ],
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset",
+          "examples": [
+            0
+          ],
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "SurfSearchProjectsConfig",
+      "type": "object"
+    },
+    "SurfSearchTokensConfig": {
+      "additionalProperties": false,
+      "description": "Token Symbol Resolution",
+      "properties": {
+        "operation": {
+          "const": "search_tokens",
+          "default": "search_tokens",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "description": "Exact token ticker symbol to resolve (case-insensitive), like `USDC` or `PEPE`. NOT a contract address, trading pair, or fuzzy token name.",
+          "examples": [
+            "USDC"
+          ],
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "chain": {
+          "anyOf": [
+            {
+              "enum": [
+                "ethereum",
+                "base",
+                "bsc",
+                "arbitrum",
+                "solana",
+                "polygon",
+                "optimism",
+                "avalanche",
+                "fantom",
+                "tron",
+                "linea",
+                "mantle",
+                "blast",
+                "gnosis",
+                "zksync",
+                "scroll"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict resolution to one supported chain. Omit to search all supported chains.",
+          "examples": [
+            "solana"
+          ],
+          "title": "Chain",
+          "enum": [
+            "ethereum",
+            "base",
+            "bsc",
+            "arbitrum",
+            "solana",
+            "polygon",
+            "optimism",
+            "avalanche",
+            "fantom",
+            "tron",
+            "linea",
+            "mantle",
+            "blast",
+            "gnosis",
+            "zksync",
+            "scroll"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 20,
+          "description": "Results per page",
+          "examples": [
+            20
+          ],
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset",
+          "examples": [
+            0
+          ],
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "SurfSearchTokensConfig",
+      "type": "object"
+    },
+    "SurfSearchWebConfig": {
+      "additionalProperties": false,
+      "description": "Web Search",
+      "properties": {
+        "operation": {
+          "const": "search_web",
+          "default": "search_web",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "description": "Search query like `bitcoin price prediction 2026`",
+          "examples": [
+            "bitcoin price prediction 2026"
+          ],
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Results per page",
+          "examples": [
+            20
+          ],
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Pagination offset",
+          "examples": [
+            0
+          ],
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "site": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated domain filter like `coindesk.com` or `cointelegraph.com`",
+          "examples": [
+            "coindesk.com,cointelegraph.com"
+          ],
+          "title": "Site"
+        },
+        "include_content": {
+          "default": false,
+          "description": "When false (default), search returns title/url/description only \u2014 fast (~2-3s) URL discovery. Set true to also include full markdown content for each result (~5-30KB per result, ~10-15s for limit=5). Use true only when the caller needs page content inline and won't follow up with `/web/fetch`.",
+          "examples": [
+            false
+          ],
+          "title": "Include Content",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "SurfSearchWebConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_sql_job": "#/$defs/SurfCancelSqlJobConfig",
+          "create_sql_job": "#/$defs/SurfCreateSqlJobConfig",
+          "fetch_web_page": "#/$defs/SurfFetchWebPageConfig",
+          "get_credits": "#/$defs/SurfGetCreditsConfig",
+          "get_defi_metrics": "#/$defs/SurfGetDefiMetricsConfig",
+          "get_fear_greed": "#/$defs/SurfGetFearGreedConfig",
+          "get_gas_price": "#/$defs/SurfGetGasPriceConfig",
+          "get_news": "#/$defs/SurfGetNewsConfig",
+          "get_price_history": "#/$defs/SurfGetPriceHistoryConfig",
+          "get_project": "#/$defs/SurfGetProjectConfig",
+          "get_sql_job": "#/$defs/SurfGetSqlJobConfig",
+          "get_wallet": "#/$defs/SurfGetWalletConfig",
+          "list_news": "#/$defs/SurfListNewsConfig",
+          "list_token_holders": "#/$defs/SurfListTokenHoldersConfig",
+          "list_token_rankings": "#/$defs/SurfListTokenRankingsConfig",
+          "list_wallet_transfers": "#/$defs/SurfListWalletTransfersConfig",
+          "preflight_sql": "#/$defs/SurfPreflightSqlConfig",
+          "search_projects": "#/$defs/SurfSearchProjectsConfig",
+          "search_tokens": "#/$defs/SurfSearchTokensConfig",
+          "search_web": "#/$defs/SurfSearchWebConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SurfGetFearGreedConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfGetPriceHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfListTokenRankingsConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfGetCreditsConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfGetNewsConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfListNewsConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfGetGasPriceConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfCreateSqlJobConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfCancelSqlJobConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfGetSqlJobConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfPreflightSqlConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfGetDefiMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfSearchProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfSearchTokensConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfSearchWebConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfListTokenHoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfGetWalletConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfListWalletTransfersConfig"
+        },
+        {
+          "$ref": "#/$defs/SurfFetchWebPageConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SurfApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Surf Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
