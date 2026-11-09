@@ -1,0 +1,1295 @@
+{
+  "$defs": {
+    "CancelEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "cancel_event",
+          "default": "cancel_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "cancel_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancel Reason"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "CancelEvent",
+      "type": "object"
+    },
+    "CreateEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        },
+        "display_name": {
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "start_at": {
+          "format": "date-time",
+          "title": "Start At",
+          "type": "string"
+        },
+        "end_at": {
+          "format": "date-time",
+          "title": "End At",
+          "type": "string"
+        },
+        "time_zone": {
+          "description": "Scheduler's local IANA time zone.",
+          "title": "Time Zone",
+          "type": "string"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "pattern": "^\\+[0-9]{7,15}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/SavvyCalFieldAnswer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Answers matching custom fields returned by get link.",
+          "title": "Fields"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "link_id",
+        "display_name",
+        "email",
+        "start_at",
+        "end_at",
+        "time_zone"
+      ],
+      "title": "CreateEvent",
+      "type": "object"
+    },
+    "CreatePersonalLink": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_personal_link",
+          "default": "create_personal_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "private_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private Name"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "type": {
+          "default": "recurring",
+          "enum": [
+            "recurring",
+            "single"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreatePersonalLink",
+      "type": "object"
+    },
+    "CreateScopeLink": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_scope_link",
+          "default": "create_scope_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scope_slug": {
+          "title": "Scope Slug",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "private_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private Name"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "type": {
+          "default": "recurring",
+          "enum": [
+            "recurring",
+            "single"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scope_slug",
+        "name"
+      ],
+      "title": "CreateScopeLink",
+      "type": "object"
+    },
+    "CreateWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "Public HTTPS receiver for SavvyCal webhook deliveries.",
+          "format": "uri",
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "CreateWebhook",
+      "type": "object"
+    },
+    "DeleteLink": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_link",
+          "default": "delete_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "DeleteLink",
+      "type": "object"
+    },
+    "DeleteWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "title": "Webhook Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "DeleteWebhook",
+      "type": "object"
+    },
+    "DuplicateLink": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "duplicate_link",
+          "default": "duplicate_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "DuplicateLink",
+      "type": "object"
+    },
+    "GetAvailableSlots": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_available_slots",
+          "default": "get_available_slots",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        },
+        "from_time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start instant (query parameter from). Defaults to now.",
+          "title": "From Time"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "At most 31 days after from. Defaults to 7 days later.",
+          "title": "Until"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "GetAvailableSlots",
+      "type": "object"
+    },
+    "GetCurrentUser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCurrentUser",
+      "type": "object"
+    },
+    "GetEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetLink": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_link",
+          "default": "get_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "GetLink",
+      "type": "object"
+    },
+    "GetTimeZone": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_time_zone",
+          "default": "get_time_zone",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "time_zone": {
+          "title": "Time Zone",
+          "type": "string"
+        },
+        "instant": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instant"
+        }
+      },
+      "required": [
+        "time_zone"
+      ],
+      "title": "GetTimeZone",
+      "type": "object"
+    },
+    "GetWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "title": "Webhook Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "GetWebhook",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Page size. Return cursors are in metadata.after and metadata.before.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from metadata.after in a previous response.",
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from metadata.before in a previous response.",
+          "title": "Before"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "all",
+                "any",
+                "confirmed",
+                "canceled",
+                "awaiting_reschedule",
+                "awaiting_checkout",
+                "checkout_expired",
+                "awaiting_approval",
+                "declined",
+                "tentative"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "all",
+            "any",
+            "confirmed",
+            "canceled",
+            "awaiting_reschedule",
+            "awaiting_checkout",
+            "checkout_expired",
+            "awaiting_approval",
+            "declined",
+            "tentative"
+          ],
+          "x-enum-searchable": true
+        },
+        "period": {
+          "default": "upcoming",
+          "enum": [
+            "past",
+            "upcoming",
+            "fixed",
+            "all"
+          ],
+          "title": "Period",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for period=fixed (query parameter from).",
+          "title": "From Date"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Until"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Zone"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        },
+        "direction": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "attendance": {
+          "default": "attending",
+          "enum": [
+            "attending",
+            "any"
+          ],
+          "title": "Attendance",
+          "type": "string"
+        },
+        "link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scheduling link ID or any.",
+          "title": "Link"
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListLinks": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Page size. Return cursors are in metadata.after and metadata.before.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from metadata.after in a previous response.",
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from metadata.before in a previous response.",
+          "title": "Before"
+        },
+        "operation": {
+          "const": "list_links",
+          "default": "list_links",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "pending",
+                "disabled",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "active",
+            "pending",
+            "disabled",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        },
+        "scope": {
+          "default": "any",
+          "description": "A scope slug, personal, or any.",
+          "title": "Scope",
+          "type": "string"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        }
+      },
+      "title": "ListLinks",
+      "type": "object"
+    },
+    "ListTimeZones": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_time_zones",
+          "default": "list_time_zones",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instant": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instant"
+        },
+        "include_legacy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Legacy"
+        }
+      },
+      "title": "ListTimeZones",
+      "type": "object"
+    },
+    "ListWebhooks": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Page size. Return cursors are in metadata.after and metadata.before.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from metadata.after in a previous response.",
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from metadata.before in a previous response.",
+          "title": "Before"
+        },
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListWebhooks",
+      "type": "object"
+    },
+    "ListWorkflowRules": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_workflow_rules",
+          "default": "list_workflow_rules",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workflow_id": {
+          "title": "Workflow Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "ListWorkflowRules",
+      "type": "object"
+    },
+    "ListWorkflows": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Page size. Return cursors are in metadata.after and metadata.before.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from metadata.after in a previous response.",
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from metadata.before in a previous response.",
+          "title": "Before"
+        },
+        "operation": {
+          "const": "list_workflows",
+          "default": "list_workflows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListWorkflows",
+      "type": "object"
+    },
+    "SavvyCalFieldAnswer": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "short_text",
+            "long_text",
+            "checkboxes",
+            "radios",
+            "select",
+            "url",
+            "hidden"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/SavvyCalFieldOption"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Options"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "type"
+      ],
+      "title": "SavvyCalFieldAnswer",
+      "type": "object"
+    },
+    "SavvyCalFieldOption": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "value"
+      ],
+      "title": "SavvyCalFieldOption",
+      "type": "object"
+    },
+    "SavvyCalTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "savvycal_token",
+          "default": "savvycal_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Private key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "SavvyCal Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "In SavvyCal, open Settings > Developers, create a personal access token, and paste its Private Key. NoClick uses it to read your account and manage events, scheduling links and webhooks. Use the private key, not the public key.",
+      "x-credential-url": "https://savvycal.com/settings/developers"
+    },
+    "ToggleLink": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "toggle_link",
+          "default": "toggle_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "ToggleLink",
+      "type": "object"
+    },
+    "UpdateLink": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_link",
+          "default": "update_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "private_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private Name"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "recurring",
+                "single"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "recurring",
+            "single"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "UpdateLink",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_event": "#/$defs/CancelEvent",
+          "create_event": "#/$defs/CreateEvent",
+          "create_personal_link": "#/$defs/CreatePersonalLink",
+          "create_scope_link": "#/$defs/CreateScopeLink",
+          "create_webhook": "#/$defs/CreateWebhook",
+          "delete_link": "#/$defs/DeleteLink",
+          "delete_webhook": "#/$defs/DeleteWebhook",
+          "duplicate_link": "#/$defs/DuplicateLink",
+          "get_available_slots": "#/$defs/GetAvailableSlots",
+          "get_current_user": "#/$defs/GetCurrentUser",
+          "get_event": "#/$defs/GetEvent",
+          "get_link": "#/$defs/GetLink",
+          "get_time_zone": "#/$defs/GetTimeZone",
+          "get_webhook": "#/$defs/GetWebhook",
+          "list_events": "#/$defs/ListEvents",
+          "list_links": "#/$defs/ListLinks",
+          "list_time_zones": "#/$defs/ListTimeZones",
+          "list_webhooks": "#/$defs/ListWebhooks",
+          "list_workflow_rules": "#/$defs/ListWorkflowRules",
+          "list_workflows": "#/$defs/ListWorkflows",
+          "toggle_link": "#/$defs/ToggleLink",
+          "update_link": "#/$defs/UpdateLink"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        },
+        {
+          "$ref": "#/$defs/CancelEvent"
+        },
+        {
+          "$ref": "#/$defs/ListLinks"
+        },
+        {
+          "$ref": "#/$defs/CreatePersonalLink"
+        },
+        {
+          "$ref": "#/$defs/CreateScopeLink"
+        },
+        {
+          "$ref": "#/$defs/GetLink"
+        },
+        {
+          "$ref": "#/$defs/UpdateLink"
+        },
+        {
+          "$ref": "#/$defs/DeleteLink"
+        },
+        {
+          "$ref": "#/$defs/DuplicateLink"
+        },
+        {
+          "$ref": "#/$defs/ToggleLink"
+        },
+        {
+          "$ref": "#/$defs/GetAvailableSlots"
+        },
+        {
+          "$ref": "#/$defs/CreateEvent"
+        },
+        {
+          "$ref": "#/$defs/GetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/ListTimeZones"
+        },
+        {
+          "$ref": "#/$defs/GetTimeZone"
+        },
+        {
+          "$ref": "#/$defs/ListWebhooks"
+        },
+        {
+          "$ref": "#/$defs/CreateWebhook"
+        },
+        {
+          "$ref": "#/$defs/GetWebhook"
+        },
+        {
+          "$ref": "#/$defs/DeleteWebhook"
+        },
+        {
+          "$ref": "#/$defs/ListWorkflows"
+        },
+        {
+          "$ref": "#/$defs/ListWorkflowRules"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SavvyCalTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Savvycal Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
