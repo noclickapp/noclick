@@ -1,0 +1,1463 @@
+{
+  "list_applications": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/get-applications.html",
+    "method": "GET",
+    "path": "/meta/applications",
+    "config": {},
+    "body": null,
+    "response": {
+      "code": 3000,
+      "applications": [
+        {
+          "application_name": "Zylker Store",
+          "date_format": "MMM dd,yyyy",
+          "creation_date": "20-Apr-2020 16:23:50",
+          "link_name": "zylker-store",
+          "category": 1,
+          "time_zone": "SystemV/PST8",
+          "created_by": "jason18",
+          "workspace_name": "jason18"
+        },
+        {
+          "application_name": "Zylker Self-Service",
+          "date_format": "MM-dd-yyyy",
+          "creation_date": "30-Sep-2019 02:21:51",
+          "link_name": "zylker-self-service",
+          "category": 2,
+          "time_zone": "America/Los_Angeles",
+          "created_by": "",
+          "workspace_name": "megan"
+        },
+        {
+          "application_name": "Zylker Auto",
+          "date_format": "MM-dd-yyyy",
+          "creation_date": "30-Sep-2019 02:21:51",
+          "link_name": "zylker-auto",
+          "category": 1,
+          "time_zone": "PST",
+          "created_by": "megan78",
+          "workspace_name": "jason18"
+        }
+      ]
+    }
+  },
+  "list_workspace_applications": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/get-workspace-applications.html",
+    "method": "GET",
+    "path": "/meta/jason18/applications",
+    "config": {
+      "account_owner_name": "jason18"
+    },
+    "body": null,
+    "response": {
+      "code": 3000,
+      "applications": [
+        {
+          "application_name": "Zylker Store",
+          "date_format": "MMM dd,yyyy",
+          "creation_date": "20-Apr-2020 16:23:50",
+          "link_name": "zylker-store",
+          "category": 2,
+          "time_zone": "SystemV/PST8",
+          "created_by": "",
+          "workspace_name": "megan9"
+        },
+        {
+          "application_name": "Zylker Self-Service",
+          "date_format": "MM-dd-yyyy",
+          "creation_date": "30-Sep-2019 02:21:51",
+          "link_name": "zylker-self-service",
+          "category": 2,
+          "time_zone": "America/Los_Angeles",
+          "created_by": "",
+          "workspace_name": "megan9"
+        }
+      ]
+    }
+  },
+  "list_forms": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/get-forms.html",
+    "method": "GET",
+    "path": "/meta/jason18/zylker-store/forms",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store"
+    },
+    "body": null,
+    "response": {
+      "code": 3000,
+      "forms": [
+        {
+          "display_name": "Add Order",
+          "link_name": "Order_Form",
+          "type": 1
+        },
+        {
+          "display_name": "Add Inventory",
+          "link_name": "Inventory_Form",
+          "type": 1
+        },
+        {
+          "display_name": "Order Stateless Form",
+          "link_name": "Order_Stateless_Form",
+          "type": 2
+        }
+      ]
+    }
+  },
+  "list_reports": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/get-reports.html",
+    "method": "GET",
+    "path": "/meta/jason18/zylker-store/reports",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store"
+    },
+    "body": null,
+    "response": {
+      "code": 3000,
+      "reports": [
+        {
+          "display_name": "List Report",
+          "link_name": "List_Report",
+          "type": 1
+        },
+        {
+          "display_name": "Calendar Report",
+          "link_name": "Calendar_Report",
+          "type": 2
+        },
+        {
+          "display_name": "Kanban Report",
+          "link_name": "Kanban_Report",
+          "type": 4
+        },
+        {
+          "display_name": "Map Report",
+          "link_name": "Map_Report",
+          "type": 5
+        },
+        {
+          "display_name": "Spreadsheet Report",
+          "link_name": "Spreadsheet_Report",
+          "type": 6
+        },
+        {
+          "display_name": "Pivot Table",
+          "link_name": "Pivot_Table",
+          "type": 7
+        },
+        {
+          "display_name": "Pivot Chart",
+          "link_name": "Pivot_Chart",
+          "type": 8
+        },
+        {
+          "display_name": "List Report with Custom QuickView Layout",
+          "link_name": "List_Report_Custom_Layout",
+          "type": 9
+        },
+        {
+          "display_name": "Timeline Report",
+          "link_name": "Timeline_Report",
+          "type": 10
+        }
+      ]
+    }
+  },
+  "list_pages": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/get-pages.html",
+    "method": "GET",
+    "path": "/meta/jason18/zylker-store/pages",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store"
+    },
+    "body": null,
+    "response": {
+      "code": 3000,
+      "pages": [
+        {
+          "display_name": "Assets Dashboard",
+          "link_name": "Asset_Dashboard"
+        },
+        {
+          "display_name": "Home",
+          "link_name": "Home_Page"
+        }
+      ]
+    }
+  },
+  "list_sections": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/get-sections.html",
+    "method": "GET",
+    "path": "/meta/jason18/zylker-store/sections",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store"
+    },
+    "body": null,
+    "response": {
+      "code": 3000,
+      "sections": [
+        {
+          "components": [
+            {
+              "page_type": 2,
+              "type": 3,
+              "link_name": "Dashboard",
+              "display_name": "Dashboard"
+            }
+          ],
+          "display_name": "Dashboard",
+          "link_name": "Dashboard"
+        },
+        {
+          "components": [
+            {
+              "view_type": 1,
+              "type": 2,
+              "link_name": "All_Order_Line_Items",
+              "display_name": "All Order Line Items"
+            },
+            {
+              "view_type": 1,
+              "type": 2,
+              "link_name": "All_Orders",
+              "display_name": "All Orders"
+            }
+          ],
+          "display_name": "Orders",
+          "link_name": "Orders1"
+        },
+        {
+          "components": [
+            {
+              "view_type": 1,
+              "type": 2,
+              "link_name": "All_Products",
+              "display_name": "All Products"
+            }
+          ],
+          "display_name": "Inventory",
+          "link_name": "Inventory"
+        },
+        {
+          "components": [
+            {
+              "view_type": 1,
+              "type": 2,
+              "link_name": "All_Customers",
+              "display_name": "All Customers"
+            },
+            {
+              "view_type": 1,
+              "type": 2,
+              "link_name": "Sales_Reps_Report",
+              "display_name": "Sales Reps Report"
+            },
+            {
+              "view_type": 1,
+              "type": 2,
+              "link_name": "Logistics_Partners_Report",
+              "display_name": "Logistics Partners Report"
+            }
+          ],
+          "display_name": "Other Reports",
+          "link_name": "Other_Reports"
+        }
+      ]
+    }
+  },
+  "list_fields": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/get-fields.html",
+    "method": "GET",
+    "path": "/meta/jason18/zylker-store/form/Orders/fields",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store",
+      "form_link_name": "Orders"
+    },
+    "body": null,
+    "response": {
+      "code": 3000,
+      "fields": [
+        {
+          "subfields": [
+            {
+              "is_hidden": false,
+              "column_name": "prefix",
+              "display_name": "Prefix",
+              "link_name": "prefix",
+              "choices": [
+                {
+                  "value": "Mr.",
+                  "key": "Mr."
+                },
+                {
+                  "value": "Mrs.",
+                  "key": "Mrs."
+                },
+                {
+                  "value": "Ms.",
+                  "key": "Ms."
+                }
+              ]
+            },
+            {
+              "is_hidden": false,
+              "column_name": "first_name",
+              "display_name": "First Name",
+              "link_name": "first_name"
+            },
+            {
+              "is_hidden": false,
+              "column_name": "last_name",
+              "display_name": "Last Name",
+              "link_name": "last_name"
+            },
+            {
+              "is_hidden": false,
+              "column_name": "suffix",
+              "display_name": "Suffix",
+              "link_name": "suffix"
+            }
+          ],
+          "unique": false,
+          "display_name": "Name",
+          "link_name": "Name",
+          "type": 29,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "max_char": 255,
+          "display_name": "Email",
+          "link_name": "Email",
+          "type": 3,
+          "mandatory": false
+        },
+        {
+          "subfields": [
+            {
+              "is_hidden": false,
+              "column_name": "address_line_1",
+              "display_name": "Address Line 1",
+              "link_name": "address_line_1"
+            },
+            {
+              "is_hidden": false,
+              "column_name": "address_line_2",
+              "display_name": "Address Line 2",
+              "link_name": "address_line_2"
+            },
+            {
+              "is_hidden": false,
+              "column_name": "district_city",
+              "display_name": "City / District",
+              "link_name": "district_city"
+            },
+            {
+              "is_hidden": false,
+              "column_name": "state_province",
+              "display_name": "State / Province",
+              "link_name": "state_province"
+            },
+            {
+              "is_hidden": false,
+              "column_name": "postal_code",
+              "display_name": "Postal Code",
+              "link_name": "postal_code"
+            },
+            {
+              "is_hidden": false,
+              "column_name": "country",
+              "display_name": "Country",
+              "link_name": "country"
+            },
+            {
+              "is_hidden": true,
+              "column_name": "latitude",
+              "display_name": "latitude",
+              "link_name": "latitude"
+            },
+            {
+              "is_hidden": true,
+              "column_name": "longitude",
+              "display_name": "longitude",
+              "link_name": "longitude"
+            }
+          ],
+          "unique": false,
+          "display_name": "Address",
+          "link_name": "Address",
+          "type": 30,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "allowed_countries": "",
+          "display_name": "Phone",
+          "link_name": "Phone_Number",
+          "type": 27,
+          "mandatory": false,
+          "default_country": "us"
+        },
+        {
+          "unique": false,
+          "max_char": 255,
+          "display_name": "Single Line",
+          "link_name": "Single_Line",
+          "type": 1,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "max_char": 200,
+          "display_name": "Multi Line",
+          "link_name": "Multi_Line",
+          "type": 2,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Rich Text",
+          "link_name": "Rich_Text",
+          "type": 4,
+          "mandatory": false
+        },
+        {
+          "decimal_length": 0,
+          "unique": false,
+          "max_char": 10,
+          "display_name": "Number",
+          "link_name": "Number",
+          "type": 5,
+          "mandatory": false
+        },
+        {
+          "decimal_length": 2,
+          "unique": false,
+          "max_char": 10,
+          "display_name": "Decimal",
+          "link_name": "Decimal",
+          "type": 6,
+          "mandatory": false
+        },
+        {
+          "decimal_length": 2,
+          "unique": false,
+          "max_char": 10,
+          "display_name": "Percent",
+          "link_name": "Percent",
+          "type": 7,
+          "mandatory": false
+        },
+        {
+          "decimal_length": 2,
+          "currency_name": "United States Dollars",
+          "currency_type": 202,
+          "currency_symbol": "$",
+          "unique": false,
+          "currency_display": "USD",
+          "max_char": 10,
+          "display_name": "Currency",
+          "link_name": "Currency",
+          "type": 8,
+          "mandatory": false,
+          "number_format": 1
+        },
+        {
+          "unique": false,
+          "display_name": "Date",
+          "link_name": "Date_field",
+          "type": 10,
+          "allowed_days": "0,1,2,3,4,5,6",
+          "mandatory": false
+        },
+        {
+          "allowed_hours": [],
+          "time_display_options": "hh:mm:ss",
+          "unique": false,
+          "display_name": "Time",
+          "link_name": "Time",
+          "type": 34,
+          "mins_display_interval": 1,
+          "mandatory": false
+        },
+        {
+          "allowed_hours": [],
+          "time_display_options": "hh:mm:ss",
+          "unique": false,
+          "display_name": "Date-Time",
+          "link_name": "Date_Time",
+          "type": 11,
+          "allowed_days": "0,1,2,3,4,5,6",
+          "mins_display_interval": 1,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Radio",
+          "link_name": "Radio",
+          "type": 13,
+          "choices": [
+            {
+              "value": "Choice 1",
+              "key": "Choice 1"
+            },
+            {
+              "value": "Choice 2",
+              "key": "Choice 2"
+            },
+            {
+              "value": "Choice 3",
+              "key": "Choice 3"
+            }
+          ],
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Drop Down",
+          "link_name": "Dropdown",
+          "type": 12,
+          "choices": [
+            {
+              "value": "Choice 1",
+              "key": "Choice 1"
+            },
+            {
+              "value": "Choice 2",
+              "key": "Choice 2"
+            },
+            {
+              "value": "Choice 3",
+              "key": "Choice 3"
+            }
+          ],
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Checkbox",
+          "link_name": "Checkbox",
+          "type": 15,
+          "choices": [
+            {
+              "value": "Choice 1",
+              "key": "Choice 1"
+            },
+            {
+              "value": "Choice 2",
+              "key": "Choice 2"
+            },
+            {
+              "value": "Choice 3",
+              "key": "Choice 3"
+            }
+          ],
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Multi Select",
+          "link_name": "Multi_Select",
+          "type": 14,
+          "choices": [
+            {
+              "value": "Choice 1",
+              "key": "Choice 1"
+            },
+            {
+              "value": "Choice 2",
+              "key": "Choice 2"
+            },
+            {
+              "value": "Choice 3",
+              "key": "Choice 3"
+            }
+          ],
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Decision box",
+          "link_name": "Decision_box",
+          "type": 16,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Image",
+          "link_name": "Image",
+          "type": 18,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "File upload",
+          "link_name": "File_upload",
+          "type": 19,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Audio",
+          "link_name": "Audio",
+          "type": 32,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Video",
+          "link_name": "Video",
+          "type": 33,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Signature",
+          "link_name": "Signature",
+          "type": 25,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "link_name_required": true,
+          "display_name": "Url",
+          "link_name": "Url",
+          "type": 17,
+          "mandatory": false,
+          "target": 1
+        },
+        {
+          "is_lookup_field": true,
+          "unique": false,
+          "display_name": "Lookup",
+          "link_name": "Lookup",
+          "type": 12,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Auto Number",
+          "link_name": "Auto_Number",
+          "type": 9,
+          "mandatory": false
+        },
+        {
+          "visibility": true,
+          "unique": false,
+          "display_name": "Formula",
+          "link_name": "Formula",
+          "type": 20,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "text": "Add your Note here ...",
+          "display_name": "",
+          "link_name": "Add_Notes",
+          "type": 24,
+          "mandatory": false
+        },
+        {
+          "unique": false,
+          "display_name": "Users",
+          "link_name": "users",
+          "type": 26,
+          "mandatory": false,
+          "field_select_type": 100
+        },
+        {
+          "is_integration": true,
+          "unique": false,
+          "display_name": "Integration",
+          "link_name": "Integration",
+          "type": 31,
+          "mandatory": false
+        },
+        {
+          "decimal_length": 0,
+          "zia_base_field_type": 5,
+          "unique": false,
+          "max_char": 10,
+          "display_name": "Prediction",
+          "link_name": "Prediction",
+          "type": 39,
+          "mandatory": false
+        },
+        {
+          "zia_base_field_type": 2,
+          "unique": false,
+          "max_char": 200,
+          "display_name": "Keyword",
+          "link_name": "Keyword",
+          "type": 37,
+          "mandatory": false
+        },
+        {
+          "zia_base_field_type": 12,
+          "unique": false,
+          "display_name": "Sentiment",
+          "link_name": "Sentiment",
+          "type": 38,
+          "choices": [
+            {
+              "value": "Negative",
+              "key": "Negative"
+            },
+            {
+              "value": "Neutral",
+              "key": "Neutral"
+            },
+            {
+              "value": "Positive",
+              "key": "Positive"
+            }
+          ],
+          "mandatory": false
+        },
+        {
+          "zia_base_field_type": 2,
+          "unique": false,
+          "max_char": 200,
+          "display_name": "OCR",
+          "link_name": "OCR",
+          "type": 35,
+          "mandatory": false
+        },
+        {
+          "zia_base_field_type": 2,
+          "unique": false,
+          "max_char": 200,
+          "display_name": "Object Detection",
+          "link_name": "Object_Detection",
+          "type": 36,
+          "mandatory": false
+        },
+        {
+          "ref_form": "ZC_SUBFORM_68",
+          "unique": false,
+          "display_name": "Inline SubForm",
+          "link_name": "Inline_SubForm",
+          "type": 21,
+          "fields": [
+            {
+              "subfields": [
+                {
+                  "is_hidden": true,
+                  "column_name": "prefix",
+                  "display_name": "Prefix",
+                  "link_name": "prefix",
+                  "choices": [
+                    {
+                      "value": "Mr.",
+                      "key": "Mr."
+                    },
+                    {
+                      "value": "Mrs.",
+                      "key": "Mrs."
+                    },
+                    {
+                      "value": "Ms.",
+                      "key": "Ms."
+                    }
+                  ]
+                },
+                {
+                  "is_hidden": false,
+                  "column_name": "first_name",
+                  "display_name": "First Name",
+                  "link_name": "first_name"
+                },
+                {
+                  "is_hidden": false,
+                  "column_name": "last_name",
+                  "display_name": "Last Name",
+                  "link_name": "last_name"
+                },
+                {
+                  "is_hidden": true,
+                  "column_name": "suffix",
+                  "display_name": "Suffix",
+                  "link_name": "suffix"
+                }
+              ],
+              "unique": false,
+              "display_name": "Name",
+              "link_name": "Name",
+              "type": 29,
+              "mandatory": false
+            },
+            {
+              "unique": false,
+              "max_char": 255,
+              "display_name": "Email",
+              "link_name": "Email",
+              "type": 3,
+              "mandatory": false
+            },
+            {
+              "unique": false,
+              "max_char": 255,
+              "display_name": "Single Line",
+              "link_name": "Single_Line",
+              "type": 1,
+              "mandatory": false
+            }
+          ],
+          "mandatory": false,
+          "ref_application": "test-file-upload"
+        },
+        {
+          "ref_form": "SubForm",
+          "unique": false,
+          "display_name": "SubForm",
+          "link_name": "SubForm",
+          "type": 21,
+          "fields": [
+            {
+              "subfields": [
+                {
+                  "is_hidden": true,
+                  "column_name": "prefix",
+                  "display_name": "Prefix",
+                  "link_name": "prefix",
+                  "choices": [
+                    {
+                      "value": "Mr.",
+                      "key": "Mr."
+                    },
+                    {
+                      "value": "Mrs.",
+                      "key": "Mrs."
+                    },
+                    {
+                      "value": "Ms.",
+                      "key": "Ms."
+                    }
+                  ]
+                },
+                {
+                  "is_hidden": false,
+                  "column_name": "first_name",
+                  "display_name": "First Name",
+                  "link_name": "first_name"
+                },
+                {
+                  "is_hidden": false,
+                  "column_name": "last_name",
+                  "display_name": "Last Name",
+                  "link_name": "last_name"
+                },
+                {
+                  "is_hidden": true,
+                  "column_name": "suffix",
+                  "display_name": "Suffix",
+                  "link_name": "suffix"
+                }
+              ],
+              "unique": false,
+              "display_name": "Name",
+              "link_name": "Name",
+              "type": 29,
+              "mandatory": false
+            },
+            {
+              "unique": false,
+              "max_char": 255,
+              "display_name": "Email",
+              "link_name": "Email",
+              "type": 3,
+              "mandatory": false
+            },
+            {
+              "unique": false,
+              "max_char": 255,
+              "display_name": "Single Line",
+              "link_name": "Single_Line",
+              "type": 1,
+              "mandatory": false
+            }
+          ],
+          "mandatory": false,
+          "ref_application": "zylker-store"
+        }
+      ]
+    }
+  },
+  "list_records": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/get-records.html",
+    "method": "GET",
+    "path": "/data/jason18/zylker-store/report/All_Orders",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store",
+      "report_link_name": "All_Orders"
+    },
+    "body": null,
+    "response": {
+      "code": 3000,
+      "data": [
+        {
+          "ID": "52129000008009043",
+          "Single_Line": "Warehouse",
+          "Email": "John@Lord.com",
+          "Currency": "1234723.90",
+          "Name": {
+            "zc_display_value": "John Lord",
+            "prefix": "",
+            "last_name": "Lord",
+            "suffix": "",
+            "first_name": "John"
+          },
+          "Address": {
+            "zc_display_value": "6, West Street, Phoenix, Phoenix, Arizona, 20532, USA",
+            "country": "USA",
+            "district_city": "Phoenix",
+            "address_line_1": "6, West Street",
+            "state_province": "Arizona",
+            "address_line_2": "Phoenix",
+            "postal_code": "20532"
+          },
+          "Image": "/api/v2.1/christinaclover/import/report/sample_report/52129000008009043/Image/download?filepath=1681379407888_John.jpeg",
+          "test_ss": {
+            "zc_display_value": "52129000008009170 - 13-Apr-2023 17:21:24 - christinaclover",
+            "Added_User": "christinaclover",
+            "ID": "52129000008009170",
+            "Added_Time": "13-Apr-2023 17:21:24"
+          },
+          "test_ss.Single_Line": "Portia",
+          "test_ss.Name": {
+            "zc_display_value": "Portia Lance",
+            "prefix": "",
+            "last_name": "Lance",
+            "suffix": "",
+            "first_name": "Portia"
+          },
+          "test_ms": [
+            {
+              "zc_display_value": "52129000008009051 - christinaclover - John - 13-Apr-2023 16:59:29",
+              "Modified_Time": "13-Apr-2023 16:59:29",
+              "Added_User": "christinaclover",
+              "ID": "52129000008009051",
+              "Name.first_name": "John"
+            },
+            {
+              "zc_display_value": "52129000008009170 - christinaclover - Portia - 13-Apr-2023 18:03:05",
+              "Modified_Time": "13-Apr-2023 18:03:05",
+              "Added_User": "christinaclover",
+              "ID": "52129000008009170",
+              "Name.first_name": "Portia"
+            }
+          ],
+          "test_ms.Single_Line": [
+            "test",
+            "Portia"
+          ],
+          "test_ms.Name": [
+            {
+              "zc_display_value": "John Lord",
+              "prefix": "",
+              "last_name": "Lord",
+              "suffix": "",
+              "first_name": "John"
+            },
+            {
+              "zc_display_value": "Portia Lance",
+              "prefix": "",
+              "last_name": "Lance",
+              "suffix": "",
+              "first_name": "Portia"
+            }
+          ],
+          "SubForm": [
+            {
+              "zc_display_value": "John Lord 220B, Baker Street, London, London, 13455, United Kingdom 10-Apr-2023 52129000008009051 52129000008009051, 52129000008009084",
+              "Date_field": "10-Apr-2023",
+              "Address": {
+                "zc_display_value": "220B, Baker Street, London, London, 13455, United Kingdom",
+                "country": "United Kingdom",
+                "district_city": "London",
+                "address_line_1": "220B, Baker Street",
+                "state_province": "London",
+                "address_line_2": "",
+                "postal_code": "13455"
+              },
+              "test": {
+                "zc_display_value": "52129000008009051",
+                "ID": "52129000008009051"
+              },
+              "test_ms": [
+                {
+                  "zc_display_value": "52129000008009051",
+                  "ID": "52129000008009051"
+                },
+                {
+                  "zc_display_value": "52129000008009084",
+                  "ID": "52129000008009084"
+                }
+              ],
+              "ID": "52129000008009023",
+              "Name": {
+                "zc_display_value": "John Lord",
+                "last_name": "Lord",
+                "first_name": "John"
+              }
+            },
+            {
+              "zc_display_value": "    ",
+              "Date_field": "",
+              "Address": {
+                "zc_display_value": "",
+                "country": "",
+                "district_city": "",
+                "address_line_1": "",
+                "state_province": "",
+                "address_line_2": "",
+                "postal_code": ""
+              },
+              "test": {},
+              "test_ms": [],
+              "ID": "5213456789000987"
+            }
+          ],
+          "Users_MS": [
+            "christinaclover",
+            "manish.koothrapalli"
+          ]
+        }
+      ]
+    }
+  },
+  "get_record": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/get-records-by-ID.html",
+    "method": "GET",
+    "path": "/data/jason18/zylker-store/report/All_Orders/3888833000000114027",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store",
+      "report_link_name": "All_Orders",
+      "record_id": "3888833000000114027"
+    },
+    "body": null,
+    "response": {
+      "code": 3000,
+      "data": {
+        "ID": "52129000008009043",
+        "Single_Line": "Warehouse",
+        "Email": "John@Lord.com",
+        "Currency": "1234723.90",
+        "Name": {
+          "zc_display_value": "John Lord",
+          "prefix": "",
+          "last_name": "Lord",
+          "suffix": "",
+          "first_name": "John"
+        },
+        "Address": {
+          "zc_display_value": "6, West Street, Phoenix, Phoenix, Arizona, 20532, USA",
+          "country": "USA",
+          "district_city": "Phoenix",
+          "address_line_1": "6, West Street",
+          "state_province": "Arizona",
+          "address_line_2": "Phoenix",
+          "postal_code": "20532"
+        },
+        "Image": "/api/v2.1/christinaclover/import/report/sample_report/52129000008009043/Image/download?filepath=1681379407888_John.jpeg",
+        "test_ss": {
+          "zc_display_value": "52129000008009170 - 13-Apr-2023 17:21:24 - christinaclover",
+          "Added_User": "christinaclover",
+          "ID": "52129000008009170",
+          "Added_Time": "13-Apr-2023 17:21:24"
+        },
+        "test_ss.Single_Line": "Portia",
+        "test_ss.Name": {
+          "zc_display_value": "Portia Lance",
+          "prefix": "",
+          "last_name": "Lance",
+          "suffix": "",
+          "first_name": "Portia"
+        },
+        "test_ms": [
+          {
+            "zc_display_value": "52129000008009051 - christinaclover - John - 13-Apr-2023 16:59:29",
+            "Modified_Time": "13-Apr-2023 16:59:29",
+            "Added_User": "christinaclover",
+            "ID": "52129000008009051",
+            "Name.first_name": "John"
+          },
+          {
+            "zc_display_value": "52129000008009170 - christinaclover - Portia - 13-Apr-2023 18:03:05",
+            "Modified_Time": "13-Apr-2023 18:03:05",
+            "Added_User": "christinaclover",
+            "ID": "52129000008009170",
+            "Name.first_name": "Portia"
+          }
+        ],
+        "test_ms.Single_Line": [
+          "test",
+          "Portia"
+        ],
+        "test_ms.Name": [
+          {
+            "zc_display_value": "John Lord",
+            "prefix": "",
+            "last_name": "Lord",
+            "suffix": "",
+            "first_name": "John"
+          },
+          {
+            "zc_display_value": "Portia Lance",
+            "prefix": "",
+            "last_name": "Lance",
+            "suffix": "",
+            "first_name": "Portia"
+          }
+        ],
+        "SubForm": [
+          {
+            "zc_display_value": "John Lord 220B, Baker Street, London, London, 13455, United Kingdom 10-Apr-2023 52129000008009051 52129000008009051, 52129000008009084",
+            "Date_field": "10-Apr-2023",
+            "Address": {
+              "zc_display_value": "220B, Baker Street, London, London, 13455, United Kingdom",
+              "country": "United Kingdom",
+              "district_city": "London",
+              "address_line_1": "220B, Baker Street",
+              "state_province": "London",
+              "address_line_2": "",
+              "postal_code": "13455"
+            },
+            "test": {
+              "zc_display_value": "52129000008009051",
+              "ID": "52129000008009051"
+            },
+            "test_ms": [
+              {
+                "zc_display_value": "52129000008009051",
+                "ID": "52129000008009051"
+              },
+              {
+                "zc_display_value": "52129000008009084",
+                "ID": "52129000008009084"
+              }
+            ],
+            "ID": "52129000008009023",
+            "Name": {
+              "zc_display_value": "John Lord",
+              "last_name": "Lord",
+              "first_name": "John"
+            }
+          },
+          {
+            "zc_display_value": "    ",
+            "Date_field": "",
+            "Address": {
+              "zc_display_value": "",
+              "country": "",
+              "district_city": "",
+              "address_line_1": "",
+              "state_province": "",
+              "address_line_2": "",
+              "postal_code": ""
+            },
+            "test": {},
+            "test_ms": [],
+            "ID": "52129000008009029"
+          }
+        ],
+        "Users_MS": [
+          "christinaclover",
+          "manish.koothrapalli"
+        ]
+      }
+    }
+  },
+  "add_records": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/add-records.html",
+    "method": "POST",
+    "path": "/data/jason18/zylker-store/form/Orders",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store",
+      "form_link_name": "Orders",
+      "data": [
+        {
+          "Single_Line": "Single Line of Text",
+          "Number": "12345"
+        }
+      ]
+    },
+    "body": {
+      "data": [
+        {
+          "Single_Line": "Single Line of Text",
+          "Number": "12345"
+        }
+      ]
+    },
+    "response": {
+      "result": [
+        {
+          "code": 3000,
+          "data": {
+            "Email": "jason@zylker.com",
+            "Single_Line": "Single Line of Text",
+            "ID": "3888833000000121607"
+          },
+          "message": "Data Added Successfully!",
+          "tasks": {
+            "openurl": {
+              "type": "Same window",
+              "url": "#Report:All_Orders"
+            }
+          }
+        }
+      ],
+      "code": 3000
+    }
+  },
+  "update_record": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/update-specific-record.html",
+    "method": "PATCH",
+    "path": "/data/jason18/zylker-store/report/All_Orders/3888833000000114027",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store",
+      "report_link_name": "All_Orders",
+      "record_id": "3888833000000114027",
+      "data": {
+        "Single_Line": "Single Line of Text",
+        "Number": "12345"
+      }
+    },
+    "body": {
+      "data": {
+        "Single_Line": "Single Line of Text",
+        "Number": "12345"
+      }
+    },
+    "response": {
+      "code": 3000,
+      "data": {
+        "Email": "jason@zylker.com",
+        "Single_Line": "Single Line of Text",
+        "ID": "3888833000000114027"
+      },
+      "message": "Data Updated Successfully!",
+      "tasks": {
+        "openurl": {
+          "type": "Same window",
+          "url": "http://www.zylker.com"
+        }
+      }
+    }
+  },
+  "update_records": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/update-records.html",
+    "method": "PATCH",
+    "path": "/data/jason18/zylker-store/report/All_Orders",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store",
+      "report_link_name": "All_Orders",
+      "data": {
+        "Single_Line": "Single Line of Text",
+        "Number": "12345"
+      },
+      "criteria": "Single_Line == \"Single Line of Text\""
+    },
+    "body": {
+      "data": {
+        "Single_Line": "Single Line of Text",
+        "Number": "12345"
+      },
+      "criteria": "Single_Line == \"Single Line of Text\""
+    },
+    "response": {
+      "result": [
+        {
+          "code": 3000,
+          "data": {
+            "Number": "12345",
+            "Single_Line": "Single Line of Text",
+            "ID": "3888833000000114023"
+          },
+          "message": "Data Updated Successfully!",
+          "tasks": {
+            "openurl": {
+              "type": "Same window",
+              "url": "http://www.zylker.com"
+            }
+          }
+        },
+        {
+          "code": 3000,
+          "data": {
+            "Number": "12345",
+            "Single_Line": "Single Line of Text",
+            "ID": "3888833000000114047"
+          },
+          "message": "Data Updated Successfully!",
+          "tasks": {
+            "openurl": {
+              "type": "Same window",
+              "url": "http://www.zylker.com"
+            }
+          }
+        },
+        {
+          "code": 3000,
+          "data": {
+            "Number": "12345",
+            "Single_Line": "Single Line of Text",
+            "ID": "3888833000000118019"
+          },
+          "message": "Data Updated Successfully!",
+          "tasks": {
+            "openurl": {
+              "type": "Same window",
+              "url": "http://www.zylker.com"
+            }
+          }
+        }
+      ],
+      "code": 3000
+    }
+  },
+  "delete_record": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/delete-specific-record.html",
+    "method": "DELETE",
+    "path": "/data/jason18/zylker-store/report/All_Orders/3888833000000114027",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store",
+      "report_link_name": "All_Orders",
+      "record_id": "3888833000000114027"
+    },
+    "body": null,
+    "response": {
+      "code": 3000,
+      "data": {
+        "ID": 3888833000000114027
+      },
+      "message": "Record Deleted Successfully!"
+    }
+  },
+  "delete_records": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/delete-records.html",
+    "method": "DELETE",
+    "path": "/data/jason18/zylker-store/report/All_Orders",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store",
+      "report_link_name": "All_Orders",
+      "criteria": "(Single_Line.contains(\"Single Line of Text\"))"
+    },
+    "body": {
+      "criteria": "(Single_Line.contains(\"Single Line of Text\"))"
+    },
+    "response": {
+      "result": [
+        {
+          "code": 3001,
+          "data": {
+            "ID": "3000000013011"
+          },
+          "error": [
+            "Failed to Delete Data."
+          ]
+        },
+        {
+          "code": 3000,
+          "data": {
+            "ID": "3000000015003"
+          },
+          "message": "Record Deleted Successfully!"
+        },
+        {
+          "code": 3000,
+          "data": {
+            "ID": "3000000015007"
+          },
+          "message": "Record Deleted Successfully!"
+        }
+      ],
+      "code": 3000
+    }
+  },
+  "create_bulk_read": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/bulk-api/create-bulk-read-job.html",
+    "method": "POST",
+    "path": "/bulk/jason18/zylker-store/report/All_Orders/read",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store",
+      "report_link_name": "All_Orders",
+      "max_records": 100000
+    },
+    "body": {
+      "query": {
+        "max_records": 100000
+      }
+    },
+    "response": {
+      "code": 3000,
+      "details": {
+        "created_time": "03-Sep-2021 14:55:46",
+        "id": "2000000018003",
+        "operation": "read",
+        "created_by": "jason18",
+        "status": "In-progress"
+      }
+    }
+  },
+  "get_bulk_read": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/bulk-api/get-the-status-of-the-bulk-read-job.html",
+    "method": "GET",
+    "path": "/bulk/jason18/zylker-store/report/All_Orders/read/2000000018003",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store",
+      "report_link_name": "All_Orders",
+      "job_id": "2000000018003"
+    },
+    "body": null,
+    "response": {
+      "code": 3000,
+      "details": {
+        "created_time": "06-Sep-2021 16:47:18",
+        "id": "2000000018003",
+        "operation": "read",
+        "created_by": "jason18",
+        "status": "In-progress"
+      }
+    }
+  },
+  "get_bulk_insert": {
+    "source": "https://www.zoho.com/creator/help/api/v2.1/bulk-insert-api/get-job-status.html",
+    "method": "GET",
+    "path": "/bulk/jason18/zylker-store/form/Employee_Details/insert/3888833000000114027",
+    "config": {
+      "account_owner_name": "jason18",
+      "app_link_name": "zylker-store",
+      "form_link_name": "Employee_Details",
+      "job_id": "3888833000000114027"
+    },
+    "body": null,
+    "response": {
+      "code": 3000,
+      "data": {
+        "api_status": "IN_PROGRESS",
+        "record_details": {
+          "total_records": 1,
+          "failed_records": 0,
+          "unprocessed_records": 0,
+          "success_records": 1
+        }
+      }
+    }
+  }
+}

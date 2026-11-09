@@ -1,0 +1,156 @@
+{
+  "contract": {
+    "file": "openapi.json",
+    "sha256": "94cd0d186ed989aaeed5c9a48e209564f44839096726551f5292a79400847a0e",
+    "version": "2.0",
+    "source_url": "https://creator.zoho.com/api/v2.1/downloadOAS",
+    "node_type": "automation-zoho-creator"
+  },
+  "verdict": {
+    "provider": "zoho-creator",
+    "ready": false,
+    "blocking": [
+      "list_applications: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "list_workspace_applications: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "list_forms: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "list_reports: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "list_pages: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "list_sections: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "list_fields: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "list_records: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "get_record: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "add_records: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "update_record: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "update_records: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "delete_record: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "delete_records: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "create_bulk_read: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "get_bulk_read: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'",
+      "get_bulk_insert: request: MissingRequiredParameter: Missing required path parameter: version / KeyError: 'version'"
+    ],
+    "advisory": [],
+    "stats": {
+      "operations": 17,
+      "skipped": 0,
+      "request_ok": 0,
+      "authored_parser_ok": 16,
+      "generated_only": 1,
+      "local_ok": 0
+    }
+  },
+  "spec_defects": [
+    {
+      "operation": "list_applications",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/get-applications.html"
+    },
+    {
+      "operation": "list_workspace_applications",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/get-workspace-applications.html"
+    },
+    {
+      "operation": "list_forms",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/get-forms.html"
+    },
+    {
+      "operation": "list_reports",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/get-reports.html"
+    },
+    {
+      "operation": "list_pages",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/get-pages.html"
+    },
+    {
+      "operation": "list_sections",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/get-sections.html"
+    },
+    {
+      "operation": "list_fields",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/get-fields.html"
+    },
+    {
+      "operation": "list_records",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/get-records.html"
+    },
+    {
+      "operation": "get_record",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/get-records-by-ID.html"
+    },
+    {
+      "operation": "add_records",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/add-records.html"
+    },
+    {
+      "operation": "update_record",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/update-specific-record.html"
+    },
+    {
+      "operation": "update_records",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/update-records.html"
+    },
+    {
+      "operation": "delete_record",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/delete-specific-record.html"
+    },
+    {
+      "operation": "delete_records",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/delete-records.html"
+    },
+    {
+      "operation": "create_bulk_read",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/bulk-api/create-bulk-read-job.html"
+    },
+    {
+      "operation": "get_bulk_read",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/bulk-api/get-the-status-of-the-bulk-read-job.html"
+    },
+    {
+      "operation": "get_bulk_insert",
+      "kind": "contract-defect",
+      "issue": "The OAS requires a path parameter named version although the path contains literal /creator/v2.1, with no {version} slot. The documented request URL and sample use the same literal route as the node.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/bulk-insert-api/get-job-status.html"
+    },
+    {
+      "operation": "delete_records",
+      "kind": "contract-defect",
+      "issue": "The response schema declares result[].data.ID as integer, but both the schema example and current provider docs use string IDs. The node preserves the provider JSON. The harness falls back to a generated response; the documented mixed-result response is tested through the node factory.",
+      "source": "https://www.zoho.com/creator/help/api/v2.1/delete-records.html"
+    }
+  ],
+  "notes": [
+    "The catalog preserves the immutable provider contract. Its required version path parameter is not a template slot in any documented route. All remaining verdict blocking items are this one provider specification defect.",
+    "Every implemented operation has a checked-in provider-published HTTP response and a factory transport test. The pinned delete-records response schema declares integer IDs but the documented per-row IDs are strings, so the harness falls back to a generated response for that operation; the documented mixed result is tested directly.",
+    "No live account, API credential or OAuth app registration was used. Self-hosted instances must configure ZOHO_CREATOR_CLIENT_ID, ZOHO_CREATOR_CLIENT_SECRET and ZOHO_CREATOR_REDIRECT_URI and register that callback with Zoho."
+  ]
+}

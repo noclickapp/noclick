@@ -1,0 +1,1017 @@
+{
+  "$defs": {
+    "ZohoCreatorAddRecordsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_records",
+          "default": "add_records",
+          "title": "Add Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Records",
+          "x-operation-kind": "write"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        },
+        "form_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Form link name",
+          "type": "string"
+        },
+        "data": {
+          "description": "Array of JSON objects keyed by field link name. Associated workflows run by default.",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Records",
+          "type": "array"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name",
+        "form_link_name",
+        "data"
+      ],
+      "title": "ZohoCreatorAddRecordsConfig",
+      "type": "object"
+    },
+    "ZohoCreatorCreateBulkReadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_bulk_read",
+          "default": "create_bulk_read",
+          "title": "Create Bulk Read Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Bulk Jobs",
+          "x-operation-kind": "write"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        },
+        "report_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Report link name",
+          "type": "string"
+        },
+        "criteria": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter criteria"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field link names"
+        },
+        "max_records": {
+          "default": 100000,
+          "maximum": 200000,
+          "minimum": 100000,
+          "title": "Maximum export records",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name",
+        "report_link_name"
+      ],
+      "title": "ZohoCreatorCreateBulkReadConfig",
+      "type": "object"
+    },
+    "ZohoCreatorDeleteRecordConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_record",
+          "default": "delete_record",
+          "title": "Delete Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Records",
+          "x-operation-kind": "write"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        },
+        "report_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Report link name",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name",
+        "report_link_name",
+        "record_id"
+      ],
+      "title": "ZohoCreatorDeleteRecordConfig",
+      "type": "object"
+    },
+    "ZohoCreatorDeleteRecordsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_records",
+          "default": "delete_records",
+          "title": "Delete Matching Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Records",
+          "x-operation-kind": "write"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        },
+        "report_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Report link name",
+          "type": "string"
+        },
+        "criteria": {
+          "description": "Zoho criteria, for example Email == \"jason@zylker.com\". Required for mutations; these affect up to 200 matching records.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Filter criteria",
+          "type": "string"
+        },
+        "process_until_limit": {
+          "default": false,
+          "title": "Process first 200 matches",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name",
+        "report_link_name",
+        "criteria"
+      ],
+      "title": "ZohoCreatorDeleteRecordsConfig",
+      "type": "object"
+    },
+    "ZohoCreatorGetBulkInsertConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_bulk_insert",
+          "default": "get_bulk_insert",
+          "title": "Get Bulk Insert Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Bulk Jobs",
+          "x-operation-kind": "read"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        },
+        "form_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Form link name",
+          "type": "string"
+        },
+        "job_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Bulk job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name",
+        "form_link_name",
+        "job_id"
+      ],
+      "title": "ZohoCreatorGetBulkInsertConfig",
+      "type": "object"
+    },
+    "ZohoCreatorGetBulkReadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_bulk_read",
+          "default": "get_bulk_read",
+          "title": "Get Bulk Read Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Bulk Jobs",
+          "x-operation-kind": "read"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        },
+        "report_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Report link name",
+          "type": "string"
+        },
+        "job_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Bulk job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name",
+        "report_link_name",
+        "job_id"
+      ],
+      "title": "ZohoCreatorGetBulkReadConfig",
+      "type": "object"
+    },
+    "ZohoCreatorGetRecordConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_record",
+          "default": "get_record",
+          "title": "Get Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Records",
+          "x-operation-kind": "read"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        },
+        "report_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Report link name",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "field_config": {
+          "anyOf": [
+            {
+              "enum": [
+                "quick_view",
+                "detail_view",
+                "custom",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field selection",
+          "enum": [
+            "quick_view",
+            "detail_view",
+            "custom",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used with custom field selection.",
+          "title": "Field link names"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name",
+        "report_link_name",
+        "record_id"
+      ],
+      "title": "ZohoCreatorGetRecordConfig",
+      "type": "object"
+    },
+    "ZohoCreatorListApplicationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_applications",
+          "default": "list_applications",
+          "title": "List Applications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Applications",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "ZohoCreatorListApplicationsConfig",
+      "type": "object"
+    },
+    "ZohoCreatorListFieldsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "List Form Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Metadata",
+          "x-operation-kind": "read"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        },
+        "form_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Form link name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name",
+        "form_link_name"
+      ],
+      "title": "ZohoCreatorListFieldsConfig",
+      "type": "object"
+    },
+    "ZohoCreatorListFormsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "List Forms",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Metadata",
+          "x-operation-kind": "read"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name"
+      ],
+      "title": "ZohoCreatorListFormsConfig",
+      "type": "object"
+    },
+    "ZohoCreatorListPagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_pages",
+          "default": "list_pages",
+          "title": "List Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Metadata",
+          "x-operation-kind": "read"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name"
+      ],
+      "title": "ZohoCreatorListPagesConfig",
+      "type": "object"
+    },
+    "ZohoCreatorListRecordsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_records",
+          "default": "list_records",
+          "title": "List or Search Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Records",
+          "x-operation-kind": "read"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        },
+        "report_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Report link name",
+          "type": "string"
+        },
+        "field_config": {
+          "anyOf": [
+            {
+              "enum": [
+                "quick_view",
+                "detail_view",
+                "custom",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field selection",
+          "enum": [
+            "quick_view",
+            "detail_view",
+            "custom",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used with custom field selection.",
+          "title": "Field link names"
+        },
+        "criteria": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter criteria"
+        },
+        "max_records": {
+          "default": 200,
+          "enum": [
+            200,
+            500,
+            1000
+          ],
+          "title": "Page size",
+          "type": "integer"
+        },
+        "record_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use the returned record_cursor with the same report and filters for the next page.",
+          "title": "Record cursor"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name",
+        "report_link_name"
+      ],
+      "title": "ZohoCreatorListRecordsConfig",
+      "type": "object"
+    },
+    "ZohoCreatorListReportsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_reports",
+          "default": "list_reports",
+          "title": "List Reports",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Metadata",
+          "x-operation-kind": "read"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name"
+      ],
+      "title": "ZohoCreatorListReportsConfig",
+      "type": "object"
+    },
+    "ZohoCreatorListSectionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sections",
+          "default": "list_sections",
+          "title": "List Sections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Metadata",
+          "x-operation-kind": "read"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name"
+      ],
+      "title": "ZohoCreatorListSectionsConfig",
+      "type": "object"
+    },
+    "ZohoCreatorListWorkspaceApplicationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_workspace_applications",
+          "default": "list_workspace_applications",
+          "title": "List Workspace Applications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Applications",
+          "x-operation-kind": "read"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_owner_name"
+      ],
+      "title": "ZohoCreatorListWorkspaceApplicationsConfig",
+      "type": "object"
+    },
+    "ZohoCreatorOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zoho_creator_oauth",
+          "default": "zoho_creator_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "minLength": 1,
+          "title": "Refresh token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "description": "ISO 8601 UTC timestamp at which the access token expires.",
+          "title": "Token expiry",
+          "type": "string"
+        },
+        "accounts_server": {
+          "description": "Regional Zoho accounts origin, such as https://accounts.zoho.com.",
+          "title": "Accounts server",
+          "type": "string"
+        },
+        "api_domain": {
+          "description": "api_domain from the token response, such as https://www.zohoapis.com.",
+          "title": "API domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "accounts_server",
+        "api_domain"
+      ],
+      "title": "Zoho Creator OAuth",
+      "type": "object",
+      "x-credential-instructions": "Sign in with Zoho to grant access to Creator apps and records. For a manual connection, supply an existing OAuth access token and its refresh token, expiry, accounts server and API domain. Mutations run the app's associated workflows by default.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://api-console.zoho.com/",
+      "x-oauth-provider": "zoho_creator",
+      "x-oauth-scopes": [
+        "ZohoCreator.bulk.CREATE",
+        "ZohoCreator.bulk.READ",
+        "ZohoCreator.dashboard.READ",
+        "ZohoCreator.form.CREATE",
+        "ZohoCreator.meta.application.READ",
+        "ZohoCreator.meta.form.READ",
+        "ZohoCreator.report.DELETE",
+        "ZohoCreator.report.READ",
+        "ZohoCreator.report.UPDATE",
+        "aaaserver.profile.READ"
+      ]
+    },
+    "ZohoCreatorUpdateRecordConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_record",
+          "default": "update_record",
+          "title": "Update Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Records",
+          "x-operation-kind": "write"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        },
+        "report_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Report link name",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": true,
+          "description": "JSON object mapping field link names to values.",
+          "minProperties": 1,
+          "title": "Record fields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name",
+        "report_link_name",
+        "record_id",
+        "data"
+      ],
+      "title": "ZohoCreatorUpdateRecordConfig",
+      "type": "object"
+    },
+    "ZohoCreatorUpdateRecordsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_records",
+          "default": "update_records",
+          "title": "Update Matching Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Records",
+          "x-operation-kind": "write"
+        },
+        "account_owner_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account owner / workspace name",
+          "type": "string"
+        },
+        "app_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Application link name",
+          "type": "string"
+        },
+        "report_link_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Report link name",
+          "type": "string"
+        },
+        "criteria": {
+          "description": "Zoho criteria, for example Email == \"jason@zylker.com\". Required for mutations; these affect up to 200 matching records.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Filter criteria",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": true,
+          "description": "JSON object mapping field link names to values.",
+          "minProperties": 1,
+          "title": "Record fields",
+          "type": "object"
+        },
+        "process_until_limit": {
+          "default": false,
+          "description": "When enabled, update the first 200 matches and inspect more_records before continuing.",
+          "title": "Process first 200 matches",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "account_owner_name",
+        "app_link_name",
+        "report_link_name",
+        "criteria",
+        "data"
+      ],
+      "title": "ZohoCreatorUpdateRecordsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_records": "#/$defs/ZohoCreatorAddRecordsConfig",
+          "create_bulk_read": "#/$defs/ZohoCreatorCreateBulkReadConfig",
+          "delete_record": "#/$defs/ZohoCreatorDeleteRecordConfig",
+          "delete_records": "#/$defs/ZohoCreatorDeleteRecordsConfig",
+          "get_bulk_insert": "#/$defs/ZohoCreatorGetBulkInsertConfig",
+          "get_bulk_read": "#/$defs/ZohoCreatorGetBulkReadConfig",
+          "get_record": "#/$defs/ZohoCreatorGetRecordConfig",
+          "list_applications": "#/$defs/ZohoCreatorListApplicationsConfig",
+          "list_fields": "#/$defs/ZohoCreatorListFieldsConfig",
+          "list_forms": "#/$defs/ZohoCreatorListFormsConfig",
+          "list_pages": "#/$defs/ZohoCreatorListPagesConfig",
+          "list_records": "#/$defs/ZohoCreatorListRecordsConfig",
+          "list_reports": "#/$defs/ZohoCreatorListReportsConfig",
+          "list_sections": "#/$defs/ZohoCreatorListSectionsConfig",
+          "list_workspace_applications": "#/$defs/ZohoCreatorListWorkspaceApplicationsConfig",
+          "update_record": "#/$defs/ZohoCreatorUpdateRecordConfig",
+          "update_records": "#/$defs/ZohoCreatorUpdateRecordsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ZohoCreatorListApplicationsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorListWorkspaceApplicationsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorListFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorListReportsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorListPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorListSectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorListRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorGetRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorAddRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorUpdateRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorUpdateRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorDeleteRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorDeleteRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorCreateBulkReadConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorGetBulkReadConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoCreatorGetBulkInsertConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZohoCreatorOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zoho-creator Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add records to a Zoho Creator form",
+    "Find Zoho Creator records",
+    "Update a Zoho Creator record"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
