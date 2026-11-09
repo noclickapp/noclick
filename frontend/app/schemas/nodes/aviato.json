@@ -1,0 +1,1547 @@
+{
+  "$defs": {
+    "AviatoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "aviato_api_key",
+          "default": "aviato_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Aviato API Key",
+      "type": "object",
+      "x-credential-instructions": "Select your Aviato team, open API Keys, and create a key. Paste the key without the Bearer prefix. Enrichment, contact and search requests may spend your team's credits.",
+      "x-credential-url": "https://data.aviato.co/dashboard/teams",
+      "x-help-url": "https://docs.data.aviato.co/intro/introduction-auth"
+    },
+    "AviatoBulkEnrichCompaniesConfig": {
+      "additionalProperties": false,
+      "description": "Get enriched details on multiple companies.",
+      "properties": {
+        "lookups": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/CompanyLookup"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "type": "array"
+          },
+          "description": "JSON array of company lookup objects (id, website or linkedinURL); at most 100.",
+          "title": "Lookups",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "required_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Fields"
+        },
+        "operation": {
+          "const": "bulk_enrich_companies",
+          "default": "bulk_enrich_companies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookups"
+      ],
+      "title": "AviatoBulkEnrichCompaniesConfig",
+      "type": "object"
+    },
+    "AviatoBulkEnrichPeopleConfig": {
+      "additionalProperties": false,
+      "description": "Get enriched details on multiple people at once. Max 20 at a time",
+      "properties": {
+        "lookups": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/PersonLookup"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "type": "array"
+          },
+          "description": "JSON array of person lookup objects (id, linkedinURL or email); at most 20.",
+          "title": "Lookups",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preview"
+        },
+        "required_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Fields"
+        },
+        "operation": {
+          "const": "bulk_enrich_people",
+          "default": "bulk_enrich_people",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookups"
+      ],
+      "title": "AviatoBulkEnrichPeopleConfig",
+      "type": "object"
+    },
+    "AviatoBulkGetContactInfoConfig": {
+      "additionalProperties": false,
+      "description": "Get contact info (emails, phones) for multiple people at once. Max 100 at a time. Only charges credits for people with contact data found.",
+      "properties": {
+        "lookups": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/PersonLookup"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "type": "array"
+          },
+          "description": "JSON array of person lookup objects (id, linkedinURL or email); at most 20.",
+          "title": "Lookups",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "bulk_get_contact_info",
+          "default": "bulk_get_contact_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookups"
+      ],
+      "title": "AviatoBulkGetContactInfoConfig",
+      "type": "object"
+    },
+    "AviatoDSL": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Sort",
+          "type": "array"
+        },
+        "filters": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Filters",
+          "type": "array"
+        },
+        "nameQuery": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namequery"
+        }
+      },
+      "title": "AviatoDSL",
+      "type": "object"
+    },
+    "AviatoEnrichCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Get enriched details on a company",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato company ID, website or LinkedIn URL, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "website",
+            "linkedinURL",
+            "linkedinID",
+            "linkedinNumID",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "required_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Require these top-level response fields to be nonempty, or return 404 without charging.",
+          "title": "Required Fields"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only return identification information without charging a credit.",
+          "title": "Preview"
+        },
+        "full": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include relational data such as funding and founders.",
+          "title": "Full"
+        },
+        "operation": {
+          "const": "enrich_company",
+          "default": "enrich_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoEnrichCompanyConfig",
+      "type": "object"
+    },
+    "AviatoEnrichPersonConfig": {
+      "additionalProperties": false,
+      "description": "Get enriched details on a person.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato person ID, LinkedIn URL or email, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "linkedinURL",
+            "email",
+            "linkedinID",
+            "linkedinEntityId",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only return identification information without charging a credit.",
+          "title": "Preview"
+        },
+        "full": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include investments and founded companies.",
+          "title": "Full"
+        },
+        "required_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Fields"
+        },
+        "operation": {
+          "const": "enrich_person",
+          "default": "enrich_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoEnrichPersonConfig",
+      "type": "object"
+    },
+    "AviatoGenerateMarketMapConfig": {
+      "additionalProperties": false,
+      "description": "Start generating a market map to find similar companies. You can supply either both name and website, or alternatively, an Aviato company ID.",
+      "properties": {
+        "company_id": {
+          "description": "Aviato company ID to generate a market map for. Returns mapID; use Get Market Map to retrieve the result.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Company Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "generate_market_map",
+          "default": "generate_market_map",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "AviatoGenerateMarketMapConfig",
+      "type": "object"
+    },
+    "AviatoGetBalanceConfig": {
+      "additionalProperties": false,
+      "description": "Get the credit balance for the team.",
+      "properties": {
+        "operation": {
+          "const": "get_balance",
+          "default": "get_balance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "AviatoGetBalanceConfig",
+      "type": "object"
+    },
+    "AviatoGetCompanyAcquisitionsConfig": {
+      "additionalProperties": false,
+      "description": "Get the companies that have been acquired by the specified company.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato company ID, website or LinkedIn URL, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "website",
+            "linkedinURL",
+            "linkedinID",
+            "linkedinNumID",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "description": "Page number, starting at zero. Fetch one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_company_acquisitions",
+          "default": "get_company_acquisitions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetCompanyAcquisitionsConfig",
+      "type": "object"
+    },
+    "AviatoGetCompanyEmployeesConfig": {
+      "additionalProperties": false,
+      "description": "Get the employees of the specified company.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato company ID, website or LinkedIn URL, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "website",
+            "linkedinURL",
+            "linkedinID",
+            "linkedinNumID",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "description": "Page number, starting at zero. Fetch one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_company_employees",
+          "default": "get_company_employees",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetCompanyEmployeesConfig",
+      "type": "object"
+    },
+    "AviatoGetCompanyFinancialsConfig": {
+      "additionalProperties": false,
+      "description": "Get a company's financial information, including the estimated annual revenue range. Returns 404 without charging when no category data is available.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato company ID, website or LinkedIn URL, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "website",
+            "linkedinURL",
+            "linkedinID",
+            "linkedinNumID",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "required_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Require these top-level response fields to be nonempty, or return 404 without charging.",
+          "title": "Required Fields"
+        },
+        "operation": {
+          "const": "get_company_financials",
+          "default": "get_company_financials",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetCompanyFinancialsConfig",
+      "type": "object"
+    },
+    "AviatoGetCompanyFoundersConfig": {
+      "additionalProperties": false,
+      "description": "Get the founders of the specified company.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato company ID, website or LinkedIn URL, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "website",
+            "linkedinURL",
+            "linkedinID",
+            "linkedinNumID",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "description": "Page number, starting at zero. Fetch one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_company_founders",
+          "default": "get_company_founders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetCompanyFoundersConfig",
+      "type": "object"
+    },
+    "AviatoGetCompanyFundingRoundsConfig": {
+      "additionalProperties": false,
+      "description": "Get the funding rounds of the specified company.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato company ID, website or LinkedIn URL, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "website",
+            "linkedinURL",
+            "linkedinID",
+            "linkedinNumID",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "description": "Page number, starting at zero. Fetch one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_company_funding_rounds",
+          "default": "get_company_funding_rounds",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetCompanyFundingRoundsConfig",
+      "type": "object"
+    },
+    "AviatoGetCompanyInvestmentsConfig": {
+      "additionalProperties": false,
+      "description": "Get a list of the investments made into the specified company.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato company ID, website or LinkedIn URL, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "website",
+            "linkedinURL",
+            "linkedinID",
+            "linkedinNumID",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "description": "Page number, starting at zero. Fetch one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_company_investments",
+          "default": "get_company_investments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetCompanyInvestmentsConfig",
+      "type": "object"
+    },
+    "AviatoGetCompanyLegalConfig": {
+      "additionalProperties": false,
+      "description": "Get a company's legal identifiers and registered name. Returns 404 without charging when no category data is available.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato company ID, website or LinkedIn URL, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "website",
+            "linkedinURL",
+            "linkedinID",
+            "linkedinNumID",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "required_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Require these top-level response fields to be nonempty, or return 404 without charging.",
+          "title": "Required Fields"
+        },
+        "operation": {
+          "const": "get_company_legal",
+          "default": "get_company_legal",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetCompanyLegalConfig",
+      "type": "object"
+    },
+    "AviatoGetCompanySocialMetricsConfig": {
+      "additionalProperties": false,
+      "description": "Get a company's social audience counts and growth metrics. Returns 404 without charging when no category data is available.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato company ID, website or LinkedIn URL, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "website",
+            "linkedinURL",
+            "linkedinID",
+            "linkedinNumID",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "required_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Require these top-level response fields to be nonempty, or return 404 without charging.",
+          "title": "Required Fields"
+        },
+        "operation": {
+          "const": "get_company_social_metrics",
+          "default": "get_company_social_metrics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetCompanySocialMetricsConfig",
+      "type": "object"
+    },
+    "AviatoGetCompanyWebTrafficConfig": {
+      "additionalProperties": false,
+      "description": "Get a company's web traffic history, sources, and visitor geography. Returns 404 without charging when no category data is available.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato company ID, website or LinkedIn URL, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "website",
+            "linkedinURL",
+            "linkedinID",
+            "linkedinNumID",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "required_fields": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Require these top-level response fields to be nonempty, or return 404 without charging.",
+          "title": "Required Fields"
+        },
+        "operation": {
+          "const": "get_company_web_traffic",
+          "default": "get_company_web_traffic",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetCompanyWebTrafficConfig",
+      "type": "object"
+    },
+    "AviatoGetMarketMapConfig": {
+      "additionalProperties": false,
+      "description": "Fetch the data for the generated market map.",
+      "properties": {
+        "map_id": {
+          "description": "mapID returned by Generate Market Map.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Map Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_market_map",
+          "default": "get_market_map",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "map_id"
+      ],
+      "title": "AviatoGetMarketMapConfig",
+      "type": "object"
+    },
+    "AviatoGetPersonCompanyInvestmentsConfig": {
+      "additionalProperties": false,
+      "description": "Get the companies that a person has invested in, along with investment info.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato person ID, LinkedIn URL or email, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "linkedinURL",
+            "email",
+            "linkedinID",
+            "linkedinEntityId",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "description": "Page number, starting at zero. Fetch one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_person_company_investments",
+          "default": "get_person_company_investments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetPersonCompanyInvestmentsConfig",
+      "type": "object"
+    },
+    "AviatoGetPersonContactInfoConfig": {
+      "additionalProperties": false,
+      "description": "Pull a person's contact info",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato person ID, LinkedIn URL or email, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "linkedinURL",
+            "email",
+            "linkedinID",
+            "linkedinEntityId",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "email_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "personal",
+                "work",
+                "student"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to return all email types.",
+          "title": "Email Type",
+          "enum": [
+            "personal",
+            "work",
+            "student"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "get_person_contact_info",
+          "default": "get_person_contact_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetPersonContactInfoConfig",
+      "type": "object"
+    },
+    "AviatoGetPersonEmailConfig": {
+      "additionalProperties": false,
+      "description": "Get a person's email addresses.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato person ID, LinkedIn URL or email, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "linkedinURL",
+            "email",
+            "linkedinID",
+            "linkedinEntityId",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "email_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "personal",
+                "work",
+                "student"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to return all email types.",
+          "title": "Email Type",
+          "enum": [
+            "personal",
+            "work",
+            "student"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "get_person_email",
+          "default": "get_person_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetPersonEmailConfig",
+      "type": "object"
+    },
+    "AviatoGetPersonFoundedCompaniesConfig": {
+      "additionalProperties": false,
+      "description": "Get the companies that a person has founded.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato person ID, LinkedIn URL or email, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "linkedinURL",
+            "email",
+            "linkedinID",
+            "linkedinEntityId",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "description": "Page number, starting at zero. Fetch one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_person_founded_companies",
+          "default": "get_person_founded_companies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetPersonFoundedCompaniesConfig",
+      "type": "object"
+    },
+    "AviatoGetPersonFundInvestmentsConfig": {
+      "additionalProperties": false,
+      "description": "Get the funds that a person has invested in.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato person ID, LinkedIn URL or email, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "linkedinURL",
+            "email",
+            "linkedinID",
+            "linkedinEntityId",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "description": "Page number, starting at zero. Fetch one page per execution.",
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_person_fund_investments",
+          "default": "get_person_fund_investments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetPersonFundInvestmentsConfig",
+      "type": "object"
+    },
+    "AviatoGetPersonPhoneConfig": {
+      "additionalProperties": false,
+      "description": "Get a person's phone numbers.",
+      "properties": {
+        "lookup_value": {
+          "description": "Aviato person ID, LinkedIn URL or email, according to Lookup by.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Lookup Value",
+          "type": "string"
+        },
+        "lookup_by": {
+          "default": "id",
+          "enum": [
+            "id",
+            "linkedinURL",
+            "email",
+            "linkedinID",
+            "linkedinEntityId",
+            "crunchbaseID"
+          ],
+          "title": "Lookup By",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_person_phone",
+          "default": "get_person_phone",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lookup_value"
+      ],
+      "title": "AviatoGetPersonPhoneConfig",
+      "type": "object"
+    },
+    "AviatoSearchCompaniesConfig": {
+      "additionalProperties": false,
+      "description": "Search using the Aviato DSL. There is no application clause-count cap.",
+      "properties": {
+        "dsl": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "$ref": "#/$defs/AviatoDSL"
+          },
+          "description": "Aviato DSL JSON: offset (0\u201310000), limit (1\u2013250), sort and filters arrays; optional nameQuery. Returns one page. See https://docs.data.aviato.co/aviato-dsl/aviato-dsl-v-1",
+          "title": "Dsl",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "search_companies",
+          "default": "search_companies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "dsl"
+      ],
+      "title": "AviatoSearchCompaniesConfig",
+      "type": "object"
+    },
+    "AviatoSearchPeopleConfig": {
+      "additionalProperties": false,
+      "description": "Search for people using the Aviato DSL. See the [DSL documentation](/aviato-dsl/aviato-dsl-v-1).",
+      "properties": {
+        "dsl": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "$ref": "#/$defs/AviatoDSL"
+          },
+          "description": "Aviato DSL JSON: offset (0\u201310000), limit (1\u2013250), sort and filters arrays; optional nameQuery. Returns one page. See https://docs.data.aviato.co/aviato-dsl/aviato-dsl-v-1",
+          "title": "Dsl",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "search_people",
+          "default": "search_people",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "dsl"
+      ],
+      "title": "AviatoSearchPeopleConfig",
+      "type": "object"
+    },
+    "CompanyLookup": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "linkedinURL": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linkedinurl"
+        }
+      },
+      "title": "CompanyLookup",
+      "type": "object"
+    },
+    "PersonLookup": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "linkedinURL": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linkedinurl"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "PersonLookup",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "bulk_enrich_companies": "#/$defs/AviatoBulkEnrichCompaniesConfig",
+          "bulk_enrich_people": "#/$defs/AviatoBulkEnrichPeopleConfig",
+          "bulk_get_contact_info": "#/$defs/AviatoBulkGetContactInfoConfig",
+          "enrich_company": "#/$defs/AviatoEnrichCompanyConfig",
+          "enrich_person": "#/$defs/AviatoEnrichPersonConfig",
+          "generate_market_map": "#/$defs/AviatoGenerateMarketMapConfig",
+          "get_balance": "#/$defs/AviatoGetBalanceConfig",
+          "get_company_acquisitions": "#/$defs/AviatoGetCompanyAcquisitionsConfig",
+          "get_company_employees": "#/$defs/AviatoGetCompanyEmployeesConfig",
+          "get_company_financials": "#/$defs/AviatoGetCompanyFinancialsConfig",
+          "get_company_founders": "#/$defs/AviatoGetCompanyFoundersConfig",
+          "get_company_funding_rounds": "#/$defs/AviatoGetCompanyFundingRoundsConfig",
+          "get_company_investments": "#/$defs/AviatoGetCompanyInvestmentsConfig",
+          "get_company_legal": "#/$defs/AviatoGetCompanyLegalConfig",
+          "get_company_social_metrics": "#/$defs/AviatoGetCompanySocialMetricsConfig",
+          "get_company_web_traffic": "#/$defs/AviatoGetCompanyWebTrafficConfig",
+          "get_market_map": "#/$defs/AviatoGetMarketMapConfig",
+          "get_person_company_investments": "#/$defs/AviatoGetPersonCompanyInvestmentsConfig",
+          "get_person_contact_info": "#/$defs/AviatoGetPersonContactInfoConfig",
+          "get_person_email": "#/$defs/AviatoGetPersonEmailConfig",
+          "get_person_founded_companies": "#/$defs/AviatoGetPersonFoundedCompaniesConfig",
+          "get_person_fund_investments": "#/$defs/AviatoGetPersonFundInvestmentsConfig",
+          "get_person_phone": "#/$defs/AviatoGetPersonPhoneConfig",
+          "search_companies": "#/$defs/AviatoSearchCompaniesConfig",
+          "search_people": "#/$defs/AviatoSearchPeopleConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AviatoGetBalanceConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoEnrichCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetCompanyFinancialsConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetCompanySocialMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetCompanyWebTrafficConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetCompanyLegalConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoBulkEnrichCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetCompanyAcquisitionsConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetCompanyFoundersConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetCompanyInvestmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetCompanyFundingRoundsConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetCompanyEmployeesConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoSearchCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoEnrichPersonConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetPersonContactInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetPersonEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetPersonPhoneConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoBulkEnrichPeopleConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoBulkGetContactInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoSearchPeopleConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetPersonCompanyInvestmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetPersonFundInvestmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetPersonFoundedCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGenerateMarketMapConfig"
+        },
+        {
+          "$ref": "#/$defs/AviatoGetMarketMapConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AviatoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Aviato Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
