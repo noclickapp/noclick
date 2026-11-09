@@ -1,0 +1,1180 @@
+{
+  "$defs": {
+    "FormsparkAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "formspark_api_token",
+          "default": "formspark_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Formspark API Token",
+      "type": "object",
+      "x-credential-instructions": "Create an API token in the Formspark dashboard under API tokens and paste it here without the Bearer prefix. Include workspaces:read for the connection check, plus forms:read, forms:write, submissions:read, submissions:write or workspaces:write for the operations you use. Form and submission access requires an upgraded workspace. Tokens expire unless you choose Never; replace expired or revoked tokens manually.",
+      "x-credential-url": "https://dashboard.formspark.io/"
+    },
+    "FormsparkCreateFormConfig": {
+      "additionalProperties": false,
+      "description": "Create a form.",
+      "properties": {
+        "operation": {
+          "const": "create_form",
+          "default": "create_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "technology": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Technology"
+        },
+        "notificationEmails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Complete replacement list of notification email addresses (at most 100).",
+          "title": "Notificationemails"
+        },
+        "emailThreading": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailthreading"
+        },
+        "automaticSpamFilter": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether submissions to this form are screened by the automatic spam filter. Defaults to true. Setting it to false stores every submission, including the ones the filter would have held back, and each of those counts against the workspace's quota.",
+          "title": "Automaticspamfilter"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where each submission is delivered. Must be an http or https URL, and must resolve to a public address when called.",
+          "title": "Webhookurl"
+        },
+        "slackChannel": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slackchannel"
+        },
+        "customHoneypot": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customhoneypot"
+        },
+        "customSpamWords": {
+          "anyOf": [
+            {
+              "maxLength": 2560,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customspamwords",
+          "ui:widget": "textarea"
+        },
+        "allowedDomains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The sites a submission may be sent from. Each entry also covers its subdomains, and a pasted address is reduced to its host. Once the list is set, a submission must carry an Origin or Referer header naming one of them, so a server-side request is rejected unless it sends one. An empty list or null accepts submissions from anywhere.",
+          "title": "Alloweddomains"
+        },
+        "spamProtection": {
+          "anyOf": [
+            {
+              "enum": [
+                "BOTPOISON",
+                "GOOGLE_RECAPTCHA_V2",
+                "HCAPTCHA",
+                "TURNSTILE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The challenge a submitter must pass. Requires the provider's secret key, stored on the form earlier or sent in the same request. Null disables it.",
+          "title": "Spamprotection",
+          "enum": [
+            "BOTPOISON",
+            "GOOGLE_RECAPTCHA_V2",
+            "HCAPTCHA",
+            "TURNSTILE"
+          ],
+          "x-enum-searchable": true
+        },
+        "botpoisonSecretKey": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Botpoison secret key the form verifies challenges with. Write-only: it is stored on the form and never returned. Null removes it, which is refused while the form's spamProtection uses it.",
+          "title": "Botpoisonsecretkey",
+          "ui:widget": "password"
+        },
+        "recaptchaV2SecretKey": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The reCAPTCHA v2 secret key the form verifies challenges with. Write-only: it is stored on the form and never returned. Null removes it, which is refused while the form's spamProtection uses it.",
+          "title": "Recaptchav2Secretkey",
+          "ui:widget": "password"
+        },
+        "hCaptchaSecretKey": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The hCaptcha secret key the form verifies challenges with. Write-only: it is stored on the form and never returned. Null removes it, which is refused while the form's spamProtection uses it.",
+          "title": "Hcaptchasecretkey",
+          "ui:widget": "password"
+        },
+        "turnstileSecretKey": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Turnstile secret key the form verifies challenges with. Write-only: it is stored on the form and never returned. Null removes it, which is refused while the form's spamProtection uses it.",
+          "title": "Turnstilesecretkey",
+          "ui:widget": "password"
+        },
+        "workspaceId": {
+          "minLength": 1,
+          "title": "Workspaceid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "workspaceId"
+      ],
+      "title": "FormsparkCreateFormConfig",
+      "type": "object"
+    },
+    "FormsparkCreateWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "Create a workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_workspace",
+          "default": "create_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "FormsparkCreateWorkspaceConfig",
+      "type": "object"
+    },
+    "FormsparkDeleteFormConfig": {
+      "additionalProperties": false,
+      "description": "Delete a form and all of its submissions.",
+      "properties": {
+        "operation": {
+          "const": "delete_form",
+          "default": "delete_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "formId": {
+          "minLength": 1,
+          "title": "Formid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormsparkDeleteFormConfig",
+      "type": "object"
+    },
+    "FormsparkDeleteSubmissionConfig": {
+      "additionalProperties": false,
+      "description": "Delete a submission.",
+      "properties": {
+        "operation": {
+          "const": "delete_submission",
+          "default": "delete_submission",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "submissionId": {
+          "minLength": 1,
+          "title": "Submissionid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "submissionId"
+      ],
+      "title": "FormsparkDeleteSubmissionConfig",
+      "type": "object"
+    },
+    "FormsparkDeleteTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Delete a template: notifications revert to default; autoresponder replies stop.",
+      "properties": {
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "formId": {
+          "minLength": 1,
+          "title": "Formid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "notification",
+            "autoresponder"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "formId",
+        "kind"
+      ],
+      "title": "FormsparkDeleteTemplateConfig",
+      "type": "object"
+    },
+    "FormsparkGetFormConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a form.",
+      "properties": {
+        "operation": {
+          "const": "get_form",
+          "default": "get_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "formId": {
+          "minLength": 1,
+          "title": "Formid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormsparkGetFormConfig",
+      "type": "object"
+    },
+    "FormsparkGetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a form's email template.",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "formId": {
+          "minLength": 1,
+          "title": "Formid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "notification",
+            "autoresponder"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "formId",
+        "kind"
+      ],
+      "title": "FormsparkGetTemplateConfig",
+      "type": "object"
+    },
+    "FormsparkGetTokenConfig": {
+      "additionalProperties": false,
+      "description": "Describe the current token.",
+      "properties": {
+        "operation": {
+          "const": "get_token",
+          "default": "get_token",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FormsparkGetTokenConfig",
+      "type": "object"
+    },
+    "FormsparkListFormSubmissionsConfig": {
+      "additionalProperties": false,
+      "description": "List a form's submissions, excluding spam and deleted submissions.",
+      "properties": {
+        "operation": {
+          "const": "list_form_submissions",
+          "default": "list_form_submissions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "formId": {
+          "minLength": 1,
+          "title": "Formid",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Limit"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous page; pass it unchanged. Keep the same filters.",
+          "title": "Startingafter"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormsparkListFormSubmissionsConfig",
+      "type": "object"
+    },
+    "FormsparkListFormsConfig": {
+      "additionalProperties": false,
+      "description": "List forms.",
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Limit"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous page; pass it unchanged. Keep the same filters.",
+          "title": "Startingafter"
+        },
+        "workspaceId": {
+          "minLength": 1,
+          "title": "Workspaceid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceId"
+      ],
+      "title": "FormsparkListFormsConfig",
+      "type": "object"
+    },
+    "FormsparkListWorkspaceSubmissionsConfig": {
+      "additionalProperties": false,
+      "description": "List submissions across a workspace, excluding spam and deleted submissions.",
+      "properties": {
+        "operation": {
+          "const": "list_workspace_submissions",
+          "default": "list_workspace_submissions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceId": {
+          "minLength": 1,
+          "title": "Workspaceid",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Limit"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous page; pass it unchanged. Keep the same filters.",
+          "title": "Startingafter"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "workspaceId"
+      ],
+      "title": "FormsparkListWorkspaceSubmissionsConfig",
+      "type": "object"
+    },
+    "FormsparkListWorkspacesConfig": {
+      "additionalProperties": false,
+      "description": "List workspaces.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Limit"
+        },
+        "startingAfter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque nextCursor from the previous page; pass it unchanged. Keep the same filters.",
+          "title": "Startingafter"
+        }
+      },
+      "title": "FormsparkListWorkspacesConfig",
+      "type": "object"
+    },
+    "FormsparkPreviewTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Preview a form's email template.",
+      "properties": {
+        "operation": {
+          "const": "preview_template",
+          "default": "preview_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "formId": {
+          "minLength": 1,
+          "title": "Formid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "notification",
+            "autoresponder"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stand-in submission data to render against. Defaults to example data derived from the form's own recent submissions.",
+          "title": "Data"
+        }
+      },
+      "required": [
+        "formId",
+        "kind"
+      ],
+      "title": "FormsparkPreviewTemplateConfig",
+      "type": "object"
+    },
+    "FormsparkUpdateFormConfig": {
+      "additionalProperties": false,
+      "description": "Update a form.",
+      "properties": {
+        "operation": {
+          "const": "update_form",
+          "default": "update_form",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "formId": {
+          "minLength": 1,
+          "title": "Formid",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "technology": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Technology"
+        },
+        "notificationEmails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Complete replacement list of notification email addresses (at most 100).",
+          "title": "Notificationemails"
+        },
+        "emailThreading": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailthreading"
+        },
+        "automaticSpamFilter": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether submissions to this form are screened by the automatic spam filter. Defaults to true. Setting it to false stores every submission, including the ones the filter would have held back, and each of those counts against the workspace's quota.",
+          "title": "Automaticspamfilter"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where each submission is delivered. Must be an http or https URL, and must resolve to a public address when called.",
+          "title": "Webhookurl"
+        },
+        "slackChannel": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slackchannel"
+        },
+        "customHoneypot": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customhoneypot"
+        },
+        "customSpamWords": {
+          "anyOf": [
+            {
+              "maxLength": 2560,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customspamwords",
+          "ui:widget": "textarea"
+        },
+        "allowedDomains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The sites a submission may be sent from. Each entry also covers its subdomains, and a pasted address is reduced to its host. Once the list is set, a submission must carry an Origin or Referer header naming one of them, so a server-side request is rejected unless it sends one. An empty list or null accepts submissions from anywhere.",
+          "title": "Alloweddomains"
+        },
+        "spamProtection": {
+          "anyOf": [
+            {
+              "enum": [
+                "BOTPOISON",
+                "GOOGLE_RECAPTCHA_V2",
+                "HCAPTCHA",
+                "TURNSTILE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The challenge a submitter must pass. Requires the provider's secret key, stored on the form earlier or sent in the same request. Null disables it.",
+          "title": "Spamprotection",
+          "enum": [
+            "BOTPOISON",
+            "GOOGLE_RECAPTCHA_V2",
+            "HCAPTCHA",
+            "TURNSTILE"
+          ],
+          "x-enum-searchable": true
+        },
+        "botpoisonSecretKey": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Botpoison secret key the form verifies challenges with. Write-only: it is stored on the form and never returned. Null removes it, which is refused while the form's spamProtection uses it.",
+          "title": "Botpoisonsecretkey",
+          "ui:widget": "password"
+        },
+        "recaptchaV2SecretKey": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The reCAPTCHA v2 secret key the form verifies challenges with. Write-only: it is stored on the form and never returned. Null removes it, which is refused while the form's spamProtection uses it.",
+          "title": "Recaptchav2Secretkey",
+          "ui:widget": "password"
+        },
+        "hCaptchaSecretKey": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The hCaptcha secret key the form verifies challenges with. Write-only: it is stored on the form and never returned. Null removes it, which is refused while the form's spamProtection uses it.",
+          "title": "Hcaptchasecretkey",
+          "ui:widget": "password"
+        },
+        "turnstileSecretKey": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Turnstile secret key the form verifies challenges with. Write-only: it is stored on the form and never returned. Null removes it, which is refused while the form's spamProtection uses it.",
+          "title": "Turnstilesecretkey",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "formId"
+      ],
+      "title": "FormsparkUpdateFormConfig",
+      "type": "object"
+    },
+    "FormsparkUpdateWorkspaceConfig": {
+      "additionalProperties": false,
+      "description": "Update a workspace.",
+      "properties": {
+        "operation": {
+          "const": "update_workspace",
+          "default": "update_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workspaceId": {
+          "minLength": 1,
+          "title": "Workspaceid",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspaceId",
+        "name"
+      ],
+      "title": "FormsparkUpdateWorkspaceConfig",
+      "type": "object"
+    },
+    "FormsparkWriteTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Write a form's email template.",
+      "properties": {
+        "operation": {
+          "const": "write_template",
+          "default": "write_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "formId": {
+          "minLength": 1,
+          "title": "Formid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "notification",
+            "autoresponder"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "maxLength": 262144,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTML with Handlebars placeholders. Replaces the visual layout; required to create a template. Writing an autoresponder enables replies. Check paused in the response.",
+          "title": "Code",
+          "ui:widget": "textarea"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 998,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave unset to keep the current subject; null or empty clears it to the default subject.",
+          "title": "Subject"
+        }
+      },
+      "required": [
+        "formId",
+        "kind"
+      ],
+      "title": "FormsparkWriteTemplateConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_form": "#/$defs/FormsparkCreateFormConfig",
+          "create_workspace": "#/$defs/FormsparkCreateWorkspaceConfig",
+          "delete_form": "#/$defs/FormsparkDeleteFormConfig",
+          "delete_submission": "#/$defs/FormsparkDeleteSubmissionConfig",
+          "delete_template": "#/$defs/FormsparkDeleteTemplateConfig",
+          "get_form": "#/$defs/FormsparkGetFormConfig",
+          "get_template": "#/$defs/FormsparkGetTemplateConfig",
+          "get_token": "#/$defs/FormsparkGetTokenConfig",
+          "list_form_submissions": "#/$defs/FormsparkListFormSubmissionsConfig",
+          "list_forms": "#/$defs/FormsparkListFormsConfig",
+          "list_workspace_submissions": "#/$defs/FormsparkListWorkspaceSubmissionsConfig",
+          "list_workspaces": "#/$defs/FormsparkListWorkspacesConfig",
+          "preview_template": "#/$defs/FormsparkPreviewTemplateConfig",
+          "update_form": "#/$defs/FormsparkUpdateFormConfig",
+          "update_workspace": "#/$defs/FormsparkUpdateWorkspaceConfig",
+          "write_template": "#/$defs/FormsparkWriteTemplateConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FormsparkGetTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkCreateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkUpdateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkListFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkCreateFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkGetFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkUpdateFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkDeleteFormConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkWriteTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkDeleteTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkPreviewTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkListFormSubmissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkListWorkspaceSubmissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormsparkDeleteSubmissionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FormsparkAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Formspark Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,272 @@
+{
+  "get_token": {
+    "config": {
+      "operation": "get_token"
+    },
+    "method": "GET",
+    "path": "/me",
+    "response": {
+      "name": "fixture",
+      "scopes": [],
+      "expiresAt": "2026-09-17T10:04:00.000Z",
+      "lastUsedAt": "2026-09-17T10:04:00.000Z",
+      "createdAt": "2026-09-17T10:04:00.000Z"
+    },
+    "http_status": 200
+  },
+  "list_workspaces": {
+    "config": {
+      "operation": "list_workspaces"
+    },
+    "method": "GET",
+    "path": "/workspaces",
+    "response": {
+      "data": [],
+      "hasMore": false,
+      "nextCursor": "fixture"
+    },
+    "http_status": 200
+  },
+  "create_workspace": {
+    "config": {
+      "operation": "create_workspace",
+      "name": "fixture"
+    },
+    "method": "POST",
+    "path": "/workspaces",
+    "response": {
+      "id": "fixture",
+      "name": "fixture",
+      "plan": "FREE",
+      "submissionsQuota": 25,
+      "createdAt": "2026-09-17T10:04:00.000Z",
+      "updatedAt": "2026-09-17T10:04:00.000Z"
+    },
+    "http_status": 201
+  },
+  "update_workspace": {
+    "config": {
+      "operation": "update_workspace",
+      "workspaceId": "fixture",
+      "name": "fixture"
+    },
+    "method": "PATCH",
+    "path": "/workspaces/{workspaceId}",
+    "response": {
+      "id": "fixture",
+      "name": "fixture",
+      "plan": "FREE",
+      "submissionsQuota": 25,
+      "createdAt": "2026-09-17T10:04:00.000Z",
+      "updatedAt": "2026-09-17T10:04:00.000Z"
+    },
+    "http_status": 200
+  },
+  "list_forms": {
+    "config": {
+      "operation": "list_forms",
+      "workspaceId": "fixture"
+    },
+    "method": "GET",
+    "path": "/forms",
+    "response": {
+      "data": [],
+      "hasMore": false,
+      "nextCursor": "fixture"
+    },
+    "http_status": 200
+  },
+  "create_form": {
+    "config": {
+      "operation": "create_form",
+      "name": "fixture",
+      "workspaceId": "fixture"
+    },
+    "method": "POST",
+    "path": "/forms",
+    "response": {
+      "id": "fixture",
+      "name": "fixture",
+      "description": "fixture",
+      "technology": "fixture",
+      "workspaceId": "fixture",
+      "notificationEmails": [],
+      "emailThreading": false,
+      "automaticSpamFilter": false,
+      "webhookUrl": "fixture",
+      "slackChannel": "fixture",
+      "customHoneypot": "fixture",
+      "customSpamWords": "fixture",
+      "allowedDomains": [],
+      "spamProtection": "BOTPOISON",
+      "createdAt": "2026-09-17T10:04:00.000Z",
+      "updatedAt": "2026-09-17T10:04:00.000Z"
+    },
+    "http_status": 201
+  },
+  "get_form": {
+    "config": {
+      "operation": "get_form",
+      "formId": "fixture"
+    },
+    "method": "GET",
+    "path": "/forms/{formId}",
+    "response": {
+      "id": "fixture",
+      "name": "fixture",
+      "description": "fixture",
+      "technology": "fixture",
+      "workspaceId": "fixture",
+      "notificationEmails": [],
+      "emailThreading": false,
+      "automaticSpamFilter": false,
+      "webhookUrl": "fixture",
+      "slackChannel": "fixture",
+      "customHoneypot": "fixture",
+      "customSpamWords": "fixture",
+      "allowedDomains": [],
+      "spamProtection": "BOTPOISON",
+      "createdAt": "2026-09-17T10:04:00.000Z",
+      "updatedAt": "2026-09-17T10:04:00.000Z"
+    },
+    "http_status": 200
+  },
+  "update_form": {
+    "config": {
+      "operation": "update_form",
+      "formId": "fixture"
+    },
+    "method": "PATCH",
+    "path": "/forms/{formId}",
+    "response": {
+      "id": "fixture",
+      "name": "fixture",
+      "description": "fixture",
+      "technology": "fixture",
+      "workspaceId": "fixture",
+      "notificationEmails": [],
+      "emailThreading": false,
+      "automaticSpamFilter": false,
+      "webhookUrl": "fixture",
+      "slackChannel": "fixture",
+      "customHoneypot": "fixture",
+      "customSpamWords": "fixture",
+      "allowedDomains": [],
+      "spamProtection": "BOTPOISON",
+      "createdAt": "2026-09-17T10:04:00.000Z",
+      "updatedAt": "2026-09-17T10:04:00.000Z"
+    },
+    "http_status": 200
+  },
+  "delete_form": {
+    "config": {
+      "operation": "delete_form",
+      "formId": "fixture"
+    },
+    "method": "DELETE",
+    "path": "/forms/{formId}",
+    "response": null,
+    "http_status": 204
+  },
+  "get_template": {
+    "config": {
+      "operation": "get_template",
+      "formId": "fixture",
+      "kind": "notification"
+    },
+    "method": "GET",
+    "path": "/forms/{formId}/templates/{kind}",
+    "response": {
+      "kind": "notification",
+      "mode": "visual",
+      "code": "fixture",
+      "subject": "fixture",
+      "updatedAt": "2026-09-17T10:04:00.000Z",
+      "paused": false
+    },
+    "http_status": 200
+  },
+  "write_template": {
+    "config": {
+      "operation": "write_template",
+      "formId": "fixture",
+      "kind": "notification",
+      "code": "<p>Thank you</p>"
+    },
+    "method": "PUT",
+    "path": "/forms/{formId}/templates/{kind}",
+    "response": {
+      "kind": "notification",
+      "mode": "visual",
+      "code": "fixture",
+      "subject": "fixture",
+      "updatedAt": "2026-09-17T10:04:00.000Z",
+      "paused": false
+    },
+    "http_status": 200
+  },
+  "delete_template": {
+    "config": {
+      "operation": "delete_template",
+      "formId": "fixture",
+      "kind": "notification"
+    },
+    "method": "DELETE",
+    "path": "/forms/{formId}/templates/{kind}",
+    "response": null,
+    "http_status": 204
+  },
+  "preview_template": {
+    "config": {
+      "operation": "preview_template",
+      "formId": "fixture",
+      "kind": "notification"
+    },
+    "method": "POST",
+    "path": "/forms/{formId}/templates/{kind}/preview",
+    "response": {
+      "html": "fixture",
+      "text": "fixture",
+      "subject": "fixture"
+    },
+    "http_status": 200
+  },
+  "list_form_submissions": {
+    "config": {
+      "operation": "list_form_submissions",
+      "formId": "fixture"
+    },
+    "method": "GET",
+    "path": "/forms/{formId}/submissions",
+    "response": {
+      "data": [],
+      "hasMore": false,
+      "nextCursor": "fixture"
+    },
+    "http_status": 200
+  },
+  "list_workspace_submissions": {
+    "config": {
+      "operation": "list_workspace_submissions",
+      "workspaceId": "fixture"
+    },
+    "method": "GET",
+    "path": "/workspaces/{workspaceId}/submissions",
+    "response": {
+      "data": [],
+      "hasMore": false,
+      "nextCursor": "fixture"
+    },
+    "http_status": 200
+  },
+  "delete_submission": {
+    "config": {
+      "operation": "delete_submission",
+      "submissionId": "fixture"
+    },
+    "method": "DELETE",
+    "path": "/submissions/{submissionId}",
+    "response": null,
+    "http_status": 204
+  }
+}
