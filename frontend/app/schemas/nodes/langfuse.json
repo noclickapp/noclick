@@ -1,0 +1,960 @@
+{
+  "$defs": {
+    "CreateComment": {
+      "additionalProperties": false,
+      "description": "Attach a comment to a trace, observation, session or prompt.",
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "object_type": {
+          "enum": [
+            "trace",
+            "observation",
+            "session",
+            "prompt"
+          ],
+          "title": "Object Type",
+          "type": "string"
+        },
+        "object_id": {
+          "minLength": 1,
+          "title": "Object Id",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "object_type",
+        "object_id",
+        "content"
+      ],
+      "title": "CreateComment",
+      "type": "object"
+    },
+    "CreateDataset": {
+      "additionalProperties": false,
+      "description": "Create an evaluation dataset.",
+      "properties": {
+        "operation": {
+          "const": "create_dataset",
+          "default": "create_dataset",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateDataset",
+      "type": "object"
+    },
+    "CreateScore": {
+      "additionalProperties": false,
+      "description": "Submit one numeric trace score for asynchronous processing.",
+      "properties": {
+        "operation": {
+          "const": "create_score",
+          "default": "create_score",
+          "title": "Operation",
+          "type": "string"
+        },
+        "trace_id": {
+          "minLength": 1,
+          "title": "Trace Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "score_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional project-unique ID for the score.",
+          "title": "Score Id"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comment"
+        }
+      },
+      "required": [
+        "trace_id",
+        "name",
+        "value"
+      ],
+      "title": "CreateScore",
+      "type": "object"
+    },
+    "CreateTextPrompt": {
+      "additionalProperties": false,
+      "description": "Create a text prompt or a new version of an existing prompt.",
+      "properties": {
+        "operation": {
+          "const": "create_text_prompt",
+          "default": "create_text_prompt",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "prompt": {
+          "description": "Prompt template text, including Langfuse variables if needed.",
+          "title": "Prompt",
+          "type": "string"
+        },
+        "commit_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commit Message"
+        }
+      },
+      "required": [
+        "name",
+        "prompt"
+      ],
+      "title": "CreateTextPrompt",
+      "type": "object"
+    },
+    "DeleteDatasetItem": {
+      "additionalProperties": false,
+      "description": "Irreversibly delete a dataset item and all its run items.",
+      "properties": {
+        "operation": {
+          "const": "delete_dataset_item",
+          "default": "delete_dataset_item",
+          "title": "Operation",
+          "type": "string"
+        },
+        "item_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "DeleteDatasetItem",
+      "type": "object"
+    },
+    "DeleteScore": {
+      "additionalProperties": false,
+      "description": "Delete a score by its Langfuse ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_score",
+          "default": "delete_score",
+          "title": "Operation",
+          "type": "string"
+        },
+        "score_id": {
+          "minLength": 1,
+          "title": "Score Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score_id"
+      ],
+      "title": "DeleteScore",
+      "type": "object"
+    },
+    "GetComment": {
+      "additionalProperties": false,
+      "description": "Get a comment by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "comment_id": {
+          "minLength": 1,
+          "title": "Comment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "GetComment",
+      "type": "object"
+    },
+    "GetDataset": {
+      "additionalProperties": false,
+      "description": "Get dataset metadata by name.",
+      "properties": {
+        "operation": {
+          "const": "get_dataset",
+          "default": "get_dataset",
+          "title": "Operation",
+          "type": "string"
+        },
+        "dataset_name": {
+          "minLength": 1,
+          "title": "Dataset Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_name"
+      ],
+      "title": "GetDataset",
+      "type": "object"
+    },
+    "GetDatasetItem": {
+      "additionalProperties": false,
+      "description": "Get one dataset item.",
+      "properties": {
+        "operation": {
+          "const": "get_dataset_item",
+          "default": "get_dataset_item",
+          "title": "Operation",
+          "type": "string"
+        },
+        "item_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "GetDatasetItem",
+      "type": "object"
+    },
+    "GetPrompt": {
+      "additionalProperties": false,
+      "description": "Get a prompt, optionally selecting its version or label.",
+      "properties": {
+        "operation": {
+          "const": "get_prompt",
+          "default": "get_prompt",
+          "title": "Operation",
+          "type": "string"
+        },
+        "prompt_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Prompt Name",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        }
+      },
+      "required": [
+        "prompt_name"
+      ],
+      "title": "GetPrompt",
+      "type": "object"
+    },
+    "LangfuseAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "langfuse_api_key",
+          "default": "langfuse_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "public_key": {
+          "description": "Project public API key from Langfuse project settings.",
+          "minLength": 1,
+          "title": "Public key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "secret_key": {
+          "description": "Secret API key paired with the public key.",
+          "minLength": 1,
+          "title": "Secret key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "eu",
+          "description": "Use the region where your project lives.",
+          "enum": [
+            "eu",
+            "us",
+            "jp",
+            "hipaa_us"
+          ],
+          "title": "Cloud region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "public_key",
+        "secret_key"
+      ],
+      "title": "Langfuse API Key",
+      "type": "object",
+      "x-credential-instructions": "In your Langfuse project settings, create a project API key. Paste its public key and secret key, then select the project's Cloud region. Organization keys are not supported. NoClick uses Basic authentication to the selected Langfuse Cloud host. Self-hosted instances are not supported.",
+      "x-credential-url": "https://langfuse.com/docs/api-and-data-platform/features/public-api#obtain-credentials"
+    },
+    "ListComments": {
+      "additionalProperties": false,
+      "description": "List comments in the project.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Fetch subsequent pages explicitly.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "object_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "trace",
+                "observation",
+                "session",
+                "prompt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object Type",
+          "enum": [
+            "trace",
+            "observation",
+            "session",
+            "prompt"
+          ],
+          "x-enum-searchable": true
+        },
+        "object_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object Id"
+        }
+      },
+      "title": "ListComments",
+      "type": "object"
+    },
+    "ListDatasetItems": {
+      "additionalProperties": false,
+      "description": "List dataset items, optionally filtering by dataset and source trace.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Fetch subsequent pages explicitly.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_dataset_items",
+          "default": "list_dataset_items",
+          "title": "Operation",
+          "type": "string"
+        },
+        "dataset_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dataset Name"
+        },
+        "source_trace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Trace Id"
+        }
+      },
+      "title": "ListDatasetItems",
+      "type": "object"
+    },
+    "ListDatasets": {
+      "additionalProperties": false,
+      "description": "List evaluation datasets.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Fetch subsequent pages explicitly.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_datasets",
+          "default": "list_datasets",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListDatasets",
+      "type": "object"
+    },
+    "ListObservations": {
+      "additionalProperties": false,
+      "description": "Read observation rows using the current v2 cursor API.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor returned in meta by the previous page, even if that page was empty.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_observations",
+          "default": "list_observations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "trace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trace Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "from_start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive ISO 8601 timestamp with timezone.",
+          "title": "From Start Time"
+        },
+        "to_start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclusive ISO 8601 timestamp with timezone.",
+          "title": "To Start Time"
+        }
+      },
+      "title": "ListObservations",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "description": "Read the project associated with this project API key.",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListPrompts": {
+      "additionalProperties": false,
+      "description": "List prompt metadata, versions and labels.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number. Fetch subsequent pages explicitly.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_prompts",
+          "default": "list_prompts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        }
+      },
+      "title": "ListPrompts",
+      "type": "object"
+    },
+    "ListScores": {
+      "additionalProperties": false,
+      "description": "Read evaluation scores using the current v3 cursor API.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor returned in meta by the previous page, even if that page was empty.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_scores",
+          "default": "list_scores",
+          "title": "Operation",
+          "type": "string"
+        },
+        "trace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trace Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "ListScores",
+      "type": "object"
+    },
+    "UpdatePromptLabels": {
+      "additionalProperties": false,
+      "description": "Replace a prompt version's deployment labels; labels move between versions.",
+      "properties": {
+        "operation": {
+          "const": "update_prompt_labels",
+          "default": "update_prompt_labels",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "new_labels_json": {
+          "default": "[]",
+          "description": "JSON array of labels. Empty array removes labels; latest is reserved.",
+          "title": "New Labels Json",
+          "type": "string",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "title": "UpdatePromptLabels",
+      "type": "object"
+    },
+    "UpsertDatasetItem": {
+      "additionalProperties": false,
+      "description": "Create an item or update the supplied project-unique item ID.",
+      "properties": {
+        "operation": {
+          "const": "upsert_dataset_item",
+          "default": "upsert_dataset_item",
+          "title": "Operation",
+          "type": "string"
+        },
+        "dataset_name": {
+          "minLength": 1,
+          "title": "Dataset Name",
+          "type": "string"
+        },
+        "item_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Item Id"
+        },
+        "input_json": {
+          "default": "null",
+          "description": "Dataset input as JSON.",
+          "title": "Input Json",
+          "type": "string",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        },
+        "expected_output_json": {
+          "default": "null",
+          "description": "Expected output as JSON.",
+          "title": "Expected Output Json",
+          "type": "string",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        },
+        "status": {
+          "default": "ACTIVE",
+          "enum": [
+            "ACTIVE",
+            "ARCHIVED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_name"
+      ],
+      "title": "UpsertDatasetItem",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_comment": "#/$defs/CreateComment",
+          "create_dataset": "#/$defs/CreateDataset",
+          "create_score": "#/$defs/CreateScore",
+          "create_text_prompt": "#/$defs/CreateTextPrompt",
+          "delete_dataset_item": "#/$defs/DeleteDatasetItem",
+          "delete_score": "#/$defs/DeleteScore",
+          "get_comment": "#/$defs/GetComment",
+          "get_dataset": "#/$defs/GetDataset",
+          "get_dataset_item": "#/$defs/GetDatasetItem",
+          "get_prompt": "#/$defs/GetPrompt",
+          "list_comments": "#/$defs/ListComments",
+          "list_dataset_items": "#/$defs/ListDatasetItems",
+          "list_datasets": "#/$defs/ListDatasets",
+          "list_observations": "#/$defs/ListObservations",
+          "list_projects": "#/$defs/ListProjects",
+          "list_prompts": "#/$defs/ListPrompts",
+          "list_scores": "#/$defs/ListScores",
+          "update_prompt_labels": "#/$defs/UpdatePromptLabels",
+          "upsert_dataset_item": "#/$defs/UpsertDatasetItem"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/ListPrompts"
+        },
+        {
+          "$ref": "#/$defs/GetPrompt"
+        },
+        {
+          "$ref": "#/$defs/CreateTextPrompt"
+        },
+        {
+          "$ref": "#/$defs/UpdatePromptLabels"
+        },
+        {
+          "$ref": "#/$defs/ListDatasets"
+        },
+        {
+          "$ref": "#/$defs/GetDataset"
+        },
+        {
+          "$ref": "#/$defs/CreateDataset"
+        },
+        {
+          "$ref": "#/$defs/ListDatasetItems"
+        },
+        {
+          "$ref": "#/$defs/GetDatasetItem"
+        },
+        {
+          "$ref": "#/$defs/UpsertDatasetItem"
+        },
+        {
+          "$ref": "#/$defs/DeleteDatasetItem"
+        },
+        {
+          "$ref": "#/$defs/ListObservations"
+        },
+        {
+          "$ref": "#/$defs/ListScores"
+        },
+        {
+          "$ref": "#/$defs/CreateScore"
+        },
+        {
+          "$ref": "#/$defs/DeleteScore"
+        },
+        {
+          "$ref": "#/$defs/ListComments"
+        },
+        {
+          "$ref": "#/$defs/GetComment"
+        },
+        {
+          "$ref": "#/$defs/CreateComment"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LangfuseAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Langfuse Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

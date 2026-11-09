@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/langfuse.svg",
+  "source": "https://github.com/langfuse/langfuse/blob/762fcd7364352daf57b98e18babe0891c5c04962/web/public/icon.svg",
+  "license": "Langfuse official brand mark, used nominatively to identify the service. Trademark rights remain with Langfuse.",
+  "sha256": "daeef880d58644fab4fd9ba5d292086c6d69756a39cff94d510f8ddc35312bf3"
+}
