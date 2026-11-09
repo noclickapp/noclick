@@ -1,0 +1,790 @@
+{
+  "$defs": {
+    "CancelSubscription": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "default": "live",
+          "description": "Choose live or test-mode transactions; live writes affect real subscriptions and payments.",
+          "enum": [
+            "live",
+            "test"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "order_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "subscription_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_subscription",
+          "default": "cancel_subscription",
+          "title": "Cancel Subscription",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "order_id",
+        "subscription_id"
+      ],
+      "title": "CancelSubscription",
+      "type": "object"
+    },
+    "CreateStudent": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_student",
+          "default": "create_student",
+          "title": "Create Learn Student",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "course_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Course Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "tags": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Tags",
+          "type": "array"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Id"
+        },
+        "purchase_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "product",
+                "bump",
+                "upsell",
+                "downsell"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purchase Type",
+          "enum": [
+            "product",
+            "bump",
+            "upsell",
+            "downsell"
+          ],
+          "x-enum-searchable": true
+        },
+        "purchase_id": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purchase Id"
+        },
+        "trigger_emails": {
+          "default": true,
+          "description": "Send the provider's student email; defaults to true as in ThriveCart.",
+          "title": "Trigger Emails",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email",
+        "course_id"
+      ],
+      "title": "CreateStudent",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetAffiliate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_affiliate",
+          "default": "get_affiliate",
+          "title": "Read Affiliate Information",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "affiliate_id": {
+          "description": "Affiliate ID, numeric user ID, or email address.",
+          "maxLength": 254,
+          "minLength": 1,
+          "title": "Affiliate Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "affiliate_id"
+      ],
+      "title": "GetAffiliate",
+      "type": "object"
+    },
+    "GetBump": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_bump",
+          "default": "get_bump",
+          "title": "Get Bump Offer",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bump_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Bump Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bump_id"
+      ],
+      "title": "GetBump",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "default": "live",
+          "description": "Choose live or test-mode transactions; live writes affect real subscriptions and payments.",
+          "enum": [
+            "live",
+            "test"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Read Customer Information",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetDownsell": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_downsell",
+          "default": "get_downsell",
+          "title": "Get Downsell",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "downsell_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Downsell Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "downsell_id"
+      ],
+      "title": "GetDownsell",
+      "type": "object"
+    },
+    "GetProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Get Product",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Product Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "GetProduct",
+      "type": "object"
+    },
+    "GetUpsell": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_upsell",
+          "default": "get_upsell",
+          "title": "Get Upsell",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "upsell_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Upsell Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "upsell_id"
+      ],
+      "title": "GetUpsell",
+      "type": "object"
+    },
+    "ListBumps": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_bumps",
+          "default": "list_bumps",
+          "title": "List Bump Offers",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListBumps",
+      "type": "object"
+    },
+    "ListDownsells": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_downsells",
+          "default": "list_downsells",
+          "title": "List Downsells",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListDownsells",
+      "type": "object"
+    },
+    "ListProducts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "List Products",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProducts",
+      "type": "object"
+    },
+    "ListUpsells": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_upsells",
+          "default": "list_upsells",
+          "title": "List Upsells",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUpsells",
+      "type": "object"
+    },
+    "PauseSubscription": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "default": "live",
+          "description": "Choose live or test-mode transactions; live writes affect real subscriptions and payments.",
+          "enum": [
+            "live",
+            "test"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "order_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "subscription_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "pause_subscription",
+          "default": "pause_subscription",
+          "title": "Pause Subscription",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "auto_resume": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Unix timestamp at least 24 hours in the future. Omit to pause indefinitely.",
+          "title": "Auto Resume"
+        }
+      },
+      "required": [
+        "order_id",
+        "subscription_id"
+      ],
+      "title": "PauseSubscription",
+      "type": "object"
+    },
+    "RefundTransaction": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "default": "live",
+          "description": "Choose live or test-mode transactions; live writes affect real subscriptions and payments.",
+          "enum": [
+            "live",
+            "test"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "operation": {
+          "const": "refund_transaction",
+          "default": "refund_transaction",
+          "title": "Refund Transaction",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "reference": {
+          "description": "Exact purchase reference from a transaction or customer's history.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id",
+        "reference"
+      ],
+      "title": "RefundTransaction",
+      "type": "object"
+    },
+    "ResumeSubscription": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "default": "live",
+          "description": "Choose live or test-mode transactions; live writes affect real subscriptions and payments.",
+          "enum": [
+            "live",
+            "test"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "order_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "subscription_id": {
+          "maxLength": 20,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "resume_subscription",
+          "default": "resume_subscription",
+          "title": "Resume Subscription",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "order_id",
+        "subscription_id"
+      ],
+      "title": "ResumeSubscription",
+      "type": "object"
+    },
+    "SearchAffiliates": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_affiliates",
+          "default": "search_affiliates",
+          "title": "Search Affiliates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 5,
+          "maximum": 25,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Id"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "SearchAffiliates",
+      "type": "object"
+    },
+    "SearchTransactions": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "default": "live",
+          "description": "Choose live or test-mode transactions; live writes affect real subscriptions and payments.",
+          "enum": [
+            "live",
+            "test"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_transactions",
+          "default": "search_transactions",
+          "title": "Search Transactions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 10,
+          "description": "Results per page; at most 100.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "transaction_type": {
+          "default": "any",
+          "enum": [
+            "any",
+            "charge",
+            "rebill",
+            "refund",
+            "cancel"
+          ],
+          "title": "Transaction Type",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lowercase three-letter currency, such as usd.",
+          "title": "Currency"
+        }
+      },
+      "title": "SearchTransactions",
+      "type": "object"
+    },
+    "ThriveCartAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "thrivecart_api_key",
+          "default": "thrivecart_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "ThriveCart API Key",
+      "type": "object",
+      "x-credential-instructions": "In ThriveCart, open Settings \u2192 API & webhooks \u2192 API tokens. Create an API key for your account and paste it here. NoClick verifies it by reading your account information.",
+      "x-credential-url": "https://developers.thrivecart.com/documentation/intro/authentication-via-api-key/"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_subscription": "#/$defs/CancelSubscription",
+          "create_student": "#/$defs/CreateStudent",
+          "get_account": "#/$defs/GetAccount",
+          "get_affiliate": "#/$defs/GetAffiliate",
+          "get_bump": "#/$defs/GetBump",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_downsell": "#/$defs/GetDownsell",
+          "get_product": "#/$defs/GetProduct",
+          "get_upsell": "#/$defs/GetUpsell",
+          "list_bumps": "#/$defs/ListBumps",
+          "list_downsells": "#/$defs/ListDownsells",
+          "list_products": "#/$defs/ListProducts",
+          "list_upsells": "#/$defs/ListUpsells",
+          "pause_subscription": "#/$defs/PauseSubscription",
+          "refund_transaction": "#/$defs/RefundTransaction",
+          "resume_subscription": "#/$defs/ResumeSubscription",
+          "search_affiliates": "#/$defs/SearchAffiliates",
+          "search_transactions": "#/$defs/SearchTransactions"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListProducts"
+        },
+        {
+          "$ref": "#/$defs/ListBumps"
+        },
+        {
+          "$ref": "#/$defs/ListUpsells"
+        },
+        {
+          "$ref": "#/$defs/ListDownsells"
+        },
+        {
+          "$ref": "#/$defs/GetProduct"
+        },
+        {
+          "$ref": "#/$defs/GetBump"
+        },
+        {
+          "$ref": "#/$defs/GetUpsell"
+        },
+        {
+          "$ref": "#/$defs/GetDownsell"
+        },
+        {
+          "$ref": "#/$defs/SearchTransactions"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/CancelSubscription"
+        },
+        {
+          "$ref": "#/$defs/PauseSubscription"
+        },
+        {
+          "$ref": "#/$defs/ResumeSubscription"
+        },
+        {
+          "$ref": "#/$defs/RefundTransaction"
+        },
+        {
+          "$ref": "#/$defs/SearchAffiliates"
+        },
+        {
+          "$ref": "#/$defs/GetAffiliate"
+        },
+        {
+          "$ref": "#/$defs/CreateStudent"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ThriveCartAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Thrivecart Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
