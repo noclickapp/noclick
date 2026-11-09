@@ -1,0 +1,64 @@
+{
+  "source": "https://developers.outreach.io/api/webhooks",
+  "registration": {
+    "data": {
+      "type": "webhook",
+      "id": 1,
+      "attributes": {
+        "action": "completed",
+        "active": true,
+        "cleanupToken": "eyJh....",
+        "createdAt": "2025-10-21T22:54:57.000Z",
+        "creatorAppId": "<client id>",
+        "creatorAppName": "<integration name>",
+        "disabledReason": null,
+        "disabledSince": null,
+        "disabledUntil": null,
+        "payloadVersion": 1,
+        "resource": "task",
+        "secret": "abcd1234",
+        "updatedAt": "2025-10-21T22:54:57.000Z",
+        "url": "https://foo.bar/webhooks"
+      }
+    }
+  },
+  "v1": {
+    "data": {
+      "type": "task",
+      "id": 1,
+      "attributes": {
+        "completed": true,
+        "completedAt": "2017-01-01T00:00:00",
+        "state": "completed"
+      }
+    },
+    "meta": {
+      "deliveredAt": "2017-01-01T00:00:01",
+      "eventName": "task.completed"
+    }
+  },
+  "v2": {
+    "data": {
+      "type": "task",
+      "id": 1,
+      "attributes": {
+        "completed": true,
+        "completedAt": "2017-01-01T00:00:00",
+        "state": "completed"
+      }
+    },
+    "beforeUpdate": {
+      "type": "task",
+      "id": 1,
+      "attributes": {
+        "completed": false,
+        "completedAt": null,
+        "state": "in progress"
+      }
+    },
+    "meta": {
+      "deliveredAt": "2017-01-01T00:00:01",
+      "eventName": "task.completed"
+    }
+  }
+}
