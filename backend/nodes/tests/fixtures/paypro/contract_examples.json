@@ -1,0 +1,1053 @@
+{
+  "list_customers": {
+    "method": "GET",
+    "path": "/customers",
+    "operation_id": "retrieveListOfCustomers",
+    "response": {
+      "type": "list",
+      "data": [
+        {
+          "id": "CU7JRN6W6K3DA9",
+          "type": "customer",
+          "email": "customer@paypro.nl",
+          "first_name": "firstname",
+          "last_name": "name",
+          "address": "address 2",
+          "postal": "1234AA",
+          "city": "city",
+          "country": "NL",
+          "vat_number": "vatnumber",
+          "company_name": "PayPro",
+          "phone_number": "012345679",
+          "created_at": "2022-12-31T23:00:00Z",
+          "_links": {
+            "self": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9"
+          }
+        }
+      ],
+      "count": 1,
+      "_links": {
+        "self": "https://api.paypro.nl/customers"
+      }
+    },
+    "config": {
+      "operation": "list_customers"
+    }
+  },
+  "get_customer": {
+    "method": "GET",
+    "path": "/customers/{id}",
+    "operation_id": "retrieveCustomer",
+    "response": {
+      "id": "CU7JRN6W6K3DA9",
+      "type": "customer",
+      "email": "customer@paypro.nl",
+      "first_name": "firstname",
+      "last_name": "name",
+      "address": "address 2",
+      "postal": "1234AA",
+      "city": "city",
+      "country": "NL",
+      "vat_number": "vatnumber",
+      "company_name": "PayPro",
+      "phone_number": "012345679",
+      "created_at": "2022-12-31T23:00:00Z",
+      "_links": {
+        "self": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9"
+      }
+    },
+    "config": {
+      "operation": "get_customer",
+      "customer_id": "resource123"
+    }
+  },
+  "create_customer": {
+    "method": "POST",
+    "path": "/customers",
+    "operation_id": "createCustomer",
+    "response": {
+      "id": "CU7JRN6W6K3DA9",
+      "type": "customer",
+      "email": "customer@paypro.nl",
+      "first_name": "firstname",
+      "last_name": "name",
+      "address": "address 2",
+      "postal": "1234AA",
+      "city": "city",
+      "country": "NL",
+      "vat_number": "vatnumber",
+      "company_name": "PayPro",
+      "phone_number": "012345679",
+      "created_at": "2022-12-31T23:00:00Z",
+      "_links": {
+        "self": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9"
+      }
+    },
+    "config": {
+      "operation": "create_customer",
+      "body": {
+        "email": "customer@paypro.nl",
+        "first_name": "firstname",
+        "last_name": "name",
+        "address": "address 2",
+        "postal": "1234AA",
+        "city": "city",
+        "country": "NL",
+        "vat_number": "vatnumber",
+        "company_name": "PayPro",
+        "phone_number": "012345679"
+      }
+    }
+  },
+  "update_customer": {
+    "method": "PATCH",
+    "path": "/customers/{id}",
+    "operation_id": "updateCustomer",
+    "response": {
+      "id": "CU7JRN6W6K3DA9",
+      "type": "customer",
+      "email": "customer@paypro.nl",
+      "first_name": "firstname",
+      "last_name": "name",
+      "address": "address 2",
+      "postal": "1234AA",
+      "city": "city",
+      "country": "NL",
+      "vat_number": "vatnumber",
+      "company_name": "PayPro",
+      "phone_number": "012345679",
+      "created_at": "2022-12-31T23:00:00Z",
+      "_links": {
+        "self": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9"
+      }
+    },
+    "config": {
+      "operation": "update_customer",
+      "customer_id": "resource123",
+      "body": {
+        "email": "customer@paypro.nl",
+        "first_name": "firstname",
+        "last_name": "name",
+        "address": "address 2",
+        "postal": "1234AA",
+        "city": "city",
+        "country": "NL",
+        "vat_number": "vatnumber",
+        "company_name": "PayPro",
+        "phone_number": "012345679"
+      }
+    }
+  },
+  "list_payments": {
+    "method": "GET",
+    "path": "/payments",
+    "operation_id": "retrieveListOfPayments",
+    "response": {
+      "type": "list",
+      "data": [
+        {
+          "id": "PPH25H07JYWLR7PA82",
+          "type": "payment",
+          "amount": 1000,
+          "description": "Test Payment",
+          "currency": "EUR",
+          "pay_method": {
+            "id": "ideal",
+            "type": "pay_method",
+            "name": "iDEAL | Wero",
+            "currencies": [
+              "EUR"
+            ],
+            "minimum_amount": 10,
+            "maximum_amount": 5000000,
+            "details": {}
+          },
+          "state": "paid",
+          "refunded_amount": 0,
+          "return_url": "https://example.com/thank-you",
+          "cancel_url": "https://example.com/cancel",
+          "metadata": {},
+          "customer": "CU7JRN6W6K3DA9",
+          "mandate": "MD6ULYXJ4HP9RJ",
+          "subscription": null,
+          "installment_plan": null,
+          "locale": "en",
+          "paid_at": "2023-06-30T12:44:35Z",
+          "created_at": "2023-06-30T12:40:10Z",
+          "_links": {
+            "self": "https://api.paypro.nl/payments/PPH25H07JYWLR7PA82",
+            "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+            "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+          }
+        }
+      ],
+      "count": 1,
+      "_links": {
+        "self": "https://api.paypro.nl/payments"
+      }
+    },
+    "config": {
+      "operation": "list_payments"
+    }
+  },
+  "get_payment": {
+    "method": "GET",
+    "path": "/payments/{id}",
+    "operation_id": "retrievePayment",
+    "response": {
+      "id": "PPH25H07JYWLR7PA82",
+      "type": "payment",
+      "amount": 1000,
+      "description": "Test Payment",
+      "currency": "EUR",
+      "pay_method": {
+        "id": "ideal",
+        "type": "pay_method",
+        "name": "iDEAL | Wero",
+        "currencies": [
+          "EUR"
+        ],
+        "minimum_amount": 10,
+        "maximum_amount": 5000000,
+        "details": {}
+      },
+      "state": "paid",
+      "refunded_amount": 0,
+      "return_url": "https://example.com/thank-you",
+      "cancel_url": "https://example.com/cancel",
+      "metadata": {},
+      "customer": "CU7JRN6W6K3DA9",
+      "mandate": "MD6ULYXJ4HP9RJ",
+      "subscription": null,
+      "installment_plan": null,
+      "locale": "en",
+      "paid_at": "2023-06-30T12:44:35Z",
+      "created_at": "2023-06-30T12:40:10Z",
+      "_links": {
+        "self": "https://api.paypro.nl/payments/PPH25H07JYWLR7PA82",
+        "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+        "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+      }
+    },
+    "config": {
+      "operation": "get_payment",
+      "payment_id": "resource123"
+    }
+  },
+  "create_payment": {
+    "method": "POST",
+    "path": "/payments",
+    "operation_id": "createPayment",
+    "response": {
+      "id": "PPH25H07JYWLR7PA82",
+      "type": "payment",
+      "amount": 1000,
+      "description": "Test Payment",
+      "currency": "EUR",
+      "pay_method": {
+        "id": "ideal",
+        "type": "pay_method",
+        "name": "iDEAL | Wero",
+        "currencies": [
+          "EUR"
+        ],
+        "minimum_amount": 10,
+        "maximum_amount": 5000000,
+        "details": {}
+      },
+      "state": "paid",
+      "refunded_amount": 0,
+      "return_url": "https://example.com/thank-you",
+      "cancel_url": "https://example.com/cancel",
+      "metadata": {},
+      "customer": "CU7JRN6W6K3DA9",
+      "mandate": "MD6ULYXJ4HP9RJ",
+      "subscription": null,
+      "installment_plan": null,
+      "locale": "en",
+      "paid_at": "2023-06-30T12:44:35Z",
+      "created_at": "2023-06-30T12:40:10Z",
+      "_links": {
+        "self": "https://api.paypro.nl/payments/PPH25H07JYWLR7PA82",
+        "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+        "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+      }
+    },
+    "config": {
+      "operation": "create_payment",
+      "body": {
+        "amount": 1000,
+        "currency": "EUR",
+        "description": "Test Payment",
+        "return_url": "https://example.com/thank-you",
+        "cancel_url": "https://example.com/cancel",
+        "pay_methods": [
+          "ideal",
+          "creditcard",
+          "paypal"
+        ]
+      }
+    }
+  },
+  "cancel_payment": {
+    "method": "DELETE",
+    "path": "/payments/{id}",
+    "operation_id": "cancelPayment",
+    "response": {
+      "id": "PPH25H07JYWLR7PA82",
+      "type": "payment",
+      "amount": 1000,
+      "description": "Test Payment",
+      "currency": "EUR",
+      "pay_method": {
+        "id": "ideal",
+        "type": "pay_method",
+        "name": "iDEAL | Wero",
+        "currencies": [
+          "EUR"
+        ],
+        "minimum_amount": 10,
+        "maximum_amount": 5000000,
+        "details": {}
+      },
+      "state": "paid",
+      "refunded_amount": 0,
+      "return_url": "https://example.com/thank-you",
+      "cancel_url": "https://example.com/cancel",
+      "metadata": {},
+      "customer": "CU7JRN6W6K3DA9",
+      "mandate": "MD6ULYXJ4HP9RJ",
+      "subscription": null,
+      "installment_plan": null,
+      "locale": "en",
+      "paid_at": "2023-06-30T12:44:35Z",
+      "created_at": "2023-06-30T12:40:10Z",
+      "_links": {
+        "self": "https://api.paypro.nl/payments/PPH25H07JYWLR7PA82",
+        "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+        "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+      }
+    },
+    "config": {
+      "operation": "cancel_payment",
+      "payment_id": "resource123"
+    }
+  },
+  "list_payment_refunds": {
+    "method": "GET",
+    "path": "/payments/{id}/refunds",
+    "operation_id": "retrieveListOfRefundsByPayment",
+    "response": {
+      "type": "list",
+      "data": [
+        {
+          "id": "PRRNQH3PCD125Z",
+          "type": "refund",
+          "amount": 1000,
+          "description": "Test Payment",
+          "reason": "",
+          "payment": "PPBLGEE6UG92MS",
+          "currency": "EUR",
+          "state": "refunded",
+          "metadata": {},
+          "refunded_at": "2023-06-30T12:44:35Z",
+          "created_at": "2023-06-30T12:40:10Z",
+          "_links": {
+            "self": "https://api.paypro.nl/refunds/PRRNQH3PCD125Z",
+            "payment": "https://api.paypro.nl/payments/PPBLGEE6UG92MS"
+          }
+        }
+      ],
+      "count": 1,
+      "_links": {
+        "self": "https://api.paypro.nl/payments/resource123/refunds"
+      }
+    },
+    "config": {
+      "operation": "list_payment_refunds",
+      "payment_id": "resource123"
+    }
+  },
+  "create_refund": {
+    "method": "POST",
+    "path": "/payments/{id}/refunds",
+    "operation_id": "createRefundForPayment",
+    "response": {
+      "id": "PRRNQH3PCD125Z",
+      "type": "refund",
+      "amount": 1000,
+      "description": "Test Payment",
+      "reason": "",
+      "payment": "PPBLGEE6UG92MS",
+      "currency": "EUR",
+      "state": "refunded",
+      "metadata": {},
+      "refunded_at": "2023-06-30T12:44:35Z",
+      "created_at": "2023-06-30T12:40:10Z",
+      "_links": {
+        "self": "https://api.paypro.nl/refunds/PRRNQH3PCD125Z",
+        "payment": "https://api.paypro.nl/payments/PPBLGEE6UG92MS"
+      }
+    },
+    "config": {
+      "operation": "create_refund",
+      "payment_id": "resource123",
+      "body": {
+        "amount": 1000,
+        "description": "Test Refund",
+        "reason": "Customer requested",
+        "account_holder_name": "John Doe",
+        "iban": "NL02ABNA0123456789"
+      }
+    }
+  },
+  "list_refunds": {
+    "method": "GET",
+    "path": "/refunds",
+    "operation_id": "retrieveListOfRefunds",
+    "response": {
+      "type": "list",
+      "data": [
+        {
+          "id": "PRRNQH3PCD125Z",
+          "type": "refund",
+          "amount": 1000,
+          "description": "Test Payment",
+          "reason": "",
+          "payment": "PPBLGEE6UG92MS",
+          "currency": "EUR",
+          "state": "refunded",
+          "metadata": {},
+          "refunded_at": "2023-06-30T12:44:35Z",
+          "created_at": "2023-06-30T12:40:10Z",
+          "_links": {
+            "self": "https://api.paypro.nl/refunds/PRRNQH3PCD125Z",
+            "payment": "https://api.paypro.nl/payments/PPBLGEE6UG92MS"
+          }
+        }
+      ],
+      "count": 1,
+      "_links": {
+        "self": "https://api.paypro.nl/refunds"
+      }
+    },
+    "config": {
+      "operation": "list_refunds"
+    }
+  },
+  "get_refund": {
+    "method": "GET",
+    "path": "/refunds/{id}",
+    "operation_id": "retrieveRefund",
+    "response": {
+      "id": "PRRNQH3PCD125Z",
+      "type": "refund",
+      "amount": 1000,
+      "description": "Test Payment",
+      "reason": "",
+      "payment": "PPBLGEE6UG92MS",
+      "currency": "EUR",
+      "state": "refunded",
+      "metadata": {},
+      "refunded_at": "2023-06-30T12:44:35Z",
+      "created_at": "2023-06-30T12:40:10Z",
+      "_links": {
+        "self": "https://api.paypro.nl/refunds/PRRNQH3PCD125Z",
+        "payment": "https://api.paypro.nl/payments/PPBLGEE6UG92MS"
+      }
+    },
+    "config": {
+      "operation": "get_refund",
+      "refund_id": "resource123"
+    }
+  },
+  "cancel_refund": {
+    "method": "DELETE",
+    "path": "/refunds/{id}",
+    "operation_id": "cancelRefund",
+    "response": {
+      "id": "PRRNQH3PCD125Z",
+      "type": "refund",
+      "amount": 1000,
+      "description": "Test Payment",
+      "reason": "",
+      "payment": "PPBLGEE6UG92MS",
+      "currency": "EUR",
+      "state": "refunded",
+      "metadata": {},
+      "refunded_at": "2023-06-30T12:44:35Z",
+      "created_at": "2023-06-30T12:40:10Z",
+      "_links": {
+        "self": "https://api.paypro.nl/refunds/PRRNQH3PCD125Z",
+        "payment": "https://api.paypro.nl/payments/PPBLGEE6UG92MS"
+      }
+    },
+    "config": {
+      "operation": "cancel_refund",
+      "refund_id": "resource123"
+    }
+  },
+  "list_subscriptions": {
+    "method": "GET",
+    "path": "/subscriptions",
+    "operation_id": "retrieveListOfSubscriptions",
+    "response": {
+      "type": "list",
+      "data": [
+        {
+          "id": "PSV1QACRO4DSMQT0KK",
+          "type": "subscription",
+          "description": "Test subscription",
+          "currency": "EUR",
+          "subscription_type": "direct_debit",
+          "state": "active",
+          "start_at": null,
+          "created_at": "2023-07-24T12:40:10Z",
+          "cancel_at": null,
+          "expire_at": null,
+          "customer": "CU7JRN6W6K3DA9",
+          "mandate": "MD6ULYXJ4HP9RJ",
+          "scheduling": "automatic",
+          "cancel_periods_on_cancellation": false,
+          "period": {
+            "amount": "1000",
+            "vat": "21",
+            "multiplier": 1,
+            "interval": "month"
+          },
+          "first_period": {
+            "amount": "1000",
+            "vat": "21",
+            "multiplier": 1,
+            "interval": "month"
+          },
+          "payment_details": {
+            "return_url": null,
+            "cancel_url": null
+          },
+          "next_period_date": null,
+          "available_until": null,
+          "metadata": {},
+          "_links": {
+            "self": "https://api.paypro.nl/subscriptions/PSV1QACRO4DSMQT0KK",
+            "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+            "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+          }
+        }
+      ],
+      "count": 1,
+      "_links": {
+        "self": "https://api.paypro.nl/subscriptions"
+      }
+    },
+    "config": {
+      "operation": "list_subscriptions"
+    }
+  },
+  "get_subscription": {
+    "method": "GET",
+    "path": "/subscriptions/{id}",
+    "operation_id": "retrieveSubscription",
+    "response": {
+      "id": "PSV1QACRO4DSMQT0KK",
+      "type": "subscription",
+      "description": "Test subscription",
+      "currency": "EUR",
+      "subscription_type": "direct_debit",
+      "state": "active",
+      "start_at": null,
+      "created_at": "2023-07-24T12:40:10Z",
+      "cancel_at": null,
+      "expire_at": null,
+      "customer": "CU7JRN6W6K3DA9",
+      "mandate": "MD6ULYXJ4HP9RJ",
+      "scheduling": "automatic",
+      "cancel_periods_on_cancellation": false,
+      "period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "first_period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "payment_details": {
+        "return_url": null,
+        "cancel_url": null
+      },
+      "next_period_date": null,
+      "available_until": null,
+      "metadata": {},
+      "_links": {
+        "self": "https://api.paypro.nl/subscriptions/PSV1QACRO4DSMQT0KK",
+        "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+        "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+      }
+    },
+    "config": {
+      "operation": "get_subscription",
+      "subscription_id": "resource123"
+    }
+  },
+  "create_subscription": {
+    "method": "POST",
+    "path": "/subscriptions",
+    "operation_id": "createSubscription",
+    "response": {
+      "id": "PSV1QACRO4DSMQT0KK",
+      "type": "subscription",
+      "description": "Test subscription",
+      "currency": "EUR",
+      "subscription_type": "direct_debit",
+      "state": "active",
+      "start_at": null,
+      "created_at": "2023-07-24T12:40:10Z",
+      "cancel_at": null,
+      "expire_at": null,
+      "customer": "CU7JRN6W6K3DA9",
+      "mandate": "MD6ULYXJ4HP9RJ",
+      "scheduling": "automatic",
+      "cancel_periods_on_cancellation": false,
+      "period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "first_period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "payment_details": {
+        "return_url": null,
+        "cancel_url": null
+      },
+      "next_period_date": null,
+      "available_until": null,
+      "metadata": {},
+      "_links": {
+        "self": "https://api.paypro.nl/subscriptions/PSV1QACRO4DSMQT0KK",
+        "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+        "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+      }
+    },
+    "config": {
+      "operation": "create_subscription",
+      "body": {
+        "customer": "CUW78XU8BYL8X6",
+        "pay_methods": [
+          "creditcard",
+          "direct-debit",
+          "ideal"
+        ],
+        "description": "description",
+        "currency": "EUR",
+        "start_at": "2023-08-01",
+        "period": {
+          "amount": 1000,
+          "vat": 21,
+          "multiplier": 1,
+          "interval": "month"
+        }
+      }
+    }
+  },
+  "update_subscription": {
+    "method": "PATCH",
+    "path": "/subscriptions/{id}",
+    "operation_id": "updateSubscription",
+    "response": {
+      "id": "PSV1QACRO4DSMQT0KK",
+      "type": "subscription",
+      "description": "Test subscription",
+      "currency": "EUR",
+      "subscription_type": "direct_debit",
+      "state": "active",
+      "start_at": null,
+      "created_at": "2023-07-24T12:40:10Z",
+      "cancel_at": null,
+      "expire_at": null,
+      "customer": "CU7JRN6W6K3DA9",
+      "mandate": "MD6ULYXJ4HP9RJ",
+      "scheduling": "automatic",
+      "cancel_periods_on_cancellation": false,
+      "period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "first_period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "payment_details": {
+        "return_url": null,
+        "cancel_url": null
+      },
+      "next_period_date": null,
+      "available_until": null,
+      "metadata": {},
+      "_links": {
+        "self": "https://api.paypro.nl/subscriptions/PSV1QACRO4DSMQT0KK",
+        "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+        "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+      }
+    },
+    "config": {
+      "operation": "update_subscription",
+      "subscription_id": "resource123",
+      "body": {
+        "description": "description",
+        "period": {
+          "amount": 1000
+        }
+      }
+    }
+  },
+  "cancel_subscription": {
+    "method": "DELETE",
+    "path": "/subscriptions/{id}",
+    "operation_id": "cancelSubscription",
+    "response": {
+      "id": "PSV1QACRO4DSMQT0KK",
+      "type": "subscription",
+      "description": "Test subscription",
+      "currency": "EUR",
+      "subscription_type": "direct_debit",
+      "state": "active",
+      "start_at": null,
+      "created_at": "2023-07-24T12:40:10Z",
+      "cancel_at": null,
+      "expire_at": null,
+      "customer": "CU7JRN6W6K3DA9",
+      "mandate": "MD6ULYXJ4HP9RJ",
+      "scheduling": "automatic",
+      "cancel_periods_on_cancellation": false,
+      "period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "first_period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "payment_details": {
+        "return_url": null,
+        "cancel_url": null
+      },
+      "next_period_date": null,
+      "available_until": null,
+      "metadata": {},
+      "_links": {
+        "self": "https://api.paypro.nl/subscriptions/PSV1QACRO4DSMQT0KK",
+        "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+        "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+      }
+    },
+    "config": {
+      "operation": "cancel_subscription",
+      "subscription_id": "resource123"
+    }
+  },
+  "pause_subscription": {
+    "method": "POST",
+    "path": "/subscriptions/{id}/pause",
+    "operation_id": "pauseSubscription",
+    "response": {
+      "id": "PSV1QACRO4DSMQT0KK",
+      "type": "subscription",
+      "description": "Test subscription",
+      "currency": "EUR",
+      "subscription_type": "direct_debit",
+      "state": "active",
+      "start_at": null,
+      "created_at": "2023-07-24T12:40:10Z",
+      "cancel_at": null,
+      "expire_at": null,
+      "customer": "CU7JRN6W6K3DA9",
+      "mandate": "MD6ULYXJ4HP9RJ",
+      "scheduling": "automatic",
+      "cancel_periods_on_cancellation": false,
+      "period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "first_period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "payment_details": {
+        "return_url": null,
+        "cancel_url": null
+      },
+      "next_period_date": null,
+      "available_until": null,
+      "metadata": {},
+      "_links": {
+        "self": "https://api.paypro.nl/subscriptions/PSV1QACRO4DSMQT0KK",
+        "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+        "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+      }
+    },
+    "config": {
+      "operation": "pause_subscription",
+      "subscription_id": "resource123"
+    }
+  },
+  "resume_subscription": {
+    "method": "POST",
+    "path": "/subscriptions/{id}/resume",
+    "operation_id": "resumeSubscription",
+    "response": {
+      "id": "PSV1QACRO4DSMQT0KK",
+      "type": "subscription",
+      "description": "Test subscription",
+      "currency": "EUR",
+      "subscription_type": "direct_debit",
+      "state": "active",
+      "start_at": null,
+      "created_at": "2023-07-24T12:40:10Z",
+      "cancel_at": null,
+      "expire_at": null,
+      "customer": "CU7JRN6W6K3DA9",
+      "mandate": "MD6ULYXJ4HP9RJ",
+      "scheduling": "automatic",
+      "cancel_periods_on_cancellation": false,
+      "period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "first_period": {
+        "amount": "1000",
+        "vat": "21",
+        "multiplier": 1,
+        "interval": "month"
+      },
+      "payment_details": {
+        "return_url": null,
+        "cancel_url": null
+      },
+      "next_period_date": null,
+      "available_until": null,
+      "metadata": {},
+      "_links": {
+        "self": "https://api.paypro.nl/subscriptions/PSV1QACRO4DSMQT0KK",
+        "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+        "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+      }
+    },
+    "config": {
+      "operation": "resume_subscription",
+      "subscription_id": "resource123"
+    }
+  },
+  "list_customer_subscriptions": {
+    "method": "GET",
+    "path": "/customers/{id}/subscriptions",
+    "operation_id": "retrieveListOfSubscriptionsByCustomer",
+    "response": {
+      "type": "list",
+      "data": [
+        {
+          "id": "PSV1QACRO4DSMQT0KK",
+          "type": "subscription",
+          "description": "Test subscription",
+          "currency": "EUR",
+          "subscription_type": "direct_debit",
+          "state": "active",
+          "start_at": null,
+          "created_at": "2023-07-24T12:40:10Z",
+          "cancel_at": null,
+          "expire_at": null,
+          "customer": "CU7JRN6W6K3DA9",
+          "mandate": "MD6ULYXJ4HP9RJ",
+          "scheduling": "automatic",
+          "cancel_periods_on_cancellation": false,
+          "period": {
+            "amount": "1000",
+            "vat": "21",
+            "multiplier": 1,
+            "interval": "month"
+          },
+          "first_period": {
+            "amount": "1000",
+            "vat": "21",
+            "multiplier": 1,
+            "interval": "month"
+          },
+          "payment_details": {
+            "return_url": null,
+            "cancel_url": null
+          },
+          "next_period_date": null,
+          "available_until": null,
+          "metadata": {},
+          "_links": {
+            "self": "https://api.paypro.nl/subscriptions/PSV1QACRO4DSMQT0KK",
+            "customer": "https://api.paypro.nl/customers/CU7JRN6W6K3DA9",
+            "mandate": "https://api.paypro.nl/mandates/MD6ULYXJ4HP9RJ"
+          }
+        }
+      ],
+      "count": 1,
+      "_links": {
+        "self": "https://api.paypro.nl/customers/resource123/subscriptions"
+      }
+    },
+    "config": {
+      "operation": "list_customer_subscriptions",
+      "customer_id": "resource123"
+    }
+  },
+  "list_subscription_periods": {
+    "method": "GET",
+    "path": "/subscriptions/{id}/subscription_periods",
+    "operation_id": "retrieveListOfSubscriptionPeriodsBySubscription",
+    "response": {
+      "type": "list",
+      "data": [
+        {
+          "id": "SPD344S1PDY8XX",
+          "type": "subscription_period",
+          "amount": 1500,
+          "period_number": 1,
+          "subscription": "PSUJDW4VCMG9JS",
+          "state": "paid",
+          "payments": {
+            "type": "list",
+            "data": [
+              {
+                "id": "PPH25H07JYWLR7PA82",
+                "type": "payment",
+                "amount": 1000,
+                "description": "Test Payment",
+                "currency": "EUR",
+                "state": "paid",
+                "refunded_amount": 0,
+                "return_url": "https://example.com/thank-you",
+                "cancel_url": "https://example.com/cancel",
+                "paid_at": "2023-06-30T12:44:35Z",
+                "created_at": "2023-06-30T12:40:10Z",
+                "_links": {
+                  "self": "https://api.paypro.nl/payments/PPH25H07JYWLR7PA82"
+                }
+              }
+            ],
+            "count": 1,
+            "_links": {
+              "self": "https://api.paypro.nl/subscription_periods/SPD344S1PDY8XX/payments"
+            }
+          },
+          "created_at": "2023-06-30T12:40:10Z",
+          "_links": {
+            "self": "https://api.paypro.nl/subscription_periods/SPD344S1PDY8XX",
+            "subscription": "https://api.paypro.nl/subscriptions/PSUJDW4VCMG9JS"
+          }
+        }
+      ],
+      "count": 1,
+      "_links": {
+        "self": "https://api.paypro.nl/subscriptions/resource123/subscription_periods"
+      }
+    },
+    "config": {
+      "operation": "list_subscription_periods",
+      "subscription_id": "resource123"
+    }
+  },
+  "list_balances": {
+    "method": "GET",
+    "path": "/balances",
+    "operation_id": "retrieveListOfBalances",
+    "response": {
+      "type": "list",
+      "data": [
+        {
+          "id": "PBA7HA516X604D",
+          "type": "balance",
+          "amount": 1000,
+          "currency": "EUR",
+          "_links": {
+            "self": "https://api.paypro.nl/balances/PBA7HA516X604D"
+          }
+        }
+      ],
+      "count": 1,
+      "_links": {
+        "self": "https://api.paypro.nl/balances"
+      }
+    },
+    "config": {
+      "operation": "list_balances"
+    }
+  },
+  "get_balance": {
+    "method": "GET",
+    "path": "/balances/{id}",
+    "operation_id": "retrieveBalance",
+    "response": {
+      "id": "PBA7HA516X604D",
+      "type": "balance",
+      "amount": 1000,
+      "currency": "EUR",
+      "_links": {
+        "self": "https://api.paypro.nl/balances/PBA7HA516X604D"
+      }
+    },
+    "config": {
+      "operation": "get_balance",
+      "balance_id": "resource123"
+    }
+  },
+  "list_balance_transactions": {
+    "method": "GET",
+    "path": "/balances/{balance_id}/transactions",
+    "operation_id": "retrieveListOfBalanceTransactions",
+    "response": {
+      "type": "list",
+      "data": [
+        {
+          "id": 12345,
+          "type": "balance_transaction",
+          "amount": 10000,
+          "fee_amount": 350,
+          "vat_amount": 74,
+          "currency": "EUR",
+          "description": "Product name",
+          "transaction_type": "SAL",
+          "source": "PP8VZWQN7REXUA",
+          "payout": "POKHCDCQPS4GAA",
+          "date": "2025-05-28T14:52:26Z",
+          "_links": {}
+        }
+      ],
+      "count": 1,
+      "_links": {
+        "self": "https://api.paypro.nl/balances/resource123/transactions"
+      }
+    },
+    "config": {
+      "operation": "list_balance_transactions",
+      "balance_id": "resource123"
+    }
+  }
+}
