@@ -153,15 +153,18 @@ async def send_organization_invite_email(
     invite_token: str,
     role: str = 'member',
     organization_icon_url: Optional[str] = None,
-    frontend_url: Optional[str] = None
+    frontend_url: Optional[str] = None,
+    invite_url: Optional[str] = None,
+    days: int = 7,
 ) -> bool:
-    """Send an organization invite email."""
+    """Send a workspace invite email; ``invite_url`` where accepting it lands (else the app's organization invite
+    for ``invite_token``), good for ``days``."""
     import html as html_lib
 
     from utils.notification_templates import kv_rows, para, strong
 
     base_url = frontend_url or FRONTEND_URL
-    invite_url = f"{base_url}/organization/invite/{invite_token}"
+    invite_url = invite_url or f"{base_url}/organization/invite/{invite_token}"
     org_html = html_lib.escape(organization_name or "")
     inviter_html = html_lib.escape(inviter_name or "")
 
@@ -191,7 +194,7 @@ async def send_organization_invite_email(
         cta_text="Accept Invitation",
         cta_url=invite_url,
         footer_notes=[
-            "This invitation expires in 7 days. If you didn't expect it, you can safely ignore this email.",
+            f"This invitation expires in {days} days. If you didn't expect it, you can safely ignore this email.",
         ],
         badge_html=badge_html,
     )
@@ -205,7 +208,7 @@ Hi there,
 Accept your invitation by clicking the link below:
 {invite_url}
 
-This invitation expires in 7 days.
+This invitation expires in {days} days.
 If you didn't expect this invitation, you can safely ignore this email.
 
 ---

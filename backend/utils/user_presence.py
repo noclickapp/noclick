@@ -19,7 +19,7 @@ within ``CHAT_LIVE_TTL_SECONDS``. Any doubt reads as not watching: a wrong
 """
 import logging
 import time
-from typing import Iterable, Optional
+from typing import Dict, Iterable, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +81,22 @@ async def seconds_since_active(user_id: str) -> Optional[float]:
     except Exception:
         logger.debug("[UserPresence] read failed", exc_info=True)
         return None
+
+
+async def last_seen_at(user_ids: Iterable[str]) -> Dict[str, float]:
+    """When each user was last active in NoClick (epoch seconds), for those with a stamp; empty when unknown."""
+    ids = list(user_ids)
+    try:
+        from utils.redis_client import get_shared_redis
+
+        redis = get_shared_redis()
+        if redis is None or not ids:
+            return {}
+        values = await redis.mget([_key(i) for i in ids])
+        return {i: float(v) for i, v in zip(ids, values) if v}
+    except Exception:
+        logger.debug("[UserPresence] read failed", exc_info=True)
+        return {}
 
 
 async def describe_owner_presence(user_id: str) -> str:
