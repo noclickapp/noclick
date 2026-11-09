@@ -1,0 +1,343 @@
+[
+  {
+    "config": {
+      "operation": "list_calls"
+    },
+    "path": "/calls/stream_query",
+    "body": {
+      "project_id": "entity/project",
+      "limit": 100,
+      "offset": 0,
+      "include_costs": false,
+      "include_feedback": false
+    },
+    "response": [
+      {
+        "id": "call-one"
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "get_call",
+      "id": "call-one"
+    },
+    "path": "/call/read",
+    "body": {
+      "project_id": "entity/project",
+      "id": "call-one",
+      "include_costs": false
+    },
+    "response": {
+      "call": {
+        "id": "call-one"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_call",
+      "call_id": "call-one",
+      "display_name": "Reviewed"
+    },
+    "path": "/call/update",
+    "body": {
+      "project_id": "entity/project",
+      "call_id": "call-one",
+      "display_name": "Reviewed"
+    },
+    "response": {}
+  },
+  {
+    "config": {
+      "operation": "delete_calls",
+      "call_ids": [
+        "call-one"
+      ]
+    },
+    "path": "/calls/delete",
+    "body": {
+      "project_id": "entity/project",
+      "call_ids": [
+        "call-one"
+      ]
+    },
+    "response": {
+      "num_deleted": 1
+    }
+  },
+  {
+    "config": {
+      "operation": "get_call_stats"
+    },
+    "path": "/calls/query_stats",
+    "body": {
+      "project_id": "entity/project"
+    },
+    "response": {
+      "count": 1
+    }
+  },
+  {
+    "config": {
+      "operation": "list_objects"
+    },
+    "path": "/objs/query",
+    "body": {
+      "project_id": "entity/project",
+      "limit": 100,
+      "offset": 0,
+      "metadata_only": true
+    },
+    "response": {
+      "objs": [
+        {
+          "project_id": "entity/project",
+          "object_id": "model",
+          "digest": "version",
+          "created_at": "2026-11-01T00:00:00Z",
+          "version_index": 0,
+          "is_latest": 1,
+          "kind": "object",
+          "base_object_class": null,
+          "val": {
+            "prompt": "hello"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "get_object",
+      "object_id": "model",
+      "digest": "latest"
+    },
+    "path": "/obj/read",
+    "body": {
+      "project_id": "entity/project",
+      "object_id": "model",
+      "digest": "latest"
+    },
+    "response": {
+      "obj": {
+        "project_id": "entity/project",
+        "object_id": "model",
+        "digest": "version",
+        "created_at": "2026-11-01T00:00:00Z",
+        "version_index": 0,
+        "is_latest": 1,
+        "kind": "object",
+        "base_object_class": null,
+        "val": {
+          "prompt": "hello"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "create_object",
+      "object_id": "model",
+      "val": {
+        "prompt": "hello"
+      }
+    },
+    "path": "/obj/create",
+    "body": {
+      "obj": {
+        "project_id": "entity/project",
+        "object_id": "model",
+        "val": {
+          "prompt": "hello"
+        }
+      }
+    },
+    "response": {
+      "digest": "version"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_object",
+      "object_id": "model",
+      "digests": [
+        "version"
+      ]
+    },
+    "path": "/obj/delete",
+    "body": {
+      "project_id": "entity/project",
+      "object_id": "model",
+      "digests": [
+        "version"
+      ]
+    },
+    "response": {
+      "num_deleted": 1
+    }
+  },
+  {
+    "config": {
+      "operation": "create_table",
+      "rows": [
+        {
+          "input": "hello"
+        }
+      ]
+    },
+    "path": "/table/create",
+    "body": {
+      "table": {
+        "project_id": "entity/project",
+        "rows": [
+          {
+            "input": "hello"
+          }
+        ]
+      }
+    },
+    "response": {
+      "digest": "table-version",
+      "row_digests": [
+        "row-version"
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "query_table",
+      "digest": "table-version"
+    },
+    "path": "/table/query",
+    "body": {
+      "project_id": "entity/project",
+      "digest": "table-version",
+      "limit": 100,
+      "offset": 0
+    },
+    "response": {
+      "rows": [
+        {
+          "digest": "row-version",
+          "val": {
+            "input": "hello"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "get_table_stats",
+      "digest": "table-version"
+    },
+    "path": "/table/query_stats",
+    "body": {
+      "project_id": "entity/project",
+      "digest": "table-version"
+    },
+    "response": {
+      "count": 1
+    }
+  },
+  {
+    "config": {
+      "operation": "read_refs",
+      "refs": [
+        "weave:///entity/project/object/model:version"
+      ]
+    },
+    "path": "/refs/read_batch",
+    "body": {
+      "refs": [
+        "weave:///entity/project/object/model:version"
+      ]
+    },
+    "response": {
+      "vals": [
+        {
+          "prompt": "hello"
+        }
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "create_feedback",
+      "weave_ref": "weave:///entity/project/call/call-one",
+      "feedback_type": "custom",
+      "payload": {
+        "key": "value"
+      }
+    },
+    "path": "/feedback/create",
+    "body": {
+      "project_id": "entity/project",
+      "weave_ref": "weave:///entity/project/call/call-one",
+      "feedback_type": "custom",
+      "payload": {
+        "key": "value"
+      }
+    },
+    "response": {
+      "id": "feedback-one",
+      "created_at": "2026-11-01T00:00:00Z",
+      "wb_user_id": "user-one",
+      "payload": {
+        "key": "value"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_feedback"
+    },
+    "path": "/feedback/query",
+    "body": {
+      "project_id": "entity/project",
+      "limit": 100,
+      "offset": 0
+    },
+    "response": {
+      "result": [
+        {
+          "id": "feedback-one",
+          "payload": {
+            "key": "value"
+          }
+        }
+      ],
+      "total_count": 1
+    }
+  },
+  {
+    "config": {
+      "operation": "list_costs"
+    },
+    "path": "/cost/query",
+    "body": {
+      "project_id": "entity/project",
+      "limit": 100,
+      "offset": 0
+    },
+    "response": {
+      "results": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_project_stats"
+    },
+    "path": "/project/stats",
+    "body": {
+      "project_id": "entity/project"
+    },
+    "response": {
+      "trace_storage_size_bytes": 1,
+      "objects_storage_size_bytes": 2,
+      "tables_storage_size_bytes": 3,
+      "files_storage_size_bytes": 4
+    }
+  }
+]

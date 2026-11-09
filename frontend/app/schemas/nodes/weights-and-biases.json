@@ -1,0 +1,815 @@
+{
+  "$defs": {
+    "CallFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "call_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Call Ids"
+        },
+        "trace_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trace Ids"
+        },
+        "parent_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Ids"
+        },
+        "op_names": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Op Names"
+        },
+        "trace_roots_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trace Roots Only"
+        }
+      },
+      "title": "CallFilter",
+      "type": "object"
+    },
+    "CreateFeedback": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_feedback",
+          "default": "create_feedback",
+          "title": "Operation",
+          "type": "string"
+        },
+        "weave_ref": {
+          "minLength": 1,
+          "title": "Weave Ref",
+          "type": "string"
+        },
+        "feedback_type": {
+          "description": "Feedback type, for example custom.",
+          "minLength": 1,
+          "title": "Feedback Type",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "description": "JSON payload required by the chosen feedback type.",
+          "title": "Payload",
+          "type": "object"
+        },
+        "creator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator"
+        }
+      },
+      "required": [
+        "weave_ref",
+        "feedback_type",
+        "payload"
+      ],
+      "title": "CreateFeedback",
+      "type": "object"
+    },
+    "CreateObject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_object",
+          "default": "create_object",
+          "title": "Operation",
+          "type": "string"
+        },
+        "object_id": {
+          "minLength": 1,
+          "title": "Object Id",
+          "type": "string"
+        },
+        "val": {
+          "description": "JSON value to publish as a new version of the object.",
+          "title": "Val"
+        }
+      },
+      "required": [
+        "object_id",
+        "val"
+      ],
+      "title": "CreateObject",
+      "type": "object"
+    },
+    "CreateTable": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_table",
+          "default": "create_table",
+          "title": "Operation",
+          "type": "string"
+        },
+        "rows": {
+          "description": "JSON rows for a new immutable Weave table.",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 1000,
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rows"
+      ],
+      "title": "CreateTable",
+      "type": "object"
+    },
+    "DeleteCalls": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_calls",
+          "default": "delete_calls",
+          "title": "Operation",
+          "type": "string"
+        },
+        "call_ids": {
+          "description": "Explicit call IDs to delete. Deletion may also remove their descendants.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Call Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "call_ids"
+      ],
+      "title": "DeleteCalls",
+      "type": "object"
+    },
+    "DeleteObject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_object",
+          "default": "delete_object",
+          "title": "Operation",
+          "type": "string"
+        },
+        "object_id": {
+          "minLength": 1,
+          "title": "Object Id",
+          "type": "string"
+        },
+        "digests": {
+          "description": "Explicit versions or aliases to delete; this operation requires a selection.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Digests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "object_id",
+        "digests"
+      ],
+      "title": "DeleteObject",
+      "type": "object"
+    },
+    "GetCall": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_call",
+          "default": "get_call",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Call ID",
+          "type": "string"
+        },
+        "include_costs": {
+          "default": false,
+          "title": "Include Costs",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCall",
+      "type": "object"
+    },
+    "GetCallStats": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_call_stats",
+          "default": "get_call_stats",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CallFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "GetCallStats",
+      "type": "object"
+    },
+    "GetObject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_object",
+          "default": "get_object",
+          "title": "Operation",
+          "type": "string"
+        },
+        "object_id": {
+          "minLength": 1,
+          "title": "Object Id",
+          "type": "string"
+        },
+        "digest": {
+          "description": "Version digest or alias, such as latest.",
+          "minLength": 1,
+          "title": "Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object_id",
+        "digest"
+      ],
+      "title": "GetObject",
+      "type": "object"
+    },
+    "GetProjectStats": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project_stats",
+          "default": "get_project_stats",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetProjectStats",
+      "type": "object"
+    },
+    "GetTableStats": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_table_stats",
+          "default": "get_table_stats",
+          "title": "Operation",
+          "type": "string"
+        },
+        "digest": {
+          "minLength": 1,
+          "title": "Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "digest"
+      ],
+      "title": "GetTableStats",
+      "type": "object"
+    },
+    "ListCalls": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum items in this page. A full page may have a following page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip; use next_offset to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_calls",
+          "default": "list_calls",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CallFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "include_costs": {
+          "default": false,
+          "title": "Include Costs",
+          "type": "boolean"
+        },
+        "include_feedback": {
+          "default": false,
+          "title": "Include Feedback",
+          "type": "boolean"
+        }
+      },
+      "title": "ListCalls",
+      "type": "object"
+    },
+    "ListCosts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum items in this page. A full page may have a following page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip; use next_offset to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_costs",
+          "default": "list_costs",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCosts",
+      "type": "object"
+    },
+    "ListFeedback": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum items in this page. A full page may have a following page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip; use next_offset to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_feedback",
+          "default": "list_feedback",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFeedback",
+      "type": "object"
+    },
+    "ListObjects": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum items in this page. A full page may have a following page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip; use next_offset to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_objects",
+          "default": "list_objects",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ObjectFilter"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "metadata_only": {
+          "default": true,
+          "title": "Metadata Only",
+          "type": "boolean"
+        }
+      },
+      "title": "ListObjects",
+      "type": "object"
+    },
+    "ObjectFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "object_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object Ids"
+        },
+        "base_object_classes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For example Dataset, Model or Evaluation.",
+          "title": "Base Object Classes"
+        },
+        "latest_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latest Only"
+        },
+        "is_op": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Op"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "aliases": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aliases"
+        }
+      },
+      "title": "ObjectFilter",
+      "type": "object"
+    },
+    "QueryTable": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum items in this page. A full page may have a following page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip; use next_offset to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "query_table",
+          "default": "query_table",
+          "title": "Operation",
+          "type": "string"
+        },
+        "digest": {
+          "minLength": 1,
+          "title": "Digest",
+          "type": "string"
+        }
+      },
+      "required": [
+        "digest"
+      ],
+      "title": "QueryTable",
+      "type": "object"
+    },
+    "ReadRefs": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "read_refs",
+          "default": "read_refs",
+          "title": "Operation",
+          "type": "string"
+        },
+        "refs": {
+          "description": "Weave references to resolve in one batch.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "refs"
+      ],
+      "title": "ReadRefs",
+      "type": "object"
+    },
+    "UpdateCall": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_call",
+          "default": "update_call",
+          "title": "Operation",
+          "type": "string"
+        },
+        "call_id": {
+          "minLength": 1,
+          "title": "Call Id",
+          "type": "string"
+        },
+        "display_name": {
+          "description": "New display name of the call.",
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "call_id",
+        "display_name"
+      ],
+      "title": "UpdateCall",
+      "type": "object"
+    },
+    "WeightsAndBiasesAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "weights_and_biases_api_key",
+          "default": "weights_and_biases_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "project_id": {
+          "description": "W&B entity/project, for example my-team/my-project.",
+          "maxLength": 512,
+          "minLength": 3,
+          "title": "Project",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "project_id"
+      ],
+      "title": "Weights And Biases API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your W&B API key and the entity/project of a Weave project you can access. NoClick verifies access by listing that project's objects. Reads and writes use the key's existing permissions on W&B Cloud.",
+      "x-credential-url": "https://wandb.ai/authorize"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_feedback": "#/$defs/CreateFeedback",
+          "create_object": "#/$defs/CreateObject",
+          "create_table": "#/$defs/CreateTable",
+          "delete_calls": "#/$defs/DeleteCalls",
+          "delete_object": "#/$defs/DeleteObject",
+          "get_call": "#/$defs/GetCall",
+          "get_call_stats": "#/$defs/GetCallStats",
+          "get_object": "#/$defs/GetObject",
+          "get_project_stats": "#/$defs/GetProjectStats",
+          "get_table_stats": "#/$defs/GetTableStats",
+          "list_calls": "#/$defs/ListCalls",
+          "list_costs": "#/$defs/ListCosts",
+          "list_feedback": "#/$defs/ListFeedback",
+          "list_objects": "#/$defs/ListObjects",
+          "query_table": "#/$defs/QueryTable",
+          "read_refs": "#/$defs/ReadRefs",
+          "update_call": "#/$defs/UpdateCall"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCalls"
+        },
+        {
+          "$ref": "#/$defs/GetCall"
+        },
+        {
+          "$ref": "#/$defs/UpdateCall"
+        },
+        {
+          "$ref": "#/$defs/DeleteCalls"
+        },
+        {
+          "$ref": "#/$defs/GetCallStats"
+        },
+        {
+          "$ref": "#/$defs/ListObjects"
+        },
+        {
+          "$ref": "#/$defs/GetObject"
+        },
+        {
+          "$ref": "#/$defs/CreateObject"
+        },
+        {
+          "$ref": "#/$defs/DeleteObject"
+        },
+        {
+          "$ref": "#/$defs/CreateTable"
+        },
+        {
+          "$ref": "#/$defs/QueryTable"
+        },
+        {
+          "$ref": "#/$defs/GetTableStats"
+        },
+        {
+          "$ref": "#/$defs/ReadRefs"
+        },
+        {
+          "$ref": "#/$defs/CreateFeedback"
+        },
+        {
+          "$ref": "#/$defs/ListFeedback"
+        },
+        {
+          "$ref": "#/$defs/ListCosts"
+        },
+        {
+          "$ref": "#/$defs/GetProjectStats"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WeightsAndBiasesAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Weights-and-biases Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
