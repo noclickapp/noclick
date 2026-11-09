@@ -207,3 +207,21 @@ async def test_event_poll_documented_terminal_cursor_response(monkeypatch):
     output = await poll.execute({})
     assert output["records"] == [] and output["scan_complete"]
     assert native.CleverTapNode.resolve_agent_event(output) is None
+
+
+
+def test_event_identity_ignores_mutable_profile_and_summary_enrichment():
+    example = json.loads((Path(__file__).parent / "fixtures/clevertap/event_export_docs.json").read_text())["body"]["records"][0]
+    key = native.CleverTapNode._event_key(example)
+    enriched = copy.deepcopy(example)
+    enriched["profile"]["email"] = "changed@example.test"
+    enriched["profile"]["profileData"]["favoriteColor"] = "red"
+    enriched["events"]["Test event"]["count"] += 1
+    assert native.CleverTapNode._event_key(enriched) == key
+    for field in ("ts", "event_props", "session_props"):
+        changed = copy.deepcopy(example)
+        changed[field] = example["ts"] + 1 if field == "ts" else {"value": "different"}
+        assert native.CleverTapNode._event_key(changed) != key
+    another_user = copy.deepcopy(example)
+    another_user["profile"]["objectId"] = "different-user"
+    assert native.CleverTapNode._event_key(another_user) != key

@@ -542,7 +542,7 @@
         },
         "lookback_days": {
           "default": 2,
-          "description": "Rolling inclusive event-date window; existing records form the initial baseline. Events arriving outside this window are excluded. Identical records, including the timestamp, are treated as one delivery.",
+          "description": "Rolling inclusive event-date window; existing records form the initial baseline. Events arriving outside this window are excluded. Events with the same user ID, timestamp and event/session properties are treated as one delivery.",
           "maximum": 31,
           "minimum": 1,
           "title": "Lookback days",

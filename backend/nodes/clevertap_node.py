@@ -230,7 +230,7 @@ class OnNewEvent(PollTriggerConfigBase):
     })
     event_name: str = Field(..., min_length=1, max_length=512, title="Event name")
     account_timezone: str = Field("UTC", title="Account timezone", description="IANA timezone matching your CleverTap account, e.g. Asia/Kolkata.")
-    lookback_days: int = Field(2, ge=1, le=31, title="Lookback days", description="Rolling inclusive event-date window; existing records form the initial baseline. Events arriving outside this window are excluded. Identical records, including the timestamp, are treated as one delivery.")
+    lookback_days: int = Field(2, ge=1, le=31, title="Lookback days", description="Rolling inclusive event-date window; existing records form the initial baseline. Events arriving outside this window are excluded. Events with the same user ID, timestamp and event/session properties are treated as one delivery.")
 
     @field_validator("account_timezone")
     @classmethod
@@ -358,6 +358,17 @@ class CleverTapNode(ScheduledPollTriggerMixin, WorkflowNode):
             raise ValueError("CleverTap returned invalid subscription groups")
         return sorted(groups, key=lambda g: (g["updated_on"], g["key"]))
 
+    @staticmethod
+    def _event_key(record):
+        # Profile attributes and summary counts are mutable enrichment, not event
+        # identity. Prefer CleverTap's stable objectId to a changeable identity.
+        identifiers = {key: value for key, value in record["profile"].items() if key in {"objectId", "identity"}}
+        if "objectId" in identifiers:
+            identifiers = {"objectId": identifiers["objectId"]}
+        immutable = {key: value for key, value in record.items() if key in {"ts", "event_props", "session_props"}}
+        immutable["profile"] = identifiers
+        return hashlib.sha256(json.dumps(immutable, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
     async def _poll_events(self, op):
         today = datetime.now(ZoneInfo(op.account_timezone)).date()
         start = today - timedelta(days=op.lookback_days - 1)
@@ -391,12 +402,8 @@ class CleverTapNode(ScheduledPollTriggerMixin, WorkflowNode):
                 break
         else:
             raise ValueError("Event export exceeds 100 pages; narrow the event or lookback window")
-        def event_key(record):
-            return hashlib.sha256(json.dumps(record, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-        unique = list({event_key(record): record for record in records}.values())
-        if len(unique) > 10000:
-            raise ValueError("Event window exceeds 10,000 unique records; narrow the event or lookback window")
-        fresh = await self._filter_unseen(unique, event_key)
+        unique = list({self._event_key(record): record for record in records}.values())
+        fresh = await self._filter_unseen(unique, self._event_key)
         return {"operation": op.operation, "event_name": op.event_name, "records": fresh,
                 "new_event_count": len(fresh), "scan_complete": warning is None, "warning": warning}
 
