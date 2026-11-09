@@ -1,0 +1,4299 @@
+{
+  "source": "https://docs.investorliftdata.com/openapi.json",
+  "version": "1.0.0",
+  "cases": [
+    {
+      "config": {
+        "operation": "predict",
+        "address": "1026 N Beckley Ave, Dallas, TX 75203"
+      },
+      "method": "POST",
+      "path": "/v1/predict",
+      "response": {
+        "comps": [
+          {
+            "sqft": 2080,
+            "lotsize": 6500,
+            "bedrooms": 6,
+            "bathrooms": 2,
+            "sale_date": "2024-12-03",
+            "sale_price": 246641,
+            "year_built": 1945,
+            "address_zip": "75203",
+            "property_id": "00000000000000000000000000000001",
+            "address_city": "Dallas",
+            "address_state": "TX",
+            "property_type": "Single Family",
+            "address_street": "523 N Marsalis Ave",
+            "distance_miles": 0.4,
+            "similarity_rank": 1,
+            "price_per_square_foot": 119
+          },
+          {
+            "sqft": 1400,
+            "lotsize": 7025,
+            "bedrooms": 3,
+            "bathrooms": 1,
+            "sale_date": "2026-05-08",
+            "sale_price": 234999,
+            "year_built": 1930,
+            "address_zip": "75203",
+            "property_id": "00000000000000000000000000000001",
+            "address_city": "Dallas",
+            "address_state": "TX",
+            "property_type": "Single Family",
+            "address_street": "102 E 5th St",
+            "distance_miles": 0.09,
+            "similarity_rank": 2,
+            "price_per_square_foot": 168
+          },
+          {
+            "sqft": 1787,
+            "lotsize": 6678,
+            "bedrooms": 4,
+            "bathrooms": 2,
+            "sale_date": "2025-03-05",
+            "sale_price": 503139,
+            "year_built": 1945,
+            "address_zip": "75208",
+            "property_id": "00000000000000000000000000000001",
+            "address_city": "Dallas",
+            "address_state": "TX",
+            "property_type": "Single Family",
+            "address_street": "818 Elsbeth St",
+            "distance_miles": 0.24,
+            "similarity_rank": 3,
+            "price_per_square_foot": 282
+          }
+        ],
+        "comp_band": {
+          "low": 388634,
+          "high": 942020,
+          "median": 571412
+        },
+        "cost_stack": {
+          "loan": 331200,
+          "points": 6624,
+          "interest": 6533,
+          "hold_days": 60,
+          "down_payment": 82800,
+          "closing_costs": 29562,
+          "target_profit": 114282
+        },
+        "rehab_budget": 0,
+        "target_margin": 0.2,
+        "valuation_mean": 1016099,
+        "subject_property": {
+          "facts": {
+            "bathrooms": {
+              "value": 2,
+              "source": "county-record"
+            },
+            "year_built": {
+              "value": 1935,
+              "source": "county-record"
+            },
+            "square_feet": {
+              "value": 2047,
+              "source": "county-record"
+            },
+            "property_type": {
+              "value": "Single Family",
+              "source": "county-record"
+            },
+            "lot_size_square_feet": {
+              "value": 7100,
+              "source": "county-record"
+            }
+          },
+          "address": {
+            "zip": "75203",
+            "city": "Dallas",
+            "state": "TX",
+            "street": "1026 N Beckley Ave"
+          },
+          "property_id": "00000000000000000000000000000001",
+          "address_quality": {
+            "code": "zip-confirmed",
+            "statement": "The house number matched exactly one county record, and that record sits in the same ZIP code your address resolved to. Check the address and property facts in this block before relying on these numbers."
+          },
+          "outside_model_range": {
+            "flagged": false,
+            "reasons": []
+          }
+        },
+        "as_is_similar_band": {
+          "basis": "all-comparable-sales",
+          "statement": "Too few comparable sales passed the size, age and recency filter this service applies to state a similar-sales range, so this price-per-square-foot range covers every comparable sale below that carries a usable sale price and square footage. `qualifying_sales` is how many passed the filter and fell short.",
+          "qualifying_sales": 1,
+          "price_per_square_foot": {
+            "low": 190,
+            "high": 460,
+            "median": 279
+          }
+        },
+        "rehab_adjusted_arv": 571000,
+        "max_allowable_offer": {
+          "amount": 414000,
+          "clamped": false
+        },
+        "valuation_quantiles": {
+          "0.02": 191787,
+          "0.10": 345336,
+          "0.20": 476815,
+          "0.30": 598093,
+          "0.40": 733771,
+          "0.50": 878872,
+          "0.60": 1110818,
+          "0.70": 1417051,
+          "0.80": 1988162,
+          "0.90": 3615373,
+          "0.98": 15505619
+        },
+        "effective_sample_size": 51.04950714111328,
+        "model_estimate_available": true,
+        "pricing_model_arv_estimate": 1417000
+      }
+    },
+    {
+      "config": {
+        "operation": "predict_batch",
+        "properties": [
+          {
+            "address": "1026 N Beckley Ave, Dallas, TX 75203"
+          },
+          {
+            "address": "100 Sample Street, Dallas, TX 75203",
+            "condition": "major_rehab"
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/v1/predict/batch",
+      "response": {
+        "results": [
+          {
+            "comp_band": {
+              "low": 388634,
+              "high": 942020,
+              "median": 571412
+            },
+            "cost_stack": {
+              "loan": 331200,
+              "points": 6624,
+              "interest": 6533,
+              "hold_days": 60,
+              "down_payment": 82800,
+              "closing_costs": 29562,
+              "target_profit": 114282
+            },
+            "rehab_budget": 0,
+            "target_margin": 0.2,
+            "valuation_mean": 1016099,
+            "subject_property": {
+              "facts": {
+                "bathrooms": {
+                  "value": 2,
+                  "source": "county-record"
+                },
+                "year_built": {
+                  "value": 1935,
+                  "source": "county-record"
+                },
+                "square_feet": {
+                  "value": 2047,
+                  "source": "county-record"
+                },
+                "property_type": {
+                  "value": "Single Family",
+                  "source": "county-record"
+                },
+                "lot_size_square_feet": {
+                  "value": 7100,
+                  "source": "county-record"
+                }
+              },
+              "address": {
+                "zip": "75203",
+                "city": "Dallas",
+                "state": "TX",
+                "street": "1026 N Beckley Ave"
+              },
+              "property_id": "00000000000000000000000000000001",
+              "address_quality": {
+                "code": "zip-confirmed",
+                "statement": "The house number matched exactly one county record, and that record sits in the same ZIP code your address resolved to. Check the address and property facts in this block before relying on these numbers."
+              },
+              "outside_model_range": {
+                "flagged": false,
+                "reasons": []
+              }
+            },
+            "as_is_similar_band": {
+              "basis": "all-comparable-sales",
+              "statement": "Too few comparable sales passed the size, age and recency filter this service applies to state a similar-sales range, so this price-per-square-foot range covers every comparable sale below that carries a usable sale price and square footage. `qualifying_sales` is how many passed the filter and fell short.",
+              "qualifying_sales": 1,
+              "price_per_square_foot": {
+                "low": 190,
+                "high": 460,
+                "median": 279
+              }
+            },
+            "rehab_adjusted_arv": 571000,
+            "max_allowable_offer": {
+              "amount": 414000,
+              "clamped": false
+            },
+            "valuation_quantiles": {
+              "0.02": 191787,
+              "0.10": 345336,
+              "0.20": 476815,
+              "0.30": 598093,
+              "0.40": 733771,
+              "0.50": 878872,
+              "0.60": 1110818,
+              "0.70": 1417051,
+              "0.80": 1988162,
+              "0.90": 3615373,
+              "0.98": 15505619
+            },
+            "effective_sample_size": 51.04950714111328,
+            "model_estimate_available": true,
+            "pricing_model_arv_estimate": 1417000
+          },
+          {
+            "type": "https://docs.investorliftdata.com/errors/unscorable-address",
+            "title": "Address cannot be scored",
+            "detail": "The submitted address could not be scored. The Credit for this call has been returned to the Account as a Refund.",
+            "status": 422,
+            "trace_id": "00000000-0000-4000-8000-000000000000"
+          }
+        ]
+      }
+    },
+    {
+      "config": {
+        "operation": "get_history",
+        "address": "1026 N Beckley Ave, Dallas, TX 75203"
+      },
+      "method": "POST",
+      "path": "/v1/history",
+      "response": {
+        "flips": [],
+        "permits": {
+          "hvac": {
+            "work_status": null,
+            "most_recent_date": null,
+            "most_recent_job_value": null
+          },
+          "roof": {
+            "work_status": null,
+            "most_recent_date": null,
+            "most_recent_job_value": null
+          },
+          "permits": [
+            {
+              "tags": [
+                "tags_electrical",
+                "tags_solar"
+              ],
+              "file_date": "2023-10-05",
+              "job_value": 16000,
+              "final_date": "2025-04-26",
+              "issue_date": "2023-10-05",
+              "work_status": "completed",
+              "construction_duration": 569
+            },
+            {
+              "tags": [
+                "tags_electrical"
+              ],
+              "file_date": null,
+              "job_value": null,
+              "final_date": null,
+              "issue_date": "2023-04-21",
+              "work_status": "open",
+              "construction_duration": null
+            },
+            {
+              "tags": [
+                "tags_plumbing"
+              ],
+              "file_date": null,
+              "job_value": null,
+              "final_date": null,
+              "issue_date": "2016-03-08",
+              "work_status": "completed",
+              "construction_duration": null
+            }
+          ],
+          "plumbing": {
+            "work_status": "completed",
+            "most_recent_date": "2016-03-08",
+            "most_recent_job_value": null
+          },
+          "statement": "Building-permit records were retrieved for this property. The permits below are the most recent recorded work in each trade, together with any permit still open and any demolition. Each category is a conclusion derived from the county record, not a statement made by the county.",
+          "demolition": {
+            "work_status": null,
+            "most_recent_date": null,
+            "most_recent_job_value": null
+          },
+          "electrical": {
+            "work_status": "completed",
+            "most_recent_date": "2023-10-05",
+            "most_recent_job_value": 16000
+          },
+          "water_heater": {
+            "work_status": null,
+            "most_recent_date": null,
+            "most_recent_job_value": null
+          },
+          "coverage_known": true,
+          "has_open_permit": true
+        },
+        "summary": {
+          "market_state": "off-market",
+          "flip_detected": false,
+          "open_permit_work": true,
+          "long_tenured_owner": true,
+          "demolition_recorded": false,
+          "asking_price_reduced": null,
+          "last_recorded_sale_kind": "family-transfer",
+          "recorded_loan_available": false,
+          "last_recorded_buyer_type": "individual",
+          "permit_records_available": true,
+          "has_recorded_transactions": true
+        },
+        "transactions": [
+          {
+            "kind": "family-transfer",
+            "reo_sale": null,
+            "sale_date": "2008-03-29",
+            "buyer_type": "individual",
+            "sale_price": 0,
+            "foreclosure": null,
+            "inter_family": true,
+            "price_is_estimated": null
+          }
+        ],
+        "market_status": {
+          "state": "off-market",
+          "sold_date": null,
+          "sold_price": null,
+          "price_reduced": null,
+          "days_on_market": null,
+          "list_price_low": null,
+          "rental_listing": false,
+          "list_price_high": null,
+          "failed_listing_date": "2023-08-09",
+          "list_price_low_date": null,
+          "list_price_high_date": null,
+          "original_listing_date": null
+        },
+        "seller_position": {
+          "basis": "No recorded loan is available for this property, so no payoff estimate and no equity estimate can be made. Nothing is inferred from that absence: it does not mean the property is owned free and clear, and it does not mean the last purchase was made in cash. What this section does report is how long the current owner has held title, taken from the chain of title above.",
+          "days_owned": 6783,
+          "owned_since": "2008-03-29",
+          "recorded_loan_available": false
+        },
+        "subject_property": {
+          "facts": {
+            "bathrooms": {
+              "value": 2,
+              "source": "county-record"
+            },
+            "year_built": {
+              "value": 1935,
+              "source": "county-record"
+            },
+            "square_feet": {
+              "value": 2047,
+              "source": "county-record"
+            },
+            "property_type": {
+              "value": "Single Family",
+              "source": "county-record"
+            },
+            "lot_size_square_feet": {
+              "value": 7100,
+              "source": "county-record"
+            }
+          },
+          "address": {
+            "zip": "75203",
+            "city": "Dallas",
+            "state": "TX",
+            "street": "1026 N Beckley Ave"
+          },
+          "property_id": "00000000000000000000000000000001",
+          "address_quality": {
+            "code": "zip-confirmed",
+            "statement": "The house number matched exactly one county record, and that record sits in the same ZIP code your address resolved to. Check the address and property facts in this block before relying on these numbers."
+          },
+          "outside_model_range": {
+            "flagged": false,
+            "reasons": []
+          }
+        },
+        "records_statement": "The recorded sale and deed records for this property were checked. The transactions below are what is on file, newest first. Each category and each buyer type is a conclusion derived from the county record, not a statement made by the county."
+      }
+    },
+    {
+      "config": {
+        "operation": "validate_request",
+        "address": "1026 N Beckley Ave, Dallas, TX 75203"
+      },
+      "method": "POST",
+      "path": "/v1/validate",
+      "response": {
+        "valid": true
+      }
+    },
+    {
+      "config": {
+        "operation": "resolve_property",
+        "address": "1026 N Beckley Ave",
+        "zip": "75203"
+      },
+      "method": "GET",
+      "path": "/v1/data/properties/resolve",
+      "response": {
+        "data": {
+          "line": "100 Sample Street",
+          "unit": null,
+          "city": "Phoenix",
+          "zip": "85008",
+          "county_fips": "04013",
+          "apn": "0000-000-000",
+          "latitude": 33.474412,
+          "longitude": -111.997848,
+          "address_held_back": null,
+          "location_radius_m": null,
+          "property_id": "b6219fe62b8b51a0efa988aa8e6e0189",
+          "state": "AZ",
+          "n_deeds": 0,
+          "n_flagged": 0,
+          "holder": null,
+          "owner": {
+            "n_owners": 1,
+            "names": [],
+            "display_names": [],
+            "is_company": false,
+            "is_trust": true,
+            "is_government": false,
+            "ownership_rights": "Trust",
+            "status_type": "Company Owned",
+            "ownership_start_date": null,
+            "length_of_residence_months": null,
+            "owner_occupied": true,
+            "absentee": false,
+            "mailing": null,
+            "mailing_out_of_state": false,
+            "last_purchase": null,
+            "last_deed": {
+              "position": 1,
+              "sale_date": "2016-05-19",
+              "document_type": "Intra-Family Transfer"
+            },
+            "purchase_match": "none",
+            "purchase_match_strength": "none",
+            "deed_match": "exact",
+            "deed_match_strength": "strong",
+            "acquisition_basis": "transfer",
+            "held_since": "2016-05-19",
+            "held_since_basis": "transfer_deed",
+            "months_held": 124.6
+          },
+          "attributes": {
+            "property_type_category": "Residential",
+            "property_type_detail": "Single Family",
+            "segment": "SFR",
+            "land_use_code": "R2",
+            "vacant": false,
+            "year_built": 1955,
+            "effective_year_built": 1955,
+            "living_area_sqft": 1477,
+            "building_sqft": 1477,
+            "bedrooms": 3,
+            "bathrooms": 2,
+            "full_bathrooms": 2,
+            "partial_bathrooms": null,
+            "stories": 1,
+            "garage_spaces": 1,
+            "pool": null,
+            "buildings": 1,
+            "units": 1,
+            "construction_type": "Concrete Block",
+            "lot_sqft": 7710,
+            "lot_acres": 0.177,
+            "zoning_code": "R-6",
+            "assessed_total": 42930,
+            "assessed_land": null,
+            "assessed_improvement": null,
+            "assessment_year": 2027,
+            "market_value_total": 429300,
+            "market_value_year": 2027,
+            "tax_amount": 1908,
+            "tax_year": 2025,
+            "tax_delinquent_year": null,
+            "tax_exemptions": null
+          },
+          "financing": {
+            "open_lien_count": 0,
+            "open_lien_balance": null,
+            "free_and_clear": true,
+            "has_heloc": false,
+            "cash_purchase": null,
+            "first_lien": null,
+            "last_mortgage": null,
+            "avm": {
+              "value": 420781,
+              "low": 332416,
+              "high": 509145,
+              "sd": 21,
+              "confidence": 79,
+              "as_of": "2026-04-08"
+            },
+            "equity": {
+              "balance": 420781,
+              "percent": 100,
+              "ltv": 0
+            },
+            "involuntary_lien_count": 1,
+            "open_liens": [],
+            "history": [],
+            "liens": [
+              {
+                "position": 1,
+                "lien_type": "Economic Lien",
+                "document_type": "Financing Statement",
+                "document_number": "0000000001",
+                "recording_date": "2024-02-08",
+                "filing_date": null,
+                "lien_amount": null,
+                "judgement_amount": null,
+                "tax_period_end_date": null,
+                "parties": [],
+                "attorney": {
+                  "company": null,
+                  "phone": null
+                }
+              }
+            ],
+            "as_of": "2026-06-25",
+            "recordings_through": "2026-06-11",
+            "contact_redacted": true
+          },
+          "short_term_rental": null,
+          "contact_redacted": true
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:18:01.462Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "get_property",
+        "property_id": "a1b2c3d4e5f60718293a4b5c6d7e8f90"
+      },
+      "method": "GET",
+      "path": "/v1/data/properties/{property_id}",
+      "response": {
+        "data": {
+          "line": "100 Sample Street",
+          "unit": null,
+          "city": "Phoenix",
+          "zip": "85008",
+          "county_fips": "04013",
+          "apn": "0000-000-000",
+          "latitude": 33.474412,
+          "longitude": -111.997848,
+          "address_held_back": null,
+          "location_radius_m": null,
+          "property_id": "b6219fe62b8b51a0efa988aa8e6e0189",
+          "state": "AZ",
+          "n_deeds": 0,
+          "n_flagged": 0,
+          "holder": null,
+          "owner": {
+            "n_owners": 1,
+            "names": [],
+            "display_names": [],
+            "is_company": false,
+            "is_trust": true,
+            "is_government": false,
+            "ownership_rights": "Trust",
+            "status_type": "Company Owned",
+            "ownership_start_date": null,
+            "length_of_residence_months": null,
+            "owner_occupied": true,
+            "absentee": false,
+            "mailing": null,
+            "mailing_out_of_state": false,
+            "last_purchase": null,
+            "last_deed": {
+              "position": 1,
+              "sale_date": "2016-05-19",
+              "document_type": "Intra-Family Transfer"
+            },
+            "purchase_match": "none",
+            "purchase_match_strength": "none",
+            "deed_match": "exact",
+            "deed_match_strength": "strong",
+            "acquisition_basis": "transfer",
+            "held_since": "2016-05-19",
+            "held_since_basis": "transfer_deed",
+            "months_held": 124.6
+          },
+          "attributes": {
+            "property_type_category": "Residential",
+            "property_type_detail": "Single Family",
+            "segment": "SFR",
+            "land_use_code": "R2",
+            "vacant": false,
+            "year_built": 1955,
+            "effective_year_built": 1955,
+            "living_area_sqft": 1477,
+            "building_sqft": 1477,
+            "bedrooms": 3,
+            "bathrooms": 2,
+            "full_bathrooms": 2,
+            "partial_bathrooms": null,
+            "stories": 1,
+            "garage_spaces": 1,
+            "pool": null,
+            "buildings": 1,
+            "units": 1,
+            "construction_type": "Concrete Block",
+            "lot_sqft": 7710,
+            "lot_acres": 0.177,
+            "zoning_code": "R-6",
+            "assessed_total": 42930,
+            "assessed_land": null,
+            "assessed_improvement": null,
+            "assessment_year": 2027,
+            "market_value_total": 429300,
+            "market_value_year": 2027,
+            "tax_amount": 1908,
+            "tax_year": 2025,
+            "tax_delinquent_year": null,
+            "tax_exemptions": null
+          },
+          "financing": {
+            "open_lien_count": 0,
+            "open_lien_balance": null,
+            "free_and_clear": true,
+            "has_heloc": false,
+            "cash_purchase": null,
+            "first_lien": null,
+            "last_mortgage": null,
+            "avm": {
+              "value": 420781,
+              "low": 332416,
+              "high": 509145,
+              "sd": 21,
+              "confidence": 79,
+              "as_of": "2026-04-08"
+            },
+            "equity": {
+              "balance": 420781,
+              "percent": 100,
+              "ltv": 0
+            },
+            "involuntary_lien_count": 1,
+            "open_liens": [],
+            "history": [],
+            "liens": [
+              {
+                "position": 1,
+                "lien_type": "Economic Lien",
+                "document_type": "Financing Statement",
+                "document_number": "0000000001",
+                "recording_date": "2024-02-08",
+                "filing_date": null,
+                "lien_amount": null,
+                "judgement_amount": null,
+                "tax_period_end_date": null,
+                "parties": [],
+                "attorney": {
+                  "company": null,
+                  "phone": null
+                }
+              }
+            ],
+            "as_of": "2026-06-25",
+            "recordings_through": "2026-06-11",
+            "contact_redacted": true
+          },
+          "short_term_rental": null,
+          "contact_redacted": true
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:19:18.979Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "get_property_history",
+        "property_id": "a1b2c3d4e5f60718293a4b5c6d7e8f90"
+      },
+      "method": "GET",
+      "path": "/v1/data/properties/{property_id}/history",
+      "response": {
+        "data": {
+          "property_id": "b6219fe62b8b51a0efa988aa8e6e0189",
+          "deeds": [],
+          "contact_redacted": false
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:19:19.308Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "get_listing_history",
+        "property_id": "a1b2c3d4e5f60718293a4b5c6d7e8f90"
+      },
+      "method": "GET",
+      "path": "/v1/data/properties/{property_id}/listing-history",
+      "response": {
+        "data": {
+          "property_id": "b6219fe62b8b51a0efa988aa8e6e0189",
+          "versions": [
+            {
+              "listing_id": "00000000000000000000000000000001",
+              "version_no": 1,
+              "is_current": true,
+              "seen_from": "2026-10-21",
+              "seen_to": null,
+              "closed_by": null,
+              "status": "ACTIVE",
+              "status_basis": "category",
+              "status_detail": null,
+              "status_raw": "Active",
+              "off_market_reason": null,
+              "is_rental": false,
+              "on_market": true,
+              "list_price": 400000,
+              "price_low": 400000,
+              "price_low_on": "2026-10-18",
+              "price_high": 400000,
+              "price_high_on": "2026-10-18",
+              "listed_on": "2026-10-18",
+              "status_updated_on": "2026-10-18",
+              "off_market_on": null,
+              "sold_on": null,
+              "sold_price": null,
+              "days_on_market": 1,
+              "mls_name": "Sample MLS",
+              "mls_number": "0000000001",
+              "brokerage_name": "Sample Realty",
+              "bedrooms": 3,
+              "bathrooms": 1,
+              "living_area": 1477,
+              "lot_sqft": 7840,
+              "year_built": 1955,
+              "property_type": "SINGLE_FAMILY",
+              "property_subtype": null,
+              "n_agents": 1,
+              "modified_at": "2026-10-20T11:43:08.027Z"
+            }
+          ]
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:19:19.645Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_listings",
+        "zip": [
+          "85008"
+        ]
+      },
+      "method": "GET",
+      "path": "/v1/data/listings",
+      "response": {
+        "data": [
+          {
+            "listing_id": "fb954c6e27240d74bf7540a56e5d0eeb",
+            "property_id": "00000000000000000000000000000001",
+            "address": {
+              "line": "100 Sample Street",
+              "city": "Phoenix",
+              "zip": "85008",
+              "apn": "0000-000-000"
+            },
+            "latitude": 33.474412,
+            "longitude": -111.997848,
+            "address_held_back": null,
+            "location_radius_m": null,
+            "distance_miles": null,
+            "status": "ACTIVE",
+            "status_detail": null,
+            "on_market": true,
+            "is_rental": false,
+            "listed_on": "2026-10-18",
+            "sold_on": null,
+            "off_market_on": null,
+            "status_updated_on": "2026-10-18",
+            "list_price": 400000,
+            "sold_price": null,
+            "price_high": 400000,
+            "days_on_market": 1,
+            "bedrooms": 3,
+            "bathrooms": 1,
+            "living_area": 1477,
+            "lot_sqft": 7840,
+            "year_built": 1955,
+            "property_type": "SINGLE_FAMILY",
+            "mls_number": "0000000001",
+            "mls_name": "Sample MLS",
+            "brokerage_name": "Sample Realty",
+            "n_agents": 1,
+            "agent_ids": [
+              "00000000000000000000000000000001"
+            ],
+            "holder_org_ids": [],
+            "n_holder_orgs": 2,
+            "holder_from_registry": false
+          },
+          {
+            "listing_id": "9e056b3eace51c9f9e18e316e077d232",
+            "property_id": "00000000000000000000000000000001",
+            "address": {
+              "line": "100 Sample Street",
+              "city": "Phoenix",
+              "zip": "85008",
+              "apn": "0000-000-000"
+            },
+            "latitude": 33.476573,
+            "longitude": -112.024229,
+            "address_held_back": null,
+            "location_radius_m": null,
+            "distance_miles": null,
+            "status": "ACTIVE",
+            "status_detail": null,
+            "on_market": true,
+            "is_rental": false,
+            "listed_on": "2026-10-17",
+            "sold_on": null,
+            "off_market_on": null,
+            "status_updated_on": "2026-10-17",
+            "list_price": 325000,
+            "sold_price": null,
+            "price_high": 325000,
+            "days_on_market": 2,
+            "bedrooms": 3,
+            "bathrooms": 3,
+            "living_area": null,
+            "lot_sqft": 7840,
+            "year_built": 1969,
+            "property_type": "SINGLE_FAMILY",
+            "mls_number": "0000000001",
+            "mls_name": "Sample MLS",
+            "brokerage_name": "Sample Realty",
+            "n_agents": 1,
+            "agent_ids": [
+              "00000000000000000000000000000001"
+            ],
+            "holder_org_ids": [],
+            "n_holder_orgs": 1,
+            "holder_from_registry": false
+          },
+          {
+            "listing_id": "9f78c37bb7983504870173e15dc32c63",
+            "property_id": "00000000000000000000000000000001",
+            "address": {
+              "line": "100 Sample Street",
+              "city": "Phoenix",
+              "zip": "85008",
+              "apn": "0000-000-000"
+            },
+            "latitude": 33.470544,
+            "longitude": -111.981495,
+            "address_held_back": null,
+            "location_radius_m": null,
+            "distance_miles": null,
+            "status": "ACTIVE",
+            "status_detail": null,
+            "on_market": true,
+            "is_rental": false,
+            "listed_on": "2026-10-17",
+            "sold_on": null,
+            "off_market_on": null,
+            "status_updated_on": "2026-10-17",
+            "list_price": 499900,
+            "sold_price": null,
+            "price_high": null,
+            "days_on_market": 2,
+            "bedrooms": 4,
+            "bathrooms": 2,
+            "living_area": 1710,
+            "lot_sqft": 6534,
+            "year_built": 1956,
+            "property_type": "SINGLE_FAMILY",
+            "mls_number": "0000000001",
+            "mls_name": "Sample MLS",
+            "brokerage_name": "Sample Realty",
+            "n_agents": 1,
+            "agent_ids": [
+              "00000000000000000000000000000001"
+            ],
+            "holder_org_ids": [],
+            "n_holder_orgs": 1,
+            "holder_from_registry": false
+          }
+        ],
+        "page": {
+          "next_cursor": "c2FtcGxlLWN1cnNvcg",
+          "limit": 100,
+          "returned": 100
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:17:00.511Z",
+          "geometry": {
+            "kind": "place",
+            "lat": null,
+            "lng": null,
+            "radius_miles": null,
+            "bbox": null,
+            "property_id": null,
+            "address": null,
+            "zip": [
+              "85008"
+            ],
+            "city": null
+          },
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "get_listing",
+        "listing_id": "a1b2c3d4e5f60718293a4b5c6d7e8f90"
+      },
+      "method": "GET",
+      "path": "/v1/data/listings/{listing_id}",
+      "response": {
+        "data": {
+          "listing": {
+            "listing_id": "fb954c6e27240d74bf7540a56e5d0eeb",
+            "property_id": "00000000000000000000000000000001",
+            "address": {
+              "line": "100 Sample Street",
+              "city": "Phoenix",
+              "zip": "85008",
+              "apn": "0000-000-000"
+            },
+            "latitude": 33.474412,
+            "longitude": -111.997848,
+            "address_held_back": null,
+            "location_radius_m": null,
+            "distance_miles": null,
+            "status": "ACTIVE",
+            "status_detail": null,
+            "on_market": true,
+            "is_rental": false,
+            "listed_on": "2026-10-18",
+            "sold_on": null,
+            "off_market_on": null,
+            "status_updated_on": "2026-10-18",
+            "list_price": 400000,
+            "sold_price": null,
+            "price_high": 400000,
+            "days_on_market": 1,
+            "bedrooms": 3,
+            "bathrooms": 1,
+            "living_area": 1477,
+            "lot_sqft": 7840,
+            "year_built": 1955,
+            "property_type": "SINGLE_FAMILY",
+            "mls_number": "0000000001",
+            "mls_name": "Sample MLS",
+            "brokerage_name": "Sample Realty",
+            "n_agents": 1,
+            "agent_ids": [
+              "00000000000000000000000000000001"
+            ],
+            "holder_org_ids": [],
+            "n_holder_orgs": 2,
+            "holder_from_registry": false
+          },
+          "versions": [
+            {
+              "listing_id": "00000000000000000000000000000001",
+              "version_no": 1,
+              "is_current": true,
+              "seen_from": "2026-10-21",
+              "seen_to": null,
+              "closed_by": null,
+              "status": "ACTIVE",
+              "status_basis": "category",
+              "status_detail": null,
+              "status_raw": "Active",
+              "off_market_reason": null,
+              "is_rental": false,
+              "on_market": true,
+              "list_price": 400000,
+              "price_low": 400000,
+              "price_low_on": "2026-10-18",
+              "price_high": 400000,
+              "price_high_on": "2026-10-18",
+              "listed_on": "2026-10-18",
+              "status_updated_on": "2026-10-18",
+              "off_market_on": null,
+              "sold_on": null,
+              "sold_price": null,
+              "days_on_market": 1,
+              "mls_name": "Sample MLS",
+              "mls_number": "0000000001",
+              "brokerage_name": "Sample Realty",
+              "bedrooms": 3,
+              "bathrooms": 1,
+              "living_area": 1477,
+              "lot_sqft": 7840,
+              "year_built": 1955,
+              "property_type": "SINGLE_FAMILY",
+              "property_subtype": null,
+              "n_agents": 1,
+              "modified_at": "2026-10-20T11:43:08.027Z"
+            }
+          ],
+          "agents": [
+            {
+              "agent_id": "00000000000000000000000000000001",
+              "person_id": "00000000000000000000000000000001",
+              "name": null,
+              "roles": "Listing Agent",
+              "is_team": false,
+              "brokerage_name": "Sample Realty",
+              "office_name": null,
+              "is_current": true
+            }
+          ],
+          "holder": {
+            "org_ids": [],
+            "n_orgs": 2,
+            "from_registry": false,
+            "deed_date": "2016-05-19",
+            "doc_class": "NOT_ECONOMIC",
+            "price": 0,
+            "basis": "deed"
+          },
+          "contact_redacted": true
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:18:01.041Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_rental_listings",
+        "zip": [
+          "85008"
+        ]
+      },
+      "method": "GET",
+      "path": "/v1/data/rental-listings",
+      "response": {
+        "data": [],
+        "page": {
+          "next_cursor": null,
+          "limit": 100,
+          "returned": 0
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:17:01.013Z",
+          "geometry": {
+            "kind": "place",
+            "lat": null,
+            "lng": null,
+            "radius_miles": null,
+            "bbox": null,
+            "property_id": null,
+            "address": null,
+            "zip": [
+              "85008"
+            ],
+            "city": null
+          },
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_sold_listings",
+        "zip": [
+          "85008"
+        ]
+      },
+      "method": "GET",
+      "path": "/v1/data/sold-listing-history",
+      "response": {
+        "data": [
+          {
+            "listing_id": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "address": {
+              "line": "100 Sample Street",
+              "city": "Phoenix",
+              "zip": "85008",
+              "apn": "0000-000-000"
+            },
+            "latitude": 33.468679,
+            "longitude": -111.974933,
+            "address_held_back": null,
+            "location_radius_m": null,
+            "distance_miles": null,
+            "status": "SOLD",
+            "status_detail": null,
+            "on_market": false,
+            "is_rental": true,
+            "listed_on": "2026-10-08",
+            "sold_on": "2026-10-15",
+            "off_market_on": null,
+            "status_updated_on": "2026-10-15",
+            "list_price": 2495,
+            "sold_price": 435000,
+            "price_high": null,
+            "days_on_market": 7,
+            "bedrooms": 4,
+            "bathrooms": 2,
+            "living_area": 1813,
+            "lot_sqft": 6534,
+            "year_built": 1955,
+            "property_type": "SINGLE_FAMILY",
+            "mls_number": "0000000001",
+            "mls_name": "Sample MLS",
+            "brokerage_name": "Sample Realty",
+            "n_agents": 1,
+            "agent_ids": [
+              "00000000000000000000000000000001"
+            ],
+            "holder_org_ids": [],
+            "n_holder_orgs": 2,
+            "holder_from_registry": false,
+            "deed": null
+          },
+          {
+            "listing_id": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "address": {
+              "line": "100 Sample Street",
+              "city": "Phoenix",
+              "zip": "85008",
+              "apn": "0000-000-000"
+            },
+            "latitude": 33.470035,
+            "longitude": -111.987639,
+            "address_held_back": null,
+            "location_radius_m": null,
+            "distance_miles": null,
+            "status": "SOLD",
+            "status_detail": null,
+            "on_market": false,
+            "is_rental": false,
+            "listed_on": "2026-10-01",
+            "sold_on": "2026-10-14",
+            "off_market_on": null,
+            "status_updated_on": "2026-10-15",
+            "list_price": 425000,
+            "sold_price": 425000,
+            "price_high": 425000,
+            "days_on_market": 13,
+            "bedrooms": 3,
+            "bathrooms": 2,
+            "living_area": 1162,
+            "lot_sqft": 8712,
+            "year_built": 1955,
+            "property_type": "SINGLE_FAMILY",
+            "mls_number": "0000000001",
+            "mls_name": "Sample MLS",
+            "brokerage_name": "Sample Realty",
+            "n_agents": 2,
+            "agent_ids": [
+              "00000000000000000000000000000001",
+              "00000000000000000000000000000001"
+            ],
+            "holder_org_ids": [],
+            "n_holder_orgs": 1,
+            "holder_from_registry": false,
+            "deed": null
+          },
+          {
+            "listing_id": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "address": {
+              "line": "100 Sample Street",
+              "city": "Phoenix",
+              "zip": "85008",
+              "apn": "0000-000-000"
+            },
+            "latitude": 33.470235,
+            "longitude": -111.97989,
+            "address_held_back": null,
+            "location_radius_m": null,
+            "distance_miles": null,
+            "status": "SOLD",
+            "status_detail": null,
+            "on_market": false,
+            "is_rental": false,
+            "listed_on": "2026-09-11",
+            "sold_on": "2026-10-14",
+            "off_market_on": null,
+            "status_updated_on": "2026-10-14",
+            "list_price": 365000,
+            "sold_price": 372500,
+            "price_high": 372500,
+            "days_on_market": 33,
+            "bedrooms": 3,
+            "bathrooms": 1,
+            "living_area": 1198,
+            "lot_sqft": 6969,
+            "year_built": 1956,
+            "property_type": "SINGLE_FAMILY",
+            "mls_number": "0000000001",
+            "mls_name": "Sample MLS",
+            "brokerage_name": "Sample Realty",
+            "n_agents": 1,
+            "agent_ids": [
+              "00000000000000000000000000000001"
+            ],
+            "holder_org_ids": [],
+            "n_holder_orgs": 1,
+            "holder_from_registry": false,
+            "deed": null
+          }
+        ],
+        "page": {
+          "next_cursor": "c2FtcGxlLWN1cnNvcg",
+          "limit": 100,
+          "returned": 100
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:17:01.344Z",
+          "geometry": {
+            "kind": "place",
+            "lat": null,
+            "lng": null,
+            "radius_miles": null,
+            "bbox": null,
+            "property_id": null,
+            "address": null,
+            "zip": [
+              "85008"
+            ],
+            "city": null
+          },
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_investor_purchases"
+      },
+      "method": "GET",
+      "path": "/v1/data/investor-purchases",
+      "response": {
+        "data": [
+          {
+            "deal_id": "7d617834449db897a2589e87f756e3dc",
+            "property_id": "00000000000000000000000000000001",
+            "sale_date": "2026-10-06",
+            "price": 294000,
+            "zip": "85008",
+            "county_fips": "04013",
+            "segment": "SFR",
+            "doc_class": "ECONOMIC",
+            "buyer": {
+              "name": "LPC HOLDINGS LLC",
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "LPC HOLDINGS LLC",
+              "from_registry": true,
+              "match_basis": "filed",
+              "company_like": true,
+              "tags": [],
+              "person_id": null
+            },
+            "sellers": [
+              {
+                "name": "ACTIVE FUNDING GROUP LLC",
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "ACTIVE FUNDING GROUP LLC",
+                "from_registry": true,
+                "match_basis": "filed",
+                "company_like": true,
+                "tags": [
+                  "institution"
+                ],
+                "person_id": null
+              }
+            ],
+            "is_entity": true,
+            "ibuyer_brand": null,
+            "repeat_buyer": true,
+            "repeat_n_12m": 6,
+            "resale": {
+              "within_12m": false,
+              "sale_date": null,
+              "price": null,
+              "days_held": null
+            },
+            "seller_hold_days": 224,
+            "same_day_resale": false,
+            "match": {
+              "basis": "filed",
+              "entity_no": "000000001",
+              "n_candidates": 2,
+              "existed_on_deed_date": true,
+              "name_at_deed_date": true
+            },
+            "tags": [],
+            "hard_reasons": [],
+            "auction_kind": null,
+            "is_auction_purchase": null,
+            "is_reo": true,
+            "marketplace_listing_id": null,
+            "purchase_loan_status": "not_measured",
+            "purchase_loan": null,
+            "short_term_rental": null,
+            "contact_redacted": false,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": null,
+              "city": "Phoenix",
+              "zip": "85008",
+              "county_fips": "04013",
+              "apn": "0000-000-000",
+              "latitude": 33.471135,
+              "longitude": -112.010868,
+              "address_held_back": null,
+              "location_radius_m": null,
+              "bedrooms": 6,
+              "bathrooms": 2,
+              "living_area_sqft": 1903,
+              "year_built": 1951
+            },
+            "distance_miles": null
+          },
+          {
+            "deal_id": "2b9ca03c0d4751adca7a3ca34433669d",
+            "property_id": "00000000000000000000000000000001",
+            "sale_date": "2026-09-29",
+            "price": 290000,
+            "zip": "85008",
+            "county_fips": "04013",
+            "segment": "SFR",
+            "doc_class": "ECONOMIC",
+            "buyer": {
+              "name": "LPC HOLDINGS LLC",
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "LPC HOLDINGS LLC",
+              "from_registry": true,
+              "match_basis": "filed",
+              "company_like": true,
+              "tags": [],
+              "person_id": null
+            },
+            "sellers": [
+              {
+                "name": null,
+                "org_id": null,
+                "org_name": null,
+                "from_registry": null,
+                "match_basis": "none",
+                "company_like": false,
+                "tags": [],
+                "person_id": "00000000000000000000000000000001"
+              }
+            ],
+            "is_entity": true,
+            "ibuyer_brand": null,
+            "repeat_buyer": true,
+            "repeat_n_12m": 5,
+            "resale": {
+              "within_12m": false,
+              "sale_date": null,
+              "price": null,
+              "days_held": null
+            },
+            "seller_hold_days": 4117,
+            "same_day_resale": false,
+            "match": {
+              "basis": "filed",
+              "entity_no": "000000001",
+              "n_candidates": 2,
+              "existed_on_deed_date": true,
+              "name_at_deed_date": true
+            },
+            "tags": [],
+            "hard_reasons": [],
+            "auction_kind": null,
+            "is_auction_purchase": null,
+            "is_reo": false,
+            "marketplace_listing_id": null,
+            "purchase_loan_status": "not_measured",
+            "purchase_loan": null,
+            "short_term_rental": null,
+            "contact_redacted": true,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": null,
+              "city": "Phoenix",
+              "zip": "85008",
+              "county_fips": "04013",
+              "apn": "0000-000-000",
+              "latitude": 33.473308,
+              "longitude": -112.026341,
+              "address_held_back": null,
+              "location_radius_m": null,
+              "bedrooms": 3,
+              "bathrooms": 2,
+              "living_area_sqft": 1713,
+              "year_built": 1948
+            },
+            "distance_miles": null
+          },
+          {
+            "deal_id": "cc86341046e78687cb2922e2831c2719",
+            "property_id": "00000000000000000000000000000001",
+            "sale_date": "2026-09-29",
+            "price": 300000,
+            "zip": "85008",
+            "county_fips": "04013",
+            "segment": "SFR",
+            "doc_class": "ECONOMIC",
+            "buyer": {
+              "name": "ECH RESIDENTIAL LLC",
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "ECH RESIDENTIAL LLC",
+              "from_registry": true,
+              "match_basis": "filed",
+              "company_like": true,
+              "tags": [],
+              "person_id": null
+            },
+            "sellers": [
+              {
+                "name": null,
+                "org_id": null,
+                "org_name": null,
+                "from_registry": null,
+                "match_basis": "none",
+                "company_like": false,
+                "tags": [],
+                "person_id": "00000000000000000000000000000001"
+              }
+            ],
+            "is_entity": true,
+            "ibuyer_brand": null,
+            "repeat_buyer": false,
+            "repeat_n_12m": 1,
+            "resale": {
+              "within_12m": false,
+              "sale_date": null,
+              "price": null,
+              "days_held": null
+            },
+            "seller_hold_days": null,
+            "same_day_resale": false,
+            "match": {
+              "basis": "filed",
+              "entity_no": "000000001",
+              "n_candidates": 1,
+              "existed_on_deed_date": true,
+              "name_at_deed_date": true
+            },
+            "tags": [],
+            "hard_reasons": [],
+            "auction_kind": null,
+            "is_auction_purchase": null,
+            "is_reo": false,
+            "marketplace_listing_id": null,
+            "purchase_loan_status": "not_measured",
+            "purchase_loan": null,
+            "short_term_rental": null,
+            "contact_redacted": true,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": null,
+              "city": "Phoenix",
+              "zip": "85008",
+              "county_fips": "04013",
+              "apn": "0000-000-000",
+              "latitude": 33.467015,
+              "longitude": -112.009035,
+              "address_held_back": null,
+              "location_radius_m": null,
+              "bedrooms": null,
+              "bathrooms": 2,
+              "living_area_sqft": 1521,
+              "year_built": 1952
+            },
+            "distance_miles": null
+          }
+        ],
+        "page": {
+          "next_cursor": "c2FtcGxlLWN1cnNvcg",
+          "limit": 100,
+          "returned": 100
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:17:01.841Z",
+          "geometry": {
+            "kind": "place",
+            "lat": null,
+            "lng": null,
+            "radius_miles": null,
+            "bbox": null,
+            "property_id": null,
+            "address": null,
+            "zip": [
+              "85008"
+            ],
+            "city": null
+          },
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "get_investor_purchase",
+        "purchase_id": "a1b2c3d4e5f60718293a4b5c6d7e8f90"
+      },
+      "method": "GET",
+      "path": "/v1/data/investor-purchases/{purchase_id}",
+      "response": {
+        "data": {
+          "deal_id": "7d617834449db897a2589e87f756e3dc",
+          "property_id": "00000000000000000000000000000001",
+          "parcel": {
+            "line": "100 Sample Street",
+            "unit": null,
+            "city": "Phoenix",
+            "zip": "85008",
+            "county_fips": "04013",
+            "apn": "0000-000-000",
+            "latitude": 33.471135,
+            "longitude": -112.010868,
+            "address_held_back": null,
+            "location_radius_m": null,
+            "bedrooms": 6,
+            "bathrooms": 2,
+            "living_area_sqft": 1903,
+            "year_built": 1951
+          },
+          "sale_date": "2026-10-06",
+          "price": 294000,
+          "doc_class": "ECONOMIC",
+          "segment": "SFR",
+          "transaction_id": "00000000000000000000000000000001",
+          "document_number": "0000000001",
+          "flagged": true,
+          "hard_reasons": [],
+          "buyer_is_entity": true,
+          "buyer_has_trust": false,
+          "repeat_buyer": true,
+          "repeat_n_12m": 6,
+          "resale": {
+            "within_12m": false,
+            "sale_date": null,
+            "price": null,
+            "days_held": null
+          },
+          "seller_hold_days": 224,
+          "same_day_resale": false,
+          "buyers": [
+            {
+              "name": "LPC HOLDINGS LLC",
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "LPC HOLDINGS LLC",
+              "from_registry": true,
+              "match_basis": "filed",
+              "company_like": true,
+              "tags": [],
+              "person_id": null
+            }
+          ],
+          "sellers": [
+            {
+              "name": "ACTIVE FUNDING GROUP LLC",
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "ACTIVE FUNDING GROUP LLC",
+              "from_registry": true,
+              "match_basis": "filed",
+              "company_like": true,
+              "tags": [
+                "institution"
+              ],
+              "person_id": null
+            }
+          ],
+          "chain": [
+            {
+              "deal_id": "00000000000000000000000000000001",
+              "position": 1,
+              "sale_date": "2026-10-06",
+              "price": 294000,
+              "doc_class": "ECONOMIC",
+              "flagged": true,
+              "buyers": [
+                {
+                  "name": "LPC HOLDINGS LLC",
+                  "org_id": "00000000000000000000000000000001",
+                  "org_name": "LPC HOLDINGS LLC",
+                  "from_registry": true,
+                  "match_basis": "filed",
+                  "company_like": true,
+                  "tags": [],
+                  "person_id": null
+                }
+              ]
+            },
+            {
+              "deal_id": "00000000000000000000000000000001",
+              "position": 2,
+              "sale_date": "2026-02-24",
+              "price": 303000,
+              "doc_class": "DISTRESSED",
+              "flagged": true,
+              "buyers": [
+                {
+                  "name": "ACTIVE FUNDING GROUP LLC",
+                  "org_id": "00000000000000000000000000000001",
+                  "org_name": "ACTIVE FUNDING GROUP LLC",
+                  "from_registry": true,
+                  "match_basis": "filed",
+                  "company_like": true,
+                  "tags": [
+                    "institution"
+                  ],
+                  "person_id": null
+                }
+              ]
+            },
+            {
+              "deal_id": "00000000000000000000000000000001",
+              "position": 4,
+              "sale_date": "2024-11-11",
+              "price": 285000,
+              "doc_class": "ECONOMIC",
+              "flagged": true,
+              "buyers": [
+                {
+                  "name": "YOHRE HOLDINGS LLC",
+                  "org_id": "00000000000000000000000000000001",
+                  "org_name": "YOHRE HOLDINGS LLC",
+                  "from_registry": true,
+                  "match_basis": "filed",
+                  "company_like": true,
+                  "tags": [],
+                  "person_id": null
+                }
+              ]
+            }
+          ],
+          "auction": null,
+          "reo": {
+            "takeback_position": 2,
+            "takeback_date": "2026-02-24",
+            "takeback_type": "Deed in Lieu of Foreclosure",
+            "takeback_kind": "NOT_AUCTION",
+            "hops": 1,
+            "grantor_class": "INSTITUTION",
+            "evidence": "BOTH"
+          },
+          "marketplace": [],
+          "financing": {
+            "purchase_loan_status": "not_measured",
+            "purchase_loan": null,
+            "secondary_loans_n": null,
+            "link_window": null,
+            "outcome": null,
+            "resolved_on": null,
+            "months_to_resolution": null,
+            "foreclosed": null,
+            "as_of": "2026-06-25"
+          },
+          "short_term_rental": null,
+          "contact_redacted": false
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:18:02.654Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_active_investors",
+        "zip": [
+          "75203"
+        ]
+      },
+      "method": "GET",
+      "path": "/v1/data/investors/active",
+      "response": {
+        "data": [
+          {
+            "org_id": "AZ:name:FEDERAL NATIONAL MORTGAGE ASSOCIATION",
+            "org_name": "FEDERAL NATIONAL MORTGAGE ASSOCIATION",
+            "from_registry": false,
+            "n_deals": 379,
+            "n_parcels": 378,
+            "n_resold": 340,
+            "first_deal_date": "1994-01-13",
+            "last_deal_date": "2019-03-12",
+            "total_price": 60886542,
+            "n_deals_all": null,
+            "n_entities": null,
+            "is_active": true,
+            "n_auction_buys": 0,
+            "is_active_auction_buyer": false,
+            "n_reo_buys": 0,
+            "is_active_reo_buyer": false,
+            "n_marketplace_buys": 0,
+            "financing": {
+              "n_loans": 2,
+              "n_loans_24m": 0,
+              "n_lenders": 2,
+              "n_lenders_tagged_hard_money": 0,
+              "top_lender": {
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "ARIZONA INDUSTRIAL DEVELOPMENT AUTHORITY",
+                "from_registry": true,
+                "tags": [
+                  "government"
+                ]
+              },
+              "last_loan_on": "2022-11-29",
+              "as_of": "2026-06-25"
+            },
+            "short_term_rental": null
+          },
+          {
+            "org_id": "AZ:name:DEUTSCHE BANK NATIONAL",
+            "org_name": "DEUTSCHE BANK NATIONAL TRUST COMPANY",
+            "from_registry": false,
+            "n_deals": 165,
+            "n_parcels": 162,
+            "n_resold": 146,
+            "first_deal_date": "2003-08-13",
+            "last_deal_date": "2026-05-11",
+            "total_price": 20770818,
+            "n_deals_all": null,
+            "n_entities": null,
+            "is_active": true,
+            "n_auction_buys": 0,
+            "is_active_auction_buyer": false,
+            "n_reo_buys": 0,
+            "is_active_reo_buyer": false,
+            "n_marketplace_buys": 0,
+            "financing": {
+              "n_loans": 0,
+              "n_loans_24m": 0,
+              "n_lenders": 0,
+              "n_lenders_tagged_hard_money": 0,
+              "top_lender": null,
+              "last_loan_on": null,
+              "as_of": "2026-06-25"
+            },
+            "short_term_rental": null
+          },
+          {
+            "org_id": "AZ:name:FEDERAL HOME LOAN MORTGAGE",
+            "org_name": "FEDERAL HOME LOAN MORTGAGE CORP",
+            "from_registry": false,
+            "n_deals": 160,
+            "n_parcels": 160,
+            "n_resold": 127,
+            "first_deal_date": "1993-10-08",
+            "last_deal_date": "2019-09-16",
+            "total_price": 16679756,
+            "n_deals_all": null,
+            "n_entities": null,
+            "is_active": true,
+            "n_auction_buys": 0,
+            "is_active_auction_buyer": false,
+            "n_reo_buys": 0,
+            "is_active_reo_buyer": false,
+            "n_marketplace_buys": 1,
+            "financing": {
+              "n_loans": 6,
+              "n_loans_24m": 1,
+              "n_lenders": 5,
+              "n_lenders_tagged_hard_money": 0,
+              "top_lender": {
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "SUNSTREET MORTGAGE LLC",
+                "from_registry": true,
+                "tags": [
+                  "institution"
+                ]
+              },
+              "last_loan_on": "2025-05-21",
+              "as_of": "2026-06-25"
+            },
+            "short_term_rental": null
+          }
+        ],
+        "page": {
+          "next_cursor": "c2FtcGxlLWN1cnNvcg",
+          "limit": 100,
+          "returned": 97
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:17:04.524Z",
+          "geometry": {
+            "kind": "place",
+            "lat": null,
+            "lng": null,
+            "radius_miles": null,
+            "bbox": null,
+            "property_id": null,
+            "address": null,
+            "zip": [
+              "85008"
+            ],
+            "city": null
+          },
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "match_investors",
+        "property_id": "a1b2c3d4e5f60718293a4b5c6d7e8f90"
+      },
+      "method": "GET",
+      "path": "/v1/data/investors/match",
+      "response": {
+        "data": [
+          {
+            "org_id": "00000000000000000000000000000001",
+            "org_name": "OPENDOOR PROPERTY TRUST",
+            "from_registry": false,
+            "n_like": 11,
+            "n_zip": 11,
+            "n_near": 11,
+            "n_near_12m": 1,
+            "last_like_date": "2026-08-20",
+            "last_near_date": "2026-08-20",
+            "nearest_miles": null,
+            "median_like_price": 325800,
+            "price_p25_like": 303800,
+            "price_p75_like": 351150,
+            "n_deals_all": null,
+            "n_entities": null,
+            "company_like": true,
+            "is_active": true,
+            "days_since_last_purchase": 3,
+            "n_closings_as_buyer": 49,
+            "financing": {
+              "n_loans": 8,
+              "n_loans_24m": 3,
+              "n_lenders": 7,
+              "n_lenders_tagged_hard_money": 0,
+              "top_lender": {
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "NRP MORTGAGE TRUST I",
+                "from_registry": false,
+                "tags": [
+                  "institution"
+                ]
+              },
+              "last_loan_on": "2026-03-18",
+              "as_of": "2026-06-25"
+            },
+            "short_term_rental": null
+          },
+          {
+            "org_id": "00000000000000000000000000000001",
+            "org_name": "WHOLESALE AUCTION HOMES LLC",
+            "from_registry": true,
+            "n_like": 9,
+            "n_zip": 9,
+            "n_near": 9,
+            "n_near_12m": 3,
+            "last_like_date": "2026-02-17",
+            "last_near_date": "2026-02-17",
+            "nearest_miles": null,
+            "median_like_price": 173370,
+            "price_p25_like": 172000,
+            "price_p75_like": 183370,
+            "n_deals_all": 426,
+            "n_entities": 28,
+            "company_like": null,
+            "is_active": true,
+            "days_since_last_purchase": 2,
+            "n_closings_as_buyer": 37,
+            "financing": {
+              "n_loans": 74,
+              "n_loans_24m": 21,
+              "n_lenders": 6,
+              "n_lenders_tagged_hard_money": 1,
+              "top_lender": {
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "PAJ ENTERPRISES LLC",
+                "from_registry": true,
+                "tags": []
+              },
+              "last_loan_on": "2016-06-03",
+              "as_of": "2026-06-25"
+            },
+            "short_term_rental": null
+          },
+          {
+            "org_id": "00000000000000000000000000000001",
+            "org_name": "BLACK ARROW CAPITAL LLC",
+            "from_registry": true,
+            "n_like": 7,
+            "n_zip": 7,
+            "n_near": 7,
+            "n_near_12m": 0,
+            "last_like_date": "2025-03-21",
+            "last_near_date": "2025-03-21",
+            "nearest_miles": null,
+            "median_like_price": 307500,
+            "price_p25_like": 255000,
+            "price_p75_like": 329500,
+            "n_deals_all": 436,
+            "n_entities": 15,
+            "company_like": null,
+            "is_active": true,
+            "days_since_last_purchase": 8,
+            "n_closings_as_buyer": 20,
+            "financing": {
+              "n_loans": 12,
+              "n_loans_24m": 0,
+              "n_lenders": 9,
+              "n_lenders_tagged_hard_money": 3,
+              "top_lender": {
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "RFLF 4 LLC",
+                "from_registry": false,
+                "tags": []
+              },
+              "last_loan_on": "2023-06-12",
+              "as_of": "2026-06-25"
+            },
+            "short_term_rental": null
+          }
+        ],
+        "page": {
+          "next_cursor": "c2FtcGxlLWN1cnNvcg",
+          "limit": 100,
+          "returned": 90
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:19:20.111Z",
+          "geometry": {
+            "kind": "place",
+            "lat": null,
+            "lng": null,
+            "radius_miles": null,
+            "bbox": null,
+            "property_id": null,
+            "address": null,
+            "zip": [
+              "85008"
+            ],
+            "city": null
+          },
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        },
+        "subject": {
+          "property_id": "b6219fe62b8b51a0efa988aa8e6e0189",
+          "place": "zip",
+          "zip": "85008",
+          "lat": null,
+          "lng": null,
+          "radius_miles": null,
+          "segment": null,
+          "price": null,
+          "price_low": null,
+          "price_high": null,
+          "period": "36m",
+          "since": "2023-10-08",
+          "financing_as_of": "2026-06-25"
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "search_investors",
+        "q": "Sample"
+      },
+      "method": "GET",
+      "path": "/v1/data/investors/search",
+      "response": {
+        "data": [
+          {
+            "kind": "lender",
+            "match": "exact",
+            "text": "FEDERAL NATIONAL MORTGAGE ASSOCIATION",
+            "id": "00000000000000000000000000000001",
+            "state": "AZ",
+            "person_id": null,
+            "agent_id": null,
+            "org_id": "00000000000000000000000000000001",
+            "org_name": "FEDERAL NATIONAL MORTGAGE ASSOCIATION",
+            "roles": [],
+            "n_listings": 0,
+            "n_deals": 15,
+            "n_entities": 0
+          },
+          {
+            "kind": "lender",
+            "match": "prefix",
+            "text": "FEDERAL NATIONAL MORTGAGE ASSN CHARTER A",
+            "id": "00000000000000000000000000000001",
+            "state": "AZ",
+            "person_id": null,
+            "agent_id": null,
+            "org_id": "00000000000000000000000000000001",
+            "org_name": "FEDERAL NATIONAL MORTGAGE ASSN CHARTER A",
+            "roles": [],
+            "n_listings": 0,
+            "n_deals": 1,
+            "n_entities": 0
+          },
+          {
+            "kind": "lender",
+            "match": "prefix",
+            "text": "FEDERAL NATL MTG ASSN FNMA",
+            "id": "00000000000000000000000000000001",
+            "state": "AZ",
+            "person_id": null,
+            "agent_id": null,
+            "org_id": "00000000000000000000000000000001",
+            "org_name": "FEDERAL NATL MTG ASSN FNMA",
+            "roles": [],
+            "n_listings": 0,
+            "n_deals": 1,
+            "n_entities": 0
+          }
+        ],
+        "page": {
+          "next_cursor": null,
+          "limit": 10,
+          "returned": 3,
+          "capped": false
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:26:56.407Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "get_investor_company",
+        "company_id": "AZ:123456"
+      },
+      "method": "GET",
+      "path": "/v1/data/investor-companies/{company_id}",
+      "response": {
+        "data": {
+          "id": "AZ:L07997410",
+          "kind": "registry",
+          "state": "AZ",
+          "display_name": "HOUSEOPOLY LLC",
+          "n_entities": 75,
+          "anchor_entity_no": "000000001",
+          "anchor_formation_date": "1997-02-12",
+          "display_entity_no": "000000001",
+          "display_basis": "deeds_5y",
+          "n_display_deeds": 185,
+          "deals": {
+            "n_deals": 1302,
+            "first_deal_date": "1996-06-25",
+            "last_deal_date": "2026-09-08",
+            "total_price": 109823737,
+            "n_sold": 1243,
+            "n_bought_from": 1496,
+            "n_sold_to": 1563
+          },
+          "profile": {
+            "data_end": "2026-10-08",
+            "n_purchases": 1306,
+            "n_sales": 1243,
+            "first_purchase_date": "1995-10-13",
+            "last_purchase_date": "2026-09-08",
+            "last_sale_date": "2026-09-21",
+            "n_purchases_12m": 64,
+            "n_purchases_24m": 101,
+            "n_purchases_36m": 148,
+            "is_active": true,
+            "days_since_last_purchase": 30,
+            "days_since_last_sale": 17,
+            "median_gap_days": 5,
+            "n_resold": 1200,
+            "n_held": 106,
+            "n_quick_resales": 118,
+            "n_flips": 521,
+            "n_flip_window_other": 192,
+            "n_long_holds_sold": 369,
+            "n_builds": 72,
+            "median_hold_days": 177,
+            "median_spread": 0.722,
+            "n_priced_purchases": 1207,
+            "price_p25": 80500,
+            "price_p50": 127056,
+            "price_p75": 230551,
+            "price_band_window": "5y",
+            "n_priced_purchases_24m": 92,
+            "price_p25_24m": 75000,
+            "price_p50_24m": 120446,
+            "price_p75_24m": 232501,
+            "n_sfr": 1004,
+            "n_condo_th": 145,
+            "n_other": 157,
+            "total_price": 110536433,
+            "n_bought_from_quick_resellers_24m": 0,
+            "top_quick_reseller": null,
+            "auction": {
+              "n_auction_buys": 945,
+              "n_auction_buys_24m": 85,
+              "last_auction_buy_date": "2026-09-08",
+              "is_active_auction_buyer": true,
+              "n_reo_buys": 23,
+              "n_reo_buys_24m": 0,
+              "last_reo_buy_date": "2012-10-24",
+              "is_active_reo_buyer": false
+            }
+          },
+          "entities": [
+            {
+              "entity_no": "000000001",
+              "name": "AMERICAN BUILDING MOVERS & SALVAGE, L.L.C.",
+              "display_name": "AMERICAN BUILDING MOVERS & SALVAGE LLC",
+              "kind": "LLC",
+              "type_as_filed": "Domestic Limited Liability Company",
+              "status": "Inactive",
+              "formation_date": "1997-02-12",
+              "is_foreign": false,
+              "is_anchor": true,
+              "former_names": [],
+              "agent_name": null,
+              "principal_address": {
+                "line1": "100 Sample Street",
+                "city": "dallas",
+                "state": "TX",
+                "zip": "75203"
+              },
+              "links": [
+                {
+                  "link_class": "sample",
+                  "link_key": null,
+                  "rule": "sample",
+                  "kept": true,
+                  "joined": true,
+                  "drop_reason": null,
+                  "n_entities": 16
+                }
+              ]
+            },
+            {
+              "entity_no": "000000001",
+              "name": "STAGHORN VISTA, L.L.C.",
+              "display_name": "STAGHORN VISTA LLC",
+              "kind": "LLC",
+              "type_as_filed": "Domestic Limited Liability Company",
+              "status": "Active",
+              "formation_date": "1998-04-23",
+              "is_foreign": false,
+              "is_anchor": false,
+              "former_names": [],
+              "agent_name": null,
+              "principal_address": {
+                "line1": "100 Sample Street",
+                "city": "dallas",
+                "state": "TX",
+                "zip": "75203"
+              },
+              "links": [
+                {
+                  "link_class": "sample",
+                  "link_key": null,
+                  "rule": "sample",
+                  "kept": true,
+                  "joined": true,
+                  "drop_reason": null,
+                  "n_entities": 13
+                },
+                {
+                  "link_class": "sample",
+                  "link_key": null,
+                  "rule": "sample",
+                  "kept": true,
+                  "joined": false,
+                  "drop_reason": "sample",
+                  "n_entities": 2
+                },
+                {
+                  "link_class": "sample",
+                  "link_key": null,
+                  "rule": "sample",
+                  "kept": false,
+                  "joined": false,
+                  "drop_reason": "sample",
+                  "n_entities": 24
+                }
+              ]
+            },
+            {
+              "entity_no": "000000001",
+              "name": "BAYSHORE HOLDINGS LLC",
+              "display_name": "BAYSHORE HOLDINGS LLC",
+              "kind": "LLC",
+              "type_as_filed": "Domestic Limited Liability Company",
+              "status": "Active",
+              "formation_date": "1999-06-21",
+              "is_foreign": false,
+              "is_anchor": false,
+              "former_names": [],
+              "agent_name": null,
+              "principal_address": {
+                "line1": "100 Sample Street",
+                "city": "dallas",
+                "state": "TX",
+                "zip": "75203"
+              },
+              "links": [
+                {
+                  "link_class": "sample",
+                  "link_key": null,
+                  "rule": "sample",
+                  "kept": true,
+                  "joined": true,
+                  "drop_reason": null,
+                  "n_entities": 16
+                },
+                {
+                  "link_class": "sample",
+                  "link_key": null,
+                  "rule": "sample",
+                  "kept": true,
+                  "joined": true,
+                  "drop_reason": null,
+                  "n_entities": 16
+                },
+                {
+                  "link_class": "sample",
+                  "link_key": "00000000000000000000000000000001",
+                  "rule": "sample",
+                  "kept": false,
+                  "joined": false,
+                  "drop_reason": "sample",
+                  "n_entities": 4
+                }
+              ]
+            }
+          ],
+          "people": [],
+          "companies": [
+            {
+              "name": "Sample Owner",
+              "name_key": "00000000000000000000000000000001",
+              "n_filings": 20,
+              "org": {
+                "match": "ambiguous",
+                "org_id": null,
+                "entity_no": null,
+                "display_name": null
+              },
+              "filings": [
+                {
+                  "entity_no": "000000001",
+                  "title": "Statutory Agent",
+                  "role": "agent",
+                  "source": "agent",
+                  "names_itself": false
+                },
+                {
+                  "entity_no": "000000001",
+                  "title": "Statutory Agent",
+                  "role": "agent",
+                  "source": "agent",
+                  "names_itself": false
+                },
+                {
+                  "entity_no": "000000001",
+                  "title": "Statutory Agent",
+                  "role": "agent",
+                  "source": "agent",
+                  "names_itself": false
+                }
+              ]
+            },
+            {
+              "name": "Sample Owner",
+              "name_key": "00000000000000000000000000000001",
+              "n_filings": 8,
+              "org": {
+                "match": "filed",
+                "org_id": "00000000000000000000000000000001",
+                "entity_no": "000000001",
+                "display_name": "Sample Owner"
+              },
+              "filings": [
+                {
+                  "entity_no": "000000001",
+                  "title": "Member",
+                  "role": "member",
+                  "source": "principal",
+                  "names_itself": false
+                },
+                {
+                  "entity_no": "000000001",
+                  "title": "Member",
+                  "role": "member",
+                  "source": "principal",
+                  "names_itself": false
+                },
+                {
+                  "entity_no": "000000001",
+                  "title": "Member",
+                  "role": "member",
+                  "source": "principal",
+                  "names_itself": false
+                }
+              ]
+            },
+            {
+              "name": "Sample Owner",
+              "name_key": "00000000000000000000000000000001",
+              "n_filings": 8,
+              "org": {
+                "match": "none",
+                "org_id": null,
+                "entity_no": null,
+                "display_name": null
+              },
+              "filings": [
+                {
+                  "entity_no": "000000001",
+                  "title": "Member",
+                  "role": "member",
+                  "source": "principal",
+                  "names_itself": false
+                },
+                {
+                  "entity_no": "000000001",
+                  "title": "Member",
+                  "role": "member",
+                  "source": "principal",
+                  "names_itself": false
+                },
+                {
+                  "entity_no": "000000001",
+                  "title": "Member",
+                  "role": "member",
+                  "source": "principal",
+                  "names_itself": false
+                }
+              ]
+            }
+          ],
+          "holdings": [
+            {
+              "entity_no": "000000001",
+              "name": "MARICOPOLY LLC",
+              "status": "Active",
+              "formation_date": "2016-05-24",
+              "org_id": "00000000000000000000000000000001",
+              "org_display_name": "MARICOPOLY LLC",
+              "role": "member",
+              "title": "Member",
+              "holder_entity_no": "000000001"
+            },
+            {
+              "entity_no": "000000001",
+              "name": "MARICOPOLY LLC",
+              "status": "Active",
+              "formation_date": "2016-05-24",
+              "org_id": "00000000000000000000000000000001",
+              "org_display_name": "MARICOPOLY LLC",
+              "role": "member",
+              "title": "Member",
+              "holder_entity_no": "000000001"
+            },
+            {
+              "entity_no": "000000001",
+              "name": "QUICK CASH FOR HOMES LLC",
+              "status": "Active",
+              "formation_date": "2012-06-13",
+              "org_id": "00000000000000000000000000000001",
+              "org_display_name": "QUICK CASH FOR HOMES LLC",
+              "role": "member",
+              "title": "Member",
+              "holder_entity_no": "000000001"
+            }
+          ],
+          "n_holdings": 4,
+          "n_agent_for": 0,
+          "n_agents": 32,
+          "marketplace": {
+            "n_listings": 0,
+            "n_closed": 0,
+            "n_closed_late": 0,
+            "n_open": 0,
+            "n_late_window": 0,
+            "n_no_deed": 0,
+            "n_unresolved": 0,
+            "first_published_on": null,
+            "last_published_on": null,
+            "n_closings_as_buyer": 3,
+            "last_closing_as_buyer_on": "2025-10-09",
+            "listings": [],
+            "seller_accounts": null
+          },
+          "lending": {
+            "lender_id": "00000000000000000000000000000001",
+            "display_name": "HOUSEOPOLY LLC",
+            "recorded_name": "HOUSEOPOLY LLC",
+            "from_registry": true,
+            "tags": [
+              "institution"
+            ],
+            "nmls": null,
+            "successor": null,
+            "counts": {
+              "n_loans": 265,
+              "n_loans_12m": 3,
+              "n_loans_24m": 10,
+              "n_loans_36m": 15,
+              "volume_24m": 5009325,
+              "n_unpriced_24m": 0,
+              "n_amount_excluded_24m": 0,
+              "n_blanket_positions_24m": 0,
+              "n_parcels": 213,
+              "n_in_history": 234,
+              "n_in_history_24m": 4,
+              "n_in_both_24m": 2,
+              "n_first_lien_24m": 8,
+              "n_heloc_24m": 0,
+              "n_construction_24m": 0,
+              "n_purchase_label_24m": 1,
+              "n_priced_24m": 10,
+              "n_rated_24m": 10,
+              "n_term_known_24m": 4,
+              "n_loans_since_2015": 117,
+              "n_before_2002": 0,
+              "n_undated": 0,
+              "first_recording_date": "2003-08-07",
+              "last_recording_date": "2025-10-27"
+            },
+            "open": {
+              "n_liens": 47,
+              "n_first_liens": 40,
+              "n_junior_liens": 7,
+              "n_due_known": 0,
+              "n_maturing_12m": 0,
+              "n_on_resold_parcels": 3,
+              "n_open_24m": 8,
+              "balance": 6648162,
+              "n_balance_excluded": 3
+            },
+            "terms": {
+              "amount_window": "all",
+              "amount_p25": 25825,
+              "amount_p50": 53000,
+              "amount_p75": 100000,
+              "rate_p50": 4.46,
+              "term_p50_months": 360,
+              "share_le_24m": 0,
+              "share_25_120m": 0,
+              "share_121_359m": 0,
+              "share_ge_360m": 1
+            },
+            "places": {
+              "n_zips_24m": 8,
+              "n_counties_24m": 4,
+              "top_zip5_24m": "85031",
+              "top_zip_share_24m": 0.2
+            },
+            "rank_in_state": {
+              "loans_24m": 1231,
+              "volume_24m": 1225
+            },
+            "deals": {
+              "n_deals": 1302,
+              "first_deal_date": "1996-06-25",
+              "last_deal_date": "2026-09-08"
+            },
+            "is_active_12m": true,
+            "has_open_book": true,
+            "borrowers": {
+              "n_borrowers": 145,
+              "n_borrowers_24m": 6,
+              "n_borrower_orgs_24m": 6,
+              "n_repeat_borrowers_24m": 2
+            },
+            "financed": {
+              "n_investor_loans": 108,
+              "n_investor_loans_24m": 4,
+              "n_investor_orgs_24m": 3,
+              "n_investor_loans_since_2015": 62,
+              "n_deals_financed": 35,
+              "n_deals_financed_24m": 5,
+              "n_auction_purchases_financed_24m": 1,
+              "n_marketplace_purchases_financed_24m": 0,
+              "n_purchase_24m": 6,
+              "n_not_purchase_24m": 3,
+              "n_purpose_unknown_24m": 1,
+              "investor_lender_by_count": false
+            },
+            "outcomes": {
+              "n_strict_all": 40,
+              "n_strict_24m": 5,
+              "n_captured_24m": 5,
+              "n_foreclosed": 0,
+              "n_foreclosed_24m": 0,
+              "n_resolved_by_resale": 24,
+              "n_refinanced": 10,
+              "n_open_outcome": 5,
+              "n_takebacks": 102,
+              "n_takebacks_24m": 21,
+              "median_months_to_payoff": null,
+              "is_auction_lender": false
+            },
+            "as_of": "2026-06-25",
+            "recordings_through": "2026-06-11"
+          },
+          "financing": {
+            "n_loans": 1128,
+            "n_loans_12m": 27,
+            "n_loans_24m": 38,
+            "n_lenders": 117,
+            "n_lenders_tagged_hard_money": 4,
+            "first_loan_on": "2003-10-21",
+            "last_loan_on": "2026-06-03",
+            "total_amount": 77077296,
+            "top_lenders": [
+              {
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "VAN OAK CAPITAL LLC",
+                "from_registry": true,
+                "tags": [],
+                "n_deeds": 152
+              },
+              {
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "COTTERKEY INVESTMENTS LTD",
+                "from_registry": true,
+                "tags": [],
+                "n_deeds": 126
+              },
+              {
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "RLS CAPITAL INC",
+                "from_registry": true,
+                "tags": [],
+                "n_deeds": 112
+              }
+            ],
+            "n_deals_financed_24m": 13,
+            "share_deals_financed_24m": 0.134020619,
+            "as_of": "2026-06-25"
+          },
+          "short_term_rental": null,
+          "ledger": [
+            {
+              "kind": "deed",
+              "role": "bought",
+              "via": "own",
+              "n": 1229
+            },
+            {
+              "kind": "deed",
+              "role": "bought",
+              "via": "principal",
+              "n": 86
+            },
+            {
+              "kind": "deed",
+              "role": "sold",
+              "via": "own",
+              "n": 1193
+            }
+          ],
+          "addresses": null,
+          "channels": null,
+          "accounts": null,
+          "contact_redacted": true
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:19:20.819Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_company_purchases",
+        "company_id": "AZ:123456"
+      },
+      "method": "GET",
+      "path": "/v1/data/investor-companies/{company_id}/purchases",
+      "response": {
+        "data": [
+          {
+            "deal_id": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "sale_date": "2026-09-08",
+            "price": 116500,
+            "zip": "85351",
+            "county_fips": "04013",
+            "segment": "CONDO_TH",
+            "doc_class": "DISTRESSED",
+            "buyer": {
+              "name": "BURQWEST RE LLC",
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "HOUSEOPOLY LLC",
+              "from_registry": true,
+              "match_basis": "filed",
+              "company_like": true,
+              "tags": [],
+              "person_id": null
+            },
+            "sellers": [
+              {
+                "name": null,
+                "org_id": null,
+                "org_name": null,
+                "from_registry": null,
+                "match_basis": "none",
+                "company_like": false,
+                "tags": [],
+                "person_id": "00000000000000000000000000000001"
+              }
+            ],
+            "is_entity": true,
+            "ibuyer_brand": null,
+            "repeat_buyer": true,
+            "repeat_n_12m": 7,
+            "resale": {
+              "within_12m": false,
+              "sale_date": null,
+              "price": null,
+              "days_held": null
+            },
+            "seller_hold_days": 6133,
+            "same_day_resale": false,
+            "match": {
+              "basis": "filed",
+              "entity_no": "000000001",
+              "n_candidates": 1,
+              "existed_on_deed_date": true,
+              "name_at_deed_date": true
+            },
+            "tags": [],
+            "hard_reasons": [],
+            "auction_kind": "TRUSTEE_SALE",
+            "is_auction_purchase": true,
+            "is_reo": false,
+            "marketplace_listing_id": null,
+            "purchase_loan_status": "not_measured",
+            "purchase_loan": null,
+            "short_term_rental": null,
+            "contact_redacted": true,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": "Unit 1",
+              "city": "Sun City",
+              "zip": "85351",
+              "county_fips": "04013",
+              "apn": "0000-000-000",
+              "latitude": 33.604238,
+              "longitude": -112.272153,
+              "address_held_back": null,
+              "location_radius_m": null,
+              "bedrooms": 2,
+              "bathrooms": 1,
+              "living_area_sqft": 1224,
+              "year_built": 1972
+            },
+            "distance_miles": null
+          },
+          {
+            "deal_id": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "sale_date": "2026-09-01",
+            "price": 112600,
+            "zip": "85715",
+            "county_fips": "04019",
+            "segment": "CONDO_TH",
+            "doc_class": "DISTRESSED",
+            "buyer": {
+              "name": "J AND J DESERT ENTERPRISES LLC",
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "HOUSEOPOLY LLC",
+              "from_registry": true,
+              "match_basis": "filed",
+              "company_like": true,
+              "tags": [],
+              "person_id": null
+            },
+            "sellers": [
+              {
+                "name": "COUNTY SHERIFF OF PIMA",
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "COUNTY SHERIFF OF PIMA",
+                "from_registry": false,
+                "match_basis": "none",
+                "company_like": true,
+                "tags": [
+                  "government"
+                ],
+                "person_id": null
+              }
+            ],
+            "is_entity": true,
+            "ibuyer_brand": null,
+            "repeat_buyer": true,
+            "repeat_n_12m": 40,
+            "resale": {
+              "within_12m": false,
+              "sale_date": null,
+              "price": null,
+              "days_held": null
+            },
+            "seller_hold_days": 7757,
+            "same_day_resale": false,
+            "match": {
+              "basis": "filed",
+              "entity_no": "000000001",
+              "n_candidates": 1,
+              "existed_on_deed_date": true,
+              "name_at_deed_date": true
+            },
+            "tags": [],
+            "hard_reasons": [],
+            "auction_kind": "SHERIFF_SALE",
+            "is_auction_purchase": true,
+            "is_reo": false,
+            "marketplace_listing_id": null,
+            "purchase_loan_status": "not_measured",
+            "purchase_loan": null,
+            "short_term_rental": null,
+            "contact_redacted": false,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": "Unit 1",
+              "city": "Tucson",
+              "zip": "85715",
+              "county_fips": "04019",
+              "apn": "0000-000-000",
+              "latitude": 32.249559,
+              "longitude": -110.828599,
+              "address_held_back": null,
+              "location_radius_m": null,
+              "bedrooms": 2,
+              "bathrooms": 2,
+              "living_area_sqft": 1010,
+              "year_built": 1986
+            },
+            "distance_miles": null
+          },
+          {
+            "deal_id": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "sale_date": "2026-09-01",
+            "price": 19683,
+            "zip": "85138",
+            "county_fips": "04021",
+            "segment": "SFR",
+            "doc_class": "DISTRESSED",
+            "buyer": {
+              "name": "J AND J DESERT ENTERPRISES LLC",
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "HOUSEOPOLY LLC",
+              "from_registry": true,
+              "match_basis": "filed",
+              "company_like": true,
+              "tags": [],
+              "person_id": null
+            },
+            "sellers": [
+              {
+                "name": "OF SHERIFF OF THE COUNTY OF PINAL STATE",
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "OF SHERIFF OF THE COUNTY OF PINAL STATE",
+                "from_registry": false,
+                "match_basis": "none",
+                "company_like": true,
+                "tags": [
+                  "government",
+                  "institution"
+                ],
+                "person_id": null
+              }
+            ],
+            "is_entity": true,
+            "ibuyer_brand": null,
+            "repeat_buyer": true,
+            "repeat_n_12m": 40,
+            "resale": {
+              "within_12m": false,
+              "sale_date": null,
+              "price": null,
+              "days_held": null
+            },
+            "seller_hold_days": 2728,
+            "same_day_resale": false,
+            "match": {
+              "basis": "filed",
+              "entity_no": "000000001",
+              "n_candidates": 1,
+              "existed_on_deed_date": true,
+              "name_at_deed_date": true
+            },
+            "tags": [],
+            "hard_reasons": [],
+            "auction_kind": "SHERIFF_SALE",
+            "is_auction_purchase": true,
+            "is_reo": false,
+            "marketplace_listing_id": null,
+            "purchase_loan_status": "not_measured",
+            "purchase_loan": null,
+            "short_term_rental": null,
+            "contact_redacted": false,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": null,
+              "city": "Maricopa",
+              "zip": "85138",
+              "county_fips": "04021",
+              "apn": "0000-000-000",
+              "latitude": 33.045184,
+              "longitude": -112.00949,
+              "address_held_back": null,
+              "location_radius_m": null,
+              "bedrooms": 4,
+              "bathrooms": 3,
+              "living_area_sqft": 2294,
+              "year_built": 2008
+            },
+            "distance_miles": null
+          }
+        ],
+        "page": {
+          "next_cursor": "c2FtcGxlLWN1cnNvcg",
+          "limit": 100,
+          "returned": 100
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:19:21.403Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_company_sales",
+        "company_id": "AZ:123456"
+      },
+      "method": "GET",
+      "path": "/v1/data/investor-companies/{company_id}/sales",
+      "response": {
+        "data": [
+          {
+            "deal_id": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "sale_date": "2026-09-21",
+            "price": 299900,
+            "zip": "86323",
+            "flagged": true,
+            "seller": {
+              "name": "HOUSEOPOLY LLC",
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "HOUSEOPOLY LLC",
+              "from_registry": true,
+              "match_basis": "filed",
+              "company_like": true,
+              "tags": [],
+              "person_id": null
+            },
+            "buyers": [
+              {
+                "name": "TULE RIVER HOME BUYER EARNED EQUITY AGENCY",
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "TULE RIVER HOME BUYER EARNED EQUITY AGENCY",
+                "from_registry": false,
+                "match_basis": "none",
+                "company_like": true,
+                "tags": [],
+                "person_id": null
+              }
+            ],
+            "contact_redacted": false,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": null,
+              "city": "Chino Valley",
+              "zip": "86323",
+              "county_fips": "04025",
+              "apn": "0000-000-000",
+              "latitude": 34.803176,
+              "longitude": -112.499848,
+              "address_held_back": null,
+              "location_radius_m": null,
+              "bedrooms": 5,
+              "bathrooms": 3,
+              "living_area_sqft": 1792,
+              "year_built": 1998
+            },
+            "distance_miles": null
+          },
+          {
+            "deal_id": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "sale_date": "2026-09-17",
+            "price": 245000,
+            "zip": "85326",
+            "flagged": false,
+            "seller": {
+              "name": "J & J DESERT ENTERPRISES LLC",
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "HOUSEOPOLY LLC",
+              "from_registry": true,
+              "match_basis": "filed",
+              "company_like": true,
+              "tags": [],
+              "person_id": null
+            },
+            "buyers": [
+              {
+                "name": null,
+                "org_id": null,
+                "org_name": null,
+                "from_registry": null,
+                "match_basis": "none",
+                "company_like": false,
+                "tags": [],
+                "person_id": "00000000000000000000000000000001"
+              },
+              {
+                "name": null,
+                "org_id": null,
+                "org_name": null,
+                "from_registry": null,
+                "match_basis": "none",
+                "company_like": false,
+                "tags": [],
+                "person_id": "00000000000000000000000000000001"
+              }
+            ],
+            "contact_redacted": true,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": null,
+              "city": "Buckeye",
+              "zip": "85326",
+              "county_fips": "04013",
+              "apn": "0000-000-000",
+              "latitude": 33.384087,
+              "longitude": -112.583342,
+              "address_held_back": null,
+              "location_radius_m": null,
+              "bedrooms": 2,
+              "bathrooms": 1,
+              "living_area_sqft": 816,
+              "year_built": 1954
+            },
+            "distance_miles": null
+          },
+          {
+            "deal_id": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "sale_date": "2026-08-27",
+            "price": 320000,
+            "zip": "85138",
+            "flagged": false,
+            "seller": {
+              "name": "HOUSEOPOLY LLC",
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "HOUSEOPOLY LLC",
+              "from_registry": true,
+              "match_basis": "filed",
+              "company_like": true,
+              "tags": [],
+              "person_id": null
+            },
+            "buyers": [
+              {
+                "name": null,
+                "org_id": null,
+                "org_name": null,
+                "from_registry": null,
+                "match_basis": "none",
+                "company_like": false,
+                "tags": [],
+                "person_id": "00000000000000000000000000000001"
+              }
+            ],
+            "contact_redacted": true,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": null,
+              "city": "Maricopa",
+              "zip": "85138",
+              "county_fips": "04021",
+              "apn": "0000-000-000",
+              "latitude": 33.044917,
+              "longitude": -112.00949,
+              "address_held_back": null,
+              "location_radius_m": null,
+              "bedrooms": 3,
+              "bathrooms": 3,
+              "living_area_sqft": 2294,
+              "year_built": 2008
+            },
+            "distance_miles": null
+          }
+        ],
+        "page": {
+          "next_cursor": "c2FtcGxlLWN1cnNvcg",
+          "limit": 100,
+          "returned": 100
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:19:23.759Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_lenders",
+        "state": "AZ"
+      },
+      "method": "GET",
+      "path": "/v1/data/lenders",
+      "response": {
+        "data": [
+          {
+            "rank": 1,
+            "lender": {
+              "org_id": "AZ:02332544",
+              "org_name": "DESERT FINANCIAL CREDIT UNION",
+              "from_registry": true,
+              "tags": [
+                "credit_union",
+                "institution"
+              ]
+            },
+            "recorded_name": "DESERT FINANCIAL CU",
+            "n": 121,
+            "n_recordings": 121,
+            "volume": 15333587,
+            "n_first_lien": 101,
+            "n_heloc": 106,
+            "n_construction": 1,
+            "n_open_liens": null,
+            "open_balance": null,
+            "share": 0.081591369,
+            "n_investor_loans": 7,
+            "n_investor_recordings": 7,
+            "n_investor_orgs": 8,
+            "n_deals_financed": 0,
+            "investor_share": 0.05785124,
+            "last_recorded_on": "2026-06-11",
+            "as_of": "2026-06-25",
+            "recordings_through": "2026-06-11",
+            "contact_redacted": true
+          },
+          {
+            "rank": 2,
+            "lender": {
+              "org_id": "AZ:R17517033",
+              "org_name": "UNITED WHOLESALE MORTGAGE LLC",
+              "from_registry": true,
+              "tags": [
+                "institution"
+              ]
+            },
+            "recorded_name": "UNITED WHOLESALE MORTGAGE",
+            "n": 78,
+            "n_recordings": 78,
+            "volume": 27787883,
+            "n_first_lien": 69,
+            "n_heloc": 9,
+            "n_construction": 0,
+            "n_open_liens": null,
+            "open_balance": null,
+            "share": 0.052596089,
+            "n_investor_loans": 1,
+            "n_investor_recordings": 1,
+            "n_investor_orgs": 1,
+            "n_deals_financed": 0,
+            "investor_share": 0.012820513,
+            "last_recorded_on": "2026-05-21",
+            "as_of": "2026-06-25",
+            "recordings_through": "2026-06-11",
+            "contact_redacted": true
+          },
+          {
+            "rank": 3,
+            "lender": {
+              "org_id": "AZ:23078262",
+              "org_name": "ROCKET MORTGAGE LLC",
+              "from_registry": true,
+              "tags": [
+                "institution"
+              ]
+            },
+            "recorded_name": "ROCKET MORTGAGE LLC",
+            "n": 70,
+            "n_recordings": 70,
+            "volume": 21276903,
+            "n_first_lien": 63,
+            "n_heloc": 0,
+            "n_construction": 0,
+            "n_open_liens": null,
+            "open_balance": null,
+            "share": 0.047201618,
+            "n_investor_loans": 0,
+            "n_investor_recordings": 0,
+            "n_investor_orgs": 0,
+            "n_deals_financed": 0,
+            "investor_share": 0,
+            "last_recorded_on": "2026-06-11",
+            "as_of": "2026-06-25",
+            "recordings_through": "2026-06-11",
+            "contact_redacted": true
+          }
+        ],
+        "page": {
+          "next_cursor": "c2FtcGxlLWN1cnNvcg",
+          "limit": 100,
+          "returned": 100
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:17:05.369Z",
+          "geometry": {
+            "kind": "place",
+            "lat": null,
+            "lng": null,
+            "radius_miles": null,
+            "bbox": null,
+            "property_id": null,
+            "address": null,
+            "zip": [
+              "85008"
+            ],
+            "city": null
+          },
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "get_lender",
+        "lender_id": "AZ:123456"
+      },
+      "method": "GET",
+      "path": "/v1/data/lenders/{lender_id}",
+      "response": {
+        "data": {
+          "id": "AZ:02332544",
+          "state": "AZ",
+          "kind": "registry",
+          "display_name": "DESERT FINANCIAL CREDIT UNION",
+          "recorded_name": "DESERT FINANCIAL CU",
+          "from_registry": true,
+          "tags": [
+            "credit_union",
+            "institution"
+          ],
+          "nmls": {
+            "id": 509455,
+            "url": "https://example.com/listing/1"
+          },
+          "successor": null,
+          "counts": {
+            "n_loans": 123288,
+            "n_loans_12m": 10017,
+            "n_loans_24m": 19297,
+            "n_loans_36m": 26677,
+            "volume_24m": 2928121539,
+            "n_unpriced_24m": 1,
+            "n_amount_excluded_24m": 14,
+            "n_blanket_positions_24m": 5,
+            "n_parcels": 88168,
+            "n_in_history": 107319,
+            "n_in_history_24m": 11332,
+            "n_in_both_24m": 9554,
+            "n_first_lien_24m": 17247,
+            "n_heloc_24m": 17767,
+            "n_construction_24m": 10,
+            "n_purchase_label_24m": 60,
+            "n_priced_24m": 19282,
+            "n_rated_24m": 18163,
+            "n_term_known_24m": 15627,
+            "n_loans_since_2015": 64040,
+            "n_before_2002": 81,
+            "n_undated": 0,
+            "first_recording_date": "1994-08-19",
+            "last_recording_date": "2026-06-11"
+          },
+          "open": {
+            "n_liens": 44291,
+            "n_first_liens": 39782,
+            "n_junior_liens": 4509,
+            "n_due_known": 39461,
+            "n_maturing_12m": 70,
+            "n_on_resold_parcels": 513,
+            "n_open_24m": 17512,
+            "balance": 5446379138,
+            "n_balance_excluded": 562
+          },
+          "terms": {
+            "amount_window": "24m",
+            "amount_p25": 70000,
+            "amount_p50": 100000,
+            "amount_p75": 150000,
+            "rate_p50": 6.64,
+            "term_p50_months": 360,
+            "share_le_24m": 0.00019108,
+            "share_25_120m": 0.014556825,
+            "share_121_359m": 0.303426412,
+            "share_ge_360m": 0.681825683
+          },
+          "places": {
+            "n_zips_24m": 277,
+            "n_counties_24m": 15,
+            "top_zip5_24m": "85142",
+            "top_zip_share_24m": 0.021091361
+          },
+          "rank_in_state": {
+            "loans_24m": 3,
+            "volume_24m": 5
+          },
+          "deals": {
+            "n_deals": 13,
+            "first_deal_date": "2000-06-15",
+            "last_deal_date": "2026-09-28"
+          },
+          "is_active_12m": true,
+          "has_open_book": true,
+          "borrowers": {
+            "n_borrowers": 144053,
+            "n_borrowers_24m": 27348,
+            "n_borrower_orgs_24m": 27198,
+            "n_repeat_borrowers_24m": 949
+          },
+          "financed": {
+            "n_investor_loans": 7215,
+            "n_investor_loans_24m": 1101,
+            "n_investor_orgs_24m": 1123,
+            "n_investor_loans_since_2015": 3957,
+            "n_deals_financed": 79,
+            "n_deals_financed_24m": 11,
+            "n_auction_purchases_financed_24m": 0,
+            "n_marketplace_purchases_financed_24m": 0,
+            "n_purchase_24m": 757,
+            "n_not_purchase_24m": 17481,
+            "n_purpose_unknown_24m": 1059,
+            "investor_lender_by_count": false
+          },
+          "outcomes": {
+            "n_strict_all": 83,
+            "n_strict_24m": 11,
+            "n_captured_24m": 12,
+            "n_foreclosed": 0,
+            "n_foreclosed_24m": 0,
+            "n_resolved_by_resale": 23,
+            "n_refinanced": 26,
+            "n_open_outcome": 48,
+            "n_takebacks": 35,
+            "n_takebacks_24m": 9,
+            "median_months_to_payoff": 92.3,
+            "is_auction_lender": true
+          },
+          "as_of": "2026-06-25",
+          "recordings_through": "2026-06-11",
+          "names": [
+            {
+              "name": "DESERT SCHOOLS FCU",
+              "lender_key": "DESERT SCHOOLS FEDERAL CREDIT UNION",
+              "identity_basis": "dictionary",
+              "company_like": true,
+              "tags": [
+                "credit_union",
+                "institution"
+              ],
+              "entity_no": "000000001",
+              "match_basis": "filed",
+              "n_rows": 86934,
+              "n_rows_24m": 1,
+              "first_recording_date": "1994-08-19",
+              "last_recording_date": "2025-07-15"
+            },
+            {
+              "name": "DESERT FINANCIAL CU",
+              "lender_key": "DESERT FINANCIAL CREDIT UNION",
+              "identity_basis": "key",
+              "company_like": true,
+              "tags": [
+                "credit_union",
+                "institution"
+              ],
+              "entity_no": "000000001",
+              "match_basis": "filed",
+              "n_rows": 78844,
+              "n_rows_24m": 33174,
+              "first_recording_date": "2018-01-08",
+              "last_recording_date": "2026-06-09"
+            },
+            {
+              "name": "DESERT FINANCIAL CREDIT UNION",
+              "lender_key": "DESERT FINANCIAL CREDIT UNION",
+              "identity_basis": "key",
+              "company_like": true,
+              "tags": [
+                "credit_union",
+                "institution"
+              ],
+              "entity_no": "000000001",
+              "match_basis": "filed",
+              "n_rows": 30288,
+              "n_rows_24m": 13195,
+              "first_recording_date": "2018-01-16",
+              "last_recording_date": "2026-06-11"
+            }
+          ],
+          "lender_key": "DESERT FINANCIAL CREDIT UNION",
+          "identity_bases": [
+            "dictionary",
+            "key"
+          ],
+          "by_county": [
+            {
+              "key": "04013",
+              "n_24m": 16961,
+              "n_all": 113270,
+              "volume_24m": 2570595982,
+              "share_of_lender": 0.878944914,
+              "rank_in_place": 1,
+              "share_of_place": 0.065396598,
+              "n_investor_loans_24m": 985,
+              "n_investor_loans_all": 6666
+            },
+            {
+              "key": "04021",
+              "n_24m": 1336,
+              "n_all": 5904,
+              "volume_24m": 158287076,
+              "share_of_lender": 0.06923356,
+              "rank_in_place": 6,
+              "share_of_place": 0.032134696,
+              "n_investor_loans_24m": 62,
+              "n_investor_loans_all": 284
+            },
+            {
+              "key": "04025",
+              "n_24m": 347,
+              "n_all": 1182,
+              "volume_24m": 59624805,
+              "share_of_lender": 0.01798207,
+              "rank_in_place": 6,
+              "share_of_place": 0.020533759,
+              "n_investor_loans_24m": 22,
+              "n_investor_loans_all": 107
+            }
+          ],
+          "by_zip": [
+            {
+              "key": "85142",
+              "n_24m": 407,
+              "n_all": 1781,
+              "volume_24m": 71906932,
+              "share_of_lender": 0.021091361,
+              "rank_in_place": 2,
+              "share_of_place": 0.05648855,
+              "n_investor_loans_24m": 31,
+              "n_investor_loans_all": 123
+            },
+            {
+              "key": "85383",
+              "n_24m": 403,
+              "n_all": 2259,
+              "volume_24m": 66320078,
+              "share_of_lender": 0.020884075,
+              "rank_in_place": 2,
+              "share_of_place": 0.064202645,
+              "n_investor_loans_24m": 30,
+              "n_investor_loans_all": 171
+            },
+            {
+              "key": "85326",
+              "n_24m": 365,
+              "n_all": 1347,
+              "volume_24m": 35009769,
+              "share_of_lender": 0.018914857,
+              "rank_in_place": 4,
+              "share_of_place": 0.043478261,
+              "n_investor_loans_24m": 17,
+              "n_investor_loans_all": 95
+            }
+          ],
+          "other_states": [],
+          "contact_redacted": true
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:18:04.580Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_lender_loans",
+        "lender_id": "AZ:123456"
+      },
+      "method": "GET",
+      "path": "/v1/data/lenders/{lender_id}/loans",
+      "response": {
+        "data": [
+          {
+            "loan_key": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "source": "recorded",
+            "position": 2,
+            "is_instrument": true,
+            "in_both": false,
+            "lender": {
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "DESERT FINANCIAL CREDIT UNION",
+              "from_registry": true,
+              "tags": [
+                "credit_union",
+                "institution"
+              ]
+            },
+            "lender_name_as_recorded": "DESERT FINANCIAL CREDIT UNION",
+            "assigned_lender_name": null,
+            "lender_open": null,
+            "lender_disagrees": false,
+            "recording_date": "2026-06-11",
+            "document_date": "2026-06-06",
+            "due_date": null,
+            "loan_amount": 50000,
+            "amount_outlier": false,
+            "current_balance": null,
+            "balance_outlier": null,
+            "interest_rate": null,
+            "interest_rate_type": null,
+            "estimated_payment": null,
+            "term_months": null,
+            "months": null,
+            "term_band": "unknown",
+            "loan_type": "Credit Line (Revolving)",
+            "loan_type_code": "K",
+            "financing_type": null,
+            "label": "heloc",
+            "label_as_recorded": "HELOCS - both purchase money and non-purchase money HELOCS",
+            "product": "heloc",
+            "product_basis": null,
+            "product_proxy": null,
+            "purpose_of_loan": null,
+            "heloc": null,
+            "construction_loan": null,
+            "standalone_refi": null,
+            "cash_purchase": null,
+            "adjustable_rate_rider": null,
+            "ltv": null,
+            "blanket": null,
+            "link": {
+              "purpose": "not_purchase",
+              "deed_deal_id": null,
+              "deed_date": null,
+              "deed_price": null,
+              "loan_to_price": null,
+              "sale_mtg_match": false,
+              "deal": null,
+              "outcome": null,
+              "resolved_on": null,
+              "months_to_resolution": null,
+              "foreclosed": null
+            },
+            "borrowers": [
+              {
+                "name": null,
+                "org_id": "00000000000000000000000000000001",
+                "org_name": "Sample Company LLC",
+                "from_registry": true,
+                "match_basis": "principal",
+                "company_like": false,
+                "tags": [],
+                "person_id": null,
+                "borrower_basis": "registry"
+              }
+            ],
+            "as_of": "2026-06-25",
+            "contact_redacted": true,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": null,
+              "city": "Tempe",
+              "zip": "85282",
+              "county_fips": "04013",
+              "apn": "0000-000-000",
+              "latitude": 33.388398,
+              "longitude": -111.951252,
+              "address_held_back": null,
+              "location_radius_m": null
+            }
+          },
+          {
+            "loan_key": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "source": "recorded",
+            "position": 2,
+            "is_instrument": true,
+            "in_both": false,
+            "lender": {
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "DESERT FINANCIAL CREDIT UNION",
+              "from_registry": true,
+              "tags": [
+                "credit_union",
+                "institution"
+              ]
+            },
+            "lender_name_as_recorded": "DESERT FINANCIAL CREDIT UNION",
+            "assigned_lender_name": null,
+            "lender_open": null,
+            "lender_disagrees": false,
+            "recording_date": "2026-06-11",
+            "document_date": "2026-06-06",
+            "due_date": null,
+            "loan_amount": 45000,
+            "amount_outlier": false,
+            "current_balance": null,
+            "balance_outlier": null,
+            "interest_rate": null,
+            "interest_rate_type": null,
+            "estimated_payment": null,
+            "term_months": null,
+            "months": null,
+            "term_band": "unknown",
+            "loan_type": "Credit Line (Revolving)",
+            "loan_type_code": "K",
+            "financing_type": null,
+            "label": "heloc",
+            "label_as_recorded": "HELOCS - both purchase money and non-purchase money HELOCS",
+            "product": "heloc",
+            "product_basis": null,
+            "product_proxy": null,
+            "purpose_of_loan": null,
+            "heloc": null,
+            "construction_loan": null,
+            "standalone_refi": null,
+            "cash_purchase": null,
+            "adjustable_rate_rider": null,
+            "ltv": null,
+            "blanket": null,
+            "link": {
+              "purpose": "not_purchase",
+              "deed_deal_id": null,
+              "deed_date": null,
+              "deed_price": null,
+              "loan_to_price": null,
+              "sale_mtg_match": false,
+              "deal": null,
+              "outcome": null,
+              "resolved_on": null,
+              "months_to_resolution": null,
+              "foreclosed": null
+            },
+            "borrowers": [
+              {
+                "name": null,
+                "org_id": null,
+                "org_name": null,
+                "from_registry": null,
+                "match_basis": "none",
+                "company_like": false,
+                "tags": [],
+                "person_id": "00000000000000000000000000000001",
+                "borrower_basis": "party"
+              }
+            ],
+            "as_of": "2026-06-25",
+            "contact_redacted": true,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": null,
+              "city": "Chandler",
+              "zip": "85226",
+              "county_fips": "04013",
+              "apn": "0000-000-000",
+              "latitude": 33.300603,
+              "longitude": -111.929896,
+              "address_held_back": null,
+              "location_radius_m": null
+            }
+          },
+          {
+            "loan_key": "00000000000000000000000000000001",
+            "property_id": "00000000000000000000000000000001",
+            "source": "recorded",
+            "position": 3,
+            "is_instrument": true,
+            "in_both": false,
+            "lender": {
+              "org_id": "00000000000000000000000000000001",
+              "org_name": "DESERT FINANCIAL CREDIT UNION",
+              "from_registry": true,
+              "tags": [
+                "credit_union",
+                "institution"
+              ]
+            },
+            "lender_name_as_recorded": "DESERT FINANCIAL CREDIT UNION",
+            "assigned_lender_name": null,
+            "lender_open": null,
+            "lender_disagrees": false,
+            "recording_date": "2026-06-11",
+            "document_date": "2026-06-06",
+            "due_date": null,
+            "loan_amount": 365467,
+            "amount_outlier": false,
+            "current_balance": null,
+            "balance_outlier": null,
+            "interest_rate": null,
+            "interest_rate_type": null,
+            "estimated_payment": null,
+            "term_months": null,
+            "months": null,
+            "term_band": "unknown",
+            "loan_type": "Credit Line (Revolving)",
+            "loan_type_code": "K",
+            "financing_type": null,
+            "label": "heloc",
+            "label_as_recorded": "HELOCS - both purchase money and non-purchase money HELOCS",
+            "product": "heloc",
+            "product_basis": null,
+            "product_proxy": null,
+            "purpose_of_loan": null,
+            "heloc": null,
+            "construction_loan": null,
+            "standalone_refi": null,
+            "cash_purchase": null,
+            "adjustable_rate_rider": null,
+            "ltv": null,
+            "blanket": null,
+            "link": {
+              "purpose": "not_purchase",
+              "deed_deal_id": null,
+              "deed_date": null,
+              "deed_price": null,
+              "loan_to_price": null,
+              "sale_mtg_match": false,
+              "deal": null,
+              "outcome": null,
+              "resolved_on": null,
+              "months_to_resolution": null,
+              "foreclosed": null
+            },
+            "borrowers": [
+              {
+                "name": null,
+                "org_id": null,
+                "org_name": null,
+                "from_registry": null,
+                "match_basis": "none",
+                "company_like": false,
+                "tags": [],
+                "person_id": "00000000000000000000000000000001",
+                "borrower_basis": "mortgage_only"
+              }
+            ],
+            "as_of": "2026-06-25",
+            "contact_redacted": true,
+            "parcel": {
+              "line": "100 Sample Street",
+              "unit": null,
+              "city": "Gilbert",
+              "zip": "85295",
+              "county_fips": "04013",
+              "apn": "0000-000-000",
+              "latitude": 33.306305,
+              "longitude": -111.728761,
+              "address_held_back": null,
+              "location_radius_m": null
+            }
+          }
+        ],
+        "page": {
+          "next_cursor": "c2FtcGxlLWN1cnNvcg",
+          "limit": 100,
+          "returned": 100
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:18:10.503Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "list_lender_borrowers",
+        "lender_id": "AZ:123456"
+      },
+      "method": "GET",
+      "path": "/v1/data/lenders/{lender_id}/borrowers",
+      "response": {
+        "data": [
+          {
+            "relation": "lent_to",
+            "org_id": "00000000000000000000000000000001",
+            "org_name": "ESTRELLA LOGISTICS LLC",
+            "from_registry": true,
+            "is_investor": false,
+            "n_deals_all": 0,
+            "tags": [],
+            "n_deeds": 33,
+            "first_date": "2023-09-05",
+            "last_date": "2024-10-03",
+            "total_price": 1204000,
+            "n_deeds_24m": 1,
+            "window_end": "2026-06-25",
+            "n_zips": 1,
+            "cp_n_purchases": 1,
+            "cp_n_quick_resales": 0,
+            "cp_median_hold_days": null
+          },
+          {
+            "relation": "lent_to",
+            "org_id": "00000000000000000000000000000001",
+            "org_name": "SOUL SISTERS 412 LLC",
+            "from_registry": true,
+            "is_investor": false,
+            "n_deals_all": 0,
+            "tags": [],
+            "n_deeds": 26,
+            "first_date": "2023-12-15",
+            "last_date": "2025-06-30",
+            "total_price": 1675000,
+            "n_deeds_24m": 1,
+            "window_end": "2026-06-25",
+            "n_zips": 2,
+            "cp_n_purchases": 3,
+            "cp_n_quick_resales": 0,
+            "cp_median_hold_days": null
+          },
+          {
+            "relation": "lent_to",
+            "org_id": "00000000000000000000000000000001",
+            "org_name": "INCLEDON 2 LLC",
+            "from_registry": true,
+            "is_investor": true,
+            "n_deals_all": 1,
+            "tags": [],
+            "n_deeds": 24,
+            "first_date": "2021-07-21",
+            "last_date": "2022-04-27",
+            "total_price": 2680000,
+            "n_deeds_24m": 0,
+            "window_end": "2026-06-25",
+            "n_zips": 1,
+            "cp_n_purchases": 1,
+            "cp_n_quick_resales": 0,
+            "cp_median_hold_days": 475
+          }
+        ],
+        "page": {
+          "next_cursor": "c2FtcGxlLWN1cnNvcg",
+          "limit": 100,
+          "returned": 69
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:18:11.095Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "config": {
+        "operation": "get_coverage"
+      },
+      "method": "GET",
+      "path": "/v1/data/coverage",
+      "response": {
+        "data": {
+          "states": [
+            {
+              "state": "AZ",
+              "build_id": null,
+              "built_at": "2026-10-22T11:47:47.520Z",
+              "published_at": "2026-10-22T15:09:59.945Z",
+              "run_id": 1792675938,
+              "financing_as_of": "2026-06-25",
+              "recordings_through": "2026-06-11",
+              "financing_source": "sample",
+              "str_as_of": "2026-10-22",
+              "deeds_through": "2026-10-08",
+              "listings_through": "2026-10-19",
+              "registry_rows": 2812108,
+              "counties": [
+                {
+                  "fips": "04001",
+                  "n_parcels": 23982,
+                  "zips": [
+                    {
+                      "zip": "85901",
+                      "n_parcels": 560
+                    },
+                    {
+                      "zip": "85920",
+                      "n_parcels": 1583
+                    },
+                    {
+                      "zip": "85924",
+                      "n_parcels": 8023
+                    }
+                  ]
+                },
+                {
+                  "fips": "04003",
+                  "n_parcels": 59895,
+                  "zips": [
+                    {
+                      "zip": "00000",
+                      "n_parcels": 1
+                    },
+                    {
+                      "zip": "08607",
+                      "n_parcels": 1
+                    },
+                    {
+                      "zip": "85067",
+                      "n_parcels": 1
+                    }
+                  ]
+                },
+                {
+                  "fips": "04005",
+                  "n_parcels": 75444,
+                  "zips": [
+                    {
+                      "zip": "85931",
+                      "n_parcels": 1015
+                    },
+                    {
+                      "zip": "86001",
+                      "n_parcels": 10721
+                    },
+                    {
+                      "zip": "86004",
+                      "n_parcels": 15685
+                    }
+                  ]
+                }
+              ],
+              "counts": {
+                "org": 2125837,
+                "reo": 222035,
+                "deal": 1790829,
+                "lien": 334472,
+                "loan": 6291319,
+                "agent": 81299,
+                "alias": 3621403,
+                "owner": 2994239,
+                "party": 16988903,
+                "entity": 2812108,
+                "filing": 7171397,
+                "holder": 1152408,
+                "parcel": 2994383,
+                "person": 13767132,
+                "search": 46245077,
+                "address": 2990671,
+                "auction": 500063,
+                "channel": 316161,
+                "listing": 3852247,
+                "org_str": 3064,
+                "org_link": 4972748,
+                "purchase": 6425781,
+                "agent_org": 2116578,
+                "financing": 2992231,
+                "loan_link": 6291319,
+                "agent_edge": 66935,
+                "loan_party": 16159970,
+                "org_record": 15456878,
+                "str_parcel": 5667,
+                "lender_name": 139248,
+                "listing_geo": 1236963,
+                "org_profile": 9587327,
+                "person_edge": 82649,
+                "account_link": 5433,
+                "counterparty": 7085809,
+                "lender_place": 980882,
+                "place_seller": 1758071,
+                "str_coverage": 679894,
+                "agent_listing": 3527513,
+                "entity_holder": 1012374,
+                "parcel_search": 2994383,
+                "person_record": 70087286,
+                "deal_financing": 1421902,
+                "lender_profile": 124329,
+                "person_linkage": 13205021,
+                "contact_address": 11865534,
+                "person_sighting": 18786349,
+                "agent_person_org": 8206,
+                "borrower_profile": 4897145,
+                "str_jurisdiction": 107,
+                "lender_place_link": 980882,
+                "marketplace_match": 12959,
+                "lender_counterparty": 14114928,
+                "lender_link_profile": 124329
+              },
+              "short_term_rental": null
+            }
+          ],
+          "place": null
+        },
+        "meta": {
+          "generated_at": "2026-10-24T08:26:52.789Z",
+          "coverage": [],
+          "build": {
+            "states": [
+              {
+                "state": "AZ",
+                "build_id": null,
+                "built_at": "2026-10-22T11:47:47.520Z",
+                "published_at": "2026-10-22T15:09:59.945Z",
+                "run_id": 1792675938,
+                "financing_as_of": "2026-06-25",
+                "recordings_through": "2026-06-11",
+                "financing_source": "sample",
+                "str_as_of": "2026-10-22"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
