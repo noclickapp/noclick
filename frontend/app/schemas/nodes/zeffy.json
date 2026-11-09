@@ -1,0 +1,1350 @@
+{
+  "$defs": {
+    "ZeffyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zeffy_api_key",
+          "default": "zeffy_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Zeffy API Key",
+      "type": "object",
+      "x-credential-instructions": "As the organization owner, open Settings \u2192 Integrations in Zeffy and complete the API key setup. Paste the key here without the Bearer prefix. Writes require the organization to have completed Stripe verification. NoClick checks the key by reading your organization's campaigns.",
+      "x-credential-url": "https://www.zeffy.com/o/settings?openIntegrations=true"
+    },
+    "ZeffyAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "line1": {
+          "title": "Line1",
+          "type": "string"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "State"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Country"
+        }
+      },
+      "required": [
+        "line1",
+        "city",
+        "state",
+        "postal_code",
+        "country"
+      ],
+      "title": "ZeffyAddress",
+      "type": "object"
+    },
+    "ZeffyCreateContactConfig": {
+      "additionalProperties": false,
+      "description": "Create a contact with email or both names. Existing emails return a conflict.",
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to leave unchanged; null clears on update.",
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ZeffyAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full mailing address object; null clears the whole address on update."
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ZeffyCreateContactConfig",
+      "type": "object"
+    },
+    "ZeffyCreatePaymentConfig": {
+      "additionalProperties": false,
+      "description": "Record an offline payment, without charging a card. Auctions are unsupported.",
+      "properties": {
+        "operation": {
+          "const": "create_payment",
+          "default": "create_payment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Donation in cents. For donation forms only; use tickets for ticketing campaigns.",
+          "title": "Amount"
+        },
+        "tickets": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ZeffyPaymentTicket"
+              },
+              "maxItems": 1000,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tickets"
+        },
+        "occurrence_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for ticketing campaigns with multiple occurrences.",
+          "title": "Occurrence Id"
+        },
+        "extra_donation": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Extra cents, for ticketing only.",
+          "title": "Extra Donation"
+        },
+        "payment_method": {
+          "default": "cash",
+          "enum": [
+            "cash",
+            "cheque",
+            "in_kind",
+            "other"
+          ],
+          "title": "Payment Method",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "generate_tax_receipt": {
+          "default": false,
+          "description": "Generate and email a tax receipt.",
+          "title": "Generate Tax Receipt",
+          "type": "boolean"
+        },
+        "send_confirmation_email": {
+          "default": false,
+          "description": "Send the buyer a confirmation email.",
+          "title": "Send Confirmation Email",
+          "type": "boolean"
+        },
+        "payment_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO calendar date or datetime, e.g. 2026-01-15. Defaults to now.",
+          "title": "Payment Date"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "ZeffyCreatePaymentConfig",
+      "type": "object"
+    },
+    "ZeffyDeleteContactConfig": {
+      "additionalProperties": false,
+      "description": "Permanently delete a contact, with the dashboard's side effects. Active memberships prevent deletion.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ZeffyDeleteContactConfig",
+      "type": "object"
+    },
+    "ZeffyDeletePaymentConfig": {
+      "additionalProperties": false,
+      "description": "Permanently delete a manual/imported payment; cancel its receipt and keep its contact. No email is sent. Online payments cannot be deleted.",
+      "properties": {
+        "operation": {
+          "const": "delete_payment",
+          "default": "delete_payment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "payment_id": {
+          "minLength": 1,
+          "title": "Payment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "ZeffyDeletePaymentConfig",
+      "type": "object"
+    },
+    "ZeffyGetCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Read a single campaign belonging to the organization.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "description": "Zeffy campaign ID.",
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "ZeffyGetCampaignConfig",
+      "type": "object"
+    },
+    "ZeffyGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Read a single contact belonging to the organization.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "description": "Zeffy contact ID.",
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ZeffyGetContactConfig",
+      "type": "object"
+    },
+    "ZeffyGetPaymentConfig": {
+      "additionalProperties": false,
+      "description": "Read a single payment belonging to the organization.",
+      "properties": {
+        "operation": {
+          "const": "get_payment",
+          "default": "get_payment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "payment_id": {
+          "description": "Zeffy payment ID.",
+          "minLength": 1,
+          "title": "Payment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "ZeffyGetPaymentConfig",
+      "type": "object"
+    },
+    "ZeffyGetUserConfig": {
+      "additionalProperties": false,
+      "description": "Read a single user belonging to the organization.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "Zeffy user ID.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "ZeffyGetUserConfig",
+      "type": "object"
+    },
+    "ZeffyListCampaignsConfig": {
+      "additionalProperties": false,
+      "description": "List the organization's donation forms and ticketing campaigns.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size, 1\u2013100. Each run fetches one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return resources before this ID; do not combine with starting_after.",
+          "title": "Ending Before"
+        },
+        "created_gt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created after this Unix timestamp (seconds).",
+          "title": "Created Gt"
+        },
+        "created_gte": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created at or after this Unix timestamp (seconds).",
+          "title": "Created Gte"
+        },
+        "created_lt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created before this Unix timestamp (seconds).",
+          "title": "Created Lt"
+        },
+        "created_lte": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created at or before this Unix timestamp (seconds).",
+          "title": "Created Lte"
+        },
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string"
+        },
+        "creator_user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator User Id"
+        }
+      },
+      "title": "ZeffyListCampaignsConfig",
+      "type": "object"
+    },
+    "ZeffyListContactsConfig": {
+      "additionalProperties": false,
+      "description": "Find contacts by exact primary or secondary email, or by creation/update time.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size, 1\u2013100. Each run fetches one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return resources before this ID; do not combine with starting_after.",
+          "title": "Ending Before"
+        },
+        "created_gt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created after this Unix timestamp (seconds).",
+          "title": "Created Gt"
+        },
+        "created_gte": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created at or after this Unix timestamp (seconds).",
+          "title": "Created Gte"
+        },
+        "created_lt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created before this Unix timestamp (seconds).",
+          "title": "Created Lt"
+        },
+        "created_lte": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created at or before this Unix timestamp (seconds).",
+          "title": "Created Lte"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "updated_gt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated Gt"
+        },
+        "updated_gte": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated Gte"
+        },
+        "updated_lt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated Lt"
+        },
+        "updated_lte": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated Lte"
+        }
+      },
+      "title": "ZeffyListContactsConfig",
+      "type": "object"
+    },
+    "ZeffyListPaymentsConfig": {
+      "additionalProperties": false,
+      "description": "List payments, with optional donor, campaign, status and date filters.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size, 1\u2013100. Each run fetches one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return resources before this ID; do not combine with starting_after.",
+          "title": "Ending Before"
+        },
+        "created_gt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created after this Unix timestamp (seconds).",
+          "title": "Created Gt"
+        },
+        "created_gte": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created at or after this Unix timestamp (seconds).",
+          "title": "Created Gte"
+        },
+        "created_lt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created before this Unix timestamp (seconds).",
+          "title": "Created Lt"
+        },
+        "created_lte": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created at or before this Unix timestamp (seconds).",
+          "title": "Created Lte"
+        },
+        "operation": {
+          "const": "list_payments",
+          "default": "list_payments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "enum": [
+                "cad",
+                "usd"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency",
+          "enum": [
+            "cad",
+            "usd"
+          ],
+          "x-enum-searchable": true
+        },
+        "contact": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact ID to filter by.",
+          "title": "Contact"
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Campaign ID to filter by.",
+          "title": "Campaign"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "online",
+                "manual",
+                "imported"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "online",
+            "manual",
+            "imported"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "succeeded",
+                "failed",
+                "pending"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "succeeded",
+            "failed",
+            "pending"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ZeffyListPaymentsConfig",
+      "type": "object"
+    },
+    "ZeffyListUsersConfig": {
+      "additionalProperties": false,
+      "description": "List organization team members, including removed users when requested.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Page size, 1\u2013100. Each run fetches one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return resources before this ID; do not combine with starting_after.",
+          "title": "Ending Before"
+        },
+        "created_gt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created after this Unix timestamp (seconds).",
+          "title": "Created Gt"
+        },
+        "created_gte": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created at or after this Unix timestamp (seconds).",
+          "title": "Created Gte"
+        },
+        "created_lt": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created before this Unix timestamp (seconds).",
+          "title": "Created Lt"
+        },
+        "created_lte": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created at or before this Unix timestamp (seconds).",
+          "title": "Created Lte"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "removed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "removed"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ZeffyListUsersConfig",
+      "type": "object"
+    },
+    "ZeffyPaymentTicket": {
+      "additionalProperties": false,
+      "properties": {
+        "rate_id": {
+          "description": "Rate ID from Get Campaign's rates.",
+          "minLength": 1,
+          "title": "Rate Id",
+          "type": "string"
+        },
+        "quantity": {
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Per-unit cents, only for pay-what-you-can rates.",
+          "title": "Amount"
+        }
+      },
+      "required": [
+        "rate_id",
+        "quantity"
+      ],
+      "title": "ZeffyPaymentTicket",
+      "type": "object"
+    },
+    "ZeffyUpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "Update supplied fields on a contact. Explicit null clears a field.",
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to leave unchanged; null clears on update.",
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ZeffyAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full mailing address object; null clears the whole address on update."
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "minLength": 1,
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ZeffyUpdateContactConfig",
+      "type": "object"
+    },
+    "ZeffyUpsertContactConfig": {
+      "additionalProperties": false,
+      "description": "Create or update by email (primary or secondary); the match email is not rewritten.",
+      "properties": {
+        "email": {
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ZeffyAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full mailing address object; null clears the whole address on update."
+        },
+        "operation": {
+          "const": "upsert_contact",
+          "default": "upsert_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ZeffyUpsertContactConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/ZeffyCreateContactConfig",
+          "create_payment": "#/$defs/ZeffyCreatePaymentConfig",
+          "delete_contact": "#/$defs/ZeffyDeleteContactConfig",
+          "delete_payment": "#/$defs/ZeffyDeletePaymentConfig",
+          "get_campaign": "#/$defs/ZeffyGetCampaignConfig",
+          "get_contact": "#/$defs/ZeffyGetContactConfig",
+          "get_payment": "#/$defs/ZeffyGetPaymentConfig",
+          "get_user": "#/$defs/ZeffyGetUserConfig",
+          "list_campaigns": "#/$defs/ZeffyListCampaignsConfig",
+          "list_contacts": "#/$defs/ZeffyListContactsConfig",
+          "list_payments": "#/$defs/ZeffyListPaymentsConfig",
+          "list_users": "#/$defs/ZeffyListUsersConfig",
+          "update_contact": "#/$defs/ZeffyUpdateContactConfig",
+          "upsert_contact": "#/$defs/ZeffyUpsertContactConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ZeffyListPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyGetPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyCreatePaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyDeletePaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyUpsertContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/ZeffyGetUserConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZeffyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zeffy Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
