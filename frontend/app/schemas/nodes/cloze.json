@@ -1,0 +1,1815 @@
+{
+  "$defs": {
+    "ClozeAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "cloze_api_key",
+          "default": "cloze_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Cloze API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Cloze API key from More > Settings > Accounts and Services > API Access. NoClick sends it as a bearer token to api.cloze.com. API availability depends on your Cloze plan and permissions. Cloze requires OAuth for publishing a public integration; this connection uses your own API key.",
+      "x-credential-url": "https://help.cloze.com/article/2176-api-key"
+    },
+    "ClozeCreateCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Create company in Cloze.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "segment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment"
+        },
+        "step": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "dryrun": {
+          "default": false,
+          "description": "Validate without creating or updating the record.",
+          "title": "Dryrun",
+          "type": "boolean"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "domains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domains"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "lead",
+                "future",
+                "current",
+                "past",
+                "out"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage",
+          "enum": [
+            "lead",
+            "future",
+            "current",
+            "past",
+            "out"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "create_company",
+          "default": "create_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ClozeCreateCompanyConfig",
+      "type": "object"
+    },
+    "ClozeCreateNoteConfig": {
+      "additionalProperties": false,
+      "description": "Add a note with a stable external ID and source domain.",
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "style": {
+          "const": "note",
+          "default": "note",
+          "title": "Style",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uniqueid": {
+          "description": "Stable external note identifier.",
+          "minLength": 1,
+          "title": "Uniqueid",
+          "type": "string"
+        },
+        "source": {
+          "description": "Source domain, for example example.org.",
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "subject": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "body": {
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "bodytype": {
+          "default": "text",
+          "enum": [
+            "text",
+            "html"
+          ],
+          "title": "Bodytype",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date/time for the timeline entry.",
+          "title": "Date"
+        },
+        "dryrun": {
+          "default": false,
+          "title": "Dryrun",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "uniqueid",
+        "source",
+        "subject",
+        "body"
+      ],
+      "title": "ClozeCreateNoteConfig",
+      "type": "object"
+    },
+    "ClozeCreatePersonConfig": {
+      "additionalProperties": false,
+      "description": "Create person in Cloze.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "segment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment"
+        },
+        "step": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "dryrun": {
+          "default": false,
+          "description": "Validate without creating or updating the record.",
+          "title": "Dryrun",
+          "type": "boolean"
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First"
+        },
+        "last": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last"
+        },
+        "headline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headline"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "lead",
+                "future",
+                "current",
+                "past",
+                "out"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage",
+          "enum": [
+            "lead",
+            "future",
+            "current",
+            "past",
+            "out"
+          ],
+          "x-enum-searchable": true
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/_Email"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "operation": {
+          "const": "create_person",
+          "default": "create_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ClozeCreatePersonConfig",
+      "type": "object"
+    },
+    "ClozeCreateProjectConfig": {
+      "additionalProperties": false,
+      "description": "Create project in Cloze.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "segment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment"
+        },
+        "step": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "dryrun": {
+          "default": false,
+          "description": "Validate without creating or updating the record.",
+          "title": "Dryrun",
+          "type": "boolean"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "future",
+                "current",
+                "pending",
+                "won",
+                "lost"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage",
+          "enum": [
+            "future",
+            "current",
+            "pending",
+            "won",
+            "lost"
+          ],
+          "x-enum-searchable": true
+        },
+        "createdDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date (YYYY-MM-DD).",
+          "title": "Createddate"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date (YYYY-MM-DD).",
+          "title": "Startdate"
+        },
+        "endDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date (YYYY-MM-DD).",
+          "title": "Enddate"
+        },
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ClozeCreateProjectConfig",
+      "type": "object"
+    },
+    "ClozeCreateTodoConfig": {
+      "additionalProperties": false,
+      "description": "Create a task for the current user or an assignee.",
+      "properties": {
+        "operation": {
+          "const": "create_todo",
+          "default": "create_todo",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subject": {
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "when": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date/time for the reminder; omitted means someday.",
+          "title": "When"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preview"
+        },
+        "assignee": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee"
+        },
+        "dryrun": {
+          "default": false,
+          "title": "Dryrun",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "subject"
+      ],
+      "title": "ClozeCreateTodoConfig",
+      "type": "object"
+    },
+    "ClozeDeleteCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Delete company in Cloze.",
+      "properties": {
+        "id": {
+          "description": "Identifier of the record to permanently delete.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "team": {
+          "default": false,
+          "title": "Team",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "delete_company",
+          "default": "delete_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ClozeDeleteCompanyConfig",
+      "type": "object"
+    },
+    "ClozeDeletePersonConfig": {
+      "additionalProperties": false,
+      "description": "Delete person in Cloze.",
+      "properties": {
+        "id": {
+          "description": "Identifier of the record to permanently delete.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "team": {
+          "default": false,
+          "title": "Team",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "delete_person",
+          "default": "delete_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ClozeDeletePersonConfig",
+      "type": "object"
+    },
+    "ClozeDeleteProjectConfig": {
+      "additionalProperties": false,
+      "description": "Delete project in Cloze.",
+      "properties": {
+        "id": {
+          "description": "Identifier of the record to permanently delete.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "team": {
+          "default": false,
+          "title": "Team",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ClozeDeleteProjectConfig",
+      "type": "object"
+    },
+    "ClozeGetCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Get company in Cloze.",
+      "properties": {
+        "id": {
+          "description": "Cloze syncKey, portableId, unique ID or documented app-link ID.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "team": {
+          "default": false,
+          "title": "Team",
+          "type": "boolean"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format"
+        },
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ClozeGetCompanyConfig",
+      "type": "object"
+    },
+    "ClozeGetCustomFieldsConfig": {
+      "additionalProperties": false,
+      "description": "Get custom field definitions.",
+      "properties": {
+        "operation": {
+          "const": "get_custom_fields",
+          "default": "get_custom_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ClozeGetCustomFieldsConfig",
+      "type": "object"
+    },
+    "ClozeGetPersonConfig": {
+      "additionalProperties": false,
+      "description": "Get person in Cloze.",
+      "properties": {
+        "id": {
+          "description": "Cloze syncKey, portableId, unique ID or documented app-link ID.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "team": {
+          "default": false,
+          "title": "Team",
+          "type": "boolean"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format"
+        },
+        "operation": {
+          "const": "get_person",
+          "default": "get_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ClozeGetPersonConfig",
+      "type": "object"
+    },
+    "ClozeGetProfileConfig": {
+      "additionalProperties": false,
+      "description": "Get the account that accepts this API key.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ClozeGetProfileConfig",
+      "type": "object"
+    },
+    "ClozeGetProjectConfig": {
+      "additionalProperties": false,
+      "description": "Get project in Cloze.",
+      "properties": {
+        "id": {
+          "description": "Cloze syncKey, portableId, unique ID or documented app-link ID.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "team": {
+          "default": false,
+          "title": "Team",
+          "type": "boolean"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ClozeGetProjectConfig",
+      "type": "object"
+    },
+    "ClozeGetStepsConfig": {
+      "additionalProperties": false,
+      "description": "Get configured next steps.",
+      "properties": {
+        "operation": {
+          "const": "get_steps",
+          "default": "get_steps",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ClozeGetStepsConfig",
+      "type": "object"
+    },
+    "ClozeGetTagsConfig": {
+      "additionalProperties": false,
+      "description": "Get account tags.",
+      "properties": {
+        "operation": {
+          "const": "get_tags",
+          "default": "get_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ClozeGetTagsConfig",
+      "type": "object"
+    },
+    "ClozeListCompaniesConfig": {
+      "additionalProperties": false,
+      "description": "List companies in Cloze.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor returned by the previous feed page. Omit on the initial request.",
+          "title": "Cursor"
+        },
+        "pagesize": {
+          "default": 25,
+          "description": "Set on the initial request; Cloze defaults to 10, maximum 1000.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "modifiedafter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial request: UTC milliseconds or now; omit to first retrieve all matching records.",
+          "title": "Modifiedafter"
+        },
+        "freeformquery": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Freeformquery"
+        },
+        "segment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "local",
+                "team"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "enum": [
+            "local",
+            "team"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ClozeListCompaniesConfig",
+      "type": "object"
+    },
+    "ClozeListPeopleConfig": {
+      "additionalProperties": false,
+      "description": "List people in Cloze.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor returned by the previous feed page. Omit on the initial request.",
+          "title": "Cursor"
+        },
+        "pagesize": {
+          "default": 25,
+          "description": "Set on the initial request; Cloze defaults to 10, maximum 1000.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "modifiedafter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial request: UTC milliseconds or now; omit to first retrieve all matching records.",
+          "title": "Modifiedafter"
+        },
+        "freeformquery": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Freeformquery"
+        },
+        "segment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "local",
+                "team"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "enum": [
+            "local",
+            "team"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_people",
+          "default": "list_people",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ClozeListPeopleConfig",
+      "type": "object"
+    },
+    "ClozeListProjectsConfig": {
+      "additionalProperties": false,
+      "description": "List projects in Cloze.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor returned by the previous feed page. Omit on the initial request.",
+          "title": "Cursor"
+        },
+        "pagesize": {
+          "default": 25,
+          "description": "Set on the initial request; Cloze defaults to 10, maximum 1000.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "modifiedafter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial request: UTC milliseconds or now; omit to first retrieve all matching records.",
+          "title": "Modifiedafter"
+        },
+        "freeformquery": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Freeformquery"
+        },
+        "segment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "local",
+                "team"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "enum": [
+            "local",
+            "team"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ClozeListProjectsConfig",
+      "type": "object"
+    },
+    "ClozeUpdateCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Update company in Cloze.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "segment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment"
+        },
+        "step": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "dryrun": {
+          "default": false,
+          "description": "Validate without creating or updating the record.",
+          "title": "Dryrun",
+          "type": "boolean"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "domains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domains"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "lead",
+                "future",
+                "current",
+                "past",
+                "out"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage",
+          "enum": [
+            "lead",
+            "future",
+            "current",
+            "past",
+            "out"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "update_company",
+          "default": "update_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "syncKey": {
+          "description": "Existing record syncKey returned by Cloze; included with the changes.",
+          "minLength": 1,
+          "title": "Synckey",
+          "type": "string"
+        }
+      },
+      "required": [
+        "syncKey"
+      ],
+      "title": "ClozeUpdateCompanyConfig",
+      "type": "object"
+    },
+    "ClozeUpdatePersonConfig": {
+      "additionalProperties": false,
+      "description": "Update person in Cloze.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "segment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment"
+        },
+        "step": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "dryrun": {
+          "default": false,
+          "description": "Validate without creating or updating the record.",
+          "title": "Dryrun",
+          "type": "boolean"
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First"
+        },
+        "last": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last"
+        },
+        "headline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Headline"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "lead",
+                "future",
+                "current",
+                "past",
+                "out"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage",
+          "enum": [
+            "lead",
+            "future",
+            "current",
+            "past",
+            "out"
+          ],
+          "x-enum-searchable": true
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/_Email"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails"
+        },
+        "operation": {
+          "const": "update_person",
+          "default": "update_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "syncKey": {
+          "description": "Existing record syncKey returned by Cloze; included with the changes.",
+          "minLength": 1,
+          "title": "Synckey",
+          "type": "string"
+        }
+      },
+      "required": [
+        "syncKey"
+      ],
+      "title": "ClozeUpdatePersonConfig",
+      "type": "object"
+    },
+    "ClozeUpdateProjectConfig": {
+      "additionalProperties": false,
+      "description": "Update project in Cloze.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "segment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment"
+        },
+        "step": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "dryrun": {
+          "default": false,
+          "description": "Validate without creating or updating the record.",
+          "title": "Dryrun",
+          "type": "boolean"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "future",
+                "current",
+                "pending",
+                "won",
+                "lost"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage",
+          "enum": [
+            "future",
+            "current",
+            "pending",
+            "won",
+            "lost"
+          ],
+          "x-enum-searchable": true
+        },
+        "createdDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date (YYYY-MM-DD).",
+          "title": "Createddate"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date (YYYY-MM-DD).",
+          "title": "Startdate"
+        },
+        "endDate": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date (YYYY-MM-DD).",
+          "title": "Enddate"
+        },
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "syncKey": {
+          "description": "Existing record syncKey returned by Cloze; included with the changes.",
+          "minLength": 1,
+          "title": "Synckey",
+          "type": "string"
+        }
+      },
+      "required": [
+        "syncKey"
+      ],
+      "title": "ClozeUpdateProjectConfig",
+      "type": "object"
+    },
+    "_Email": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "format": "email",
+          "title": "Value",
+          "type": "string"
+        },
+        "work": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "_Email",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_company": "#/$defs/ClozeCreateCompanyConfig",
+          "create_note": "#/$defs/ClozeCreateNoteConfig",
+          "create_person": "#/$defs/ClozeCreatePersonConfig",
+          "create_project": "#/$defs/ClozeCreateProjectConfig",
+          "create_todo": "#/$defs/ClozeCreateTodoConfig",
+          "delete_company": "#/$defs/ClozeDeleteCompanyConfig",
+          "delete_person": "#/$defs/ClozeDeletePersonConfig",
+          "delete_project": "#/$defs/ClozeDeleteProjectConfig",
+          "get_company": "#/$defs/ClozeGetCompanyConfig",
+          "get_custom_fields": "#/$defs/ClozeGetCustomFieldsConfig",
+          "get_person": "#/$defs/ClozeGetPersonConfig",
+          "get_profile": "#/$defs/ClozeGetProfileConfig",
+          "get_project": "#/$defs/ClozeGetProjectConfig",
+          "get_steps": "#/$defs/ClozeGetStepsConfig",
+          "get_tags": "#/$defs/ClozeGetTagsConfig",
+          "list_companies": "#/$defs/ClozeListCompaniesConfig",
+          "list_people": "#/$defs/ClozeListPeopleConfig",
+          "list_projects": "#/$defs/ClozeListProjectsConfig",
+          "update_company": "#/$defs/ClozeUpdateCompanyConfig",
+          "update_person": "#/$defs/ClozeUpdatePersonConfig",
+          "update_project": "#/$defs/ClozeUpdateProjectConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ClozeListPeopleConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeGetPersonConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeCreatePersonConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeUpdatePersonConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeDeletePersonConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeListCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeGetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeCreateCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeUpdateCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeDeleteCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeDeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeGetTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeGetCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeGetStepsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeCreateTodoConfig"
+        },
+        {
+          "$ref": "#/$defs/ClozeCreateNoteConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClozeAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cloze Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

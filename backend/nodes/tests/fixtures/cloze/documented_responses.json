@@ -1,0 +1,83 @@
+{
+  "profile": {
+    "errorcode": 0,
+    "profile": {
+      "email": "someone@company.com",
+      "name": "John Q. Public",
+      "first": "John",
+      "last": "Public",
+      "country": "US"
+    }
+  },
+  "tags": {
+    "errorcode": 0,
+    "keywords": [
+      {
+        "id": "dog-lover",
+        "count": 27
+      },
+      {
+        "id": "garden-club",
+        "count": 23
+      }
+    ]
+  },
+  "fields": {
+    "errorcode": 0,
+    "list": [
+      {
+        "id": "role",
+        "type": "keyword",
+        "name": "Role",
+        "description": "Role of a person in their business",
+        "relations": {
+          "person": true
+        },
+        "values": {
+          "cxo": {
+            "locked": true,
+            "label": "CxO"
+          },
+          "vp": {
+            "locked": true,
+            "label": "VO"
+          }
+        }
+      },
+      {
+        "id": "meeting-limit",
+        "type": "number",
+        "name": "Meeting Limit",
+        "description": "Cap on meeting size"
+      },
+      {
+        "id": "tweet-of-the-day",
+        "type": "text",
+        "name": "Tweet of the Day",
+        "segments": {
+          "friend": true,
+          "family": true
+        }
+      }
+    ]
+  },
+  "steps": {
+    "errorcode": 0,
+    "segments": {
+      "supplier": {
+        "current": {
+          "steps": [
+            {
+              "name": "append samples",
+              "key": "s-00000"
+            },
+            {
+              "name": "have dinner with the boss",
+              "key": "*s-15344457035"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
