@@ -1,0 +1,1290 @@
+{
+  "$defs": {
+    "AryeoAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "aryeo_api_token",
+          "default": "aryeo_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Aryeo API Token",
+      "type": "object",
+      "x-credential-instructions": "In Aryeo, open your group's developer settings and generate a personal access token. Paste only the token, without the Bearer prefix. NoClick reads your listings to check the connection. The token's user and current group determine which records you can access.",
+      "x-credential-url": "https://docs.aryeo.com/"
+    },
+    "AryeoCancelAppointment": {
+      "additionalProperties": false,
+      "description": "Cancel an appointment. The appointments order's customer can be optionally notified of this change.",
+      "properties": {
+        "operation": {
+          "const": "cancel_appointment",
+          "default": "cancel_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "appointment_id": {
+          "maxLength": 255,
+          "minLength": 36,
+          "title": "Appointment Id",
+          "type": "string"
+        },
+        "notify_customer": {
+          "default": false,
+          "description": "Sends a notification to the appointment's order's customer that the appointment was canceled.",
+          "title": "Notify Customer",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "appointment_id"
+      ],
+      "title": "AryeoCancelAppointment",
+      "type": "object"
+    },
+    "AryeoCreateOrder": {
+      "additionalProperties": false,
+      "description": "Create an order.",
+      "properties": {
+        "operation": {
+          "const": "create_order",
+          "default": "create_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fulfillment_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "FULFILLED",
+                "UNFULFILLED"
+              ],
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The fulfillment status of the order. Defaults to \"UNFULFILLED\".",
+          "title": "Fulfillment Status",
+          "enum": [
+            "FULFILLED",
+            "UNFULFILLED"
+          ],
+          "x-enum-searchable": true
+        },
+        "internal_notes": {
+          "anyOf": [
+            {
+              "maxLength": 2550,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Internal notes that will be attached to the order. Viewable only by the team.",
+          "title": "Internal Notes"
+        },
+        "address_id": {
+          "anyOf": [
+            {
+              "maxLength": 36,
+              "minLength": 36,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the address to associate with the order. UUID Version 4.",
+          "title": "Address Id"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 36,
+              "minLength": 36,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the customer to associate with the order. UUID Version 4.",
+          "title": "Customer Id"
+        },
+        "notify": {
+          "default": false,
+          "description": "Indicates if the customer and creator notifications should be sent when creating the order. Requires an address and customer to be set in order for the notifications to be sent.",
+          "title": "Notify",
+          "type": "boolean"
+        },
+        "lock_download_for_payment": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates if the downloads for the attached listing should be locked while there is an outstanding balance on the order.",
+          "title": "Lock Download For Payment"
+        },
+        "allow_payments_before_fulfillment": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates if the order will allow payments from the customer before the order is marked as fulfilled.",
+          "title": "Allow Payments Before Fulfillment"
+        }
+      },
+      "title": "AryeoCreateOrder",
+      "type": "object"
+    },
+    "AryeoGetListing": {
+      "additionalProperties": false,
+      "description": "Retrieves the details of a listing with the given ID.",
+      "properties": {
+        "operation": {
+          "const": "get_listing",
+          "default": "get_listing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listing_id": {
+          "maxLength": 36,
+          "minLength": 36,
+          "title": "Listing Id",
+          "type": "string"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "listing_id"
+      ],
+      "title": "AryeoGetListing",
+      "type": "object"
+    },
+    "AryeoGetOrder": {
+      "additionalProperties": false,
+      "description": "Retrieves the details of an order with the given ID.",
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "order_id": {
+          "maxLength": 36,
+          "minLength": 36,
+          "title": "Order Id",
+          "type": "string"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "AryeoGetOrder",
+      "type": "object"
+    },
+    "AryeoGetUnconfirmedAppointment": {
+      "additionalProperties": false,
+      "description": "Retrieves the details of an unconfirmed appointment with the given ID.",
+      "properties": {
+        "operation": {
+          "const": "get_unconfirmed_appointment",
+          "default": "get_unconfirmed_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "unconfirmed_appointment_id": {
+          "maxLength": 255,
+          "minLength": 36,
+          "title": "Unconfirmed Appointment Id",
+          "type": "string"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "unconfirmed_appointment_id"
+      ],
+      "title": "AryeoGetUnconfirmedAppointment",
+      "type": "object"
+    },
+    "AryeoGetVendor": {
+      "additionalProperties": false,
+      "description": "Retrieves the details of a vendor with the given ID.",
+      "properties": {
+        "operation": {
+          "const": "get_vendor",
+          "default": "get_vendor",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "vendor_id": {
+          "maxLength": 36,
+          "minLength": 36,
+          "title": "Vendor Id",
+          "type": "string"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "required": [
+        "vendor_id"
+      ],
+      "title": "AryeoGetVendor",
+      "type": "object"
+    },
+    "AryeoListAppointments": {
+      "additionalProperties": false,
+      "description": "List all appointments. By default, returns a list of appointments that have been scheduled and have not been canceled",
+      "properties": {
+        "operation": {
+          "const": "list_appointments",
+          "default": "list_appointments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "filter_tense": {
+          "anyOf": [
+            {
+              "enum": [
+                "PAST",
+                "UPCOMING"
+              ],
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Tense",
+          "enum": [
+            "PAST",
+            "UPCOMING"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_start_at_gte": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Start At Gte"
+        },
+        "filter_start_at_lte": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Start At Lte"
+        },
+        "filter_user_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter User Ids"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "per_page": {
+          "default": "25",
+          "maxLength": 5,
+          "pattern": "[1-9][0-9]{0,4}",
+          "title": "Per Page",
+          "type": "string"
+        },
+        "page": {
+          "default": "1",
+          "maxLength": 5,
+          "pattern": "[1-9][0-9]{0,4}",
+          "title": "Page",
+          "type": "string"
+        }
+      },
+      "title": "AryeoListAppointments",
+      "type": "object"
+    },
+    "AryeoListAvailableDates": {
+      "additionalProperties": false,
+      "description": "Fetch available calendar days for scheduling or rescheduling an appointment. Availability can be retrieved using a specific start & end date range, or using a timeframe. When using a timeframe, the page parameter can be used to flip through weeks, months, etc.",
+      "properties": {
+        "operation": {
+          "const": "list_available_dates",
+          "default": "list_available_dates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter_user_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter User Ids"
+        },
+        "filter_appointment_id": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Appointment Id"
+        },
+        "filter_start_at": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Start At"
+        },
+        "filter_end_at": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter End At"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "maximum": 360,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "maximum": 360,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 99999,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 99999,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "AryeoListAvailableDates",
+      "type": "object"
+    },
+    "AryeoListAvailableTimeslots": {
+      "additionalProperties": false,
+      "description": "Fetch available timeslots for scheduling or rescheduling an appointment. Timeslots can be retrieved using a specific start & end date range, or using a timeframe. When using a timeframe, the page parameter can be used to flip through days or weeks.",
+      "properties": {
+        "operation": {
+          "const": "list_available_timeslots",
+          "default": "list_available_timeslots",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter_user_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter User Ids"
+        },
+        "filter_appointment_id": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Appointment Id"
+        },
+        "filter_start_at": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Start At"
+        },
+        "filter_end_at": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter End At"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "maximum": 360,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "maximum": 360,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 99999,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 99999,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "AryeoListAvailableTimeslots",
+      "type": "object"
+    },
+    "AryeoListListings": {
+      "additionalProperties": false,
+      "description": "Lists all listings available to a group.",
+      "properties": {
+        "operation": {
+          "const": "list_listings",
+          "default": "list_listings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "filter_search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Search"
+        },
+        "filter_address": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Address"
+        },
+        "filter_list_agent": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter List Agent"
+        },
+        "filter_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "DRAFT",
+                "COMING_SOON",
+                "FOR_LEASE",
+                "FOR_SALE",
+                "PENDING_SALE",
+                "PENDING_LEASE",
+                "SOLD",
+                "LEASED",
+                "OFF_MARKET",
+                "null"
+              ],
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Status",
+          "enum": [
+            "DRAFT",
+            "COMING_SOON",
+            "FOR_LEASE",
+            "FOR_SALE",
+            "PENDING_SALE",
+            "PENDING_LEASE",
+            "SOLD",
+            "LEASED",
+            "OFF_MARKET",
+            "null"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Active"
+        },
+        "filter_price_gte": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Price Gte"
+        },
+        "filter_price_lte": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Price Lte"
+        },
+        "filter_square_feet_gte": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Square Feet Gte"
+        },
+        "filter_square_feet_lte": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Square Feet Lte"
+        },
+        "filter_bedrooms_gte": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Bedrooms Gte"
+        },
+        "filter_bedrooms_lte": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Bedrooms Lte"
+        },
+        "filter_bathrooms_gte": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Bathrooms Gte"
+        },
+        "filter_bathrooms_lte": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Bathrooms Lte"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "per_page": {
+          "default": "25",
+          "maxLength": 5,
+          "pattern": "[1-9][0-9]{0,4}",
+          "title": "Per Page",
+          "type": "string"
+        },
+        "page": {
+          "default": "1",
+          "maxLength": 5,
+          "pattern": "[1-9][0-9]{0,4}",
+          "title": "Page",
+          "type": "string"
+        }
+      },
+      "title": "AryeoListListings",
+      "type": "object"
+    },
+    "AryeoListOrders": {
+      "additionalProperties": false,
+      "description": "Lists all orders of a group.",
+      "properties": {
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "per_page": {
+          "default": "25",
+          "maxLength": 5,
+          "pattern": "[1-9][0-9]{0,4}",
+          "title": "Per Page",
+          "type": "string"
+        },
+        "page": {
+          "default": "1",
+          "maxLength": 5,
+          "pattern": "[1-9][0-9]{0,4}",
+          "title": "Page",
+          "type": "string"
+        }
+      },
+      "title": "AryeoListOrders",
+      "type": "object"
+    },
+    "AryeoListProducts": {
+      "additionalProperties": false,
+      "description": "List all products of a group.",
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "per_page": {
+          "default": "25",
+          "maxLength": 5,
+          "pattern": "[1-9][0-9]{0,4}",
+          "title": "Per Page",
+          "type": "string"
+        },
+        "page": {
+          "default": "1",
+          "maxLength": 5,
+          "pattern": "[1-9][0-9]{0,4}",
+          "title": "Page",
+          "type": "string"
+        },
+        "filter_search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Search"
+        },
+        "filter_include_inactive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Include Inactive"
+        },
+        "filter_category_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Category Ids"
+        },
+        "filter_type": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Type"
+        }
+      },
+      "title": "AryeoListProducts",
+      "type": "object"
+    },
+    "AryeoListUnconfirmedAppointments": {
+      "additionalProperties": false,
+      "description": "List all unconfirmed appointments. These are appointments that have not been scheduled.",
+      "properties": {
+        "operation": {
+          "const": "list_unconfirmed_appointments",
+          "default": "list_unconfirmed_appointments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        },
+        "filter_user_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter User Ids"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "per_page": {
+          "default": "25",
+          "maxLength": 5,
+          "pattern": "[1-9][0-9]{0,4}",
+          "title": "Per Page",
+          "type": "string"
+        },
+        "page": {
+          "default": "1",
+          "maxLength": 5,
+          "pattern": "[1-9][0-9]{0,4}",
+          "title": "Page",
+          "type": "string"
+        }
+      },
+      "title": "AryeoListUnconfirmedAppointments",
+      "type": "object"
+    },
+    "AryeoListVendors": {
+      "additionalProperties": false,
+      "description": "Lists all vendors available to a group.",
+      "properties": {
+        "operation": {
+          "const": "list_vendors",
+          "default": "list_vendors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include"
+        }
+      },
+      "title": "AryeoListVendors",
+      "type": "object"
+    },
+    "AryeoRescheduleAppointment": {
+      "additionalProperties": false,
+      "description": "Reschedule an appointment. The appointments order's customer can be optionally notified of this change.",
+      "properties": {
+        "operation": {
+          "const": "reschedule_appointment",
+          "default": "reschedule_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "appointment_id": {
+          "maxLength": 255,
+          "minLength": 36,
+          "title": "Appointment Id",
+          "type": "string"
+        },
+        "start_at": {
+          "description": "The new date and time (ISO 8601 format) when the appointment is set to start.",
+          "maxLength": 255,
+          "title": "Start At",
+          "type": "string"
+        },
+        "end_at": {
+          "description": "The new date and time (ISO 8601 format) when the appointment is set to end.",
+          "maxLength": 255,
+          "title": "End At",
+          "type": "string"
+        },
+        "notify_customer": {
+          "default": false,
+          "description": "Send a notification to the appointment's order's customer that the appointment was rescheduled.",
+          "title": "Notify Customer",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "appointment_id",
+        "start_at",
+        "end_at"
+      ],
+      "title": "AryeoRescheduleAppointment",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_appointment": "#/$defs/AryeoCancelAppointment",
+          "create_order": "#/$defs/AryeoCreateOrder",
+          "get_listing": "#/$defs/AryeoGetListing",
+          "get_order": "#/$defs/AryeoGetOrder",
+          "get_unconfirmed_appointment": "#/$defs/AryeoGetUnconfirmedAppointment",
+          "get_vendor": "#/$defs/AryeoGetVendor",
+          "list_appointments": "#/$defs/AryeoListAppointments",
+          "list_available_dates": "#/$defs/AryeoListAvailableDates",
+          "list_available_timeslots": "#/$defs/AryeoListAvailableTimeslots",
+          "list_listings": "#/$defs/AryeoListListings",
+          "list_orders": "#/$defs/AryeoListOrders",
+          "list_products": "#/$defs/AryeoListProducts",
+          "list_unconfirmed_appointments": "#/$defs/AryeoListUnconfirmedAppointments",
+          "list_vendors": "#/$defs/AryeoListVendors",
+          "reschedule_appointment": "#/$defs/AryeoRescheduleAppointment"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AryeoListAppointments"
+        },
+        {
+          "$ref": "#/$defs/AryeoCancelAppointment"
+        },
+        {
+          "$ref": "#/$defs/AryeoRescheduleAppointment"
+        },
+        {
+          "$ref": "#/$defs/AryeoListListings"
+        },
+        {
+          "$ref": "#/$defs/AryeoGetListing"
+        },
+        {
+          "$ref": "#/$defs/AryeoListProducts"
+        },
+        {
+          "$ref": "#/$defs/AryeoListOrders"
+        },
+        {
+          "$ref": "#/$defs/AryeoCreateOrder"
+        },
+        {
+          "$ref": "#/$defs/AryeoGetOrder"
+        },
+        {
+          "$ref": "#/$defs/AryeoListAvailableDates"
+        },
+        {
+          "$ref": "#/$defs/AryeoListAvailableTimeslots"
+        },
+        {
+          "$ref": "#/$defs/AryeoListUnconfirmedAppointments"
+        },
+        {
+          "$ref": "#/$defs/AryeoGetUnconfirmedAppointment"
+        },
+        {
+          "$ref": "#/$defs/AryeoListVendors"
+        },
+        {
+          "$ref": "#/$defs/AryeoGetVendor"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AryeoAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Aryeo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

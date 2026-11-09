@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard@512w</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="1024" height="1024" rx="195"></rect>
+        <linearGradient x1="50%" y1="99.9964392%" x2="50%" y2="3.19290738e-05%" id="linearGradient-3">
+            <stop stop-color="#5146CD" offset="0%"></stop>
+            <stop stop-color="#6061F6" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-4" x="-2.86665464" y="0" width="1027" height="1024"></rect>
+        <path d="M764,408.05124 L764,775.790969 C764,783.1728 517.568611,592.587756 517.568611,592.587756 C513.393034,589.178023 507.605426,589.178023 503.431389,592.587756 C503.431389,592.587756 257,783.1728 257,775.790969 L257,408.083684 C257,404.168749 258.713649,400.480923 261.629778,398.121765 L504.58306,201.523726 C508.757097,198.146438 514.52007,198.160343 518.68179,201.55617 L759.410253,398.12022 C762.301747,400.482468 764,404.154844 764,408.05124 Z M656.675215,579.684531 L657,437.722788 C657.003055,436.052343 656.223287,434.477088 654.893546,433.468373 L510.60895,324.077241 C508.687872,322.620207 506.028389,322.643237 504.131822,324.134048 L365.031379,433.472979 C363.749128,434.480159 363,436.023171 363,437.658304 L363,579.443483 C363,583.816119 367.969679,586.320252 371.471739,583.713252 L504.202293,484.899047 C506.055964,483.520316 508.586762,483.498821 510.461881,484.848381 L648.273946,583.992683 C651.779071,586.515239 656.666024,584.011107 656.675215,579.684531 Z" id="path-5"></path>
+        <filter x="-11.9%" y="-5.6%" width="120.3%" height="118.2%" filterUnits="objectBoundingBox" id="filter-6">
+            <feMorphology radius="1" operator="erode" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="-9" dy="19" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="15" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.117647059   0 0 0 0 0.117647059   0 0 0 0 0.117647059  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-8">
+            <g id="Rectangle">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Mask" fill="#FFFFFF" xlink:href="#path-1"></use>
+                <g mask="url(#mask-2)">
+                    <use fill="#D8D8D8" xlink:href="#path-4"></use>
+                    <use fill="url(#linearGradient-3)" xlink:href="#path-4"></use>
+                </g>
+            </g>
+            <g id="Purple">
+                <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-5"></use>
+            </g>
+        </g>
+    </g>
+</svg>
