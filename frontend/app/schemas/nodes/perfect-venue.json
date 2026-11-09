@@ -1,0 +1,1044 @@
+{
+  "$defs": {
+    "ContactFields": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        }
+      },
+      "title": "ContactFields",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "description": "Create a contact for a venue; the provider does not deduplicate contacts.",
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "venue_id": {
+          "title": "Venue Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "venue_id"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateEvent": {
+      "additionalProperties": false,
+      "description": "Create an event using an existing contact or inline contact details.",
+      "properties": {
+        "contact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Time"
+        },
+        "group_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Size"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estimated event value in integer cents.",
+          "title": "Amount"
+        },
+        "event_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An event type configured for this venue.",
+          "title": "Event Type"
+        },
+        "spaces": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Space slugs from the venue settings.",
+          "title": "Spaces"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom"
+        },
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "venue_id": {
+          "title": "Venue Id",
+          "type": "string"
+        },
+        "contact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContactFields"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Create or reuse a contact by email; omit when contact_id is set."
+        },
+        "message_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Text"
+        }
+      },
+      "required": [
+        "name",
+        "venue_id"
+      ],
+      "title": "CreateEvent",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "description": "Read one contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetEvent": {
+      "additionalProperties": false,
+      "description": "Read one event.",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Read a team member by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "GetVenue": {
+      "additionalProperties": false,
+      "description": "Read venue settings, spaces and custom fields.",
+      "properties": {
+        "operation": {
+          "const": "get_venue",
+          "default": "get_venue",
+          "title": "Operation",
+          "type": "string"
+        },
+        "venue_id": {
+          "title": "Venue Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "venue_id"
+      ],
+      "title": "GetVenue",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "description": "Sync one page of contacts; follow meta.next_cursor until null.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated After"
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created After"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "description": "Read one event page; use meta.total_pages to continue with page + 1.",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string"
+        },
+        "venue_id": {
+          "title": "Venue Id",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "lead",
+                  "qualified",
+                  "proposal_sent",
+                  "confirmed",
+                  "balance_due",
+                  "completed",
+                  "lost"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "event_type": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Type"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "spaces": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Spaces"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "order": {
+          "default": "created_at",
+          "enum": [
+            "created_at",
+            "updated_at",
+            "start_time",
+            "name"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "sort_direction": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date To"
+        },
+        "date_field": {
+          "default": "created_at",
+          "enum": [
+            "created_at",
+            "updated_at",
+            "start_time"
+          ],
+          "title": "Date Field",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "venue_id"
+      ],
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "description": "List team members in the authorizing user's organization.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "ListVenues": {
+      "additionalProperties": false,
+      "description": "List venues accessible to the authorizing user.",
+      "properties": {
+        "operation": {
+          "const": "list_venues",
+          "default": "list_venues",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListVenues",
+      "type": "object"
+    },
+    "PerfectVenueOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "perfect_venue_oauth",
+          "default": "perfect_venue_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        },
+        "token_type": {
+          "default": "Bearer",
+          "title": "Token Type",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Perfect Venue OAuth",
+      "type": "object",
+      "x-credential-instructions": "Connect your Perfect Venue account. Perfect Venue must first provision the OAuth application for the NoClick instance; partner developers request setup from eng@perfectvenue.com.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://docs.perfectvenue.com/#section/Authentication",
+      "x-oauth-provider": "perfect-venue",
+      "x-oauth-scopes": [
+        "contacts_read",
+        "public",
+        "read",
+        "users_read",
+        "write"
+      ]
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "description": "Update a contact's name, email or phone.",
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateEvent": {
+      "additionalProperties": false,
+      "description": "Update event details and timing.",
+      "properties": {
+        "contact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Time"
+        },
+        "group_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Size"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estimated event value in integer cents.",
+          "title": "Amount"
+        },
+        "event_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An event type configured for this venue.",
+          "title": "Event Type"
+        },
+        "spaces": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Space slugs from the venue settings.",
+          "title": "Spaces"
+        },
+        "custom": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom"
+        },
+        "operation": {
+          "const": "update_event",
+          "default": "update_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "UpdateEvent",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/CreateContact",
+          "create_event": "#/$defs/CreateEvent",
+          "get_contact": "#/$defs/GetContact",
+          "get_event": "#/$defs/GetEvent",
+          "get_user": "#/$defs/GetUser",
+          "get_venue": "#/$defs/GetVenue",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_events": "#/$defs/ListEvents",
+          "list_users": "#/$defs/ListUsers",
+          "list_venues": "#/$defs/ListVenues",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_event": "#/$defs/UpdateEvent"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListVenues"
+        },
+        {
+          "$ref": "#/$defs/GetVenue"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        },
+        {
+          "$ref": "#/$defs/CreateEvent"
+        },
+        {
+          "$ref": "#/$defs/UpdateEvent"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PerfectVenueOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Perfect-venue Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
