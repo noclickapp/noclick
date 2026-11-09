@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "code": 200,
+    "request_id": "req_abc123xyz"
+  },
+  "data": [
+    {
+      "id": 7,
+      "name": "Test Carrier"
+    }
+  ],
+  "pagination": {
+    "previous": null,
+    "next": "https://carrier.superdispatch.com/v1/carriers/?page=2",
+    "total": 21
+  }
+}

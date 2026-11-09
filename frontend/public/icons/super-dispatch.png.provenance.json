@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/super-dispatch.png",
+  "source": "https://developer.superdispatch.com/img/favicon.ico",
+  "license": "Super Dispatch trademark; used to identify the Super Dispatch integration",
+  "sha256": "43f616229a3cf6b94454854ba1ef8815335403c0d01fd0e41b01c219567c5984",
+  "transformation": "Lossless PNG conversion of the official favicon with sips; no visual changes."
+}
