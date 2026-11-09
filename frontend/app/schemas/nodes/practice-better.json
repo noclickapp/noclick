@@ -1,0 +1,1310 @@
+{
+  "$defs": {
+    "BookSession": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "book_session",
+          "default": "book_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "record_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Record Id",
+          "type": "string"
+        },
+        "service_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Service Id",
+          "type": "string"
+        },
+        "service_type": {
+          "default": "face",
+          "enum": [
+            "face",
+            "phone",
+            "virtual"
+          ],
+          "title": "Service Type",
+          "type": "string"
+        },
+        "session_date": {
+          "format": "date-time",
+          "title": "Session Date",
+          "type": "string"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Duration in seconds; omitted uses the service duration.",
+          "title": "Duration"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Windows timezone name, for example Pacific Standard Time.",
+          "title": "Time Zone"
+        },
+        "launch_application": {
+          "anyOf": [
+            {
+              "enum": [
+                "zoom",
+                "system",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Launch Application",
+          "enum": [
+            "zoom",
+            "system",
+            "other"
+          ],
+          "x-enum-searchable": true
+        },
+        "notify": {
+          "default": false,
+          "description": "Send the client a booking confirmation.",
+          "title": "Notify",
+          "type": "boolean"
+        },
+        "ignore_conflict": {
+          "default": false,
+          "description": "Explicitly override conflicts in the practitioner's calendar.",
+          "title": "Ignore Conflict",
+          "type": "boolean"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "record_id",
+        "service_id",
+        "session_date"
+      ],
+      "title": "BookSession",
+      "type": "object"
+    },
+    "CancelSession": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "cancel_session",
+          "default": "cancel_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "notify": {
+          "default": false,
+          "description": "Send this client the cancellation notification.",
+          "title": "Notify",
+          "type": "boolean"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "CancelSession",
+      "type": "object"
+    },
+    "CreateClient": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email_address": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Email Address",
+          "type": "string"
+        },
+        "mobile_phone": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Phone"
+        },
+        "send_invitation": {
+          "default": false,
+          "description": "Send an email inviting this client to Practice Better.",
+          "title": "Send Invitation",
+          "type": "boolean"
+        },
+        "is_active": {
+          "default": true,
+          "description": "Allow the client access to the Client Portal.",
+          "title": "Is Active",
+          "type": "boolean"
+        },
+        "parent_record_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Record Id"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "email_address"
+      ],
+      "title": "CreateClient",
+      "type": "object"
+    },
+    "CreateTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "Create or overwrite the tag matching this name, ignoring case and spaces. Only ASCII letters, digits, spaces, dot, dash and underscore are retained by the provider.",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "DeleteSession": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_session",
+          "default": "delete_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "Delete this session rather than retaining a cancelled record.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "DeleteSession",
+      "type": "object"
+    },
+    "DeleteTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_id": {
+          "description": "Removes the tag from related entities; tags used by team permissions cannot be deleted.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "DeleteTag",
+      "type": "object"
+    },
+    "GetClient": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "record_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetClient",
+      "type": "object"
+    },
+    "GetEnrollment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_enrollment",
+          "default": "get_enrollment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Course Id",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id",
+        "record_id"
+      ],
+      "title": "GetEnrollment",
+      "type": "object"
+    },
+    "GetInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "GetInvoice",
+      "type": "object"
+    },
+    "GetProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetProfile",
+      "type": "object"
+    },
+    "GetProgram": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_program",
+          "default": "get_program",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Course Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "GetProgram",
+      "type": "object"
+    },
+    "GetSession": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_session",
+          "default": "get_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSession",
+      "type": "object"
+    },
+    "GetTag": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Tag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "GetTag",
+      "type": "object"
+    },
+    "ListClients": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Fetch one page, between 1 and 100 items. The result retains count and hasMore.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch before this ID for descending lists. Use the last item's ID from the previous page.",
+          "title": "Before Id"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch after this ID for ascending lists. Services and packages are rank ordered; use the provider's cursor direction.",
+          "title": "After Id"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "details": {
+          "default": false,
+          "title": "Details",
+          "type": "boolean"
+        },
+        "modified_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified Gte"
+        },
+        "modified_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified Lte"
+        }
+      },
+      "title": "ListClients",
+      "type": "object"
+    },
+    "ListEnrollments": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Fetch one page, between 1 and 100 items. The result retains count and hasMore.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch before this ID for descending lists. Use the last item's ID from the previous page.",
+          "title": "Before Id"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch after this ID for ascending lists. Services and packages are rank ordered; use the provider's cursor direction.",
+          "title": "After Id"
+        },
+        "operation": {
+          "const": "list_enrollments",
+          "default": "list_enrollments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Course Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "ListEnrollments",
+      "type": "object"
+    },
+    "ListInvoices": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Fetch one page, between 1 and 100 items. The result retains count and hasMore.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch before this ID for descending lists. Use the last item's ID from the previous page.",
+          "title": "Before Id"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch after this ID for ascending lists. Services and packages are rank ordered; use the provider's cursor direction.",
+          "title": "After Id"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoicedate_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoicedate Gte"
+        },
+        "invoicedate_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoicedate Lte"
+        }
+      },
+      "title": "ListInvoices",
+      "type": "object"
+    },
+    "ListPackages": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Fetch one page, between 1 and 100 items. The result retains count and hasMore.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch before this ID for descending lists. Use the last item's ID from the previous page.",
+          "title": "Before Id"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch after this ID for ascending lists. Services and packages are rank ordered; use the provider's cursor direction.",
+          "title": "After Id"
+        },
+        "operation": {
+          "const": "list_packages",
+          "default": "list_packages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListPackages",
+      "type": "object"
+    },
+    "ListPrograms": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Fetch one page, between 1 and 100 items. The result retains count and hasMore.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch before this ID for descending lists. Use the last item's ID from the previous page.",
+          "title": "Before Id"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch after this ID for ascending lists. Services and packages are rank ordered; use the provider's cursor direction.",
+          "title": "After Id"
+        },
+        "operation": {
+          "const": "list_programs",
+          "default": "list_programs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListPrograms",
+      "type": "object"
+    },
+    "ListServices": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Fetch one page, between 1 and 100 items. The result retains count and hasMore.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch before this ID for descending lists. Use the last item's ID from the previous page.",
+          "title": "Before Id"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch after this ID for ascending lists. Services and packages are rank ordered; use the provider's cursor direction.",
+          "title": "After Id"
+        },
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListServices",
+      "type": "object"
+    },
+    "ListSessions": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Fetch one page, between 1 and 100 items. The result retains count and hasMore.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch before this ID for descending lists. Use the last item's ID from the previous page.",
+          "title": "Before Id"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch after this ID for ascending lists. Services and packages are rank ordered; use the provider's cursor direction.",
+          "title": "After Id"
+        },
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "date_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Gte"
+        },
+        "date_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Lte"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        }
+      },
+      "title": "ListSessions",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Fetch one page, between 1 and 100 items. The result retains count and hasMore.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch before this ID for descending lists. Use the last item's ID from the previous page.",
+          "title": "Before Id"
+        },
+        "after_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch after this ID for ascending lists. Services and packages are rank ordered; use the provider's cursor direction.",
+          "title": "After Id"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "PracticeBetterAccessToken": {
+      "properties": {
+        "credential_type": {
+          "const": "practice_better_access_token",
+          "default": "practice_better_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Practice Better Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing Practice Better access_token obtained from the documented client-credentials grant at POST /oauth2/token. Paste only the token, without Bearer. Tokens expire: replace the saved token when it expires. NoClick does not obtain or refresh tokens. The token needs read access for the connection check, plus write access for mutations; your account permissions must also allow each operation. Listing your services proves read access, not every write permission.",
+      "x-credential-url": "https://api-docs.practicebetter.io/#/operations/OAuth2_grant"
+    },
+    "RegisterClients": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "register_clients",
+          "default": "register_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Course Id",
+          "type": "string"
+        },
+        "record_ids": {
+          "description": "Enroll up to 20 clients. May send the program's configured welcome email. Existing enrollments are skipped; HTTP success does not prove each client enrolled.",
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Record Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "course_id",
+        "record_ids"
+      ],
+      "title": "RegisterClients",
+      "type": "object"
+    },
+    "RescheduleSession": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "reschedule_session",
+          "default": "reschedule_session",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "session_date": {
+          "description": "New date and time with timezone offset. Clears client confirmation and may notify the client; detaches recurring sessions.",
+          "format": "date-time",
+          "title": "Session Date",
+          "type": "string"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New duration in seconds.",
+          "title": "Duration"
+        },
+        "ignore_conflict": {
+          "default": false,
+          "title": "Ignore Conflict",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "session_id",
+        "session_date"
+      ],
+      "title": "RescheduleSession",
+      "type": "object"
+    },
+    "UnregisterClient": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "unregister_client",
+          "default": "unregister_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "course_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Course Id",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id",
+        "record_id"
+      ],
+      "title": "UnregisterClient",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "book_session": "#/$defs/BookSession",
+          "cancel_session": "#/$defs/CancelSession",
+          "create_client": "#/$defs/CreateClient",
+          "create_tag": "#/$defs/CreateTag",
+          "delete_session": "#/$defs/DeleteSession",
+          "delete_tag": "#/$defs/DeleteTag",
+          "get_client": "#/$defs/GetClient",
+          "get_enrollment": "#/$defs/GetEnrollment",
+          "get_invoice": "#/$defs/GetInvoice",
+          "get_profile": "#/$defs/GetProfile",
+          "get_program": "#/$defs/GetProgram",
+          "get_session": "#/$defs/GetSession",
+          "get_tag": "#/$defs/GetTag",
+          "list_clients": "#/$defs/ListClients",
+          "list_enrollments": "#/$defs/ListEnrollments",
+          "list_invoices": "#/$defs/ListInvoices",
+          "list_packages": "#/$defs/ListPackages",
+          "list_programs": "#/$defs/ListPrograms",
+          "list_services": "#/$defs/ListServices",
+          "list_sessions": "#/$defs/ListSessions",
+          "list_tags": "#/$defs/ListTags",
+          "register_clients": "#/$defs/RegisterClients",
+          "reschedule_session": "#/$defs/RescheduleSession",
+          "unregister_client": "#/$defs/UnregisterClient"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetProfile"
+        },
+        {
+          "$ref": "#/$defs/ListClients"
+        },
+        {
+          "$ref": "#/$defs/GetClient"
+        },
+        {
+          "$ref": "#/$defs/CreateClient"
+        },
+        {
+          "$ref": "#/$defs/ListSessions"
+        },
+        {
+          "$ref": "#/$defs/GetSession"
+        },
+        {
+          "$ref": "#/$defs/BookSession"
+        },
+        {
+          "$ref": "#/$defs/CancelSession"
+        },
+        {
+          "$ref": "#/$defs/RescheduleSession"
+        },
+        {
+          "$ref": "#/$defs/DeleteSession"
+        },
+        {
+          "$ref": "#/$defs/ListServices"
+        },
+        {
+          "$ref": "#/$defs/ListPackages"
+        },
+        {
+          "$ref": "#/$defs/ListPrograms"
+        },
+        {
+          "$ref": "#/$defs/GetProgram"
+        },
+        {
+          "$ref": "#/$defs/ListEnrollments"
+        },
+        {
+          "$ref": "#/$defs/GetEnrollment"
+        },
+        {
+          "$ref": "#/$defs/RegisterClients"
+        },
+        {
+          "$ref": "#/$defs/UnregisterClient"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/GetTag"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/DeleteTag"
+        },
+        {
+          "$ref": "#/$defs/ListInvoices"
+        },
+        {
+          "$ref": "#/$defs/GetInvoice"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PracticeBetterAccessToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Practice-better Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
