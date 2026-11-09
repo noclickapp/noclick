@@ -1,0 +1,232 @@
+{
+  "source": "https://docs.showmojo.com/openapi/showmojo-api-legacy.yaml",
+  "examples": {
+    "listing_page": {
+      "data": [
+        {
+          "uid": "abc123def",
+          "title": "Spacious 2BR Apartment",
+          "address": "401 Dains St.",
+          "status": "STATUS_ACTIVE",
+          "updated_at": "2026-10-15T14:22:00.000Z"
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "per_page": 100,
+        "total": 1,
+        "total_pages": 1
+      }
+    },
+    "listing": {
+      "uid": "abc123def",
+      "property_id": "prop456",
+      "title": "Spacious 2BR Apartment",
+      "address": "401 Dains St.",
+      "unit": "4B",
+      "city": "San Francisco",
+      "state": "CA",
+      "zip": "94107",
+      "code": "DAINS401",
+      "general_type": "RENT",
+      "housing_type": "Apartment",
+      "status": "STATUS_ACTIVE",
+      "rent": 2500,
+      "max_rent": null,
+      "price": null,
+      "property_tax": null,
+      "bedrooms": 2,
+      "plus_convertible": false,
+      "full_bathrooms": 1,
+      "partial_bathrooms": 1,
+      "offices": null,
+      "square_feet": 1200,
+      "year_built": 1995,
+      "available_type": "Immediate",
+      "available_date": null,
+      "highlights": "Newly renovated kitchen with stainless steel appliances.",
+      "lat": 37.7749,
+      "long": -122.4194,
+      "video_url": null,
+      "tour_url": null,
+      "phone": "4155551234",
+      "security_deposit_type": "SET_AMOUNT",
+      "security_deposit_value": 2500,
+      "notify_tenants": false,
+      "listing_group_name": "Downtown Lofts",
+      "photos": [
+        [
+          "https://cdn.example.com/img1_std.jpg",
+          "https://cdn.example.com/img1_lg.jpg",
+          "https://cdn.example.com/img1_md.jpg"
+        ],
+        [
+          "https://cdn.example.com/img2_std.jpg",
+          "https://cdn.example.com/img2_lg.jpg",
+          "https://cdn.example.com/img2_md.jpg"
+        ]
+      ],
+      "details": [
+        "Pet Friendly",
+        "Washer/Dryer In Unit",
+        "Parking Included"
+      ],
+      "contact_info": {
+        "agent_name": "John Smith",
+        "company": "Acme Realty",
+        "phone": "(415) 555-1234",
+        "email": "john@acmerealty.com"
+      },
+      "showing_types": [
+        "in_person",
+        "self_guided"
+      ],
+      "external_id": "YARDI-12345",
+      "external_source": "YARDI",
+      "fees": [
+        {
+          "fee_type": "PET_RENT",
+          "category": "monthly",
+          "amount": 25,
+          "requirement_type": "required",
+          "per_item": true,
+          "display_name": "Pet Rent"
+        },
+        {
+          "fee_type": "APPLICATION_FEE",
+          "category": "one_time",
+          "amount": 50,
+          "requirement_type": "required",
+          "per_item": false,
+          "display_name": "Application Fee"
+        },
+        {
+          "fee_type": "CUSTOM",
+          "category": "monthly",
+          "amount": 15,
+          "requirement_type": "optional",
+          "per_item": false,
+          "display_name": "Rooftop Access"
+        }
+      ],
+      "scheduling_block": {
+        "type": "BETWEEN",
+        "block_until": "2026-04-15T00:00:00.000Z",
+        "block_from": "2026-04-01T00:00:00.000Z"
+      },
+      "application_url": "https://apply.example.com/listing/abc123",
+      "created_at": "2026-01-15T10:30:00.000Z",
+      "updated_at": "2026-03-10T14:22:00.000Z"
+    },
+    "import_result": {
+      "response": [
+        {
+          "status": "created",
+          "uid": "xyz123",
+          "code": "APT-001",
+          "edit_url": "https://showmojo.com/edit/xyz123",
+          "public_url": "https://showmojo.com/listing/xyz123"
+        },
+        {
+          "status": "updated",
+          "uid": "abc456",
+          "code": "APT-002",
+          "edit_url": "https://showmojo.com/edit/abc456",
+          "public_url": "https://showmojo.com/listing/abc456"
+        },
+        {
+          "status": "error",
+          "code": "APT-003",
+          "errors": "Address can't be blank"
+        }
+      ]
+    },
+    "schedule_input": {
+      "listing_id": "abc123",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "5551234567",
+      "showtime": "2024-03-01T10:00:00",
+      "can_contact_by_email": true,
+      "can_contact_by_phone": true,
+      "showing_type": "in_person",
+      "screening_answers": [
+        {
+          "question_id": 123,
+          "answer": "No pets"
+        }
+      ]
+    },
+    "schedule_result": {
+      "success": true,
+      "tour_id": "xyz789",
+      "showing_type": "in_person",
+      "pending_acceptance": false,
+      "showtime": {
+        "start_time": "2024-03-01T10:00:00",
+        "end_time": "2024-03-01T10:30:00"
+      }
+    },
+    "questions": {
+      "questions": [
+        {
+          "id": 123,
+          "type": "PETS",
+          "text": "Do you have any pets?",
+          "required": true,
+          "options": [
+            "No pets",
+            "One or more cats",
+            "One or more dogs",
+            "Both cat(s) and dog(s)"
+          ]
+        },
+        {
+          "id": 456,
+          "type": "MOVEDATE",
+          "text": "When do you plan to move in?",
+          "required": true
+        },
+        {
+          "id": 789,
+          "type": "ROOMMATES",
+          "text": "Will you have any roommates?",
+          "required": false,
+          "hint": "Provide comma-separated list of names or emails"
+        },
+        {
+          "id": 101,
+          "type": "INCOME",
+          "text": "What is your monthly income?",
+          "required": true,
+          "options": [
+            "500",
+            "1000",
+            "1500",
+            "2000",
+            "2500",
+            "3000"
+          ]
+        }
+      ]
+    },
+    "report": {
+      "response": {
+        "status": "success",
+        "data": [
+          {
+            "name": "Jane Prospect",
+            "showtime": "Oct 14, 2026 10:00 AM CDT",
+            "showing_address_and_unit": "401 Dains St. 4B",
+            "listing_uid": "abc123def",
+            "phone": "(415) 555-1234",
+            "email": "jane@example.com",
+            "status": "STATUS_CONFIRMED",
+            "no_show": false,
+            "listing_code": "DAINS401"
+          }
+        ]
+      }
+    }
+  }
+}
