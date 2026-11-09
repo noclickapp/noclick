@@ -25,6 +25,7 @@ const CrowdinNodeComponent = (props: NodeProps) => (
 export const CrowdinNode: NodeDefinition = {
     type: 'automation-crowdin',
     label: 'Crowdin',
+    category: 'productivity',
     description:
         'Localization projects, files, strings, translations, and glossaries',
     Icon: CrowdinIcon,
