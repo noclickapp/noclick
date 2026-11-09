@@ -1,0 +1,13 @@
+{
+  "source": "https://www.recraft.ai/docs/api-reference/agents.md",
+  "generated": {
+    "created": 1759140000,
+    "credits": 80,
+    "data": [{"image_id": "0e6a1b8c-5b1f-4a8e-9f3a-2c7d4e8b9a10", "url": "https://..."}]
+  },
+  "processed": {
+    "created": 1759140000,
+    "credits": 10,
+    "image": {"image_id": "0e6a1b8c-5b1f-4a8e-9f3a-2c7d4e8b9a10", "url": "https://..."}
+  }
+}
