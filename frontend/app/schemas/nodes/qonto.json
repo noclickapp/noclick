@@ -1,0 +1,1538 @@
+{
+  "$defs": {
+    "QontoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "qonto_api_key",
+          "default": "qonto_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "login": {
+          "description": "The organization's API login, for example pied-piper-7132; not your email address.",
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Organization login",
+          "type": "string"
+        },
+        "secret_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Secret key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "login",
+        "secret_key"
+      ],
+      "title": "Qonto API Key",
+      "type": "object",
+      "x-credential-instructions": "In Qonto, select your organization, then Integrations and Partnerships > API key. Copy its login and secret key. NoClick sends login:secret-key directly to Qonto. API keys support the reads and bookkeeping writes shown here; payment transfers require OAuth and are not offered.",
+      "x-credential-url": "https://docs.qonto.com/guides/authentication/api-key"
+    },
+    "QontoCreateClientConfig": {
+      "additionalProperties": false,
+      "description": "Create client.",
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kind": {
+          "enum": [
+            "company",
+            "individual",
+            "freelancer"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "tax_identification_number": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Identification Number"
+        },
+        "vat_number": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vat Number"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "zip_code": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip Code"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "QontoCreateClientConfig",
+      "type": "object"
+    },
+    "QontoCreateProductConfig": {
+      "additionalProperties": false,
+      "description": "Create product.",
+      "properties": {
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "product_type": {
+          "enum": [
+            "good",
+            "service"
+          ],
+          "title": "Product Type",
+          "type": "string"
+        },
+        "unit_price_value": {
+          "description": "Decimal unit price, for example 150.00.",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Unit Price Value",
+          "type": "string"
+        },
+        "currency": {
+          "pattern": "^[A-Z]{3}$",
+          "title": "Currency",
+          "type": "string"
+        },
+        "vat_rate": {
+          "description": "Decimal VAT rate, for example 0.2 for 20 percent.",
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Vat Rate",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 600,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "vat_exemption_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "N1",
+                "N2",
+                "N2.1",
+                "N2.2",
+                "N3",
+                "N3.1",
+                "N3.2",
+                "N3.3",
+                "N3.4",
+                "N3.5",
+                "N3.6",
+                "N4",
+                "N5",
+                "N6",
+                "N6.1",
+                "N6.2",
+                "N6.3",
+                "N6.4",
+                "N6.5",
+                "N6.6",
+                "N6.7",
+                "N6.8",
+                "N6.9",
+                "N7",
+                "S293B",
+                "S262.1",
+                "S259",
+                "S283",
+                "S261",
+                "S262",
+                "S263",
+                "S19.1",
+                "S4.1B",
+                "S4.1A",
+                "S4",
+                "S13B",
+                "S122",
+                "S25",
+                "S21",
+                "S69",
+                "S20",
+                "S84.1.2"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vat Exemption Code",
+          "enum": [
+            "N1",
+            "N2",
+            "N2.1",
+            "N2.2",
+            "N3",
+            "N3.1",
+            "N3.2",
+            "N3.3",
+            "N3.4",
+            "N3.5",
+            "N3.6",
+            "N4",
+            "N5",
+            "N6",
+            "N6.1",
+            "N6.2",
+            "N6.3",
+            "N6.4",
+            "N6.5",
+            "N6.6",
+            "N6.7",
+            "N6.8",
+            "N6.9",
+            "N7",
+            "S293B",
+            "S262.1",
+            "S259",
+            "S283",
+            "S261",
+            "S262",
+            "S263",
+            "S19.1",
+            "S4.1B",
+            "S4.1A",
+            "S4",
+            "S13B",
+            "S122",
+            "S25",
+            "S21",
+            "S69",
+            "S20",
+            "S84.1.2"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "title",
+        "product_type",
+        "unit_price_value",
+        "currency",
+        "vat_rate"
+      ],
+      "title": "QontoCreateProductConfig",
+      "type": "object"
+    },
+    "QontoDeleteClientConfig": {
+      "additionalProperties": false,
+      "description": "Delete client.",
+      "properties": {
+        "operation": {
+          "const": "delete_client",
+          "default": "delete_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Qonto resource UUID.",
+          "format": "uuid",
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "QontoDeleteClientConfig",
+      "type": "object"
+    },
+    "QontoDeleteProductConfig": {
+      "additionalProperties": false,
+      "description": "Delete product.",
+      "properties": {
+        "operation": {
+          "const": "delete_product",
+          "default": "delete_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product_id": {
+          "description": "Qonto resource UUID.",
+          "format": "uuid",
+          "title": "Product Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "QontoDeleteProductConfig",
+      "type": "object"
+    },
+    "QontoGetBeneficiaryConfig": {
+      "additionalProperties": false,
+      "description": "Get beneficiary.",
+      "properties": {
+        "operation": {
+          "const": "get_beneficiary",
+          "default": "get_beneficiary",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "beneficiary_id": {
+          "description": "Qonto resource UUID.",
+          "format": "uuid",
+          "title": "Beneficiary Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "beneficiary_id"
+      ],
+      "title": "QontoGetBeneficiaryConfig",
+      "type": "object"
+    },
+    "QontoGetClientConfig": {
+      "additionalProperties": false,
+      "description": "Get client.",
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Qonto resource UUID.",
+          "format": "uuid",
+          "title": "Client Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "QontoGetClientConfig",
+      "type": "object"
+    },
+    "QontoGetClientInvoiceConfig": {
+      "additionalProperties": false,
+      "description": "Get client invoice.",
+      "properties": {
+        "operation": {
+          "const": "get_client_invoice",
+          "default": "get_client_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_invoice_id": {
+          "description": "Qonto resource UUID.",
+          "format": "uuid",
+          "title": "Client Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_invoice_id"
+      ],
+      "title": "QontoGetClientInvoiceConfig",
+      "type": "object"
+    },
+    "QontoGetOrganizationConfig": {
+      "additionalProperties": false,
+      "description": "Get organization.",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_external_accounts": {
+          "default": false,
+          "title": "Include External Accounts",
+          "type": "boolean"
+        }
+      },
+      "title": "QontoGetOrganizationConfig",
+      "type": "object"
+    },
+    "QontoGetProductConfig": {
+      "additionalProperties": false,
+      "description": "Get product.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product_id": {
+          "description": "Qonto resource UUID.",
+          "format": "uuid",
+          "title": "Product Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "QontoGetProductConfig",
+      "type": "object"
+    },
+    "QontoGetSupplierInvoiceConfig": {
+      "additionalProperties": false,
+      "description": "Get supplier invoice.",
+      "properties": {
+        "operation": {
+          "const": "get_supplier_invoice",
+          "default": "get_supplier_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "supplier_invoice_id": {
+          "description": "Qonto resource UUID.",
+          "format": "uuid",
+          "title": "Supplier Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "supplier_invoice_id"
+      ],
+      "title": "QontoGetSupplierInvoiceConfig",
+      "type": "object"
+    },
+    "QontoGetTransactionConfig": {
+      "additionalProperties": false,
+      "description": "Get transaction.",
+      "properties": {
+        "operation": {
+          "const": "get_transaction",
+          "default": "get_transaction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "transaction_id": {
+          "description": "Qonto resource UUID.",
+          "format": "uuid",
+          "title": "Transaction Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transaction_id"
+      ],
+      "title": "QontoGetTransactionConfig",
+      "type": "object"
+    },
+    "QontoListBeneficiariesConfig": {
+      "additionalProperties": false,
+      "description": "List beneficiaries.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use next_page from the previous result.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "description": "Number of records per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_beneficiaries",
+          "default": "list_beneficiaries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "trusted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trusted"
+        }
+      },
+      "title": "QontoListBeneficiariesConfig",
+      "type": "object"
+    },
+    "QontoListClientInvoicesConfig": {
+      "additionalProperties": false,
+      "description": "List client invoices.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use next_page from the previous result.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "description": "Number of records per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_client_invoices",
+          "default": "list_client_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "draft",
+                  "unpaid",
+                  "paid",
+                  "canceled"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statuses"
+        },
+        "exclude_imported": {
+          "default": true,
+          "title": "Exclude Imported",
+          "type": "boolean"
+        }
+      },
+      "title": "QontoListClientInvoicesConfig",
+      "type": "object"
+    },
+    "QontoListClientsConfig": {
+      "additionalProperties": false,
+      "description": "List clients.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use next_page from the previous result.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "description": "Number of records per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "QontoListClientsConfig",
+      "type": "object"
+    },
+    "QontoListLabelsConfig": {
+      "additionalProperties": false,
+      "description": "List labels.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use next_page from the previous result.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "description": "Number of records per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "QontoListLabelsConfig",
+      "type": "object"
+    },
+    "QontoListMembershipsConfig": {
+      "additionalProperties": false,
+      "description": "List memberships.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use next_page from the previous result.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "description": "Number of records per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_memberships",
+          "default": "list_memberships",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "QontoListMembershipsConfig",
+      "type": "object"
+    },
+    "QontoListProductsConfig": {
+      "additionalProperties": false,
+      "description": "List products.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use next_page from the previous result.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "description": "Number of records per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "good",
+                "service"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Type",
+          "enum": [
+            "good",
+            "service"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "QontoListProductsConfig",
+      "type": "object"
+    },
+    "QontoListStatementsConfig": {
+      "additionalProperties": false,
+      "description": "List statements.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use next_page from the previous result.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "description": "Number of records per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_statements",
+          "default": "list_statements",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "QontoListStatementsConfig",
+      "type": "object"
+    },
+    "QontoListSupplierInvoicesConfig": {
+      "additionalProperties": false,
+      "description": "List supplier invoices.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use next_page from the previous result.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "description": "Number of records per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_supplier_invoices",
+          "default": "list_supplier_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "to_review",
+                "to_pay",
+                "to_approve",
+                "awaiting_payment",
+                "pending",
+                "scheduled",
+                "paid",
+                "archived",
+                "rejected",
+                "discarded"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "to_review",
+            "to_pay",
+            "to_approve",
+            "awaiting_payment",
+            "pending",
+            "scheduled",
+            "paid",
+            "archived",
+            "rejected",
+            "discarded"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "QontoListSupplierInvoicesConfig",
+      "type": "object"
+    },
+    "QontoListTransactionsConfig": {
+      "additionalProperties": false,
+      "description": "List transactions.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; use next_page from the previous result.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "description": "Number of records per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bank_account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uuid",
+          "title": "Bank Account Id"
+        },
+        "iban": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Iban"
+        },
+        "side": {
+          "anyOf": [
+            {
+              "enum": [
+                "debit",
+                "credit"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Side",
+          "enum": [
+            "debit",
+            "credit"
+          ],
+          "x-enum-searchable": true
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "pending",
+                  "declined",
+                  "completed",
+                  "reversed"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statuses"
+        },
+        "updated_at_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated At From"
+        },
+        "updated_at_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated At To"
+        },
+        "settled_at_from": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Settled At From"
+        },
+        "settled_at_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Settled At To"
+        },
+        "with_attachments": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "With Attachments"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "created_at:asc",
+                "created_at:desc",
+                "updated_at:asc",
+                "updated_at:desc",
+                "settled_at:asc",
+                "settled_at:desc",
+                "emitted_at:asc",
+                "emitted_at:desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "created_at:asc",
+            "created_at:desc",
+            "updated_at:asc",
+            "updated_at:desc",
+            "settled_at:asc",
+            "settled_at:desc",
+            "emitted_at:asc",
+            "emitted_at:desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "QontoListTransactionsConfig",
+      "type": "object"
+    },
+    "QontoMarkSupplierInvoiceAsPaidConfig": {
+      "additionalProperties": false,
+      "description": "Record a supplier invoice as paid for bookkeeping; this does not transfer funds.",
+      "properties": {
+        "operation": {
+          "const": "mark_supplier_invoice_as_paid",
+          "default": "mark_supplier_invoice_as_paid",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "supplier_invoice_id": {
+          "description": "Qonto resource UUID.",
+          "format": "uuid",
+          "title": "Supplier Invoice Id",
+          "type": "string"
+        },
+        "payment_date": {
+          "description": "Explicit bookkeeping payment date. Does not execute a payment; avoids date-less retry changes across days.",
+          "format": "date",
+          "title": "Payment Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "supplier_invoice_id",
+        "payment_date"
+      ],
+      "title": "QontoMarkSupplierInvoiceAsPaidConfig",
+      "type": "object"
+    },
+    "QontoUnmarkSupplierInvoiceAsPaidConfig": {
+      "additionalProperties": false,
+      "description": "Clear the paid bookkeeping status. Only paid invoices are eligible; repeating fails.",
+      "properties": {
+        "operation": {
+          "const": "unmark_supplier_invoice_as_paid",
+          "default": "unmark_supplier_invoice_as_paid",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "supplier_invoice_id": {
+          "description": "Qonto resource UUID.",
+          "format": "uuid",
+          "title": "Supplier Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "supplier_invoice_id"
+      ],
+      "title": "QontoUnmarkSupplierInvoiceAsPaidConfig",
+      "type": "object"
+    },
+    "QontoUpdateClientConfig": {
+      "additionalProperties": false,
+      "description": "Update client.",
+      "properties": {
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Qonto resource UUID.",
+          "format": "uuid",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "tax_identification_number": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Identification Number"
+        },
+        "vat_number": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vat Number"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "zip_code": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip Code"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "QontoUpdateClientConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_client": "#/$defs/QontoCreateClientConfig",
+          "create_product": "#/$defs/QontoCreateProductConfig",
+          "delete_client": "#/$defs/QontoDeleteClientConfig",
+          "delete_product": "#/$defs/QontoDeleteProductConfig",
+          "get_beneficiary": "#/$defs/QontoGetBeneficiaryConfig",
+          "get_client": "#/$defs/QontoGetClientConfig",
+          "get_client_invoice": "#/$defs/QontoGetClientInvoiceConfig",
+          "get_organization": "#/$defs/QontoGetOrganizationConfig",
+          "get_product": "#/$defs/QontoGetProductConfig",
+          "get_supplier_invoice": "#/$defs/QontoGetSupplierInvoiceConfig",
+          "get_transaction": "#/$defs/QontoGetTransactionConfig",
+          "list_beneficiaries": "#/$defs/QontoListBeneficiariesConfig",
+          "list_client_invoices": "#/$defs/QontoListClientInvoicesConfig",
+          "list_clients": "#/$defs/QontoListClientsConfig",
+          "list_labels": "#/$defs/QontoListLabelsConfig",
+          "list_memberships": "#/$defs/QontoListMembershipsConfig",
+          "list_products": "#/$defs/QontoListProductsConfig",
+          "list_statements": "#/$defs/QontoListStatementsConfig",
+          "list_supplier_invoices": "#/$defs/QontoListSupplierInvoicesConfig",
+          "list_transactions": "#/$defs/QontoListTransactionsConfig",
+          "mark_supplier_invoice_as_paid": "#/$defs/QontoMarkSupplierInvoiceAsPaidConfig",
+          "unmark_supplier_invoice_as_paid": "#/$defs/QontoUnmarkSupplierInvoiceAsPaidConfig",
+          "update_client": "#/$defs/QontoUpdateClientConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/QontoGetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoListTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoGetTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoListLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoListMembershipsConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoListBeneficiariesConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoGetBeneficiaryConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoListSupplierInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoGetSupplierInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoMarkSupplierInvoiceAsPaidConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoUnmarkSupplierInvoiceAsPaidConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoGetClientConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoListClientInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoGetClientInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoListStatementsConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoCreateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoUpdateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoDeleteClientConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoCreateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoDeleteProductConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QontoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Qonto Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

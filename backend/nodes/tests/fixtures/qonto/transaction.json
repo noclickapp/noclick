@@ -1,0 +1,75 @@
+{
+  "source": "https://docs.qonto.com/api-reference/business-api/transactions-statements/transactions/retrieve-a-transaction",
+  "body": {
+    "transaction": {
+      "transaction_id": "super-transaction-6576",
+      "amount": 52.4,
+      "amount_cents": 5240,
+      "settled_balance": 111.1,
+      "settled_balance_cents": 11110,
+      "attachment_ids": [],
+      "local_amount": 52.4,
+      "local_amount_cents": 5240,
+      "side": "debit",
+      "operation_type": "transfer",
+      "currency": "EUR",
+      "local_currency": "EUR",
+      "label": "Stamm and Sons",
+      "settled_at": "2021-03-14T17:17:02.000Z",
+      "emitted_at": "2021-03-06T12:33:13.000Z",
+      "created_at": "2021-03-06T12:33:13.000Z",
+      "updated_at": "2021-03-21T21:32:03.000Z",
+      "status": "completed",
+      "note": "Jacynthe Kuhic",
+      "reference": null,
+      "vat_amount": null,
+      "vat_amount_cents": null,
+      "vat_rate": null,
+      "initiator_id": "6e5468a1-22ad-4974-bf9f-45652511d39c",
+      "label_ids": [
+        "872a75d8-b85c-467e-b8f0-091ea48ef68f"
+      ],
+      "attachment_lost": false,
+      "attachment_required": true,
+      "card_last_digits": "1234",
+      "card_id": "019ee255-3e39-7ec4-82c0-160d2c67df36",
+      "category": "gas_station",
+      "cashflow_category": {
+        "id": "38f3c1d2-2c0a-4e2e-9d0a-1a3a4f5b6c7d",
+        "name": "Others"
+      },
+      "cashflow_subcategory": {
+        "id": "7a1b2c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d",
+        "name": "Tips"
+      },
+      "id": "7b7a5ed6-3903-4782-889d-b4f64bd7bef9",
+      "attachments": [
+        {
+          "id": "ea54f563-eaee-4dcb-b08e-688dc9937d23",
+          "created_at": "2021-03-18T11:52:07.000Z",
+          "file_name": "Foobar",
+          "file_size": "666",
+          "file_content_type": "image/png",
+          "url": "https://qonto-dev.s3.eu-central-1.amazonaws.com/test/uploads/attachment/ea54f563-eaee-4dcb-b08e-688dc9937d23/%23%3CRack%3A%3ATest%3A%3AUploadedFile%3A0x00005635fc7cf8e8%3E?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20210521%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210521T080955Z&X-Amz-Expires=1800&X-Amz-SignedHeaders=host&X-Amz-Signature=b6b8977aff8529018d15a05f3e36cc5b59e325d675b6538ff55005aa8e2eb3ed",
+          "probative_attachment": {
+            "status": "unavailable"
+          }
+        }
+      ],
+      "labels": [
+        {
+          "id": "211e69c1-f27f-4b45-a623-bec44a715ee7",
+          "name": "Durable Silk Table",
+          "parent_id": null
+        }
+      ],
+      "subject_type": "transfer",
+      "transfer": {
+        "counterparty_account_number": "NL93RABO3730976796",
+        "counterparty_account_number_format": "IBAN",
+        "counterparty_bank_identifier": "RABO",
+        "counterparty_bank_identifier_format": "SWIFT_BIC"
+      }
+    }
+  }
+}
