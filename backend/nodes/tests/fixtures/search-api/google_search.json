@@ -1,0 +1,11 @@
+{
+  "source": "https://www.searchapi.io/docs/google",
+  "body": {
+    "answer_box": {
+      "type": "local_time",
+      "answer": "Friday, November 10, 2023 (Date in New York County, NY)",
+      "local_time": "Friday, November 10, 2023",
+      "location": "Date in New York County, NY"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "source": "https://www.searchapi.io/docs/google",
+  "body": {
+    "answer_box": {
+      "type": "organic_result",
+      "answer": "The earth's spin axis is tilted with respect to its orbital plane",
+      "snippet": "The earth's spin axis is tilted with respect to its orbital plane. This is what causes the seasons. When the earth's axis points towards the sun, it is summer for that hemisphere. When the earth's axis points away, winter can be expected.",
+      "organic_result": {
+        "title": "Why Do We Have Seasons? - National Weather Service",
+        "link": "https://www.weather.gov/lmk/seasons#:~:text=The%20earth's%20spin%20axis%20is,away%2C%20winter%20can%20be%20expected.",
+        "source": "National Weather Service (.gov)",
+        "domain": "www.weather.gov",
+        "displayed_link": "https://www.weather.gov \u203a lmk \u203a seasons",
+        "favicon": "data:image/png;base64,..."
+      },
+      "thumbnail": "data:image/png;base64,..."
+    }
+  }
+}
