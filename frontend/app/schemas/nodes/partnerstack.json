@@ -1,0 +1,2448 @@
+{
+  "$defs": {
+    "ArchiveDeal": {
+      "additionalProperties": false,
+      "description": "Archive a deal.",
+      "properties": {
+        "operation": {
+          "const": "archive_deal",
+          "default": "archive_deal",
+          "title": "Archive Deal",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "deal_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Deal Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "ArchiveDeal",
+      "type": "object"
+    },
+    "ArchiveLead": {
+      "additionalProperties": false,
+      "description": "Archive a lead.",
+      "properties": {
+        "operation": {
+          "const": "archive_lead",
+          "default": "archive_lead",
+          "title": "Archive Lead",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Lead Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "ArchiveLead",
+      "type": "object"
+    },
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "description": "Create a customer.",
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Create Customer",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_key": {
+          "description": "External customer key that can be configured on creation.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Customer Key",
+          "type": "string"
+        },
+        "partner_key": {
+          "description": "The key of the partner that is responsible for the customer **(note: `partner_key` must belong to a partner in your program)**.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Partner Key",
+          "type": "string"
+        },
+        "email": {
+          "description": "The customers email, must be a valid email",
+          "format": "email",
+          "maxLength": 255,
+          "minLength": 4,
+          "title": "Email",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Should be either the customer's name, or the company name",
+          "title": "Name"
+        },
+        "provider_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A unique identifier given by a payment provider (Stripe, Recurly, Chargebee etc)",
+          "title": "Provider Key"
+        },
+        "member_key": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The key of the member that is responsible for the customer **(note: `member_key` must belong to a team member of a partner in your program)**.",
+          "title": "Member Key"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional custom fields for the customer that is configured in your PartnerStack dashboard.",
+          "title": "Meta"
+        },
+        "created_at": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The timestamp of the customer creation in epoch milliseconds.",
+          "title": "Created At"
+        }
+      },
+      "required": [
+        "customer_key",
+        "partner_key",
+        "email"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "CreateDeal": {
+      "additionalProperties": false,
+      "description": "Create a deal.",
+      "properties": {
+        "operation": {
+          "const": "create_deal",
+          "default": "create_deal",
+          "title": "Create Deal",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_name": {
+          "description": "Name of the account",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Account Name",
+          "type": "string"
+        },
+        "contact_first_name": {
+          "description": "First name of the account's contact",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Contact First Name",
+          "type": "string"
+        },
+        "contact_last_name": {
+          "description": "Last name of the account's contact",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Contact Last Name",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Deal amount in **cents**",
+          "title": "Amount",
+          "type": "integer"
+        },
+        "stage": {
+          "description": "Current stage of this deal. Must appear in Deals Stage list found in group settings.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Stage",
+          "type": "string"
+        },
+        "close_date": {
+          "description": "Expected close date of deal as YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or full ISO 8601 with timezone",
+          "format": "date",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Close Date",
+          "type": "string"
+        },
+        "customer_key": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The unique key of the customer to associate with this deal. The customer must belong to the specified partner.",
+          "title": "Customer Key"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "partner",
+                "vendor"
+              ],
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source of the deal, either 'partner' or 'vendor', defaults to 'partner' if not specified",
+          "title": "Source",
+          "enum": [
+            "partner",
+            "vendor"
+          ],
+          "x-enum-searchable": true
+        },
+        "team_member_email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email of the partner team member who submitted this deal. To select a team member, please pass either the personal_stack_key or the team_member_email. Partner source only.",
+          "title": "Team Member Email"
+        },
+        "personal_stack_key": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The unique personal stack_key of the partner team member who submitted this deal. To select a team member, please pass either the personal_stack_key or the team_member_email. Partner source only.",
+          "title": "Personal Stack Key"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider custom field values.",
+          "title": "Meta"
+        },
+        "group_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supply either Group Key or Partner Key, exclusively.",
+          "title": "Group Key"
+        },
+        "partner_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supply either Partner Key or Group Key, exclusively.",
+          "title": "Partner Key"
+        }
+      },
+      "required": [
+        "account_name",
+        "contact_first_name",
+        "contact_last_name",
+        "amount",
+        "stage",
+        "close_date"
+      ],
+      "title": "CreateDeal",
+      "type": "object"
+    },
+    "CreateLead": {
+      "additionalProperties": false,
+      "description": "Create a lead.",
+      "properties": {
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Create Lead",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "external_key": {
+          "description": "A unique key that identifies this lead in an external system. This key must be unique across all leads in your account. This key is used to identify leads when they are updated or deleted. Often provided as an email, but can be any unique string.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "External Key",
+          "type": "string"
+        },
+        "partner_key": {
+          "description": "The unique key of the partner who submitted this lead",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Partner Key",
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/$defs/LeadMeta",
+          "description": "Key value pairs that store additional information about this lead. First and last name required. Other eligible keys are based on Lead forms created. Use the /leads/form-template to view field names",
+          "title": "Meta"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead amount in **cents**",
+          "title": "Amount"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed",
+                "dead",
+                "closed won",
+                "closed lost"
+              ],
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Current status of this lead. Must be one of either 'open', 'closed', 'dead', 'closed won', or 'closed lost'. Note that open = New, closed = Qualified and dead = Unqualified default stages in the PartnerStack dashboard.",
+          "title": "Status",
+          "enum": [
+            "open",
+            "closed",
+            "dead",
+            "closed won",
+            "closed lost"
+          ],
+          "x-enum-searchable": true
+        },
+        "stage_api_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The api_name of the Stage this lead should be in. This is used to determine the current stage of the lead. If not provided, the lead will be placed in the first stage of the sales cycle.",
+          "title": "Stage Api Name"
+        },
+        "approved": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used to indicate whether this lead has been approved to move past the closed stage",
+          "title": "Approved"
+        }
+      },
+      "required": [
+        "external_key",
+        "partner_key",
+        "meta"
+      ],
+      "title": "CreateLead",
+      "type": "object"
+    },
+    "CreatePartnership": {
+      "additionalProperties": false,
+      "description": "Create a partnership.",
+      "properties": {
+        "operation": {
+          "const": "create_partnership",
+          "default": "create_partnership",
+          "title": "Create Partnership",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "The email of the partner.",
+          "format": "email",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The first name of the partner.",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The last name of the partner.",
+          "title": "Last Name"
+        },
+        "partner_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `partner_key` you wish to use for this partner. If included, **must** be unique to this partner. For more information on `partner_key` see PartnerStackJS. Note that the partner_key can only consist of letters, numbers, and underscores.",
+          "title": "Partner Key"
+        },
+        "group_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The key of the group within PartnerStack that you want this partner to be placed into.",
+          "title": "Group Key"
+        },
+        "notify_by_email": {
+          "default": false,
+          "description": "Whether to send a verification email to the partner.",
+          "title": "Notify By Email",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreatePartnership",
+      "type": "object"
+    },
+    "CreateTransaction": {
+      "additionalProperties": false,
+      "description": "Create a transaction.",
+      "properties": {
+        "operation": {
+          "const": "create_transaction",
+          "default": "create_transaction",
+          "title": "Create Transaction",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "amount": {
+          "description": "Transaction amount in cents for specified currency.",
+          "maximum": 50000000000,
+          "minimum": -50000000000,
+          "title": "Amount",
+          "type": "integer"
+        },
+        "currency": {
+          "description": "Transaction currency type. Note that the format is the three-letter ISO currency code.",
+          "maxLength": 3,
+          "minLength": 3,
+          "title": "Currency",
+          "type": "string"
+        },
+        "customer_key": {
+          "description": "Key of customer who made the transaction.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Customer Key",
+          "type": "string"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Key of transaction record in PartnerStack.",
+          "title": "Key"
+        },
+        "product_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Key of transaction product.",
+          "title": "Product Key"
+        },
+        "category_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Key of transaction category.",
+          "title": "Category Key"
+        },
+        "subscription_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External identifier of the subscription/product associated with the transaction.",
+          "title": "Subscription Key"
+        },
+        "created_at": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The created_at date of the transaction in epoch (ms).",
+          "title": "Created At"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional data that can be provided for the transaction on creation. Note that you can only store a maximum of 25 metadata attributes. The value of each attribute cannot exceed 100 characters, and the name of each attribute cannot exceed 30 characters.",
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "amount",
+        "currency",
+        "customer_key"
+      ],
+      "title": "CreateTransaction",
+      "type": "object"
+    },
+    "DeleteCustomer": {
+      "additionalProperties": false,
+      "description": "Delete a customer.",
+      "properties": {
+        "operation": {
+          "const": "delete_customer",
+          "default": "delete_customer",
+          "title": "Delete Customer",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "DeleteCustomer",
+      "type": "object"
+    },
+    "DeleteTransaction": {
+      "additionalProperties": false,
+      "description": "Delete a transaction.",
+      "properties": {
+        "operation": {
+          "const": "delete_transaction",
+          "default": "delete_transaction",
+          "title": "Delete Transaction",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "transaction_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Transaction Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transaction_id"
+      ],
+      "title": "DeleteTransaction",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "description": "Retrieve a customer.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Get Customer",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetDeal": {
+      "additionalProperties": false,
+      "description": "Retrieve a deal.",
+      "properties": {
+        "operation": {
+          "const": "get_deal",
+          "default": "get_deal",
+          "title": "Get Deal",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "deal_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Deal Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "GetDeal",
+      "type": "object"
+    },
+    "GetLead": {
+      "additionalProperties": false,
+      "description": "Retrieve a lead.",
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Get Lead",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Lead Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "GetLead",
+      "type": "object"
+    },
+    "GetPartnership": {
+      "additionalProperties": false,
+      "description": "Retrieve a partnership.",
+      "properties": {
+        "operation": {
+          "const": "get_partnership",
+          "default": "get_partnership",
+          "title": "Get Partnership",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "partnership_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Partnership Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "partnership_id"
+      ],
+      "title": "GetPartnership",
+      "type": "object"
+    },
+    "LeadMeta": {
+      "additionalProperties": true,
+      "properties": {
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "company": {
+          "minLength": 1,
+          "title": "Company",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "company"
+      ],
+      "title": "LeadMeta",
+      "type": "object"
+    },
+    "ListActions": {
+      "additionalProperties": false,
+      "description": "List all actions.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Each execution returns one page, up to 250 records.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key from the previous page; mutually exclusive with Ending Before.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key for reverse pagination; mutually exclusive with Starting After.",
+          "title": "Ending Before"
+        },
+        "operation": {
+          "const": "list_actions",
+          "default": "list_actions",
+          "title": "List Actions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "partnership_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partnership Key"
+        },
+        "customer_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Key"
+        },
+        "action_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action Type"
+        },
+        "min_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Created"
+        },
+        "max_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Created"
+        },
+        "min_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Updated"
+        },
+        "max_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Updated"
+        }
+      },
+      "title": "ListActions",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "description": "List all customers.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Each execution returns one page, up to 250 records.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key from the previous page; mutually exclusive with Ending Before.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key for reverse pagination; mutually exclusive with Starting After.",
+          "title": "Ending Before"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "List Customers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "partner_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partner Key"
+        },
+        "partnership_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partnership Key"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "min_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Created"
+        },
+        "max_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Created"
+        },
+        "min_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Updated"
+        },
+        "max_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Updated"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListDeals": {
+      "additionalProperties": false,
+      "description": "List all deals.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Each execution returns one page, up to 250 records.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key from the previous page; mutually exclusive with Ending Before.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key for reverse pagination; mutually exclusive with Starting After.",
+          "title": "Ending Before"
+        },
+        "operation": {
+          "const": "list_deals",
+          "default": "list_deals",
+          "title": "List Deals",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "partner_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partner Key"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "min_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Created"
+        },
+        "max_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Created"
+        },
+        "min_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Updated"
+        },
+        "max_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Updated"
+        }
+      },
+      "title": "ListDeals",
+      "type": "object"
+    },
+    "ListGroups": {
+      "additionalProperties": false,
+      "description": "List all groups.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Each execution returns one page, up to 250 records.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key from the previous page; mutually exclusive with Ending Before.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key for reverse pagination; mutually exclusive with Starting After.",
+          "title": "Ending Before"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "min_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Created"
+        },
+        "max_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Created"
+        },
+        "min_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Updated"
+        },
+        "max_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Updated"
+        }
+      },
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "ListLeads": {
+      "additionalProperties": false,
+      "description": "List all leads.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Each execution returns one page, up to 250 records.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key from the previous page; mutually exclusive with Ending Before.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key for reverse pagination; mutually exclusive with Starting After.",
+          "title": "Ending Before"
+        },
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "List Leads",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "partner_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partner Key"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "min_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Created"
+        },
+        "max_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Created"
+        },
+        "min_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Updated"
+        },
+        "max_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Updated"
+        }
+      },
+      "title": "ListLeads",
+      "type": "object"
+    },
+    "ListPartnerships": {
+      "additionalProperties": false,
+      "description": "List all partnerships.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Each execution returns one page, up to 250 records.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key from the previous page; mutually exclusive with Ending Before.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key for reverse pagination; mutually exclusive with Starting After.",
+          "title": "Ending Before"
+        },
+        "operation": {
+          "const": "list_partnerships",
+          "default": "list_partnerships",
+          "title": "List Partnerships",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "partnership_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partnership Key"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "min_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Created"
+        },
+        "max_created": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Created"
+        },
+        "min_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Updated"
+        },
+        "max_updated": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Updated"
+        }
+      },
+      "title": "ListPartnerships",
+      "type": "object"
+    },
+    "ListTransactions": {
+      "additionalProperties": false,
+      "description": "List all transactions.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Each execution returns one page, up to 250 records.",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key from the previous page; mutually exclusive with Ending Before.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item key for reverse pagination; mutually exclusive with Starting After.",
+          "title": "Ending Before"
+        },
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "List Transactions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Key"
+        }
+      },
+      "title": "ListTransactions",
+      "type": "object"
+    },
+    "PartnerStackAPIKeys": {
+      "properties": {
+        "credential_type": {
+          "const": "partnerstack_api_keys",
+          "default": "partnerstack_api_keys",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "public_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Public Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "secret_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Secret Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "public_key",
+        "secret_key"
+      ],
+      "title": "Partnerstack API Keys",
+      "type": "object",
+      "x-credential-instructions": "In your vendor dashboard, open Settings \u2192 Integrations \u2192 PartnerStack API Keys. Paste the public and secret keys from the same test or production pair. Test keys work with test partners and customers; production keys perform live actions. NoClick sends these keys over HTTPS using Basic authentication.",
+      "x-credential-url": "https://app.partnerstack.com/settings/integrations"
+    },
+    "RecordAction": {
+      "additionalProperties": false,
+      "description": "Record action.",
+      "properties": {
+        "operation": {
+          "const": "record_action",
+          "default": "record_action",
+          "title": "Record Action",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "description": "The type of action the partner or customer performed",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "description": "The number of times the action was performed",
+          "minimum": 1,
+          "title": "Value",
+          "type": "integer"
+        },
+        "target_type": {
+          "description": "Whether to record an action under a partnership or customer",
+          "enum": [
+            "partnership",
+            "customer"
+          ],
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Target Type",
+          "type": "string"
+        },
+        "target_key": {
+          "description": "The identifier of the target specified in `target_type`. For a customer, this is the customer key. For a partnership, it is their partner key.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Target Key",
+          "type": "string"
+        },
+        "external_key": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The external key of the action record in PartnerStack",
+          "title": "External Key"
+        },
+        "created_at": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The created_at date of the action in epoch (ms).",
+          "title": "Created At"
+        }
+      },
+      "required": [
+        "type",
+        "value",
+        "target_type",
+        "target_key"
+      ],
+      "title": "RecordAction",
+      "type": "object"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "description": "Update a customer.",
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Update Customer",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "customer_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External customer key that can be configured on creation.",
+          "title": "Customer Key"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The customers email, must be a valid email",
+          "format": "email",
+          "title": "Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Should be either the customer's name, or the company name",
+          "title": "Name"
+        },
+        "provider_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A unique identifier given by a payment provider (Stripe, Recurly, Chargebee etc)",
+          "title": "Provider Key"
+        },
+        "member_key": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The key of the member that is responsible for the customer **(note: `member_key` must belong to a team member of a partner in your program)**.",
+          "title": "Member Key"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional custom fields for the customer that is configured in your PartnerStack dashboard.",
+          "title": "Meta"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    },
+    "UpdateDeal": {
+      "additionalProperties": false,
+      "description": "Update a deal.",
+      "properties": {
+        "operation": {
+          "const": "update_deal",
+          "default": "update_deal",
+          "title": "Update Deal",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "deal_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Deal Id",
+          "type": "string"
+        },
+        "account_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of the account",
+          "title": "Account Name"
+        },
+        "contact_first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First name of the account's contact",
+          "title": "Contact First Name"
+        },
+        "contact_last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name of the account's contact",
+          "title": "Contact Last Name"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deal amount in **cents**",
+          "title": "Amount"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Current stage of this deal. Must appear in Deals Stage list found in group settings.",
+          "title": "Stage"
+        },
+        "close_date": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expected close date of deal as YYYY-MM-DD",
+          "format": "date",
+          "title": "Close Date"
+        },
+        "customer_key": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The unique key of the customer associated with this deal.",
+          "title": "Customer Key"
+        },
+        "external_key": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference that can be used in place of the key.",
+          "title": "External Key"
+        },
+        "lost_reason": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reason for which the deal was lost.",
+          "title": "Lost Reason"
+        },
+        "partner_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The unique key of the partner who owns this deal",
+          "title": "Partner Key"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider custom field values.",
+          "title": "Meta"
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "UpdateDeal",
+      "type": "object"
+    },
+    "UpdateLead": {
+      "additionalProperties": false,
+      "description": "Update a lead.",
+      "properties": {
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Update Lead",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "external_key": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A unique key that identifies this lead in an external system. This key must be unique across all leads in your account. This key is used to identify leads when they are updated or deleted. Often provided as an email, but can be any unique string.",
+          "title": "External Key"
+        },
+        "partner_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The unique key of the partner who submitted this lead",
+          "title": "Partner Key"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Key value pairs that store additional information about this lead. First and last name required. Other eligible keys are based on Lead forms created. Use the /leads/form-template to view field names",
+          "title": "Meta"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead amount in **cents**",
+          "title": "Amount"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed",
+                "dead",
+                "closed won",
+                "closed lost"
+              ],
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Current status of this lead. Must be one of either 'open', 'closed', 'dead', 'closed won', or 'closed lost. Note that open = New, closed = Qualified and dead = Unqualified default stages in the PartnerStack dashboard.'",
+          "title": "Status",
+          "enum": [
+            "open",
+            "closed",
+            "dead",
+            "closed won",
+            "closed lost"
+          ],
+          "x-enum-searchable": true
+        },
+        "approved": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used to indicate whether this lead has been approved to move past the closed stage",
+          "title": "Approved"
+        },
+        "customer_key": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique identifier to be used for Customer after a lead has been converted",
+          "title": "Customer Key"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "UpdateLead",
+      "type": "object"
+    },
+    "UpdatePartnership": {
+      "additionalProperties": false,
+      "description": "Update a partnership.",
+      "properties": {
+        "operation": {
+          "const": "update_partnership",
+          "default": "update_partnership",
+          "title": "Update Partnership",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "partnership_id": {
+          "description": "The existing resource key or documented external identifier; used only in the URL path.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Partnership Id",
+          "type": "string"
+        },
+        "group_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The key of the group within PartnerStack that you want this partner to be placed into.",
+          "title": "Group Key"
+        },
+        "manager_email": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email of the partner manager that you would like to assign this partner.",
+          "title": "Manager Email"
+        },
+        "partner_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The partner_key that you would like this partner to have.",
+          "title": "Partner Key"
+        },
+        "tier_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The key of the tier within PartnerStack that you want this partner to be placed into.",
+          "title": "Tier Key"
+        }
+      },
+      "required": [
+        "partnership_id"
+      ],
+      "title": "UpdatePartnership",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_deal": "#/$defs/ArchiveDeal",
+          "archive_lead": "#/$defs/ArchiveLead",
+          "create_customer": "#/$defs/CreateCustomer",
+          "create_deal": "#/$defs/CreateDeal",
+          "create_lead": "#/$defs/CreateLead",
+          "create_partnership": "#/$defs/CreatePartnership",
+          "create_transaction": "#/$defs/CreateTransaction",
+          "delete_customer": "#/$defs/DeleteCustomer",
+          "delete_transaction": "#/$defs/DeleteTransaction",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_deal": "#/$defs/GetDeal",
+          "get_lead": "#/$defs/GetLead",
+          "get_partnership": "#/$defs/GetPartnership",
+          "list_actions": "#/$defs/ListActions",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_deals": "#/$defs/ListDeals",
+          "list_groups": "#/$defs/ListGroups",
+          "list_leads": "#/$defs/ListLeads",
+          "list_partnerships": "#/$defs/ListPartnerships",
+          "list_transactions": "#/$defs/ListTransactions",
+          "record_action": "#/$defs/RecordAction",
+          "update_customer": "#/$defs/UpdateCustomer",
+          "update_deal": "#/$defs/UpdateDeal",
+          "update_lead": "#/$defs/UpdateLead",
+          "update_partnership": "#/$defs/UpdatePartnership"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/DeleteCustomer"
+        },
+        {
+          "$ref": "#/$defs/ListLeads"
+        },
+        {
+          "$ref": "#/$defs/GetLead"
+        },
+        {
+          "$ref": "#/$defs/CreateLead"
+        },
+        {
+          "$ref": "#/$defs/UpdateLead"
+        },
+        {
+          "$ref": "#/$defs/ArchiveLead"
+        },
+        {
+          "$ref": "#/$defs/ListDeals"
+        },
+        {
+          "$ref": "#/$defs/GetDeal"
+        },
+        {
+          "$ref": "#/$defs/CreateDeal"
+        },
+        {
+          "$ref": "#/$defs/UpdateDeal"
+        },
+        {
+          "$ref": "#/$defs/ArchiveDeal"
+        },
+        {
+          "$ref": "#/$defs/ListPartnerships"
+        },
+        {
+          "$ref": "#/$defs/GetPartnership"
+        },
+        {
+          "$ref": "#/$defs/CreatePartnership"
+        },
+        {
+          "$ref": "#/$defs/UpdatePartnership"
+        },
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/ListTransactions"
+        },
+        {
+          "$ref": "#/$defs/CreateTransaction"
+        },
+        {
+          "$ref": "#/$defs/DeleteTransaction"
+        },
+        {
+          "$ref": "#/$defs/ListActions"
+        },
+        {
+          "$ref": "#/$defs/RecordAction"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PartnerStackAPIKeys"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Partnerstack Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
