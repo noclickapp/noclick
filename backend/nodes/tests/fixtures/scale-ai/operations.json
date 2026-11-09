@@ -1,0 +1,414 @@
+{
+  "source": "https://raw.githubusercontent.com/scaleapi/launch-python-client/master/openapi.json",
+  "kind": "synthetic contract-shaped request/response fixtures; not live evidence",
+  "cases": [
+    {
+      "operation": "list_model_bundles",
+      "method": "GET",
+      "path": "/v1/launch/v1/model-bundles",
+      "arguments": {
+        "model_name": "classifier",
+        "order_by": "newest"
+      },
+      "params": {
+        "model_name": "classifier",
+        "order_by": "newest"
+      },
+      "body": null,
+      "response": {
+        "model_bundles": [
+          {
+            "id": "bundle-1",
+            "name": "classifier",
+            "location": "s3://fixture/bundle",
+            "requirements": [],
+            "env_params": {
+              "framework_type": "pytorch"
+            },
+            "packaging_type": "cloudpickle",
+            "metadata": {},
+            "created_at": "2026-01-01T00:00:00Z",
+            "model_artifact_ids": []
+          }
+        ]
+      }
+    },
+    {
+      "operation": "get_model_bundle",
+      "method": "GET",
+      "path": "/v1/launch/v1/model-bundles/bundle-1",
+      "arguments": {
+        "model_bundle_id": "bundle-1"
+      },
+      "params": {},
+      "body": null,
+      "response": {
+        "id": "bundle-1",
+        "name": "classifier",
+        "location": "s3://fixture/bundle",
+        "requirements": [],
+        "env_params": {
+          "framework_type": "pytorch"
+        },
+        "packaging_type": "cloudpickle",
+        "metadata": {},
+        "created_at": "2026-01-01T00:00:00Z",
+        "model_artifact_ids": []
+      }
+    },
+    {
+      "operation": "get_latest_model_bundle",
+      "method": "GET",
+      "path": "/v1/launch/v1/model-bundles/latest",
+      "arguments": {
+        "model_name": "classifier"
+      },
+      "params": {
+        "model_name": "classifier"
+      },
+      "body": null,
+      "response": {
+        "id": "bundle-1",
+        "name": "classifier",
+        "location": "s3://fixture/bundle",
+        "requirements": [],
+        "env_params": {
+          "framework_type": "pytorch"
+        },
+        "packaging_type": "cloudpickle",
+        "metadata": {},
+        "created_at": "2026-01-01T00:00:00Z",
+        "model_artifact_ids": []
+      }
+    },
+    {
+      "operation": "list_model_endpoints",
+      "method": "GET",
+      "path": "/v1/launch/v1/model-endpoints",
+      "arguments": {
+        "name": "classifier",
+        "order_by": "oldest"
+      },
+      "params": {
+        "name": "classifier",
+        "order_by": "oldest"
+      },
+      "body": null,
+      "response": {
+        "model_endpoints": [
+          {
+            "id": "endpoint-1",
+            "name": "classifier",
+            "endpoint_type": "async",
+            "destination": "fixture",
+            "bundle_name": "classifier",
+            "status": "READY",
+            "created_by": "fixture",
+            "created_at": "2026-01-01T00:00:00Z",
+            "last_updated_at": "2026-01-01T00:00:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "get_model_endpoint",
+      "method": "GET",
+      "path": "/v1/launch/v1/model-endpoints/endpoint-1",
+      "arguments": {
+        "model_endpoint_id": "endpoint-1"
+      },
+      "params": {},
+      "body": null,
+      "response": {
+        "id": "endpoint-1",
+        "name": "classifier",
+        "endpoint_type": "async",
+        "destination": "fixture",
+        "bundle_name": "classifier",
+        "status": "READY",
+        "created_by": "fixture",
+        "created_at": "2026-01-01T00:00:00Z",
+        "last_updated_at": "2026-01-01T00:00:00Z"
+      }
+    },
+    {
+      "operation": "create_model_endpoint",
+      "method": "POST",
+      "path": "/v1/launch/v1/model-endpoints",
+      "arguments": {
+        "name": "classifier",
+        "model_bundle_id": "bundle-1",
+        "endpoint_type": "async",
+        "cpus": 1,
+        "gpus": 0,
+        "memory": "4Gi",
+        "storage": "10Gi",
+        "min_workers": 0,
+        "max_workers": 2,
+        "per_worker": 1,
+        "metadata": {},
+        "labels": {}
+      },
+      "params": {},
+      "body": {
+        "name": "classifier",
+        "model_bundle_id": "bundle-1",
+        "endpoint_type": "async",
+        "cpus": 1,
+        "gpus": 0,
+        "memory": "4Gi",
+        "storage": "10Gi",
+        "min_workers": 0,
+        "max_workers": 2,
+        "per_worker": 1,
+        "metadata": {},
+        "labels": {}
+      },
+      "response": {
+        "endpoint_creation_task_id": "deploy-1"
+      }
+    },
+    {
+      "operation": "update_model_endpoint",
+      "method": "PUT",
+      "path": "/v1/launch/v1/model-endpoints/endpoint-1",
+      "arguments": {
+        "model_endpoint_id": "endpoint-1",
+        "min_workers": 0,
+        "max_workers": 3,
+        "labels": {}
+      },
+      "params": {},
+      "body": {
+        "min_workers": 0,
+        "max_workers": 3,
+        "labels": {}
+      },
+      "response": {
+        "endpoint_creation_task_id": "deploy-2"
+      }
+    },
+    {
+      "operation": "delete_model_endpoint",
+      "method": "DELETE",
+      "path": "/v1/launch/v1/model-endpoints/endpoint-1",
+      "arguments": {
+        "model_endpoint_id": "endpoint-1"
+      },
+      "params": {},
+      "body": null,
+      "response": {
+        "deleted": true
+      }
+    },
+    {
+      "operation": "restart_model_endpoint",
+      "method": "POST",
+      "path": "/v1/launch/v1/model-endpoints/endpoint-1/restart",
+      "arguments": {
+        "model_endpoint_id": "endpoint-1"
+      },
+      "params": {},
+      "body": null,
+      "response": {
+        "restarted": true
+      }
+    },
+    {
+      "operation": "create_async_task",
+      "method": "POST",
+      "path": "/v1/launch/v1/async-tasks",
+      "arguments": {
+        "model_endpoint_id": "endpoint-1",
+        "args": {
+          "text": "hello"
+        }
+      },
+      "params": {
+        "model_endpoint_id": "endpoint-1"
+      },
+      "body": {
+        "args": {
+          "text": "hello"
+        }
+      },
+      "response": {
+        "task_id": "task-1"
+      }
+    },
+    {
+      "operation": "get_async_task",
+      "method": "GET",
+      "path": "/v1/launch/v1/async-tasks/task-1",
+      "arguments": {
+        "task_id": "task-1"
+      },
+      "params": {},
+      "body": null,
+      "response": {
+        "task_id": "task-1",
+        "status": "SUCCESS",
+        "result": {
+          "label": "greeting"
+        }
+      }
+    },
+    {
+      "operation": "create_sync_task",
+      "method": "POST",
+      "path": "/v1/launch/v1/sync-tasks",
+      "arguments": {
+        "model_endpoint_id": "endpoint-1",
+        "args": [
+          1,
+          2
+        ],
+        "timeout_seconds": 30,
+        "num_retries": 0
+      },
+      "params": {
+        "model_endpoint_id": "endpoint-1"
+      },
+      "body": {
+        "args": [
+          1,
+          2
+        ],
+        "timeout_seconds": 30.0,
+        "num_retries": 0
+      },
+      "response": {
+        "status": "SUCCESS",
+        "result": [
+          3
+        ]
+      }
+    },
+    {
+      "operation": "list_fine_tunes",
+      "method": "GET",
+      "path": "/v1/launch/v1/llm/fine-tunes",
+      "arguments": {},
+      "params": {},
+      "body": null,
+      "response": {
+        "jobs": [
+          {
+            "id": "tune-1",
+            "status": "RUNNING"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "create_fine_tune",
+      "method": "POST",
+      "path": "/v1/launch/v1/llm/fine-tunes",
+      "arguments": {
+        "model": "llama",
+        "training_file": "file-1",
+        "hyperparameters": {
+          "epochs": 2
+        },
+        "suffix": "support"
+      },
+      "params": {},
+      "body": {
+        "model": "llama",
+        "training_file": "file-1",
+        "hyperparameters": {
+          "epochs": 2
+        },
+        "suffix": "support"
+      },
+      "response": {
+        "id": "tune-1"
+      }
+    },
+    {
+      "operation": "get_fine_tune",
+      "method": "GET",
+      "path": "/v1/launch/v1/llm/fine-tunes/tune-1",
+      "arguments": {
+        "fine_tune_id": "tune-1"
+      },
+      "params": {},
+      "body": null,
+      "response": {
+        "id": "tune-1",
+        "status": "RUNNING"
+      }
+    },
+    {
+      "operation": "cancel_fine_tune",
+      "method": "PUT",
+      "path": "/v1/launch/v1/llm/fine-tunes/tune-1/cancel",
+      "arguments": {
+        "fine_tune_id": "tune-1"
+      },
+      "params": {},
+      "body": null,
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "operation": "get_fine_tune_events",
+      "method": "GET",
+      "path": "/v1/launch/v1/llm/fine-tunes/tune-1/events",
+      "arguments": {
+        "fine_tune_id": "tune-1"
+      },
+      "params": {},
+      "body": null,
+      "response": {
+        "events": []
+      }
+    },
+    {
+      "operation": "list_files",
+      "method": "GET",
+      "path": "/v1/launch/v1/files",
+      "arguments": {},
+      "params": {},
+      "body": null,
+      "response": {
+        "files": [
+          {
+            "id": "file-1",
+            "filename": "train.jsonl",
+            "size": 123
+          }
+        ]
+      }
+    },
+    {
+      "operation": "get_file",
+      "method": "GET",
+      "path": "/v1/launch/v1/files/file-1",
+      "arguments": {
+        "file_id": "file-1"
+      },
+      "params": {},
+      "body": null,
+      "response": {
+        "id": "file-1",
+        "filename": "train.jsonl",
+        "size": 123
+      }
+    },
+    {
+      "operation": "delete_file",
+      "method": "DELETE",
+      "path": "/v1/launch/v1/files/file-1",
+      "arguments": {
+        "file_id": "file-1"
+      },
+      "params": {},
+      "body": null,
+      "response": {
+        "deleted": true
+      }
+    }
+  ]
+}

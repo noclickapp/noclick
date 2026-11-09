@@ -1,0 +1,1059 @@
+{
+  "$defs": {
+    "CancelFineTune": {
+      "additionalProperties": false,
+      "description": "Cancel a fine-tuning job.",
+      "properties": {
+        "fine_tune_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Fine Tune Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_fine_tune",
+          "default": "cancel_fine_tune",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fine_tune_id"
+      ],
+      "title": "CancelFineTune",
+      "type": "object"
+    },
+    "CreateAsyncTask": {
+      "additionalProperties": false,
+      "description": "Submit JSON model inputs for asynchronous inference.",
+      "properties": {
+        "model_endpoint_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Model Endpoint Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_async_task",
+          "default": "create_async_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "args": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            }
+          ],
+          "description": "JSON input in the deployed model's request format.",
+          "title": "Args"
+        }
+      },
+      "required": [
+        "model_endpoint_id",
+        "args"
+      ],
+      "title": "CreateAsyncTask",
+      "type": "object"
+    },
+    "CreateFineTune": {
+      "additionalProperties": false,
+      "description": "Start a paid fine-tuning job using an existing training file.",
+      "properties": {
+        "operation": {
+          "const": "create_fine_tune",
+          "default": "create_fine_tune",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "training_file": {
+          "minLength": 1,
+          "title": "Training File",
+          "type": "string"
+        },
+        "validation_file": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Validation File"
+        },
+        "hyperparameters": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "additionalProperties": true,
+                "type": "object"
+              }
+            ]
+          },
+          "title": "Hyperparameters",
+          "type": "object"
+        },
+        "suffix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suffix"
+        }
+      },
+      "required": [
+        "model",
+        "training_file"
+      ],
+      "title": "CreateFineTune",
+      "type": "object"
+    },
+    "CreateModelEndpoint": {
+      "additionalProperties": false,
+      "description": "Deploy a bundle on provisioned workers. This allocates paid compute.",
+      "properties": {
+        "model_bundle_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Model Bundle Id",
+          "type": "string"
+        },
+        "cpus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Cpus"
+        },
+        "gpus": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Gpus",
+          "type": "integer"
+        },
+        "gpu_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "nvidia-tesla-t4",
+                "nvidia-ampere-a10",
+                "nvidia-ampere-a100",
+                "nvidia-ampere-a100e",
+                "nvidia-hopper-h100",
+                "nvidia-hopper-h100-1g20gb",
+                "nvidia-hopper-h100-3g40gb"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gpu Type",
+          "enum": [
+            "nvidia-tesla-t4",
+            "nvidia-ampere-a10",
+            "nvidia-ampere-a100",
+            "nvidia-ampere-a100e",
+            "nvidia-hopper-h100",
+            "nvidia-hopper-h100-1g20gb",
+            "nvidia-hopper-h100-3g40gb"
+          ],
+          "x-enum-searchable": true
+        },
+        "memory": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Memory"
+        },
+        "storage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Storage"
+        },
+        "min_workers": {
+          "minimum": 0,
+          "title": "Min Workers",
+          "type": "integer"
+        },
+        "max_workers": {
+          "minimum": 0,
+          "title": "Max Workers",
+          "type": "integer"
+        },
+        "per_worker": {
+          "exclusiveMinimum": 0,
+          "title": "Per Worker",
+          "type": "integer"
+        },
+        "labels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Labels",
+          "type": "object"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "operation": {
+          "const": "create_model_endpoint",
+          "default": "create_model_endpoint",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "endpoint_type": {
+          "enum": [
+            "async",
+            "sync",
+            "streaming"
+          ],
+          "title": "Endpoint Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_bundle_id",
+        "cpus",
+        "memory",
+        "storage",
+        "min_workers",
+        "max_workers",
+        "per_worker",
+        "name",
+        "endpoint_type"
+      ],
+      "title": "CreateModelEndpoint",
+      "type": "object"
+    },
+    "CreateSyncTask": {
+      "additionalProperties": false,
+      "description": "Run synchronous inference with JSON model inputs.",
+      "properties": {
+        "model_endpoint_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Model Endpoint Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_sync_task",
+          "default": "create_sync_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "args": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            }
+          ],
+          "description": "JSON input in the deployed model's request format.",
+          "title": "Args"
+        },
+        "timeout_seconds": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeout Seconds"
+        },
+        "num_retries": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider-side inference retries; NoClick does not retry the HTTP request.",
+          "title": "Num Retries"
+        }
+      },
+      "required": [
+        "model_endpoint_id",
+        "args"
+      ],
+      "title": "CreateSyncTask",
+      "type": "object"
+    },
+    "DeleteFile": {
+      "additionalProperties": false,
+      "description": "Delete a stored file.",
+      "properties": {
+        "file_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "DeleteFile",
+      "type": "object"
+    },
+    "DeleteModelEndpoint": {
+      "additionalProperties": false,
+      "description": "Delete a model deployment and stop its workers.",
+      "properties": {
+        "model_endpoint_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Model Endpoint Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_model_endpoint",
+          "default": "delete_model_endpoint",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_endpoint_id"
+      ],
+      "title": "DeleteModelEndpoint",
+      "type": "object"
+    },
+    "GetAsyncTask": {
+      "additionalProperties": false,
+      "description": "Poll asynchronous inference status and retrieve the JSON result.",
+      "properties": {
+        "operation": {
+          "const": "get_async_task",
+          "default": "get_async_task",
+          "title": "Operation",
+          "type": "string"
+        },
+        "task_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "GetAsyncTask",
+      "type": "object"
+    },
+    "GetFile": {
+      "additionalProperties": false,
+      "description": "Read file metadata without downloading file contents.",
+      "properties": {
+        "file_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFile",
+      "type": "object"
+    },
+    "GetFineTune": {
+      "additionalProperties": false,
+      "description": "Read fine-tuning progress and the resulting model name.",
+      "properties": {
+        "fine_tune_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Fine Tune Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_fine_tune",
+          "default": "get_fine_tune",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fine_tune_id"
+      ],
+      "title": "GetFineTune",
+      "type": "object"
+    },
+    "GetFineTuneEvents": {
+      "additionalProperties": false,
+      "description": "Read a fine-tuning job's progress events.",
+      "properties": {
+        "fine_tune_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Fine Tune Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_fine_tune_events",
+          "default": "get_fine_tune_events",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fine_tune_id"
+      ],
+      "title": "GetFineTuneEvents",
+      "type": "object"
+    },
+    "GetLatestModelBundle": {
+      "additionalProperties": false,
+      "description": "Find the latest bundle for a model name.",
+      "properties": {
+        "operation": {
+          "const": "get_latest_model_bundle",
+          "default": "get_latest_model_bundle",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model_name": {
+          "minLength": 1,
+          "title": "Model Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_name"
+      ],
+      "title": "GetLatestModelBundle",
+      "type": "object"
+    },
+    "GetModelBundle": {
+      "additionalProperties": false,
+      "description": "Read a model bundle's deployment metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_model_bundle",
+          "default": "get_model_bundle",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model_bundle_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Model Bundle Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_bundle_id"
+      ],
+      "title": "GetModelBundle",
+      "type": "object"
+    },
+    "GetModelEndpoint": {
+      "additionalProperties": false,
+      "description": "Read one model endpoint's configuration and status.",
+      "properties": {
+        "model_endpoint_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Model Endpoint Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_model_endpoint",
+          "default": "get_model_endpoint",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_endpoint_id"
+      ],
+      "title": "GetModelEndpoint",
+      "type": "object"
+    },
+    "ListFiles": {
+      "additionalProperties": false,
+      "description": "List file IDs, names and sizes for the connected account.",
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFiles",
+      "type": "object"
+    },
+    "ListFineTunes": {
+      "additionalProperties": false,
+      "description": "List the connected account's fine-tuning jobs.",
+      "properties": {
+        "operation": {
+          "const": "list_fine_tunes",
+          "default": "list_fine_tunes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFineTunes",
+      "type": "object"
+    },
+    "ListModelBundles": {
+      "additionalProperties": false,
+      "description": "List model bundles owned by the connected account.",
+      "properties": {
+        "operation": {
+          "const": "list_model_bundles",
+          "default": "list_model_bundles",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Name"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "newest",
+                "oldest"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order By",
+          "enum": [
+            "newest",
+            "oldest"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListModelBundles",
+      "type": "object"
+    },
+    "ListModelEndpoints": {
+      "additionalProperties": false,
+      "description": "List model deployments owned by the connected account.",
+      "properties": {
+        "operation": {
+          "const": "list_model_endpoints",
+          "default": "list_model_endpoints",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "newest",
+                "oldest",
+                "alphabetical"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order By",
+          "enum": [
+            "newest",
+            "oldest",
+            "alphabetical"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListModelEndpoints",
+      "type": "object"
+    },
+    "RestartModelEndpoint": {
+      "additionalProperties": false,
+      "description": "Restart the workers serving a model deployment.",
+      "properties": {
+        "model_endpoint_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Model Endpoint Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "restart_model_endpoint",
+          "default": "restart_model_endpoint",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_endpoint_id"
+      ],
+      "title": "RestartModelEndpoint",
+      "type": "object"
+    },
+    "ScaleAiAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "scale_ai_api_key",
+          "default": "scale_ai_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Scale AI API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Scale API key with access to Launch. NoClick sends it as the HTTP Basic username with an empty password to api.scale.com. Listing your model endpoints verifies the connection.",
+      "x-credential-url": "https://dashboard.scale.com/apikeys"
+    },
+    "UpdateModelEndpoint": {
+      "additionalProperties": false,
+      "description": "Change a deployment's bundle, compute settings, labels or metadata.",
+      "properties": {
+        "model_endpoint_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+          "title": "Model Endpoint Id",
+          "type": "string"
+        },
+        "model_bundle_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Bundle Id"
+        },
+        "cpus": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CPU quantity, for example 1 or 500m.",
+          "title": "Cpus"
+        },
+        "gpus": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gpus"
+        },
+        "gpu_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "nvidia-tesla-t4",
+                "nvidia-ampere-a10",
+                "nvidia-ampere-a100",
+                "nvidia-ampere-a100e",
+                "nvidia-hopper-h100",
+                "nvidia-hopper-h100-1g20gb",
+                "nvidia-hopper-h100-3g40gb"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gpu Type",
+          "enum": [
+            "nvidia-tesla-t4",
+            "nvidia-ampere-a10",
+            "nvidia-ampere-a100",
+            "nvidia-ampere-a100e",
+            "nvidia-hopper-h100",
+            "nvidia-hopper-h100-1g20gb",
+            "nvidia-hopper-h100-3g40gb"
+          ],
+          "x-enum-searchable": true
+        },
+        "memory": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Memory quantity, for example 4Gi.",
+          "title": "Memory"
+        },
+        "storage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Storage quantity, for example 10Gi.",
+          "title": "Storage"
+        },
+        "min_workers": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Workers"
+        },
+        "max_workers": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Workers"
+        },
+        "per_worker": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Per Worker"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "operation": {
+          "const": "update_model_endpoint",
+          "default": "update_model_endpoint",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_endpoint_id"
+      ],
+      "title": "UpdateModelEndpoint",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_fine_tune": "#/$defs/CancelFineTune",
+          "create_async_task": "#/$defs/CreateAsyncTask",
+          "create_fine_tune": "#/$defs/CreateFineTune",
+          "create_model_endpoint": "#/$defs/CreateModelEndpoint",
+          "create_sync_task": "#/$defs/CreateSyncTask",
+          "delete_file": "#/$defs/DeleteFile",
+          "delete_model_endpoint": "#/$defs/DeleteModelEndpoint",
+          "get_async_task": "#/$defs/GetAsyncTask",
+          "get_file": "#/$defs/GetFile",
+          "get_fine_tune": "#/$defs/GetFineTune",
+          "get_fine_tune_events": "#/$defs/GetFineTuneEvents",
+          "get_latest_model_bundle": "#/$defs/GetLatestModelBundle",
+          "get_model_bundle": "#/$defs/GetModelBundle",
+          "get_model_endpoint": "#/$defs/GetModelEndpoint",
+          "list_files": "#/$defs/ListFiles",
+          "list_fine_tunes": "#/$defs/ListFineTunes",
+          "list_model_bundles": "#/$defs/ListModelBundles",
+          "list_model_endpoints": "#/$defs/ListModelEndpoints",
+          "restart_model_endpoint": "#/$defs/RestartModelEndpoint",
+          "update_model_endpoint": "#/$defs/UpdateModelEndpoint"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListModelBundles"
+        },
+        {
+          "$ref": "#/$defs/GetModelBundle"
+        },
+        {
+          "$ref": "#/$defs/GetLatestModelBundle"
+        },
+        {
+          "$ref": "#/$defs/ListModelEndpoints"
+        },
+        {
+          "$ref": "#/$defs/GetModelEndpoint"
+        },
+        {
+          "$ref": "#/$defs/CreateModelEndpoint"
+        },
+        {
+          "$ref": "#/$defs/UpdateModelEndpoint"
+        },
+        {
+          "$ref": "#/$defs/DeleteModelEndpoint"
+        },
+        {
+          "$ref": "#/$defs/RestartModelEndpoint"
+        },
+        {
+          "$ref": "#/$defs/CreateAsyncTask"
+        },
+        {
+          "$ref": "#/$defs/GetAsyncTask"
+        },
+        {
+          "$ref": "#/$defs/CreateSyncTask"
+        },
+        {
+          "$ref": "#/$defs/ListFineTunes"
+        },
+        {
+          "$ref": "#/$defs/CreateFineTune"
+        },
+        {
+          "$ref": "#/$defs/GetFineTune"
+        },
+        {
+          "$ref": "#/$defs/CancelFineTune"
+        },
+        {
+          "$ref": "#/$defs/GetFineTuneEvents"
+        },
+        {
+          "$ref": "#/$defs/ListFiles"
+        },
+        {
+          "$ref": "#/$defs/GetFile"
+        },
+        {
+          "$ref": "#/$defs/DeleteFile"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ScaleAiAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Scale-ai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
