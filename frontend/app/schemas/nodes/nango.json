@@ -1,0 +1,940 @@
+{
+  "$defs": {
+    "CreateIntegrationConfig": {
+      "additionalProperties": false,
+      "description": "Create an integration without developer-app credentials; configure those in Nango.",
+      "properties": {
+        "unique_key": {
+          "description": "Nango integration ID (unique key).",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Unique Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_integration",
+          "default": "create_integration",
+          "title": "Operation",
+          "type": "string"
+        },
+        "provider": {
+          "description": "Nango provider name, for example github.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "forward_webhooks": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Forward Webhooks"
+        }
+      },
+      "required": [
+        "unique_key",
+        "provider"
+      ],
+      "title": "CreateIntegrationConfig",
+      "type": "object"
+    },
+    "DeleteConnectionConfig": {
+      "additionalProperties": false,
+      "description": "Delete the connection within the selected integration.",
+      "properties": {
+        "provider_config_key": {
+          "description": "Nango integration ID.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider Config Key",
+          "type": "string"
+        },
+        "connection_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_connection",
+          "default": "delete_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider_config_key",
+        "connection_id"
+      ],
+      "title": "DeleteConnectionConfig",
+      "type": "object"
+    },
+    "DeleteIntegrationConfig": {
+      "additionalProperties": false,
+      "description": "Delete the selected integration from Nango.",
+      "properties": {
+        "unique_key": {
+          "description": "Nango integration ID (unique key).",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Unique Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_integration",
+          "default": "delete_integration",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unique_key"
+      ],
+      "title": "DeleteIntegrationConfig",
+      "type": "object"
+    },
+    "GetActionResultConfig": {
+      "additionalProperties": false,
+      "description": "Read an asynchronous action result by its ID. A 404 can mean it is still running.",
+      "properties": {
+        "operation": {
+          "const": "get_action_result",
+          "default": "get_action_result",
+          "title": "Operation",
+          "type": "string"
+        },
+        "action_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Action Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "title": "GetActionResultConfig",
+      "type": "object"
+    },
+    "GetConnectionConfig": {
+      "additionalProperties": false,
+      "description": "Read connection details. Credentials returned by Nango are removed from output.",
+      "properties": {
+        "provider_config_key": {
+          "description": "Nango integration ID.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider Config Key",
+          "type": "string"
+        },
+        "connection_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_connection",
+          "default": "get_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider_config_key",
+        "connection_id"
+      ],
+      "title": "GetConnectionConfig",
+      "type": "object"
+    },
+    "GetIntegrationConfig": {
+      "additionalProperties": false,
+      "description": "Read integration details, without requesting credentials or webhook secrets.",
+      "properties": {
+        "unique_key": {
+          "description": "Nango integration ID (unique key).",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Unique Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_integration",
+          "default": "get_integration",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unique_key"
+      ],
+      "title": "GetIntegrationConfig",
+      "type": "object"
+    },
+    "GetRecordsConfig": {
+      "additionalProperties": false,
+      "description": "Fetch one page of synced records. Continue with next_cursor until null.",
+      "properties": {
+        "provider_config_key": {
+          "description": "Nango integration ID.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider Config Key",
+          "type": "string"
+        },
+        "connection_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_records",
+          "default": "get_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "added",
+                "updated",
+                "deleted"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter",
+          "enum": [
+            "added",
+            "updated",
+            "deleted"
+          ],
+          "x-enum-searchable": true
+        },
+        "modified_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date-time.",
+          "title": "Modified After"
+        },
+        "variant": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variant"
+        }
+      },
+      "required": [
+        "provider_config_key",
+        "connection_id",
+        "model"
+      ],
+      "title": "GetRecordsConfig",
+      "type": "object"
+    },
+    "GetSyncStatusConfig": {
+      "additionalProperties": false,
+      "description": "Read sync status for one connection.",
+      "properties": {
+        "provider_config_key": {
+          "description": "Nango integration ID.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider Config Key",
+          "type": "string"
+        },
+        "connection_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sync_status",
+          "default": "get_sync_status",
+          "title": "Operation",
+          "type": "string"
+        },
+        "syncs": {
+          "default": "*",
+          "description": "Comma-separated sync names, name::variant, or * for all.",
+          "maxLength": 4096,
+          "title": "Syncs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider_config_key",
+        "connection_id"
+      ],
+      "title": "GetSyncStatusConfig",
+      "type": "object"
+    },
+    "ListConnectionsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of connections, without connection credentials.",
+      "properties": {
+        "operation": {
+          "const": "list_connections",
+          "default": "list_connections",
+          "title": "Operation",
+          "type": "string"
+        },
+        "connection_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact connection ID filter, across integrations.",
+          "title": "Connection Id"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListConnectionsConfig",
+      "type": "object"
+    },
+    "ListFunctionsConfig": {
+      "additionalProperties": false,
+      "description": "List one page of integration functions. Requires environment:functions:list.",
+      "properties": {
+        "unique_key": {
+          "description": "Nango integration ID (unique key).",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Unique Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_functions",
+          "default": "list_functions",
+          "title": "Operation",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "sync",
+                "action",
+                "on-event",
+                "tool"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "sync",
+            "action",
+            "on-event",
+            "tool"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "unique_key"
+      ],
+      "title": "ListFunctionsConfig",
+      "type": "object"
+    },
+    "ListIntegrationsConfig": {
+      "additionalProperties": false,
+      "description": "List the integrations configured in this Nango environment.",
+      "properties": {
+        "operation": {
+          "const": "list_integrations",
+          "default": "list_integrations",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListIntegrationsConfig",
+      "type": "object"
+    },
+    "NangoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "nango_api_key",
+          "default": "nango_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Environment API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Nango API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an environment API key from Nango's Environment settings \u2192 API Keys. Select permissions for the operations you use, including listing integrations for the connection check. NoClick sends it as a Bearer token to api.nango.dev.",
+      "x-credential-url": "https://app.nango.dev"
+    },
+    "PauseSyncConfig": {
+      "additionalProperties": false,
+      "description": "Pause scheduled syncs for one connection.",
+      "properties": {
+        "provider_config_key": {
+          "description": "Nango integration ID.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider Config Key",
+          "type": "string"
+        },
+        "connection_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "syncs": {
+          "description": "Explicit sync names. This node targets one connection.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Syncs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "pause_sync",
+          "default": "pause_sync",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider_config_key",
+        "connection_id",
+        "syncs"
+      ],
+      "title": "PauseSyncConfig",
+      "type": "object"
+    },
+    "SetConnectionMetadataConfig": {
+      "additionalProperties": false,
+      "description": "Replace metadata on a single connection.",
+      "properties": {
+        "provider_config_key": {
+          "description": "Nango integration ID.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider Config Key",
+          "type": "string"
+        },
+        "connection_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_connection_metadata",
+          "default": "set_connection_metadata",
+          "title": "Operation",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "Full replacement metadata object.",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "provider_config_key",
+        "connection_id",
+        "metadata"
+      ],
+      "title": "SetConnectionMetadataConfig",
+      "type": "object"
+    },
+    "StartSyncConfig": {
+      "additionalProperties": false,
+      "description": "Start scheduled syncs for one connection.",
+      "properties": {
+        "provider_config_key": {
+          "description": "Nango integration ID.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider Config Key",
+          "type": "string"
+        },
+        "connection_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "syncs": {
+          "description": "Explicit sync names. This node targets one connection.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Syncs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "start_sync",
+          "default": "start_sync",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider_config_key",
+        "connection_id",
+        "syncs"
+      ],
+      "title": "StartSyncConfig",
+      "type": "object"
+    },
+    "TriggerActionConfig": {
+      "additionalProperties": false,
+      "description": "Trigger an action once; async acknowledgements return an ID for polling.",
+      "properties": {
+        "provider_config_key": {
+          "description": "Nango integration ID.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider Config Key",
+          "type": "string"
+        },
+        "connection_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "trigger_action",
+          "default": "trigger_action",
+          "title": "Operation",
+          "type": "string"
+        },
+        "action_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Action Name",
+          "type": "string"
+        },
+        "input": {
+          "additionalProperties": true,
+          "title": "Input",
+          "type": "object"
+        },
+        "asynchronous": {
+          "default": false,
+          "description": "Return an action ID instead of waiting for the result.",
+          "title": "Asynchronous",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "provider_config_key",
+        "connection_id",
+        "action_name"
+      ],
+      "title": "TriggerActionConfig",
+      "type": "object"
+    },
+    "TriggerSyncConfig": {
+      "additionalProperties": false,
+      "description": "Trigger syncs for one connection. The acknowledgement does not prove completion.",
+      "properties": {
+        "provider_config_key": {
+          "description": "Nango integration ID.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider Config Key",
+          "type": "string"
+        },
+        "connection_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "syncs": {
+          "description": "Explicit sync names. This node targets one connection.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Syncs",
+          "type": "array"
+        },
+        "operation": {
+          "const": "trigger_sync",
+          "default": "trigger_sync",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider_config_key",
+        "connection_id",
+        "syncs"
+      ],
+      "title": "TriggerSyncConfig",
+      "type": "object"
+    },
+    "UpdateConnectionConfig": {
+      "additionalProperties": false,
+      "description": "Update connection tags; keys are normalized to lowercase by Nango.",
+      "properties": {
+        "provider_config_key": {
+          "description": "Nango integration ID.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider Config Key",
+          "type": "string"
+        },
+        "connection_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_connection",
+          "default": "update_connection",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Up to ten string tags, each value at most 255 characters.",
+          "maxProperties": 10,
+          "title": "Tags",
+          "type": "object"
+        }
+      },
+      "required": [
+        "provider_config_key",
+        "connection_id",
+        "tags"
+      ],
+      "title": "UpdateConnectionConfig",
+      "type": "object"
+    },
+    "UpdateConnectionMetadataConfig": {
+      "additionalProperties": false,
+      "description": "Merge supplied metadata fields into a single connection's metadata.",
+      "properties": {
+        "provider_config_key": {
+          "description": "Nango integration ID.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Provider Config Key",
+          "type": "string"
+        },
+        "connection_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_connection_metadata",
+          "default": "update_connection_metadata",
+          "title": "Operation",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "description": "Metadata fields to merge.",
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "provider_config_key",
+        "connection_id",
+        "metadata"
+      ],
+      "title": "UpdateConnectionMetadataConfig",
+      "type": "object"
+    },
+    "UpdateIntegrationConfig": {
+      "additionalProperties": false,
+      "description": "Update the display name and webhook forwarding preference.",
+      "properties": {
+        "unique_key": {
+          "description": "Nango integration ID (unique key).",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Unique Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_integration",
+          "default": "update_integration",
+          "title": "Operation",
+          "type": "string"
+        },
+        "display_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "forward_webhooks": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Forward Webhooks"
+        }
+      },
+      "required": [
+        "unique_key",
+        "display_name"
+      ],
+      "title": "UpdateIntegrationConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_integration": "#/$defs/CreateIntegrationConfig",
+          "delete_connection": "#/$defs/DeleteConnectionConfig",
+          "delete_integration": "#/$defs/DeleteIntegrationConfig",
+          "get_action_result": "#/$defs/GetActionResultConfig",
+          "get_connection": "#/$defs/GetConnectionConfig",
+          "get_integration": "#/$defs/GetIntegrationConfig",
+          "get_records": "#/$defs/GetRecordsConfig",
+          "get_sync_status": "#/$defs/GetSyncStatusConfig",
+          "list_connections": "#/$defs/ListConnectionsConfig",
+          "list_functions": "#/$defs/ListFunctionsConfig",
+          "list_integrations": "#/$defs/ListIntegrationsConfig",
+          "pause_sync": "#/$defs/PauseSyncConfig",
+          "set_connection_metadata": "#/$defs/SetConnectionMetadataConfig",
+          "start_sync": "#/$defs/StartSyncConfig",
+          "trigger_action": "#/$defs/TriggerActionConfig",
+          "trigger_sync": "#/$defs/TriggerSyncConfig",
+          "update_connection": "#/$defs/UpdateConnectionConfig",
+          "update_connection_metadata": "#/$defs/UpdateConnectionMetadataConfig",
+          "update_integration": "#/$defs/UpdateIntegrationConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListIntegrationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetIntegrationConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateIntegrationConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateIntegrationConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteIntegrationConfig"
+        },
+        {
+          "$ref": "#/$defs/ListFunctionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListConnectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/SetConnectionMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateConnectionMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/GetRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/TriggerSyncConfig"
+        },
+        {
+          "$ref": "#/$defs/StartSyncConfig"
+        },
+        {
+          "$ref": "#/$defs/PauseSyncConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSyncStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/TriggerActionConfig"
+        },
+        {
+          "$ref": "#/$defs/GetActionResultConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NangoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Nango Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

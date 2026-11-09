@@ -1,0 +1,16 @@
+[
+  {
+    "operation": "get_integration",
+    "kind": "d",
+    "source": "https://nango.dev/docs/reference/backend/http-api/integration/get.md",
+    "detail": "IntegrationFull intersects Integration (additionalProperties:false, required unique_key/display_name/provider/created_at/updated_at) with another additionalProperties:false object permitting only webhook_url and credentials. The official Basic response shown on this page is rejected by the latter. The node accepts this documented response without requesting sensitive include fields.",
+    "doc_url": "https://nango.dev/docs/reference/backend/http-api/integration/get.md"
+  },
+  {
+    "operation": "get_connection",
+    "kind": "d",
+    "source": "https://nango.dev/docs/reference/backend/http-api/connections/get.md",
+    "detail": "AllAuthCredentials includes OAuth1CredentialsWithRaw/OAuth2CredentialsWithRaw. Each intersects a closed base credential object with a closed object permitting only raw, so the required OAuth type/token fields and raw cannot coexist. The harness selects the published OAuth1 branch and cannot generate a valid response. The docs say this endpoint returns OAuth1/OAuth2 credentials and describe fetching/refreshing access tokens. The node parses these connection objects and removes their credentials from output.",
+    "doc_url": "https://nango.dev/docs/reference/backend/http-api/connections/get.md"
+  }
+]
