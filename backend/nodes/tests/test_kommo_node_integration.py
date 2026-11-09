@@ -399,3 +399,12 @@ async def test_registration_failure_and_invalid_host_are_not_accepted(monkeypatc
             config={},
             node_id="test",
         )
+
+
+def test_updated_lead_without_stage_transition_still_reaches_agent():
+    body = json.loads(json.dumps(EVENTS["update_lead"]["body"]))
+    body["leads"]["update"][0].pop("old_status_id")
+    output = KommoNode.resolve_trigger_payload(body, {"event_type": "update_lead"})
+    event = KommoNode.resolve_agent_event(output)
+    assert "Previous stage" not in event["text"]
+    assert "get_lead" in event["text"]

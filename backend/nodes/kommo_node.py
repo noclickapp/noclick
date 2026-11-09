@@ -374,7 +374,7 @@ class KommoNode(ExternalWebhookTriggerMixin, WorkflowNode):
                 lines.append(
                     f"Stage: {record.get('status_id', '')}; value: {record.get('price', '')}"
                 )
-                if event_type != "add_lead":
+                if event_type != "add_lead" and record.get("old_status_id"):
                     lines.append(f"Previous stage: {record['old_status_id']}")
                 lines.append(
                     f"Changed by user {record.get('modified_user_id', '')}; responsible user {record.get('responsible_user_id', '')}"
