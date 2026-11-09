@@ -1,0 +1,957 @@
+{
+  "$defs": {
+    "ChorusAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "chorus_by_zoominfo_api_token",
+          "default": "chorus_by_zoominfo_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Chorus API Token",
+      "type": "object",
+      "x-credential-instructions": "In Chorus Personal Settings, generate a personal API token. Your Chorus role must permit API access. Paste only the token; NoClick sends it in the Authorization header. API access follows your user's data visibility and action permissions.",
+      "x-credential-url": "https://chorus.ai/login"
+    },
+    "CreateMoment": {
+      "additionalProperties": false,
+      "description": "Create moment.",
+      "properties": {
+        "operation": {
+          "const": "create_moment",
+          "default": "create_moment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "callid": {
+          "minLength": 1,
+          "title": "Callid",
+          "type": "string"
+        },
+        "moment_time": {
+          "description": "Start time in seconds.",
+          "minimum": 0,
+          "title": "Moment Time",
+          "type": "number"
+        },
+        "moment_duration": {
+          "description": "Duration in seconds.",
+          "exclusiveMinimum": 0,
+          "title": "Moment Duration",
+          "type": "number"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "url_string": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url String"
+        },
+        "expiration_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expiration Date"
+        }
+      },
+      "required": [
+        "callid",
+        "moment_time",
+        "moment_duration"
+      ],
+      "title": "CreateMoment",
+      "type": "object"
+    },
+    "CreatePlaylist": {
+      "additionalProperties": false,
+      "description": "Create playlist.",
+      "properties": {
+        "operation": {
+          "const": "create_playlist",
+          "default": "create_playlist",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreatePlaylist",
+      "type": "object"
+    },
+    "CreateWebhook": {
+      "additionalProperties": false,
+      "description": "Create webhook.",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event": {
+          "const": "recording_done",
+          "default": "recording_done",
+          "title": "Event",
+          "type": "string"
+        },
+        "hook_url": {
+          "description": "Webhook callback URL that Chorus should post to.",
+          "minLength": 1,
+          "title": "Hook Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "hook_url"
+      ],
+      "title": "CreateWebhook",
+      "type": "object"
+    },
+    "DeleteEngagement": {
+      "additionalProperties": false,
+      "description": "Request asynchronous deletion of a single engagement.",
+      "properties": {
+        "operation": {
+          "const": "delete_engagement",
+          "default": "delete_engagement",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "engagement_id": {
+          "description": "Exact engagement ID to delete asynchronously.",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Engagement Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "engagement_id"
+      ],
+      "title": "DeleteEngagement",
+      "type": "object"
+    },
+    "DeleteMoment": {
+      "additionalProperties": false,
+      "description": "Delete moment.",
+      "properties": {
+        "id": {
+          "description": "Exact Chorus resource ID.",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_moment",
+          "default": "delete_moment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteMoment",
+      "type": "object"
+    },
+    "DeletePlaylist": {
+      "additionalProperties": false,
+      "description": "Delete a playlist without recursively deleting children.",
+      "properties": {
+        "id": {
+          "description": "Exact Chorus resource ID.",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_playlist",
+          "default": "delete_playlist",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeletePlaylist",
+      "type": "object"
+    },
+    "DeleteWebhook": {
+      "additionalProperties": false,
+      "description": "Delete webhook.",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "hook_url": {
+          "description": "Exact URL of the webhook to delete.",
+          "minLength": 1,
+          "title": "Hook Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "hook_url"
+      ],
+      "title": "DeleteWebhook",
+      "type": "object"
+    },
+    "GetConversation": {
+      "additionalProperties": false,
+      "description": "Get conversation.",
+      "properties": {
+        "id": {
+          "description": "Exact Chorus resource ID.",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated documented fields, e.g. name,recording.utterances,recording.trackers.",
+          "title": "Fields"
+        },
+        "include_meeting_metadata": {
+          "default": false,
+          "title": "Include Meeting Metadata",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetConversation",
+      "type": "object"
+    },
+    "GetCurrentUser": {
+      "additionalProperties": false,
+      "description": "Get current user.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCurrentUser",
+      "type": "object"
+    },
+    "GetPlaylist": {
+      "additionalProperties": false,
+      "description": "Get playlist.",
+      "properties": {
+        "id": {
+          "description": "Exact Chorus resource ID.",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_playlist",
+          "default": "get_playlist",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetPlaylist",
+      "type": "object"
+    },
+    "GetTeam": {
+      "additionalProperties": false,
+      "description": "Get team.",
+      "properties": {
+        "id": {
+          "description": "Exact Chorus resource ID.",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTeam",
+      "type": "object"
+    },
+    "ListEngagements": {
+      "additionalProperties": false,
+      "description": "List engagements.",
+      "properties": {
+        "operation": {
+          "const": "list_engagements",
+          "default": "list_engagements",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "continuation_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy the previous page's continuation_key to fetch the next page.",
+          "title": "Continuation Key"
+        },
+        "engagement_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated engagement IDs.",
+          "title": "Engagement Id"
+        },
+        "engagement_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "meeting",
+                "dialer",
+                "email",
+                "content_viewed",
+                "unrecorded_meeting"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Engagement Type",
+          "enum": [
+            "meeting",
+            "dialer",
+            "email",
+            "content_viewed",
+            "unrecorded_meeting"
+          ],
+          "x-enum-searchable": true
+        },
+        "min_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum engagement date, ISO 8601 date-time.",
+          "title": "Min Date"
+        },
+        "max_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum engagement date, ISO 8601 date-time.",
+          "title": "Max Date"
+        },
+        "participants_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Participants Email"
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated owner team IDs.",
+          "title": "Team Id"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated owner user IDs.",
+          "title": "User Id"
+        },
+        "with_trackers": {
+          "default": false,
+          "title": "With Trackers",
+          "type": "boolean"
+        }
+      },
+      "title": "ListEngagements",
+      "type": "object"
+    },
+    "ListMoments": {
+      "additionalProperties": false,
+      "description": "List moments.",
+      "properties": {
+        "operation": {
+          "const": "list_moments",
+          "default": "list_moments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "shared_on": {
+          "description": "Required date range; e.g. 2021-01-01T00:00:00Z:2021-01-31T00:00:00Z. Maximum range 365 days.",
+          "title": "Shared On",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shared_on"
+      ],
+      "title": "ListMoments",
+      "type": "object"
+    },
+    "ListPlaylists": {
+      "additionalProperties": false,
+      "description": "List playlists.",
+      "properties": {
+        "operation": {
+          "const": "list_playlists",
+          "default": "list_playlists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_number": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "conversation_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conversation Id"
+        },
+        "subscribed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subscribed"
+        }
+      },
+      "title": "ListPlaylists",
+      "type": "object"
+    },
+    "ListTeams": {
+      "additionalProperties": false,
+      "description": "List teams.",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTeams",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "description": "List users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "ListWebhooks": {
+      "additionalProperties": false,
+      "description": "List webhooks.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListWebhooks",
+      "type": "object"
+    },
+    "UpdateMoment": {
+      "additionalProperties": false,
+      "description": "Update moment.",
+      "properties": {
+        "id": {
+          "description": "Exact Chorus resource ID.",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_moment",
+          "default": "update_moment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "moment_time": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Moment Time"
+        },
+        "moment_duration": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Moment Duration"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "url_string": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url String"
+        },
+        "expiration_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expiration Date"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateMoment",
+      "type": "object"
+    },
+    "UploadRecording": {
+      "additionalProperties": false,
+      "description": "Upload recording.",
+      "properties": {
+        "operation": {
+          "const": "upload_recording",
+          "default": "upload_recording",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "data": {
+          "accept": "audio/*,video/*",
+          "description": "Recording file: public HTTPS URL or data URI. Formats: 3GPP, AU, AVI, FLV, HLS, MKV, MP3, MP4, Ogg, WAV, WebM.",
+          "format": "data-url",
+          "title": "Data",
+          "type": "string"
+        },
+        "name": {
+          "description": "Recording name.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "user": {
+          "description": "Recording owner's email address.",
+          "minLength": 1,
+          "title": "User",
+          "type": "string"
+        },
+        "meeting_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meeting Id"
+        },
+        "crm_account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Crm Account Id"
+        },
+        "crm_opportunity_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Crm Opportunity Id"
+        }
+      },
+      "required": [
+        "data",
+        "name",
+        "user"
+      ],
+      "title": "UploadRecording",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_moment": "#/$defs/CreateMoment",
+          "create_playlist": "#/$defs/CreatePlaylist",
+          "create_webhook": "#/$defs/CreateWebhook",
+          "delete_engagement": "#/$defs/DeleteEngagement",
+          "delete_moment": "#/$defs/DeleteMoment",
+          "delete_playlist": "#/$defs/DeletePlaylist",
+          "delete_webhook": "#/$defs/DeleteWebhook",
+          "get_conversation": "#/$defs/GetConversation",
+          "get_current_user": "#/$defs/GetCurrentUser",
+          "get_playlist": "#/$defs/GetPlaylist",
+          "get_team": "#/$defs/GetTeam",
+          "list_engagements": "#/$defs/ListEngagements",
+          "list_moments": "#/$defs/ListMoments",
+          "list_playlists": "#/$defs/ListPlaylists",
+          "list_teams": "#/$defs/ListTeams",
+          "list_users": "#/$defs/ListUsers",
+          "list_webhooks": "#/$defs/ListWebhooks",
+          "update_moment": "#/$defs/UpdateMoment",
+          "upload_recording": "#/$defs/UploadRecording"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/ListEngagements"
+        },
+        {
+          "$ref": "#/$defs/GetConversation"
+        },
+        {
+          "$ref": "#/$defs/DeleteEngagement"
+        },
+        {
+          "$ref": "#/$defs/ListTeams"
+        },
+        {
+          "$ref": "#/$defs/GetTeam"
+        },
+        {
+          "$ref": "#/$defs/ListPlaylists"
+        },
+        {
+          "$ref": "#/$defs/GetPlaylist"
+        },
+        {
+          "$ref": "#/$defs/CreatePlaylist"
+        },
+        {
+          "$ref": "#/$defs/DeletePlaylist"
+        },
+        {
+          "$ref": "#/$defs/ListMoments"
+        },
+        {
+          "$ref": "#/$defs/CreateMoment"
+        },
+        {
+          "$ref": "#/$defs/UpdateMoment"
+        },
+        {
+          "$ref": "#/$defs/DeleteMoment"
+        },
+        {
+          "$ref": "#/$defs/ListWebhooks"
+        },
+        {
+          "$ref": "#/$defs/CreateWebhook"
+        },
+        {
+          "$ref": "#/$defs/DeleteWebhook"
+        },
+        {
+          "$ref": "#/$defs/UploadRecording"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ChorusAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Chorus-by-zoominfo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
