@@ -6,8 +6,11 @@ writes that have no v3 equivalent.
 """
 
 import base64
+import hashlib
+import hmac
 import json
 import re
+import secrets
 import time
 from typing import Annotated, Any, Literal, Optional, Union
 from urllib.parse import quote, urlsplit
@@ -18,6 +21,10 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import (
+    ExternalWebhookTriggerMixin,
+    WebhookTriggerConfigBase,
+)
 from nodes.scopes.teamwork import TEAMWORK_SCOPES
 from nodes.teamwork_operations import BODY_SCHEMAS, OPERATIONS
 
@@ -171,6 +178,47 @@ def _make_config(name: str, op: dict[str, Any]) -> type[BaseModel]:
 
 
 CONFIG_MODELS = {name: _make_config(name, op) for name, op in OPERATIONS.items()}
+# Events: https://apidocs.teamwork.com/guides/teamwork/sample-webhook-payloads
+TRIGGER_EVENTS = {
+    "on_project_created": ("PROJECT.CREATED", "project", "New Project"),
+    "on_tasklist_created": ("TASKLIST.CREATED", "taskList", "New Task List"),
+    "on_tasklist_updated": ("TASKLIST.UPDATED", "taskList", "Updated Task List"),
+    "on_time_created": ("TIME.CREATED", "time", "New Time Entry"),
+    "on_time_updated": ("TIME.UPDATED", "time", "Updated Time Entry"),
+}
+for name, (event, resource, label) in TRIGGER_EVENTS.items():
+    CONFIG_MODELS[name] = create_model(
+        "Teamwork" + "".join(part.title() for part in name.split("_")) + "Config",
+        __base__=WebhookTriggerConfigBase,
+        __module__=__name__,
+        operation=(
+            Literal[name],
+            Field(
+                name,
+                title=label,
+                json_schema_extra={
+                    "const": name,
+                    "ui:hidden": True,
+                    "x-category": "Triggers",
+                    "x-is-trigger": True,
+                    "x-display-name": label,
+                },
+            ),
+        ),
+        webhook_url=(
+            Optional[str],
+            Field(
+                None,
+                title="Webhook URL",
+                description="Registered automatically. Requires a paid Teamwork plan and site administrator access.",
+                json_schema_extra={
+                    "ui:widget": "webhook",
+                    "ui:copyable": True,
+                    "ui:loadValue": True,
+                },
+            ),
+        ),
+    )
 globals().update({model.__name__: model for model in CONFIG_MODELS.values()})
 TeamworkConfig = Annotated[
     Union[tuple(CONFIG_MODELS.values())], Discriminator("operation")
@@ -209,7 +257,7 @@ def _site_base(raw: str) -> str:
     return f"https://{host}"
 
 
-class TeamworkNode(WorkflowNode):
+class TeamworkNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-teamwork"
     credential_provider_labels = {"teamwork": "Teamwork Account"}
     scope_registry = TEAMWORK_SCOPES
@@ -227,6 +275,146 @@ class TeamworkNode(WorkflowNode):
     def get_config_model(cls):
         return TeamworkNodeConfig
 
+    @staticmethod
+    def _authorization(credential):
+        if credential.get("credential_type") == "teamwork_api_key":
+            base = _site_base(credential["site_url"])
+            token = base64.b64encode(
+                (credential["api_key"] + ":password").encode()
+            ).decode()
+            return base, f"Basic {token}"
+        return (
+            _site_base(credential["installation"]["apiEndPoint"]),
+            f"Bearer {credential['access_token']}",
+        )
+
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, body=None):
+        base, authorization = cls._authorization(credential)
+        async with httpx.AsyncClient(timeout=60, follow_redirects=False) as client:
+            response = await client.request(
+                method,
+                base + path,
+                headers={"Authorization": authorization, "Accept": "application/json"},
+                json=body,
+            )
+        if response.is_error or response.is_redirect:
+            raise ValueError(f"Teamwork webhook API error {response.status_code}")
+        return response.json() if response.content else {}
+
+    @classmethod
+    async def _register_external_webhook(
+        cls, *, webhook_url, credential, config, node_id
+    ):
+        # Registration: https://apidocs.teamwork.com/docs/teamwork/v1/webhooks/post-webhooks-json
+        # Token: https://apidocs.teamwork.com/guides/teamwork/setting-up-webhooks
+        event = TRIGGER_EVENTS[config["operation"]][0]
+        secret = secrets.token_hex(32)
+        data = await cls._webhook_request(
+            credential,
+            "POST",
+            "/webhooks.json",
+            {
+                "webhook": {
+                    "event": event,
+                    "url": webhook_url,
+                    "status": "ACTIVE",
+                    "version": "2",
+                    "contentType": "application/json",
+                    "token": secret,
+                }
+            },
+        )
+        if not data.get("id"):
+            raise ValueError("Teamwork did not return a webhook ID")
+        return {"external_webhook_id": str(data["id"]), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        webhook_id = config.get("external_webhook_id")
+        if credential and webhook_id:
+            await cls._webhook_request(
+                credential,
+                "DELETE",
+                f"/webhooks/{quote(str(webhook_id), safe='')}.json",
+            )
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # HMAC-SHA256 over raw body, hex encoded; no timestamp or prefix.
+        secret = config.get("signing_secret")
+        signature = next(
+            (
+                value
+                for key, value in headers.items()
+                if key.lower() == "x-projects-signature"
+            ),
+            "",
+        )
+        if not secret or not signature:
+            return False
+        expected = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, signature)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        headers = payload.get("_webhook", {}).get("headers", {})
+        event = next(
+            (
+                value
+                for key, value in headers.items()
+                if key.lower() == "x-projects-event"
+            ),
+            "",
+        )
+        expected = TRIGGER_EVENTS.get(config.get("operation"))
+        return bool(expected and event.upper() == expected[0])
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if config.get("operation") in TRIGGER_EVENTS:
+            return {
+                "status": "success",
+                "operation": config["operation"],
+                "data": payload,
+            }
+        return None
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        operation = output.get("operation")
+        if operation not in TRIGGER_EVENTS:
+            return super().resolve_agent_event(output)
+        event, resource, label = TRIGGER_EVENTS[operation]
+        payload = output["data"]
+        actor = payload["eventCreator"]
+        record = payload[resource]
+        person = " ".join(filter(None, (actor.get("firstName"), actor.get("lastName"))))
+        resource_id = record["id"]
+        content = record.get("description") or ""
+        name = (
+            record.get("name")
+            if resource != "time"
+            else f"{record['hours']}h {record['minutes']}m"
+        )
+        project_id = record.get("projectId") if resource != "project" else resource_id
+        lines = [
+            f"Teamwork {label}: {name or resource_id}",
+            f"By {person or actor['id']} (user ID {actor['id']})",
+            f"{resource} ID: {resource_id}; project ID: {project_id}",
+        ]
+        if resource == "time":
+            lines.append(
+                f"Task ID: {record['taskId']}; user ID: {record['userId']}; date: {record['date']}"
+            )
+        if content:
+            lines.append(str(content))
+        return {
+            "text": "\n".join(lines),
+            "title": f"{label}: {name or resource_id}",
+            "conversation_key": f"{resource}:{resource_id}",
+        }
+
     async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(self.config, TeamworkNodeConfig):
             raise ValueError("Teamwork configuration required")
@@ -235,6 +423,9 @@ class TeamworkNode(WorkflowNode):
             raise ValueError("Connect Teamwork credentials")
         config = self.config.config
         self.scope_registry.require(config.operation)
+        if config.operation in TRIGGER_EVENTS:
+            payload = self.node_data.get("config", {}).get("_triggerPayload") or inputs
+            return self.resolve_trigger_payload(payload, config.model_dump())
         op = OPERATIONS[config.operation]
         values = config.model_dump(exclude_none=True, exclude={"operation"})
         path = op["path"]

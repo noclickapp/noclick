@@ -10,5 +10,15 @@ from nodes.teamwork_operations import OPERATIONS
 
 TEAMWORK_SCOPES = ScopeRegistry(
     provider="teamwork",
-    requirements={name: ScopeRequirement() for name in OPERATIONS},
+    requirements={
+        name: ScopeRequirement()
+        for name in (
+            *OPERATIONS,
+            "on_project_created",
+            "on_tasklist_created",
+            "on_tasklist_updated",
+            "on_time_created",
+            "on_time_updated",
+        )
+    },
 )

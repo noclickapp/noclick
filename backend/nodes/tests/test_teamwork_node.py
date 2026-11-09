@@ -2,6 +2,9 @@
 
 import base64
 import json
+import hashlib
+import hmac
+from pathlib import Path
 import re
 from unittest.mock import Mock
 
@@ -14,6 +17,7 @@ from nodes.oauth.teamwork_oauth import OAUTH_PROVIDER
 TOKEN_URL = OAUTH_PROVIDER.token_url
 USERINFO_URL = OAUTH_PROVIDER.identity_url
 from nodes.teamwork_node import (
+    TRIGGER_EVENTS,
     CONFIG_MODELS,
     OPERATIONS,
     BODY_SCHEMAS,
@@ -219,3 +223,109 @@ def test_custom_field_value_rejects_undocumented_object():
     from nodes.teamwork_node import _BODY_VALIDATOR
 
     assert not _BODY_VALIDATOR({"type": "any"}).is_valid({})
+
+
+# Fixtures copied verbatim from Teamwork's sample-webhook-payloads documentation.
+# They exercise the full delivery path and the signed registration lifecycle.
+WEBHOOK_EVENTS = json.loads(
+    (Path(__file__).parent / "fixtures/teamwork/webhook-events.json").read_text()
+)
+
+
+@pytest.mark.parametrize("operation", TRIGGER_EVENTS)
+def test_documented_webhook_delivery_and_agent_turn(operation):
+    event, resource, label = TRIGGER_EVENTS[operation]
+    documented = WEBHOOK_EVENTS[event]
+    payload = {**documented["body"], "_webhook": {"headers": documented["headers"]}}
+    config = {"operation": operation}
+    assert TeamworkNode.filter_trigger_payload(payload, config)
+    assert not TeamworkNode.filter_trigger_payload(
+        payload, {"operation": "list_projects"}
+    )
+    other = next(op for op in TRIGGER_EVENTS if op != operation)
+    assert not TeamworkNode.filter_trigger_payload(payload, {"operation": other})
+    output = TeamworkNode.resolve_trigger_payload(payload, config)
+    turn = TeamworkNode.resolve_agent_event(output)
+    record = documented["body"][resource]
+    assert "Marc Cashman" in turn["text"]
+    assert str(record["id"]) in turn["text"]
+    assert record["description"] in turn["text"]
+    assert turn["conversation_key"] == f"{resource}:{record['id']}"
+    assert TeamworkNodeConfig(
+        config=config,
+        credentials=TeamworkAPIKeyCredential(api_key="key", site_url=SITE),
+    )
+
+
+@pytest.mark.parametrize("operation", TRIGGER_EVENTS)
+@pytest.mark.parametrize("oauth", [False, True])
+@pytest.mark.asyncio
+async def test_webhook_registration_signature_and_cleanup(operation, oauth):
+    credential = (
+        {
+            "credential_type": "teamwork_oauth",
+            "access_token": "token",
+            "installation": {"apiEndPoint": SITE},
+        }
+        if oauth
+        else {"credential_type": "teamwork_api_key", "api_key": "key", "site_url": SITE}
+    )
+    with respx.mock(assert_all_called=True) as router:
+        create = router.post(SITE + "/webhooks.json").mock(
+            return_value=httpx.Response(201, json={"id": 1234, "STATUS": "OK"})
+        )
+        delete = router.delete(SITE + "/webhooks/1234.json").mock(
+            return_value=httpx.Response(200, json={"STATUS": "OK"})
+        )
+        state = await TeamworkNode._register_external_webhook(
+            webhook_url="https://test.hooks.example.test/hook",
+            credential=credential,
+            config={"operation": operation},
+            node_id="test",
+        )
+        body = json.loads(create.calls[0].request.content)["webhook"]
+        assert body == {
+            "event": TRIGGER_EVENTS[operation][0],
+            "url": "https://test.hooks.example.test/hook",
+            "status": "ACTIVE",
+            "version": "2",
+            "contentType": "application/json",
+            "token": state["signing_secret"],
+        }
+        assert (
+            create.calls[0]
+            .request.headers["authorization"]
+            .startswith("Bearer " if oauth else "Basic ")
+        )
+        raw = json.dumps(WEBHOOK_EVENTS[body["event"]]["body"]).encode()
+        signature = hmac.new(
+            state["signing_secret"].encode(), raw, hashlib.sha256
+        ).hexdigest()
+        headers = {"X-Projects-Signature": signature}
+        assert TeamworkNode.verify_webhook_signature(raw, headers, state)
+        assert not TeamworkNode.verify_webhook_signature(raw + b" ", headers, state)
+        assert not TeamworkNode.verify_webhook_signature(raw, {}, state)
+        assert not TeamworkNode.verify_webhook_signature(raw, headers, {})
+        await TeamworkNode._unregister_external_webhook(
+            credential=credential, config=state, node_id="test"
+        )
+        assert delete.called
+
+
+@pytest.mark.asyncio
+async def test_webhook_registration_requires_provider_id():
+    with respx.mock() as router:
+        router.post(SITE + "/webhooks.json").mock(
+            return_value=httpx.Response(201, json={"STATUS": "OK"})
+        )
+        with pytest.raises(ValueError, match="webhook ID"):
+            await TeamworkNode._register_external_webhook(
+                webhook_url="https://test.hooks.example.test/hook",
+                credential={
+                    "credential_type": "teamwork_api_key",
+                    "api_key": "key",
+                    "site_url": SITE,
+                },
+                config={"operation": "on_project_created"},
+                node_id="test",
+            )
