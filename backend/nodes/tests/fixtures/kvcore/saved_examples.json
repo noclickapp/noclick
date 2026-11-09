@@ -1,0 +1,290 @@
+{
+  "update_contact": {
+    "name": "Update Contact",
+    "method": "PUT",
+    "path": "/v2/public/contact/1",
+    "config": {
+      "operation": "update_contact",
+      "contact_id": 1,
+      "first_name": "TestF",
+      "last_name": "TestL",
+      "email": "no-reply@test.com",
+      "cell_phone_1": 5555555555,
+      "home_phone": 5555555555,
+      "work_phone": 5555555555,
+      "deal_type": "buyer",
+      "status": 0,
+      "rating": 0,
+      "source": null,
+      "capture_method": null,
+      "email_optin": 1,
+      "phone_on": 1,
+      "text_on": 0,
+      "assigned_agent_id": 147583,
+      "primary_city": null,
+      "primary_state": null,
+      "primary_zip": null,
+      "primary_address": null
+    },
+    "request_body": {
+      "first_name": "TestF",
+      "last_name": "TestL",
+      "email": "no-reply@test.com",
+      "cell_phone_1": 5555555555,
+      "home_phone": 5555555555,
+      "work_phone": 5555555555,
+      "deal_type": "buyer",
+      "status": 0,
+      "rating": 0,
+      "email_optin": 1,
+      "phone_on": 1,
+      "text_on": 0,
+      "assigned_agent_id": 147583
+    },
+    "status": 200,
+    "body": "{\n    \"first_name\": \"TestF\",\n    \"last_name\": \"TestL\",\n    \"email\": \"no-reply@test.com\",\n    \"cell_phone_1\": 5555555555,\n    \"home_phone\": 5555555555,\n    \"work_phone\": 5555555555,\n    \"deal_type\": \"buyer\",\n    \"status\": 0,\n    \"rating\": 0,\n    \"source\": null,\n    \"capture_method\": null,\n    \"email_optin\": 1,\n    \"phone_on\": 1,\n    \"text_on\": 0,\n    \"tcpa_optin_date\": \"0000-00-00 00:00:00\",\n    \"avg_price\": 0,\n    \"avg_beds\": 0,\n    \"avg_baths\": 0,\n    \"is_private\": 0,\n    \"active_mls_id\": null,\n    \"assigned_agent_id\": 147583,\n    \"primary_city\": null,\n    \"primary_state\": null,\n    \"primary_zip\": null,\n    \"primary_address\": null,\n    \"spouse_first_name\": null,\n    \"spouse_last_name\": null,\n    \"spouse_phone\": null,\n    \"title\": null,\n    \"birthday\": null,\n    \"gender\": null,\n    \"poi_address\": null,\n    \"poi_city\": null,\n    \"poi_state\": null,\n    \"poi_zip\": null,\n    \"second_email\": null,\n    \"id\": 2021\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "delete_contact": {
+    "name": "Remove Contact",
+    "method": "DELETE",
+    "path": "/v2/public/contact/1",
+    "config": {
+      "operation": "delete_contact",
+      "contact_id": 1
+    },
+    "request_body": null,
+    "status": 204,
+    "body": "",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "get_contact_tags": {
+    "name": "Get Tag List",
+    "method": "GET",
+    "path": "/v2/public/contact/1/tags",
+    "config": {
+      "operation": "get_contact_tags",
+      "contact_id": 1
+    },
+    "request_body": null,
+    "status": 200,
+    "body": "{\n\t\"contact_id\": 123,\n\t\"tags\" : [\n\t\t{\n\t\t\t\"name\": \"hotlead\",\n\t\t\t\"locked\": 0\n\t\t},\n\t\t{\n\t\t\t\"name\": \"companywebsite\",\n\t\t\t\"locked\": 1\n\t\t}\n\t]\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "add_contact_tags": {
+    "name": "Add Tags to Contact",
+    "method": "PUT",
+    "path": "/v2/public/contact/1/tags",
+    "config": {
+      "operation": "add_contact_tags",
+      "contact_id": 1,
+      "tags": [
+        {
+          "name": "hotlead",
+          "locked": 0
+        },
+        {
+          "name": "companywebsite",
+          "locked": 1
+        }
+      ]
+    },
+    "request_body": {
+      "tags": [
+        {
+          "name": "hotlead",
+          "locked": 0
+        },
+        {
+          "name": "companywebsite",
+          "locked": 1
+        }
+      ]
+    },
+    "status": 200,
+    "body": "{\n\t\"contact_id\": 123,\n\t\"tags\" : [\n\t\t{\n\t\t\t\"name\": \"hotlead\",\n\t\t\t\"locked\": 0\n\t\t},\n\t\t{\n\t\t\t\"name\": \"companywebsite\",\n\t\t\t\"locked\": 1\n\t\t}\n\t]\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "remove_contact_tags": {
+    "name": "Remove Tags from Contact",
+    "method": "DELETE",
+    "path": "/v2/public/contact/1/tags",
+    "config": {
+      "operation": "remove_contact_tags",
+      "contact_id": 1,
+      "tags": [
+        "hotlead",
+        "companywebsite"
+      ]
+    },
+    "request_body": {
+      "tags": [
+        "hotlead",
+        "companywebsite"
+      ]
+    },
+    "status": 200,
+    "body": "{\n\t\"contact_id\": 123,\n\t\"tags\" : [\n\t\t{\n\t\t\t\"name\": \"hotlead\",\n\t\t\t\"locked\": 0\n\t\t}\n\t]\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "get_note": {
+    "name": "Get Note Details",
+    "method": "GET",
+    "path": "/v2/public/contact/1/action/note/1",
+    "config": {
+      "operation": "get_note",
+      "contact_id": 1,
+      "action_id": 1
+    },
+    "request_body": null,
+    "status": 200,
+    "body": "{\n\t\"action_id\": 1,\n\t\"date\": \"2019-08-22 08:50:22\",\n\t\"title\": \"My Note\",\n\t\"details\": \"My note details\",\n\t\"action_owner_user_id\": 42\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "add_note": {
+    "name": "Add a Note",
+    "method": "PUT",
+    "path": "/v2/public/contact/1/action/note",
+    "config": {
+      "operation": "add_note",
+      "contact_id": 1,
+      "date": "2019-08-22 08:50:22",
+      "title": "My Note",
+      "details": "My note details",
+      "action_owner_user_id": 42
+    },
+    "request_body": {
+      "date": "2019-08-22 08:50:22",
+      "title": "My Note",
+      "details": "My note details",
+      "action_owner_user_id": 42
+    },
+    "status": 200,
+    "body": "{\n    \"action_id\": 1,\n    \"date\": \"2019-08-22 08:50:22\",\n    \"title\": \"My Note\",\n    \"details\": \"My note details\",\n    \"action_owner_user_id\": 42\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "update_note": {
+    "name": "Update a Note",
+    "method": "PUT",
+    "path": "/v2/public/contact/1/action/note/1",
+    "config": {
+      "operation": "update_note",
+      "contact_id": 1,
+      "action_id": 1,
+      "date": "2019-08-22 08:50:22",
+      "title": "My Note",
+      "details": "My note details",
+      "action_owner_user_id": 42
+    },
+    "request_body": {
+      "date": "2019-08-22 08:50:22",
+      "title": "My Note",
+      "details": "My note details",
+      "action_owner_user_id": 42
+    },
+    "status": 200,
+    "body": "{\n    \"action_id\": 1,\n    \"date\": \"2019-08-22 08:50:22\",\n    \"title\": \"My Note\",\n    \"details\": \"My note details\",\n    \"action_owner_user_id\": 42\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "get_call": {
+    "name": "Get Call Details",
+    "method": "GET",
+    "path": "/v2/public/contact/1/action/call/1",
+    "config": {
+      "operation": "get_call",
+      "contact_id": 1,
+      "action_id": 1
+    },
+    "request_body": null,
+    "status": 200,
+    "body": "{\n    \"action_id\": 198696,\n    \"date\": \"2019-08-01 18:58:26\",\n    \"action_owner_user_id\": 22277,\n    \"direction\": \"outbound\",\n    \"result\": \"3\",\n    \"recording_url\": \"https://domain.com/callrecording.mp3\",\n    \"notes\": \"Scheduled showing for tuesday next week\"\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "log_call": {
+    "name": "Log a Call",
+    "method": "PUT",
+    "path": "/v2/public/contact/1/action/call",
+    "config": {
+      "operation": "log_call",
+      "contact_id": 1,
+      "recording_url": "https://domain.com/callrecording.mp3",
+      "notes": "Scheduled showing for tuesday next week"
+    },
+    "request_body": {
+      "recording_url": "https://domain.com/callrecording.mp3",
+      "notes": "Scheduled showing for tuesday next week"
+    },
+    "status": 200,
+    "body": "{\n    \"action_id\": 198696,\n    \"date\": \"2019-08-01 18:58:26\",\n    \"action_owner_user_id\": 22277,\n    \"direction\": \"outbound\",\n    \"result\": \"3\",\n    \"recording_url\": \"https://domain.com/callrecording.mp3\",\n    \"notes\": \"Scheduled showing for tuesday next week\"\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "update_call": {
+    "name": "Update a Call",
+    "method": "PUT",
+    "path": "/v2/public/contact/1/action/call/1",
+    "config": {
+      "operation": "update_call",
+      "contact_id": 1,
+      "action_id": 1,
+      "recording_url": "https://domain.com/callrecording.mp3",
+      "notes": "Scheduled showing for tuesday next week"
+    },
+    "request_body": {
+      "recording_url": "https://domain.com/callrecording.mp3",
+      "notes": "Scheduled showing for tuesday next week"
+    },
+    "status": 200,
+    "body": "{\n    \"action_id\": 198696,\n    \"date\": \"2019-08-01 18:58:26\",\n    \"action_owner_user_id\": 22277,\n    \"direction\": \"outbound\",\n    \"result\": \"3\",\n    \"recording_url\": \"https://domain.com/callrecording.mp3\",\n    \"notes\": \"Scheduled showing for tuesday next week\"\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "get_search_alerts": {
+    "name": "Get Contact Search Alert",
+    "method": "GET",
+    "path": "/v2/public/contact/1/searchalert",
+    "config": {
+      "operation": "get_search_alerts",
+      "contact_id": 1
+    },
+    "request_body": null,
+    "status": 200,
+    "body": "[\n    {\n        \"id\": 2,\n        \"contact_id\": 56,\n        \"number\": 1,\n        \"active\": 1,\n        \"mls_service_id\": 0,\n        \"name\": null,\n        \"areas\": \"[{\\\"type\\\":\\\"area\\\",\\\"average\\\":516270,\\\"count\\\":83,\\\"name\\\":\\\"Ch01 - Charlotte County\\\",\\\"id\\\":\\\"ch01 - charlotte county\\\",\\\"description\\\":\\\"83 averaging $516K\\\",\\\"trackId\\\":\\\"ch01 - charlotte county:area\\\"}]\",\n        \"types\": \"[{\\\"name\\\":\\\"Single Family\\\",\\\"label\\\":\\\"Single Family\\\",\\\"id\\\":1}]\",\n        \"options\": \"[]\",\n        \"beds\": 0,\n        \"baths\": 0,\n        \"min_price\": 0,\n        \"max_price\": 300000,\n        \"min_acres\": 0,\n        \"max_acres\": 0,\n        \"min_sqft\": 0,\n        \"max_sqft\": 0,\n        \"min_year\": 0,\n        \"max_year\": 0,\n        \"last_sent\": null,\n        \"last_checked\": \"2020-10-01 15:51:19\",\n        \"frequency\": \"+1 week\",\n        \"email_cc\": \"\",\n        \"sent_listings\": null,\n        \"created_at\": \"2020-10-01 15:48:00\",\n        \"updated_at\": \"2020-10-01 15:51:19\",\n        \"deleted_at\": null,\n        \"polygons\": [],\n        \"include_agency_open_houses\": 0,\n        \"half_baths\": 0,\n        \"last_updated_by\": \"Manual\",\n        \"hashtag_searchalert_id\": null,\n        \"sold\": 1\n    }\n]\n",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "list_users": {
+    "name": "Get User List",
+    "method": "GET",
+    "path": "/v2/public/users",
+    "config": {
+      "operation": "list_users"
+    },
+    "request_body": null,
+    "status": 200,
+    "body": "{\n    \"current_page\": 1,\n    \"data\": [\n        {\n            \"id\": 229743,\n            \"email\": \"myagent@insiderealestate.com\",\n            \"external_id\": \"\",\n            \"first_name\": \"My Agent\",\n            \"last_name\": \"Name\",\n            \"updated_at\": \"2019-08-05 17:31:07\",\n            \"mls_id\": \"\",\n            \"status\": \"Active\"            \n        }\n    ],\n    \"first_page_url\": \"https://api.kvcore.com/v2/public/users?page=1\",\n    \"from\": 1,\n    \"last_page\": 1,\n    \"last_page_url\": \"https://api.kvcore.com/v2/public/users?page=1\",\n    \"next_page_url\": null,\n    \"path\": \"https://api.kvcore.com/v2/public/users\",\n    \"per_page\": 10,\n    \"prev_page_url\": null,\n    \"to\": 1,\n    \"total\": 1\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "get_user": {
+    "name": "Get User Details",
+    "method": "GET",
+    "path": "/v2/public/user/1",
+    "config": {
+      "operation": "get_user",
+      "user_id": 1
+    },
+    "request_body": null,
+    "status": 200,
+    "body": "{\n    \"external_id_2\": null,\n    \"email\": \"myagent@insiderealestate.com\",\n    \"name\": \"My Agent Name\",\n    \"default_account\": 123,\n    \"id\": 1,\n    \"updated_at\": \"2019-08-05 17:31:07\",\n    \"delete_on\": null,\n    \"user_id\": 1,\n    \"role\": \"agent\",\n    \"company_admin\": 1,\n    \"first_name\": \"My Agent\",\n    \"last_name\": \"Name\",\n    \"cell_phone\": 0,\n    \"show_cell_phone\": 1,\n    \"work_phone\": 0,\n    \"show_work_phone\": 1,\n    \"direct_phone\": 0,\n    \"show_direct_phone\": 1,\n    \"status\": 1,\n    \"last_login\": 1628184667,\n    \"registered\": null,\n    \"visibility\": 1,\n    \"photo\": \"\",\n    \"facebook_url\": \"\",\n    \"twitter_url\": \"\",\n    \"linkedin_url\": \"\",\n    \"tagline\": \"\",\n    \"title\": \"\",\n    \"mls_id\": \"\",\n    \"bio\": \"\",\n    \"signature\": \"\",\n    \"license_number\": \"\",\n    \"credentials\": null,\n    \"background\": null,\n    \"experience\": null,\n    \"education\": null,\n    \"achievements\": [],\n    \"created_at\": \"2019-08-05 14:44:58\",\n    \"instagram_url\": \"\",\n    \"external_vendor_id\": null,\n    \"nrdsid\": null,\n    \"pinterest_url\": \"\",\n    \"vanity_email\": null,\n    \"chargify_customer_id\": null,\n    \"designations\": [],\n    \"positions\": [],\n    \"languages\": [],\n    \"website\": \"agentname.website.com\"\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  },
+  "list_manual_listings": {
+    "name": "Get Manual Listings List",
+    "method": "GET",
+    "path": "/v2/public/manuallistings",
+    "config": {
+      "operation": "list_manual_listings"
+    },
+    "request_body": null,
+    "status": 200,
+    "body": "{\n    \"current_page\": 1,\n    \"data\": [],\n    \"first_page_url\": \"http://api.kvcore.com/v2/public/manuallistings?page=1\",\n    \"from\": null,\n    \"last_page\": 1,\n    \"last_page_url\": \"http://api.kvcore.com/v2/public/manuallistings?page=1\",\n    \"next_page_url\": null,\n    \"path\": \"http://api.kvcore.com/v2/public/manuallistings\",\n    \"per_page\": 10,\n    \"prev_page_url\": null,\n    \"to\": null,\n    \"total\": 0\n}",
+    "source": "https://documenter.getpostman.com/view/450814/TzsikPdi"
+  }
+}
