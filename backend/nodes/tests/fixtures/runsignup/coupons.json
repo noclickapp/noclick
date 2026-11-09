@@ -1,0 +1,80 @@
+[
+  {
+    "coupons": [
+      {
+        "coupon_id": null,
+        "coupon_code": "abc",
+        "percentage": 25,
+        "fixed_discount_in_cents": 0,
+        "discount_type": "O",
+        "start_date": "2015-01-01 00:00:00",
+        "end_date": "2015-01-31 23:59:59",
+        "applies_to_race_fee": "T",
+        "exclude_event_cost": "F",
+        "applies_to_giveaway": "F",
+        "applies_to_addons": "F",
+        "applies_to_club_membership_discounts": "F",
+        "applies_to_race_memberships": "F",
+        "applies_to_group_setup_fees": "F",
+        "applies_to_group_special_event_costs": "F",
+        "applies_to_age_based_pricing": "F",
+        "applies_to_multi_person_pricing": "F",
+        "applies_to_extra_fee": "F",
+        "applies_with_multi_event_discount": "F",
+        "applies_to_shipping_charges": "F",
+        "applies_to_store": "F",
+        "new_customer_only": "F",
+        "minimum_amount_in_cents": 2000,
+        "minimum_donation_amount_in_cents": 500,
+        "limit_per_customer": 1,
+        "max_uses": 10,
+        "max_num_race_registrants": 10,
+        "max_events_per_registration": 2,
+        "event_specific": "F",
+        "applicable_event_ids": [],
+        "coupon_notes": null,
+        "tags": []
+      },
+      {
+        "coupon_id": 12345,
+        "coupon_code": "xyz",
+        "percentage": null,
+        "fixed_discount_in_cents": 500,
+        "discount_type": "O",
+        "start_date": "2015-01-01 00:00:00",
+        "end_date": null,
+        "applies_to_race_fee": "T",
+        "exclude_event_cost": "F",
+        "applies_to_giveaway": "F",
+        "applies_to_addons": "F",
+        "applies_to_club_membership_discounts": "F",
+        "applies_to_race_memberships": "F",
+        "applies_to_group_setup_fees": "F",
+        "applies_to_group_special_event_costs": "F",
+        "applies_to_age_based_pricing": "F",
+        "applies_to_multi_person_pricing": "F",
+        "applies_to_extra_fee": "F",
+        "applies_with_multi_event_discount": "F",
+        "applies_to_shipping_charges": "F",
+        "applies_to_store": "F",
+        "new_customer_only": "T",
+        "minimum_amount_in_cents": 0,
+        "minimum_donation_amount_in_cents": null,
+        "limit_per_customer": null,
+        "max_uses": null,
+        "max_num_race_registrants": null,
+        "max_events_per_registration": null,
+        "event_specific": "T",
+        "applicable_event_ids": [
+          123,
+          456
+        ],
+        "coupon_notes": "This coupons only applies to certain events.",
+        "tags": [
+          "tag1",
+          "tag2"
+        ]
+      }
+    ]
+  }
+]

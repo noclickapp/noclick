@@ -1,0 +1,1010 @@
+{
+  "$defs": {
+    "AssignBibChip": {
+      "additionalProperties": false,
+      "properties": {
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "assign_bib_chip",
+          "default": "assign_bib_chip",
+          "title": "Assign Bib and Chip Numbers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request": {
+          "description": "An assignments array of registration_id, bib_num and chip_num objects, using the provider's JSON format.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Assignment request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "race_id",
+        "event_id",
+        "request"
+      ],
+      "title": "AssignBibChip",
+      "type": "object"
+    },
+    "GetAPIKeyEntity": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_api_key_entity",
+          "default": "get_api_key_entity",
+          "title": "Get API Key Entity",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAPIKeyEntity",
+      "type": "object"
+    },
+    "GetParticipantCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_participant_counts",
+          "default": "get_participant_counts",
+          "title": "Get Participant Counts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "race_id",
+        "event_id"
+      ],
+      "title": "GetParticipantCounts",
+      "type": "object"
+    },
+    "GetRace": {
+      "additionalProperties": false,
+      "properties": {
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_race",
+          "default": "get_race",
+          "title": "Get Race and Events",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "race_id"
+      ],
+      "title": "GetRace",
+      "type": "object"
+    },
+    "ListCoupons": {
+      "additionalProperties": false,
+      "properties": {
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_coupons",
+          "default": "list_coupons",
+          "title": "List Race Coupons",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "coupon_code": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coupon Code"
+        },
+        "created_since": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Since"
+        }
+      },
+      "required": [
+        "race_id"
+      ],
+      "title": "ListCoupons",
+      "type": "object"
+    },
+    "ListDonations": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per execution. Increment to fetch subsequent pages.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "results_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_donations",
+          "default": "list_donations",
+          "title": "List Race Donations",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "since_ts": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Since Ts"
+        },
+        "until_ts": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Until Ts"
+        },
+        "after_donation_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 9223372036854775807,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Donation Id"
+        }
+      },
+      "required": [
+        "race_id"
+      ],
+      "title": "ListDonations",
+      "type": "object"
+    },
+    "ListFundraisers": {
+      "additionalProperties": false,
+      "properties": {
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_fundraisers",
+          "default": "list_fundraisers",
+          "title": "List Race Fundraisers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "num": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "modified_after_ts": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified After Ts"
+        },
+        "after_fundraiser_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 9223372036854775807,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Fundraiser Id"
+        }
+      },
+      "required": [
+        "race_id"
+      ],
+      "title": "ListFundraisers",
+      "type": "object"
+    },
+    "ListParticipants": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per execution. Increment to fetch subsequent pages.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "results_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_participants",
+          "default": "list_participants",
+          "title": "List Race Participants",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "modified_after_timestamp": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified After Timestamp"
+        },
+        "after_registration_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 9223372036854775807,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Registration Id"
+        },
+        "search_email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Email"
+        },
+        "search_bib": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Bib"
+        }
+      },
+      "required": [
+        "race_id",
+        "event_id"
+      ],
+      "title": "ListParticipants",
+      "type": "object"
+    },
+    "ListRaces": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per execution. Increment to fetch subsequent pages.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "results_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_races",
+          "default": "list_races",
+          "title": "List Races",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider date filter; defaults to today when omitted.",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        },
+        "modified_since": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified Since"
+        }
+      },
+      "title": "ListRaces",
+      "type": "object"
+    },
+    "ListRemovedParticipants": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per execution. Increment to fetch subsequent pages.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "results_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_removed_participants",
+          "default": "list_removed_participants",
+          "title": "List Removed Participants",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "modified_after_timestamp": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified After Timestamp"
+        },
+        "after_registration_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 9223372036854775807,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Registration Id"
+        }
+      },
+      "required": [
+        "race_id",
+        "event_id"
+      ],
+      "title": "ListRemovedParticipants",
+      "type": "object"
+    },
+    "ListResultSets": {
+      "additionalProperties": false,
+      "properties": {
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_result_sets",
+          "default": "list_result_sets",
+          "title": "List Result Sets",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "race_id",
+        "event_id"
+      ],
+      "title": "ListResultSets",
+      "type": "object"
+    },
+    "ListResults": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per execution. Increment to fetch subsequent pages.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "results_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_results",
+          "default": "list_results",
+          "title": "List Race Results",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "individual_result_set_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 9223372036854775807,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Individual Result Set Id"
+        },
+        "modified_after_timestamp": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified After Timestamp"
+        },
+        "registration_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 9223372036854775807,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Registration Id"
+        },
+        "bib_num": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bib Num"
+        }
+      },
+      "required": [
+        "race_id",
+        "event_id"
+      ],
+      "title": "ListResults",
+      "type": "object"
+    },
+    "ListTeams": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per execution. Increment to fetch subsequent pages.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "results_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Race Teams",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "modified_since": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified Since"
+        }
+      },
+      "required": [
+        "race_id",
+        "event_id"
+      ],
+      "title": "ListTeams",
+      "type": "object"
+    },
+    "ListVolunteerTasks": {
+      "additionalProperties": false,
+      "properties": {
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_volunteer_tasks",
+          "default": "list_volunteer_tasks",
+          "title": "List Volunteer Tasks",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "race_id"
+      ],
+      "title": "ListVolunteerTasks",
+      "type": "object"
+    },
+    "RunSignupAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "runsignup_api_key",
+          "default": "runsignup_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret"
+      ],
+      "title": "RunSignup API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your RunSignup v2 API key and matching API secret. Legacy API keys and API caller registration tokens are different credentials. NoClick sends the key in rsu_api_key and the secret in X-RSU-API-SECRET to api.runsignup.com. The key needs permission for each selected race and action; connection verification names the key's entity and does not grant permissions.",
+      "x-credential-url": "https://runsignup.com/API/ApiKeys"
+    },
+    "UpdateRaceDescription": {
+      "additionalProperties": false,
+      "properties": {
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_race_description",
+          "default": "update_race_description",
+          "title": "Update Race Description",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "description": {
+          "description": "Replaces the race description; HTML is supported by RunSignup.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "race_id",
+        "description"
+      ],
+      "title": "UpdateRaceDescription",
+      "type": "object"
+    },
+    "UpsertCoupons": {
+      "additionalProperties": false,
+      "properties": {
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "upsert_coupons",
+          "default": "upsert_coupons",
+          "title": "Add or Edit Coupons",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request": {
+          "description": "A coupons array in RunSignup's documented format, up to 100 coupons. Null coupon_id creates; an existing ID edits. Shared coupons cannot be edited.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Coupon request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "race_id",
+        "request"
+      ],
+      "title": "UpsertCoupons",
+      "type": "object"
+    },
+    "UpsertParticipants": {
+      "additionalProperties": false,
+      "properties": {
+        "race_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Race ID",
+          "type": "integer"
+        },
+        "event_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 9223372036854775807,
+          "title": "Event ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "upsert_participants",
+          "default": "upsert_participants",
+          "title": "Add or Edit Participants",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request": {
+          "description": "A participants array using the provider's documented request format. Include registration_id to edit. Omitted personal fields are retained; explicit null clears them. Safe Sync restrictions and per-participant errors apply. Inspect data for individual outcomes.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Participant request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "restrict_potential_dup": {
+          "default": "T",
+          "enum": [
+            "T",
+            "F"
+          ],
+          "title": "Restrict potential duplicates",
+          "type": "string"
+        }
+      },
+      "required": [
+        "race_id",
+        "event_id",
+        "request"
+      ],
+      "title": "UpsertParticipants",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "assign_bib_chip": "#/$defs/AssignBibChip",
+          "get_api_key_entity": "#/$defs/GetAPIKeyEntity",
+          "get_participant_counts": "#/$defs/GetParticipantCounts",
+          "get_race": "#/$defs/GetRace",
+          "list_coupons": "#/$defs/ListCoupons",
+          "list_donations": "#/$defs/ListDonations",
+          "list_fundraisers": "#/$defs/ListFundraisers",
+          "list_participants": "#/$defs/ListParticipants",
+          "list_races": "#/$defs/ListRaces",
+          "list_removed_participants": "#/$defs/ListRemovedParticipants",
+          "list_result_sets": "#/$defs/ListResultSets",
+          "list_results": "#/$defs/ListResults",
+          "list_teams": "#/$defs/ListTeams",
+          "list_volunteer_tasks": "#/$defs/ListVolunteerTasks",
+          "update_race_description": "#/$defs/UpdateRaceDescription",
+          "upsert_coupons": "#/$defs/UpsertCoupons",
+          "upsert_participants": "#/$defs/UpsertParticipants"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAPIKeyEntity"
+        },
+        {
+          "$ref": "#/$defs/ListRaces"
+        },
+        {
+          "$ref": "#/$defs/GetRace"
+        },
+        {
+          "$ref": "#/$defs/ListParticipants"
+        },
+        {
+          "$ref": "#/$defs/GetParticipantCounts"
+        },
+        {
+          "$ref": "#/$defs/ListRemovedParticipants"
+        },
+        {
+          "$ref": "#/$defs/ListDonations"
+        },
+        {
+          "$ref": "#/$defs/ListFundraisers"
+        },
+        {
+          "$ref": "#/$defs/ListTeams"
+        },
+        {
+          "$ref": "#/$defs/ListCoupons"
+        },
+        {
+          "$ref": "#/$defs/ListResultSets"
+        },
+        {
+          "$ref": "#/$defs/ListResults"
+        },
+        {
+          "$ref": "#/$defs/ListVolunteerTasks"
+        },
+        {
+          "$ref": "#/$defs/UpdateRaceDescription"
+        },
+        {
+          "$ref": "#/$defs/UpsertParticipants"
+        },
+        {
+          "$ref": "#/$defs/UpsertCoupons"
+        },
+        {
+          "$ref": "#/$defs/AssignBibChip"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RunSignupAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Runsignup Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

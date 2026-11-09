@@ -1,0 +1,57 @@
+{
+  "tasks": [
+    {
+      "volunteer_task_id": 1286,
+      "volunteer_session_id": 37,
+      "task_title": "Handing out race Bibs",
+      "deleted": "F",
+      "public_task": "T",
+      "volunteer_category_id": 16,
+      "timeslots": "T",
+      "sort_order": 1000,
+      "volunteer_last_year_task_id": null,
+      "volunteer_age_minimum": null,
+      "volunteer_age_maximum": null,
+      "volunteer_people_resources": [
+        {
+          "volunteer_people_resource_id": 1307,
+          "min_people": 2,
+          "max_people": 5,
+          "start_ts": 1919678400,
+          "end_ts": 1919685659
+        }
+      ],
+      "volunteer_custom_resources": []
+    },
+    {
+      "volunteer_task_id": 1287,
+      "volunteer_session_id": 37,
+      "task_title": "Handing out water at station 1",
+      "deleted": "F",
+      "public_task": "T",
+      "volunteer_category_id": 16,
+      "timeslots": "T",
+      "sort_order": 1001,
+      "volunteer_last_year_task_id": null,
+      "volunteer_age_minimum": null,
+      "volunteer_age_maximum": null,
+      "volunteer_people_resources": [
+        {
+          "volunteer_people_resource_id": 1308,
+          "min_people": 2,
+          "max_people": 5,
+          "start_ts": 1919678400,
+          "end_ts": 1919685659
+        }
+      ],
+      "volunteer_custom_resources": [
+        {
+          "volunteer_custom_resource_id": 38,
+          "volunteer_custom_resource_name": "Water Cups",
+          "min_resources": 800,
+          "max_resources": 1000
+        }
+      ]
+    }
+  ]
+}
