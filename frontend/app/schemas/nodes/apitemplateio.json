@@ -1,0 +1,799 @@
+{
+  "$defs": {
+    "APITemplateIOApiKey": {
+      "properties": {
+        "credential_type": {
+          "const": "apitemplateio_api_key",
+          "default": "apitemplateio_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "singapore",
+          "enum": [
+            "singapore",
+            "australia",
+            "europe",
+            "us"
+          ],
+          "title": "Processing region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "APITemplate.io API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the APITemplate.io web console. Paste the key without a header prefix, and choose your processing region. NoClick checks your account's templates using X-API-KEY.",
+      "x-credential-url": "https://app.apitemplate.io/"
+    },
+    "CreateImage": {
+      "additionalProperties": false,
+      "properties": {
+        "expiration": {
+          "default": 60,
+          "description": "File lifetime in minutes; 0 stores permanently.",
+          "maximum": 10080,
+          "minimum": 0,
+          "title": "Expiration",
+          "type": "integer"
+        },
+        "cloud_storage": {
+          "default": 1,
+          "description": "Store on provider CDN (1), or use configured post actions (0).",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Cloud Storage",
+          "type": "integer"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External reference for list objects.",
+          "title": "Meta"
+        },
+        "template_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_image",
+          "default": "create_image",
+          "title": "Create Image",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "data": {
+          "description": "JSON object with an overrides array of named template layers.",
+          "maxLength": 2000000,
+          "title": "Data",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "output_image_type": {
+          "default": "all",
+          "enum": [
+            "jpegOnly",
+            "pngOnly",
+            "all"
+          ],
+          "title": "Output Image Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id",
+        "data"
+      ],
+      "title": "CreateImage",
+      "type": "object"
+    },
+    "CreatePdf": {
+      "additionalProperties": false,
+      "properties": {
+        "expiration": {
+          "default": 60,
+          "description": "File lifetime in minutes; 0 stores permanently.",
+          "maximum": 10080,
+          "minimum": 0,
+          "title": "Expiration",
+          "type": "integer"
+        },
+        "cloud_storage": {
+          "default": 1,
+          "description": "Store on provider CDN (1), or use configured post actions (0).",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Cloud Storage",
+          "type": "integer"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External reference for list objects.",
+          "title": "Meta"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom filename ending in .pdf.",
+          "title": "Filename"
+        },
+        "output_format": {
+          "default": "pdf",
+          "enum": [
+            "pdf",
+            "html"
+          ],
+          "title": "Output Format",
+          "type": "string"
+        },
+        "template_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_pdf",
+          "default": "create_pdf",
+          "title": "Create PDF",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "data": {
+          "description": "Template JSON data object.",
+          "maxLength": 2000000,
+          "title": "Data",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "template_id",
+        "data"
+      ],
+      "title": "CreatePdf",
+      "type": "object"
+    },
+    "CreatePdfFromHtml": {
+      "additionalProperties": false,
+      "properties": {
+        "expiration": {
+          "default": 60,
+          "description": "File lifetime in minutes; 0 stores permanently.",
+          "maximum": 10080,
+          "minimum": 0,
+          "title": "Expiration",
+          "type": "integer"
+        },
+        "cloud_storage": {
+          "default": 1,
+          "description": "Store on provider CDN (1), or use configured post actions (0).",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Cloud Storage",
+          "type": "integer"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External reference for list objects.",
+          "title": "Meta"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom filename ending in .pdf.",
+          "title": "Filename"
+        },
+        "output_format": {
+          "default": "pdf",
+          "enum": [
+            "pdf",
+            "html"
+          ],
+          "title": "Output Format",
+          "type": "string"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PDF generation settings JSON object (paper_size, margins, header/footer).",
+          "title": "Settings",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "create_pdf_from_html",
+          "default": "create_pdf_from_html",
+          "title": "Create PDF from HTML",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "description": "HTML body, optionally with Jinja2 variables.",
+          "maxLength": 2000000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "css": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CSS including style tags.",
+          "title": "Css"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "maxLength": 2000000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of template variables.",
+          "title": "Data",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "CreatePdfFromHtml",
+      "type": "object"
+    },
+    "CreatePdfFromUrl": {
+      "additionalProperties": false,
+      "properties": {
+        "expiration": {
+          "default": 60,
+          "description": "File lifetime in minutes; 0 stores permanently.",
+          "maximum": 10080,
+          "minimum": 0,
+          "title": "Expiration",
+          "type": "integer"
+        },
+        "cloud_storage": {
+          "default": 1,
+          "description": "Store on provider CDN (1), or use configured post actions (0).",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Cloud Storage",
+          "type": "integer"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External reference for list objects.",
+          "title": "Meta"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom filename ending in .pdf.",
+          "title": "Filename"
+        },
+        "output_format": {
+          "default": "pdf",
+          "enum": [
+            "pdf",
+            "html"
+          ],
+          "title": "Output Format",
+          "type": "string"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PDF generation settings JSON object (paper_size, margins, header/footer).",
+          "title": "Settings",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "create_pdf_from_url",
+          "default": "create_pdf_from_url",
+          "title": "Create PDF from URL",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "Page URL to render.",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "CreatePdfFromUrl",
+      "type": "object"
+    },
+    "DeleteObject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_object",
+          "default": "delete_object",
+          "description": "Deletes a generated file using the provider's documented GET endpoint.",
+          "title": "Delete Generated Object",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "transaction_ref": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Transaction Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transaction_ref"
+      ],
+      "title": "DeleteObject",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "template_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get PDF Template",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "ListObjects": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "One page only. Increase offset by the number of returned records for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_objects",
+          "default": "list_objects",
+          "title": "List Generated Objects",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Id"
+        },
+        "transaction_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "PDF",
+                "JPEG",
+                "MERGE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transaction Type",
+          "enum": [
+            "PDF",
+            "JPEG",
+            "MERGE"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListObjects",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "One page only. Increase offset by the number of returned records for another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "format": {
+          "anyOf": [
+            {
+              "enum": [
+                "PDF",
+                "JPEG"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format",
+          "enum": [
+            "PDF",
+            "JPEG"
+          ],
+          "x-enum-searchable": true
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Id"
+        },
+        "group_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Name"
+        },
+        "with_layer_info": {
+          "default": "0",
+          "enum": [
+            "0",
+            "1"
+          ],
+          "title": "With Layer Info",
+          "type": "string"
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "MergePdfs": {
+      "additionalProperties": false,
+      "properties": {
+        "expiration": {
+          "default": 60,
+          "description": "File lifetime in minutes; 0 stores permanently.",
+          "maximum": 10080,
+          "minimum": 0,
+          "title": "Expiration",
+          "type": "integer"
+        },
+        "cloud_storage": {
+          "default": 1,
+          "description": "Store on provider CDN (1), or use configured post actions (0).",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Cloud Storage",
+          "type": "integer"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External reference for list objects.",
+          "title": "Meta"
+        },
+        "operation": {
+          "const": "merge_pdfs",
+          "default": "merge_pdfs",
+          "title": "Merge PDFs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "urls": {
+          "description": "PDF URLs in merge order.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 2,
+          "title": "Urls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "title": "MergePdfs",
+      "type": "object"
+    },
+    "UpdateTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "template_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Template ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "title": "Update PDF Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 2000000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replacement HTML body.",
+          "title": "Body"
+        },
+        "css": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replacement CSS.",
+          "title": "Css"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "UpdateTemplate",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_image": "#/$defs/CreateImage",
+          "create_pdf": "#/$defs/CreatePdf",
+          "create_pdf_from_html": "#/$defs/CreatePdfFromHtml",
+          "create_pdf_from_url": "#/$defs/CreatePdfFromUrl",
+          "delete_object": "#/$defs/DeleteObject",
+          "get_template": "#/$defs/GetTemplate",
+          "list_objects": "#/$defs/ListObjects",
+          "list_templates": "#/$defs/ListTemplates",
+          "merge_pdfs": "#/$defs/MergePdfs",
+          "update_template": "#/$defs/UpdateTemplate"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreatePdf"
+        },
+        {
+          "$ref": "#/$defs/CreateImage"
+        },
+        {
+          "$ref": "#/$defs/CreatePdfFromHtml"
+        },
+        {
+          "$ref": "#/$defs/CreatePdfFromUrl"
+        },
+        {
+          "$ref": "#/$defs/ListObjects"
+        },
+        {
+          "$ref": "#/$defs/DeleteObject"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        },
+        {
+          "$ref": "#/$defs/UpdateTemplate"
+        },
+        {
+          "$ref": "#/$defs/MergePdfs"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/APITemplateIOApiKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Apitemplateio Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a PDF from this template",
+    "Generate a social image",
+    "Merge these PDFs"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

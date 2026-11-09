@@ -1,0 +1,176 @@
+{
+  "source": {
+    "email": "hello@apitemplate.io",
+    "url": "https://apitemplate.io"
+  },
+  "contract": "https://raw.githubusercontent.com/APITemplate-io/apitemplateio-csharp/master/api/openapi.yaml",
+  "responses": {
+    "create_pdf": {
+      "download_url": "https://bucket.s3.amazonaws.com/91f62769-69e4-48bf.pdf",
+      "template_id": "cd890b2b199c5c42",
+      "total_pages": 4,
+      "status": "success",
+      "transaction_ref": "a0430897-2c94-40e1-a09b-57403d811ceb",
+      "post_actions": [
+        {
+          "action": "S3",
+          "name": "S3 Storage",
+          "bucket": "alphacloud-test-bucket",
+          "status": "success",
+          "file": "s3://alphacloud-test-bucket/ab2e1bf7-cefa-42c7-929f-38d92b8bf8bf.pdf"
+        }
+      ]
+    },
+    "create_image": {
+      "download_url": "https://bucket.s3.amazonaws.com/91f62769-69e4-48bf.jpeg",
+      "template_id": "cd890b2b199c5c42",
+      "status": "success",
+      "download_url_png": "https://bucket.s3.amazonaws.com/91f62769-69e4-48bf.png",
+      "transaction_ref": "a0430897-2c94-40e1-a09b-57403d811ceb",
+      "post_actions": [
+        {
+          "action": "S3",
+          "name": "S3 Storage",
+          "bucket": "alphacloud-test-bucket",
+          "status": "success",
+          "file": "s3://alphacloud-test-bucket/91f62769-69e4-48bf.png"
+        },
+        {
+          "action": "S3",
+          "name": "S3 Storage",
+          "bucket": "alphacloud-test-bucket",
+          "status": "success",
+          "file": "s3://alphacloud-test-bucket/91f62769-69e4-48bf.jpg"
+        }
+      ]
+    },
+    "create_pdf_from_html": {
+      "download_url": "https://bucket.s3.amazonaws.com/91f62769-69e4-48bf.pdf",
+      "template_id": "cd890b2b199c5c42",
+      "total_pages": 4,
+      "status": "success",
+      "transaction_ref": "a0430897-2c94-40e1-a09b-57403d811ceb",
+      "post_actions": [
+        {
+          "action": "S3",
+          "name": "S3 Storage",
+          "bucket": "alphacloud-test-bucket",
+          "status": "success",
+          "file": "s3://alphacloud-test-bucket/ab2e1bf7-cefa-42c7-929f-38d92b8bf8bf.pdf"
+        }
+      ]
+    },
+    "create_pdf_from_url": {
+      "download_url": "https://bucket.s3.amazonaws.com/91f62769-69e4-48bf.pdf",
+      "template_id": "cd890b2b199c5c42",
+      "total_pages": 4,
+      "status": "success",
+      "transaction_ref": "a0430897-2c94-40e1-a09b-57403d811ceb",
+      "post_actions": [
+        {
+          "action": "S3",
+          "name": "S3 Storage",
+          "bucket": "alphacloud-test-bucket",
+          "status": "success",
+          "file": "s3://alphacloud-test-bucket/ab2e1bf7-cefa-42c7-929f-38d92b8bf8bf.pdf"
+        }
+      ]
+    },
+    "list_objects": {
+      "objects": [
+        {
+          "transaction_ref": "e9c46f03-1840-44dc-bae7-f280e0be98a9",
+          "description": null,
+          "source": null,
+          "meta": "inv-23ejh23bh",
+          "transaction_type": "JPEG",
+          "primary_url": "https://pub-cdn.apitemplate.io/e9c46f03-1840-44dc-bae7-f280e0be98a9.jpeg",
+          "secondary_url": "https://pub-cdn.apitemplate.io/e9c46f03-1840-44dc-bae7-f280e0be98a9.png",
+          "deleted_at": null,
+          "deletion_status": 0,
+          "ip_address": "1.222.242.231",
+          "created_at": "2021-10-16 12:08:59.281000+00:00"
+        },
+        {
+          "transaction_ref": "c973f544-fb56-465d-a1bd-35ff0e4b77e7",
+          "description": null,
+          "source": null,
+          "meta": "inv-45ekdjkdbh",
+          "transaction_type": "PDF",
+          "primary_url": "https://pub-cdn.apitemplate.io/2021/10/c973f544-fb56-465d-a1bd-35ff0e4b77e7.pdf",
+          "secondary_url": "",
+          "deleted_at": null,
+          "deletion_status": 0,
+          "ip_address": "1.222.242.231",
+          "created_at": "2021-10-16 12:07:34.478000+00:00"
+        },
+        {
+          "transaction_ref": "5ee5e0aa-4431-4d17-b94a-24ac859a5e71",
+          "description": null,
+          "source": null,
+          "meta": "inv-klkjbr34ded",
+          "transaction_type": "JPEG",
+          "primary_url": "https://pub-cdn.apitemplate.io/5ee5e0aa-4431-4d17-b94a-24ac859a5e71.jpeg",
+          "secondary_url": "https://pub-cdn.apitemplate.io/5ee5e0aa-4431-4d17-b94a-24ac859a5e71.png",
+          "deleted_at": null,
+          "deletion_status": 0,
+          "ip_address": "1.222.242.231",
+          "created_at": "2021-10-16 12:05:59.111000+00:00"
+        }
+      ],
+      "status": "success"
+    },
+    "delete_object": {
+      "status": "success",
+      "transaction_ref": "1618d386-2343-3d234-b9c7-99c82bb9f104"
+    },
+    "list_templates": {
+      "templates": [
+        {
+          "template_id": "12577b29420496",
+          "name": "Positive Review",
+          "status": "ACTIVE",
+          "format": "JPEG",
+          "created_at": "2021-10-15 06:29:01.308000+00:00",
+          "updated_at": "2021-10-15 13:03:43.615000+00:00",
+          "group_name": ""
+        },
+        {
+          "template_id": "004271e0ee394",
+          "name": "Test Template PDF",
+          "status": "ACTIVE",
+          "format": "PDF",
+          "created_at": "2021-10-09 09:57:52.224000+00:00",
+          "updated_at": "2021-10-16 11:18:10.613000+00:00",
+          "group_name": ""
+        },
+        {
+          "template_id": "8bf77213e06b670",
+          "name": "New Template",
+          "status": "ACTIVE",
+          "format": "PDF",
+          "created_at": "2021-10-09 08:54:49.486000+00:00",
+          "updated_at": "2021-10-09 09:54:44.667000+00:00",
+          "group_name": ""
+        }
+      ],
+      "status": "success"
+    },
+    "get_template": {
+      "settings": "{\"paper_size\":\"A4\",\"orientation\":\"1\",\"print_background\":\"1\",\"margin_top\":\"40\",\"margin_bottom\":\"40\",\"margin_right\":\"40\",\"margin_left\":\"40\",\"header_right\":\"{{pageNumber}}/{{totalPages}}\",\"footer_center\":\"{{pageNumber}}/{{totalPages}}\",\"header_center\":\"Sample Invoice\",\"header_font_size\":\"11px\",\"header_left\":\"{{date}}\",\"footer_left\":\"{{date}}\",\"custom_header\":\"\",\"footer_font_size\":\"11px\"}",
+      "css": "body{background: white}",
+      "template_id": "cd890b2b199c5c42",
+      "body": "<h1>Title</h1>",
+      "status": "success"
+    },
+    "update_template": {
+      "status": "success"
+    },
+    "merge_pdfs": {
+      "total_pages": 4,
+      "primary_url": "https://craftmypdf.com/output.pdf",
+      "status": "success",
+      "transaction_ref": "a0430897-2c94-40e1-a09b-57403d811ceb"
+    }
+  }
+}
