@@ -1,0 +1,1162 @@
+{
+  "$defs": {
+    "DixaAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "dixa_api_token",
+          "default": "dixa_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Dixa API Token",
+      "type": "object",
+      "x-credential-instructions": "In Dixa, open Settings > Integrations > API tokens and create a token with access to the actions you need. Paste the token here without an Authorization prefix. Activating a trigger also requires webhook integration permissions.",
+      "x-credential-url": "https://docs.dixa.io/docs/tutorial-create-an-api-token"
+    },
+    "DixaAddNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_note",
+          "default": "add_note",
+          "title": "Add Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Add Note",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        },
+        "message": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author agent ID"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "message"
+      ],
+      "title": "DixaAddNoteConfig",
+      "type": "object"
+    },
+    "DixaCloseConversationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "close_conversation",
+          "default": "close_conversation",
+          "title": "Close Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Close Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "DixaCloseConversationConfig",
+      "type": "object"
+    },
+    "DixaCreateEndUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_end_user",
+          "default": "create_end_user",
+          "title": "Create End User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Create End User",
+          "x-is-trigger": false
+        },
+        "display_name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Display name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone number"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External ID"
+        }
+      },
+      "required": [
+        "display_name"
+      ],
+      "title": "DixaCreateEndUserConfig",
+      "type": "object"
+    },
+    "DixaCreateTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Create Tag",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Tag name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "DixaCreateTagConfig",
+      "type": "object"
+    },
+    "DixaGetConversationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Get Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Get Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "DixaGetConversationConfig",
+      "type": "object"
+    },
+    "DixaGetEndUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_end_user",
+          "default": "get_end_user",
+          "title": "Get End User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Get End User",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "format": "uuid",
+          "title": "End user ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "DixaGetEndUserConfig",
+      "type": "object"
+    },
+    "DixaGetOrganizationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Get Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Get Organization",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DixaGetOrganizationConfig",
+      "type": "object"
+    },
+    "DixaListAgentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_agents",
+          "default": "list_agents",
+          "title": "List Agents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Agents",
+          "x-is-trigger": false
+        },
+        "page_limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_key": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy the opaque pageKey from Dixa's next pagination link. Leave empty for the first page.",
+          "title": "Page key"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email filter"
+        }
+      },
+      "title": "DixaListAgentsConfig",
+      "type": "object"
+    },
+    "DixaListConversationTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_conversation_tags",
+          "default": "list_conversation_tags",
+          "title": "List Conversation Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Conversation Tags",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "DixaListConversationTagsConfig",
+      "type": "object"
+    },
+    "DixaListEndUserConversationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_end_user_conversations",
+          "default": "list_end_user_conversations",
+          "title": "List End User Conversations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List End User Conversations",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "format": "uuid",
+          "title": "End user ID",
+          "type": "string"
+        },
+        "page_limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_key": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy the opaque pageKey from Dixa's next pagination link. Leave empty for the first page.",
+          "title": "Page key"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "DixaListEndUserConversationsConfig",
+      "type": "object"
+    },
+    "DixaListEndUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_end_users",
+          "default": "list_end_users",
+          "title": "List End Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List End Users",
+          "x-is-trigger": false
+        },
+        "page_limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_key": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy the opaque pageKey from Dixa's next pagination link. Leave empty for the first page.",
+          "title": "Page key"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email filter"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone filter"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External ID filter"
+        }
+      },
+      "title": "DixaListEndUsersConfig",
+      "type": "object"
+    },
+    "DixaListMessagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "List Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Messages",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "DixaListMessagesConfig",
+      "type": "object"
+    },
+    "DixaListNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "List Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Notes",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "DixaListNotesConfig",
+      "type": "object"
+    },
+    "DixaListQueuesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_queues",
+          "default": "list_queues",
+          "title": "List Queues",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Queues",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DixaListQueuesConfig",
+      "type": "object"
+    },
+    "DixaListTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Tags",
+          "x-is-trigger": false
+        },
+        "include_deactivated": {
+          "default": false,
+          "title": "Include deactivated tags",
+          "type": "boolean"
+        }
+      },
+      "title": "DixaListTagsConfig",
+      "type": "object"
+    },
+    "DixaListTeamsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Teams",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DixaListTeamsConfig",
+      "type": "object"
+    },
+    "DixaOnNoteAddedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_note_added",
+          "default": "on_note_added",
+          "title": "On Internal Note Added",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Internal Note Added",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "DixaOnNoteAddedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "DixaPatchEndUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "patch_end_user",
+          "default": "patch_end_user",
+          "title": "Patch End User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Patch End User",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "format": "uuid",
+          "title": "End user ID",
+          "type": "string"
+        },
+        "display_name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Display name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone number"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External ID"
+        }
+      },
+      "required": [
+        "user_id",
+        "display_name"
+      ],
+      "title": "DixaPatchEndUserConfig",
+      "type": "object"
+    },
+    "DixaReopenConversationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "reopen_conversation",
+          "default": "reopen_conversation",
+          "title": "Reopen Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Reopen Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "DixaReopenConversationConfig",
+      "type": "object"
+    },
+    "DixaSearchConversationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_conversations",
+          "default": "search_conversations",
+          "title": "Search Conversations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Search Conversations",
+          "x-is-trigger": false
+        },
+        "page_limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_key": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy the opaque pageKey from Dixa's next pagination link. Leave empty for the first page.",
+          "title": "Page key"
+        },
+        "query": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Search text",
+          "type": "string"
+        },
+        "exact_match": {
+          "default": false,
+          "title": "Exact match",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "DixaSearchConversationsConfig",
+      "type": "object"
+    },
+    "DixaSendReplyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_reply",
+          "default": "send_reply",
+          "title": "Send Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Send Reply",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        },
+        "agent_id": {
+          "format": "uuid",
+          "title": "Sending agent ID",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Reply text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "agent_id",
+        "message"
+      ],
+      "title": "DixaSendReplyConfig",
+      "type": "object"
+    },
+    "DixaTagConversationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "tag_conversation",
+          "default": "tag_conversation",
+          "title": "Tag Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Tag Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        },
+        "tag_id": {
+          "format": "uuid",
+          "title": "Tag ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "tag_id"
+      ],
+      "title": "DixaTagConversationConfig",
+      "type": "object"
+    },
+    "DixaUntagConversationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "untag_conversation",
+          "default": "untag_conversation",
+          "title": "Untag Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Untag Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Conversation ID",
+          "type": "integer"
+        },
+        "tag_id": {
+          "format": "uuid",
+          "title": "Tag ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "tag_id"
+      ],
+      "title": "DixaUntagConversationConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_note": "#/$defs/DixaAddNoteConfig",
+          "close_conversation": "#/$defs/DixaCloseConversationConfig",
+          "create_end_user": "#/$defs/DixaCreateEndUserConfig",
+          "create_tag": "#/$defs/DixaCreateTagConfig",
+          "get_conversation": "#/$defs/DixaGetConversationConfig",
+          "get_end_user": "#/$defs/DixaGetEndUserConfig",
+          "get_organization": "#/$defs/DixaGetOrganizationConfig",
+          "list_agents": "#/$defs/DixaListAgentsConfig",
+          "list_conversation_tags": "#/$defs/DixaListConversationTagsConfig",
+          "list_end_user_conversations": "#/$defs/DixaListEndUserConversationsConfig",
+          "list_end_users": "#/$defs/DixaListEndUsersConfig",
+          "list_messages": "#/$defs/DixaListMessagesConfig",
+          "list_notes": "#/$defs/DixaListNotesConfig",
+          "list_queues": "#/$defs/DixaListQueuesConfig",
+          "list_tags": "#/$defs/DixaListTagsConfig",
+          "list_teams": "#/$defs/DixaListTeamsConfig",
+          "on_note_added": "#/$defs/DixaOnNoteAddedConfig",
+          "patch_end_user": "#/$defs/DixaPatchEndUserConfig",
+          "reopen_conversation": "#/$defs/DixaReopenConversationConfig",
+          "search_conversations": "#/$defs/DixaSearchConversationsConfig",
+          "send_reply": "#/$defs/DixaSendReplyConfig",
+          "tag_conversation": "#/$defs/DixaTagConversationConfig",
+          "untag_conversation": "#/$defs/DixaUntagConversationConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DixaGetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaSearchConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaSendReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaAddNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaCloseConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaReopenConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaTagConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaUntagConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaListConversationTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaListEndUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaGetEndUserConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaCreateEndUserConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaPatchEndUserConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaListEndUserConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaListAgentsConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaListQueuesConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/DixaOnNoteAddedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DixaAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dixa Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find conversations about a refund",
+    "Add an internal note",
+    "Reply to a customer",
+    "Create an end user",
+    "Notify me when an internal note is added"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
