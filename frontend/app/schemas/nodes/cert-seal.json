@@ -1,0 +1,942 @@
+{
+  "$defs": {
+    "ArchiveBatch": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "archive_batch",
+          "default": "archive_batch",
+          "description": "Freezes recipient writes until unarchived; existing certificates remain accessible.",
+          "title": "Archive Batch",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "ArchiveBatch",
+      "type": "object"
+    },
+    "CertSealAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "cert_seal_api_key",
+          "default": "cert_seal_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Cert Seal API Key",
+      "type": "object",
+      "x-credential-instructions": "In Cert Seal, open API Keys and create a key for your workspace. Paste the key here without the Bearer prefix. The key is shown only once and is bound to that workspace.",
+      "x-credential-url": "https://app.certseal.com"
+    },
+    "CreateBatch": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_batch",
+          "default": "create_batch",
+          "title": "Create Batch",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "design_id": {
+          "minLength": 1,
+          "title": "Design Id",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "email_template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Template Id"
+        },
+        "course_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Course Name"
+        },
+        "issuer_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issuer Name"
+        }
+      },
+      "required": [
+        "title",
+        "design_id"
+      ],
+      "title": "CreateBatch",
+      "type": "object"
+    },
+    "CreateRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Email"
+        },
+        "certificate_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional unique certificate code. Treat existing codes as opaque strings.",
+          "title": "Certificate Id"
+        },
+        "issue_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issue Date"
+        },
+        "expiry_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expiry Date"
+        },
+        "data": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Template variable names mapped to text values.",
+          "title": "Data",
+          "type": "object"
+        },
+        "send": {
+          "default": false,
+          "description": "Also queue email. Requires an email template on the batch and sending configured by Cert Seal.",
+          "title": "Send",
+          "type": "boolean"
+        },
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_recipient",
+          "default": "create_recipient",
+          "title": "Issue Certificate",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "CreateRecipient",
+      "type": "object"
+    },
+    "CreateRecipientsBulk": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_recipients_bulk",
+          "default": "create_recipients_bulk",
+          "title": "Issue Certificates in Bulk",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "recipients": {
+          "items": {
+            "$ref": "#/$defs/RecipientInput"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Recipients",
+          "type": "array"
+        },
+        "send": {
+          "default": false,
+          "description": "Queue email for every recipient, subject to Cert Seal sending configuration.",
+          "title": "Send",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "batch_id",
+        "recipients"
+      ],
+      "title": "CreateRecipientsBulk",
+      "type": "object"
+    },
+    "DeleteRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "recipient_id": {
+          "minLength": 1,
+          "title": "Recipient ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_recipient",
+          "default": "delete_recipient",
+          "title": "Delete Recipient",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id",
+        "recipient_id"
+      ],
+      "title": "DeleteRecipient",
+      "type": "object"
+    },
+    "GetBatch": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_batch",
+          "default": "get_batch",
+          "title": "Get Batch",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "GetBatch",
+      "type": "object"
+    },
+    "GetCertificateByCode": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_certificate_by_code",
+          "default": "get_certificate_by_code",
+          "title": "Look Up Certificate by Code",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "certificate_id": {
+          "minLength": 1,
+          "title": "Certificate Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "certificate_id"
+      ],
+      "title": "GetCertificateByCode",
+      "type": "object"
+    },
+    "GetCertificateByToken": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_certificate_by_token",
+          "default": "get_certificate_by_token",
+          "title": "Look Up Certificate by Share Token",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "share_token": {
+          "minLength": 8,
+          "title": "Share Token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "share_token"
+      ],
+      "title": "GetCertificateByToken",
+      "type": "object"
+    },
+    "GetRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "recipient_id": {
+          "minLength": 1,
+          "title": "Recipient ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_recipient",
+          "default": "get_recipient",
+          "title": "Get Recipient",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id",
+        "recipient_id"
+      ],
+      "title": "GetRecipient",
+      "type": "object"
+    },
+    "ListBatches": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination.nextCursor from the previous page; omit for the first page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_batches",
+          "default": "list_batches",
+          "title": "List Batches",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "default": "active",
+          "enum": [
+            "active",
+            "archived",
+            "all"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "title": "ListBatches",
+      "type": "object"
+    },
+    "ListDesigns": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination.nextCursor from the previous page; omit for the first page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_designs",
+          "default": "list_designs",
+          "description": "Designs are authored in the Cert Seal web app.",
+          "title": "List Designs",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListDesigns",
+      "type": "object"
+    },
+    "ListRecipients": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination.nextCursor from the previous page; omit for the first page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_recipients",
+          "default": "list_recipients",
+          "title": "List Recipients",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "pending",
+                "queued",
+                "sending",
+                "sent",
+                "failed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Status",
+          "enum": [
+            "pending",
+            "queued",
+            "sending",
+            "sent",
+            "failed"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "ListRecipients",
+      "type": "object"
+    },
+    "RecipientInput": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Email"
+        },
+        "certificate_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional unique certificate code. Treat existing codes as opaque strings.",
+          "title": "Certificate Id"
+        },
+        "issue_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issue Date"
+        },
+        "expiry_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expiry Date"
+        },
+        "data": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Template variable names mapped to text values.",
+          "title": "Data",
+          "type": "object"
+        },
+        "send": {
+          "default": false,
+          "description": "Also queue email. Requires an email template on the batch and sending configured by Cert Seal.",
+          "title": "Send",
+          "type": "boolean"
+        }
+      },
+      "title": "RecipientInput",
+      "type": "object"
+    },
+    "ReinstateRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "recipient_id": {
+          "minLength": 1,
+          "title": "Recipient ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reinstate_recipient",
+          "default": "reinstate_recipient",
+          "title": "Reinstate Certificate",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id",
+        "recipient_id"
+      ],
+      "title": "ReinstateRecipient",
+      "type": "object"
+    },
+    "RevokeRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "recipient_id": {
+          "minLength": 1,
+          "title": "Recipient ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "revoke_recipient",
+          "default": "revoke_recipient",
+          "title": "Revoke Certificate",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace-only reason, hidden from public pages.",
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "batch_id",
+        "recipient_id"
+      ],
+      "title": "RevokeRecipient",
+      "type": "object"
+    },
+    "SendRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "recipient_id": {
+          "minLength": 1,
+          "title": "Recipient ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_recipient",
+          "default": "send_recipient",
+          "description": "Queues delivery asynchronously; requires a batch email template. Does not confirm delivery.",
+          "title": "Queue Certificate Email",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id",
+        "recipient_id"
+      ],
+      "title": "SendRecipient",
+      "type": "object"
+    },
+    "UnarchiveBatch": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "unarchive_batch",
+          "default": "unarchive_batch",
+          "title": "Unarchive Batch",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "UnarchiveBatch",
+      "type": "object"
+    },
+    "UpdateRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Email"
+        },
+        "certificate_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional unique certificate code. Treat existing codes as opaque strings.",
+          "title": "Certificate Id"
+        },
+        "issue_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issue Date"
+        },
+        "expiry_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expiry Date"
+        },
+        "data": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Template variable names mapped to text values.",
+          "title": "Data",
+          "type": "object"
+        },
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch ID",
+          "type": "string"
+        },
+        "recipient_id": {
+          "minLength": 1,
+          "title": "Recipient ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_recipient",
+          "default": "update_recipient",
+          "description": "Only supplied fields change. Use null to clear an optional field.",
+          "title": "Update Recipient",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id",
+        "recipient_id"
+      ],
+      "title": "UpdateRecipient",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_batch": "#/$defs/ArchiveBatch",
+          "create_batch": "#/$defs/CreateBatch",
+          "create_recipient": "#/$defs/CreateRecipient",
+          "create_recipients_bulk": "#/$defs/CreateRecipientsBulk",
+          "delete_recipient": "#/$defs/DeleteRecipient",
+          "get_batch": "#/$defs/GetBatch",
+          "get_certificate_by_code": "#/$defs/GetCertificateByCode",
+          "get_certificate_by_token": "#/$defs/GetCertificateByToken",
+          "get_recipient": "#/$defs/GetRecipient",
+          "list_batches": "#/$defs/ListBatches",
+          "list_designs": "#/$defs/ListDesigns",
+          "list_recipients": "#/$defs/ListRecipients",
+          "reinstate_recipient": "#/$defs/ReinstateRecipient",
+          "revoke_recipient": "#/$defs/RevokeRecipient",
+          "send_recipient": "#/$defs/SendRecipient",
+          "unarchive_batch": "#/$defs/UnarchiveBatch",
+          "update_recipient": "#/$defs/UpdateRecipient"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListBatches"
+        },
+        {
+          "$ref": "#/$defs/CreateBatch"
+        },
+        {
+          "$ref": "#/$defs/GetBatch"
+        },
+        {
+          "$ref": "#/$defs/ArchiveBatch"
+        },
+        {
+          "$ref": "#/$defs/UnarchiveBatch"
+        },
+        {
+          "$ref": "#/$defs/ListRecipients"
+        },
+        {
+          "$ref": "#/$defs/CreateRecipient"
+        },
+        {
+          "$ref": "#/$defs/CreateRecipientsBulk"
+        },
+        {
+          "$ref": "#/$defs/GetRecipient"
+        },
+        {
+          "$ref": "#/$defs/UpdateRecipient"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecipient"
+        },
+        {
+          "$ref": "#/$defs/SendRecipient"
+        },
+        {
+          "$ref": "#/$defs/RevokeRecipient"
+        },
+        {
+          "$ref": "#/$defs/ReinstateRecipient"
+        },
+        {
+          "$ref": "#/$defs/GetCertificateByCode"
+        },
+        {
+          "$ref": "#/$defs/GetCertificateByToken"
+        },
+        {
+          "$ref": "#/$defs/ListDesigns"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CertSealAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cert-seal Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
