@@ -1,0 +1,978 @@
+{
+  "$defs": {
+    "CreateEmailQR": {
+      "additionalProperties": false,
+      "description": "Create a email QR code; return JSON metadata.",
+      "properties": {
+        "title": {
+          "default": "Qr Code",
+          "title": "Title",
+          "type": "string"
+        },
+        "folder_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FolderOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "create_email_qr",
+          "default": "create_email_qr",
+          "title": "Operation",
+          "type": "string"
+        },
+        "qr_fields_data": {
+          "$ref": "#/$defs/EmailData"
+        }
+      },
+      "required": [
+        "qr_fields_data"
+      ],
+      "title": "CreateEmailQR",
+      "type": "object"
+    },
+    "CreateFolder": {
+      "additionalProperties": false,
+      "description": "Create a folder or a named subfolder.",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string"
+        },
+        "folder_name": {
+          "minLength": 1,
+          "title": "Folder Name",
+          "type": "string"
+        },
+        "subfolder_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subfolder Name"
+        }
+      },
+      "required": [
+        "folder_name"
+      ],
+      "title": "CreateFolder",
+      "type": "object"
+    },
+    "CreateLinkQR": {
+      "additionalProperties": false,
+      "description": "Create a link QR code; return JSON metadata.",
+      "properties": {
+        "title": {
+          "default": "Qr Code",
+          "title": "Title",
+          "type": "string"
+        },
+        "folder_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FolderOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "create_link_qr",
+          "default": "create_link_qr",
+          "title": "Operation",
+          "type": "string"
+        },
+        "qr_fields_data": {
+          "$ref": "#/$defs/LinkData"
+        }
+      },
+      "required": [
+        "qr_fields_data"
+      ],
+      "title": "CreateLinkQR",
+      "type": "object"
+    },
+    "CreateShortLink": {
+      "additionalProperties": false,
+      "description": "Create a short link and return its metadata.",
+      "properties": {
+        "title": {
+          "default": "Qr Code",
+          "title": "Title",
+          "type": "string"
+        },
+        "folder_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FolderOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "create_short_link",
+          "default": "create_short_link",
+          "title": "Operation",
+          "type": "string"
+        },
+        "link": {
+          "description": "Destination URL, such as https://example.com.",
+          "title": "Link",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link"
+      ],
+      "title": "CreateShortLink",
+      "type": "object"
+    },
+    "CreateTextQR": {
+      "additionalProperties": false,
+      "description": "Create a text QR code; return JSON metadata.",
+      "properties": {
+        "title": {
+          "default": "Qr Code",
+          "title": "Title",
+          "type": "string"
+        },
+        "folder_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FolderOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "create_text_qr",
+          "default": "create_text_qr",
+          "title": "Operation",
+          "type": "string"
+        },
+        "qr_fields_data": {
+          "$ref": "#/$defs/TextData"
+        }
+      },
+      "required": [
+        "qr_fields_data"
+      ],
+      "title": "CreateTextQR",
+      "type": "object"
+    },
+    "CreateWifiQR": {
+      "additionalProperties": false,
+      "description": "Create a wifi QR code; return JSON metadata.",
+      "properties": {
+        "title": {
+          "default": "Qr Code",
+          "title": "Title",
+          "type": "string"
+        },
+        "folder_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FolderOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "create_wifi_qr",
+          "default": "create_wifi_qr",
+          "title": "Operation",
+          "type": "string"
+        },
+        "qr_fields_data": {
+          "$ref": "#/$defs/WifiData"
+        }
+      },
+      "required": [
+        "qr_fields_data"
+      ],
+      "title": "CreateWifiQR",
+      "type": "object"
+    },
+    "DeleteEntries": {
+      "additionalProperties": false,
+      "description": "Soft delete the specified owned QR codes or short links.",
+      "properties": {
+        "operation": {
+          "const": "delete_entries",
+          "default": "delete_entries",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ids": {
+          "description": "Numeric IDs or unique entry keys; this is a soft deletion.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "DeleteEntries",
+      "type": "object"
+    },
+    "EmailData": {
+      "additionalProperties": false,
+      "properties": {
+        "emailTo": {
+          "format": "email",
+          "title": "Emailto",
+          "type": "string"
+        },
+        "subject": {
+          "title": "Subject",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "emailTo",
+        "subject",
+        "body"
+      ],
+      "title": "EmailData",
+      "type": "object"
+    },
+    "FolderOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "folderName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Foldername"
+        },
+        "subfolderName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subfoldername"
+        }
+      },
+      "title": "FolderOptions",
+      "type": "object"
+    },
+    "GetAnalytics": {
+      "additionalProperties": false,
+      "description": "Get analytics for one QR code.",
+      "properties": {
+        "entry_uid": {
+          "description": "Numeric ID or unique entry key from ME-QR.",
+          "minLength": 1,
+          "title": "Entry Uid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_analytics",
+          "default": "get_analytics",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entry_uid"
+      ],
+      "title": "GetAnalytics",
+      "type": "object"
+    },
+    "GetEmailQR": {
+      "additionalProperties": false,
+      "description": "Get a email QR code; return JSON metadata.",
+      "properties": {
+        "entry_uid": {
+          "description": "Numeric ID or unique entry key from ME-QR.",
+          "minLength": 1,
+          "title": "Entry Uid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_email_qr",
+          "default": "get_email_qr",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entry_uid"
+      ],
+      "title": "GetEmailQR",
+      "type": "object"
+    },
+    "GetLinkQR": {
+      "additionalProperties": false,
+      "description": "Get a link QR code; return JSON metadata.",
+      "properties": {
+        "entry_uid": {
+          "description": "Numeric ID or unique entry key from ME-QR.",
+          "minLength": 1,
+          "title": "Entry Uid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_link_qr",
+          "default": "get_link_qr",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entry_uid"
+      ],
+      "title": "GetLinkQR",
+      "type": "object"
+    },
+    "GetShortLink": {
+      "additionalProperties": false,
+      "description": "Get a short link and return its metadata.",
+      "properties": {
+        "entry_uid": {
+          "description": "Numeric ID or unique entry key from ME-QR.",
+          "minLength": 1,
+          "title": "Entry Uid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_short_link",
+          "default": "get_short_link",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entry_uid"
+      ],
+      "title": "GetShortLink",
+      "type": "object"
+    },
+    "GetTextQR": {
+      "additionalProperties": false,
+      "description": "Get a text QR code; return JSON metadata.",
+      "properties": {
+        "entry_uid": {
+          "description": "Numeric ID or unique entry key from ME-QR.",
+          "minLength": 1,
+          "title": "Entry Uid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_text_qr",
+          "default": "get_text_qr",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entry_uid"
+      ],
+      "title": "GetTextQR",
+      "type": "object"
+    },
+    "GetWifiQR": {
+      "additionalProperties": false,
+      "description": "Get a wifi QR code; return JSON metadata.",
+      "properties": {
+        "entry_uid": {
+          "description": "Numeric ID or unique entry key from ME-QR.",
+          "minLength": 1,
+          "title": "Entry Uid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_wifi_qr",
+          "default": "get_wifi_qr",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entry_uid"
+      ],
+      "title": "GetWifiQR",
+      "type": "object"
+    },
+    "LinkData": {
+      "additionalProperties": false,
+      "properties": {
+        "link": {
+          "description": "Destination URL, such as https://example.com.",
+          "title": "Link",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link"
+      ],
+      "title": "LinkData",
+      "type": "object"
+    },
+    "ListFolders": {
+      "additionalProperties": false,
+      "description": "Get the authenticated account's root folders and direct subfolders.",
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFolders",
+      "type": "object"
+    },
+    "ListQRCodes": {
+      "additionalProperties": false,
+      "description": "List one page of the account's QR codes, including scan counts.",
+      "properties": {
+        "operation": {
+          "const": "list_qr_codes",
+          "default": "list_qr_codes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListQRCodes",
+      "type": "object"
+    },
+    "ListScanEvents": {
+      "additionalProperties": false,
+      "description": "List one page of geographic and device scan events, optionally filtered.",
+      "properties": {
+        "operation": {
+          "const": "list_scan_events",
+          "default": "list_scan_events",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "qr_uid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Qr Uid"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 start date, such as 2026-01-01.",
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 end date, such as 2027-01-01.",
+          "title": "Date To"
+        },
+        "return_shared_qrs": {
+          "default": true,
+          "title": "Return Shared Qrs",
+          "type": "boolean"
+        }
+      },
+      "title": "ListScanEvents",
+      "type": "object"
+    },
+    "MEQRCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "me_qr_qr_code_api_token",
+          "default": "me_qr_qr_code_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "ME-QR API Token",
+      "type": "object",
+      "x-credential-instructions": "Copy your API token from ME-QR's API page and paste it here. NoClick sends it in the X-AUTH-TOKEN header and checks your account's folders.",
+      "x-credential-url": "https://me-qr.com/api"
+    },
+    "TextData": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "description": "Text with optional HTML tags.",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "TextData",
+      "type": "object"
+    },
+    "UpdateEmailQR": {
+      "additionalProperties": false,
+      "description": "Update a email QR code; return JSON metadata.",
+      "properties": {
+        "entry_uid": {
+          "description": "Numeric ID or unique entry key from ME-QR.",
+          "minLength": 1,
+          "title": "Entry Uid",
+          "type": "string"
+        },
+        "title": {
+          "default": "Qr Code",
+          "title": "Title",
+          "type": "string"
+        },
+        "folder_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FolderOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "update_email_qr",
+          "default": "update_email_qr",
+          "title": "Operation",
+          "type": "string"
+        },
+        "qr_fields_data": {
+          "$ref": "#/$defs/EmailData"
+        }
+      },
+      "required": [
+        "entry_uid",
+        "qr_fields_data"
+      ],
+      "title": "UpdateEmailQR",
+      "type": "object"
+    },
+    "UpdateLinkQR": {
+      "additionalProperties": false,
+      "description": "Update a link QR code; return JSON metadata.",
+      "properties": {
+        "entry_uid": {
+          "description": "Numeric ID or unique entry key from ME-QR.",
+          "minLength": 1,
+          "title": "Entry Uid",
+          "type": "string"
+        },
+        "title": {
+          "default": "Qr Code",
+          "title": "Title",
+          "type": "string"
+        },
+        "folder_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FolderOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "update_link_qr",
+          "default": "update_link_qr",
+          "title": "Operation",
+          "type": "string"
+        },
+        "qr_fields_data": {
+          "$ref": "#/$defs/LinkData"
+        }
+      },
+      "required": [
+        "entry_uid",
+        "qr_fields_data"
+      ],
+      "title": "UpdateLinkQR",
+      "type": "object"
+    },
+    "UpdateShortLink": {
+      "additionalProperties": false,
+      "description": "Update a short link and return its metadata.",
+      "properties": {
+        "entry_uid": {
+          "description": "Numeric ID or unique entry key from ME-QR.",
+          "minLength": 1,
+          "title": "Entry Uid",
+          "type": "string"
+        },
+        "title": {
+          "default": "Qr Code",
+          "title": "Title",
+          "type": "string"
+        },
+        "folder_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FolderOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "update_short_link",
+          "default": "update_short_link",
+          "title": "Operation",
+          "type": "string"
+        },
+        "link": {
+          "description": "Destination URL, such as https://example.com.",
+          "title": "Link",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entry_uid",
+        "link"
+      ],
+      "title": "UpdateShortLink",
+      "type": "object"
+    },
+    "UpdateTextQR": {
+      "additionalProperties": false,
+      "description": "Update a text QR code; return JSON metadata.",
+      "properties": {
+        "entry_uid": {
+          "description": "Numeric ID or unique entry key from ME-QR.",
+          "minLength": 1,
+          "title": "Entry Uid",
+          "type": "string"
+        },
+        "title": {
+          "default": "Qr Code",
+          "title": "Title",
+          "type": "string"
+        },
+        "folder_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FolderOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "update_text_qr",
+          "default": "update_text_qr",
+          "title": "Operation",
+          "type": "string"
+        },
+        "qr_fields_data": {
+          "$ref": "#/$defs/TextData"
+        }
+      },
+      "required": [
+        "entry_uid",
+        "qr_fields_data"
+      ],
+      "title": "UpdateTextQR",
+      "type": "object"
+    },
+    "UpdateWifiQR": {
+      "additionalProperties": false,
+      "description": "Update a wifi QR code; return JSON metadata.",
+      "properties": {
+        "entry_uid": {
+          "description": "Numeric ID or unique entry key from ME-QR.",
+          "minLength": 1,
+          "title": "Entry Uid",
+          "type": "string"
+        },
+        "title": {
+          "default": "Qr Code",
+          "title": "Title",
+          "type": "string"
+        },
+        "folder_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FolderOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "operation": {
+          "const": "update_wifi_qr",
+          "default": "update_wifi_qr",
+          "title": "Operation",
+          "type": "string"
+        },
+        "qr_fields_data": {
+          "$ref": "#/$defs/WifiData"
+        }
+      },
+      "required": [
+        "entry_uid",
+        "qr_fields_data"
+      ],
+      "title": "UpdateWifiQR",
+      "type": "object"
+    },
+    "WifiData": {
+      "additionalProperties": false,
+      "properties": {
+        "ssid": {
+          "title": "Ssid",
+          "type": "string"
+        },
+        "encryption": {
+          "enum": [
+            "wpa/wpa2",
+            "wpa3",
+            "wep",
+            "none",
+            "raw"
+          ],
+          "title": "Encryption",
+          "type": "string"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Password",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "ssid",
+        "encryption"
+      ],
+      "title": "WifiData",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_email_qr": "#/$defs/CreateEmailQR",
+          "create_folder": "#/$defs/CreateFolder",
+          "create_link_qr": "#/$defs/CreateLinkQR",
+          "create_short_link": "#/$defs/CreateShortLink",
+          "create_text_qr": "#/$defs/CreateTextQR",
+          "create_wifi_qr": "#/$defs/CreateWifiQR",
+          "delete_entries": "#/$defs/DeleteEntries",
+          "get_analytics": "#/$defs/GetAnalytics",
+          "get_email_qr": "#/$defs/GetEmailQR",
+          "get_link_qr": "#/$defs/GetLinkQR",
+          "get_short_link": "#/$defs/GetShortLink",
+          "get_text_qr": "#/$defs/GetTextQR",
+          "get_wifi_qr": "#/$defs/GetWifiQR",
+          "list_folders": "#/$defs/ListFolders",
+          "list_qr_codes": "#/$defs/ListQRCodes",
+          "list_scan_events": "#/$defs/ListScanEvents",
+          "update_email_qr": "#/$defs/UpdateEmailQR",
+          "update_link_qr": "#/$defs/UpdateLinkQR",
+          "update_short_link": "#/$defs/UpdateShortLink",
+          "update_text_qr": "#/$defs/UpdateTextQR",
+          "update_wifi_qr": "#/$defs/UpdateWifiQR"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListQRCodes"
+        },
+        {
+          "$ref": "#/$defs/ListScanEvents"
+        },
+        {
+          "$ref": "#/$defs/ListFolders"
+        },
+        {
+          "$ref": "#/$defs/CreateFolder"
+        },
+        {
+          "$ref": "#/$defs/GetAnalytics"
+        },
+        {
+          "$ref": "#/$defs/DeleteEntries"
+        },
+        {
+          "$ref": "#/$defs/CreateLinkQR"
+        },
+        {
+          "$ref": "#/$defs/UpdateLinkQR"
+        },
+        {
+          "$ref": "#/$defs/GetLinkQR"
+        },
+        {
+          "$ref": "#/$defs/CreateTextQR"
+        },
+        {
+          "$ref": "#/$defs/UpdateTextQR"
+        },
+        {
+          "$ref": "#/$defs/GetTextQR"
+        },
+        {
+          "$ref": "#/$defs/CreateEmailQR"
+        },
+        {
+          "$ref": "#/$defs/UpdateEmailQR"
+        },
+        {
+          "$ref": "#/$defs/GetEmailQR"
+        },
+        {
+          "$ref": "#/$defs/CreateWifiQR"
+        },
+        {
+          "$ref": "#/$defs/UpdateWifiQR"
+        },
+        {
+          "$ref": "#/$defs/GetWifiQR"
+        },
+        {
+          "$ref": "#/$defs/CreateShortLink"
+        },
+        {
+          "$ref": "#/$defs/UpdateShortLink"
+        },
+        {
+          "$ref": "#/$defs/GetShortLink"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MEQRCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Me-qr-qr-code Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
