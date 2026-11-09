@@ -1,0 +1,1531 @@
+{
+  "list_users": {
+    "body": {
+      "meta_data": {
+        "pagination": {
+          "current_page": 1,
+          "first_page_url": "https://api.timeero.app/api/public/users?page=1",
+          "from": 1,
+          "last_page": 2,
+          "last_page_url": "https://api.timeero.app/api/public/users?page=2",
+          "next_page_url": "https://api.timeero.app/api/public/users?page=2",
+          "path": "https://api.timeero.app/api/public/users",
+          "per_page": 10,
+          "prev_page_url": null,
+          "to": 10,
+          "total": 15,
+          "options": true
+        }
+      },
+      "items": [
+        {
+          "id": 660,
+          "first_name": "Alexandria",
+          "last_name": "Rodriguez",
+          "email": "alexandria@timeero.com",
+          "phone": "",
+          "company_employee_id": "",
+          "employee_code": "",
+          "pay_rate": 0,
+          "billing_rate_type": 0,
+          "active": "Inactive",
+          "role_name": "Employee",
+          "can_track_location": true,
+          "can_track_mileage": false,
+          "notes": null,
+          "created_at": "2023-09-25T14:42:41",
+          "updated_at": "2023-09-25T15:06:42",
+          "custom_fields": {
+            "1390": "09/02/2025",
+            "1833": "ID_876545"
+          }
+        }
+      ]
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "get_user": {
+    "body": {
+      "items": {
+        "id": 660,
+        "first_name": "Alexandria",
+        "last_name": "Rodriguez",
+        "email": "alexandria@timeero.com",
+        "phone": "",
+        "company_employee_id": "",
+        "employee_code": "",
+        "pay_rate": 0,
+        "billing_rate_type": 0,
+        "active": "Inactive",
+        "role_name": "Employee",
+        "can_track_location": true,
+        "can_track_mileage": false,
+        "notes": null,
+        "created_at": "2023-09-25T14:42:41",
+        "updated_at": "2023-09-25T15:06:42",
+        "custom_fields": null
+      },
+      "message": "User loaded successfully."
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "list_groups": {
+    "body": {
+      "meta_data": {
+        "pagination": {
+          "current_page": 1,
+          "first_page_url": "https://api.sandbox.timeero.com/api/public/groups?page=1",
+          "from": 1,
+          "last_page": 1,
+          "last_page_url": "https://api.sandbox.timeero.com/api/public/groups?page=1",
+          "next_page_url": null,
+          "path": "https://api.sandbox.timeero.com/api/public/groups",
+          "per_page": 10,
+          "prev_page_url": null,
+          "to": 9,
+          "total": 9,
+          "options": true
+        }
+      },
+      "items": [
+        {
+          "id": 16,
+          "name_prefix": "PPC",
+          "name": "Party Planning Committee",
+          "users_count": 0,
+          "users": [],
+          "created_at": "2020-11-10T20:20:26"
+        },
+        {
+          "id": 34,
+          "name_prefix": "A",
+          "name": "Accounting",
+          "users_count": 2,
+          "users": [
+            {
+              "id": 10,
+              "first_name": "Michael",
+              "last_name": "Scott",
+              "email": "barima@timeero.com",
+              "role_name": "Admin",
+              "company_employee_id": "2345"
+            },
+            {
+              "id": 214,
+              "first_name": "Creed",
+              "last_name": "Bratton",
+              "email": "creed.bratton@dundermifflin.com",
+              "role_name": "Employee",
+              "company_employee_id": null
+            }
+          ],
+          "created_at": "2021-12-01T05:54:01"
+        }
+      ]
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "list_jobs": {
+    "body": {
+      "meta_data": {
+        "pagination": {
+          "current_page": 1,
+          "first_page_url": "http://api.timeero.app/api/public/jobs?page=1",
+          "from": 1,
+          "last_page": 1,
+          "last_page_url": "http://api.timeero.app/api/public/jobs?page=1",
+          "next_page_url": null,
+          "path": "http://api.timeero.app/api/public/jobs",
+          "per_page": 10,
+          "prev_page_url": null,
+          "to": 9,
+          "total": 9,
+          "options": true
+        }
+      },
+      "items": [
+        {
+          "id": 5103,
+          "name": "Job A",
+          "description": "Job A description",
+          "job_status": true,
+          "job_code": null,
+          "job_rate_per_hour": null,
+          "radius_meters": 0,
+          "longitude": -80.3136614,
+          "latitude": 26.013501,
+          "require_geofence": false,
+          "address": {
+            "street": null,
+            "city": null,
+            "state": null,
+            "zipCode": null,
+            "country": null
+          },
+          "contact_info": {
+            "contact_name": "Joe",
+            "contact_email": "joe@example.com",
+            "contact_mobile": null,
+            "contact_phone": "123456"
+          },
+          "track_mileage": true,
+          "assigned_users": [],
+          "created_at": "2024-01-19T18:56:36",
+          "updated_at": "2024-01-19T18:56:36"
+        },
+        {
+          "id": 5111,
+          "name": "Job A",
+          "description": "Job A description",
+          "job_status": true,
+          "job_code": null,
+          "job_rate_per_hour": null,
+          "radius_meters": 0,
+          "longitude": 0,
+          "latitude": 0,
+          "require_geofence": false,
+          "address": {
+            "street": null,
+            "city": null,
+            "state": null,
+            "zipCode": null,
+            "country": null
+          },
+          "contact_info": {
+            "contact_name": null,
+            "contact_email": null,
+            "contact_mobile": null,
+            "contact_phone": null
+          },
+          "track_mileage": true,
+          "assigned_users": [],
+          "created_at": "2024-02-09T15:29:06",
+          "updated_at": "2024-02-09T15:29:06"
+        },
+        {
+          "id": 248061,
+          "name": "Job A Updated",
+          "description": "Job A description",
+          "job_status": true,
+          "job_code": "5453B",
+          "job_rate_per_hour": null,
+          "radius_meters": 110,
+          "longitude": -80.3136614,
+          "latitude": 26.013501,
+          "require_geofence": false,
+          "address": {
+            "street": null,
+            "city": null,
+            "state": null,
+            "zipCode": null,
+            "country": null
+          },
+          "contact_info": {
+            "contact_name": "Joe",
+            "contact_email": "joe@example.com",
+            "contact_mobile": null,
+            "contact_phone": "123456"
+          },
+          "track_mileage": true,
+          "assigned_users": [],
+          "created_at": "2024-06-03T12:32:42",
+          "updated_at": "2024-06-03T12:33:19"
+        },
+        {
+          "id": 5104,
+          "name": "Job B",
+          "description": "Job A description",
+          "job_status": true,
+          "job_code": null,
+          "job_rate_per_hour": null,
+          "radius_meters": 0,
+          "longitude": -80.3136614,
+          "latitude": 26.013501,
+          "require_geofence": false,
+          "address": {
+            "street": null,
+            "city": null,
+            "state": null,
+            "zipCode": null,
+            "country": null
+          },
+          "contact_info": {
+            "contact_name": "Joe",
+            "contact_email": "joe@example.com",
+            "contact_mobile": null,
+            "contact_phone": "123456"
+          },
+          "track_mileage": true,
+          "assigned_users": [],
+          "created_at": "2024-01-19T18:57:14",
+          "updated_at": "2024-01-19T18:57:14"
+        },
+        {
+          "id": 5105,
+          "name": "Job C",
+          "description": "Job A description",
+          "job_status": true,
+          "job_code": null,
+          "job_rate_per_hour": null,
+          "radius_meters": 0,
+          "longitude": -80.3136614,
+          "latitude": 26.013501,
+          "require_geofence": false,
+          "address": {
+            "street": null,
+            "city": null,
+            "state": null,
+            "zipCode": null,
+            "country": null
+          },
+          "contact_info": {
+            "contact_name": "Joe",
+            "contact_email": "joe@example.com",
+            "contact_mobile": null,
+            "contact_phone": "123456"
+          },
+          "track_mileage": true,
+          "assigned_users": [],
+          "created_at": "2024-01-19T18:57:30",
+          "updated_at": "2024-01-19T18:57:30"
+        },
+        {
+          "id": 5106,
+          "name": "Job D",
+          "description": "Job A description",
+          "job_status": true,
+          "job_code": null,
+          "job_rate_per_hour": null,
+          "radius_meters": 0,
+          "longitude": -80.3136614,
+          "latitude": 26.013501,
+          "require_geofence": false,
+          "address": {
+            "street": null,
+            "city": null,
+            "state": null,
+            "zipCode": null,
+            "country": null
+          },
+          "contact_info": {
+            "contact_name": "Joe",
+            "contact_email": "joe@example.com",
+            "contact_mobile": null,
+            "contact_phone": "123456"
+          },
+          "track_mileage": true,
+          "assigned_users": [],
+          "created_at": "2024-01-19T18:57:48",
+          "updated_at": "2024-01-19T18:57:48"
+        },
+        {
+          "id": 5107,
+          "name": "Job E",
+          "description": "Job A description",
+          "job_status": true,
+          "job_code": null,
+          "job_rate_per_hour": null,
+          "radius_meters": 0,
+          "longitude": -80.3136614,
+          "latitude": 26.013501,
+          "require_geofence": false,
+          "address": {
+            "street": null,
+            "city": null,
+            "state": null,
+            "zipCode": null,
+            "country": null
+          },
+          "contact_info": {
+            "contact_name": "Joe",
+            "contact_email": "joe@example.com",
+            "contact_mobile": null,
+            "contact_phone": "123456"
+          },
+          "track_mileage": true,
+          "assigned_users": [],
+          "created_at": "2024-01-19T19:01:24",
+          "updated_at": "2024-01-19T19:01:24"
+        },
+        {
+          "id": 5108,
+          "name": "Job F",
+          "description": "Job A description",
+          "job_status": true,
+          "job_code": null,
+          "job_rate_per_hour": null,
+          "radius_meters": 0,
+          "longitude": -80.3136614,
+          "latitude": 26.013501,
+          "require_geofence": false,
+          "address": {
+            "street": null,
+            "city": null,
+            "state": null,
+            "zipCode": null,
+            "country": null
+          },
+          "contact_info": {
+            "contact_name": "Joe",
+            "contact_email": "joe@example.com",
+            "contact_mobile": null,
+            "contact_phone": "123456"
+          },
+          "track_mileage": true,
+          "assigned_users": [],
+          "created_at": "2024-01-19T19:02:40",
+          "updated_at": "2024-01-19T19:02:40"
+        },
+        {
+          "id": 5109,
+          "name": "Job G",
+          "description": "",
+          "job_status": true,
+          "job_code": null,
+          "job_rate_per_hour": null,
+          "radius_meters": 0,
+          "longitude": 0,
+          "latitude": 0,
+          "require_geofence": false,
+          "address": {
+            "street": null,
+            "city": null,
+            "state": null,
+            "zipCode": null,
+            "country": null
+          },
+          "contact_info": {
+            "contact_name": null,
+            "contact_email": null,
+            "contact_mobile": null,
+            "contact_phone": null
+          },
+          "track_mileage": false,
+          "assigned_users": [],
+          "created_at": "2024-01-19T19:21:01",
+          "updated_at": "2024-01-19T19:21:01"
+        }
+      ]
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "get_job": {
+    "body": {
+      "items": {
+        "id": 2,
+        "name": "Job A",
+        "description": "Job A description",
+        "job_status": true,
+        "job_code": "5453A",
+        "job_rate_per_hour": null,
+        "radius_meters": 105,
+        "longitude": 0,
+        "latitude": 0,
+        "require_geofence": false,
+        "address": {
+          "street": "Street 1",
+          "city": null,
+          "state": null,
+          "zipCode": null,
+          "country": null
+        },
+        "contact_info": {
+          "contact_name": null,
+          "contact_email": null,
+          "contact_mobile": null,
+          "contact_phone": null
+        },
+        "track_mileage": true,
+        "created_at": "2024-11-06T17:08:56",
+        "updated_at": "2024-11-06T17:08:56"
+      }
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "create_job": {
+    "body": {
+      "items": {
+        "id": 5108,
+        "name": "Job A",
+        "description": "Job A description",
+        "job_status": true,
+        "job_code": "5453A",
+        "job_rate_per_hour": null,
+        "radius_meters": 0,
+        "longitude": -80.3136614,
+        "latitude": 26.013501,
+        "require_geofence": false,
+        "address": {
+          "street": null,
+          "city": null,
+          "state": null,
+          "zipCode": null,
+          "country": null
+        },
+        "contact_info": {
+          "contact_name": "Joe",
+          "contact_email": "joe@example.com",
+          "contact_mobile": null,
+          "contact_phone": "123456"
+        },
+        "track_mileage": true,
+        "created_at": "2024-01-19T19:02:40",
+        "updated_at": "2024-01-19T19:02:40"
+      },
+      "message": "Job created successfully"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "update_job": {
+    "body": {
+      "items": {
+        "id": 5102,
+        "name": "Job A Updated",
+        "description": "Job A description",
+        "job_status": true,
+        "job_code": "5453B",
+        "job_rate_per_hour": 0,
+        "radius_meters": 0,
+        "longitude": -80.3136614,
+        "latitude": 26.013501,
+        "require_geofence": false,
+        "address": {
+          "street": "",
+          "city": "",
+          "state": "",
+          "zipCode": "",
+          "country": ""
+        },
+        "contact_info": {
+          "contact_name": "Joe",
+          "contact_email": "joe@example.com",
+          "contact_mobile": null,
+          "contact_phone": "123456"
+        },
+        "track_mileage": true,
+        "created_at": "2024-01-18T22:17:13",
+        "updated_at": "2024-01-19T21:23:02"
+      },
+      "message": "Job updated successfully."
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "list_tasks": {
+    "body": {
+      "meta_data": {
+        "pagination": {
+          "current_page": 1,
+          "first_page_url": "https://api.timeero.app/api/public/tasks?page=1",
+          "from": 1,
+          "last_page": 1,
+          "last_page_url": "https://api.timeero.app/api/public/tasks?page=1",
+          "next_page_url": null,
+          "path": "https://api.timeero.app/api/public/tasks",
+          "per_page": 10,
+          "prev_page_url": null,
+          "to": 4,
+          "total": 4,
+          "options": true
+        }
+      },
+      "items": [
+        {
+          "id": 3699,
+          "createdAt": "2022-02-25T00:51:32",
+          "updatedAt": "2022-11-03T16:23:04",
+          "name": "01.2 Building Permits",
+          "billable": true,
+          "task_status": 1,
+          "billable_rate": null,
+          "description": null,
+          "assigned_users": [],
+          "assigned_jobs": []
+        },
+        {
+          "id": 11134,
+          "createdAt": "2023-11-30T01:32:22",
+          "updatedAt": "2023-11-30T01:32:22",
+          "name": "Install Locks",
+          "billable": false,
+          "task_status": 1,
+          "billable_rate": 0,
+          "description": null,
+          "assigned_users": [],
+          "assigned_jobs": []
+        },
+        {
+          "id": 14838,
+          "createdAt": "2024-06-19T16:21:33",
+          "updatedAt": "2024-06-19T16:21:33",
+          "name": "New zapier task",
+          "billable": true,
+          "task_status": 1,
+          "billable_rate": 0,
+          "description": "Zapier task description",
+          "assigned_users": [],
+          "assigned_jobs": []
+        },
+        {
+          "id": 1995,
+          "createdAt": "2021-07-17T20:32:36",
+          "updatedAt": "2021-09-14T14:44:27",
+          "name": "Task 1",
+          "billable": false,
+          "task_status": 0,
+          "billable_rate": null,
+          "description": "",
+          "assigned_users": [],
+          "assigned_jobs": []
+        }
+      ]
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "get_task": {
+    "body": {
+      "items": {
+        "id": 96,
+        "createdAt": "2023-02-09T19:38:06",
+        "updatedAt": "2023-05-26T01:07:35",
+        "name": "Gardening",
+        "billable": false,
+        "task_status": 1,
+        "billable_rate": 0,
+        "description": "Perform routine gardening and landscaping tasks to maintain a clean, healthy, and visually appealing garden area.",
+        "assigned_users": [
+          {
+            "userId": 10,
+            "firstName": "Michael",
+            "lastName": "Scott",
+            "email": "barima@timeero.com",
+            "roleName": "Admin"
+          },
+          {
+            "userId": 10,
+            "firstName": "Michael",
+            "lastName": "Scott",
+            "email": "barima@timeero.com",
+            "roleName": "Admin"
+          }
+        ],
+        "assigned_jobs": [
+          {
+            "id": 3295,
+            "name": "Sprinkling Steaks",
+            "assigned_users": [],
+            "total_tasks": 0
+          },
+          {
+            "id": 769,
+            "name": "Fry's Food & Drug",
+            "assigned_users": [],
+            "total_tasks": 0
+          }
+        ]
+      },
+      "message": ""
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "create_task": {
+    "body": {
+      "items": {
+        "id": 96,
+        "createdAt": "2026-01-26T09:17:44",
+        "updatedAt": "2026-01-26T09:17:44",
+        "name": "Gardening",
+        "billable": false,
+        "task_status": null,
+        "billable_rate": null,
+        "description": "Perform routine gardening and landscaping tasks to maintain a clean, healthy, and visually appealing garden area."
+      },
+      "message": "New task created successfully"
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "update_task": {
+    "body": {
+      "items": {
+        "id": 122,
+        "createdAt": "2024-03-08T10:12:38",
+        "updatedAt": "2024-03-08T10:55:25",
+        "name": "Task A",
+        "billable": true,
+        "task_status": 1,
+        "billable_rate": 100,
+        "description": "New task Updated from api"
+      },
+      "message": "Task updated successfully."
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "list_timesheets": {
+    "body": {
+      "meta_data": {
+        "pagination": {
+          "current_page": 1,
+          "first_page_url": "https://api.sandbox.timeero.com/api/public/timesheets?page=1",
+          "from": 1,
+          "last_page": 15,
+          "last_page_url": "https://api.sandbox.timeero.com/api/public/timesheets?page=15",
+          "next_page_url": "https://api.sandbox.timeero.com/api/public/timesheets?page=2",
+          "path": "https://api.sandbox.timeero.com/api/public/timesheets",
+          "per_page": 10,
+          "prev_page_url": null,
+          "to": 10,
+          "total": 142,
+          "options": true
+        }
+      },
+      "items": [
+        {
+          "id": 3018248,
+          "user_id": 661,
+          "first_name": "Alice",
+          "last_name": "Villa",
+          "company_employee_id": null,
+          "notes": null,
+          "job_id": 5181,
+          "job_name": "Jasmina geo 2",
+          "task_id": null,
+          "task_name": null,
+          "clock_in_time": "2024-10-02T00:00:00",
+          "clock_in_address": null,
+          "clock_in_latitude": null,
+          "clock_in_longitude": null,
+          "clock_out_time": "2024-10-02T23:59:59",
+          "clock_out_address": null,
+          "clock_out_latitude": 44.6902612,
+          "clock_out_longitude": 18.3098668,
+          "break_in_seconds": 0,
+          "breaks": [],
+          "duration": "23:59:59",
+          "mileage": 0,
+          "attachments": 0,
+          "flagged": false,
+          "approved": false,
+          "approved_by": null,
+          "custom_fields": null,
+          "clock_in_timezone": "Europe/Sarajevo",
+          "clock_out_timezone": "Europe/Sarajevo",
+          "created_at": "2024-10-01T17:55:23",
+          "updated_at": "2024-10-01T17:55:23"
+        },
+        {
+          "id": 3018247,
+          "user_id": 661,
+          "first_name": "Alice",
+          "last_name": "Villa",
+          "company_employee_id": null,
+          "notes": null,
+          "job_id": 5181,
+          "job_name": "Jasmina geo 2",
+          "task_id": null,
+          "task_name": null,
+          "clock_in_time": "2024-10-01T00:00:00",
+          "clock_in_address": null,
+          "clock_in_latitude": null,
+          "clock_in_longitude": null,
+          "clock_out_time": "2024-10-01T19:55:21",
+          "clock_out_address": null,
+          "clock_out_latitude": 44.6902612,
+          "clock_out_longitude": 18.3098668,
+          "break_in_seconds": 0,
+          "breaks": [],
+          "duration": "19:55:21",
+          "mileage": 55.97,
+          "attachments": 0,
+          "flagged": false,
+          "approved": false,
+          "approved_by": null,
+          "custom_fields": null,
+          "clock_in_timezone": "Europe/Sarajevo",
+          "clock_out_timezone": "Europe/Sarajevo",
+          "created_at": "2024-10-01T17:55:22",
+          "updated_at": "2024-10-01T17:55:23"
+        },
+        {
+          "id": 3018240,
+          "user_id": 661,
+          "first_name": "Alice",
+          "last_name": "Villa",
+          "company_employee_id": null,
+          "notes": "",
+          "job_id": 5181,
+          "job_name": "Jasmina geo 2",
+          "task_id": null,
+          "task_name": null,
+          "clock_in_time": "2024-09-30T23:41:35",
+          "clock_in_address": null,
+          "clock_in_latitude": 44.6903808,
+          "clock_in_longitude": 18.3100086,
+          "clock_out_time": "2024-09-30T23:59:59",
+          "clock_out_address": null,
+          "clock_out_latitude": null,
+          "clock_out_longitude": null,
+          "break_in_seconds": 0,
+          "breaks": [],
+          "duration": "0:18:24",
+          "mileage": 1.21,
+          "attachments": 0,
+          "flagged": false,
+          "approved": false,
+          "approved_by": null,
+          "custom_fields": null,
+          "clock_in_timezone": "Europe/Sarajevo",
+          "clock_out_timezone": "Europe/Sarajevo",
+          "created_at": "2024-09-30T21:41:35",
+          "updated_at": "2024-10-02T13:07:16"
+        },
+        {
+          "id": 3018238,
+          "user_id": 138,
+          "first_name": "Angela",
+          "last_name": "Martin",
+          "company_employee_id": "32123",
+          "notes": null,
+          "job_id": 5181,
+          "job_name": "Jasmina geo 2",
+          "task_id": null,
+          "task_name": null,
+          "clock_in_time": "2024-09-27T00:00:00",
+          "clock_in_address": null,
+          "clock_in_latitude": null,
+          "clock_in_longitude": null,
+          "clock_out_time": "2024-09-27T15:22:15",
+          "clock_out_address": null,
+          "clock_out_latitude": null,
+          "clock_out_longitude": null,
+          "break_in_seconds": 0,
+          "breaks": [],
+          "duration": "15:22:15",
+          "mileage": 0,
+          "attachments": 0,
+          "flagged": false,
+          "approved": false,
+          "approved_by": null,
+          "custom_fields": null,
+          "clock_in_timezone": "Europe/Sarajevo",
+          "clock_out_timezone": "Europe/Berlin",
+          "created_at": "2024-09-27T13:22:15",
+          "updated_at": "2024-09-27T13:22:15"
+        },
+        {
+          "id": 3018237,
+          "user_id": 661,
+          "first_name": "Alice",
+          "last_name": "Villa",
+          "company_employee_id": null,
+          "notes": null,
+          "job_id": 5181,
+          "job_name": "Jasmina geo 2",
+          "task_id": null,
+          "task_name": null,
+          "clock_in_time": "2024-09-27T00:00:00",
+          "clock_in_address": null,
+          "clock_in_latitude": null,
+          "clock_in_longitude": null,
+          "clock_out_time": "2024-09-27T15:19:36",
+          "clock_out_address": null,
+          "clock_out_latitude": 44.6903131,
+          "clock_out_longitude": 18.3099117,
+          "break_in_seconds": 0,
+          "breaks": [],
+          "duration": "15:19:36",
+          "mileage": 52.82,
+          "attachments": 0,
+          "flagged": false,
+          "approved": false,
+          "approved_by": null,
+          "custom_fields": null,
+          "clock_in_timezone": "Europe/Sarajevo",
+          "clock_out_timezone": "Europe/Berlin",
+          "created_at": "2024-09-27T13:19:36",
+          "updated_at": "2024-09-27T13:19:36"
+        },
+        {
+          "id": 3018230,
+          "user_id": 138,
+          "first_name": "Angela",
+          "last_name": "Martin",
+          "company_employee_id": "32123",
+          "notes": null,
+          "job_id": 5181,
+          "job_name": "Jasmina geo 2",
+          "task_id": null,
+          "task_name": null,
+          "clock_in_time": "2024-09-26T23:49:11",
+          "clock_in_address": null,
+          "clock_in_latitude": null,
+          "clock_in_longitude": null,
+          "clock_out_time": "2024-09-26T23:59:59",
+          "clock_out_address": null,
+          "clock_out_latitude": null,
+          "clock_out_longitude": null,
+          "break_in_seconds": 0,
+          "breaks": [],
+          "duration": "0:10:48",
+          "mileage": 0,
+          "attachments": 0,
+          "flagged": false,
+          "approved": false,
+          "approved_by": null,
+          "custom_fields": null,
+          "clock_in_timezone": "Europe/Sarajevo",
+          "clock_out_timezone": "Europe/Berlin",
+          "created_at": "2024-09-26T21:49:11",
+          "updated_at": "2024-09-27T13:22:15"
+        },
+        {
+          "id": 3018229,
+          "user_id": 661,
+          "first_name": "Alice",
+          "last_name": "Villa",
+          "company_employee_id": null,
+          "notes": null,
+          "job_id": 5181,
+          "job_name": "Jasmina geo 2",
+          "task_id": null,
+          "task_name": null,
+          "clock_in_time": "2024-09-26T23:33:56",
+          "clock_in_address": null,
+          "clock_in_latitude": 44.6904083,
+          "clock_in_longitude": 18.3098952,
+          "clock_out_time": "2024-09-26T23:59:59",
+          "clock_out_address": null,
+          "clock_out_latitude": null,
+          "clock_out_longitude": null,
+          "break_in_seconds": 0,
+          "breaks": [],
+          "duration": "0:26:03",
+          "mileage": 0,
+          "attachments": 0,
+          "flagged": false,
+          "approved": false,
+          "approved_by": null,
+          "custom_fields": null,
+          "clock_in_timezone": "Europe/Sarajevo",
+          "clock_out_timezone": "Europe/Berlin",
+          "created_at": "2024-09-26T21:33:56",
+          "updated_at": "2024-09-27T13:19:36"
+        },
+        {
+          "id": 3018097,
+          "user_id": 662,
+          "first_name": "Amanda",
+          "last_name": "Kramer",
+          "company_employee_id": "",
+          "notes": "",
+          "job_id": 812,
+          "job_name": "Cheesesteak House",
+          "task_id": null,
+          "task_name": null,
+          "clock_in_time": "2024-08-29T21:14:32",
+          "clock_in_address": null,
+          "clock_in_latitude": null,
+          "clock_in_longitude": null,
+          "clock_out_time": "2024-09-26T23:19:38",
+          "clock_out_address": null,
+          "clock_out_latitude": null,
+          "clock_out_longitude": null,
+          "break_in_seconds": 0,
+          "breaks": [],
+          "duration": "681:05:06",
+          "mileage": 0,
+          "attachments": 0,
+          "flagged": false,
+          "approved": false,
+          "approved_by": null,
+          "custom_fields": null,
+          "clock_in_timezone": "Asia/Tokyo",
+          "clock_out_timezone": "Europe/Berlin",
+          "created_at": "2024-08-29T12:14:33",
+          "updated_at": "2024-09-26T21:19:39"
+        },
+        {
+          "id": 3018096,
+          "user_id": 661,
+          "first_name": "Alice",
+          "last_name": "Villa",
+          "company_employee_id": null,
+          "notes": "",
+          "job_id": 812,
+          "job_name": "Cheesesteak House",
+          "task_id": null,
+          "task_name": null,
+          "clock_in_time": "2024-08-29T21:14:32",
+          "clock_in_address": null,
+          "clock_in_latitude": null,
+          "clock_in_longitude": null,
+          "clock_out_time": "2024-09-26T23:19:38",
+          "clock_out_address": null,
+          "clock_out_latitude": null,
+          "clock_out_longitude": null,
+          "break_in_seconds": 0,
+          "breaks": [],
+          "duration": "681:05:06",
+          "mileage": 0,
+          "attachments": 0,
+          "flagged": false,
+          "approved": false,
+          "approved_by": null,
+          "custom_fields": null,
+          "clock_in_timezone": "Asia/Tokyo",
+          "clock_out_timezone": "Europe/Berlin",
+          "created_at": "2024-08-29T12:14:33",
+          "updated_at": "2024-09-26T21:19:39"
+        },
+        {
+          "id": 3018095,
+          "user_id": 661,
+          "first_name": "Alice",
+          "last_name": "Villa",
+          "company_employee_id": null,
+          "notes": "",
+          "job_id": 5088,
+          "job_name": "#1561 Test",
+          "task_id": null,
+          "task_name": null,
+          "clock_in_time": "2024-08-29T21:12:31",
+          "clock_in_address": null,
+          "clock_in_latitude": null,
+          "clock_in_longitude": null,
+          "clock_out_time": "2024-08-29T21:13:02",
+          "clock_out_address": null,
+          "clock_out_latitude": null,
+          "clock_out_longitude": null,
+          "break_in_seconds": 0,
+          "breaks": [],
+          "duration": "0:00:31",
+          "mileage": 0,
+          "attachments": 0,
+          "flagged": false,
+          "approved": false,
+          "approved_by": null,
+          "custom_fields": null,
+          "clock_in_timezone": "Asia/Tokyo",
+          "clock_out_timezone": "Asia/Tokyo",
+          "created_at": "2024-08-29T12:12:32",
+          "updated_at": "2024-08-29T12:13:02"
+        }
+      ]
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "get_timesheet": {
+    "body": {
+      "items": {
+        "id": 3018248,
+        "user_id": 661,
+        "first_name": "Alice",
+        "last_name": "Villa",
+        "company_employee_id": null,
+        "notes": null,
+        "job_id": 5181,
+        "job_name": "Jasmina geo 2",
+        "task_id": null,
+        "task_name": null,
+        "clock_in_time": "2024-10-02T00:00:00",
+        "clock_in_address": null,
+        "clock_in_latitude": null,
+        "clock_in_longitude": null,
+        "clock_out_time": "2024-10-02T23:59:59",
+        "clock_out_address": null,
+        "clock_out_latitude": 44.6902612,
+        "clock_out_longitude": 18.3098668,
+        "break_in_seconds": 0,
+        "breaks": [],
+        "duration": "23:59:59",
+        "mileage": 0,
+        "attachments": 0,
+        "flagged": false,
+        "approved": false,
+        "approved_by": null,
+        "custom_fields": null,
+        "clock_in_timezone": "Europe/Sarajevo",
+        "clock_out_timezone": "Europe/Sarajevo",
+        "created_at": "2024-10-01T17:55:23",
+        "updated_at": "2024-10-01T17:55:23"
+      },
+      "message": "Timesheet loaded successfully."
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "create_timesheet": {
+    "body": {
+      "items": {
+        "id": 8542081,
+        "user_id": 678,
+        "first_name": "John",
+        "last_name": "Doe",
+        "company_employee_id": null,
+        "notes": "",
+        "job_id": null,
+        "job_name": null,
+        "task_id": null,
+        "task_name": null,
+        "clock_in_time": "2024-10-24T08:10:48",
+        "clock_in_address": null,
+        "clock_in_latitude": null,
+        "clock_in_longitude": null,
+        "clock_out_time": "",
+        "clock_out_address": null,
+        "clock_out_latitude": null,
+        "clock_out_longitude": null,
+        "break_in_seconds": null,
+        "breaks": [],
+        "duration": "10:57",
+        "mileage": 10,
+        "attachments": 0,
+        "flagged": false,
+        "approved": false,
+        "approved_by": null,
+        "clock_in_timezone": "America/Los_Angeles",
+        "clock_out_timezone": null,
+        "created_at": "2024-10-24T12:08:29",
+        "updated_at": "2024-10-24T12:08:29"
+      }
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "update_timesheet": {
+    "body": {
+      "items": {
+        "id": 8542079,
+        "user_id": 678,
+        "first_name": "John",
+        "last_name": "Doe",
+        "company_employee_id": null,
+        "notes": "",
+        "job_id": null,
+        "job_name": null,
+        "task_id": null,
+        "task_name": null,
+        "clock_in_time": "2024-10-23T12:10:48",
+        "clock_in_address": null,
+        "clock_in_latitude": null,
+        "clock_in_longitude": null,
+        "clock_out_time": "",
+        "clock_out_address": null,
+        "clock_out_latitude": null,
+        "clock_out_longitude": null,
+        "break_in_seconds": 0,
+        "breaks": [],
+        "duration": "2:24",
+        "mileage": 10,
+        "attachments": 0,
+        "flagged": false,
+        "approved": false,
+        "approved_by": null,
+        "clock_in_timezone": "Africa/Accra",
+        "clock_out_timezone": "America/Phoenix",
+        "created_at": "2024-10-23T14:49:47",
+        "updated_at": "2024-10-23T21:34:53"
+      }
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "approve_timesheets": {
+    "body": {
+      "items": []
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "clock_in": {
+    "body": {
+      "items": {
+        "id": 3018016,
+        "user_id": 681,
+        "userName": "Joe Doe updated",
+        "company_employee_id": null,
+        "notes": "",
+        "job_id": 5102,
+        "job_name": "Sample Job",
+        "task_id": null,
+        "task_name": "",
+        "clock_in_time": "2024-07-30T11:23:36",
+        "clock_out_time": null,
+        "breaks": [],
+        "duration": "4288:49",
+        "attachments": [],
+        "flagged": false,
+        "approved": false,
+        "clockInTimezone": "Europe/Stockholm",
+        "clockOutTimezone": null,
+        "created_at": "2024-01-19T16:34:23",
+        "updated_at": "2024-01-19T16:34:23"
+      }
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "clock_out": {
+    "body": {
+      "items": {
+        "id": 3018016,
+        "user_id": 681,
+        "userName": "Joe Doe updated",
+        "company_employee_id": null,
+        "notes": "",
+        "job_id": 5102,
+        "job_name": "Sample Job",
+        "task_id": null,
+        "task_name": "",
+        "clock_in_time": "2024-07-30T11:23:36",
+        "clock_out_time": "2024-01-19T17:30:36.000000Z",
+        "breaks": [],
+        "duration": "4287:53",
+        "attachments": [],
+        "flagged": false,
+        "approved": false,
+        "clockInTimezone": "Europe/Stockholm",
+        "clockOutTimezone": "Africa/Accra",
+        "created_at": "2024-01-19T16:34:23",
+        "updated_at": "2024-01-19T16:59:04"
+      }
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "list_schedules": {
+    "body": {
+      "items": {
+        "events": [
+          {
+            "id": 7289,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-09 00:00:00",
+            "end": "2024-01-09 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7290,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-10 00:00:00",
+            "end": "2024-01-10 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7291,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-11 00:00:00",
+            "end": "2024-01-11 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7292,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-12 00:00:00",
+            "end": "2024-01-12 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7293,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-13 00:00:00",
+            "end": "2024-01-13 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7294,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-14 00:00:00",
+            "end": "2024-01-14 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7295,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-15 00:00:00",
+            "end": "2024-01-15 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7296,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-16 00:00:00",
+            "end": "2024-01-16 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7297,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-17 00:00:00",
+            "end": "2024-01-17 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7298,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-18 00:00:00",
+            "end": "2024-01-18 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7299,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-19 00:00:00",
+            "end": "2024-01-19 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7300,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-20 00:00:00",
+            "end": "2024-01-20 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7301,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-21 00:00:00",
+            "end": "2024-01-21 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7302,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-22 00:00:00",
+            "end": "2024-01-22 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7303,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-23 00:00:00",
+            "end": "2024-01-23 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7304,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-24 00:00:00",
+            "end": "2024-01-24 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7305,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-25 00:00:00",
+            "end": "2024-01-25 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          },
+          {
+            "id": 7306,
+            "title": "Schedule 2 repeat",
+            "description": null,
+            "start": "2024-01-26 00:00:00",
+            "end": "2024-01-26 23:59:00",
+            "color": "#EF6C00",
+            "event_pid": "8803a969ddca25bd3e421d0d4d0c09a7",
+            "repeat": true,
+            "assign_by": "John Doe",
+            "job_id": 5104,
+            "is_published": true,
+            "user_id": [
+              680
+            ]
+          }
+        ],
+        "users": [
+          {
+            "id": 680,
+            "first_name": "Employee",
+            "last_name": "User",
+            "email": "employeeuser@example.com",
+            "phone": "0000000000",
+            "company_employee_id": null,
+            "employee_image": null
+          }
+        ]
+      }
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  },
+  "get_schedule": {
+    "body": {
+      "items": {
+        "id": 16902,
+        "title": "Test Schedule",
+        "description": null,
+        "start_date": "2026-01-11T02:00:00",
+        "end_date": "2026-01-11T04:00:00",
+        "color": "#010101",
+        "event_pid": "c14014c88e4cf5e890faaf5f62ba8f9c",
+        "repeat": true,
+        "job_name": "Test Job Name",
+        "assign_by": "Michael Scott",
+        "is_published": 1,
+        "employee": "",
+        "accepted_employees": "",
+        "notaccepted_employees": "",
+        "job_id": 812,
+        "repeat_date": "2026-01-31T00:00:00",
+        "user_ids": [
+          10
+        ],
+        "utc_dateinfo": {
+          "start_date": "2026-01-11T01:00:00",
+          "end_date": "2026-01-11T03:00:00",
+          "start_time": "01:00:00",
+          "end_time": "03:00:00"
+        },
+        "timezone": null,
+        "timezone_dateinfo": null
+      },
+      "message": "Schedule loaded successfully."
+    },
+    "source": "https://dash.readme.com/api/v1/api-registry/13cpw3kmkyssk2u"
+  }
+}

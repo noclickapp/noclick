@@ -1,0 +1,2857 @@
+{
+  "$defs": {
+    "TimeeroAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "timeero_api_key",
+          "default": "timeero_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Timeero API Key",
+      "type": "object",
+      "x-credential-instructions": "In Timeero, open Integrations > Public API > Configuration and copy your API key. Paste only the key. Timeero API keys have administrative access; NoClick sends yours directly in the Authorization header.",
+      "x-credential-url": "https://help.timeero.com/public-api-integration"
+    },
+    "TimeeroApproveTimesheetsConfig": {
+      "additionalProperties": false,
+      "description": "Approve Timesheets using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "approve_timesheets",
+          "default": "approve_timesheets",
+          "title": "Approve Timesheets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Timesheets",
+          "x-display-name": "Approve Timesheets",
+          "x-is-trigger": false
+        },
+        "ids": {
+          "description": "An array of timesheet IDs that should be approved in a single request.",
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        },
+        "mute_notification": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether approval notifications should be muted for this action. When set to true, approval notifications will not be sent to users. If false or omitted, users will receive a notification after their timesheets are approved.",
+          "title": "Mute Notification"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "TimeeroApproveTimesheetsConfig",
+      "type": "object"
+    },
+    "TimeeroClockInConfig": {
+      "additionalProperties": false,
+      "description": "Clock In using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "clock_in",
+          "default": "clock_in",
+          "title": "Clock In",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Timesheets",
+          "x-display-name": "Clock In",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "The unique ID of the user who is clocking in.",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the job or project the user is clocking in for. this is required based on company settings.",
+          "title": "Job Id"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The specific task ID under the job. If not applicable, this value can be set to null. this is required based on company settings.",
+          "title": "Task Id"
+        },
+        "clock_in_time": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The exact date and time when the user clocked in. This should be provided in ISO 8601 format, e.g YYYY-MM-DDTHH:MM:SS\u00b1HH:MM.",
+          "format": "date-time",
+          "title": "Clock In Time"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The user\u2019s local timezone at the time of clock-in, formatted as an IANA timezone identifier.",
+          "title": "Timezone"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The latitude coordinate where the user clocked in. Used for location tracking and geofencing validation.",
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The longitude coordinate where the user clocked in. Used for location tracking and geofencing validation.",
+          "title": "Longitude"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "TimeeroClockInConfig",
+      "type": "object"
+    },
+    "TimeeroClockOutConfig": {
+      "additionalProperties": false,
+      "description": "Clock Out using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "clock_out",
+          "default": "clock_out",
+          "title": "Clock Out",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Timesheets",
+          "x-display-name": "Clock Out",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "The unique ID of the user who is clocking out.",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "clock_out_time": {
+          "description": "The exact date and time when the user clocked out. Must be later than the corresponding clock-in time and formatted in ISO 8601.  e.g YYYY-MM-DDTHH:MM:SS\u00b1HH:MM.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Clock Out Time",
+          "type": "string"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The user\u2019s local timezone at the moment of clock-out, provided as an IANA timezone identifier.",
+          "title": "Timezone"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The latitude coordinate where the user clocked out. Used for location verification and geofence enforcement.",
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The longitude coordinate where the user clocked out. Used for location verification and geofence enforcement.",
+          "title": "Longitude"
+        }
+      },
+      "required": [
+        "user_id",
+        "clock_out_time"
+      ],
+      "title": "TimeeroClockOutConfig",
+      "type": "object"
+    },
+    "TimeeroCreateJobConfig": {
+      "additionalProperties": false,
+      "description": "Create Job using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Create Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "Create Job",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The name of the job.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A brief description of the job.",
+          "title": "Description"
+        },
+        "track_mileage": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether mileage tracking is enabled for the job",
+          "title": "Track Mileage"
+        },
+        "require_geofence": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether users must be within the geofence to perform job-related actions. All the fields are optional except street, city, state, zip_code and country are required when require_geofence is true or 1 and latitude and longitude are not provided.",
+          "title": "Require Geofence"
+        },
+        "street": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The street address of the job location.",
+          "title": "Street"
+        },
+        "landmark": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A nearby landmark to help identify the job location.",
+          "title": "Landmark"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The state or region where the job is located.",
+          "title": "State"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The city where the job is located.",
+          "title": "City"
+        },
+        "zip_code": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ZIP or postal code of the job location.",
+          "title": "Zip Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The country where the job is located.",
+          "title": "Country"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The latitude coordinate of the job location.",
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The longitude coordinate of the job location.",
+          "title": "Longitude"
+        },
+        "radius": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The geofence radius around the job location, in meters.",
+          "title": "Radius"
+        },
+        "contact_required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether a contact person is required for the job (true = required, false = not required). contact_name, contact_phone, contact_mobile, and contact_email are required when contact_required is true.",
+          "title": "Contact Required"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the job contact person.",
+          "title": "Contact Name"
+        },
+        "contact_phone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The phone number of the job contact person.",
+          "title": "Contact Phone"
+        },
+        "contact_mobile": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The mobile number of the job contact person.",
+          "title": "Contact Mobile"
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email address of the job contact person.",
+          "title": "Contact Email"
+        },
+        "geofence_members": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A list of user IDs allowed to access or operate within the job\u2019s geofence.",
+          "title": "Geofence Members"
+        },
+        "users": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A list of user IDs assigned to the job.",
+          "title": "Users"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TimeeroCreateJobConfig",
+      "type": "object"
+    },
+    "TimeeroCreateTaskConfig": {
+      "additionalProperties": false,
+      "description": "Create Task using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The name of the task.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A brief description of the task.",
+          "title": "Description"
+        },
+        "user_id": {
+          "description": "The ID of the user with role Admin.",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether the task is billable.",
+          "title": "Billable"
+        },
+        "billable_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing rate for the task. Set to 0 if the task is not billable.",
+          "title": "Billable Rate"
+        },
+        "jobs": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A list of job IDs associated with the task.",
+          "title": "Jobs"
+        }
+      },
+      "required": [
+        "name",
+        "user_id"
+      ],
+      "title": "TimeeroCreateTaskConfig",
+      "type": "object"
+    },
+    "TimeeroCreateTimesheetConfig": {
+      "additionalProperties": false,
+      "description": "Create Timesheet using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "create_timesheet",
+          "default": "create_timesheet",
+          "title": "Create Timesheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Timesheets",
+          "x-display-name": "Create Timesheet",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "The ID of the timesheet owner",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "start": {
+          "description": "The date and time when the user clocked in, in ISO 8601 format, e.g: YYYY-MM-DDTHH:MM:SS\u00b1HH:MM.",
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date and time when the user clocked out, in ISO 8601 format: YYYY-MM-DDTHH:MM:SS\u00b1HH:MM. Set to null if the user is still clocked in.",
+          "format": "date-time",
+          "title": "End"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the job associated with the timesheet entry.",
+          "title": "Job Id"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the task associated with the timesheet entry.",
+          "title": "Task Id"
+        },
+        "mileage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The distance(in miles) traveled during the timesheet period.",
+          "title": "Mileage"
+        },
+        "clock_in_timezone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The timezone in which the clock-in time was recorded. The company's timezone will be used if none is provided. And it must match the offset when ISO 8601 offset is set.",
+          "title": "Clock In Timezone"
+        },
+        "clock_out_timezone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The timezone in which the clock-out time was recorded. Set to null if the user has not clocked out yet. The company's timezone will be used if none is provided. And it must match the ISO 8601 offset when set.",
+          "title": "Clock Out Timezone"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional notes or comments for the timesheet entry.",
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "user_id",
+        "start"
+      ],
+      "title": "TimeeroCreateTimesheetConfig",
+      "type": "object"
+    },
+    "TimeeroGetJobConfig": {
+      "additionalProperties": false,
+      "description": "Get Job using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "Get Job",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "TimeeroGetJobConfig",
+      "type": "object"
+    },
+    "TimeeroGetScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Get Schedule using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "get_schedule",
+          "default": "get_schedule",
+          "title": "Get Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedules",
+          "x-display-name": "Get Schedule",
+          "x-is-trigger": false
+        },
+        "schedule_id": {
+          "minimum": 1,
+          "title": "Schedule Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "TimeeroGetScheduleConfig",
+      "type": "object"
+    },
+    "TimeeroGetTaskConfig": {
+      "additionalProperties": false,
+      "description": "Get Task using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "minimum": 1,
+          "title": "Task Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "TimeeroGetTaskConfig",
+      "type": "object"
+    },
+    "TimeeroGetTimesheetConfig": {
+      "additionalProperties": false,
+      "description": "Get Timesheet using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "get_timesheet",
+          "default": "get_timesheet",
+          "title": "Get Timesheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Timesheets",
+          "x-display-name": "Get Timesheet",
+          "x-is-trigger": false
+        },
+        "timesheet_id": {
+          "minimum": 1,
+          "title": "Timesheet Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "timesheet_id"
+      ],
+      "title": "TimeeroGetTimesheetConfig",
+      "type": "object"
+    },
+    "TimeeroGetUserConfig": {
+      "additionalProperties": false,
+      "description": "Get User using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get User",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "TimeeroGetUserConfig",
+      "type": "object"
+    },
+    "TimeeroListGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List Groups using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Groups",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies which page of the paginated results to return, starting from page 1.",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to include in each page of the response.",
+          "title": "Per Page"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "id",
+                "name"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The field used to sort the results. Allowed values are id, name.",
+          "title": "Sort",
+          "enum": [
+            "id",
+            "name"
+          ],
+          "x-enum-searchable": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This field used to filter groups by group name",
+          "title": "Name"
+        }
+      },
+      "title": "TimeeroListGroupsConfig",
+      "type": "object"
+    },
+    "TimeeroListJobsConfig": {
+      "additionalProperties": false,
+      "description": "List Jobs using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "List Jobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "List Jobs",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies which page of the paginated results to return, starting from page 1.",
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to include in each page of the response.",
+          "title": "Page Size"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "id",
+                "name"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The field used to sort the results. Allowed values are id, name.",
+          "title": "Sort",
+          "enum": [
+            "id",
+            "name"
+          ],
+          "x-enum-searchable": true
+        },
+        "job_status": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The field used to filter jobs by job status. true for Active and false for Inactive jobs.",
+          "title": "Job Status"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name field used to filter jobs by job name",
+          "title": "Name"
+        }
+      },
+      "title": "TimeeroListJobsConfig",
+      "type": "object"
+    },
+    "TimeeroListSchedulesConfig": {
+      "additionalProperties": false,
+      "description": "List Schedules using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "list_schedules",
+          "default": "list_schedules",
+          "title": "List Schedules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedules",
+          "x-display-name": "List Schedules",
+          "x-is-trigger": false
+        },
+        "date_range": {
+          "description": "Filter schedules with in date range. value format for this field e.g `2025-07-18,2025-07-31`",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Date Range",
+          "type": "string"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the job associated with the schedules.",
+          "title": "Job Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "published"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The status of schedules. values are `draft` or `published`",
+          "title": "Status",
+          "enum": [
+            "draft",
+            "published"
+          ],
+          "x-enum-searchable": true
+        },
+        "employee_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the user for whom the schedule is being created.",
+          "title": "Employee Id"
+        }
+      },
+      "required": [
+        "date_range"
+      ],
+      "title": "TimeeroListSchedulesConfig",
+      "type": "object"
+    },
+    "TimeeroListTasksConfig": {
+      "additionalProperties": false,
+      "description": "List Tasks using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Tasks",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies which page of the paginated results to return, starting from page 1.",
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to include in each page of the response. Maximum items per page is 100.",
+          "title": "Page Size"
+        },
+        "jobId": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter tasks by unique job ID.",
+          "title": "Job ID"
+        },
+        "task_status": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The field used to filter tasks by task status. true for Active and false for Inactive tasks.",
+          "title": "Task Status"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name field used to filter tasks by task name",
+          "title": "Name"
+        }
+      },
+      "title": "TimeeroListTasksConfig",
+      "type": "object"
+    },
+    "TimeeroListTimesheetsConfig": {
+      "additionalProperties": false,
+      "description": "List Timesheets using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "list_timesheets",
+          "default": "list_timesheets",
+          "title": "List Timesheets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Timesheets",
+          "x-display-name": "List Timesheets",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies which page of the paginated results to return, starting from page 1.",
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to include in each page of the response. Maximum items per page is 100.",
+          "title": "Page Size"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the user associated with the timesheet entry.",
+          "title": "User Id"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the group associated with users. It fetches all the user's timesheet associated with the given group id.",
+          "title": "Group Id"
+        },
+        "date_range": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter timesheets with in date range. value format for this field e.g `2025-07-18,2025-07-31`",
+          "title": "Date Range"
+        }
+      },
+      "title": "TimeeroListTimesheetsConfig",
+      "type": "object"
+    },
+    "TimeeroListUsersConfig": {
+      "additionalProperties": false,
+      "description": "List Users using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "List Users",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies which page of the paginated results to return, starting from page 1.",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to include in each page of the response.",
+          "title": "Per Page"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "first_name",
+                "last_name",
+                "role_id"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The field used to sort the results. Allowed values are first_name, last_name, and role_id.",
+          "title": "Sort",
+          "enum": [
+            "first_name",
+            "last_name",
+            "role_id"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A keyword used to search users by first name, last name, group name, phone number, or email address.",
+          "title": "Search"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters users based on their role (1 for Admin, 2 for Manager, 3 for Employee).",
+          "title": "Role"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters users by their group ID.",
+          "title": "Group Id"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters users based on their active status (true or false).",
+          "title": "Active"
+        }
+      },
+      "title": "TimeeroListUsersConfig",
+      "type": "object"
+    },
+    "TimeeroOnClockInConfig": {
+      "description": "Receive a documented clock in notification.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_clock_in",
+          "default": "on_clock_in",
+          "title": "Clock In",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Clock In",
+          "x-is-trigger": true
+        },
+        "replace_existing_subscription": {
+          "default": false,
+          "description": "Enable to use this workflow as Timeero\u2019s single company webhook receiver, replacing any existing configuration.",
+          "title": "Replace Company Webhook",
+          "type": "boolean"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timeero has one company webhook configuration. Activating this trigger replaces it; use one Timeero trigger per company. Only matching events start this workflow.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "TimeeroOnClockInConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TimeeroOnClockOutConfig": {
+      "description": "Receive a documented clock out notification.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_clock_out",
+          "default": "on_clock_out",
+          "title": "Clock Out",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Clock Out",
+          "x-is-trigger": true
+        },
+        "replace_existing_subscription": {
+          "default": false,
+          "description": "Enable to use this workflow as Timeero\u2019s single company webhook receiver, replacing any existing configuration.",
+          "title": "Replace Company Webhook",
+          "type": "boolean"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timeero has one company webhook configuration. Activating this trigger replaces it; use one Timeero trigger per company. Only matching events start this workflow.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "TimeeroOnClockOutConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TimeeroOnNewJobConfig": {
+      "description": "Receive a documented new job notification.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_job",
+          "default": "on_new_job",
+          "title": "New Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "New Job",
+          "x-is-trigger": true
+        },
+        "replace_existing_subscription": {
+          "default": false,
+          "description": "Enable to use this workflow as Timeero\u2019s single company webhook receiver, replacing any existing configuration.",
+          "title": "Replace Company Webhook",
+          "type": "boolean"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timeero has one company webhook configuration. Activating this trigger replaces it; use one Timeero trigger per company. Only matching events start this workflow.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "TimeeroOnNewJobConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TimeeroOnNewScheduleConfig": {
+      "description": "Receive a documented new schedule notification.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_schedule",
+          "default": "on_new_schedule",
+          "title": "New Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "New Schedule",
+          "x-is-trigger": true
+        },
+        "replace_existing_subscription": {
+          "default": false,
+          "description": "Enable to use this workflow as Timeero\u2019s single company webhook receiver, replacing any existing configuration.",
+          "title": "Replace Company Webhook",
+          "type": "boolean"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timeero has one company webhook configuration. Activating this trigger replaces it; use one Timeero trigger per company. Only matching events start this workflow.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "TimeeroOnNewScheduleConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TimeeroOnNewTaskConfig": {
+      "description": "Receive a documented new task notification.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_task",
+          "default": "on_new_task",
+          "title": "New Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "New Task",
+          "x-is-trigger": true
+        },
+        "replace_existing_subscription": {
+          "default": false,
+          "description": "Enable to use this workflow as Timeero\u2019s single company webhook receiver, replacing any existing configuration.",
+          "title": "Replace Company Webhook",
+          "type": "boolean"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timeero has one company webhook configuration. Activating this trigger replaces it; use one Timeero trigger per company. Only matching events start this workflow.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "TimeeroOnNewTaskConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TimeeroUpdateJobConfig": {
+      "additionalProperties": false,
+      "description": "Update Job using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "update_job",
+          "default": "update_job",
+          "title": "Update Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "Update Job",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "minimum": 1,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "The name of the job.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A brief description of the job.",
+          "title": "Description"
+        },
+        "track_mileage": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether mileage tracking is enabled for the job.",
+          "title": "Track Mileage"
+        },
+        "require_geofence": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether users must be within the geofence to perform job-related actions. All the fields are optional except street, city, state, zip_code and country are required when require_geofence is true or 1 and latitude and longitude are not provided.",
+          "title": "Require Geofence"
+        },
+        "street": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The street address of the job location.",
+          "title": "Street"
+        },
+        "landmark": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A nearby landmark to help identify the job location.",
+          "title": "Landmark"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The state or region where the job is located.",
+          "title": "State"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The city where the job is located.",
+          "title": "City"
+        },
+        "zip_code": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ZIP or postal code of the job location.",
+          "title": "Zip Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The country where the job is located.",
+          "title": "Country"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The latitude coordinate of the job location.",
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The longitude coordinate of the job location.",
+          "title": "Longitude"
+        },
+        "radius": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The geofence radius around the job location, in meters.",
+          "title": "Radius"
+        },
+        "contact_required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether a contact person is required for the job (true = required, false = not required). contact_name, contact_phone, contact_mobile, and contact_email are required when contact_required is true.",
+          "title": "Contact Required"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the job contact person.",
+          "title": "Contact Name"
+        },
+        "contact_phone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The phone number of the job contact person.",
+          "title": "Contact Phone"
+        },
+        "contact_mobile": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The mobile number of the job contact person.",
+          "title": "Contact Mobile"
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email address of the job contact person.",
+          "title": "Contact Email"
+        },
+        "geofence_members": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A list of user IDs allowed to access or operate within the job\u2019s geofence.",
+          "title": "Geofence Members"
+        },
+        "users": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A list of user IDs assigned to the job.",
+          "title": "Users"
+        }
+      },
+      "required": [
+        "job_id",
+        "name"
+      ],
+      "title": "TimeeroUpdateJobConfig",
+      "type": "object"
+    },
+    "TimeeroUpdateTaskConfig": {
+      "additionalProperties": false,
+      "description": "Update Task using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Update Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "minimum": 1,
+          "title": "Task Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "The name of the task.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A brief description of the task.",
+          "title": "Description"
+        },
+        "user_id": {
+          "description": "The ID of the user with role Admin.",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether the task is billable.",
+          "title": "Billable"
+        },
+        "billable_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The billing rate for the task. Set to 0 if the task is not billable.",
+          "title": "Billable Rate"
+        },
+        "jobs": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A list of job IDs associated with the task",
+          "title": "Jobs"
+        }
+      },
+      "required": [
+        "task_id",
+        "name",
+        "user_id"
+      ],
+      "title": "TimeeroUpdateTaskConfig",
+      "type": "object"
+    },
+    "TimeeroUpdateTimesheetConfig": {
+      "additionalProperties": false,
+      "description": "Update Timesheet using one documented API operation.",
+      "properties": {
+        "operation": {
+          "const": "update_timesheet",
+          "default": "update_timesheet",
+          "title": "Update Timesheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Timesheets",
+          "x-display-name": "Update Timesheet",
+          "x-is-trigger": false
+        },
+        "timesheet_id": {
+          "minimum": 1,
+          "title": "Timesheet Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "description": "The ID of the timesheet owner.",
+          "minimum": 1,
+          "title": "User Id",
+          "type": "integer"
+        },
+        "start": {
+          "description": "The date and time when the user clocked in, in ISO 8601 format, e.g: YYYY-MM-DDTHH:MM:SS\u00b1HH:MM.",
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date and time when the user clocked out, in ISO 8601 format: YYYY-MM-DDTHH:MM:SS\u00b1HH:MM. Set to null if the user is still clocked in.",
+          "format": "date-time",
+          "title": "End"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the job associated with the timesheet entry.",
+          "title": "Job Id"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the task associated with the timesheet entry.",
+          "title": "Task Id"
+        },
+        "mileage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The distance(in miles) traveled during the timesheet period.",
+          "title": "Mileage"
+        },
+        "clock_in_timezone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The timezone in which the clock-in time was recorded. The company's timezone will be used if none is provided. And it must match the offset when ISO 8601 offset is set.",
+          "title": "Clock In Timezone"
+        },
+        "clock_out_timezone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The timezone in which the clock-out time was recorded. Set to null if the user has not clocked out yet. The company's timezone will be used if none is provided. And it must match the ISO 8601 offset when set.",
+          "title": "Clock Out Timezone"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional notes or comments for the timesheet entry.",
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "timesheet_id",
+        "user_id",
+        "start"
+      ],
+      "title": "TimeeroUpdateTimesheetConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "approve_timesheets": "#/$defs/TimeeroApproveTimesheetsConfig",
+          "clock_in": "#/$defs/TimeeroClockInConfig",
+          "clock_out": "#/$defs/TimeeroClockOutConfig",
+          "create_job": "#/$defs/TimeeroCreateJobConfig",
+          "create_task": "#/$defs/TimeeroCreateTaskConfig",
+          "create_timesheet": "#/$defs/TimeeroCreateTimesheetConfig",
+          "get_job": "#/$defs/TimeeroGetJobConfig",
+          "get_schedule": "#/$defs/TimeeroGetScheduleConfig",
+          "get_task": "#/$defs/TimeeroGetTaskConfig",
+          "get_timesheet": "#/$defs/TimeeroGetTimesheetConfig",
+          "get_user": "#/$defs/TimeeroGetUserConfig",
+          "list_groups": "#/$defs/TimeeroListGroupsConfig",
+          "list_jobs": "#/$defs/TimeeroListJobsConfig",
+          "list_schedules": "#/$defs/TimeeroListSchedulesConfig",
+          "list_tasks": "#/$defs/TimeeroListTasksConfig",
+          "list_timesheets": "#/$defs/TimeeroListTimesheetsConfig",
+          "list_users": "#/$defs/TimeeroListUsersConfig",
+          "on_clock_in": "#/$defs/TimeeroOnClockInConfig",
+          "on_clock_out": "#/$defs/TimeeroOnClockOutConfig",
+          "on_new_job": "#/$defs/TimeeroOnNewJobConfig",
+          "on_new_schedule": "#/$defs/TimeeroOnNewScheduleConfig",
+          "on_new_task": "#/$defs/TimeeroOnNewTaskConfig",
+          "update_job": "#/$defs/TimeeroUpdateJobConfig",
+          "update_task": "#/$defs/TimeeroUpdateTaskConfig",
+          "update_timesheet": "#/$defs/TimeeroUpdateTimesheetConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TimeeroListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroCreateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroUpdateJobConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroListTimesheetsConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroGetTimesheetConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroCreateTimesheetConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroUpdateTimesheetConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroApproveTimesheetsConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroClockInConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroClockOutConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroListSchedulesConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroGetScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroOnClockInConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroOnClockOutConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroOnNewJobConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroOnNewTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/TimeeroOnNewScheduleConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimeeroAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Timeero Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
