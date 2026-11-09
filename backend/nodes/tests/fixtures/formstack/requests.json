@@ -1,0 +1,310 @@
+[
+  {
+    "config": {
+      "operation": "list_forms"
+    },
+    "method": "GET",
+    "path": "/forms",
+    "query": {
+      "pageNumber": "1",
+      "pageSize": "50"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_form",
+      "form_id": 12
+    },
+    "method": "GET",
+    "path": "/forms/12",
+    "query": {
+      "withFields": "false"
+    }
+  },
+  {
+    "config": {
+      "operation": "create_form",
+      "name": "Feedback",
+      "isActive": false
+    },
+    "method": "POST",
+    "path": "/forms",
+    "body": {
+      "name": "Feedback",
+      "isActive": false
+    }
+  },
+  {
+    "config": {
+      "operation": "update_form",
+      "form_id": 12,
+      "name": "Feedback"
+    },
+    "method": "PUT",
+    "path": "/forms/12",
+    "body": {
+      "name": "Feedback"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_form",
+      "form_id": 12
+    },
+    "method": "DELETE",
+    "path": "/forms/12"
+  },
+  {
+    "config": {
+      "operation": "copy_form",
+      "form_id": 12
+    },
+    "method": "POST",
+    "path": "/forms/12/copy",
+    "query": {
+      "includeIntegrations": "false",
+      "includeEmails": "false"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_fields",
+      "form_id": 12
+    },
+    "method": "GET",
+    "path": "/forms/12/fields"
+  },
+  {
+    "config": {
+      "operation": "get_field",
+      "form_id": 12,
+      "field_id": 45
+    },
+    "method": "GET",
+    "path": "/forms/12/fields/45"
+  },
+  {
+    "config": {
+      "operation": "list_folders"
+    },
+    "method": "GET",
+    "path": "/folders",
+    "query": {
+      "page": "1",
+      "perPage": "50"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_folder",
+      "folder_id": 34
+    },
+    "method": "GET",
+    "path": "/folders/34"
+  },
+  {
+    "config": {
+      "operation": "create_folder",
+      "name": "Reports",
+      "parent": 34
+    },
+    "method": "POST",
+    "path": "/folders",
+    "body": {
+      "name": "Reports",
+      "parent": 34
+    }
+  },
+  {
+    "config": {
+      "operation": "update_folder",
+      "folder_id": 34,
+      "name": "Reports"
+    },
+    "method": "PUT",
+    "path": "/folders/34",
+    "body": {
+      "name": "Reports"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_folder",
+      "folder_id": 34
+    },
+    "method": "DELETE",
+    "path": "/folders/34"
+  },
+  {
+    "config": {
+      "operation": "list_form_submissions",
+      "form_id": 12
+    },
+    "method": "GET",
+    "path": "/forms/12/submissions",
+    "query": {
+      "pageNumber": "1",
+      "pageSize": "50",
+      "data": "true",
+      "dataFormat": "standardized"
+    }
+  },
+  {
+    "config": {
+      "operation": "search_submissions",
+      "search": "Ada"
+    },
+    "method": "GET",
+    "path": "/submissions",
+    "query": {
+      "search": "Ada",
+      "pageNumber": "1",
+      "pageSize": "50"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_submission",
+      "submission_id": 73
+    },
+    "method": "GET",
+    "path": "/submissions/73"
+  },
+  {
+    "config": {
+      "operation": "create_submission",
+      "form_id": 12,
+      "fields": [
+        {
+          "id": "45",
+          "value": {
+            "value": "Ada"
+          }
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/forms/12/submissions",
+    "body": {
+      "fields": [
+        {
+          "id": "45",
+          "value": {
+            "value": "Ada"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "update_submission",
+      "submission_id": 73,
+      "fields": [
+        {
+          "id": "45",
+          "value": {
+            "value": "Ada"
+          }
+        }
+      ],
+      "read": "true"
+    },
+    "method": "PUT",
+    "path": "/submissions/73",
+    "body": {
+      "fields": [
+        {
+          "id": "45",
+          "value": {
+            "value": "Ada"
+          }
+        }
+      ],
+      "read": "true"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_submission",
+      "submission_id": 73
+    },
+    "method": "DELETE",
+    "path": "/submissions/73"
+  },
+  {
+    "config": {
+      "operation": "count_form_submissions",
+      "form_id": 12,
+      "lookbackPeriod": 7
+    },
+    "method": "GET",
+    "path": "/forms/12/submissions/count",
+    "query": {
+      "lookbackPeriod": "7"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_webhooks",
+      "form_id": 12
+    },
+    "method": "GET",
+    "path": "/forms/12/webhooks"
+  },
+  {
+    "config": {
+      "operation": "get_webhook",
+      "form_id": 12,
+      "webhook_id": 81
+    },
+    "method": "GET",
+    "path": "/forms/12/webhooks/81"
+  },
+  {
+    "config": {
+      "operation": "create_webhook",
+      "form_id": 12,
+      "name": "CRM",
+      "url": "https://example.com/hooks",
+      "contentType": "json",
+      "fileTransferType": "downloadLink"
+    },
+    "method": "POST",
+    "path": "/forms/12/webhooks",
+    "body": {
+      "name": "CRM",
+      "url": "https://example.com/hooks",
+      "contentType": "json",
+      "fileTransferType": "downloadLink"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_webhook",
+      "form_id": 12,
+      "webhook_id": 81,
+      "name": "CRM",
+      "url": "https://example.com/hooks",
+      "contentType": "json",
+      "fileTransferType": "downloadLink"
+    },
+    "method": "PUT",
+    "path": "/forms/12/webhooks/81",
+    "body": {
+      "name": "CRM",
+      "url": "https://example.com/hooks",
+      "contentType": "json",
+      "fileTransferType": "downloadLink"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_webhook",
+      "form_id": 12,
+      "webhook_id": 81
+    },
+    "method": "DELETE",
+    "path": "/forms/12/webhooks/81"
+  }
+]
