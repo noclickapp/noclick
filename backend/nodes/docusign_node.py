@@ -1,6 +1,9 @@
 """Docusign eSignature workflows: templates, envelopes, recipients and documents."""
 
 import base64
+import hashlib
+import hmac
+import re
 from typing import Any, Annotated, Literal, Optional, Union
 from urllib.parse import quote
 
@@ -10,6 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field, Discriminator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.oauth.docusign_oauth import resolve_account, validate_base_uri
 from nodes.scopes.docusign import DOCUSIGN_SCOPES
 
@@ -79,7 +83,8 @@ class SendDocument(BaseModel):
     operation: Literal["send_document"] = _operation(
         "send_document", "Send Document for Signature", "Envelopes",
         **{"x-creates-resource": True, "x-resource-type": "docusign_envelope", "x-resource-id-path": "data.envelopeId"})
-    document_base64: str = Field(..., title="Document (Base64)", description="Base64 PDF content, optionally from an upstream node")
+    document_base64: str = Field(..., title="Document (Base64)", description="Base64 PDF content, optionally from an upstream node",
+                                 json_schema_extra={"contentMediaType": "application/pdf", "contentEncoding": "base64"})
     document_name: str = Field("Document.pdf", title="Document Name")
     signer_name: str = Field(..., title="Signer Name")
     signer_email: str = Field(..., title="Signer Email")
@@ -127,9 +132,35 @@ class VoidEnvelope(BaseModel):
     reason: str = Field(..., title="Reason", description="Shown to recipients")
 
 
+# Registration: pinned eSignature v2.1 Connect contract. Payloads and HMAC:
+# https://developers.docusign.com/platform/webhooks/connect/json-sim-event-model/
+# https://developers.docusign.com/platform/webhooks/connect/validate
+DOCUSIGN_EVENTS = (
+    "envelope-created", "envelope-sent", "envelope-delivered", "envelope-completed",
+    "envelope-declined", "envelope-voided", "recipient-sent", "recipient-completed",
+    "recipient-declined",
+)
+
+
+class OnDocusignEvent(WebhookTriggerConfigBase):
+    """Start a workflow for envelope or recipient activity across the connected account."""
+
+    operation: Literal["on_event"] = _operation(
+        "on_event", "On Envelope or Recipient Event", "Triggers", **{"x-is-trigger": True})
+    event_type: Literal[*DOCUSIGN_EVENTS] = Field("envelope-completed", title="Event Type")
+    connect_hmac_secret: str = Field(
+        ..., min_length=1, title="Connect HMAC Key",
+        description="An existing HMAC key from Docusign Settings → Connect → Connect Keys. "
+                    "Requires Connect enabled and an account administrator. Keep this key in Docusign while the trigger is active.",
+        json_schema_extra={"ui:widget": "password"})
+    webhook_url: Optional[str] = Field(
+        None, title="Webhook URL", description="Registered with Docusign automatically",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 DocusignConfig = Annotated[Union[
     GetAccount, ListTemplates, GetTemplate, CreateFromTemplate, SendDocument,
-    GetEnvelope, ListEnvelopes, ListRecipients, ListDocuments, DownloadDocument, VoidEnvelope,
+    GetEnvelope, ListEnvelopes, ListRecipients, ListDocuments, DownloadDocument, VoidEnvelope, OnDocusignEvent,
 ], Discriminator("operation")]
 
 
@@ -137,7 +168,7 @@ class DocusignNodeConfig(NodeConfig[DocusignConfig, DocusignOAuthCredential]):
     pass
 
 
-class DocusignNode(WorkflowNode):
+class DocusignNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """Run a Docusign eSignature API operation on the user's default account."""
 
     integration_type = "automation-docusign"
@@ -147,6 +178,113 @@ class DocusignNode(WorkflowNode):
         "List my Docusign templates", "Send a Docusign template for signature",
         "Check the status of a Docusign envelope", "Download a completed signed document",
     ]
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {key: config.get(key) for key in ("event_type", "connect_hmac_secret")}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        """https://developers.docusign.com/docs/esign-rest-api/reference/connect/connectconfigurations/create/"""
+        op = OnDocusignEvent.model_validate(config or {})
+        secret = op.connect_hmac_secret.strip().replace('"', '')
+        if not secret:
+            raise ValueError("Enter an existing Docusign Connect HMAC key")
+        payload = await cls._request(credential, "POST", "/connect", json={
+            "configurationType": "custom", "urlToPublishTo": webhook_url,
+            "name": f"NoClick {node_id}", "allowEnvelopePublish": "true",
+            "enableLog": "true", "requiresAcknowledgement": "true",
+            "signMessageWithX509Certificate": "false", "includeHMAC": "true",
+            "deliveryMode": "SIM", "events": [op.event_type],
+            "eventData": {"version": "restv2.1", "includeData": ["recipients"]},
+            "allUsers": "true",
+        })
+        connect_id = payload.get("connectId")
+        if not connect_id:
+            raise ValueError("Docusign did not return a Connect configuration ID")
+        return {"external_webhook_id": str(connect_id), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        """https://developers.docusign.com/docs/esign-rest-api/reference/connect/connectconfigurations/delete/"""
+        connect_id = (config or {}).get("external_webhook_id")
+        if not connect_id:
+            return
+        if not credential:
+            raise ValueError("Connect Docusign to remove its webhook")
+        await cls._request(credential, "DELETE", f"/connect/{quote(str(connect_id), safe='')}")
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        secret = (config or {}).get("signing_secret")
+        if not secret:
+            return False
+        # Match any numbered signature during key rotation, over exact body bytes.
+        key = str(secret).strip().replace('"', '').encode("utf-8")
+        if not key:
+            return False
+        expected = base64.b64encode(hmac.new(key, body, hashlib.sha256).digest())
+        return any(
+            hmac.compare_digest(str(value).encode("utf-8"), expected)
+            for name, value in headers.items()
+            if re.fullmatch(r"x-docusign-signature-[1-9][0-9]*", name.lower())
+        )
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        event = payload.get("event") if isinstance(payload, dict) else None
+        if event not in DOCUSIGN_EVENTS or event != config.get("event_type", "envelope-completed"):
+            return cls.no_event_output("on_event", "No matching Docusign event was delivered")
+        connect_id = config.get("external_webhook_id")
+        if connect_id and str(payload.get("configurationId")) != str(connect_id):
+            return cls.no_event_output("on_event", "Event belongs to another Connect configuration")
+        return payload
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        from nodes.core.agent_events import prune_empty
+
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        if output.get("status") == "no_event":
+            return None
+        event = output.get("data") if "status" in output else output
+        if not isinstance(event, dict) or event.get("event") not in DOCUSIGN_EVENTS:
+            return super().resolve_agent_event(output)
+        data = event.get("data") if isinstance(event.get("data"), dict) else {}
+        summary = data.get("envelopeSummary")
+        summary = summary if isinstance(summary, dict) else {}
+        envelope_id = data.get("envelopeId") or summary.get("envelopeId")
+        if not envelope_id:
+            return super().resolve_agent_event(output)
+        subject = summary.get("emailSubject") or str(envelope_id)
+        sender = summary.get("sender") if isinstance(summary.get("sender"), dict) else {}
+        lines = [f"Docusign {event['event'].replace('-', ' ')}: {subject}"]
+        for label, value in (
+            ("Sender", " ".join(str(sender[k]) for k in ("userName", "email") if sender.get(k))),
+            ("Account ID", data.get("accountId")), ("Envelope ID", envelope_id),
+            ("User ID", data.get("userId")), ("Recipient ID", data.get("recipientId")),
+            ("Status", summary.get("status")), ("At", event.get("generatedDateTime")),
+            ("API resource", event.get("uri")), ("Message", summary.get("emailBlurb")),
+            ("Void reason", summary.get("voidedReason")),
+        ):
+            if value:
+                lines.append(f"{label}: {prune_empty(str(value), max_str=1500)}")
+        recipients = summary.get("recipients")
+        if isinstance(recipients, dict):
+            for group in recipients.values():
+                if not isinstance(group, list):
+                    continue
+                for recipient in group[:10]:
+                    if isinstance(recipient, dict):
+                        facts = [f"{k}={recipient[k]}" for k in
+                                 ("name", "email", "recipientId", "status", "declinedReason") if recipient.get(k)]
+                        if facts:
+                            lines.append("Recipient: " + prune_empty(", ".join(facts), max_str=1500))
+        lines.append(f"To act: get_envelope envelope_id={envelope_id}; "
+                     f"list_recipients or download_document envelope_id={envelope_id}.")
+        return {"text": "\n".join(lines), "conversation_key": f"{data.get('accountId', '')}:{envelope_id}",
+                "title": str(subject)[:200]}
 
     @classmethod
     def get_config_model(cls):
@@ -195,11 +333,14 @@ class DocusignNode(WorkflowNode):
             except (ValueError, AttributeError):
                 detail = None
             raise ValueError(f"Docusign API error {response.status_code}: {detail or 'request failed'}")
-        return response.content if raw else response.json()
+        return response.content if raw else (response.json() if response.content else {})
 
     async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(self.config, DocusignNodeConfig):
             raise ValueError("Docusign configuration required")
+        op = self.config.config
+        if isinstance(op, OnDocusignEvent):
+            return self.resolve_trigger_payload(inputs, op.model_dump())
         credential = self.config.credentials
         if credential is None:
             raise ValueError("Connect a Docusign account")
@@ -208,7 +349,6 @@ class DocusignNode(WorkflowNode):
         for key in ("account_id", "base_uri", "account_name", "email"):
             setattr(credential, key, auth.get(key))
         auth["access_token"] = token
-        op = self.config.config
         name = op.operation
         self.scope_registry.require(name)
         params = None

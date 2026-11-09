@@ -11,7 +11,7 @@ from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 _OPERATIONS = (
     "get_account", "list_templates", "get_template", "create_from_template",
     "send_document", "get_envelope", "list_envelopes", "list_recipients",
-    "list_documents", "download_document", "void_envelope",
+    "list_documents", "download_document", "void_envelope", "on_event",
 )
 
 DOCUSIGN_SCOPES = ScopeRegistry(

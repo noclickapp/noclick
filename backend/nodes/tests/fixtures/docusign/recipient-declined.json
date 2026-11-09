@@ -1,0 +1,15 @@
+{
+  "event": "recipient-declined",
+  "uri": "/restapi/{apiVersion}/accounts/{accountId}/envelopes/{envelopeId}",
+  "retryCount": "",
+  "configurationId": "",
+  "apiVersion": "v2.1",
+  "generatedDateTime": "",
+  "data": {
+    "accountId": "",
+    "envelopeId": "",
+    "userId": "",
+    "recipientId": "",
+    "envelopeSummary": ""
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "event": "envelope-sent",
+  "uri": "/restapi/{apiVersion}/accounts/{accountId}/envelopes/{envelopeId}",
+  "retryCount": 0,
+  "configurationId": 10242474,
+  "apiVersion": "v2.1",
+  "generatedDateTime": "2021-05-14T23:15:56.3570000Z",
+  "data": {
+    "accountId": "0000000-0000-0000-0000-000000000000",
+    "userId": "12345678-xxxx-xxxx-xxxx-123456789abc",
+    "envelopeId": "cc6803ce-xxxx-xxxx-xxxx-3c4f50733703",
+    "envelopeSummary": "rest of envelope summary"
+  }
+}

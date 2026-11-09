@@ -360,6 +360,160 @@
       "title": "ListTemplates",
       "type": "object"
     },
+    "OnDocusignEvent": {
+      "description": "Start a workflow for envelope or recipient activity across the connected account.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Envelope or Recipient Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Envelope or Recipient Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "envelope-completed",
+          "enum": [
+            "envelope-created",
+            "envelope-sent",
+            "envelope-delivered",
+            "envelope-completed",
+            "envelope-declined",
+            "envelope-voided",
+            "recipient-sent",
+            "recipient-completed",
+            "recipient-declined"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        },
+        "connect_hmac_secret": {
+          "description": "An existing HMAC key from Docusign Settings \u2192 Connect \u2192 Connect Keys. Requires Connect enabled and an account administrator. Keep this key in Docusign while the trigger is active.",
+          "minLength": 1,
+          "title": "Connect HMAC Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Docusign automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "connect_hmac_secret"
+      ],
+      "title": "OnDocusignEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "SendDocument": {
       "description": "Create a draft or send a PDF with an anchor-positioned signature field.",
       "properties": {
@@ -377,6 +531,8 @@
           "x-resource-type": "docusign_envelope"
         },
         "document_base64": {
+          "contentEncoding": "base64",
+          "contentMediaType": "application/pdf",
           "description": "Base64 PDF content, optionally from an upstream node",
           "title": "Document (Base64)",
           "type": "string"
@@ -465,6 +621,7 @@
           "list_envelopes": "#/$defs/ListEnvelopes",
           "list_recipients": "#/$defs/ListRecipients",
           "list_templates": "#/$defs/ListTemplates",
+          "on_event": "#/$defs/OnDocusignEvent",
           "send_document": "#/$defs/SendDocument",
           "void_envelope": "#/$defs/VoidEnvelope"
         },
@@ -503,6 +660,9 @@
         },
         {
           "$ref": "#/$defs/VoidEnvelope"
+        },
+        {
+          "$ref": "#/$defs/OnDocusignEvent"
         }
       ],
       "title": "Config"
