@@ -1,0 +1,20 @@
+[
+  {
+    "file": "document.yaml",
+    "sha256": "5bc7edd33662dda8f5fd285afe52fa85c4c1fe9513bfbcd76a181c0b2c3d3c6f",
+    "version": "1.0.0",
+    "source_url": "https://www.zoho.com/sites/zweb/images/writer/zoho-writer-oas-specs.zip"
+  },
+  {
+    "file": "publish.yaml",
+    "sha256": "3d9b20b96792414289b5144f028224744399b199582f931ebd3f8644bdffbee1",
+    "version": "1.0.0",
+    "source_url": "https://www.zoho.com/sites/zweb/images/writer/zoho-writer-oas-specs.zip"
+  },
+  {
+    "file": "template.yaml",
+    "sha256": "d6402912c1e95da6304ef3df8163a51e9edfdfc457aed69af950b52f7934ee5e",
+    "version": "1.0.0",
+    "source_url": "https://www.zoho.com/sites/zweb/images/writer/zoho-writer-oas-specs.zip"
+  }
+]

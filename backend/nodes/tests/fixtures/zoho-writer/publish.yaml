@@ -1,0 +1,196 @@
+openapi: 3.0.0
+info:
+  title: Zoho Writer Publish API
+  version: "1.0.0"
+  description: >-
+    The Zoho Writer Publish API provides operations to publish and unpublish Zoho
+    Writer documents.
+
+servers:
+  - url: "www.zohoapis.com"
+    description: US data center
+
+security:
+  - oAuth2:
+      - ZohoWriter.documentEditor.ALL
+
+tags:
+  - name: Publish
+    description: >-
+      Controls the web publishing state of a Zoho Writer document, making it
+      publicly accessible as a web page or withdrawing that access.
+
+paths:
+
+  /writer/api/v1/documents/{document_id}/publish:
+    post:
+      tags:
+        - Publish
+      summary: Publish Document
+      description: >
+        Publishes a Zoho Writer document externally or within the organization. A
+        snapshot of the current version is published immediately; enable automatic
+        republishing to keep the published copy in sync as the document is edited.
+      operationId: publishDocument
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique identifier of the document to be published.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scope:
+                  type: string
+                  enum:
+                    - external
+                    - organization
+                  default: external
+                  description: >
+                    The audience for the published document. `external` publishes the
+                    document publicly on the web, and `organization` restricts access to
+                    members of the organization.
+                auto_republish:
+                  type: boolean
+                  default: true
+                  description: >
+                    When set to `true` (default), the document is republished
+                    automatically whenever it is edited. Set to `false` to publish only
+                    the current version — later edits require another call to this
+                    operation to update the published copy.
+                publish_settings:
+                  type: object
+                  description: Display and access options for the published page.
+                  properties:
+                    description:
+                      type: string
+                      maxLength: 500
+                      description: Custom description text shown on the published page.
+                    title:
+                      type: string
+                      maxLength: 500
+                      description: Custom title shown on the published page.
+                    download:
+                      type: boolean
+                      description: Shows a "Download" option for viewers of the published page.
+                    embed:
+                      type: boolean
+                      description: Shows an "Embed" option for viewers of the published page.
+                    makeacopy:
+                      type: boolean
+                      description: >
+                        Shows a "Make a Copy" option, allowing viewers to create their
+                        own copy of the document. Applicable only when `scope` is `organization`.
+                    author_info:
+                      type: boolean
+                      description: Shows the document author's information on the published page.
+                    reading_time:
+                      type: boolean
+                      description: Shows the estimated reading time on the published page.
+                    view_count:
+                      type: boolean
+                      description: Shows the view count on the published page.
+                    translate:
+                      type: boolean
+                      description: >
+                        Shows a "Translate" option on the published page.
+                        Applicable only when `scope` is `external`.
+                    search_indexing:
+                      type: boolean
+                      description: >
+                        Allows the published page to be indexed by search engines.
+                        Applicable only when `scope` is `external`.
+                    keywords:
+                      type: string
+                      maxLength: 10000
+                      description: >
+                        Keywords associated with the published page, used for search indexing.
+                        Applicable only when `scope` is `external`.
+                    social_media:
+                      type: boolean
+                      description: >
+                        Shows social media sharing options on the published page.
+                        Applicable only when `scope` is `external`.
+                    document_navigation:
+                      type: boolean
+                      description: Shows a document navigation panel on the published page.
+      responses:
+        "200":
+          description: Details of the published document.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  result: "success"
+                  auto_republish: true
+                  scope: "external"
+                  message: "Document has been successfully published externally."
+                  published_url: "https://writer.zoho.com/writer/published/h36bc140de7af48564a4e9ff5ef48ade1a37d"
+                  published_settings:
+                    title: "Q3 Roadmap"
+                    description: "Roadmap overview for Q3."
+                    download: true
+                    embed: true
+                    makeacopy: true
+                    author_info: true
+                    reading_time: true
+                    view_count: true
+                    translate: true
+                    search_indexing: true
+                    keywords: "roadmap, planning"
+                    social_media: true
+                    document_navigation: false
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+
+    delete:
+      tags:
+        - Publish
+      summary: Unpublish Document
+      description: >-
+        Unpublishes a Zoho Writer document that was previously published either
+        externally or within the organization.
+      operationId: unpublishDocument
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique identifier of the document to be unpublished.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+      responses:
+        "200":
+          description: The document was unpublished successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  result: "success"
+                  scope: "organization"
+                  message: "We've successfully unpublished this document within the organization."
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+
+components:
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      description: Zoho OAuth 2.0 authentication.
+      flows:
+        authorizationCode:
+          authorizationUrl: "https://accounts.zoho.com/oauth/v2/auth"
+          tokenUrl: "https://accounts.zoho.com/oauth/v2/token"
+          scopes:
+            ZohoWriter.documentEditor.ALL: Full access to the Zoho Writer document editor.

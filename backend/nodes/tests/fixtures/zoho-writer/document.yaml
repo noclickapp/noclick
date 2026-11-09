@@ -1,0 +1,1255 @@
+openapi: 3.0.0
+info:
+  title: Zoho Writer Document API
+  version: "1.0.0"
+  description: >-
+    The Zoho Writer Document API provides operations to create, retrieve, copy, restore,
+    and delete documents, and to update their metadata and state. It also exposes
+    endpoints to list, search, and retrieve document details, metrics, and field
+    information.
+
+servers:
+  - url: "www.zohoapis.com"
+    description: US data center
+
+security:
+  - oAuth2:
+      - ZohoWriter.documentEditor.ALL
+
+tags:
+  - name: Documents
+    description: >-
+      Covers the full lifecycle of a Zoho Writer document, from creation and
+      format conversion to retrieval and permanent deletion. It also manages
+      document metadata and state, including renaming, favoriting, locking,
+      marking final, and track-changes, along with content search, field
+      extraction, and usage metrics.
+
+paths:
+
+  /writer/api/v1/documents:
+    post:
+      tags:
+        - Documents
+      summary: Create Document
+      description: >
+        <p>Creates a Zoho Writer document, optionally populated from an uploaded file, a
+        web URL, plain text, or an existing template to create from. If none of those is
+        provided, a blank document is created.</p><br>
+        <p>Provide at most one of <code>content</code>, <code>url</code>,
+        <code>text</code>, or <code>template_id</code>.</p>
+      operationId: createDocument
+      requestBody:
+        required: false
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  format: binary
+                  description: >
+                    The file to upload as the new document's content.
+                    Supported formats: `docx` (up to 50 MB), `rtf`, `html`, `txt`, `odt` (up to 10 MB).
+                text:
+                  type: string
+                  maxLength: 100000
+                  description: The plain text content to populate the new document with.
+                  example: "Invoice details for Q1 2026."
+                url:
+                  type: string
+                  format: uri
+                  maxLength: 5000
+                  description: >-
+                    A publicly accessible URL from which to import the document content.
+                    The fetched content must not exceed 10 MB.
+                  example: "https://zylker.com/sample-invoice.docx"
+                template_id:
+                  type: string
+                  description: The unique ID of an existing template to copy as the new document.
+                  example: "t04apjk9p7d6ba94f4cbf9c56e1b1ed9bac89"
+                filename:
+                  type: string
+                  maxLength: 255
+                  description: A name for the new document.
+                  example: "Invoice_2026_001"
+                password:
+                  type: string
+                  maxLength: 255
+                  description: The password to unlock the uploaded `content` file, if it is password-protected.
+                resource_type:
+                  type: string
+                  enum:
+                    - fillable
+                    - merge
+                    - sign
+                    - label
+                  description: The type of document to create.
+                folder_id:
+                  type: string
+                  maxLength: 100
+                  description: The ID of the folder in which to place the new document.
+                  example: "t04apjk9p7d6ba94f4cbf9c56e1b1ed9bac89"
+      responses:
+        "200":
+          description: Document created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentObject'
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+    get:
+      tags:
+        - Documents
+      summary: List Documents
+      description: >-
+        Retrieves a paginated list of documents, optionally filtered by category or
+        document type and sorted by a chosen field.
+      operationId: listDocuments
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          description: The starting position for the list.
+          schema:
+            type: integer
+            default: 0
+          example: 0
+        - name: limit
+          in: query
+          required: false
+          description: >-
+            The maximum number of documents to return. Maximum allowed value is 100.
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+          example: 10
+        - name: sortby
+          in: query
+          required: false
+          description: >
+            The field by which to sort the results. `created_time` sorts by creation date,
+            `modified_time` sorts by last modified date, `shared_time` sorts by when the document was
+            shared, and `name` sorts by document name.<br>
+            Defaults to `modified_time`, except when `category` is `shared_to_me`, in which case it defaults to `shared_time`.<br>
+            When `category` is `recent`, this parameter is ignored and results are always sorted by `modified_time` descending.
+          schema:
+            type: string
+            enum:
+              - created_time
+              - modified_time
+              - shared_time
+              - name
+        - name: sort_order_by
+          in: query
+          required: false
+          description: >
+            The sort direction for the results. Defaults to `descending`, except when
+            `sortby` is `name`, in which case it defaults to `ascending`.
+            When `category` is `recent`, this parameter is ignored.
+          schema:
+            type: string
+            enum:
+              - ascending
+              - descending
+            default: descending
+        - name: category
+          in: query
+          required: false
+          description: >
+            Filters the results by ownership, access, or status. `favourite` returns
+            favourited documents, `trashed` returns documents in the Trash, and `recent`
+            returns recently accessed documents.
+          schema:
+            type: string
+            enum:
+              - all
+              - owned_by_me
+              - shared_to_me
+              - favourite
+              - trashed
+              - recent
+            default: all
+        - name: resource_type
+          in: query
+          required: false
+          description: >
+            A comma-separated list of document types to filter by. Supported values:
+            `fillable`, `merge`, `sign`, `label`.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of documents retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentListResponse'
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+  /writer/api/v1/documents/convert:
+    post:
+      tags:
+        - Documents
+      summary: Convert Document
+      description: >-
+        Converts an uploaded document file, provided text, or a document available at a
+        web URL into another supported file format. Converting a PDF file to another
+        format is not supported. The converted file is returned as binary content in the
+        response body. Provide exactly one of `content`, `text`, or `url`.
+      operationId: convertDocument
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - format
+              properties:
+                content:
+                  type: string
+                  format: binary
+                  description: >
+                    The document file to be converted.
+                    Supported formats: `docx` (up to 50 MB), `rtf`, `odt`, `txt`, `html`, `epub` (up to 10 MB).
+                text:
+                  type: string
+                  maxLength: 1000000
+                  description: The text content to be converted into a document.
+                url:
+                  type: string
+                  format: uri
+                  maxLength: 5000
+                  description: >
+                    The web URL of the document to be converted.
+                    Supported formats: `docx` (up to 50 MB), `rtf`, `odt`, `txt`, `html`, `epub` (up to 10 MB).
+                format:
+                  type: string
+                  enum:
+                    - docx
+                    - odt
+                    - rtf
+                    - txt
+                    - html
+                    - pdf
+                    - zdoc
+                    - epub
+                  description: The output format to convert the document into.
+                password:
+                  type: string
+                  maxLength: 255
+                  description: >-
+                    A unique password for the document to be converted. Applicable when
+                    `content` or `url` is provided.
+                filename:
+                  type: string
+                  maxLength: 255
+                  description: >-
+                    A name for the converted document.
+      responses:
+        "200":
+          description: The converted document is downloaded.
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+
+  /writer/api/v1/documents/search:
+    get:
+      tags:
+        - Documents
+      summary: Search Documents
+      description: >-
+        Searches for documents by name, keyword, or content, optionally scoped to a
+        specific team, sorted by a chosen field, and filtered by a modified or
+        creation date range.
+      operationId: searchDocuments
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: The search term to look for in document names, keywords, or content.
+          schema:
+            type: string
+            maxLength: 10000
+          example: "Invoice_2026"
+        - name: team_id
+          in: query
+          required: false
+          description: The unique ID of the team within which to scope the search.
+          schema:
+            type: string
+        - name: offset
+          in: query
+          required: false
+          description: The starting position for the search results.
+          schema:
+            type: integer
+            default: 0
+          example: 0
+        - name: limit
+          in: query
+          required: false
+          description: The maximum number of results to return.
+          schema:
+            type: integer
+            default: 50
+          example: 50
+        - name: sortby
+          in: query
+          required: false
+          description: >-
+            The field to sort results by. No sort is applied downstream if
+            this parameter is omitted.
+          schema:
+            type: string
+            enum:
+              - name
+              - created_time
+              - modified_time
+        - name: sort_order_by
+          in: query
+          required: false
+          description: >-
+            The sort direction. Has no effect unless `sortby` is also specified; if
+            `sortby` is omitted, this parameter is silently ignored.
+          schema:
+            type: string
+            enum:
+              - ascending
+              - descending
+            default: descending
+        - name: date_type
+          in: query
+          required: false
+          description: >-
+            Filters results by a modified/creation date range. Only applies for
+            WorkDrive-integrated accounts. Required alongside `start_time` and `end_time`
+            when set to `custom_date`.
+          schema:
+            type: string
+            enum:
+              - today
+              - yesterday
+              - last_week
+              - last_month
+              - last_year
+              - custom_date
+        - name: start_time
+          in: query
+          required: false
+          description: >-
+            The start of the custom date range, in Unix epoch milliseconds. Required when
+            `date_type` is `custom_date`.
+          schema:
+            type: integer
+            format: int64
+        - name: end_time
+          in: query
+          required: false
+          description: >-
+            The end of the custom date range, in Unix epoch milliseconds. Required when
+            `date_type` is `custom_date`.
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Search results retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  documents:
+                    - document_name: "Presales tips"
+                      open_url: "https://writer.zoho.com/writer/open/1x3q99f2155c6737241ea929eb72ad141da7c"
+                      is_favourite: false
+                      thumbnail_url: "https://writer.zoho.com/writer/thumbnail/1x3q99f2155c6737241ea929eb72ad141da7c"
+                      document_id: "1x3q99f2155c6737241ea929eb72ad141da7d"
+                      type: "document"
+                      modified_time: "2020-06-23T10:13:11Z"
+                      download_url: "https://writer.zoho.com/writer/api/v1/download/1x3q99f2155c6737241ea929eb72ad141da7c"
+                      lastmodified_by:
+                        - email_id: "amelia@zylker.com"
+                          profile_photo: "https://contacts.zoho.com/file?t=user&ID=1234&fs=thumb"
+                          user_id: "456215787"
+                          timezone: "Asia/Kolkata"
+                          language: "en"
+                          display_name: "Amelia"
+                      created_time: "2020-06-16T08:46:40Z"
+                      last_opened_time: "2020-06-16T08:46:40Z"
+                      created_by: "Amelia"
+                      created_time_ms: 1592297200540
+                      preview_url: "https://writer.zoho.com/writer/zwpreview/1x3q99f2155c6737241ea929eb72ad141da7c"
+                      creator_id: "53884257"
+                      name: "New Document"
+                  total_count: 33
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+            - ZohoSearch.securesearch.READ
+            - WorkDrive.team.READ
+
+  /writer/api/v1/documents/{document_id}:
+    get:
+      tags:
+        - Documents
+      summary: Get Document Details
+      description: >
+        <p>Retrieves detailed metadata for a specific Zoho Writer document, including its
+        ID, name, owner, creation and modification timestamps, and access URLs.</p>
+      operationId: getDocumentDetails
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique ID of the document.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+      responses:
+        "200":
+          description: Document details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentObject'
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+    post:
+      tags:
+        - Documents
+      summary: Create New Document Version
+      description: >-
+        Updates the content of an existing document by uploading a new file, creating
+        a new version of it. The version history of the document is preserved.
+      operationId: createNewDocumentVersion
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique ID of the document to update.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  format: binary
+                  description: >
+                    The new file to upload as the document's updated content.
+                    Supported formats: `docx` (up to 50 MB), `rtf`, `html`, `txt`, `odt` (up to 10 MB).
+                password:
+                  type: string
+                  maxLength: 255
+                  description: The password to unlock the file, if the uploaded content is password-protected.
+      responses:
+        "200":
+          description: New document version created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentObject'
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+  /writer/api/v1/download/{document_id}:
+    get:
+      tags:
+        - Documents
+      summary: Download Document
+      description: >-
+        Downloads a Zoho Writer document in the specified file format, with options
+        to control how tracked changes, comments, and styles are rendered, or to
+        format signature fields for compatibility with a third-party e-signature
+        service.
+      operationId: downloadDocument
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique ID of the document to download.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+        - name: format
+          in: query
+          required: false
+          description: >-
+            The format in which to download the document.
+          schema:
+            type: string
+            enum:
+              - docx
+              - odt
+              - rtf
+              - txt
+              - html
+              - pdf
+              - zip
+              - epub
+            default: docx
+        - name: options
+          in: query
+          required: false
+          description: >
+            Controls how tracked changes, comments, and styles appear in the downloaded file.
+          schema:
+            type: object
+            properties:
+              include_changes:
+                type: string
+                enum:
+                  - as_markups
+                  - all
+                  - none
+                default: none
+                description: >
+                  How tracked changes are reflected. `as_markups` includes markup annotations;
+                  `all` accepts all changes; `none` rejects all changes.
+              include_comments:
+                type: string
+                enum:
+                  - all
+                  - none
+                default: none
+                description: >
+                  Whether to include comments in the downloaded file. `all` includes them;
+                  `none` excludes them. Applicable only for `docx` and `pdf` formats.
+              include_styles:
+                type: string
+                enum:
+                  - as_inline
+                  - none
+                default: as_inline
+                description: >
+                  Whether to include styles. `as_inline` retains font colors and sizes as inline
+                  styles; `none` retains only headings, basic formatting, and hyperlinks.
+                  Applicable only for `html` and `zip` formats.
+          style: deepObject
+          explode: true
+          example:
+            include_changes: none
+            include_comments: none
+            include_styles: as_inline
+        - name: sign_service_name
+          in: query
+          required: false
+          description: >-
+            The third-party e-signature service used to format signature-field tags
+            in the downloaded PDF, so the file is compatible if later uploaded to
+            that service. Applicable only when `format` is `pdf`.
+          schema:
+            type: string
+            enum:
+              - zohosign
+              - adobesign
+              - docusign
+            default: zohosign
+        - name: password
+          in: query
+          required: false
+          description: >-
+            A password to protect the downloaded document. Applicable only for `docx` and `pdf`
+            formats.
+          schema:
+            type: string
+            maxLength: 255
+      responses:
+        "200":
+          description: Document downloaded successfully.
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+  /writer/api/v1/documents/{document_id}/metrics:
+    get:
+      tags:
+        - Documents
+      summary: Get Document Metrics
+      description: >
+        <p>Retrieves content metrics for a specific document, including the count of
+        characters, words, sentences, comments, and tracked changes.</p>
+      operationId: getDocumentMetrics
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique ID of the document.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+      responses:
+        "200":
+          description: Document metrics retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  comments_metrics:
+                    all: 1
+                    unresolved: 0
+                    resolved: 1
+                  content_metrics:
+                    number_of_sentences: 31
+                    number_of_characters: 1817
+                    number_of_words: 263
+                    number_of_characters_without_whitespaces: 1557
+                  tracked_changes_metrics:
+                    all: 3
+                    insertions: 1
+                    deletions: 1
+                    replacements: 1
+                    fields_updated: 0
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+  /writer/api/v1/documents/{document_id}/fields:
+    get:
+      tags:
+        - Documents
+      summary: Get Document Fields
+      description: >
+        <p>Retrieves all fields present in a document, categorized by type: fillable fields
+        (<code>fill</code>), merge fields (<code>merge</code>), and signature fields
+        (<code>sign</code>).</p><br>
+      operationId: getAllDocumentFields
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique ID of the document.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+      responses:
+        "200":
+          description: Document fields retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  fill:
+                    - formats:
+                        lookup: true
+                        watch:
+                          fields:
+                            - id: ""
+                        uncheckedValue: ""
+                        checkedValue: ""
+                        maxLength: 30
+                      name: "User name"
+                      id: ""
+                      type: "singleline"
+                      value: "Amelia"
+                  merge:
+                    - id: "Name"
+                      display_name: "Name"
+                      type: "text"
+                      fields:
+                        - id: "Products.Products_name"
+                          display_name: "Products.Products Name"
+                          type: "text"
+                  sign:
+                    Recipient1:
+                      job_title: ""
+                      Agree_term_and_conditions: ""
+                    Recipient2:
+                      company_name: ""
+                      Address: ""
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+  /writer/api/v1/documents/{document_id}/meta:
+    post:
+      tags:
+        - Documents
+      summary: Update Document Metadata
+      description: >-
+        Updates a single metadata field or state attribute of a Zoho Writer document —
+        its name, description, favourite flag, final/draft state, lock state, readiness,
+        or track-changes setting.
+      operationId: updateDocumentMeta
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique identifier of the Zoho Writer document.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - operations
+              properties:
+                operations:
+                  type: object
+                  description: >
+                    An object containing exactly one metadata field to update.
+                  properties:
+                    name:
+                      type: string
+                      maxLength: 255
+                      description: The new name to assign to the document.
+                      example: "New Document Name"
+                    description:
+                      type: string
+                      maxLength: 200
+                      description: The new description to set for the document.
+                      example: "Invoice Q1 2026"
+                    favourite:
+                      type: boolean
+                      description: >
+                        When `true`, marks the document as a favourite. When
+                        `false`, removes the document from favourites.
+                      example: true
+                    mark_as_final:
+                      type: boolean
+                      description: >
+                        When `true`, marks the document as final. When `false`,
+                        reverts the document from final back to an editable state.
+                      example: true
+                    lock:
+                      type: boolean
+                      description: >
+                        When `true`, locks the document. When `false`, unlocks
+                        the document.
+                      example: true
+                    state:
+                      type: string
+                      enum:
+                        - mark_as_complete
+                      description: >
+                        Marks the document as ready, moving it out of the draft state and
+                        making it accessible to everyone in the team folder.
+                    track_changes:
+                      type: string
+                      enum:
+                        - enable
+                        - disable
+                      description: >
+                        Controls whether track changes is enabled for the document.
+                        If the document owner or co-owner enables track changes, the
+                        feature is enabled for all users accessing that document. If
+                        any other collaborator enables track changes while viewing
+                        the document, the feature applies only to that collaborator
+                        and not to other users accessing the same document.
+      responses:
+        "200":
+          description: >-
+            Success response. The fields returned depend on which metadata field was
+            provided in the request.
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                description:
+                  summary: Description updated
+                  value:
+                    result: "success"
+                    message: "Document description has been updated successfully."
+                    description: "Invoice Q1 2026"
+                    modified_by:
+                      email_id: "zylker@zylker.com"
+                      profile_photo: "https://contacts.zoho.com/file?t=user&ID=1308724&fs=thumb"
+                      user_id: "1308724"
+                      timezone: "Asia/Kolkata"
+                      language: "en"
+                      display_name: "Zylker"
+                favourite:
+                  summary: Favourite made/removed
+                  value:
+                    result: "success"
+                    message: "The document has been added to your favorites."
+                    is_favourite: true
+                    modified_by:
+                      email_id: "zylker@zylker.com"
+                      profile_photo: "https://contacts.zoho.com/file?t=user&ID=1308724&fs=thumb"
+                      user_id: "1308724"
+                      timezone: "Asia/Kolkata"
+                      language: "en"
+                      display_name: "Zylker"
+                mark_as_final:
+                  summary: Marked/reverted as final
+                  value:
+                    result: "success"
+                    message: "The document has been marked as final."
+                    final_info:
+                      zuid: "1308724"
+                      status: true
+                      display_name: "Zylker"
+                lock_checkout:
+                  summary: Document locked (checked out)
+                  value:
+                    result: "success"
+                    message: "Document lock operation has been completed successfully."
+                    locked_by:
+                      email_id: "zylker@zylker.com"
+                      profile_photo: "https://contacts.zoho.com/file?t=user&ID=1308724&fs=thumb"
+                      user_id: "1308724"
+                      timezone: "Asia/Kolkata"
+                      language: "en"
+                      display_name: "Zylker"
+                lock_checkin:
+                  summary: Document unlocked (checked in)
+                  value:
+                    result: "success"
+                    message: "The document has been unlocked successfully."
+                    unlocked_by:
+                      email_id: "zylker@zylker.com"
+                      profile_photo: "https://contacts.zoho.com/file?t=user&ID=1308724&fs=thumb"
+                      user_id: "1308724"
+                      timezone: "Asia/Kolkata"
+                      language: "en"
+                      display_name: "Zylker"
+                name:
+                  summary: Document renamed
+                  value:
+                    result: "success"
+                    message: "Document has been renamed successfully."
+                    name: "New Document Name"
+                    modified_by:
+                      email_id: "zylker@zylker.com"
+                      profile_photo: "https://contacts.zoho.com/file?t=user&ID=1308724&fs=thumb"
+                      user_id: "1308724"
+                      timezone: "Asia/Kolkata"
+                      language: "en"
+                      display_name: "Zylker"
+                state:
+                  summary: Marked as ready
+                  value:
+                    message: "Document marked as complete successfully"
+                    state: "active"
+                    modified_by:
+                      email_id: "zylker@zylker.com"
+                      profile_photo: "https://contacts.zoho.com/file?t=user&ID=1308724&fs=thumb"
+                      user_id: "1308724"
+                      timezone: "Asia/Kolkata"
+                      language: "en"
+                      display_name: "Zylker"
+                track_changes:
+                  summary: Track changes enabled/disabled
+                  value:
+                    result: "success"
+                    message: "The trackchanges has been enabled in the document."
+                    modified_by:
+                      email_id: "zylker@zylker.com"
+                      profile_photo: "https://contacts.zoho.com/file?t=user&ID=1308724&fs=thumb"
+                      user_id: "1308724"
+                      timezone: "Asia/Kolkata"
+                      language: "en"
+                      display_name: "Zylker"
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+  /writer/api/v1/documents/{document_id}/copy:
+    post:
+      tags:
+        - Documents
+      summary: Copy Document
+      description: >-
+        Creates a copy of an existing document, optionally converting its format,
+        copying a specific historical version, or overriding the resulting
+        document's type.
+      operationId: copyDocument
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique ID of the document to copy.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                document_name:
+                  type: string
+                  maxLength: 255
+                  description: A unique name for the copied document.
+                  example: "Invoice_2026_Copy"
+                format:
+                  type: string
+                  enum:
+                    - docx
+                    - zdoc
+                    - odt
+                    - html
+                    - pdf
+                    - epub
+                    - rtf
+                    - txt
+                  default: zdoc
+                  description: The format in which to store the copied document.
+                  example: "zdoc"
+                password:
+                  type: string
+                  description: A password to protect the copied document. Applicable only for `docx` and `pdf` formats.
+                folder_id:
+                  type: string
+                  maxLength: 100
+                  description: The ID of the folder in which to store the copy. Defaults to "My Folders".
+                  example: "t04apjk9p7d6ba94f4cbf9c56e1b1ed9bac89"
+                resource_type:
+                  type: string
+                  enum:
+                    - fillable
+                    - merge
+                    - sign
+                  description: Overrides the document type assigned to the copy.
+                from:
+                  type: string
+                  enum:
+                    - publish
+                    - editor
+                    - version
+                    - dashboard
+                  description: >
+                    Indicates the context the copy request originated from. When set to `publish`, the
+                    copy always excludes tracked changes and comments, overriding `options.include_changes`
+                    and `options.include_comments`.
+                version_id:
+                  type: integer
+                  description: The ID of the specific document version to copy. If omitted, the latest version is copied.
+                options:
+                  type: object
+                  description: Controls how tracked changes, comments, and template settings are handled in the copy.
+                  properties:
+                    include_changes:
+                      type: string
+                      enum:
+                        - as_markups
+                        - all
+                        - none
+                      default: none
+                      description: >
+                        How tracked changes are reflected in the copy. `as_markups` includes markup
+                        annotations; `all` accepts all changes; `none` rejects all changes.
+                    include_comments:
+                      type: string
+                      enum:
+                        - all
+                        - none
+                      default: none
+                      description: Whether to include comments in the copy. Applicable only for `docx` and `pdf` formats.
+                    include_template_settings:
+                      type: boolean
+                      description: Whether to include automation configuration in the copy. Applicable only for Sign and Fillable Templates.
+                  example:
+                    include_changes: none
+                    include_comments: none
+                    include_template_settings: false
+      responses:
+        "200":
+          description: Document copied successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentObject'
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+  /writer/api/v1/documents/{document_id}/trash:
+    delete:
+      tags:
+        - Documents
+      summary: Move Document to Trash
+      description: >-
+        Moves a document to the Trash.
+      operationId: trashDocument
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique ID of the document to move to Trash.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+      responses:
+        "200":
+          description: >-
+            Document moved to Trash successfully. `retention_data` is included only when the
+            document belongs to a WorkDrive team/organization.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  result: "success"
+                  message: "Document has been trashed successfully."
+                  retention_data:
+                    trash_retention_days: 30
+                    delete_retention_days: 60
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+  /writer/api/v1/documents/{document_id}/restore:
+    post:
+      tags:
+        - Documents
+      summary: Restore Document from Trash
+      description: >
+        <p>Restores a previously trashed document, making it accessible again in your
+        Zoho Writer account.</p>
+      operationId: restoreDocument
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique ID of the trashed document to restore.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+      responses:
+        "200":
+          description: Document restored successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  result: "success"
+                  message: "Document has been restored successfully."
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+  /writer/api/v1/documents/{document_id}/delete:
+    delete:
+      tags:
+        - Documents
+      summary: Delete Document Permanently
+      description: >
+        <p>Permanently deletes a trashed document. This action is irreversible. Only documents
+        that are already in the Trash can be permanently deleted.</p>
+      operationId: deleteDocumentPermanently
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: The unique ID of the trashed document to permanently delete.
+          schema:
+            type: string
+          example: "a1b2c3d4e5f6g7h8i9"
+      responses:
+        "200":
+          description: Document permanently deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  result: "success"
+                  message: "Document has been deleted successfully."
+      security:
+        - oAuth2:
+            - ZohoWriter.documentEditor.ALL
+            - WorkDrive.files.ALL
+            - WorkDrive.organization.ALL
+            - WorkDrive.workspace.ALL
+
+components:
+  schemas:
+    DocumentObject:
+      type: object
+      example:
+        extension: "zwriter"
+        role: "OWNER"
+        modified_time_ms: 1736426248822
+        owner_id: "667009621"
+        writer_home_url: "https://writer.zoho.com/documents"
+        is_published: false
+        shared_time_ms: 1736426248822
+        open_url: "https://writer.zoho.com/writer/open/6yc4z4f557db79e9f446ca37f5702c8b901f6"
+        is_favourite: false
+        last_opened_time_ms: 1736332736838
+        thumbnail_url: "https://writer.zoho.com/writer/thumbnail/6yc4z4f557db79e9f446ca37f5702c8b901f6?t_id=4504799000121824571"
+        document_id: "6yc4z4f557db79e9f446ca37f5702c8b901f6"
+        type: "document"
+        title: "New Document"
+        lock_info:
+          status: false
+        is_orgpublished: false
+        document_name: "Invoice_2026_001"
+        isWorkflowCompleted: false
+        modified_time: "2025-01-09T12:37:28Z"
+        library_id: 14
+        permissions:
+          can_read_fill: true
+          can_trash: true
+          can_share: true
+          can_edit: true
+          can_lock: true
+          can_copy: true
+          can_org_publish: true
+          can_read: true
+          is_admin: false
+          can_discard_lock: false
+          can_remove_share: false
+          can_publish: true
+          can_delete: false
+          can_restore: false
+          can_rename: true
+          can_favourite: true
+          can_leave: false
+          can_download: true
+          can_unlock: false
+        is_shared: false
+        download_url: "https://writer.zoho.com/writer/api/v1/download/6yc4z4f557db79e9f446ca37f5702c8b901f6"
+        id: "6yc4z4f557db79e9f446ca37f5702c8b901f6"
+        lastmodified_by:
+          - email_id: "amelia@zylker.com"
+            profile_photo: "https://contacts.zoho.com/file?t=user&ID=950162&fs=thumb"
+            user_id: "950162"
+            timezone: "Asia/Kolkata"
+            language: "en"
+            display_name: "Amelia"
+        final_info:
+          status: false
+        parent_info:
+          folder_name: "My Folders"
+          folder_link: "https://workdrive.zoho.com/home/ep/6oq3d00e1e07d58c64077b4f1c1f28da4a777/privatespace/folders/files"
+        created_time: "2025-01-08T10:38:56Z"
+        parent_folder_id: "qpz9g646b2ddd954247b3988165bc17c156fe"
+        isWorkflowStarted: false
+        collaboration_id: "2242265600293904878"
+        resource_type: "native"
+        last_opened_time: "2025-01-08T10:38:56Z"
+        version_id: "5719899008834658125"
+        created_by: "Amelia"
+        version: "4.0"
+        created_time_ms: 1736332736838
+        product_type: 1
+        preview_url: "https://writer.zoho.com/writer/zwpreview/6yc4z4f557db79e9f446ca37f5702c8b901f6"
+        creator_id: "667009621"
+        name: "Sample Document"
+        permalink: "https://workdrive.zoho.com/file/6yc4z4f557db79e9f446ca37f5702c8b901f6"
+        publish_info:
+          is_published: false
+          type: "none"
+          version: "-1"
+        status: "active"
+    DocumentListResponse:
+      type: object
+      example:
+        offset: 2
+        documents:
+          - created_time: "2018-03-30T10:58:48Z"
+            role: "OWNER"
+            modified_time_ms: 1522411691658
+            parent_folder_id: "40dgcFOLDER4579020"
+            collaboration_id: "1203298717956895014"
+            last_opened_time: "2018-03-30T13:54:51Z"
+            open_url: "https://writer.zoho.com/writer/open/ponaz5c1a267e61074c50a012d8e4b519c755"
+            is_favourite: false
+            type: "document"
+            document_id: "ponaz5c1a267e61074c50a012d8e4b519c755"
+            last_opened_time_ms: 1522411691658
+            thumbnail_url: "https://writer.zoho.com/writer/thumbnail/ponaz5c1a267e61074c50a012d8e4b519c755"
+            created_by: "Amelia"
+            document_name: "Presales tips"
+            created_time_ms: 1522407528000
+            modified_time: "2018-03-30T13:54:51Z"
+            preview_url: "https://writer.zoho.com/writer/preview/ponaz5c1a267e61074c50a012d8e4b519c755"
+            creator_id: "4579020"
+            download_url: "https://writer.zoho.com/api/v1/download/ponaz5c1a267e61074c50a012d8e4b519c755"
+            permalink: "https://workdrive.zoho.com/file/ponaz5c1a267e61074c50a012d8e4b519c755"
+            published_url: "https://writer.zoho.com/writer/published/ponaz5c1a267e61074c50a012d8e4b519c755"
+            document_type: "document"
+            lastmodified_by:
+              - email_id: "amelia@zylker.com"
+                profile_photo: "https://contacts.zoho.com/file?t=user&ID=4579020&fs=thumb"
+                user_id: "4579020"
+                timezone: "Asia/Kolkata"
+                language: "en"
+                display_name: "Amelia"
+            status: "active"
+        total_count: 9
+        limit: 1
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      description: Zoho OAuth 2.0 authentication.
+      flows:
+        authorizationCode:
+          authorizationUrl: "https://accounts.zoho.com/oauth/v2/auth"
+          tokenUrl: "https://accounts.zoho.com/oauth/v2/token"
+          scopes:
+            ZohoWriter.documentEditor.ALL: Full access to the Zoho Writer document editor.
+            WorkDrive.files.ALL: Full access to Zoho WorkDrive files.
+            WorkDrive.organization.ALL: Full access to Zoho WorkDrive organization resources.
+            WorkDrive.workspace.ALL: Full access to Zoho WorkDrive workspace resources.
+            ZohoSearch.securesearch.READ: Read access to Zoho Search.
+            WorkDrive.team.READ: Read access to Zoho WorkDrive team resources.
