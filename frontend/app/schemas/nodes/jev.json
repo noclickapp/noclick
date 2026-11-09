@@ -1,0 +1,1324 @@
+{
+  "$defs": {
+    "AnalyzeSentimentConfig": {
+      "additionalProperties": false,
+      "description": "Classify message tone with editable named choices.",
+      "properties": {
+        "model": {
+          "default": "jev-latest",
+          "description": "Model name from List Models. Use a vision model for images.",
+          "maxLength": 256,
+          "title": "Model",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "Content all questions refer to; text, a JSON object, or an array.",
+          "title": "State"
+        },
+        "assets": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/ImageAsset"
+              },
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Images keyed by placeholders in state or instructions. Opts into the provider's image danger zone.",
+          "title": "Assets"
+        },
+        "long_context": {
+          "default": false,
+          "description": "Opt into TypeSafe-Danger-Zone-Long-Context: true.",
+          "title": "Long Context",
+          "type": "boolean"
+        },
+        "question_name": {
+          "default": "result",
+          "description": "Key of the answer in the returned answers object.",
+          "maxLength": 256,
+          "title": "Question Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "analyze_sentiment",
+          "default": "analyze_sentiment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "default": "What is the tone of this message?",
+          "title": "Instructions"
+        },
+        "criteria": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxProperties": 255,
+          "minProperties": 1,
+          "title": "Criteria",
+          "type": "object"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "AnalyzeSentimentConfig",
+      "type": "object"
+    },
+    "AskYesNoConfig": {
+      "additionalProperties": false,
+      "description": "Return the probability that a statement is true (a Noul question).",
+      "properties": {
+        "model": {
+          "default": "jev-latest",
+          "description": "Model name from List Models. Use a vision model for images.",
+          "maxLength": 256,
+          "title": "Model",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "Content all questions refer to; text, a JSON object, or an array.",
+          "title": "State"
+        },
+        "assets": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/ImageAsset"
+              },
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Images keyed by placeholders in state or instructions. Opts into the provider's image danger zone.",
+          "title": "Assets"
+        },
+        "long_context": {
+          "default": false,
+          "description": "Opt into TypeSafe-Danger-Zone-Long-Context: true.",
+          "title": "Long Context",
+          "type": "boolean"
+        },
+        "question_name": {
+          "default": "result",
+          "description": "Key of the answer in the returned answers object.",
+          "maxLength": 256,
+          "title": "Question Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "ask_yes_no",
+          "default": "ask_yes_no",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "The statement or yes/no question to evaluate.",
+          "title": "Instructions"
+        },
+        "criteria": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NoulCriteria"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "state",
+        "instructions"
+      ],
+      "title": "AskYesNoConfig",
+      "type": "object"
+    },
+    "BoxQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "box",
+          "default": "box",
+          "title": "Type",
+          "type": "string"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        }
+      },
+      "title": "BoxQuestion",
+      "type": "object"
+    },
+    "ChoiceQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "choice",
+          "default": "choice",
+          "title": "Type",
+          "type": "string"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "criteria": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxProperties": 255,
+          "minProperties": 1,
+          "title": "Criteria",
+          "type": "object"
+        }
+      },
+      "required": [
+        "criteria"
+      ],
+      "title": "ChoiceQuestion",
+      "type": "object"
+    },
+    "ChooseOptionConfig": {
+      "additionalProperties": false,
+      "description": "Choose among named options with probabilities and confidence.",
+      "properties": {
+        "model": {
+          "default": "jev-latest",
+          "description": "Model name from List Models. Use a vision model for images.",
+          "maxLength": 256,
+          "title": "Model",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "Content all questions refer to; text, a JSON object, or an array.",
+          "title": "State"
+        },
+        "assets": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/ImageAsset"
+              },
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Images keyed by placeholders in state or instructions. Opts into the provider's image danger zone.",
+          "title": "Assets"
+        },
+        "long_context": {
+          "default": false,
+          "description": "Opt into TypeSafe-Danger-Zone-Long-Context: true.",
+          "title": "Long Context",
+          "type": "boolean"
+        },
+        "question_name": {
+          "default": "result",
+          "description": "Key of the answer in the returned answers object.",
+          "maxLength": 256,
+          "title": "Question Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "choose_option",
+          "default": "choose_option",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "criteria": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxProperties": 255,
+          "minProperties": 1,
+          "title": "Criteria",
+          "type": "object"
+        }
+      },
+      "required": [
+        "state",
+        "criteria"
+      ],
+      "title": "ChooseOptionConfig",
+      "type": "object"
+    },
+    "DetectSpamConfig": {
+      "additionalProperties": false,
+      "description": "Screen a message for unsolicited advertising with a Noul question.",
+      "properties": {
+        "model": {
+          "default": "jev-latest",
+          "description": "Model name from List Models. Use a vision model for images.",
+          "maxLength": 256,
+          "title": "Model",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "Content all questions refer to; text, a JSON object, or an array.",
+          "title": "State"
+        },
+        "assets": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/ImageAsset"
+              },
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Images keyed by placeholders in state or instructions. Opts into the provider's image danger zone.",
+          "title": "Assets"
+        },
+        "long_context": {
+          "default": false,
+          "description": "Opt into TypeSafe-Danger-Zone-Long-Context: true.",
+          "title": "Long Context",
+          "type": "boolean"
+        },
+        "question_name": {
+          "default": "result",
+          "description": "Key of the answer in the returned answers object.",
+          "maxLength": 256,
+          "title": "Question Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "detect_spam",
+          "default": "detect_spam",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "default": "Is this message spam?",
+          "title": "Instructions"
+        },
+        "criteria": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NoulCriteria"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "DetectSpamConfig",
+      "type": "object"
+    },
+    "DetectToxicityConfig": {
+      "additionalProperties": false,
+      "description": "Screen content for toxic language; returns a probability, not a block action.",
+      "properties": {
+        "model": {
+          "default": "jev-latest",
+          "description": "Model name from List Models. Use a vision model for images.",
+          "maxLength": 256,
+          "title": "Model",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "Content all questions refer to; text, a JSON object, or an array.",
+          "title": "State"
+        },
+        "assets": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/ImageAsset"
+              },
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Images keyed by placeholders in state or instructions. Opts into the provider's image danger zone.",
+          "title": "Assets"
+        },
+        "long_context": {
+          "default": false,
+          "description": "Opt into TypeSafe-Danger-Zone-Long-Context: true.",
+          "title": "Long Context",
+          "type": "boolean"
+        },
+        "question_name": {
+          "default": "result",
+          "description": "Key of the answer in the returned answers object.",
+          "maxLength": 256,
+          "title": "Question Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "detect_toxicity",
+          "default": "detect_toxicity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "default": "Does this content contain toxic or abusive language?",
+          "title": "Instructions"
+        },
+        "criteria": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NoulCriteria"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "DetectToxicityConfig",
+      "type": "object"
+    },
+    "EvaluateQuestionsConfig": {
+      "additionalProperties": false,
+      "description": "Evaluate multiple named questions of any supported type in one request.",
+      "properties": {
+        "model": {
+          "default": "jev-latest",
+          "description": "Model name from List Models. Use a vision model for images.",
+          "maxLength": 256,
+          "title": "Model",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "Content all questions refer to; text, a JSON object, or an array.",
+          "title": "State"
+        },
+        "assets": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/ImageAsset"
+              },
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Images keyed by placeholders in state or instructions. Opts into the provider's image danger zone.",
+          "title": "Assets"
+        },
+        "long_context": {
+          "default": false,
+          "description": "Opt into TypeSafe-Danger-Zone-Long-Context: true.",
+          "title": "Long Context",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "evaluate_questions",
+          "default": "evaluate_questions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "questions": {
+          "additionalProperties": {
+            "discriminator": {
+              "mapping": {
+                "box": "#/$defs/BoxQuestion",
+                "choice": "#/$defs/ChoiceQuestion",
+                "noul": "#/$defs/NoulQuestion",
+                "score": "#/$defs/ScoreQuestion"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/NoulQuestion"
+              },
+              {
+                "$ref": "#/$defs/ChoiceQuestion"
+              },
+              {
+                "$ref": "#/$defs/ScoreQuestion"
+              },
+              {
+                "$ref": "#/$defs/BoxQuestion"
+              }
+            ]
+          },
+          "description": "Named noul, choice, score, or box questions; answers retain these names.",
+          "minProperties": 1,
+          "title": "Questions",
+          "type": "object"
+        }
+      },
+      "required": [
+        "state",
+        "questions"
+      ],
+      "title": "EvaluateQuestionsConfig",
+      "type": "object"
+    },
+    "ImageAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "image",
+          "default": "image",
+          "title": "Type",
+          "type": "string"
+        },
+        "format": {
+          "enum": [
+            "png",
+            "jpg",
+            "jpeg"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "data_base64": {
+          "description": "Base64 image bytes, without a data URL prefix. This is sent to TypeSafe, not returned in the node output.",
+          "maxLength": 44000000,
+          "minLength": 1,
+          "title": "Data Base64",
+          "type": "string"
+        }
+      },
+      "required": [
+        "format",
+        "data_base64"
+      ],
+      "title": "ImageAsset",
+      "type": "object"
+    },
+    "JevAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "jev_api_key",
+          "default": "jev_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Jev API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your TypeSafe API key. NoClick sends it as a bearer token to api.typesafe.ai. Listing models checks that the key is accepted; it does not identify the account.",
+      "x-credential-url": "https://console.typesafe.ai/keys"
+    },
+    "ListModelsConfig": {
+      "additionalProperties": false,
+      "description": "List the available model names and aliases (one GET /v1/models).",
+      "properties": {
+        "operation": {
+          "const": "list_models",
+          "default": "list_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListModelsConfig",
+      "type": "object"
+    },
+    "LocateInImageConfig": {
+      "additionalProperties": false,
+      "description": "Locate an object with normalized box coordinates in a supplied image.",
+      "properties": {
+        "model": {
+          "default": "jev-preview",
+          "description": "Vision-language model name from List Models.",
+          "maxLength": 256,
+          "title": "Model",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "Content all questions refer to; text, a JSON object, or an array.",
+          "title": "State"
+        },
+        "assets": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ImageAsset"
+          },
+          "minProperties": 1,
+          "title": "Assets",
+          "type": "object"
+        },
+        "long_context": {
+          "default": false,
+          "description": "Opt into TypeSafe-Danger-Zone-Long-Context: true.",
+          "title": "Long Context",
+          "type": "boolean"
+        },
+        "question_name": {
+          "default": "result",
+          "description": "Key of the answer in the returned answers object.",
+          "maxLength": 256,
+          "title": "Question Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "locate_in_image",
+          "default": "locate_in_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "What to locate in the image.",
+          "title": "Instructions"
+        }
+      },
+      "required": [
+        "state",
+        "assets",
+        "instructions"
+      ],
+      "title": "LocateInImageConfig",
+      "type": "object"
+    },
+    "NoulCriteria": {
+      "additionalProperties": false,
+      "properties": {
+        "true": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "True"
+        },
+        "false": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "False"
+        }
+      },
+      "title": "NoulCriteria",
+      "type": "object"
+    },
+    "NoulQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "noul",
+          "default": "noul",
+          "title": "Type",
+          "type": "string"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "criteria": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NoulCriteria"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "NoulQuestion",
+      "type": "object"
+    },
+    "RateContentConfig": {
+      "additionalProperties": false,
+      "description": "Rate content on an ordered zero-based rubric.",
+      "properties": {
+        "model": {
+          "default": "jev-latest",
+          "description": "Model name from List Models. Use a vision model for images.",
+          "maxLength": 256,
+          "title": "Model",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "Content all questions refer to; text, a JSON object, or an array.",
+          "title": "State"
+        },
+        "assets": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/ImageAsset"
+              },
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Images keyed by placeholders in state or instructions. Opts into the provider's image danger zone.",
+          "title": "Assets"
+        },
+        "long_context": {
+          "default": false,
+          "description": "Opt into TypeSafe-Danger-Zone-Long-Context: true.",
+          "title": "Long Context",
+          "type": "boolean"
+        },
+        "question_name": {
+          "default": "result",
+          "description": "Key of the answer in the returned answers object.",
+          "maxLength": 256,
+          "title": "Question Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "rate_content",
+          "default": "rate_content",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "criteria": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ]
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Criteria",
+          "type": "array"
+        }
+      },
+      "required": [
+        "state",
+        "criteria"
+      ],
+      "title": "RateContentConfig",
+      "type": "object"
+    },
+    "ScoreQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "score",
+          "default": "score",
+          "title": "Type",
+          "type": "string"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "criteria": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ]
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Criteria",
+          "type": "array"
+        }
+      },
+      "required": [
+        "criteria"
+      ],
+      "title": "ScoreQuestion",
+      "type": "object"
+    },
+    "ScoreUrgencyConfig": {
+      "additionalProperties": false,
+      "description": "Score a message's urgency with an editable zero-based rubric.",
+      "properties": {
+        "model": {
+          "default": "jev-latest",
+          "description": "Model name from List Models. Use a vision model for images.",
+          "maxLength": 256,
+          "title": "Model",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "Content all questions refer to; text, a JSON object, or an array.",
+          "title": "State"
+        },
+        "assets": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/ImageAsset"
+              },
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Images keyed by placeholders in state or instructions. Opts into the provider's image danger zone.",
+          "title": "Assets"
+        },
+        "long_context": {
+          "default": false,
+          "description": "Opt into TypeSafe-Danger-Zone-Long-Context: true.",
+          "title": "Long Context",
+          "type": "boolean"
+        },
+        "question_name": {
+          "default": "result",
+          "description": "Key of the answer in the returned answers object.",
+          "maxLength": 256,
+          "title": "Question Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "score_urgency",
+          "default": "score_urgency",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "default": "How urgent is this message?",
+          "title": "Instructions"
+        },
+        "criteria": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "items": {},
+                "type": "array"
+              }
+            ]
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Criteria",
+          "type": "array"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "ScoreUrgencyConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "analyze_sentiment": "#/$defs/AnalyzeSentimentConfig",
+          "ask_yes_no": "#/$defs/AskYesNoConfig",
+          "choose_option": "#/$defs/ChooseOptionConfig",
+          "detect_spam": "#/$defs/DetectSpamConfig",
+          "detect_toxicity": "#/$defs/DetectToxicityConfig",
+          "evaluate_questions": "#/$defs/EvaluateQuestionsConfig",
+          "list_models": "#/$defs/ListModelsConfig",
+          "locate_in_image": "#/$defs/LocateInImageConfig",
+          "rate_content": "#/$defs/RateContentConfig",
+          "score_urgency": "#/$defs/ScoreUrgencyConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/EvaluateQuestionsConfig"
+        },
+        {
+          "$ref": "#/$defs/AskYesNoConfig"
+        },
+        {
+          "$ref": "#/$defs/ChooseOptionConfig"
+        },
+        {
+          "$ref": "#/$defs/RateContentConfig"
+        },
+        {
+          "$ref": "#/$defs/LocateInImageConfig"
+        },
+        {
+          "$ref": "#/$defs/DetectSpamConfig"
+        },
+        {
+          "$ref": "#/$defs/DetectToxicityConfig"
+        },
+        {
+          "$ref": "#/$defs/AnalyzeSentimentConfig"
+        },
+        {
+          "$ref": "#/$defs/ScoreUrgencyConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JevAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Jev Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

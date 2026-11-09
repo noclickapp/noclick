@@ -1,0 +1,140 @@
+{
+  "source": "https://api.typesafe.ai/openapi.json",
+  "version": "0.2.0",
+  "requests": {
+    "noul": {
+      "model": "jev-latest",
+      "state": "I was charged twice for my subscription this month. Please refund the extra charge.",
+      "questions": {
+        "billing": {
+          "type": "noul",
+          "instructions": "Is this message about billing?"
+        }
+      }
+    },
+    "choice": {
+      "model": "jev-latest",
+      "state": "I was charged twice for my subscription this month. Please refund the extra charge.",
+      "questions": {
+        "tone": {
+          "type": "choice",
+          "instructions": "What is the tone of this message?",
+          "criteria": {
+            "angry": "An upset or hostile message",
+            "calm": "A neutral or polite message",
+            "excited": "An enthusiastic or eager message"
+          }
+        }
+      }
+    },
+    "score": {
+      "model": "jev-latest",
+      "state": "I was charged twice for my subscription this month. Please refund the extra charge.",
+      "questions": {
+        "urgency": {
+          "type": "score",
+          "instructions": "How urgent is this message?",
+          "criteria": [
+            "Can wait",
+            "Needs attention this week",
+            "Needs attention today"
+          ]
+        }
+      }
+    },
+    "box": {
+      "model": "jev-preview",
+      "state": "photo",
+      "questions": {
+        "red_rectangle": {
+          "type": "box",
+          "instructions": "Locate the red rectangle."
+        }
+      },
+      "assets": {
+        "photo": {
+          "type": "image",
+          "format": "png",
+          "data_base64": "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAHElEQVR4nGP4TyJgoKcGBgbsaFQDfTUQB4aDBgDAen2fpitsVAAAAABJRU5ErkJggg=="
+        }
+      }
+    }
+  },
+  "responses": {
+    "noul": {
+      "model": "jev-latest",
+      "answers": {
+        "billing": {
+          "type": "noul",
+          "noul": 0.98
+        }
+      },
+      "usage": {
+        "input_tokens": 120,
+        "output_tokens": 12
+      }
+    },
+    "choice": {
+      "model": "jev-latest",
+      "answers": {
+        "tone": {
+          "type": "choice",
+          "choice": "calm",
+          "confidence": 0.7,
+          "probabilities": {
+            "angry": 0.15,
+            "calm": 0.8,
+            "excited": 0.05
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 120,
+        "output_tokens": 12
+      }
+    },
+    "score": {
+      "model": "jev-latest",
+      "answers": {
+        "urgency": {
+          "type": "score",
+          "score": 1.7,
+          "confidence": 0.55,
+          "legend": {
+            "0": "Can wait",
+            "1": "Needs attention this week",
+            "2": "Needs attention today"
+          },
+          "probabilities": {
+            "0": 0.1,
+            "1": 0.1,
+            "2": 0.8
+          }
+        }
+      },
+      "usage": {
+        "input_tokens": 120,
+        "output_tokens": 12
+      }
+    },
+    "box": {
+      "model": "jev-preview",
+      "answers": {
+        "red_rectangle": {
+          "type": "box",
+          "box": {
+            "top": 0.2,
+            "bottom": 0.66,
+            "left": 0.19,
+            "right": 0.68
+          },
+          "confidence": null
+        }
+      },
+      "usage": {
+        "input_tokens": 285,
+        "output_tokens": 20
+      }
+    }
+  }
+}
