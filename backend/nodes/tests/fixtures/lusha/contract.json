@@ -1,0 +1,157 @@
+{
+  "sha256": "7c415553f7a4ee13192c9217e019993e87a1d4f484445c12ad02287c9aff7caa",
+  "source": "https://docs.lusha.com/openapi.json",
+  "version": "V3 (info.version empty)",
+  "operations": {
+    "search_contacts": {
+      "operation_id": "searchContacts",
+      "method": "POST",
+      "path": "/v3/contacts/search",
+      "source": "https://docs.lusha.com/#operation/searchContacts"
+    },
+    "enrich_contacts": {
+      "operation_id": "enrichContacts",
+      "method": "POST",
+      "path": "/v3/contacts/enrich",
+      "source": "https://docs.lusha.com/#operation/enrichContacts"
+    },
+    "search_and_enrich_contacts": {
+      "operation_id": "searchAndEnrichContacts",
+      "method": "POST",
+      "path": "/v3/contacts/search-and-enrich",
+      "source": "https://docs.lusha.com/#operation/searchAndEnrichContacts"
+    },
+    "search_companies": {
+      "operation_id": "searchCompanies",
+      "method": "POST",
+      "path": "/v3/companies/search",
+      "source": "https://docs.lusha.com/#operation/searchCompanies"
+    },
+    "enrich_companies": {
+      "operation_id": "enrichCompanies",
+      "method": "POST",
+      "path": "/v3/companies/enrich",
+      "source": "https://docs.lusha.com/#operation/enrichCompanies"
+    },
+    "search_and_enrich_companies": {
+      "operation_id": "searchAndEnrichCompanies",
+      "method": "POST",
+      "path": "/v3/companies/search-and-enrich",
+      "source": "https://docs.lusha.com/#operation/searchAndEnrichCompanies"
+    },
+    "prospecting_contacts": {
+      "operation_id": "prospectingContacts",
+      "method": "POST",
+      "path": "/v3/contacts/prospecting",
+      "source": "https://docs.lusha.com/#operation/prospectingContacts"
+    },
+    "prospecting_companies": {
+      "operation_id": "prospectingCompanies",
+      "method": "POST",
+      "path": "/v3/companies/prospecting",
+      "source": "https://docs.lusha.com/#operation/prospectingCompanies"
+    },
+    "create_contacts_table": {
+      "operation_id": "createContactsTable",
+      "method": "POST",
+      "path": "/v3/contacts/tables",
+      "source": "https://docs.lusha.com/#operation/createContactsTable"
+    },
+    "list_contacts_tables": {
+      "operation_id": "listContactsTables",
+      "method": "POST",
+      "path": "/v3/contacts/tables/list",
+      "source": "https://docs.lusha.com/#operation/listContactsTables"
+    },
+    "get_contacts_table": {
+      "operation_id": "getContactsTable",
+      "method": "GET",
+      "path": "/v3/contacts/tables/{table_id}",
+      "source": "https://docs.lusha.com/#operation/getContactsTable"
+    },
+    "update_contacts_table": {
+      "operation_id": "updateContactsTable",
+      "method": "PATCH",
+      "path": "/v3/contacts/tables/{table_id}",
+      "source": "https://docs.lusha.com/#operation/updateContactsTable"
+    },
+    "delete_contacts_table": {
+      "operation_id": "deleteContactsTable",
+      "method": "DELETE",
+      "path": "/v3/contacts/tables/{table_id}",
+      "source": "https://docs.lusha.com/#operation/deleteContactsTable"
+    },
+    "get_contacts_table_entities": {
+      "operation_id": "getContactsTableEntities",
+      "method": "GET",
+      "path": "/v3/contacts/tables/{table_id}/entities",
+      "source": "https://docs.lusha.com/#operation/getContactsTableEntities"
+    },
+    "add_contacts_table_entities": {
+      "operation_id": "addContactsTableEntities",
+      "method": "POST",
+      "path": "/v3/contacts/tables/{table_id}/entities",
+      "source": "https://docs.lusha.com/#operation/addContactsTableEntities"
+    },
+    "remove_contacts_table_entities": {
+      "operation_id": "removeContactsTableEntities",
+      "method": "DELETE",
+      "path": "/v3/contacts/tables/{table_id}/entities",
+      "source": "https://docs.lusha.com/#operation/removeContactsTableEntities"
+    },
+    "create_companies_table": {
+      "operation_id": "createCompaniesTable",
+      "method": "POST",
+      "path": "/v3/companies/tables",
+      "source": "https://docs.lusha.com/#operation/createCompaniesTable"
+    },
+    "list_companies_tables": {
+      "operation_id": "listCompaniesTables",
+      "method": "POST",
+      "path": "/v3/companies/tables/list",
+      "source": "https://docs.lusha.com/#operation/listCompaniesTables"
+    },
+    "get_companies_table": {
+      "operation_id": "getCompaniesTable",
+      "method": "GET",
+      "path": "/v3/companies/tables/{table_id}",
+      "source": "https://docs.lusha.com/#operation/getCompaniesTable"
+    },
+    "update_companies_table": {
+      "operation_id": "updateCompaniesTable",
+      "method": "PATCH",
+      "path": "/v3/companies/tables/{table_id}",
+      "source": "https://docs.lusha.com/#operation/updateCompaniesTable"
+    },
+    "delete_companies_table": {
+      "operation_id": "deleteCompaniesTable",
+      "method": "DELETE",
+      "path": "/v3/companies/tables/{table_id}",
+      "source": "https://docs.lusha.com/#operation/deleteCompaniesTable"
+    },
+    "get_companies_table_entities": {
+      "operation_id": "getCompaniesTableEntities",
+      "method": "GET",
+      "path": "/v3/companies/tables/{table_id}/entities",
+      "source": "https://docs.lusha.com/#operation/getCompaniesTableEntities"
+    },
+    "add_companies_table_entities": {
+      "operation_id": "addCompaniesTableEntities",
+      "method": "POST",
+      "path": "/v3/companies/tables/{table_id}/entities",
+      "source": "https://docs.lusha.com/#operation/addCompaniesTableEntities"
+    },
+    "remove_companies_table_entities": {
+      "operation_id": "removeCompaniesTableEntities",
+      "method": "DELETE",
+      "path": "/v3/companies/tables/{table_id}/entities",
+      "source": "https://docs.lusha.com/#operation/removeCompaniesTableEntities"
+    },
+    "get_account_usage": {
+      "operation_id": "getAccountUsage",
+      "method": "GET",
+      "path": "/v3/account/usage",
+      "source": "https://docs.lusha.com/#operation/getAccountUsage"
+    }
+  }
+}
