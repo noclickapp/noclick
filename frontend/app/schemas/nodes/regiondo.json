@@ -1,0 +1,1005 @@
+{
+  "$defs": {
+    "CancelTickets": {
+      "additionalProperties": false,
+      "description": "Cancel API-booked tickets. Regiondo does not refund or notify the customer; the supplier is notified.",
+      "properties": {
+        "operation": {
+          "const": "cancel_tickets",
+          "default": "cancel_tickets",
+          "title": "Operation",
+          "type": "string"
+        },
+        "reference_ids": {
+          "description": "Comma-separated ticket reference IDs. Only bookings placed through the API can be canceled; this does not refund or email the customer.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reference Ids",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference_ids"
+      ],
+      "title": "CancelTickets",
+      "type": "object"
+    },
+    "GetAvailability": {
+      "additionalProperties": false,
+      "description": "Read available dates and times for a price category.",
+      "properties": {
+        "operation": {
+          "const": "get_availability",
+          "default": "get_availability",
+          "title": "Operation",
+          "type": "string"
+        },
+        "variationId": {
+          "exclusiveMinimum": 0,
+          "title": "Variation ID",
+          "type": "integer"
+        },
+        "dt_from": {
+          "format": "date",
+          "title": "Dt From",
+          "type": "string"
+        },
+        "dt_to": {
+          "format": "date",
+          "title": "Dt To",
+          "type": "string"
+        },
+        "show_soldout": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Show Soldout",
+          "type": "string"
+        }
+      },
+      "required": [
+        "variationId",
+        "dt_from",
+        "dt_to"
+      ],
+      "title": "GetAvailability",
+      "type": "object"
+    },
+    "GetBooking": {
+      "additionalProperties": false,
+      "description": "Get a booking or permanent reservation by booking key.",
+      "properties": {
+        "operation": {
+          "const": "get_booking",
+          "default": "get_booking",
+          "title": "Operation",
+          "type": "string"
+        },
+        "booking_key": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Booking Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_key"
+      ],
+      "title": "GetBooking",
+      "type": "object"
+    },
+    "GetProduct": {
+      "additionalProperties": false,
+      "description": "Get the full details of a product.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "productId": {
+          "exclusiveMinimum": 0,
+          "title": "Product ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "productId"
+      ],
+      "title": "GetProduct",
+      "type": "object"
+    },
+    "GetPurchase": {
+      "additionalProperties": false,
+      "description": "Get purchase details and ticket processing status.",
+      "properties": {
+        "operation": {
+          "const": "get_purchase",
+          "default": "get_purchase",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_number": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Order Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_number"
+      ],
+      "title": "GetPurchase",
+      "type": "object"
+    },
+    "ListAvailableOptions": {
+      "additionalProperties": false,
+      "description": "List ticket options for a price category, optionally for a date.",
+      "properties": {
+        "operation": {
+          "const": "list_available_options",
+          "default": "list_available_options",
+          "title": "Operation",
+          "type": "string"
+        },
+        "variationId": {
+          "exclusiveMinimum": 0,
+          "title": "Variation ID",
+          "type": "integer"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        }
+      },
+      "required": [
+        "variationId"
+      ],
+      "title": "ListAvailableOptions",
+      "type": "object"
+    },
+    "ListHolds": {
+      "additionalProperties": false,
+      "description": "List the active holds accessible to this API key.",
+      "properties": {
+        "operation": {
+          "const": "list_holds",
+          "default": "list_holds",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListHolds",
+      "type": "object"
+    },
+    "ListPartnerBookings": {
+      "additionalProperties": false,
+      "description": "Sync one page of the partner account's bookings.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset. Use next_offset until it is null.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "booking_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Booking Key"
+        },
+        "date_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated start,end dates, e.g. 2015-01-01,2015-02-01.",
+          "title": "Date Range"
+        },
+        "date_range_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "date_bought",
+                "date_of_event"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Range By",
+          "enum": [
+            "date_bought",
+            "date_of_event"
+          ],
+          "x-enum-searchable": true
+        },
+        "product_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Ids"
+        },
+        "order_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Ids"
+        },
+        "resource_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resource Ids"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "sent",
+                "booked",
+                "approved",
+                "reserved",
+                "canceled",
+                "rejected",
+                "processing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "sent",
+            "booked",
+            "approved",
+            "reserved",
+            "canceled",
+            "rejected",
+            "processing"
+          ],
+          "x-enum-searchable": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "offline_reservation",
+                "booking",
+                "voucher",
+                "redeem",
+                "offline_reservation,booking,voucher,redeem"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "offline_reservation",
+            "booking",
+            "voucher",
+            "redeem",
+            "offline_reservation,booking,voucher,redeem"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_partner_bookings",
+          "default": "list_partner_bookings",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListPartnerBookings",
+      "type": "object"
+    },
+    "ListPartnerCustomers": {
+      "additionalProperties": false,
+      "description": "Sync one page of the partner CRM customers.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset. Use next_offset until it is null.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_partner_customers",
+          "default": "list_partner_customers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListPartnerCustomers",
+      "type": "object"
+    },
+    "ListProducts": {
+      "additionalProperties": false,
+      "description": "Search products with explicit active and category filters.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset. Use next_offset until it is null.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string"
+        },
+        "active_only": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Active Only",
+          "type": "string"
+        },
+        "kwd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kwd"
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category Id"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "product_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Ids"
+        }
+      },
+      "title": "ListProducts",
+      "type": "object"
+    },
+    "ListResources": {
+      "additionalProperties": false,
+      "description": "List supplier resources for booking assignment.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset. Use next_offset until it is null.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_resources",
+          "default": "list_resources",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListResources",
+      "type": "object"
+    },
+    "ListSoldItems": {
+      "additionalProperties": false,
+      "description": "Export the supplier's sold ticket details.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset. Use next_offset until it is null.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_sold_items",
+          "default": "list_sold_items",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Number"
+        },
+        "date_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Range"
+        },
+        "product_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Ids"
+        }
+      },
+      "title": "ListSoldItems",
+      "type": "object"
+    },
+    "ListSupplierBookings": {
+      "additionalProperties": false,
+      "description": "Sync one page of the supplier account's bookings.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset. Use next_offset until it is null.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "booking_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Booking Key"
+        },
+        "date_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated start,end dates, e.g. 2015-01-01,2015-02-01.",
+          "title": "Date Range"
+        },
+        "date_range_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "date_bought",
+                "date_of_event"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Range By",
+          "enum": [
+            "date_bought",
+            "date_of_event"
+          ],
+          "x-enum-searchable": true
+        },
+        "product_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Ids"
+        },
+        "order_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Ids"
+        },
+        "resource_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resource Ids"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "sent",
+                "booked",
+                "approved",
+                "reserved",
+                "canceled",
+                "rejected",
+                "processing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "sent",
+            "booked",
+            "approved",
+            "reserved",
+            "canceled",
+            "rejected",
+            "processing"
+          ],
+          "x-enum-searchable": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "offline_reservation",
+                "booking",
+                "voucher",
+                "redeem",
+                "offline_reservation,booking,voucher,redeem"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "offline_reservation",
+            "booking",
+            "voucher",
+            "redeem",
+            "offline_reservation,booking,voucher,redeem"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_supplier_bookings",
+          "default": "list_supplier_bookings",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSupplierBookings",
+      "type": "object"
+    },
+    "ListSupplierCustomers": {
+      "additionalProperties": false,
+      "description": "Sync one page of the supplier CRM customers.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset. Use next_offset until it is null.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_supplier_customers",
+          "default": "list_supplier_customers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSupplierCustomers",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "description": "List this supplier's custom product categories.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Number of results in this page (maximum 250).",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start offset. Use next_offset until it is null.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ListVariations": {
+      "additionalProperties": false,
+      "description": "List price categories for a product.",
+      "properties": {
+        "operation": {
+          "const": "list_variations",
+          "default": "list_variations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "productId": {
+          "exclusiveMinimum": 0,
+          "title": "Product ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "productId"
+      ],
+      "title": "ListVariations",
+      "type": "object"
+    },
+    "ProlongHold": {
+      "additionalProperties": false,
+      "description": "Extend an existing hold; the provider decides whether it can be extended.",
+      "properties": {
+        "operation": {
+          "const": "prolong_hold",
+          "default": "prolong_hold",
+          "title": "Operation",
+          "type": "string"
+        },
+        "reservation_code": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Reservation Code",
+          "type": "string"
+        },
+        "reserve_minutes": {
+          "default": 20,
+          "exclusiveMinimum": 0,
+          "title": "Reserve Minutes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "reservation_code"
+      ],
+      "title": "ProlongHold",
+      "type": "object"
+    },
+    "RegiondoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "regiondo_api_key",
+          "default": "regiondo_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "public_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Public API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "private_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Private API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "public_key",
+        "private_key"
+      ],
+      "title": "Regiondo API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste the public and private API keys from your Regiondo account. Requests are HMAC-SHA256 signed and sent only to api.regiondo.com. Supplier and partner operations require the corresponding account access. Connection checks list your account's active holds; an empty list proves API access but cannot name the account.",
+      "x-credential-type": "api_key",
+      "x-credential-url": "https://sandbox-api.regiondo.com/docs/"
+    },
+    "ReleaseHold": {
+      "additionalProperties": false,
+      "description": "Remove an existing hold, releasing its reserved capacity.",
+      "properties": {
+        "operation": {
+          "const": "release_hold",
+          "default": "release_hold",
+          "title": "Operation",
+          "type": "string"
+        },
+        "reservation_code": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Reservation Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reservation_code"
+      ],
+      "title": "ReleaseHold",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_tickets": "#/$defs/CancelTickets",
+          "get_availability": "#/$defs/GetAvailability",
+          "get_booking": "#/$defs/GetBooking",
+          "get_product": "#/$defs/GetProduct",
+          "get_purchase": "#/$defs/GetPurchase",
+          "list_available_options": "#/$defs/ListAvailableOptions",
+          "list_holds": "#/$defs/ListHolds",
+          "list_partner_bookings": "#/$defs/ListPartnerBookings",
+          "list_partner_customers": "#/$defs/ListPartnerCustomers",
+          "list_products": "#/$defs/ListProducts",
+          "list_resources": "#/$defs/ListResources",
+          "list_sold_items": "#/$defs/ListSoldItems",
+          "list_supplier_bookings": "#/$defs/ListSupplierBookings",
+          "list_supplier_customers": "#/$defs/ListSupplierCustomers",
+          "list_tags": "#/$defs/ListTags",
+          "list_variations": "#/$defs/ListVariations",
+          "prolong_hold": "#/$defs/ProlongHold",
+          "release_hold": "#/$defs/ReleaseHold"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListProducts"
+        },
+        {
+          "$ref": "#/$defs/GetProduct"
+        },
+        {
+          "$ref": "#/$defs/ListVariations"
+        },
+        {
+          "$ref": "#/$defs/GetAvailability"
+        },
+        {
+          "$ref": "#/$defs/ListAvailableOptions"
+        },
+        {
+          "$ref": "#/$defs/ListSupplierBookings"
+        },
+        {
+          "$ref": "#/$defs/ListPartnerBookings"
+        },
+        {
+          "$ref": "#/$defs/ListSupplierCustomers"
+        },
+        {
+          "$ref": "#/$defs/ListPartnerCustomers"
+        },
+        {
+          "$ref": "#/$defs/ListResources"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/ListSoldItems"
+        },
+        {
+          "$ref": "#/$defs/ListHolds"
+        },
+        {
+          "$ref": "#/$defs/GetBooking"
+        },
+        {
+          "$ref": "#/$defs/GetPurchase"
+        },
+        {
+          "$ref": "#/$defs/ProlongHold"
+        },
+        {
+          "$ref": "#/$defs/ReleaseHold"
+        },
+        {
+          "$ref": "#/$defs/CancelTickets"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RegiondoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Regiondo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
