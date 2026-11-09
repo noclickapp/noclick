@@ -1,0 +1,29 @@
+{
+  "universe": {
+    "node_type": "automation-universe",
+    "credential": {
+      "credential_type": "universe_oauth",
+      "access_token": "<token>"
+    },
+    "specs": [
+      {
+        "file": "1qz7y2qplt7f12sf.json",
+        "sha256": "b5075b7b1c657ee22bf872bd8ee0d5955df32d19c4e66eb4a6d300c7e906d21b",
+        "version": "unknown",
+        "source_url": "https://dash.readme.com/api/v1/api-registry/1qz7y2qplt7f12sf"
+      },
+      {
+        "file": "1mld74kq6vjc4y.json",
+        "sha256": "03927034f7efc8554f40dae44abb3df4c100c19f75566f11b48aa08930e1ed14",
+        "version": "unknown",
+        "source_url": "https://dash.readme.com/api/v1/api-registry/1mld74kq6vjc4y"
+      },
+      {
+        "file": "1mld74kq6vj9hd.json",
+        "sha256": "254819a413d8809ecb00bb7caeb0f8d5675303a8c3c64fe20cb310ca53369d6f",
+        "version": "unknown",
+        "source_url": "https://dash.readme.com/api/v1/api-registry/1mld74kq6vj9hd"
+      }
+    ]
+  }
+}

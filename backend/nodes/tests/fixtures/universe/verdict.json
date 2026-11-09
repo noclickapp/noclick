@@ -1,0 +1,23 @@
+{
+ "provider": "universe",
+ "ready": false,
+ "blocking": [
+  "get_current_user: parser on provider-authored response: execution: ValueError: Universe returned an error or unexpected response",
+  "get_token_info: parser on provider-authored response: execution: ValueError: Universe returned an error or unexpected response",
+  "list_listings: parser on provider-authored response: execution: ValueError: Universe returned an error or unexpected response",
+  "list_guestlists: parser on provider-authored response: execution: ValueError: Universe did not return JSON; inspect writes before retrying / JSONDecodeError: Expecting value: line 4 column 13 (char 46) / StopIteration: 46",
+  "list_event_guestlist: parser on provider-authored response: execution: ValueError: Universe did not return JSON; inspect writes before retrying / JSONDecodeError: Expecting value: line 4 column 13 (char 46) / StopIteration: 46",
+  "create_rate: fixture error: KeyError: 'responses'",
+  "create_percent_discount: request: InvalidRequestBody: Request body validation error: Value {'discount_code': {'listing_id': '1', 'code': '1', 'quantity': 1, 'rate_ids': ['1'], 'percent': 1.0, 'discount_type': 'percent'}} not ",
+  "create_fixed_discount: request: InvalidRequestBody: Request body validation error: Value {'discount_code': {'listing_id': '1', 'code': '1', 'quantity': 1, 'rate_ids': ['1'], 'fixed': 1.0, 'discount_type': 'fixed'}} not vali"
+ ],
+ "advisory": [],
+ "stats": {
+  "operations": 10,
+  "skipped": 0,
+  "request_ok": 8,
+  "authored_parser_ok": 1,
+  "generated_only": 4,
+  "local_ok": 0
+ }
+}
