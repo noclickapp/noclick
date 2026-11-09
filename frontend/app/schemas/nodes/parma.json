@@ -1,0 +1,841 @@
+{
+  "$defs": {
+    "ParmaAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "parma_api_token",
+          "default": "parma_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Parma API Token",
+      "type": "object",
+      "x-credential-instructions": "Open Parma's API page for your workspace and copy its API token. Paste the token here. It grants read and write access to that workspace; NoClick sends it only to app.parma.ai.",
+      "x-credential-url": "https://app.parma.ai/api"
+    },
+    "ParmaAddRelationshipToGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_relationship_to_group",
+          "default": "add_relationship_to_group",
+          "title": "Add relationship to group",
+          "type": "string"
+        },
+        "relationship_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Relationship Id",
+          "type": "integer"
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "relationship_id",
+        "group_id"
+      ],
+      "title": "ParmaAddRelationshipToGroupConfig",
+      "type": "object"
+    },
+    "ParmaCreateNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Create note",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "relationship_ids": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647,
+            "type": "integer"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Relationship Ids",
+          "type": "array"
+        },
+        "datetime": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Datetime"
+        }
+      },
+      "required": [
+        "body",
+        "relationship_ids"
+      ],
+      "title": "ParmaCreateNoteConfig",
+      "type": "object"
+    },
+    "ParmaCreateRelationshipConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_relationship",
+          "default": "create_relationship",
+          "title": "Create relationship",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "group_ids": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647,
+            "type": "integer"
+          },
+          "maxItems": 1000,
+          "title": "Group Ids",
+          "type": "array"
+        },
+        "relationship_type": {
+          "default": "person",
+          "enum": [
+            "person",
+            "company"
+          ],
+          "title": "Relationship Type",
+          "type": "string"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "about": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "About"
+        }
+      },
+      "required": [
+        "name",
+        "group_ids"
+      ],
+      "title": "ParmaCreateRelationshipConfig",
+      "type": "object"
+    },
+    "ParmaDeleteRelationshipConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_relationship",
+          "default": "delete_relationship",
+          "title": "Delete relationship",
+          "type": "string"
+        },
+        "relationship_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Relationship Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "relationship_id"
+      ],
+      "title": "ParmaDeleteRelationshipConfig",
+      "type": "object"
+    },
+    "ParmaGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get current user",
+          "type": "string"
+        }
+      },
+      "title": "ParmaGetCurrentUserConfig",
+      "type": "object"
+    },
+    "ParmaGetDealConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_deal",
+          "default": "get_deal",
+          "title": "Get deal",
+          "type": "string"
+        },
+        "deal_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Deal Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "ParmaGetDealConfig",
+      "type": "object"
+    },
+    "ParmaGetPipelineConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_pipeline",
+          "default": "get_pipeline",
+          "title": "Get pipeline",
+          "type": "string"
+        },
+        "pipeline_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Pipeline Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "pipeline_id"
+      ],
+      "title": "ParmaGetPipelineConfig",
+      "type": "object"
+    },
+    "ParmaGetRelationshipConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_relationship",
+          "default": "get_relationship",
+          "title": "Get relationship",
+          "type": "string"
+        },
+        "relationship_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Relationship Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "relationship_id"
+      ],
+      "title": "ParmaGetRelationshipConfig",
+      "type": "object"
+    },
+    "ParmaGetStageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_stage",
+          "default": "get_stage",
+          "title": "Get stage",
+          "type": "string"
+        },
+        "stage_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Stage Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "stage_id"
+      ],
+      "title": "ParmaGetStageConfig",
+      "type": "object"
+    },
+    "ParmaListDealsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_deals",
+          "default": "list_deals",
+          "title": "List deals",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "ParmaListDealsConfig",
+      "type": "object"
+    },
+    "ParmaListGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List groups",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "ParmaListGroupsConfig",
+      "type": "object"
+    },
+    "ParmaListNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "List notes",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "ParmaListNotesConfig",
+      "type": "object"
+    },
+    "ParmaListPipelinesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_pipelines",
+          "default": "list_pipelines",
+          "title": "List pipelines",
+          "type": "string"
+        }
+      },
+      "title": "ParmaListPipelinesConfig",
+      "type": "object"
+    },
+    "ParmaListRelationshipGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_relationship_groups",
+          "default": "list_relationship_groups",
+          "title": "List relationship groups",
+          "type": "string"
+        },
+        "relationship_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Relationship Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "relationship_id"
+      ],
+      "title": "ParmaListRelationshipGroupsConfig",
+      "type": "object"
+    },
+    "ParmaListRelationshipNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_relationship_notes",
+          "default": "list_relationship_notes",
+          "title": "List relationship notes",
+          "type": "string"
+        },
+        "relationship_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Relationship Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "relationship_id"
+      ],
+      "title": "ParmaListRelationshipNotesConfig",
+      "type": "object"
+    },
+    "ParmaListRelationshipsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_relationships",
+          "default": "list_relationships",
+          "title": "List relationships",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "person",
+                "company"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relationship Type",
+          "enum": [
+            "person",
+            "company"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "ParmaListRelationshipsConfig",
+      "type": "object"
+    },
+    "ParmaListStagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_stages",
+          "default": "list_stages",
+          "title": "List stages",
+          "type": "string"
+        }
+      },
+      "title": "ParmaListStagesConfig",
+      "type": "object"
+    },
+    "ParmaListUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List users",
+          "type": "string"
+        }
+      },
+      "title": "ParmaListUsersConfig",
+      "type": "object"
+    },
+    "ParmaRemoveRelationshipFromGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "remove_relationship_from_group",
+          "default": "remove_relationship_from_group",
+          "title": "Remove relationship from group",
+          "type": "string"
+        },
+        "relationship_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Relationship Id",
+          "type": "integer"
+        },
+        "relationship_group_id": {
+          "description": "Membership ID from List relationship groups; not the group ID",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Relationship Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "relationship_id",
+        "relationship_group_id"
+      ],
+      "title": "ParmaRemoveRelationshipFromGroupConfig",
+      "type": "object"
+    },
+    "ParmaUpdateNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Update note",
+          "type": "string"
+        },
+        "note_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Note Id",
+          "type": "integer"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "relationship_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
+                "type": "integer"
+              },
+              "maxItems": 1000,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relationship Ids"
+        },
+        "datetime": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Datetime"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "ParmaUpdateNoteConfig",
+      "type": "object"
+    },
+    "ParmaUpdateRelationshipConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_relationship",
+          "default": "update_relationship",
+          "title": "Update relationship",
+          "type": "string"
+        },
+        "relationship_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Relationship Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "group_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
+                "type": "integer"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Ids"
+        },
+        "relationship_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "person",
+                "company"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relationship Type",
+          "enum": [
+            "person",
+            "company"
+          ],
+          "x-enum-searchable": true
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "about": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "About"
+        }
+      },
+      "required": [
+        "relationship_id"
+      ],
+      "title": "ParmaUpdateRelationshipConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_relationship_to_group": "#/$defs/ParmaAddRelationshipToGroupConfig",
+          "create_note": "#/$defs/ParmaCreateNoteConfig",
+          "create_relationship": "#/$defs/ParmaCreateRelationshipConfig",
+          "delete_relationship": "#/$defs/ParmaDeleteRelationshipConfig",
+          "get_current_user": "#/$defs/ParmaGetCurrentUserConfig",
+          "get_deal": "#/$defs/ParmaGetDealConfig",
+          "get_pipeline": "#/$defs/ParmaGetPipelineConfig",
+          "get_relationship": "#/$defs/ParmaGetRelationshipConfig",
+          "get_stage": "#/$defs/ParmaGetStageConfig",
+          "list_deals": "#/$defs/ParmaListDealsConfig",
+          "list_groups": "#/$defs/ParmaListGroupsConfig",
+          "list_notes": "#/$defs/ParmaListNotesConfig",
+          "list_pipelines": "#/$defs/ParmaListPipelinesConfig",
+          "list_relationship_groups": "#/$defs/ParmaListRelationshipGroupsConfig",
+          "list_relationship_notes": "#/$defs/ParmaListRelationshipNotesConfig",
+          "list_relationships": "#/$defs/ParmaListRelationshipsConfig",
+          "list_stages": "#/$defs/ParmaListStagesConfig",
+          "list_users": "#/$defs/ParmaListUsersConfig",
+          "remove_relationship_from_group": "#/$defs/ParmaRemoveRelationshipFromGroupConfig",
+          "update_note": "#/$defs/ParmaUpdateNoteConfig",
+          "update_relationship": "#/$defs/ParmaUpdateRelationshipConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ParmaListRelationshipsConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaGetRelationshipConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaCreateRelationshipConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaUpdateRelationshipConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaDeleteRelationshipConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaListRelationshipNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaUpdateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaListRelationshipGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaAddRelationshipToGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaRemoveRelationshipFromGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaListDealsConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaGetDealConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaListPipelinesConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaGetPipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaListStagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaGetStageConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/ParmaGetCurrentUserConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ParmaAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Parma Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find relationships by email",
+    "Add a note to a relationship",
+    "Add a relationship to a group"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
