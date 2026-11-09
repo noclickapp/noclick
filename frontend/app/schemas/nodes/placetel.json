@@ -1,0 +1,1985 @@
+{
+  "$defs": {
+    "CreateContactConfig": {
+      "description": "Create a contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "speeddial": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Speeddial"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "email_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Work"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "address_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Work"
+        },
+        "phone_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Work"
+        },
+        "mobile_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Work"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "fax": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fax"
+        },
+        "fax_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fax Work"
+        },
+        "facebook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Facebook Url"
+        },
+        "linkedin_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linkedin Url"
+        },
+        "xing_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Xing Url"
+        },
+        "twitter_account": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Twitter Account"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "blocked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blocked"
+        }
+      },
+      "title": "CreateContactConfig",
+      "type": "object"
+    },
+    "CreateGroupConfig": {
+      "description": "Create a group.",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Create Group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "ring_all",
+            "monitoring",
+            "hunt"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "member_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of SipUser ids",
+          "title": "Member Ids"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "title": "CreateGroupConfig",
+      "type": "object"
+    },
+    "DeleteCallConfig": {
+      "description": "Delete a call.",
+      "properties": {
+        "operation": {
+          "const": "delete_call",
+          "default": "delete_call",
+          "title": "Delete Call",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "call_id": {
+          "description": "Call ID",
+          "minimum": 1,
+          "title": "Call Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "call_id"
+      ],
+      "title": "DeleteCallConfig",
+      "type": "object"
+    },
+    "DeleteContactConfig": {
+      "description": "Deletes a contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "description": "Contact ID",
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DeleteContactConfig",
+      "type": "object"
+    },
+    "DeleteGroupConfig": {
+      "description": "Delete a group.",
+      "properties": {
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Delete Group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "description": "Group ID",
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "DeleteGroupConfig",
+      "type": "object"
+    },
+    "GetCallConfig": {
+      "description": "Retrieve a call.",
+      "properties": {
+        "operation": {
+          "const": "get_call",
+          "default": "get_call",
+          "title": "Get Call",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "call_id": {
+          "description": "Call ID",
+          "minimum": 1,
+          "title": "Call Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "call_id"
+      ],
+      "title": "GetCallConfig",
+      "type": "object"
+    },
+    "GetContactConfig": {
+      "description": "Retrieve a contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "description": "ID of a contact",
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContactConfig",
+      "type": "object"
+    },
+    "GetFaxConfig": {
+      "description": "Fetch specific fax.",
+      "properties": {
+        "operation": {
+          "const": "get_fax",
+          "default": "get_fax",
+          "title": "Get Fax",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fax_id": {
+          "description": "Fax ID",
+          "minimum": 1,
+          "title": "Fax Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fax_id"
+      ],
+      "title": "GetFaxConfig",
+      "type": "object"
+    },
+    "GetGroupConfig": {
+      "description": "Fetch a group.",
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Get Group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "description": "Group ID",
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "GetGroupConfig",
+      "type": "object"
+    },
+    "GetMeConfig": {
+      "description": "Me.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Get Me",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetMeConfig",
+      "type": "object"
+    },
+    "GetNumberConfig": {
+      "description": "Retrieve a number.",
+      "properties": {
+        "operation": {
+          "const": "get_number",
+          "default": "get_number",
+          "title": "Get Number",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "number_id": {
+          "description": "Number ID",
+          "minimum": 1,
+          "title": "Number Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "number_id"
+      ],
+      "title": "GetNumberConfig",
+      "type": "object"
+    },
+    "GetRecordingConfig": {
+      "description": "Fetch specific recording.",
+      "properties": {
+        "operation": {
+          "const": "get_recording",
+          "default": "get_recording",
+          "title": "Get Recording",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "recording_id": {
+          "description": "Recording ID",
+          "minimum": 1,
+          "title": "Recording Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "GetRecordingConfig",
+      "type": "object"
+    },
+    "GetSipUserConfig": {
+      "description": "Fetch a sip user.",
+      "properties": {
+        "operation": {
+          "const": "get_sip_user",
+          "default": "get_sip_user",
+          "title": "Get Sip User",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sip_user_id": {
+          "description": "Sip user ID",
+          "minimum": 1,
+          "title": "Sip User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sip_user_id"
+      ],
+      "title": "GetSipUserConfig",
+      "type": "object"
+    },
+    "InitiateCallConfig": {
+      "description": "Initiate a call.",
+      "properties": {
+        "operation": {
+          "const": "initiate_call",
+          "default": "initiate_call",
+          "title": "Initiate Call",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sipuid": {
+          "description": "Sipuid to use (e.g. 7771234567@fpbx.de)",
+          "title": "Sipuid",
+          "type": "string"
+        },
+        "target": {
+          "description": "Number to call",
+          "title": "Target",
+          "type": "string"
+        },
+        "from_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Name"
+        }
+      },
+      "required": [
+        "sipuid",
+        "target"
+      ],
+      "title": "InitiateCallConfig",
+      "type": "object"
+    },
+    "ListCallsConfig": {
+      "description": "Fetch all incoming calls.",
+      "properties": {
+        "operation": {
+          "const": "list_calls",
+          "default": "list_calls",
+          "title": "List Calls",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD, defaults to today.",
+          "title": "Filter Date"
+        },
+        "filter_from_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter From Number"
+        },
+        "filter_to_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter To Number"
+        },
+        "filter_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "voicemail",
+                "missed",
+                "blocked",
+                "accepted",
+                "voicemail,missed",
+                "missed,blocked,accepted"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Type",
+          "enum": [
+            "voicemail",
+            "missed",
+            "blocked",
+            "accepted",
+            "voicemail,missed",
+            "missed,blocked,accepted"
+          ],
+          "x-enum-searchable": true
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page of results to fetch.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Number of results to return per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListCallsConfig",
+      "type": "object"
+    },
+    "ListContactsConfig": {
+      "description": "Get all contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter_speeddial": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Speeddial"
+        },
+        "filter_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter First Name"
+        },
+        "filter_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Last Name"
+        },
+        "filter_company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Company"
+        },
+        "filter_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Email"
+        },
+        "filter_email_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Email Work"
+        },
+        "filter_phone_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Phone Work"
+        },
+        "filter_mobile_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Mobile Work"
+        },
+        "filter_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Phone"
+        },
+        "filter_mobile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Mobile"
+        },
+        "filter_blocked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Blocked"
+        },
+        "filter_updated_at_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Updated At Gte"
+        },
+        "filter_updated_at_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Updated At Lte"
+        },
+        "search_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Number"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page of results to fetch.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Number of results to return per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListContactsConfig",
+      "type": "object"
+    },
+    "ListFaxesConfig": {
+      "description": "Fetch in- and outbound faxes.",
+      "properties": {
+        "operation": {
+          "const": "list_faxes",
+          "default": "list_faxes",
+          "title": "List Faxes",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "inbound,outbound",
+                "inbound",
+                "outbound"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Type",
+          "enum": [
+            "inbound,outbound",
+            "inbound",
+            "outbound"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter_from_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter From Number"
+        },
+        "filter_to_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter To Number"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page of results to fetch.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Number of results to return per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListFaxesConfig",
+      "type": "object"
+    },
+    "ListGroupsConfig": {
+      "description": "Fetch all groups.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Name"
+        },
+        "filter_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Description"
+        },
+        "filter_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "ring_all",
+                "monitoring",
+                "hunt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Type",
+          "enum": [
+            "ring_all",
+            "monitoring",
+            "hunt"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page of results to fetch.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Number of results to return per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListGroupsConfig",
+      "type": "object"
+    },
+    "ListNumbersConfig": {
+      "description": "Get all numbers.",
+      "properties": {
+        "operation": {
+          "const": "list_numbers",
+          "default": "list_numbers",
+          "title": "List Numbers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Prefix"
+        },
+        "filter_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Number"
+        },
+        "filter_activated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only relevant for Profi customers",
+          "title": "Filter Activated"
+        },
+        "filter_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Name"
+        },
+        "filter_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Description"
+        },
+        "filter_site_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Site Id"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page of results to fetch.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Number of results to return per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListNumbersConfig",
+      "type": "object"
+    },
+    "ListRecordingsConfig": {
+      "description": "Fetch call recordings.",
+      "properties": {
+        "operation": {
+          "const": "list_recordings",
+          "default": "list_recordings",
+          "title": "List Recordings",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter_direction": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Direction"
+        },
+        "filter_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter From"
+        },
+        "filter_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter To"
+        },
+        "filter_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD",
+          "title": "Filter Date"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page of results to fetch.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Number of results to return per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListRecordingsConfig",
+      "type": "object"
+    },
+    "ListSipUsersConfig": {
+      "description": "Fetch all sip users.",
+      "properties": {
+        "operation": {
+          "const": "list_sip_users",
+          "default": "list_sip_users",
+          "title": "List Sip Users",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter_did": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Did"
+        },
+        "filter_username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Username"
+        },
+        "filter_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Name"
+        },
+        "filter_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Description"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page of results to fetch.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "Number of results to return per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListSipUsersConfig",
+      "type": "object"
+    },
+    "PlacetelAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "placetel_api_key",
+          "default": "placetel_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Placetel API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from Placetel's Web API integration settings. Paste the key without the Bearer prefix. Your existing API v1 key also works. NoClick checks the current API user; operations depend on your Placetel plan and permissions.",
+      "x-credential-url": "https://web.placetel.de/integrations/web_api"
+    },
+    "SendFaxConfig": {
+      "description": "Create outbound fax.",
+      "properties": {
+        "operation": {
+          "const": "send_fax",
+          "default": "send_fax",
+          "title": "Send Fax",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_number": {
+          "title": "From Number",
+          "type": "string"
+        },
+        "to_number": {
+          "title": "To Number",
+          "type": "string"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        },
+        "file": {
+          "description": "Base64 encoded PDF file as [data uri](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs)",
+          "title": "File",
+          "type": "string"
+        },
+        "header": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Header"
+        }
+      },
+      "required": [
+        "from_number",
+        "to_number",
+        "email",
+        "file"
+      ],
+      "title": "SendFaxConfig",
+      "type": "object"
+    },
+    "SendSmsConfig": {
+      "description": "Send SMS.",
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Send Sms",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "recipient": {
+          "description": "Number to send message to",
+          "title": "Recipient",
+          "type": "string"
+        },
+        "message": {
+          "description": "Your message",
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recipient",
+        "message"
+      ],
+      "title": "SendSmsConfig",
+      "type": "object"
+    },
+    "UpdateContactConfig": {
+      "description": "Update a contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "description": "Contact ID",
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "speeddial": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Speeddial"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "email_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Work"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "address_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Work"
+        },
+        "phone_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Work"
+        },
+        "mobile_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Work"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "fax": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fax"
+        },
+        "fax_work": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fax Work"
+        },
+        "facebook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Facebook Url"
+        },
+        "linkedin_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linkedin Url"
+        },
+        "xing_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Xing Url"
+        },
+        "twitter_account": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Twitter Account"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "blocked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blocked"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContactConfig",
+      "type": "object"
+    },
+    "UpdateGroupConfig": {
+      "description": "Update a group.",
+      "properties": {
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Update Group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "description": "Group ID",
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "member_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of SipUser ids",
+          "title": "Member Ids"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "UpdateGroupConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/CreateContactConfig",
+          "create_group": "#/$defs/CreateGroupConfig",
+          "delete_call": "#/$defs/DeleteCallConfig",
+          "delete_contact": "#/$defs/DeleteContactConfig",
+          "delete_group": "#/$defs/DeleteGroupConfig",
+          "get_call": "#/$defs/GetCallConfig",
+          "get_contact": "#/$defs/GetContactConfig",
+          "get_fax": "#/$defs/GetFaxConfig",
+          "get_group": "#/$defs/GetGroupConfig",
+          "get_me": "#/$defs/GetMeConfig",
+          "get_number": "#/$defs/GetNumberConfig",
+          "get_recording": "#/$defs/GetRecordingConfig",
+          "get_sip_user": "#/$defs/GetSipUserConfig",
+          "initiate_call": "#/$defs/InitiateCallConfig",
+          "list_calls": "#/$defs/ListCallsConfig",
+          "list_contacts": "#/$defs/ListContactsConfig",
+          "list_faxes": "#/$defs/ListFaxesConfig",
+          "list_groups": "#/$defs/ListGroupsConfig",
+          "list_numbers": "#/$defs/ListNumbersConfig",
+          "list_recordings": "#/$defs/ListRecordingsConfig",
+          "list_sip_users": "#/$defs/ListSipUsersConfig",
+          "send_fax": "#/$defs/SendFaxConfig",
+          "send_sms": "#/$defs/SendSmsConfig",
+          "update_contact": "#/$defs/UpdateContactConfig",
+          "update_group": "#/$defs/UpdateGroupConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/ListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCallsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCallConfig"
+        },
+        {
+          "$ref": "#/$defs/InitiateCallConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteCallConfig"
+        },
+        {
+          "$ref": "#/$defs/ListNumbersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetNumberConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSipUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSipUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/ListRecordingsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetRecordingConfig"
+        },
+        {
+          "$ref": "#/$defs/ListFaxesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetFaxConfig"
+        },
+        {
+          "$ref": "#/$defs/SendFaxConfig"
+        },
+        {
+          "$ref": "#/$defs/SendSmsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PlacetelAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Placetel Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
