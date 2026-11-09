@@ -1,0 +1,1006 @@
+{
+  "$defs": {
+    "ActionstepCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false
+        },
+        "display_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "required": [
+        "display_name"
+      ],
+      "title": "ActionstepCreateContactConfig",
+      "type": "object"
+    },
+    "ActionstepCreateFileNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_file_note",
+          "default": "create_file_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create File Note",
+          "x-is-trigger": false
+        },
+        "text": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Note Text",
+          "type": "string"
+        },
+        "matter_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Matter ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "text",
+        "matter_id"
+      ],
+      "title": "ActionstepCreateFileNoteConfig",
+      "type": "object"
+    },
+    "ActionstepCreateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Task Name",
+          "type": "string"
+        },
+        "status": {
+          "default": "Incomplete",
+          "enum": [
+            "Incomplete",
+            "Complete",
+            "Hidden",
+            "Deleted"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "priority": {
+          "default": "Normal",
+          "enum": [
+            "Low",
+            "Normal",
+            "High"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "due_timestamp": {
+          "format": "date-time",
+          "title": "Due Timestamp",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "matter_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Matter ID",
+          "type": "integer"
+        },
+        "assignee_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Assignee Participant ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "due_timestamp",
+        "matter_id",
+        "assignee_id"
+      ],
+      "title": "ActionstepCreateTaskConfig",
+      "type": "object"
+    },
+    "ActionstepDeleteFileNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_file_note",
+          "default": "delete_file_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete File Note",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ActionstepDeleteFileNoteConfig",
+      "type": "object"
+    },
+    "ActionstepDeleteTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Task",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ActionstepDeleteTaskConfig",
+      "type": "object"
+    },
+    "ActionstepGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Contact",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ActionstepGetContactConfig",
+      "type": "object"
+    },
+    "ActionstepGetFileNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_file_note",
+          "default": "get_file_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get File Note",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ActionstepGetFileNoteConfig",
+      "type": "object"
+    },
+    "ActionstepGetMatterConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_matter",
+          "default": "get_matter",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Matter",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ActionstepGetMatterConfig",
+      "type": "object"
+    },
+    "ActionstepGetTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ActionstepGetTaskConfig",
+      "type": "object"
+    },
+    "ActionstepGetTimeEntryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_time_entry",
+          "default": "get_time_entry",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Time Entry",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ActionstepGetTimeEntryConfig",
+      "type": "object"
+    },
+    "ActionstepListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; follow next_page returned by this operation.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "name_contains": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name Contains"
+        }
+      },
+      "title": "ActionstepListContactsConfig",
+      "type": "object"
+    },
+    "ActionstepListFileNotesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_file_notes",
+          "default": "list_file_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List File Notes",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; follow next_page returned by this operation.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "matter_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matter ID"
+        }
+      },
+      "title": "ActionstepListFileNotesConfig",
+      "type": "object"
+    },
+    "ActionstepListMatterTypesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_matter_types",
+          "default": "list_matter_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Matter Types",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; follow next_page returned by this operation.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "ActionstepListMatterTypesConfig",
+      "type": "object"
+    },
+    "ActionstepListMattersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_matters",
+          "default": "list_matters",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Matters",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; follow next_page returned by this operation.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "name_contains": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name Contains"
+        }
+      },
+      "title": "ActionstepListMattersConfig",
+      "type": "object"
+    },
+    "ActionstepListTasksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Tasks",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; follow next_page returned by this operation.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "matter_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matter ID"
+        }
+      },
+      "title": "ActionstepListTasksConfig",
+      "type": "object"
+    },
+    "ActionstepListTimeEntriesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_time_entries",
+          "default": "list_time_entries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Time Entries",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number; follow next_page returned by this operation.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "matter_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matter ID"
+        }
+      },
+      "title": "ActionstepListTimeEntriesConfig",
+      "type": "object"
+    },
+    "ActionstepOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "actionstep_oauth",
+          "default": "actionstep_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_endpoint": {
+          "description": "The api_endpoint from the Actionstep token response, for example https://ap-southeast-2.actionstep.com/api/.",
+          "title": "Regional API Endpoint",
+          "type": "string"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "orgkey": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organisation Key"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "api_endpoint"
+      ],
+      "title": "Actionstep Account",
+      "type": "object",
+      "x-credential-instructions": "Connect your Actionstep account. Your app must have production API credentials issued by Actionstep Support and the requested domain scopes. The regional API endpoint is supplied by Actionstep during sign-in.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://docs.actionstep.com/api-credentials/",
+      "x-oauth-provider": "actionstep",
+      "x-oauth-scopes": [
+        "actions",
+        "actiontypes",
+        "filenotes",
+        "participants",
+        "tasks",
+        "timeentries",
+        "users"
+      ]
+    },
+    "ActionstepUpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Contact",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ActionstepUpdateContactConfig",
+      "type": "object"
+    },
+    "ActionstepUpdateFileNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_file_note",
+          "default": "update_file_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update File Note",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "text": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Note Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "title": "ActionstepUpdateFileNoteConfig",
+      "type": "object"
+    },
+    "ActionstepUpdateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Task",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Task Name",
+          "type": "string"
+        },
+        "status": {
+          "default": "Incomplete",
+          "enum": [
+            "Incomplete",
+            "Complete",
+            "Hidden",
+            "Deleted"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "priority": {
+          "default": "Normal",
+          "enum": [
+            "Low",
+            "Normal",
+            "High"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "due_timestamp": {
+          "format": "date-time",
+          "title": "Due Timestamp",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "matter_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Matter ID",
+          "type": "integer"
+        },
+        "assignee_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Assignee Participant ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "due_timestamp",
+        "matter_id",
+        "assignee_id"
+      ],
+      "title": "ActionstepUpdateTaskConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/ActionstepCreateContactConfig",
+          "create_file_note": "#/$defs/ActionstepCreateFileNoteConfig",
+          "create_task": "#/$defs/ActionstepCreateTaskConfig",
+          "delete_file_note": "#/$defs/ActionstepDeleteFileNoteConfig",
+          "delete_task": "#/$defs/ActionstepDeleteTaskConfig",
+          "get_contact": "#/$defs/ActionstepGetContactConfig",
+          "get_file_note": "#/$defs/ActionstepGetFileNoteConfig",
+          "get_matter": "#/$defs/ActionstepGetMatterConfig",
+          "get_task": "#/$defs/ActionstepGetTaskConfig",
+          "get_time_entry": "#/$defs/ActionstepGetTimeEntryConfig",
+          "list_contacts": "#/$defs/ActionstepListContactsConfig",
+          "list_file_notes": "#/$defs/ActionstepListFileNotesConfig",
+          "list_matter_types": "#/$defs/ActionstepListMatterTypesConfig",
+          "list_matters": "#/$defs/ActionstepListMattersConfig",
+          "list_tasks": "#/$defs/ActionstepListTasksConfig",
+          "list_time_entries": "#/$defs/ActionstepListTimeEntriesConfig",
+          "update_contact": "#/$defs/ActionstepUpdateContactConfig",
+          "update_file_note": "#/$defs/ActionstepUpdateFileNoteConfig",
+          "update_task": "#/$defs/ActionstepUpdateTaskConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ActionstepListMattersConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepGetMatterConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepDeleteTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepListFileNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepGetFileNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepCreateFileNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepUpdateFileNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepDeleteFileNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepListTimeEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepGetTimeEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/ActionstepListMatterTypesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ActionstepOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Actionstep Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
