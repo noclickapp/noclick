@@ -1,0 +1,17 @@
+{
+  "source": "https://gist.githubusercontent.com/MikeRalphson/a9eb3040cb611121b568844958564849/raw/d0996b827b9eb2ae4fa946b9aacf02b03dc3d933/openapi.json",
+  "responses": {
+    "Tracks": {
+      "collection": {
+        "$ref": "#/components/examples/Track/value"
+      },
+      "next_href": "https://api.soundcloud.com/collection?client_id=client_id&page_size=10&cursor=1234567"
+    },
+    "Users": {
+      "collection": {
+        "$ref": "#/components/examples/User/value"
+      },
+      "next_href": "https://api.soundcloud.com/collection?client_id=client_id&page_size=10&cursor=1234567"
+    }
+  }
+}
