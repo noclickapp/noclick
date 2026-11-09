@@ -1,0 +1,1999 @@
+{
+  "$defs": {
+    "AddJobNote": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "Housecall Pro job ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_job_note",
+          "default": "add_job_note",
+          "title": "Add Job Note",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "content": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "content"
+      ],
+      "title": "AddJobNote",
+      "type": "object"
+    },
+    "AddJobTag": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "Housecall Pro job ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_job_tag",
+          "default": "add_job_tag",
+          "title": "Add Job Tag",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Tag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "tag_id"
+      ],
+      "title": "AddJobTag",
+      "type": "object"
+    },
+    "AddressInput": {
+      "additionalProperties": false,
+      "properties": {
+        "street": {
+          "maxLength": 10000,
+          "title": "Street",
+          "type": "string"
+        },
+        "street_line_2": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street Line 2"
+        },
+        "city": {
+          "maxLength": 10000,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "maxLength": 10000,
+          "title": "State",
+          "type": "string"
+        },
+        "zip": {
+          "maxLength": 10000,
+          "title": "Zip",
+          "type": "string"
+        },
+        "country": {
+          "maxLength": 10000,
+          "title": "Country",
+          "type": "string"
+        }
+      },
+      "required": [
+        "street",
+        "city",
+        "state",
+        "zip",
+        "country"
+      ],
+      "title": "AddressInput",
+      "type": "object"
+    },
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "notifications_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether Housecall Pro may notify this customer.",
+          "title": "Notifications Enabled"
+        },
+        "mobile_number": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Number"
+        },
+        "home_number": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Home Number"
+        },
+        "work_number": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Number"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "lead_source": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Source"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Create Customer",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "addresses": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/AddressInput"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addresses"
+        }
+      },
+      "required": [
+        "first_name"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "CreateCustomerAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "street": {
+          "maxLength": 10000,
+          "title": "Street",
+          "type": "string"
+        },
+        "street_line_2": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street Line 2"
+        },
+        "city": {
+          "maxLength": 10000,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "maxLength": 10000,
+          "title": "State",
+          "type": "string"
+        },
+        "zip": {
+          "maxLength": 10000,
+          "title": "Zip",
+          "type": "string"
+        },
+        "country": {
+          "maxLength": 10000,
+          "title": "Country",
+          "type": "string"
+        },
+        "customer_id": {
+          "description": "Housecall Pro customer ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_customer_address",
+          "default": "create_customer_address",
+          "title": "Create Customer Address",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "street",
+        "city",
+        "state",
+        "zip",
+        "country",
+        "customer_id"
+      ],
+      "title": "CreateCustomerAddress",
+      "type": "object"
+    },
+    "CreateEstimate": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_id": {
+          "description": "Housecall Pro customer ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_estimate",
+          "default": "create_estimate",
+          "title": "Create Estimate",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Address Id",
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/EstimateOption"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Options",
+          "type": "array"
+        },
+        "assigned_employee_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned Employee Ids"
+        },
+        "lead_source": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Source"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        }
+      },
+      "required": [
+        "customer_id",
+        "address_id",
+        "options"
+      ],
+      "title": "CreateEstimate",
+      "type": "object"
+    },
+    "CreateJob": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_id": {
+          "description": "Housecall Pro customer ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Create Job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Address Id",
+          "type": "string"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/JobSchedule"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "assigned_employee_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned Employee Ids"
+        },
+        "line_items": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/LineItemInput"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line Items"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "lead_source": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Source"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "customer_id",
+        "address_id"
+      ],
+      "title": "CreateJob",
+      "type": "object"
+    },
+    "CreateJobAppointment": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "Housecall Pro job ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_job_appointment",
+          "default": "create_job_appointment",
+          "title": "Create Job Appointment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_time": {
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "title": "End Time",
+          "type": "string"
+        },
+        "dispatched_employees_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Dispatched Employees Ids",
+          "type": "array"
+        },
+        "arrival_window_minutes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arrival Window Minutes"
+        }
+      },
+      "required": [
+        "job_id",
+        "start_time",
+        "end_time",
+        "dispatched_employees_ids"
+      ],
+      "title": "CreateJobAppointment",
+      "type": "object"
+    },
+    "CreateJobLineItem": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "unit_price": {
+          "default": 0,
+          "description": "Selling price per unit in cents.",
+          "title": "Unit Price",
+          "type": "number"
+        },
+        "quantity": {
+          "default": 1,
+          "description": "Quantity; up to two decimal places.",
+          "exclusiveMinimum": 0,
+          "title": "Quantity",
+          "type": "number"
+        },
+        "unit_cost": {
+          "default": 0,
+          "description": "Cost per unit in cents.",
+          "title": "Unit Cost",
+          "type": "number"
+        },
+        "job_id": {
+          "description": "Housecall Pro job ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_job_line_item",
+          "default": "create_job_line_item",
+          "title": "Create Job Line Item",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kind": {
+          "default": "labor",
+          "enum": [
+            "materials",
+            "labor",
+            "fixed gratuity",
+            "fixed discount",
+            "percent discount"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "taxable": {
+          "default": true,
+          "title": "Taxable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "job_id"
+      ],
+      "title": "CreateJobLineItem",
+      "type": "object"
+    },
+    "CreateLead": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_id": {
+          "description": "Housecall Pro customer ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Create Lead",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Id"
+        },
+        "assigned_employee_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned Employee Id"
+        },
+        "lead_source": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Source"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "CreateLead",
+      "type": "object"
+    },
+    "DeleteJobNote": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "Housecall Pro job ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_job_note",
+          "default": "delete_job_note",
+          "title": "Delete Job Note",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "note_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "note_id"
+      ],
+      "title": "DeleteJobNote",
+      "type": "object"
+    },
+    "EstimateOption": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 10000,
+          "title": "Name",
+          "type": "string"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "line_items": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/LineItemInput"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line Items"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "EstimateOption",
+      "type": "object"
+    },
+    "GetCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Get Company",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCompany",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_id": {
+          "description": "Housecall Pro customer ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Get Customer",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetJob": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "Housecall Pro job ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJob",
+      "type": "object"
+    },
+    "GetLead": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Get Lead",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Lead Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "GetLead",
+      "type": "object"
+    },
+    "HousecallProAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "housecall_pro_api_key",
+          "default": "housecall_pro_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Housecall Pro API Key",
+      "type": "object",
+      "x-credential-instructions": "An admin on a MAX plan can generate a Company API key in My Apps \u2192 All Apps \u2192 API Key Management. Choose Full access for writes or Read-only for reads. Paste the key alone; NoClick sends Authorization: Token to api.housecallpro.com. Connecting reads your company information.",
+      "x-credential-url": "https://help.housecallpro.com/en/articles/8505035-api-overview"
+    },
+    "JobSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "scheduled_start": {
+          "title": "Scheduled Start",
+          "type": "string"
+        },
+        "scheduled_end": {
+          "title": "Scheduled End",
+          "type": "string"
+        },
+        "arrival_window": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arrival Window"
+        }
+      },
+      "required": [
+        "scheduled_start",
+        "scheduled_end"
+      ],
+      "title": "JobSchedule",
+      "type": "object"
+    },
+    "LineItemInput": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "unit_price": {
+          "default": 0,
+          "description": "Selling price per unit in cents.",
+          "title": "Unit Price",
+          "type": "number"
+        },
+        "quantity": {
+          "default": 1,
+          "description": "Quantity; up to two decimal places.",
+          "exclusiveMinimum": 0,
+          "title": "Quantity",
+          "type": "number"
+        },
+        "unit_cost": {
+          "default": 0,
+          "description": "Cost per unit in cents.",
+          "title": "Unit Cost",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "LineItemInput",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page from the preceding result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort_direction": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "List Customers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search name, email, mobile number or address.",
+          "title": "Q"
+        },
+        "sort_by": {
+          "default": "created_at",
+          "enum": [
+            "created_at",
+            "updated_at"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListEmployees": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page from the preceding result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort_direction": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_employees",
+          "default": "list_employees",
+          "title": "List Employees",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListEmployees",
+      "type": "object"
+    },
+    "ListEstimates": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page from the preceding result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort_direction": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "scheduled_start_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled Start Min"
+        },
+        "scheduled_start_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled Start Max"
+        },
+        "scheduled_end_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled End Min"
+        },
+        "scheduled_end_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled End Max"
+        },
+        "operation": {
+          "const": "list_estimates",
+          "default": "list_estimates",
+          "title": "List Estimates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort_by": {
+          "default": "created_at",
+          "enum": [
+            "created_at",
+            "updated_at",
+            "id"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        }
+      },
+      "title": "ListEstimates",
+      "type": "object"
+    },
+    "ListJobAppointments": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "Housecall Pro job ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_job_appointments",
+          "default": "list_job_appointments",
+          "title": "List Job Appointments",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListJobAppointments",
+      "type": "object"
+    },
+    "ListJobLineItems": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "Housecall Pro job ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_job_line_items",
+          "default": "list_job_line_items",
+          "title": "List Job Line Items",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListJobLineItems",
+      "type": "object"
+    },
+    "ListJobs": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page from the preceding result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort_direction": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "scheduled_start_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled Start Min"
+        },
+        "scheduled_start_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled Start Max"
+        },
+        "scheduled_end_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled End Min"
+        },
+        "scheduled_end_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scheduled End Max"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "List Jobs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort_by": {
+          "default": "created_at",
+          "enum": [
+            "created_at",
+            "updated_at",
+            "invoice_number",
+            "id",
+            "description",
+            "work_status"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        }
+      },
+      "title": "ListJobs",
+      "type": "object"
+    },
+    "ListLeadSources": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page from the preceding result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort_direction": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_lead_sources",
+          "default": "list_lead_sources",
+          "title": "List Lead Sources",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        }
+      },
+      "title": "ListLeadSources",
+      "type": "object"
+    },
+    "ListLeads": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page from the preceding result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort_direction": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "List Leads",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "lost",
+                "open",
+                "won"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "lost",
+            "open",
+            "won"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_by": {
+          "default": "created_at",
+          "enum": [
+            "created_at",
+            "updated_at",
+            "id",
+            "status"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        }
+      },
+      "title": "ListLeads",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Use next_page from the preceding result.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort_direction": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Direction",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort_by": {
+          "default": "created_at",
+          "enum": [
+            "created_at",
+            "name"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "RemoveJobTag": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "description": "Housecall Pro job ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_job_tag",
+          "default": "remove_job_tag",
+          "title": "Remove Job Tag",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Tag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "tag_id"
+      ],
+      "title": "RemoveJobTag",
+      "type": "object"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "notifications_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether Housecall Pro may notify this customer.",
+          "title": "Notifications Enabled"
+        },
+        "mobile_number": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Number"
+        },
+        "home_number": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Home Number"
+        },
+        "work_number": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Number"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "lead_source": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Source"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "customer_id": {
+          "description": "Housecall Pro customer ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Update Customer",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_job_note": "#/$defs/AddJobNote",
+          "add_job_tag": "#/$defs/AddJobTag",
+          "create_customer": "#/$defs/CreateCustomer",
+          "create_customer_address": "#/$defs/CreateCustomerAddress",
+          "create_estimate": "#/$defs/CreateEstimate",
+          "create_job": "#/$defs/CreateJob",
+          "create_job_appointment": "#/$defs/CreateJobAppointment",
+          "create_job_line_item": "#/$defs/CreateJobLineItem",
+          "create_lead": "#/$defs/CreateLead",
+          "delete_job_note": "#/$defs/DeleteJobNote",
+          "get_company": "#/$defs/GetCompany",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_job": "#/$defs/GetJob",
+          "get_lead": "#/$defs/GetLead",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_employees": "#/$defs/ListEmployees",
+          "list_estimates": "#/$defs/ListEstimates",
+          "list_job_appointments": "#/$defs/ListJobAppointments",
+          "list_job_line_items": "#/$defs/ListJobLineItems",
+          "list_jobs": "#/$defs/ListJobs",
+          "list_lead_sources": "#/$defs/ListLeadSources",
+          "list_leads": "#/$defs/ListLeads",
+          "list_tags": "#/$defs/ListTags",
+          "remove_job_tag": "#/$defs/RemoveJobTag",
+          "update_customer": "#/$defs/UpdateCustomer"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCompany"
+        },
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomerAddress"
+        },
+        {
+          "$ref": "#/$defs/ListEmployees"
+        },
+        {
+          "$ref": "#/$defs/ListJobs"
+        },
+        {
+          "$ref": "#/$defs/GetJob"
+        },
+        {
+          "$ref": "#/$defs/CreateJob"
+        },
+        {
+          "$ref": "#/$defs/ListJobLineItems"
+        },
+        {
+          "$ref": "#/$defs/CreateJobLineItem"
+        },
+        {
+          "$ref": "#/$defs/ListJobAppointments"
+        },
+        {
+          "$ref": "#/$defs/CreateJobAppointment"
+        },
+        {
+          "$ref": "#/$defs/AddJobNote"
+        },
+        {
+          "$ref": "#/$defs/DeleteJobNote"
+        },
+        {
+          "$ref": "#/$defs/AddJobTag"
+        },
+        {
+          "$ref": "#/$defs/RemoveJobTag"
+        },
+        {
+          "$ref": "#/$defs/ListEstimates"
+        },
+        {
+          "$ref": "#/$defs/CreateEstimate"
+        },
+        {
+          "$ref": "#/$defs/ListLeads"
+        },
+        {
+          "$ref": "#/$defs/GetLead"
+        },
+        {
+          "$ref": "#/$defs/CreateLead"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/ListLeadSources"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HousecallProAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Housecall-pro Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
