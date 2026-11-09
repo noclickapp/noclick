@@ -1,0 +1,515 @@
+[
+  {
+    "config": {
+      "operation": "list_proxy_bindings"
+    },
+    "method": "GET",
+    "path": "/proxy-bindings",
+    "body": null,
+    "response": {
+      "meta": {
+        "usedProxyBindings": 1,
+        "availableProxyBindings": 10,
+        "isVerificationEmailSend": false
+      },
+      "data": [
+        {
+          "type": "proxy_bindings",
+          "id": "C6C4C547-6000-0000-00000BAE",
+          "attributes": {
+            "real_addresses": {
+              "kkkchinazes@pxdmail.int": {
+                "is_enabled": true,
+                "is_verification_needed": false,
+                "is_verified": false
+              }
+            },
+            "proxy_address": "v7do1zfs8w@proxiedmail.com",
+            "received_emails": 0,
+            "description": "",
+            "callback_url": "",
+            "created_at": "2023-12-23 12:56:32",
+            "updated_at": "2023-12-23 12:56:32"
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "type": "users",
+                "id": "A2F49023-0000-0000-00009BC6"
+              }
+            }
+          }
+        },
+        {
+          "type": "proxy_bindings",
+          "id": "DBE6A547-6000-0000-00000BAE",
+          "attributes": {
+            "real_addresses": {
+              "kkkchinazes@pxdmail.int": {
+                "is_enabled": true,
+                "is_verification_needed": false,
+                "is_verified": false
+              }
+            },
+            "proxy_address": "news-65ddf8@proxiedmail.com",
+            "received_emails": 0,
+            "description": "Automatic address, created to send you tips on how to stay safe online and protect the ownership of your digital assets",
+            "callback_url": "",
+            "created_at": "2023-12-23 12:53:22",
+            "updated_at": "2023-12-23 12:53:22"
+          },
+          "relationships": {
+            "user": {
+              "data": {
+                "type": "users",
+                "id": "A2F49023-0000-0000-00009BC6"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "source": "https://docs.proxiedmail.com/docs/endpoints/getproxybindings/",
+    "http_status": 200
+  },
+  {
+    "config": {
+      "operation": "create_proxy_binding",
+      "real_addresses": [
+        "kkkchinazes@pxdmail.int"
+      ],
+      "proxy_address": "d0zjr5gnwi@proxiedmail.com",
+      "is_browsable": true
+    },
+    "method": "POST",
+    "path": "/proxy-bindings",
+    "body": {
+      "data": {
+        "type": "proxy_bindings",
+        "attributes": {
+          "real_addresses": [
+            "kkkchinazes@pxdmail.int"
+          ],
+          "proxy_address": "d0zjr5gnwi@proxiedmail.com",
+          "is_browsable": true
+        }
+      }
+    },
+    "response": {
+      "meta": {
+        "isVerificationEmailSend": false,
+        "firstProxyBinding": false
+      },
+      "data": {
+        "type": "proxy_bindings",
+        "id": "8BE3D44A-6000-0000-00000BAE",
+        "attributes": {
+          "real_addresses": {
+            "bblabla@proxiedmail.int": {
+              "is_enabled": true,
+              "is_verified": false
+            }
+          },
+          "type": 0,
+          "proxy_address": "7uj7s9gbnp@proxiedmail.com",
+          "received_emails": 0,
+          "description": "",
+          "callback_url": "",
+          "created_at": "2024-01-08 00:08:22",
+          "updated_at": "2024-01-08 00:08:22"
+        },
+        "relationships": {
+          "user": {
+            "data": {
+              "type": "users",
+              "id": "BE090B33-0000-0000-00009BC6"
+            }
+          }
+        }
+      }
+    },
+    "source": "https://docs.proxiedmail.com/docs/endpoints/postproxybindings/",
+    "http_status": 201
+  },
+  {
+    "config": {
+      "operation": "update_proxy_binding",
+      "proxy_binding_id": "A1131D57-6000-0000-00000BAE",
+      "real_addresses": {
+        "kkkchinazes@pxdmail.int": true
+      },
+      "proxy_address": "q1v9nj1gkw@proxiedmail.com",
+      "description": "abc"
+    },
+    "method": "PATCH",
+    "path": "/proxy-bindings/A1131D57-6000-0000-00000BAE",
+    "body": {
+      "data": {
+        "id": "A1131D57-6000-0000-00000BAE",
+        "type": "proxy_bindings",
+        "attributes": {
+          "real_addresses": {
+            "kkkchinazes@pxdmail.int": true
+          },
+          "proxy_address": "q1v9nj1gkw@proxiedmail.com",
+          "description": "abc"
+        }
+      }
+    },
+    "response": {
+      "meta": {
+        "isVerificationEmailSend": false,
+        "firstProxyBinding": false
+      },
+      "data": {
+        "type": "proxy_bindings",
+        "id": "8BE3D44A-6000-0000-00000BAE",
+        "attributes": {
+          "real_addresses": {
+            "bblabla@proxiedmail.int": {
+              "is_enabled": true,
+              "is_verified": false
+            }
+          },
+          "type": 0,
+          "proxy_address": "7uj7s9gbnp@proxiedmail.com",
+          "received_emails": 0,
+          "description": "abc",
+          "callback_url": "",
+          "created_at": "2024-01-08 00:08:22",
+          "updated_at": "2024-01-08 00:22:50"
+        },
+        "relationships": {
+          "user": {
+            "data": {
+              "type": "users",
+              "id": "BE090B33-0000-0000-00009BC6"
+            }
+          }
+        }
+      }
+    },
+    "source": "https://docs.proxiedmail.com/docs/endpoints/patchproxybindings/",
+    "http_status": 200
+  },
+  {
+    "config": {
+      "operation": "set_forwarding_addresses",
+      "proxy_binding_id": "A1131D57-6000-0000-00000BAE",
+      "real_addresses": {
+        "kkkchinazes@pxdmail.int": true
+      }
+    },
+    "method": "PATCH",
+    "path": "/proxy-bindings/A1131D57-6000-0000-00000BAE",
+    "body": {
+      "data": {
+        "id": "A1131D57-6000-0000-00000BAE",
+        "type": "proxy_bindings",
+        "attributes": {
+          "real_addresses": {
+            "kkkchinazes@pxdmail.int": true
+          }
+        }
+      }
+    },
+    "response": {
+      "meta": {
+        "isVerificationEmailSend": false,
+        "firstProxyBinding": false
+      },
+      "data": {
+        "type": "proxy_bindings",
+        "id": "8BE3D44A-6000-0000-00000BAE",
+        "attributes": {
+          "real_addresses": {
+            "bblabla@proxiedmail.int": {
+              "is_enabled": true,
+              "is_verified": false
+            }
+          },
+          "type": 0,
+          "proxy_address": "7uj7s9gbnp@proxiedmail.com",
+          "received_emails": 0,
+          "description": "abc",
+          "callback_url": "",
+          "created_at": "2024-01-08 00:08:22",
+          "updated_at": "2024-01-08 00:22:50"
+        },
+        "relationships": {
+          "user": {
+            "data": {
+              "type": "users",
+              "id": "BE090B33-0000-0000-00009BC6"
+            }
+          }
+        }
+      }
+    },
+    "source": "https://docs.proxiedmail.com/docs/endpoints/patchproxybindings/",
+    "http_status": 200
+  },
+  {
+    "config": {
+      "operation": "set_callback_url",
+      "proxy_binding_id": "8BE3D44A-6000-0000-00000BAE",
+      "callback_url": "https://zalupa.com/callback"
+    },
+    "method": "PATCH",
+    "path": "/proxy-bindings/8BE3D44A-6000-0000-00000BAE",
+    "body": {
+      "data": {
+        "id": "8BE3D44A-6000-0000-00000BAE",
+        "type": "proxy_bindings",
+        "attributes": {
+          "callback_url": "https://zalupa.com/callback"
+        }
+      }
+    },
+    "response": {
+      "meta": {
+        "isVerificationEmailSend": false,
+        "firstProxyBinding": false
+      },
+      "data": {
+        "type": "proxy_bindings",
+        "id": "8BE3D44A-6000-0000-00000BAE",
+        "attributes": {
+          "real_addresses": {
+            "bblabla@proxiedmail.int": {
+              "is_enabled": true,
+              "is_verified": false
+            }
+          },
+          "type": 0,
+          "proxy_address": "7uj7s9gbnp@proxiedmail.com",
+          "received_emails": 0,
+          "description": "abc",
+          "callback_url": "",
+          "created_at": "2024-01-08 00:08:22",
+          "updated_at": "2024-01-08 00:22:50"
+        },
+        "relationships": {
+          "user": {
+            "data": {
+              "type": "users",
+              "id": "BE090B33-0000-0000-00009BC6"
+            }
+          }
+        }
+      }
+    },
+    "source": "https://docs.proxiedmail.com/docs/endpoints/patchproxybindings/",
+    "http_status": 200
+  },
+  {
+    "config": {
+      "operation": "enable_email_browsing",
+      "proxy_binding_id": "8BE3D44A-6000-0000-00000BAE"
+    },
+    "method": "PATCH",
+    "path": "/proxy-bindings/8BE3D44A-6000-0000-00000BAE",
+    "body": {
+      "data": {
+        "id": "8BE3D44A-6000-0000-00000BAE",
+        "type": "proxy_bindings",
+        "attributes": {
+          "is_browsable": true
+        }
+      }
+    },
+    "response": {
+      "meta": {
+        "isVerificationEmailSend": false,
+        "firstProxyBinding": false
+      },
+      "data": {
+        "type": "proxy_bindings",
+        "id": "8BE3D44A-6000-0000-00000BAE",
+        "attributes": {
+          "real_addresses": {
+            "bblabla@proxiedmail.int": {
+              "is_enabled": true,
+              "is_verified": false
+            }
+          },
+          "type": 0,
+          "proxy_address": "7uj7s9gbnp@proxiedmail.com",
+          "received_emails": 0,
+          "description": "abc",
+          "callback_url": "",
+          "created_at": "2024-01-08 00:08:22",
+          "updated_at": "2024-01-08 00:22:50"
+        },
+        "relationships": {
+          "user": {
+            "data": {
+              "type": "users",
+              "id": "BE090B33-0000-0000-00009BC6"
+            }
+          }
+        }
+      }
+    },
+    "source": "https://docs.proxiedmail.com/docs/endpoints/patchproxybindings/",
+    "http_status": 200
+  },
+  {
+    "config": {
+      "operation": "disable_email_browsing",
+      "proxy_binding_id": "8BE3D44A-6000-0000-00000BAE"
+    },
+    "method": "PATCH",
+    "path": "/proxy-bindings/8BE3D44A-6000-0000-00000BAE",
+    "body": {
+      "data": {
+        "id": "8BE3D44A-6000-0000-00000BAE",
+        "type": "proxy_bindings",
+        "attributes": {
+          "is_browsable": false
+        }
+      }
+    },
+    "response": {
+      "meta": {
+        "isVerificationEmailSend": false,
+        "firstProxyBinding": false
+      },
+      "data": {
+        "type": "proxy_bindings",
+        "id": "8BE3D44A-6000-0000-00000BAE",
+        "attributes": {
+          "real_addresses": {
+            "bblabla@proxiedmail.int": {
+              "is_enabled": true,
+              "is_verified": false
+            }
+          },
+          "type": 0,
+          "proxy_address": "7uj7s9gbnp@proxiedmail.com",
+          "received_emails": 0,
+          "description": "abc",
+          "callback_url": "",
+          "created_at": "2024-01-08 00:08:22",
+          "updated_at": "2024-01-08 00:22:50"
+        },
+        "relationships": {
+          "user": {
+            "data": {
+              "type": "users",
+              "id": "BE090B33-0000-0000-00009BC6"
+            }
+          }
+        }
+      }
+    },
+    "source": "https://docs.proxiedmail.com/docs/endpoints/patchproxybindings/",
+    "http_status": 200
+  },
+  {
+    "config": {
+      "operation": "list_received_email_links",
+      "proxy_binding_id": "A1131D57-6000-0000-00000BAE"
+    },
+    "method": "GET",
+    "path": "/received-emails-links/A1131D57-6000-0000-00000BAE",
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "type": "received_emails_link",
+          "id": "81F8AD00-0000-0000-00003CC8",
+          "attributes": {
+            "recipient_email": "7ndas0szr0@pxdmail.net",
+            "sender_email": "webfay1@gmail.com",
+            "subject": "hihihi",
+            "attachmentsCounter": 0,
+            "link": "/api/v1/received-emails/81F8AD00-0000-0000-00003CC8",
+            "is_processed": true,
+            "created_at": "2023-07-17 10:59:05",
+            "updated_at": "2023-07-17 10:59:08"
+          }
+        },
+        {
+          "type": "received_emails_link",
+          "id": "A38E8D00-0000-0000-00003CC8",
+          "attributes": {
+            "recipient_email": "7ndas0szr0@pxdmail.net",
+            "sender_email": "webfay1@gmail.com",
+            "subject": "hihihi",
+            "attachmentsCounter": 0,
+            "link": "/api/v1/received-emails/A38E8D00-0000-0000-00003CC8",
+            "is_processed": true,
+            "created_at": "2023-07-17 10:50:48",
+            "updated_at": "2023-07-17 10:50:55"
+          }
+        }
+      ]
+    },
+    "source": "https://docs.proxiedmail.com/docs/endpoints/receivedEmailsLinks",
+    "http_status": 200
+  },
+  {
+    "config": {
+      "operation": "get_received_email",
+      "received_email_id": "81F8AD00-0000-0000-00003CC8"
+    },
+    "method": "GET",
+    "path": "/received-emails/81F8AD00-0000-0000-00003CC8",
+    "body": null,
+    "response": {
+      "data": {
+        "type": "received_emails_details",
+        "id": "81F8AD00-0000-0000-00003CC8",
+        "attributes": {
+          "recipient_email": "7ndas0szr0@pxdmail.net",
+          "sender_email": "webfay1@gmail.com",
+          "payload": {
+            "To": "<7ndas0szr0@pxdmail.net>",
+            "From": "\"Alex Yatsenko\" <webfay1@gmail.com>",
+            "Subject": "hihihi",
+            "recipient": "7ndas0szr0@pxdmail.net",
+            "sender": "webfay1@gmail.com",
+            "body-html": "<div dir=\"ltr\">helllloooo</div>",
+            "body-plain": "helllloooo",
+            "attachments": null
+          },
+          "attachments": [],
+          "is_processed": true,
+          "created_at": "2023-07-17 10:59:05",
+          "updated_at": "2023-07-17 10:59:08"
+        }
+      }
+    },
+    "source": "https://docs.proxiedmail.com/docs/endpoints/getReceivedEmails",
+    "http_status": 200
+  },
+  {
+    "config": {
+      "operation": "get_callback",
+      "callback_hash": "14431720055a1d06d59f7c8bf095ddc6"
+    },
+    "method": "GET",
+    "path": "/callback/get/14431720055a1d06d59f7c8bf095ddc6",
+    "body": null,
+    "response": {
+      "status": "ok",
+      "payload": {
+        "data": {
+          "type": "proxy_bindings",
+          "attributes": {
+            "real_addresses": [
+              "example@gmail.com"
+            ],
+            "proxy_address": "mafffaffddffawd1d1afff@proxiedmail.com"
+          }
+        }
+      },
+      "code": "ok",
+      "is_received": true,
+      "method": "POST"
+    },
+    "source": "https://docs.proxiedmail.com/docs/webhookscr/get/",
+    "http_status": 200
+  }
+]
