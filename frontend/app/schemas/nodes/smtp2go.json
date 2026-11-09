@@ -1,0 +1,1588 @@
+{
+  "$defs": {
+    "AddSenderDomain": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_sender_domain",
+          "default": "add_sender_domain",
+          "description": "Add a sender domain",
+          "title": "Add Sender Domain",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "Domain to add as a sender domain",
+          "maxLength": 8192,
+          "title": "Domain",
+          "type": "string"
+        },
+        "tracking_subdomain": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional subdomain used for click or open tracking and unsubscribe links",
+          "title": "Tracking Subdomain"
+        },
+        "returnpath_subdomain": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional subdomain to use as a return-path subdomain",
+          "title": "Returnpath Subdomain"
+        },
+        "auto_verify": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, verify the domain now removing the need to call the 'domain/verify' endpoint or wait for the periodic verification every 7 minutes.  Note: In order to successfully complete the verification, the 'tracking_subdomain' and 'returnpath_subdomain' must be configured in the domain DNS and propagated.",
+          "title": "Auto Verify"
+        },
+        "requisition_ssl": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, requisition an SSL certificate for the tracking domain once verification is complete",
+          "title": "Requisition Ssl"
+        },
+        "subaccount_id": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If you wish to make this API call on behalf of a subaccount then include its unique ID here",
+          "title": "Subaccount Id"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "AddSenderDomain",
+      "type": "object"
+    },
+    "AddSuppression": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_suppression",
+          "default": "add_suppression",
+          "description": "Add a suppression",
+          "title": "Add Suppression",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email_address": {
+          "description": "The email address or domain you would like to suppress from deliveries",
+          "maxLength": 8192,
+          "title": "Email Address",
+          "type": "string"
+        },
+        "block_description": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description given for suppressing the email or domain from deliveries",
+          "title": "Block Description"
+        },
+        "subaccount_id": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If you wish to make this API call on behalf of a subaccount then include its unique ID here",
+          "title": "Subaccount Id"
+        }
+      },
+      "required": [
+        "email_address"
+      ],
+      "title": "AddSuppression",
+      "type": "object"
+    },
+    "CreateTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "description": "Add an email template",
+          "title": "Create Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_name": {
+          "description": "The name of the email template. Min length: 1 Character. Max length: 64 Characters.",
+          "maxLength": 8192,
+          "title": "Template Name",
+          "type": "string"
+        },
+        "id": {
+          "description": "The case-sensitive ID of the email template. Min length: 5 Character. Max length: 24 Characters.",
+          "maxLength": 8192,
+          "title": "Id",
+          "type": "string"
+        },
+        "subject": {
+          "description": "The subject of the email template.",
+          "maxLength": 8192,
+          "title": "Subject",
+          "type": "string"
+        },
+        "html_body": {
+          "description": "The HTML body of the email template.",
+          "maxLength": 200000,
+          "title": "HTML Body",
+          "type": "string"
+        },
+        "text_body": {
+          "description": "The Plain Text body of the email template.",
+          "maxLength": 200000,
+          "title": "Text Body",
+          "type": "string"
+        },
+        "template_variables": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The variables to use within this email template in the format {\"variable1\": \"value1\", \"variable2\": \"value2\"}",
+          "title": "Template Variables"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The list of Tags to associate to this email template",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "template_name",
+        "id",
+        "subject",
+        "html_body",
+        "text_body"
+      ],
+      "title": "CreateTemplate",
+      "type": "object"
+    },
+    "DeleteTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "description": "Remove an email template",
+          "title": "Delete Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The case-sensitive ID of the email template that you wish to remove",
+          "maxLength": 8192,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteTemplate",
+      "type": "object"
+    },
+    "GetBounceStats": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_bounce_stats",
+          "default": "get_bounce_stats",
+          "description": "Email bounces",
+          "title": "Get Bounce Stats",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allows statistics to be returned for a specific user.",
+          "title": "Username"
+        }
+      },
+      "title": "GetBounceStats",
+      "type": "object"
+    },
+    "GetEmailSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_email_summary",
+          "default": "get_email_summary",
+          "description": "Email summary",
+          "title": "Get Email Summary",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allows statistics to be returned for a specific user",
+          "title": "Username"
+        }
+      },
+      "title": "GetEmailSummary",
+      "type": "object"
+    },
+    "GetSpamStats": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_spam_stats",
+          "default": "get_spam_stats",
+          "description": "Email spam",
+          "title": "Get Spam Stats",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allows statistics to be returned for a specific user.",
+          "title": "Username"
+        }
+      },
+      "title": "GetSpamStats",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "description": "View template details",
+          "title": "Get Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The case-sensitive ID of the email template that you wish to view",
+          "maxLength": 8192,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "GetUnsubscribeStats": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_unsubscribe_stats",
+          "default": "get_unsubscribe_stats",
+          "description": "Email unsubscribes",
+          "title": "Get Unsubscribe Stats",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allows statistics to be returned for a specific user.",
+          "title": "Username"
+        }
+      },
+      "title": "GetUnsubscribeStats",
+      "type": "object"
+    },
+    "ListSenderDomains": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sender_domains",
+          "default": "list_sender_domains",
+          "description": "View sender domains",
+          "title": "List Sender Domains",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "(Optional) If provided, will only retrieve records for this domain",
+          "title": "Domain"
+        },
+        "subaccount_id": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If you wish to make this API call on behalf of a subaccount then include its unique ID here",
+          "title": "Subaccount Id"
+        }
+      },
+      "title": "ListSenderDomains",
+      "type": "object"
+    },
+    "ListSenderEmails": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sender_emails",
+          "default": "list_sender_emails",
+          "description": "View single sender emails",
+          "title": "List Sender Emails",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "(Optional) If provided, only return email addresses that match value",
+          "title": "Email Address"
+        },
+        "subaccount_id": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If you wish to make this API call on behalf of a subaccount then include its unique ID here",
+          "title": "Subaccount Id"
+        }
+      },
+      "title": "ListSenderEmails",
+      "type": "object"
+    },
+    "ListSuppressions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_suppressions",
+          "default": "list_suppressions",
+          "description": "View suppressions",
+          "title": "List Suppressions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "continue_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If returned from a request this can be passed to continue paging through the result of the results",
+          "title": "Continue Token"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, checks if a specific email address or domain is in the block list",
+          "title": "Email Address"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 formatted datetime which defaults to 30 days prior to the current date at midnight. Timezone is UTC",
+          "title": "End Date"
+        },
+        "fuzzy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates if the search should use fuzzy matching on recipients & reasons",
+          "title": "Fuzzy"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A reason string to search for",
+          "title": "Reason"
+        },
+        "reasons": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array of reason strings to search for",
+          "title": "Reasons"
+        },
+        "recipient": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A recipient string to search for",
+          "title": "Recipient"
+        },
+        "recipients": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array of recipient strings to search for",
+          "title": "Recipients"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The direction to sort the results, either asc or desc",
+          "title": "Sort"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 formatted datetime which defaults to the current date at midnight. Timezone is UTC",
+          "title": "Start Date"
+        },
+        "suppression_type": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If passed restricts the search to a single suppression type manual, spam, unsubscribe, bounce or compliance",
+          "title": "Suppression Type"
+        },
+        "suppression_types": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If passed restricts the search to multiple suppression types manual, spam, unsubscribe, bounce or compliance",
+          "title": "Suppression Types"
+        },
+        "wildcard": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, only suppressions with this wildcard string in name, domain, or email address fields, will be returned",
+          "title": "Wildcard"
+        },
+        "subaccount_id": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If you wish to make this API call on behalf of a subaccount then include its unique ID here",
+          "title": "Subaccount Id"
+        }
+      },
+      "title": "ListSuppressions",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "description": "View email templates",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "fuzzy_search": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will determine whether search terms are matched exactly or using wildcards.  Default: false",
+          "title": "Fuzzy Search"
+        },
+        "search_terms": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will return email templates containing any of the strings provided in name, tag, id or subject fields.",
+          "title": "Search Terms"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will return email templates containing any of the tags provided",
+          "title": "Tags"
+        },
+        "sort_direction": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will sort the returned email templates in ascending or descending order.  Default: ascValues: asc or desc",
+          "title": "Sort Direction"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will limit the number of email templates returned. Default 100",
+          "title": "Page Size"
+        },
+        "continue_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will fetch the next page of results, following on from the previous page of results from which this continue token was returned",
+          "title": "Continue Token"
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "RemoveScheduledEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "remove_scheduled_email",
+          "default": "remove_scheduled_email",
+          "description": "Remove a scheduled email",
+          "title": "Remove Scheduled Email",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "schedule_id": {
+          "description": "The schedule_id returned from /v3/email/scheduled/search or the following endpoints [/v3/email/send, /v3/email/mime] (when schedule is passed)",
+          "maxLength": 8192,
+          "title": "Schedule Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "RemoveScheduledEmail",
+      "type": "object"
+    },
+    "RemoveSenderDomain": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "remove_sender_domain",
+          "default": "remove_sender_domain",
+          "description": "Remove a sender domain",
+          "title": "Remove Sender Domain",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "Sender Domain to delete.",
+          "maxLength": 8192,
+          "title": "Domain",
+          "type": "string"
+        },
+        "subaccount_id": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If you wish to make this API call on behalf of a subaccount then include its unique ID here",
+          "title": "Subaccount Id"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "RemoveSenderDomain",
+      "type": "object"
+    },
+    "RemoveSuppression": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "remove_suppression",
+          "default": "remove_suppression",
+          "description": "Remove a suppression",
+          "title": "Remove Suppression",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email_address": {
+          "description": "The email address or domain you would like to remove from your suppression list",
+          "maxLength": 8192,
+          "title": "Email Address",
+          "type": "string"
+        },
+        "reasons": {
+          "description": "A list of block types you would like to remove for the given email or domain",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Reasons",
+          "type": "array"
+        },
+        "subaccount_id": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If you wish to make this API call on behalf of a subaccount then include its unique ID here",
+          "title": "Subaccount Id"
+        }
+      },
+      "required": [
+        "email_address",
+        "reasons"
+      ],
+      "title": "RemoveSuppression",
+      "type": "object"
+    },
+    "SearchEmails": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_emails",
+          "default": "search_emails",
+          "description": "View and search sent emails",
+          "title": "Search Emails",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 formatted datetime. Results will be inclusive of this value. Timezone is UTC. Defaults to current date at midnight.",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 formatted datetime. Results will be inclusive of this value. Timezone is UTC. Defaults to current time.",
+          "title": "End Date"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 5000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The maximum number of emails to return. Enter an integer between 1 and 5,000. Defaults to 5,000.",
+          "title": "Limit"
+        },
+        "status_counts": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, will return an object with counts of each unique email status",
+          "title": "Status Counts"
+        },
+        "opened_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, will return emails that have been opened by at least one recipient.Note: Only returns information for emails sent from suitable accounts with Open Tracking enabled.  See more info at Open Tracking",
+          "title": "Opened Only"
+        },
+        "clicked_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, will return emails that have had a link clicked by at least one recipient.Note: Only returns information for emails sent from suitable accounts with Click Tracking enabled.  See more info at Click Tracking",
+          "title": "Clicked Only"
+        },
+        "ignore_case": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, all string searches will be case insensitive",
+          "title": "Ignore Case"
+        },
+        "filter_query": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If passed, will return results filtered by these search parameters. The query format is documented below",
+          "title": "Filter Query"
+        },
+        "email_id": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If passed, will only return emails with an ID contained within this array",
+          "title": "Email IDs"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If passed, will only return emails sent by this user",
+          "title": "Username"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If passed, will return the specified email header values",
+          "title": "Headers"
+        },
+        "continue_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If passed, the resulting query will paginate from the previous query",
+          "title": "Continue Token"
+        }
+      },
+      "title": "SearchEmails",
+      "type": "object"
+    },
+    "SendEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_email",
+          "default": "send_email",
+          "description": "Send or schedule email from a verified sender. A successful request confirms API acceptance, not delivery.",
+          "title": "Send Email",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sender": {
+          "description": "Verified sender, for example John Smith <john@example.com>.",
+          "maxLength": 8192,
+          "title": "Sender",
+          "type": "string"
+        },
+        "to": {
+          "description": "Up to 100 recipients, for example Jane Jones <jane@example.com>.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "To",
+          "type": "array"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Up to 100 CC recipients in Name <name@example.com> format.",
+          "title": "CC"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Up to 100 BCC recipients in Name <name@example.com> format.",
+          "title": "BCC"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The subject of the email to be sent, Note: if template_id if passed this field is ignored.If you would like to set a custom subject in the template_data, use a variable ({{custom_subject}} for instance) as the value of the templates subject and then set its value in template_data respectively.",
+          "title": "Subject"
+        },
+        "html_body": {
+          "anyOf": [
+            {
+              "maxLength": 200000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A HTML encoded email body. Either html_body or text_body is required if template_id is not passed. If template_id is passed this field is ignored. Warning:To correctly track clicking of URLs you must:  Enable click tracking for the API key  Insert a full anchor HTML element (not just the URL) Include \"https://\" at the start of the HREF property ",
+          "title": "HTML Body"
+        },
+        "text_body": {
+          "anyOf": [
+            {
+              "maxLength": 200000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A plain text email body. Either html_body or text_body is required if template_id is not passed. If template_id is passed this field is ignored.",
+          "title": "Text Body"
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the template you wish to use",
+          "title": "Template ID"
+        },
+        "template_data": {
+          "anyOf": [
+            {
+              "maxLength": 200000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When a template_id is provided, include the pass-through values in the format {\"variable1\": \"value1\", \"variable2\": \"value2\"}",
+          "title": "Template Data"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A timestamp that when passed allows you to schedule an email for sending. Must be in the future and within the next 3 days.The api response will include a schedule_id property which can then be used alongside webhooks (An X-Smtp2go-Schedule-Id header is added to the sent email corresponds to this id). A total of 50,000 emails can be queued at any one time.",
+          "title": "Schedule"
+        },
+        "fastaccept": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, the email will be accepted immediately and sent in a background process. Use webhooks if you need information about final delivery to the recipient. This will soon become the default method of sending via API.",
+          "title": "Accept in Background"
+        }
+      },
+      "required": [
+        "sender",
+        "to"
+      ],
+      "title": "SendEmail",
+      "type": "object"
+    },
+    "Smtp2GoApiKeyCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "smtp2go_api_key",
+          "default": "smtp2go_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Paste your SMTP2GO API key without a header name or Bearer prefix.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "SMTP2GO API Key",
+      "type": "object",
+      "x-credential-instructions": "In SMTP2GO, open Sending > API Keys and copy an API key. Allow single_sender_emails/view for the connection check and the endpoints your workflow uses.",
+      "x-credential-url": "https://app.smtp2go.com/sending/apikeys/"
+    },
+    "UpdateTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "description": "Update an email template",
+          "title": "Update Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The ID of the email template that you wish to change",
+          "maxLength": 8192,
+          "title": "Id",
+          "type": "string"
+        },
+        "new_id": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will update the email template ID",
+          "title": "New Id"
+        },
+        "template_name": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will update the email template name",
+          "title": "Template Name"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will update the email template subject",
+          "title": "Subject"
+        },
+        "html_body": {
+          "anyOf": [
+            {
+              "maxLength": 200000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will update the email template HTML body",
+          "title": "HTML Body"
+        },
+        "text_body": {
+          "anyOf": [
+            {
+              "maxLength": 200000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will update the email template Plain Text body",
+          "title": "Text Body"
+        },
+        "template_variables": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The pass-through values required by the template in the format {\"variable1\": \"value1\", \"variable2\": \"value2\"} (When template_id is provided)",
+          "title": "Template Variables"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, will update the email template tags",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateTemplate",
+      "type": "object"
+    },
+    "VerifySenderDomain": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "verify_sender_domain",
+          "default": "verify_sender_domain",
+          "description": "Verify a sender domain",
+          "title": "Verify Sender Domain",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "Domain to attempt verification for",
+          "maxLength": 8192,
+          "title": "Domain",
+          "type": "string"
+        },
+        "requisition_ssl": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, requisition an SSL certificate for the tracking domain once verification is complete",
+          "title": "Requisition Ssl"
+        },
+        "subaccount_id": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If you wish to make this API call on behalf of a subaccount then include its unique ID here",
+          "title": "Subaccount Id"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "VerifySenderDomain",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_sender_domain": "#/$defs/AddSenderDomain",
+          "add_suppression": "#/$defs/AddSuppression",
+          "create_template": "#/$defs/CreateTemplate",
+          "delete_template": "#/$defs/DeleteTemplate",
+          "get_bounce_stats": "#/$defs/GetBounceStats",
+          "get_email_summary": "#/$defs/GetEmailSummary",
+          "get_spam_stats": "#/$defs/GetSpamStats",
+          "get_template": "#/$defs/GetTemplate",
+          "get_unsubscribe_stats": "#/$defs/GetUnsubscribeStats",
+          "list_sender_domains": "#/$defs/ListSenderDomains",
+          "list_sender_emails": "#/$defs/ListSenderEmails",
+          "list_suppressions": "#/$defs/ListSuppressions",
+          "list_templates": "#/$defs/ListTemplates",
+          "remove_scheduled_email": "#/$defs/RemoveScheduledEmail",
+          "remove_sender_domain": "#/$defs/RemoveSenderDomain",
+          "remove_suppression": "#/$defs/RemoveSuppression",
+          "search_emails": "#/$defs/SearchEmails",
+          "send_email": "#/$defs/SendEmail",
+          "update_template": "#/$defs/UpdateTemplate",
+          "verify_sender_domain": "#/$defs/VerifySenderDomain"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SendEmail"
+        },
+        {
+          "$ref": "#/$defs/SearchEmails"
+        },
+        {
+          "$ref": "#/$defs/GetEmailSummary"
+        },
+        {
+          "$ref": "#/$defs/GetBounceStats"
+        },
+        {
+          "$ref": "#/$defs/GetSpamStats"
+        },
+        {
+          "$ref": "#/$defs/GetUnsubscribeStats"
+        },
+        {
+          "$ref": "#/$defs/AddSuppression"
+        },
+        {
+          "$ref": "#/$defs/ListSuppressions"
+        },
+        {
+          "$ref": "#/$defs/RemoveSuppression"
+        },
+        {
+          "$ref": "#/$defs/AddSenderDomain"
+        },
+        {
+          "$ref": "#/$defs/ListSenderDomains"
+        },
+        {
+          "$ref": "#/$defs/VerifySenderDomain"
+        },
+        {
+          "$ref": "#/$defs/RemoveSenderDomain"
+        },
+        {
+          "$ref": "#/$defs/CreateTemplate"
+        },
+        {
+          "$ref": "#/$defs/UpdateTemplate"
+        },
+        {
+          "$ref": "#/$defs/DeleteTemplate"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        },
+        {
+          "$ref": "#/$defs/ListSenderEmails"
+        },
+        {
+          "$ref": "#/$defs/RemoveScheduledEmail"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Smtp2GoApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Smtp2go Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Send an email from my verified sender",
+    "List my email templates",
+    "Suppress a recipient"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
