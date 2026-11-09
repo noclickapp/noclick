@@ -1,0 +1,10 @@
+{
+  "name": "Landing page check",
+  "type": "https",
+  "target": "https://www.landingpage.com",
+  "regions": [
+    "us_east",
+    "eu_west"
+  ],
+  "enabled": true
+}
