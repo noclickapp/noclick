@@ -1,0 +1,705 @@
+{
+  "source": "https://www.chatbase.co/docs/api-v2-openapi.json",
+  "version": "2.0.0",
+  "note": "Request examples and synthetic minimal success fixtures derived from the pinned provider contract; no live calls.",
+  "operations": [
+    {
+      "operation": "list_agents",
+      "config": {
+        "cursor": "1",
+        "limit": 20,
+        "operation": "list_agents"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents",
+      "query": {
+        "cursor": "1",
+        "limit": "20"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "data": [],
+        "pagination": {
+          "cursor": "1",
+          "hasMore": false,
+          "total": 1
+        }
+      }
+    },
+    {
+      "operation": "create_agent",
+      "config": {
+        "operation": "create_agent",
+        "name": "Support Bot",
+        "visibility": "private"
+      },
+      "method": "POST",
+      "path": "/api/v2/agents",
+      "query": {},
+      "body": {
+        "name": "Support Bot",
+        "visibility": "private"
+      },
+      "response_status": 201,
+      "response": {
+        "id": "5QHA6VB-DIAbBhxwqxfdi"
+      }
+    },
+    {
+      "operation": "get_agent",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "get_agent"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "id": "5QHA6VB-DIAbBhxwqxfdi",
+        "name": "Support Bot",
+        "instructions": "1",
+        "channelInstructions": {},
+        "model": "gpt-5.6-terra",
+        "autoRetrain": false,
+        "temp": 0,
+        "visibility": "public",
+        "allowedDomains": [],
+        "suggestedMessages": [],
+        "initialMessages": [],
+        "creditLimit": 1,
+        "creditsUsed": 1284,
+        "notificationsSettings": {
+          "dailyLeadsCollected": {
+            "active": false,
+            "emails": []
+          },
+          "dailyConversations": {
+            "active": false,
+            "emails": []
+          }
+        },
+        "ipRateLimits": {
+          "limit": 20,
+          "timeframe": 240,
+          "message": "Too many messages in a row"
+        },
+        "spamSettings": {
+          "enabled": false,
+          "prompt": "1"
+        },
+        "blockedCountries": [
+          "RU",
+          "KP"
+        ],
+        "voiceSettings": {
+          "visualization": {
+            "style": "basic",
+            "color": "#aaaaaa",
+            "contrast": 1,
+            "flow": 1,
+            "swirl": 1
+          },
+          "mode": "live"
+        },
+        "styles": {
+          "chat": {},
+          "centerStage": {}
+        },
+        "createdAt": "2024-01-15T10:30:00.000Z",
+        "lastMessageAt": "1",
+        "lastTrainedAt": "1",
+        "status": "trained",
+        "size": 1
+      }
+    },
+    {
+      "operation": "update_agent",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "update_agent",
+        "name": "Support Bot"
+      },
+      "method": "PUT",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi",
+      "query": {},
+      "body": {
+        "name": "Support Bot"
+      },
+      "response_status": 200,
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "operation": "delete_agent",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "delete_agent"
+      },
+      "method": "DELETE",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "operation": "chat",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "chat",
+        "message": "Hello, how can you help me?"
+      },
+      "method": "POST",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/chat",
+      "query": {},
+      "body": {
+        "message": "Hello, how can you help me?",
+        "stream": false
+      },
+      "response_status": 200,
+      "response": {
+        "data": {
+          "id": "msg_abc123",
+          "role": "assistant",
+          "parts": [],
+          "metadata": {
+            "userMessageId": "1",
+            "conversationId": "1",
+            "userId": "1",
+            "finishReason": "stop",
+            "usage": {
+              "credits": 2
+            }
+          }
+        }
+      }
+    },
+    {
+      "operation": "list_conversations",
+      "config": {
+        "limit": 20,
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "list_conversations"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/conversations",
+      "query": {
+        "limit": "20"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "data": [],
+        "pagination": {
+          "cursor": "1",
+          "hasMore": false,
+          "total": 1
+        }
+      }
+    },
+    {
+      "operation": "search_conversations",
+      "config": {
+        "limit": 25,
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "search_conversations",
+        "query": "refund"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/conversations/search",
+      "query": {
+        "query": "refund",
+        "limit": "25"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "data": [],
+        "pagination": {
+          "cursor": "1",
+          "hasMore": false
+        }
+      }
+    },
+    {
+      "operation": "get_conversation",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "conversation_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "operation": "get_conversation"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/conversations/a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "data": {
+          "id": "1",
+          "title": "1",
+          "createdAt": 1,
+          "updatedAt": 1,
+          "userId": "1",
+          "status": "ongoing",
+          "parentConversationId": "1",
+          "parentSummary": "1",
+          "messages": []
+        },
+        "pagination": {
+          "cursor": "1",
+          "hasMore": false,
+          "total": 1
+        }
+      }
+    },
+    {
+      "operation": "update_conversation",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "conversation_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "operation": "update_conversation",
+        "status": "ongoing"
+      },
+      "method": "PATCH",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/conversations/a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "query": {},
+      "body": {
+        "status": "ongoing"
+      },
+      "response_status": 200,
+      "response": {
+        "data": {
+          "id": "1",
+          "status": "ongoing"
+        }
+      }
+    },
+    {
+      "operation": "delete_conversation",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "conversation_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "operation": "delete_conversation"
+      },
+      "method": "DELETE",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/conversations/a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "operation": "list_conversation_messages",
+      "config": {
+        "limit": 20,
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "conversation_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "operation": "list_conversation_messages"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/conversations/a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d/messages",
+      "query": {
+        "limit": "20"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "data": [],
+        "pagination": {
+          "cursor": "1",
+          "hasMore": false,
+          "total": 1
+        }
+      }
+    },
+    {
+      "operation": "list_user_conversations",
+      "config": {
+        "limit": 20,
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "list_user_conversations",
+        "user_id": "user_abc123"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/users/user_abc123/conversations",
+      "query": {
+        "limit": "20"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "data": [],
+        "pagination": {
+          "cursor": "1",
+          "hasMore": false,
+          "total": 1
+        }
+      }
+    },
+    {
+      "operation": "get_sources_summary",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "get_sources_summary"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/sources/summary",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "links": {
+          "count": 1,
+          "size": 1
+        },
+        "files": {
+          "count": 1,
+          "size": 1
+        },
+        "qnas": {
+          "count": 1,
+          "size": 1
+        },
+        "notionPages": {
+          "count": 1,
+          "size": 1
+        },
+        "texts": {
+          "count": 1,
+          "size": 1
+        },
+        "zendeskTickets": {
+          "count": 1,
+          "size": 1
+        },
+        "salesforceCases": {
+          "count": 1,
+          "size": 1
+        },
+        "shouldRetrain": false
+      }
+    },
+    {
+      "operation": "list_sources",
+      "config": {
+        "limit": 20,
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "list_sources"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/sources",
+      "query": {
+        "limit": "20"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "data": [],
+        "pagination": {
+          "cursor": "1",
+          "hasMore": false,
+          "total": 1
+        }
+      }
+    },
+    {
+      "operation": "create_text_source",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "create_text_source",
+        "name": "Support Bot",
+        "content": "Our support team is available Monday to Friday."
+      },
+      "method": "POST",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/sources",
+      "query": {},
+      "body": {
+        "name": "Support Bot",
+        "content": "Our support team is available Monday to Friday.",
+        "type": "text"
+      },
+      "response_status": 201,
+      "response": {
+        "id": "1",
+        "type": "link",
+        "name": "1",
+        "size": 1,
+        "createdAt": "1",
+        "status": "untrained",
+        "metadata": {
+          "type": "individual"
+        }
+      }
+    },
+    {
+      "operation": "get_source",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "source_id": "a63a69a5-e7a9-4757-b73b-2041854d435d",
+        "operation": "get_source"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/sources/a63a69a5-e7a9-4757-b73b-2041854d435d",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "id": "1",
+        "type": "link",
+        "name": "1",
+        "size": 1,
+        "createdAt": "1",
+        "status": "untrained",
+        "metadata": {
+          "type": "individual"
+        }
+      }
+    },
+    {
+      "operation": "delete_source",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "source_id": "a63a69a5-e7a9-4757-b73b-2041854d435d",
+        "operation": "delete_source"
+      },
+      "method": "DELETE",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/sources/a63a69a5-e7a9-4757-b73b-2041854d435d",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "id": "1",
+        "type": "link",
+        "name": "1",
+        "size": 1,
+        "createdAt": "1",
+        "status": "untrained",
+        "metadata": {
+          "type": "individual"
+        }
+      }
+    },
+    {
+      "operation": "update_text_source",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "source_id": "a63a69a5-e7a9-4757-b73b-2041854d435d",
+        "operation": "update_text_source",
+        "content": "Our support team is available Monday to Friday."
+      },
+      "method": "PUT",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/sources/a63a69a5-e7a9-4757-b73b-2041854d435d",
+      "query": {},
+      "body": {
+        "content": "Our support team is available Monday to Friday."
+      },
+      "response_status": 200,
+      "response": {
+        "id": "1",
+        "type": "link",
+        "name": "1",
+        "size": 1,
+        "createdAt": "1",
+        "status": "untrained",
+        "metadata": {
+          "type": "individual"
+        }
+      }
+    },
+    {
+      "operation": "list_ticket_statuses",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "list_ticket_statuses"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/helpdesk/ticket-statuses",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": []
+    },
+    {
+      "operation": "search_tickets",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "search_tickets",
+        "query": "refund",
+        "limit": 20
+      },
+      "method": "POST",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/helpdesk/tickets/search",
+      "query": {},
+      "body": {
+        "query": "refund",
+        "limit": 20
+      },
+      "response_status": 200,
+      "response": {
+        "data": [],
+        "pagination": {
+          "cursor": "1",
+          "hasMore": false
+        }
+      }
+    },
+    {
+      "operation": "get_ticket",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "ticket_number": 123,
+        "operation": "get_ticket"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/helpdesk/tickets/123",
+      "query": {},
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "ticketNumber": 123,
+        "subject": "1",
+        "description": "1",
+        "statusCategory": "on_customer",
+        "statusId": "1",
+        "assigneeId": "1",
+        "customer": {
+          "id": "1",
+          "name": "Ada Lovelace",
+          "email": "ada@example.com",
+          "phoneNumber": "1"
+        },
+        "metadata": {
+          "phone_number": "+1 525-525-5255"
+        },
+        "channel": "email",
+        "conversationId": "1",
+        "teamId": "1",
+        "priority": "high",
+        "createdAt": "2026-07-20T12:34:56.000Z",
+        "updatedAt": "2026-07-21T09:00:00.000Z",
+        "lastMessageAt": "2026-07-21T08:55:00.000Z"
+      }
+    },
+    {
+      "operation": "create_ticket",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "operation": "create_ticket",
+        "subject": "Export failing with 500",
+        "description": "Customer cannot export orders.",
+        "customer_email": "jane@example.com"
+      },
+      "method": "POST",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/helpdesk/tickets",
+      "query": {},
+      "body": {
+        "subject": "Export failing with 500",
+        "description": "Customer cannot export orders.",
+        "customer": {
+          "email": "jane@example.com"
+        }
+      },
+      "response_status": 201,
+      "response": {
+        "ticketNumber": 123,
+        "subject": "1",
+        "description": "1",
+        "statusCategory": "on_customer",
+        "statusId": "1",
+        "assigneeId": "1",
+        "customer": {
+          "id": "1",
+          "name": "Ada Lovelace",
+          "email": "ada@example.com",
+          "phoneNumber": "1"
+        },
+        "metadata": {
+          "phone_number": "+1 525-525-5255"
+        },
+        "channel": "email",
+        "conversationId": "1",
+        "teamId": "1",
+        "priority": "high",
+        "createdAt": "2026-07-20T12:34:56.000Z",
+        "updatedAt": "2026-07-21T09:00:00.000Z",
+        "lastMessageAt": "2026-07-21T08:55:00.000Z"
+      }
+    },
+    {
+      "operation": "update_ticket",
+      "config": {
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "ticket_number": 123,
+        "operation": "update_ticket",
+        "statusCategory": "new"
+      },
+      "method": "PATCH",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/helpdesk/tickets/123",
+      "query": {},
+      "body": {
+        "statusCategory": "new"
+      },
+      "response_status": 200,
+      "response": {
+        "ticketNumber": 123,
+        "subject": "1",
+        "description": "1",
+        "statusCategory": "on_customer",
+        "statusId": "1",
+        "assigneeId": "1",
+        "customer": {
+          "id": "1",
+          "name": "Ada Lovelace",
+          "email": "ada@example.com",
+          "phoneNumber": "1"
+        },
+        "metadata": {
+          "phone_number": "+1 525-525-5255"
+        },
+        "channel": "email",
+        "conversationId": "1",
+        "teamId": "1",
+        "priority": "high",
+        "createdAt": "2026-07-20T12:34:56.000Z",
+        "updatedAt": "2026-07-21T09:00:00.000Z",
+        "lastMessageAt": "2026-07-21T08:55:00.000Z"
+      }
+    },
+    {
+      "operation": "list_ticket_messages",
+      "config": {
+        "limit": 20,
+        "agent_id": "5QHA6VB-DIAbBhxwqxfdi",
+        "ticket_number": 123,
+        "operation": "list_ticket_messages",
+        "types": "reply,note",
+        "order": "asc"
+      },
+      "method": "GET",
+      "path": "/api/v2/agents/5QHA6VB-DIAbBhxwqxfdi/helpdesk/tickets/123/messages",
+      "query": {
+        "limit": "20",
+        "types": "reply,note",
+        "order": "asc"
+      },
+      "body": null,
+      "response_status": 200,
+      "response": {
+        "data": [],
+        "pagination": {
+          "cursor": "1",
+          "hasMore": false,
+          "total": 1
+        }
+      }
+    }
+  ]
+}
