@@ -1,0 +1,55 @@
+{
+  "webhook": "Draft",
+  "data": {
+    "id": 12345678,
+    "carrier_code": "gls",
+    "product_code": null,
+    "service_codes": null,
+    "sms_notification": null,
+    "email_notification": null,
+    "order_id": "12345",
+    "reference": "12345",
+    "source": "minvirksomhed.dk",
+    "shop_integration_id": 12345,
+    "archived": false,
+    "label_created": true,
+    "created_at": "2024-07-08T10:09:01.049+02:00",
+    "updated_at": "2024-07-08T10:29:25.105+02:00",
+    "receiver": {
+      "name": "Lene Hansen",
+      "attention": null,
+      "address1": "Skibhusvej 52",
+      "address2": "",
+      "zipcode": "5000",
+      "city": "Odense C",
+      "country_code": "DK",
+      "email": "lene@email.dk",
+      "mobile": "70 40 04 07",
+      "telephone": "70 40 04 07",
+      "instruction": null,
+      "access_code": null
+    },
+    "sender": {
+      "name": "Min Virksomhed ApS",
+      "attention": null,
+      "address1": "Hvilehøjvej 25",
+      "address2": null,
+      "zipcode": "5220",
+      "city": "Odense SØ",
+      "country_code": "DK",
+      "email": "info@minvirksomhed.dk",
+      "mobile": "12345678",
+      "telephone": "12345678"
+    },
+    "service_point": {
+      "id": "99333",
+      "name": "Kvickly Skibhusvej",
+      "address1": "Skibhusvej 70A",
+      "zipcode": "5000",
+      "city": "Odense C",
+      "country_code": "DK",
+      "shipping_agent": "gls"
+    }
+  },
+  "url": "https://example.com/webhook"
+}

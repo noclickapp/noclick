@@ -1,0 +1,21 @@
+{
+  "webhook": "Shipment Monitor",
+  "data": {
+    "id": 98765432,
+    "shipment_id": 123456789,
+    "current_status": "DELIVERED",
+    "current_state": "SUCCESS",
+    "current_status_text": "Your package has been delivered.",
+    "current_status_registered_at": "2024-06-21T07:59:00.000+02:00",
+    "carrier_code": "gls",
+    "carrier_track_id": "012345678910",
+    "weight": "2.5 kg",
+    "length": null,
+    "height": null,
+    "width": null,
+    "location": null,
+    "city": "Odense SØ",
+    "country_code": "DK"
+  },
+  "url": "https://example.com/webhook"
+}

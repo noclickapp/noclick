@@ -1,0 +1,153 @@
+{
+  "webhook": "Sales Order",
+  "data": {
+    "id": 83837161,
+    "order_id": "56623",
+    "ordered_at": "2024-07-08T10:08:32.000+02:00",
+    "order_status": "open",
+    "fulfillment_status": "fulfilled",
+    "payment_status": "authorized",
+    "shipped_percent": 0,
+    "fulfilled_percent": 100,
+    "archived": false,
+    "source_name": "Min Virksomhed ApS",
+    "order_note": null,
+    "created_at": "2024-07-08T10:08:58.541+02:00",
+    "updated_at": "2024-07-08T10:08:58.541+02:00",
+    "ship_to": {
+      "name": "Lene Hansen",
+      "attention": null,
+      "address1": "Skibhusvej 52",
+      "address2": null,
+      "zipcode": "5000",
+      "city": "Odense C",
+      "country_code": "DK",
+      "email": "lene@email.dk",
+      "mobile": "70 40 04 07",
+      "phone": "70 40 04 07",
+      "instruction": null,
+      "vat_id": null,
+      "address_validation": {
+        "state": null,
+        "suggestion": null
+      }
+    },
+    "bill_to": {
+      "name": "Lene Hansen",
+      "attention": null,
+      "address1": "Skibhusvej 52",
+      "address2": null,
+      "zipcode": "5000",
+      "city": "Odense C",
+      "country_code": "DK",
+      "email": "lene@email.dk",
+      "mobile": "70400407",
+      "phone": "70400407"
+    },
+    "service_point": {
+      "id": "99333",
+      "name": "Kvickly Skibhusvej",
+      "address1": "Skibhusvej 70A",
+      "zipcode": "5000",
+      "city": "Odense C",
+      "country_code": "DK",
+      "shipping_agent": "gls"
+    },
+    "sender": {
+      "name": "Min Virksomhed ApS",
+      "address1": "Hvilehøjvej 25",
+      "address2": null,
+      "zipcode": "5220",
+      "city": "Odense SØ",
+      "country_code": "DK",
+      "email": "info@minvirksomhed.dk",
+      "telephone": "70400407",
+      "mobile": "70400407"
+    },
+    "payment_details": {
+      "amount_excluding_vat": "1015.0",
+      "amount_including_vat": "1268.75",
+      "authorized_amount": "1268.75",
+      "captured_amount": null,
+      "refunded_amount": null,
+      "currency_code": "DKK",
+      "vat_amount": "253.75",
+      "vat_percent": "0.25",
+      "payment_method": "Bambora",
+      "transaction_id": "373998052"
+    },
+    "order_lines": [
+      {
+        "id": 1234567810,
+        "line_type": "item",
+        "item_name": "T-Shirt",
+        "item_sku": "TS001-WH",
+        "item_variant_code": "White",
+        "item_barcode": null,
+        "quantity": "2.0",
+        "unit_price_excluding_vat": "500.0",
+        "discount_amount_excluding_vat": "0.0",
+        "amount_excluding_vat": "1000.0",
+        "amount_including_vat": "1250.0",
+        "vat_amount": "250.0",
+        "vat_percent": "0.25",
+        "currency_code": "DKK",
+        "shipped_quantity": "0.0",
+        "unit_weight": 350,
+        "cost_price": null,
+        "country_code_of_origin": null,
+        "customs_code": null,
+        "customs_description": null,
+        "image_url": null,
+        "item_bin": "100",
+        "item_id": 12345678
+      },
+      {
+        "id": 1234567811,
+        "line_type": "shipping",
+        "item_name": "GLS PakkeShop",
+        "item_sku": "shipping",
+        "item_variant_code": null,
+        "item_barcode": null,
+        "quantity": "1.0",
+        "unit_price_excluding_vat": "15.0",
+        "discount_amount_excluding_vat": "0.0",
+        "amount_excluding_vat": "15.0",
+        "amount_including_vat": "18.75",
+        "vat_amount": "3.75",
+        "vat_percent": "0.25",
+        "currency_code": "DKK",
+        "shipped_quantity": "0.0",
+        "unit_weight": null,
+        "cost_price": null,
+        "country_code_of_origin": null,
+        "customs_code": null,
+        "customs_description": null,
+        "image_url": null,
+        "item_bin": null,
+        "item_id": 12345679
+      }
+    ],
+    "order_fulfillments": [
+      {
+        "id": 12345678,
+        "code": "56623-1",
+        "type": "outbound",
+        "shipment_id": null,
+        "fulfilled_by_third_party": false,
+        "order_packaging_id": null,
+        "cancelled": false,
+        "created_at": "2024-07-08T10:16:55.314+02:00",
+        "updated_at": "2024-07-08T10:16:55.314+02:00",
+        "fulfillment_lines": [
+          {
+            "id": 12345678,
+            "shipped_quantity": "2.0",
+            "order_line_id": 1234567810
+          }
+        ]
+      }
+    ]
+  },
+  "url": "https://example.com/webhook"
+}
