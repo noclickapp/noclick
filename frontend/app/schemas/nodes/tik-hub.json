@@ -1,0 +1,938 @@
+{
+  "$defs": {
+    "ExtractTiktokUserIdsConfig": {
+      "description": "Extract list user sec_user_id.",
+      "properties": {
+        "operation": {
+          "const": "extract_tiktok_user_ids",
+          "default": "extract_tiktok_user_ids",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "urls": {
+          "description": "TikTok URLs to extract; returns IDs or original URLs for unsuccessful extractions.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Urls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "title": "ExtractTiktokUserIdsConfig",
+      "type": "object"
+    },
+    "ExtractTiktokUsernamesConfig": {
+      "description": "Get list unique_id.",
+      "properties": {
+        "operation": {
+          "const": "extract_tiktok_usernames",
+          "default": "extract_tiktok_usernames",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "urls": {
+          "description": "TikTok URLs to extract; returns IDs or original URLs for unsuccessful extractions.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Urls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "title": "ExtractTiktokUsernamesConfig",
+      "type": "object"
+    },
+    "ExtractTiktokVideoIdsConfig": {
+      "description": "Extract list video id.",
+      "properties": {
+        "operation": {
+          "const": "extract_tiktok_video_ids",
+          "default": "extract_tiktok_video_ids",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "urls": {
+          "description": "TikTok URLs to extract; returns IDs or original URLs for unsuccessful extractions.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Urls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "title": "ExtractTiktokVideoIdsConfig",
+      "type": "object"
+    },
+    "GetAccountConfig": {
+      "description": "Get TikHub user info.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccountConfig",
+      "type": "object"
+    },
+    "GetDailyUsageConfig": {
+      "description": "Get user daily usage.",
+      "properties": {
+        "operation": {
+          "const": "get_daily_usage",
+          "default": "get_daily_usage",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetDailyUsageConfig",
+      "type": "object"
+    },
+    "GetInstagramPostConfig": {
+      "description": "Get post info.",
+      "properties": {
+        "operation": {
+          "const": "get_instagram_post",
+          "default": "get_instagram_post",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "code_or_url": {
+          "description": "Post shortcode or URL",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Code Or Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code_or_url"
+      ],
+      "title": "GetInstagramPostConfig",
+      "type": "object"
+    },
+    "GetInstagramProfileConfig": {
+      "description": "Get user info.",
+      "properties": {
+        "operation": {
+          "const": "get_instagram_profile",
+          "default": "get_instagram_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "description": "Username",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "GetInstagramProfileConfig",
+      "type": "object"
+    },
+    "GetTiktokHashtagConfig": {
+      "description": "Tag Detail.",
+      "properties": {
+        "operation": {
+          "const": "get_tiktok_hashtag",
+          "default": "get_tiktok_hashtag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_name": {
+          "description": "Tag name",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_name"
+      ],
+      "title": "GetTiktokHashtagConfig",
+      "type": "object"
+    },
+    "GetTiktokLiveConfig": {
+      "description": "Get user live details.",
+      "properties": {
+        "operation": {
+          "const": "get_tiktok_live",
+          "default": "get_tiktok_live",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uniqueId": {
+          "description": "User uniqueId",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Uniqueid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uniqueId"
+      ],
+      "title": "GetTiktokLiveConfig",
+      "type": "object"
+    },
+    "GetTiktokProfileConfig": {
+      "description": "Get user profile.",
+      "properties": {
+        "operation": {
+          "const": "get_tiktok_profile",
+          "default": "get_tiktok_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uniqueId": {
+          "description": "User uniqueId",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Uniqueid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uniqueId"
+      ],
+      "title": "GetTiktokProfileConfig",
+      "type": "object"
+    },
+    "GetTiktokTrendingKeywordsConfig": {
+      "description": "Get daily trending search words.",
+      "properties": {
+        "operation": {
+          "const": "get_tiktok_trending_keywords",
+          "default": "get_tiktok_trending_keywords",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetTiktokTrendingKeywordsConfig",
+      "type": "object"
+    },
+    "GetTiktokVideoConfig": {
+      "description": "Get single video data.",
+      "properties": {
+        "operation": {
+          "const": "get_tiktok_video",
+          "default": "get_tiktok_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "itemId": {
+          "description": "Video id",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Itemid",
+          "type": "string"
+        },
+        "region": {
+          "default": "US",
+          "description": "Region code, for example US, GB, JP or ID.",
+          "maxLength": 4096,
+          "title": "Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "itemId"
+      ],
+      "title": "GetTiktokVideoConfig",
+      "type": "object"
+    },
+    "ListInstagramPostsConfig": {
+      "description": "Get user posts.",
+      "properties": {
+        "operation": {
+          "const": "list_instagram_posts",
+          "default": "list_instagram_posts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "description": "Username",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        },
+        "pagination_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination token",
+          "title": "Pagination Token"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "ListInstagramPostsConfig",
+      "type": "object"
+    },
+    "ListTiktokCommentRepliesConfig": {
+      "description": "Get video comment replies.",
+      "properties": {
+        "operation": {
+          "const": "list_tiktok_comment_replies",
+          "default": "list_tiktok_comment_replies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "item_id": {
+          "description": "Video id",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        },
+        "comment_id": {
+          "description": "Comment id",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Comment Id",
+          "type": "string"
+        },
+        "cursor": {
+          "default": 0,
+          "description": "Page cursor",
+          "minimum": 0,
+          "title": "Cursor",
+          "type": "integer"
+        },
+        "count": {
+          "default": 20,
+          "description": "Number per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "current_region": {
+          "default": "",
+          "description": "Current region",
+          "maxLength": 4096,
+          "title": "Current Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "comment_id"
+      ],
+      "title": "ListTiktokCommentRepliesConfig",
+      "type": "object"
+    },
+    "ListTiktokCommentsConfig": {
+      "description": "Get video comments.",
+      "properties": {
+        "operation": {
+          "const": "list_tiktok_comments",
+          "default": "list_tiktok_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "aweme_id": {
+          "description": "Video id",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Aweme Id",
+          "type": "string"
+        },
+        "cursor": {
+          "default": 0,
+          "description": "Page cursor",
+          "minimum": 0,
+          "title": "Cursor",
+          "type": "integer"
+        },
+        "count": {
+          "default": 20,
+          "description": "Number per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "current_region": {
+          "default": "",
+          "description": "Current region",
+          "maxLength": 4096,
+          "title": "Current Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "aweme_id"
+      ],
+      "title": "ListTiktokCommentsConfig",
+      "type": "object"
+    },
+    "ListTiktokFollowersConfig": {
+      "description": "Get user followers.",
+      "properties": {
+        "operation": {
+          "const": "list_tiktok_followers",
+          "default": "list_tiktok_followers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "secUid": {
+          "description": "User secUid",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Secuid",
+          "type": "string"
+        },
+        "count": {
+          "default": 30,
+          "description": "Number per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "maxCursor": {
+          "default": 0,
+          "description": "Max cursor",
+          "minimum": 0,
+          "title": "Maxcursor",
+          "type": "integer"
+        },
+        "minCursor": {
+          "default": 0,
+          "description": "Min cursor",
+          "minimum": 0,
+          "title": "Mincursor",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "secUid"
+      ],
+      "title": "ListTiktokFollowersConfig",
+      "type": "object"
+    },
+    "ListTiktokFollowingConfig": {
+      "description": "Get user followings.",
+      "properties": {
+        "operation": {
+          "const": "list_tiktok_following",
+          "default": "list_tiktok_following",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "secUid": {
+          "description": "User secUid",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Secuid",
+          "type": "string"
+        },
+        "count": {
+          "default": 30,
+          "description": "Number per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "maxCursor": {
+          "default": 0,
+          "description": "Max cursor",
+          "minimum": 0,
+          "title": "Maxcursor",
+          "type": "integer"
+        },
+        "minCursor": {
+          "default": 0,
+          "description": "Min cursor",
+          "minimum": 0,
+          "title": "Mincursor",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "secUid"
+      ],
+      "title": "ListTiktokFollowingConfig",
+      "type": "object"
+    },
+    "ListTiktokHashtagPostsConfig": {
+      "description": "Tag Post.",
+      "properties": {
+        "operation": {
+          "const": "list_tiktok_hashtag_posts",
+          "default": "list_tiktok_hashtag_posts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "challengeID": {
+          "description": "Tag ID",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Challengeid",
+          "type": "string"
+        },
+        "count": {
+          "default": 30,
+          "description": "Number per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "cursor": {
+          "default": 0,
+          "description": "Page cursor",
+          "minimum": 0,
+          "title": "Cursor",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "challengeID"
+      ],
+      "title": "ListTiktokHashtagPostsConfig",
+      "type": "object"
+    },
+    "ListTiktokPostsConfig": {
+      "description": "Get user posts.",
+      "properties": {
+        "operation": {
+          "const": "list_tiktok_posts",
+          "default": "list_tiktok_posts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "secUid": {
+          "description": "User secUid",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Secuid",
+          "type": "string"
+        },
+        "cursor": {
+          "default": 0,
+          "description": "Page cursor",
+          "minimum": 0,
+          "title": "Cursor",
+          "type": "integer"
+        },
+        "count": {
+          "default": 15,
+          "description": "Number per page, max 15",
+          "maximum": 15,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "coverFormat": {
+          "default": 2,
+          "description": "Cover format",
+          "minimum": 0,
+          "title": "Coverformat",
+          "type": "integer"
+        },
+        "post_item_list_request_type": {
+          "default": 0,
+          "description": "Sort type (deprecated, no longer effective)",
+          "minimum": 0,
+          "title": "Post Item List Request Type",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "secUid"
+      ],
+      "title": "ListTiktokPostsConfig",
+      "type": "object"
+    },
+    "ListTiktokRepostsConfig": {
+      "description": "Get user reposts.",
+      "properties": {
+        "operation": {
+          "const": "list_tiktok_reposts",
+          "default": "list_tiktok_reposts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "secUid": {
+          "description": "User secUid",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Secuid",
+          "type": "string"
+        },
+        "cursor": {
+          "default": 0,
+          "description": "Page cursor",
+          "minimum": 0,
+          "title": "Cursor",
+          "type": "integer"
+        },
+        "count": {
+          "default": 20,
+          "description": "Number per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "coverFormat": {
+          "default": 2,
+          "description": "Cover format",
+          "minimum": 0,
+          "title": "Coverformat",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "secUid"
+      ],
+      "title": "ListTiktokRepostsConfig",
+      "type": "object"
+    },
+    "SearchTiktokUsersConfig": {
+      "description": "Search user.",
+      "properties": {
+        "operation": {
+          "const": "search_tiktok_users",
+          "default": "search_tiktok_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "description": "Search keyword",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Keyword",
+          "type": "string"
+        },
+        "cursor": {
+          "default": 0,
+          "description": "Page cursor",
+          "minimum": 0,
+          "title": "Cursor",
+          "type": "integer"
+        },
+        "search_id": {
+          "default": "",
+          "description": "Search id, need to provide when paging",
+          "maxLength": 4096,
+          "title": "Search Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "keyword"
+      ],
+      "title": "SearchTiktokUsersConfig",
+      "type": "object"
+    },
+    "SearchTiktokVideosConfig": {
+      "description": "Search video.",
+      "properties": {
+        "operation": {
+          "const": "search_tiktok_videos",
+          "default": "search_tiktok_videos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "description": "Search keyword",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Keyword",
+          "type": "string"
+        },
+        "count": {
+          "default": 20,
+          "description": "Number per page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Page cursor",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "search_id": {
+          "default": "",
+          "description": "Search id, need to provide when paging",
+          "maxLength": 4096,
+          "title": "Search Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "keyword"
+      ],
+      "title": "SearchTiktokVideosConfig",
+      "type": "object"
+    },
+    "SearchYoutubeVideosConfig": {
+      "description": "Search video.",
+      "properties": {
+        "operation": {
+          "const": "search_youtube_videos",
+          "default": "search_youtube_videos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_query": {
+          "description": "Search keyword",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "language_code": {
+          "default": "en",
+          "description": "Language code",
+          "maxLength": 4096,
+          "title": "Language Code",
+          "type": "string"
+        },
+        "order_by": {
+          "default": "this_month",
+          "description": "Order by",
+          "maxLength": 4096,
+          "title": "Order By",
+          "type": "string"
+        },
+        "country_code": {
+          "default": "us",
+          "description": "Country code",
+          "maxLength": 4096,
+          "title": "Country Code",
+          "type": "string"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination token",
+          "title": "Continuation Token"
+        }
+      },
+      "required": [
+        "search_query"
+      ],
+      "title": "SearchYoutubeVideosConfig",
+      "type": "object"
+    },
+    "TikHubCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "tik_hub_api_token",
+          "default": "tik_hub_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Tik Hub API Token",
+      "type": "object",
+      "x-credential-instructions": "In TikHub's user center, open API Tokens and create a token. Paste the token here without Bearer. Allow the account-info endpoint and the social-data endpoints you plan to use. API requests may incur TikHub charges.",
+      "x-credential-url": "https://user.tikhub.io"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "extract_tiktok_user_ids": "#/$defs/ExtractTiktokUserIdsConfig",
+          "extract_tiktok_usernames": "#/$defs/ExtractTiktokUsernamesConfig",
+          "extract_tiktok_video_ids": "#/$defs/ExtractTiktokVideoIdsConfig",
+          "get_account": "#/$defs/GetAccountConfig",
+          "get_daily_usage": "#/$defs/GetDailyUsageConfig",
+          "get_instagram_post": "#/$defs/GetInstagramPostConfig",
+          "get_instagram_profile": "#/$defs/GetInstagramProfileConfig",
+          "get_tiktok_hashtag": "#/$defs/GetTiktokHashtagConfig",
+          "get_tiktok_live": "#/$defs/GetTiktokLiveConfig",
+          "get_tiktok_profile": "#/$defs/GetTiktokProfileConfig",
+          "get_tiktok_trending_keywords": "#/$defs/GetTiktokTrendingKeywordsConfig",
+          "get_tiktok_video": "#/$defs/GetTiktokVideoConfig",
+          "list_instagram_posts": "#/$defs/ListInstagramPostsConfig",
+          "list_tiktok_comment_replies": "#/$defs/ListTiktokCommentRepliesConfig",
+          "list_tiktok_comments": "#/$defs/ListTiktokCommentsConfig",
+          "list_tiktok_followers": "#/$defs/ListTiktokFollowersConfig",
+          "list_tiktok_following": "#/$defs/ListTiktokFollowingConfig",
+          "list_tiktok_hashtag_posts": "#/$defs/ListTiktokHashtagPostsConfig",
+          "list_tiktok_posts": "#/$defs/ListTiktokPostsConfig",
+          "list_tiktok_reposts": "#/$defs/ListTiktokRepostsConfig",
+          "search_tiktok_users": "#/$defs/SearchTiktokUsersConfig",
+          "search_tiktok_videos": "#/$defs/SearchTiktokVideosConfig",
+          "search_youtube_videos": "#/$defs/SearchYoutubeVideosConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/GetDailyUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTiktokProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTiktokVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTiktokPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTiktokRepostsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTiktokCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTiktokCommentRepliesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTiktokFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTiktokFollowingConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchTiktokVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchTiktokUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTiktokTrendingKeywordsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTiktokHashtagConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTiktokHashtagPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTiktokLiveConfig"
+        },
+        {
+          "$ref": "#/$defs/GetInstagramProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/ListInstagramPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetInstagramPostConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchYoutubeVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractTiktokVideoIdsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractTiktokUserIdsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtractTiktokUsernamesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TikHubCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Tik-hub Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

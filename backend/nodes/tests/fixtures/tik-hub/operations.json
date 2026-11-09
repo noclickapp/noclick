@@ -1,0 +1,217 @@
+{
+  "get_account": {
+    "config": {},
+    "method": "GET",
+    "path": "/api/v1/tikhub/user/get_user_info",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "get_daily_usage": {
+    "config": {},
+    "method": "GET",
+    "path": "/api/v1/tikhub/user/get_user_daily_usage",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "get_tiktok_profile": {
+    "config": {
+      "uniqueId": "tiktok"
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_user_profile",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "get_tiktok_video": {
+    "config": {
+      "itemId": "7339393672959757570",
+      "region": "US"
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_post_detail",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "list_tiktok_posts": {
+    "config": {
+      "secUid": "MS4wLjABAAAAv7iSuuXDJGDvJkmH_vz1qkDZYo1apxgzaxdBSeIuPiM",
+      "cursor": 0,
+      "count": 15,
+      "coverFormat": 2,
+      "post_item_list_request_type": 0
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_user_post",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "list_tiktok_reposts": {
+    "config": {
+      "secUid": "MS4wLjABAAAAv7iSuuXDJGDvJkmH_vz1qkDZYo1apxgzaxdBSeIuPiM",
+      "cursor": 0,
+      "count": 20,
+      "coverFormat": 2
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_user_repost",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "list_tiktok_comments": {
+    "config": {
+      "aweme_id": "7304809083817774382",
+      "cursor": 0,
+      "count": 20,
+      "current_region": ""
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_post_comment",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "list_tiktok_comment_replies": {
+    "config": {
+      "item_id": "7304809083817774382",
+      "comment_id": "7304877760886588191",
+      "cursor": 0,
+      "count": 20,
+      "current_region": ""
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_post_comment_reply",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "list_tiktok_followers": {
+    "config": {
+      "secUid": "MS4wLjABAAAAv7iSuuXDJGDvJkmH_vz1qkDZYo1apxgzaxdBSeIuPiM",
+      "count": 30,
+      "maxCursor": 0,
+      "minCursor": 0
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_user_fans",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "list_tiktok_following": {
+    "config": {
+      "secUid": "MS4wLjABAAAAv7iSuuXDJGDvJkmH_vz1qkDZYo1apxgzaxdBSeIuPiM",
+      "count": 30,
+      "maxCursor": 0,
+      "minCursor": 0
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_user_follow",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "search_tiktok_videos": {
+    "config": {
+      "keyword": "TikTok",
+      "count": 20,
+      "offset": 0,
+      "search_id": ""
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_search_video",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "search_tiktok_users": {
+    "config": {
+      "keyword": "TikTok",
+      "cursor": 0,
+      "search_id": ""
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_search_user",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "get_tiktok_trending_keywords": {
+    "config": {},
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_trending_searchwords",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "get_tiktok_hashtag": {
+    "config": {
+      "tag_name": "tiktok"
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_tag_detail",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "list_tiktok_hashtag_posts": {
+    "config": {
+      "challengeID": "7551",
+      "count": 30,
+      "cursor": 0
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_tag_post",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "get_tiktok_live": {
+    "config": {
+      "uniqueId": "tiktok"
+    },
+    "method": "GET",
+    "path": "/api/v1/tiktok/web/fetch_user_live_detail",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "get_instagram_profile": {
+    "config": {
+      "username": "instagram"
+    },
+    "method": "GET",
+    "path": "/api/v1/instagram/v2/fetch_user_info",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "list_instagram_posts": {
+    "config": {
+      "username": "instagram"
+    },
+    "method": "GET",
+    "path": "/api/v1/instagram/v2/fetch_user_posts",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "get_instagram_post": {
+    "config": {
+      "code_or_url": "DRhvwVLAHAG"
+    },
+    "method": "GET",
+    "path": "/api/v1/instagram/v2/fetch_post_info",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "search_youtube_videos": {
+    "config": {
+      "search_query": "Minecraft",
+      "language_code": "en",
+      "order_by": "this_month",
+      "country_code": "us"
+    },
+    "method": "GET",
+    "path": "/api/v1/youtube/web/search_video",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "extract_tiktok_video_ids": {
+    "config": {
+      "urls": [
+        "https://www.tiktok.com/@owlcitymusic/video/7218694761253735723"
+      ]
+    },
+    "method": "POST",
+    "path": "/api/v1/tiktok/web/get_all_aweme_id",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "extract_tiktok_user_ids": {
+    "config": {
+      "urls": [
+        "https://www.tiktok.com/@tiktok"
+      ]
+    },
+    "method": "POST",
+    "path": "/api/v1/tiktok/web/get_all_sec_user_id",
+    "source": "https://api.tikhub.io/openapi.json"
+  },
+  "extract_tiktok_usernames": {
+    "config": {
+      "urls": [
+        "https://www.tiktok.com/@tiktok"
+      ]
+    },
+    "method": "POST",
+    "path": "/api/v1/tiktok/web/get_all_unique_id",
+    "source": "https://api.tikhub.io/openapi.json"
+  }
+}
