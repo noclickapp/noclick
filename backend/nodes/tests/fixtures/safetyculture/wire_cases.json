@@ -1,0 +1,215 @@
+{
+  "description": "Synthetic wire fixtures derived from the pinned v1.369.11 contract, not provider-authored response examples.",
+  "contract": "https://developer.mitti.com/openapi/safetyculture-api.json",
+  "cases": [
+    [
+      "list_groups",
+      {},
+      "GET",
+      "/share/connections",
+      null,
+      {
+        "groups": [
+          {
+            "id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0",
+            "name": "Test organization"
+          }
+        ]
+      }
+    ],
+    [
+      "search_inspections",
+      {},
+      "GET",
+      "/audits/search",
+      null,
+      {
+        "count": 1,
+        "total": 2,
+        "audits": [
+          {
+            "audit_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+          }
+        ]
+      }
+    ],
+    [
+      "search_templates",
+      {},
+      "GET",
+      "/templates/search",
+      null,
+      {
+        "count": 0,
+        "total": 0,
+        "templates": []
+      }
+    ],
+    [
+      "get_template",
+      {
+        "template_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+      },
+      "GET",
+      "/templates/v1/templates/80e42a67-01d2-40f5-9e65-011bd09ee0f0",
+      null,
+      {
+        "template": {
+          "template_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+        }
+      }
+    ],
+    [
+      "get_inspection",
+      {
+        "inspection_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+      },
+      "GET",
+      "/inspections/v1/inspections/80e42a67-01d2-40f5-9e65-011bd09ee0f0",
+      null,
+      {
+        "inspection": {
+          "inspection_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+        }
+      }
+    ],
+    [
+      "create_inspection",
+      {
+        "template_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+      },
+      "POST",
+      "/inspections/integration/v1/inspections",
+      {
+        "template_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+      },
+      {
+        "inspection_identity": {
+          "inspection_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0",
+          "organisation_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+        }
+      }
+    ],
+    [
+      "complete_inspection",
+      {
+        "inspection_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+      },
+      "POST",
+      "/inspections/integration/v1/inspections/80e42a67-01d2-40f5-9e65-011bd09ee0f0/complete",
+      {},
+      {}
+    ],
+    [
+      "list_actions",
+      {
+        "page_size": 20,
+        "page_token": "provider-cursor"
+      },
+      "POST",
+      "/tasks/v1/actions/list",
+      {
+        "page_size": 20,
+        "page_token": "provider-cursor"
+      },
+      {
+        "next_page_token": "next-cursor",
+        "actions": []
+      }
+    ],
+    [
+      "get_action",
+      {
+        "action_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+      },
+      "GET",
+      "/tasks/v1/actions/80e42a67-01d2-40f5-9e65-011bd09ee0f0",
+      null,
+      {
+        "action": {
+          "task": {
+            "task_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+          }
+        }
+      }
+    ],
+    [
+      "create_action",
+      {
+        "title": "Inspect equipment",
+        "due_at": "2026-11-10T09:00:00Z"
+      },
+      "POST",
+      "/tasks/v1/actions",
+      {
+        "title": "Inspect equipment",
+        "due_at": "2026-11-10T09:00:00Z"
+      },
+      {
+        "action_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+      }
+    ],
+    [
+      "update_action_title",
+      {
+        "action_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0",
+        "title": "Changed"
+      },
+      "PUT",
+      "/tasks/v1/actions/80e42a67-01d2-40f5-9e65-011bd09ee0f0/title",
+      {
+        "title": "Changed"
+      },
+      {}
+    ],
+    [
+      "update_action_description",
+      {
+        "action_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0",
+        "description": "Inspect weekly"
+      },
+      "PUT",
+      "/tasks/v1/actions/80e42a67-01d2-40f5-9e65-011bd09ee0f0/description",
+      {
+        "description": "Inspect weekly"
+      },
+      {}
+    ],
+    [
+      "update_action_status",
+      {
+        "action_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0",
+        "status_id": "7223d809-553e-4714-a038-62dc98f3fbf3"
+      },
+      "PUT",
+      "/tasks/v1/actions/80e42a67-01d2-40f5-9e65-011bd09ee0f0/status",
+      {
+        "status_id": "7223d809-553e-4714-a038-62dc98f3fbf3"
+      },
+      {}
+    ],
+    [
+      "update_action_priority",
+      {
+        "action_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0",
+        "priority_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+      },
+      "PUT",
+      "/tasks/v1/actions/80e42a67-01d2-40f5-9e65-011bd09ee0f0/priority",
+      {
+        "priority_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+      },
+      {}
+    ],
+    [
+      "update_action_due_date",
+      {
+        "action_id": "80e42a67-01d2-40f5-9e65-011bd09ee0f0"
+      },
+      "PUT",
+      "/tasks/v1/actions/80e42a67-01d2-40f5-9e65-011bd09ee0f0/due_at",
+      {},
+      {}
+    ]
+  ]
+}
