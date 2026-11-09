@@ -1,0 +1,14 @@
+{
+ "provider": "hyros",
+ "ready": true,
+ "blocking": [],
+ "advisory": [],
+ "stats": {
+  "operations": 23,
+  "skipped": 0,
+  "request_ok": 23,
+  "authored_parser_ok": 3,
+  "generated_only": 20,
+  "local_ok": 0
+ }
+}

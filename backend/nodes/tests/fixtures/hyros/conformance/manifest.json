@@ -1,0 +1,13 @@
+{
+  "hyros": {
+    "file": "openapi.yaml",
+    "sha256": "2856418c050355cbb072c52749fe027560cdbd43bd3ecf9512d2f6d72fc23f42",
+    "version": "1.46",
+    "source_url": "https://api-docs.hyros.com/specs/hyros-api.yaml",
+    "node_type": "automation-hyros",
+    "credential": {
+      "credential_type": "hyros_api_key",
+      "api_key": "<token>"
+    }
+  }
+}

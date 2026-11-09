@@ -1,0 +1,509 @@
+{
+  "get_user_info": {
+    "method": "GET",
+    "path": "/api/v1.0/user-info",
+    "config": {},
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": null
+  },
+  "list_leads": {
+    "method": "GET",
+    "path": "/api/v1.0/leads",
+    "config": {},
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "result": [
+        {
+          "email": "lead1@email.com",
+          "id": "40b5af5444756c2b5e666fcb658affd2a4b455bce3711c43f88763147381e368",
+          "creationDate": "2023-01-04T04:36:41-05:00",
+          "lastUpdatedDate": "2023-06-10T09:12:00-05:00",
+          "tags": [
+            "$ettst"
+          ],
+          "adOptimizationConsent": "GRANTED",
+          "currentStage": {
+            "name": "stage1",
+            "date": "2023-01-06T09:12:00-05:00"
+          },
+          "firstSource": {
+            "sourceLinkId": "7bc217f372eab0efa188bb5b05be87460976e68e03b801d53c39bb4ed54c9750",
+            "name": "Facebook Adset",
+            "tag": "@facebook-adset",
+            "clickDate": "2023-01-03T22:14:07-05:00"
+          },
+          "lastSource": {
+            "sourceLinkId": "12cc9f521ba37e33d624927ea7088d91a6b2e39bf1466c281120cde22a4bee84",
+            "name": "Facebook Adset 2",
+            "tag": "@facebook-adset-2",
+            "clickDate": "2023-01-04T01:02:59-05:00"
+          },
+          "originLead": {
+            "email": "originlead@email.com",
+            "id": "9c1e5b0a4f7d2c8e6b3a1f0d9e8c7b6a5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a",
+            "creationDate": "2022-12-30T09:12:00-05:00",
+            "isOriginLead": true,
+            "tags": [
+              "$origin"
+            ]
+          }
+        },
+        {
+          "email": "lead2@email.com",
+          "id": "b5981e8ce87d08773a4ggre985d2d9949153c6fb55cb5075291941d9f23f4282",
+          "creationDate": "2023-01-04T02:37:45-05:00",
+          "ips": [
+            "1.2.3.4"
+          ],
+          "phoneNumbers": [
+            "202-555-0184"
+          ],
+          "adOptimizationConsent": "UNSPECIFIED"
+        }
+      ],
+      "nextPageId": "568fd86587125f55117505312dc72bb8b71e9647a25e5b142d3f28bccd228360",
+      "request_id": "e47941e7104gtrgtrgtr24d0884c6df09407e76fd"
+    }
+  },
+  "create_lead": {
+    "method": "POST",
+    "path": "/api/v1.0/leads",
+    "config": {
+      "body": {
+        "email": "John@doe.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "tags": [
+          "!Tag1"
+        ],
+        "tagsDate": "2023-05-01T10:00:00-03:00",
+        "leadIps": [
+          "172.8.105.28"
+        ],
+        "phoneNumbers": [
+          "1105385366"
+        ],
+        "stage": "MQL",
+        "adOptimizationConsent": "GRANTED"
+      }
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "update_lead": {
+    "method": "PUT",
+    "path": "/api/v1.0/leads",
+    "config": {
+      "body": {
+        "email": "John@doe.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "tags": [
+          "!Tag1"
+        ],
+        "tagsDate": "2023-05-01T10:00:00-03:00",
+        "removeTags": [
+          "!Tag2"
+        ],
+        "leadIps": [
+          "172.8.105.28"
+        ],
+        "phoneNumbers": [
+          "1105385366"
+        ],
+        "adOptimizationConsent": "GRANTED",
+        "leadStage": {
+          "name": "SQL",
+          "date": "2025-11-13T14:00:00-03:00"
+        },
+        "removeLeadStages": [
+          "MQL"
+        ]
+      },
+      "email": "john@doe.com"
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "add_lead_tags": {
+    "method": "POST",
+    "path": "/api/v1.0/leads/tags",
+    "config": {
+      "body": {
+        "ids": [
+          "40b5af5444756c2b5e666fcb658affd2a4b455bce3711c43f88763147381e368"
+        ],
+        "emails": [
+          "lead1@email.com",
+          "lead2@email.com"
+        ],
+        "tags": [
+          "!Tag1"
+        ],
+        "tagsDate": "2023-05-01T10:00:00-03:00"
+      }
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "list_sales": {
+    "method": "GET",
+    "path": "/api/v1.0/sales",
+    "config": {},
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": null
+  },
+  "create_order": {
+    "method": "POST",
+    "path": "/api/v1.0/orders",
+    "config": {
+      "body": {
+        "email": "john@doe.com",
+        "parentEmail": "jane@doe.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "leadIps": [
+          "172.8.105.28"
+        ],
+        "stage": "Customer",
+        "phoneNumbers": [
+          "1105385366"
+        ],
+        "orderId": "56354354588",
+        "cartId": "d49b708b3df50505869ca54f026e7c97a4959b587605f14f91c7e289de9f80bd",
+        "date": "2021-04-16T20:35:00",
+        "priceFormat": "DECIMAL",
+        "currency": "USD",
+        "taxes": 98.6,
+        "shippingCost": 10,
+        "orderDiscount": 3.5,
+        "hardCost": 3.15,
+        "items": [
+          {
+            "name": "T-Shirt - Blue",
+            "price": 15.5,
+            "costOfGoods": 2.25,
+            "externalId": "18294892740",
+            "quantity": 2,
+            "sku": "DEPOR-XYZ-BLN-41",
+            "taxes": 2.5,
+            "itemDiscount": 2.5,
+            "packages": [
+              "Package 1",
+              "Package 2"
+            ],
+            "isRebill": false,
+            "tag": "$premiun-t-shirt-blue",
+            "categoryName": "premium store"
+          }
+        ]
+      }
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "update_order": {
+    "method": "PUT",
+    "path": "/api/v1.0/orders/{id}",
+    "config": {
+      "id": "56354354588",
+      "body": {
+        "stage": "Repeat Customer",
+        "cartId": "d49b708b3df50505869ca54f026e7c97a4959b587605f14f91c7e289de9f80bd",
+        "priceFormat": "DECIMAL",
+        "currency": "USD",
+        "taxes": 98.6,
+        "shippingCost": 10,
+        "orderDiscount": 3.5,
+        "hardCost": 3.15,
+        "items": [
+          {
+            "name": "T-Shirt - Blue",
+            "price": 15.5,
+            "costOfGoods": 2.25,
+            "externalId": "18294892740",
+            "quantity": 2,
+            "sku": "DEPOR-XYZ-BLN-41",
+            "taxes": 2.5,
+            "itemDiscount": 2.5,
+            "isRebill": false,
+            "tag": "$premiun-t-shirt-blue",
+            "categoryName": "premium store"
+          }
+        ]
+      }
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "refund_order": {
+    "method": "DELETE",
+    "path": "/api/v1.0/orders/{id}",
+    "config": {
+      "id": "56354354588"
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "list_calls": {
+    "method": "GET",
+    "path": "/api/v1.0/calls",
+    "config": {},
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": null
+  },
+  "create_call": {
+    "method": "POST",
+    "path": "/api/v1.0/calls",
+    "config": {
+      "body": {
+        "name": "Call 1",
+        "email": "john@doe.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "leadIps": [],
+        "stage": "SQL",
+        "phoneNumbers": [],
+        "date": "2021-04-16T20:35:00",
+        "qualification": "Qualified",
+        "state": "QUALIFIED"
+      }
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "update_calls": {
+    "method": "PUT",
+    "path": "/api/v1.0/calls",
+    "config": {
+      "name": "documented-id",
+      "ids": "\"callId1\",\"callId2\""
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "list_products": {
+    "method": "GET",
+    "path": "/api/v1.0/products",
+    "config": {},
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": null
+  },
+  "create_product": {
+    "method": "POST",
+    "path": "/api/v1.0/products",
+    "config": {
+      "body": {
+        "name": "Product 1",
+        "price": 5.66,
+        "category": "Category 1",
+        "packages": [
+          "Package 1",
+          "Package 2"
+        ]
+      }
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "update_product": {
+    "method": "PUT",
+    "path": "/api/v1.0/products/{id}",
+    "config": {
+      "id": "px-abc123",
+      "body": {
+        "price": 7.99,
+        "customCost": 3.0,
+        "updateHistoricalSales": true
+      }
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "delete_product": {
+    "method": "DELETE",
+    "path": "/api/v1.0/products/{id}",
+    "config": {
+      "id": "px-abc123"
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "list_sources": {
+    "method": "GET",
+    "path": "/api/v1.0/sources",
+    "config": {},
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": null
+  },
+  "create_source": {
+    "method": "POST",
+    "path": "/api/v1.0/sources",
+    "config": {
+      "body": {
+        "name": "Organic ad 1",
+        "category": "Instagram posts",
+        "goal": "opt ins",
+        "trafficSource": "organic",
+        "isOrganic": true
+      }
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "list_tags": {
+    "method": "GET",
+    "path": "/api/v1.0/tags/count",
+    "config": {},
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "result": [
+        {
+          "name": "!tag1",
+          "amount": 12
+        },
+        {
+          "name": "!tag2",
+          "amount": 0
+        },
+        {
+          "name": "$sale1",
+          "amount": 3
+        }
+      ],
+      "nextPageId": "1073e129b360b78db3508bea584d1f295c7851c3d9b290308ac57528b6e38a21",
+      "request_id": "43573923369e40bbafd46925a5c15ff5"
+    }
+  },
+  "list_subscriptions": {
+    "method": "GET",
+    "path": "/api/v1.0/subscriptions",
+    "config": {},
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": null
+  },
+  "create_subscription": {
+    "method": "POST",
+    "path": "/api/v1.0/subscriptions",
+    "config": {
+      "body": {
+        "email": "john@doe.com",
+        "parentEmail": "jane@doe.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "leadIps": [
+          "172.8.105.28"
+        ],
+        "stage": "Customer",
+        "phoneNumbers": [
+          "1105385366"
+        ],
+        "endDate": "2025-03-16T20:35:00",
+        "subscriptionId": "18294892740",
+        "startDate": "2025-01-16T20:35:00",
+        "trialStartDate": "2025-02-16T20:35:00",
+        "planId": "IOJNF0293IRD9023JF0D",
+        "price": 8.9,
+        "periodicity": "MONTH",
+        "status": "ACTIVE",
+        "name": "Monthly Subscription Active"
+      }
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "update_subscription": {
+    "method": "PUT",
+    "path": "/api/v1.0/subscriptions",
+    "config": {
+      "body": {
+        "ids": [
+          "subscriptionId"
+        ],
+        "status": "CANCELED",
+        "name": "Monthly Subscription Active",
+        "startDate": "2025-01-16T20:35:00",
+        "endDate": "2025-03-16T20:35:00",
+        "trialStartDate": "2025-02-16T20:35:00",
+        "trialEndDate": "2025-03-16T20:35:00",
+        "cancelAtDate": "2025-03-16T20:35:00"
+      }
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "request_id": "43573923369e40bbafd46925a5c15ff5",
+      "result": "OK"
+    }
+  },
+  "get_request_status": {
+    "method": "GET",
+    "path": "/api/v1.0/requests/{request_id}",
+    "config": {
+      "request_id": "251b9b0e20a441fba3d3c346579e7105"
+    },
+    "source": "https://api-docs.hyros.com/ai-context/rest-api.txt",
+    "response": {
+      "result": {
+        "requestId": "251b9b0e20a441fba3d3c346579e7105",
+        "status": "PROCESSED",
+        "eventType": "CREATE_LEAD",
+        "createdAt": "2026-07-21T21:17:03Z",
+        "processedAt": "2026-07-21T21:20:41Z",
+        "result": {
+          "email": "lead1@email.com",
+          "id": "40b5af5444756c2b5e666fcb658affd2a4b455bce3711c43f88763147381e368",
+          "creationDate": "2023-01-04T04:36:41-05:00",
+          "isOriginLead": true,
+          "tags": [
+            "$ettst"
+          ],
+          "adOptimizationConsent": "GRANTED",
+          "currentStage": {
+            "name": "SQL",
+            "date": "2023-01-06T09:12:00-05:00"
+          }
+        }
+      },
+      "request_id": "9f2c1d7e4b8a4c1d9e0f5a6b7c8d9e0f"
+    }
+  }
+}
