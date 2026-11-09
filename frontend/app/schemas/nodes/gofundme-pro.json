@@ -1,0 +1,1255 @@
+{
+  "$defs": {
+    "CreateDesignation": {
+      "description": "Create a designation fund.",
+      "properties": {
+        "name": {
+          "maxLength": 127,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "external_reference_id": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Reference Id"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        },
+        "is_complete": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Complete"
+        },
+        "is_default": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Default"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "operation": {
+          "const": "create_designation",
+          "default": "create_designation",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateDesignation",
+      "type": "object"
+    },
+    "CreateSupporter": {
+      "description": "Create an organization supporter from supplied profile fields.",
+      "properties": {
+        "email_address": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Address"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "nickname": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nickname"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "cell_phone": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cell Phone"
+        },
+        "address1": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address1"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "maxLength": 45,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 45,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "operation": {
+          "const": "create_supporter",
+          "default": "create_supporter",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CreateSupporter",
+      "type": "object"
+    },
+    "GetCampaign": {
+      "description": "Read one campaign.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Campaign Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetDesignation": {
+      "description": "Read one designation.",
+      "properties": {
+        "operation": {
+          "const": "get_designation",
+          "default": "get_designation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "designation_id": {
+          "exclusiveMinimum": 0,
+          "title": "Designation Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "designation_id"
+      ],
+      "title": "GetDesignation",
+      "type": "object"
+    },
+    "GetFundraisingPage": {
+      "description": "Read one fundraising-page.",
+      "properties": {
+        "operation": {
+          "const": "get_fundraising_page",
+          "default": "get_fundraising_page",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fundraising_page_id": {
+          "exclusiveMinimum": 0,
+          "title": "Fundraising Page Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fundraising_page_id"
+      ],
+      "title": "GetFundraisingPage",
+      "type": "object"
+    },
+    "GetFundraisingTeam": {
+      "description": "Read one fundraising-team.",
+      "properties": {
+        "operation": {
+          "const": "get_fundraising_team",
+          "default": "get_fundraising_team",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fundraising_team_id": {
+          "exclusiveMinimum": 0,
+          "title": "Fundraising Team Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fundraising_team_id"
+      ],
+      "title": "GetFundraisingTeam",
+      "type": "object"
+    },
+    "GetRecurringDonationPlan": {
+      "description": "Read one recurring-donation-plan.",
+      "properties": {
+        "operation": {
+          "const": "get_recurring_donation_plan",
+          "default": "get_recurring_donation_plan",
+          "title": "Operation",
+          "type": "string"
+        },
+        "recurring_donation_plan_id": {
+          "exclusiveMinimum": 0,
+          "title": "Recurring Donation Plan Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "recurring_donation_plan_id"
+      ],
+      "title": "GetRecurringDonationPlan",
+      "type": "object"
+    },
+    "GetSupporter": {
+      "description": "Read one supporter.",
+      "properties": {
+        "operation": {
+          "const": "get_supporter",
+          "default": "get_supporter",
+          "title": "Operation",
+          "type": "string"
+        },
+        "supporter_id": {
+          "exclusiveMinimum": 0,
+          "title": "Supporter Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "supporter_id"
+      ],
+      "title": "GetSupporter",
+      "type": "object"
+    },
+    "GetTransaction": {
+      "description": "Read one transaction.",
+      "properties": {
+        "operation": {
+          "const": "get_transaction",
+          "default": "get_transaction",
+          "title": "Operation",
+          "type": "string"
+        },
+        "transaction_id": {
+          "exclusiveMinimum": 0,
+          "title": "Transaction Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "transaction_id"
+      ],
+      "title": "GetTransaction",
+      "type": "object"
+    },
+    "GoFundMeProAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "gofundme_pro_access_token",
+          "default": "gofundme_pro_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "organization_id": {
+          "description": "Numeric ID of the organization whose resources to list or create.",
+          "exclusiveMinimum": 0,
+          "title": "Organization ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "access_token",
+        "organization_id"
+      ],
+      "title": "GoFundMe Pro Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing GoFundMe Pro bearer access token and your organization ID. Use a token authorized for that organization's resources and the reads or writes you need. API credentials are created in the organization admin dashboard; the documented client-credentials exchange issues app access tokens. Tokens expire (the documentation example lasts 3600 seconds); replace an expired token here. NoClick checks campaigns when connecting.",
+      "x-credential-url": "https://developers.gofundme.com/pro/overview/authentication"
+    },
+    "ListCampaignFundraisingPages": {
+      "description": "List one page of campaign fundraising-pages.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Results per page (maximum 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_campaign_fundraising_pages",
+          "default": "list_campaign_fundraising_pages",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Campaign Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "ListCampaignFundraisingPages",
+      "type": "object"
+    },
+    "ListCampaignTransactions": {
+      "description": "List one page of campaign transactions.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Results per page (maximum 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_campaign_transactions",
+          "default": "list_campaign_transactions",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Campaign Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "ListCampaignTransactions",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "description": "List one page of organization campaigns.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Results per page (maximum 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListDesignations": {
+      "description": "List one page of organization designations.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Results per page (maximum 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_designations",
+          "default": "list_designations",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListDesignations",
+      "type": "object"
+    },
+    "ListFundraisingPages": {
+      "description": "List one page of organization fundraising-pages.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Results per page (maximum 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_fundraising_pages",
+          "default": "list_fundraising_pages",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFundraisingPages",
+      "type": "object"
+    },
+    "ListFundraisingTeams": {
+      "description": "List one page of organization fundraising-teams.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Results per page (maximum 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_fundraising_teams",
+          "default": "list_fundraising_teams",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFundraisingTeams",
+      "type": "object"
+    },
+    "ListRecurringDonationPlans": {
+      "description": "List one page of organization recurring-donation-plans.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Results per page (maximum 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_recurring_donation_plans",
+          "default": "list_recurring_donation_plans",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListRecurringDonationPlans",
+      "type": "object"
+    },
+    "ListSupporters": {
+      "description": "List one page of organization supporters.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Results per page (maximum 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_supporters",
+          "default": "list_supporters",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSupporters",
+      "type": "object"
+    },
+    "ListTransactions": {
+      "description": "List one page of organization transactions.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Results per page (maximum 100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTransactions",
+      "type": "object"
+    },
+    "UpdateDesignation": {
+      "description": "Update only supplied designation fields.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 127,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "external_reference_id": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Reference Id"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        },
+        "is_complete": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Complete"
+        },
+        "is_default": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Default"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "operation": {
+          "const": "update_designation",
+          "default": "update_designation",
+          "title": "Operation",
+          "type": "string"
+        },
+        "designation_id": {
+          "exclusiveMinimum": 0,
+          "title": "Designation Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "designation_id"
+      ],
+      "title": "UpdateDesignation",
+      "type": "object"
+    },
+    "UpdateSupporter": {
+      "description": "Update only supplied supporter profile fields.",
+      "properties": {
+        "email_address": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Address"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "nickname": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nickname"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "cell_phone": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cell Phone"
+        },
+        "address1": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address1"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "maxLength": 45,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 45,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "operation": {
+          "const": "update_supporter",
+          "default": "update_supporter",
+          "title": "Operation",
+          "type": "string"
+        },
+        "supporter_id": {
+          "exclusiveMinimum": 0,
+          "title": "Supporter Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "supporter_id"
+      ],
+      "title": "UpdateSupporter",
+      "type": "object"
+    },
+    "UpdateTransaction": {
+      "description": "Update donation comments, reporting and visibility fields.",
+      "properties": {
+        "operation": {
+          "const": "update_transaction",
+          "default": "update_transaction",
+          "title": "Operation",
+          "type": "string"
+        },
+        "transaction_id": {
+          "exclusiveMinimum": 0,
+          "title": "Transaction Id",
+          "type": "integer"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comment"
+        },
+        "fundraising_tracking_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fundraising Tracking Code"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "hide_amount": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hide Amount"
+        },
+        "is_anonymous": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Anonymous"
+        }
+      },
+      "required": [
+        "transaction_id"
+      ],
+      "title": "UpdateTransaction",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_designation": "#/$defs/CreateDesignation",
+          "create_supporter": "#/$defs/CreateSupporter",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_designation": "#/$defs/GetDesignation",
+          "get_fundraising_page": "#/$defs/GetFundraisingPage",
+          "get_fundraising_team": "#/$defs/GetFundraisingTeam",
+          "get_recurring_donation_plan": "#/$defs/GetRecurringDonationPlan",
+          "get_supporter": "#/$defs/GetSupporter",
+          "get_transaction": "#/$defs/GetTransaction",
+          "list_campaign_fundraising_pages": "#/$defs/ListCampaignFundraisingPages",
+          "list_campaign_transactions": "#/$defs/ListCampaignTransactions",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_designations": "#/$defs/ListDesignations",
+          "list_fundraising_pages": "#/$defs/ListFundraisingPages",
+          "list_fundraising_teams": "#/$defs/ListFundraisingTeams",
+          "list_recurring_donation_plans": "#/$defs/ListRecurringDonationPlans",
+          "list_supporters": "#/$defs/ListSupporters",
+          "list_transactions": "#/$defs/ListTransactions",
+          "update_designation": "#/$defs/UpdateDesignation",
+          "update_supporter": "#/$defs/UpdateSupporter",
+          "update_transaction": "#/$defs/UpdateTransaction"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/ListSupporters"
+        },
+        {
+          "$ref": "#/$defs/GetSupporter"
+        },
+        {
+          "$ref": "#/$defs/ListTransactions"
+        },
+        {
+          "$ref": "#/$defs/GetTransaction"
+        },
+        {
+          "$ref": "#/$defs/ListDesignations"
+        },
+        {
+          "$ref": "#/$defs/GetDesignation"
+        },
+        {
+          "$ref": "#/$defs/ListRecurringDonationPlans"
+        },
+        {
+          "$ref": "#/$defs/GetRecurringDonationPlan"
+        },
+        {
+          "$ref": "#/$defs/ListFundraisingPages"
+        },
+        {
+          "$ref": "#/$defs/GetFundraisingPage"
+        },
+        {
+          "$ref": "#/$defs/ListFundraisingTeams"
+        },
+        {
+          "$ref": "#/$defs/GetFundraisingTeam"
+        },
+        {
+          "$ref": "#/$defs/CreateSupporter"
+        },
+        {
+          "$ref": "#/$defs/UpdateSupporter"
+        },
+        {
+          "$ref": "#/$defs/CreateDesignation"
+        },
+        {
+          "$ref": "#/$defs/UpdateDesignation"
+        },
+        {
+          "$ref": "#/$defs/UpdateTransaction"
+        },
+        {
+          "$ref": "#/$defs/ListCampaignTransactions"
+        },
+        {
+          "$ref": "#/$defs/ListCampaignFundraisingPages"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoFundMeProAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Gofundme-pro Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
