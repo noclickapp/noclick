@@ -1,0 +1,1276 @@
+{
+  "$defs": {
+    "CancelExecution": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "cancel_execution",
+          "default": "cancel_execution",
+          "title": "Operation",
+          "type": "string"
+        },
+        "identifier": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "CancelExecution",
+      "type": "object"
+    },
+    "CancelNotification": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "cancel_notification",
+          "default": "cancel_notification",
+          "title": "Operation",
+          "type": "string"
+        },
+        "notification_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Notification Id",
+          "type": "string"
+        },
+        "devices": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated device names; omit for all devices.",
+          "title": "Devices"
+        },
+        "onlyScheduled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cancel only scheduled notifications when true.",
+          "title": "Onlyscheduled"
+        }
+      },
+      "required": [
+        "notification_id"
+      ],
+      "title": "CancelNotification",
+      "type": "object"
+    },
+    "CreateSubscription": {
+      "additionalProperties": false,
+      "description": "Register an online action webhook; does not start a NoClick trigger listener.",
+      "properties": {
+        "operation": {
+          "const": "create_subscription",
+          "default": "create_subscription",
+          "title": "Operation",
+          "type": "string"
+        },
+        "actionName": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Actionname",
+          "type": "string"
+        },
+        "url": {
+          "description": "Webhook URL Pushcut will call when this online action is executed.",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "isLocalUrl": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Have the device call this webhook on its local network.",
+          "title": "Islocalurl"
+        }
+      },
+      "required": [
+        "actionName",
+        "url"
+      ],
+      "title": "CreateSubscription",
+      "type": "object"
+    },
+    "DefaultNotificationAction": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "input": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "homekit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Homekit"
+        },
+        "runOnServer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Runonserver"
+        },
+        "online": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Online"
+        },
+        "shortcut": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shortcut"
+        },
+        "urlBackgroundOptions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/URLBackgroundOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "DefaultNotificationAction",
+      "type": "object"
+    },
+    "DeleteSubscription": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_subscription",
+          "default": "delete_subscription",
+          "title": "Operation",
+          "type": "string"
+        },
+        "subscription_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Subscription Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "DeleteSubscription",
+      "type": "object"
+    },
+    "ExecuteAction": {
+      "additionalProperties": false,
+      "description": "Execute exactly one Shortcut or HomeKit scene on an Automation Server.",
+      "properties": {
+        "operation": {
+          "const": "execute_action",
+          "default": "execute_action",
+          "title": "Operation",
+          "type": "string"
+        },
+        "shortcut": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shortcut"
+        },
+        "homekit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Homekit"
+        },
+        "input": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input"
+        },
+        "serverId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Serverid"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timeout in seconds or nowait. NoClick waits up to 60 seconds for HTTP.",
+          "title": "Timeout"
+        },
+        "delay": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delay"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Identifier used to overwrite or cancel a delayed execution.",
+          "title": "Identifier"
+        }
+      },
+      "title": "ExecuteAction",
+      "type": "object"
+    },
+    "GetWidgetDesign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_widget_design",
+          "default": "get_widget_design",
+          "title": "Operation",
+          "type": "string"
+        },
+        "design_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Design Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "design_id"
+      ],
+      "title": "GetWidgetDesign",
+      "type": "object"
+    },
+    "ListDevices": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_devices",
+          "default": "list_devices",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListDevices",
+      "type": "object"
+    },
+    "ListLoggedNotifications": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_logged_notifications",
+          "default": "list_logged_notifications",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListLoggedNotifications",
+      "type": "object"
+    },
+    "ListNotifications": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_notifications",
+          "default": "list_notifications",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListNotifications",
+      "type": "object"
+    },
+    "ListServers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_servers",
+          "default": "list_servers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListServers",
+      "type": "object"
+    },
+    "ListSubscriptions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSubscriptions",
+      "type": "object"
+    },
+    "ListWidgetDesigns": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_widget_designs",
+          "default": "list_widget_designs",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListWidgetDesigns",
+      "type": "object"
+    },
+    "ListWidgets": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_widgets",
+          "default": "list_widgets",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListWidgets",
+      "type": "object"
+    },
+    "MoveImage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "move_image",
+          "default": "move_image",
+          "title": "Operation",
+          "type": "string"
+        },
+        "image_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Image Name",
+          "type": "string"
+        },
+        "destination": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Destination",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_name",
+        "destination"
+      ],
+      "title": "MoveImage",
+      "type": "object"
+    },
+    "NotificationAction": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "input": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "homekit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Homekit"
+        },
+        "runOnServer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Runonserver"
+        },
+        "online": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Online"
+        },
+        "shortcut": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shortcut"
+        },
+        "urlBackgroundOptions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/URLBackgroundOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "keepNotification": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keepnotification"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "NotificationAction",
+      "type": "object"
+    },
+    "PushcutApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "pushcut_api_key",
+          "default": "pushcut_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Pushcut API Key",
+      "type": "object",
+      "x-credential-instructions": "In the Pushcut app, open Account and manage API Keys. Paste an API key here. NoClick sends it in the API-Key header to api.pushcut.io. Listing your devices verifies the connection. Dynamic notification content and widget updates require Pushcut Pro; Automation Server features may require an additional subscription.",
+      "x-credential-url": "https://www.pushcut.io/webapi"
+    },
+    "SendNotification": {
+      "additionalProperties": false,
+      "description": "Send or schedule a defined notification; omitted fields retain its app defaults.",
+      "properties": {
+        "operation": {
+          "const": "send_notification",
+          "default": "send_notification",
+          "title": "Operation",
+          "type": "string"
+        },
+        "notification_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Notification Name",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "input": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse an ID to replace an existing notification on a device.",
+          "title": "Id"
+        },
+        "devices": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Devices"
+        },
+        "image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image"
+        },
+        "imageData": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64-encoded notification image; overrides image.",
+          "title": "Imagedata"
+        },
+        "sound": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "vibrateOnly",
+                "system",
+                "subtle",
+                "question",
+                "jobDone",
+                "problem",
+                "loud",
+                "lasers"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sound",
+          "enum": [
+            "none",
+            "vibrateOnly",
+            "system",
+            "subtle",
+            "question",
+            "jobDone",
+            "problem",
+            "loud",
+            "lasers"
+          ],
+          "x-enum-searchable": true
+        },
+        "actions": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/NotificationAction"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actions"
+        },
+        "defaultAction": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DefaultNotificationAction"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "threadId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Threadid"
+        },
+        "interruptionLevel": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "passive",
+                "timeSensitive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interruptionlevel",
+          "enum": [
+            "active",
+            "passive",
+            "timeSensitive"
+          ],
+          "x-enum-searchable": true
+        },
+        "delay": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For example 10s, 15m or 6h.",
+          "title": "Delay"
+        },
+        "scheduleTimestamp": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp in milliseconds.",
+          "title": "Scheduletimestamp"
+        }
+      },
+      "required": [
+        "notification_name"
+      ],
+      "title": "SendNotification",
+      "type": "object"
+    },
+    "URLBackgroundOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "httpMethod": {
+          "anyOf": [
+            {
+              "enum": [
+                "GET",
+                "HEAD",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE",
+                "OPTIONS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Httpmethod",
+          "enum": [
+            "GET",
+            "HEAD",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+            "OPTIONS"
+          ],
+          "x-enum-searchable": true
+        },
+        "httpContentType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Httpcontenttype"
+        },
+        "httpBody": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Httpbody"
+        },
+        "httpHeader": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/URLHeader"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Httpheader"
+        }
+      },
+      "title": "URLBackgroundOptions",
+      "type": "object"
+    },
+    "URLHeader": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "title": "URLHeader",
+      "type": "object"
+    },
+    "UpdateWidget": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_widget",
+          "default": "update_widget",
+          "title": "Operation",
+          "type": "string"
+        },
+        "widget_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Widget Name",
+          "type": "string"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An existing widget design name.",
+          "title": "Content"
+        },
+        "inputs": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inputs"
+        },
+        "devices": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Devices"
+        },
+        "onTap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WidgetTapAction"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "widget_name"
+      ],
+      "title": "UpdateWidget",
+      "type": "object"
+    },
+    "UploadImage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "upload_image",
+          "default": "upload_image",
+          "title": "Operation",
+          "type": "string"
+        },
+        "image_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Image Name",
+          "type": "string"
+        },
+        "base64Image": {
+          "description": "Base64-encoded PNG, JPEG or GIF image, without a data URL prefix.",
+          "maxLength": 14000000,
+          "minLength": 1,
+          "title": "Base64Image",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_name",
+        "base64Image"
+      ],
+      "title": "UploadImage",
+      "type": "object"
+    },
+    "WidgetTapAction": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "openPushcut",
+            "runShortcut",
+            "openURL",
+            "runHomeKitScene",
+            "runIntegration"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "viewName": {
+          "anyOf": [
+            {
+              "enum": [
+                "notifications",
+                "triggers",
+                "widgets",
+                "tunnel",
+                "account",
+                "runServer"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Viewname",
+          "enum": [
+            "notifications",
+            "triggers",
+            "widgets",
+            "tunnel",
+            "account",
+            "runServer"
+          ],
+          "x-enum-searchable": true
+        },
+        "shortcutName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shortcutname"
+        },
+        "shortcutInput": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shortcutinput"
+        },
+        "shouldRunOnServer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shouldrunonserver"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "sceneName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scenename"
+        },
+        "triggerIdentifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Triggeridentifier"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "title": "WidgetTapAction",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_execution": "#/$defs/CancelExecution",
+          "cancel_notification": "#/$defs/CancelNotification",
+          "create_subscription": "#/$defs/CreateSubscription",
+          "delete_subscription": "#/$defs/DeleteSubscription",
+          "execute_action": "#/$defs/ExecuteAction",
+          "get_widget_design": "#/$defs/GetWidgetDesign",
+          "list_devices": "#/$defs/ListDevices",
+          "list_logged_notifications": "#/$defs/ListLoggedNotifications",
+          "list_notifications": "#/$defs/ListNotifications",
+          "list_servers": "#/$defs/ListServers",
+          "list_subscriptions": "#/$defs/ListSubscriptions",
+          "list_widget_designs": "#/$defs/ListWidgetDesigns",
+          "list_widgets": "#/$defs/ListWidgets",
+          "move_image": "#/$defs/MoveImage",
+          "send_notification": "#/$defs/SendNotification",
+          "update_widget": "#/$defs/UpdateWidget",
+          "upload_image": "#/$defs/UploadImage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListDevices"
+        },
+        {
+          "$ref": "#/$defs/ListNotifications"
+        },
+        {
+          "$ref": "#/$defs/SendNotification"
+        },
+        {
+          "$ref": "#/$defs/CancelNotification"
+        },
+        {
+          "$ref": "#/$defs/ListSubscriptions"
+        },
+        {
+          "$ref": "#/$defs/CreateSubscription"
+        },
+        {
+          "$ref": "#/$defs/DeleteSubscription"
+        },
+        {
+          "$ref": "#/$defs/ExecuteAction"
+        },
+        {
+          "$ref": "#/$defs/CancelExecution"
+        },
+        {
+          "$ref": "#/$defs/UploadImage"
+        },
+        {
+          "$ref": "#/$defs/MoveImage"
+        },
+        {
+          "$ref": "#/$defs/ListWidgets"
+        },
+        {
+          "$ref": "#/$defs/UpdateWidget"
+        },
+        {
+          "$ref": "#/$defs/ListWidgetDesigns"
+        },
+        {
+          "$ref": "#/$defs/GetWidgetDesign"
+        },
+        {
+          "$ref": "#/$defs/ListServers"
+        },
+        {
+          "$ref": "#/$defs/ListLoggedNotifications"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PushcutApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Pushcut Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

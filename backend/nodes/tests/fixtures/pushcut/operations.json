@@ -1,0 +1,19 @@
+[
+  {"config":{"operation":"list_devices"},"method":"GET","path":"/v1/devices","response":[{"id":"Simon's iPhone"}]},
+  {"config":{"operation":"list_notifications"},"method":"GET","path":"/v1/notifications","response":[{"id":"MyNotification","title":"Notification Title"}]},
+  {"config":{"operation":"send_notification","notification_name":"Daily / café","text":"","title":"My dynamic title","devices":["Simon's iPhone"],"actions":[{"name":"Open Website","url":"https://www.pushcut.io"}],"delay":"10s"},"method":"POST","path":"/v1/notifications/Daily%20%2F%20caf%C3%A9","body":{"text":"","title":"My dynamic title","devices":["Simon's iPhone"],"actions":[{"name":"Open Website","url":"https://www.pushcut.io"}],"delay":"10s"},"response":{"id":"notification-42","scheduleTimestamp":1800000000000},"status":202},
+  {"config":{"operation":"cancel_notification","notification_id":"notification-42","devices":"device1,device2","onlyScheduled":false},"method":"DELETE","path":"/v1/submittedNotifications/notification-42","query":{"devices":"device1,device2","onlyScheduled":"false"},"status":204},
+  {"config":{"operation":"list_subscriptions"},"method":"GET","path":"/v1/subscriptions","response":[{"id":"1234567890abc","actionName":"My Online Action","url":"https://my-server/pushcut-hook"}]},
+  {"config":{"operation":"create_subscription","actionName":"My Online Action","url":"https://my-server/pushcut-hook","isLocalUrl":false},"method":"POST","path":"/v1/subscriptions","body":{"actionName":"My Online Action","url":"https://my-server/pushcut-hook","isLocalUrl":false},"response":{"id":"1234567890abc"}},
+  {"config":{"operation":"delete_subscription","subscription_id":"1234567890abc"},"method":"DELETE","path":"/v1/subscriptions/1234567890abc"},
+  {"config":{"operation":"execute_action","shortcut":"My Shortcut","input":"hello + world","timeout":"nowait","identifier":"MyIdentifier","delay":"10s"},"method":"POST","path":"/v1/execute","query":{"shortcut":"My Shortcut","input":"hello + world","timeout":"nowait","identifier":"MyIdentifier","delay":"10s"},"status":202},
+  {"config":{"operation":"cancel_execution","identifier":"MyIdentifier"},"method":"POST","path":"/v1/cancelExecution","query":{"identifier":"MyIdentifier"}},
+  {"config":{"operation":"upload_image","image_name":"MyIcon","base64Image":"R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="},"method":"PUT","path":"/v1/images/MyIcon","body":{"base64Image":"R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="},"status":204},
+  {"config":{"operation":"move_image","image_name":"MyIcon","destination":"Renamed"},"method":"POST","path":"/v1/images/MyIcon/move","body":{"destination":"Renamed"},"response":{"name":"Renamed"}},
+  {"config":{"operation":"list_widgets"},"method":"GET","path":"/v1/widgets","response":[{"id":"MyWidget"}]},
+  {"config":{"operation":"update_widget","widget_name":"MyWidget","inputs":{"input0":"Hello"},"onTap":{"action":"runShortcut","shortcutName":"My Shortcut","shouldRunOnServer":false}},"method":"POST","path":"/v1/widgets/MyWidget","body":{"inputs":{"input0":"Hello"},"onTap":{"action":"runShortcut","shortcutName":"My Shortcut","shouldRunOnServer":false}},"response":{"message":"Success!"}},
+  {"config":{"operation":"list_widget_designs"},"method":"GET","path":"/v1/widgetDesigns","response":[{"id":"MyDesign"}]},
+  {"config":{"operation":"get_widget_design","design_id":"MyDesign"},"method":"GET","path":"/v1/widgetDesigns/MyDesign","response":{"id":"MyDesign","name":"MyDesign","preferredSize":"small","component":{"type":"text","text":"Hello"}}},
+  {"config":{"operation":"list_servers"},"method":"GET","path":"/v2/servers","response":[{"id":"device-42","name":"Kitchen","isConnected":true}]},
+  {"config":{"operation":"list_logged_notifications"},"method":"GET","path":"/v2/loggedNotifications","response":[{"name":"MyNotification","sentAt":"2019-07-31T13:23:25Z"}]}
+]

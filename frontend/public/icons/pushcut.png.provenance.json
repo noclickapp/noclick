@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/pushcut.png",
+  "source": "https://www.pushcut.io/assets/pushcut-icon.png (official Pushcut API info.x-logo.url: https://api.pushcut.io/openapi.yaml)",
+  "license": "Pushcut brand mark used nominatively to identify the connected service; trademark rights remain with Pushcut.",
+  "sha256": "7ff8d51a18ff4c803e41468fd3eb396e46c1202ff1aa29cddfdc3d2da0538ffb"
+}
