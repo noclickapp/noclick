@@ -1,0 +1,368 @@
+[
+  {
+    "operation": "get_page_info",
+    "config": {},
+    "method": "GET",
+    "path": "/fb/page/getInfo",
+    "response": {
+      "status": "success",
+      "data": {
+        "id": 123,
+        "name": "Fixture account"
+      }
+    }
+  },
+  {
+    "operation": "list_tags",
+    "config": {},
+    "method": "GET",
+    "path": "/fb/page/getTags",
+    "response": {
+      "status": "success",
+      "data": [
+        {
+          "id": 123,
+          "name": "Fixture"
+        }
+      ]
+    }
+  },
+  {
+    "operation": "create_tag",
+    "config": {
+      "name": "Contact"
+    },
+    "method": "POST",
+    "path": "/fb/page/createTag",
+    "response": {
+      "status": "success",
+      "data": {
+        "tag": {
+          "id": 123,
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "operation": "delete_tag",
+    "config": {
+      "tag_id": 123
+    },
+    "method": "POST",
+    "path": "/fb/page/removeTag",
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "list_flows",
+    "config": {},
+    "method": "GET",
+    "path": "/fb/page/getFlows",
+    "response": {
+      "status": "success",
+      "data": {
+        "flows": [
+          {
+            "ns": "content123",
+            "name": "Welcome",
+            "folder_id": 0
+          }
+        ],
+        "folders": []
+      }
+    }
+  },
+  {
+    "operation": "list_custom_fields",
+    "config": {},
+    "method": "GET",
+    "path": "/fb/page/getCustomFields",
+    "response": {
+      "status": "success",
+      "data": [
+        {
+          "id": 123,
+          "name": "Fixture"
+        }
+      ]
+    }
+  },
+  {
+    "operation": "create_custom_field",
+    "config": {
+      "caption": "Contact",
+      "type": "text",
+      "description": "Contact"
+    },
+    "method": "POST",
+    "path": "/fb/page/createCustomField",
+    "response": {
+      "status": "success",
+      "data": {
+        "field": {
+          "id": 123,
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "operation": "list_bot_fields",
+    "config": {},
+    "method": "GET",
+    "path": "/fb/page/getBotFields",
+    "response": {
+      "status": "success",
+      "data": [
+        {
+          "id": 123,
+          "name": "Fixture"
+        }
+      ]
+    }
+  },
+  {
+    "operation": "create_bot_field",
+    "config": {
+      "name": "Contact",
+      "type": "text",
+      "description": "Contact",
+      "value": "text"
+    },
+    "method": "POST",
+    "path": "/fb/page/createBotField",
+    "response": {
+      "status": "success",
+      "data": {
+        "field": {
+          "id": 123,
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "operation": "set_bot_field",
+    "config": {
+      "field_id": 123,
+      "field_value": "text"
+    },
+    "method": "POST",
+    "path": "/fb/page/setBotField",
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "set_bot_field_by_name",
+    "config": {
+      "field_name": "Contact",
+      "field_value": "text"
+    },
+    "method": "POST",
+    "path": "/fb/page/setBotFieldByName",
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "list_growth_tools",
+    "config": {},
+    "method": "GET",
+    "path": "/fb/page/getGrowthTools",
+    "response": {
+      "status": "success",
+      "data": [
+        {
+          "id": 123,
+          "name": "Fixture"
+        }
+      ]
+    }
+  },
+  {
+    "operation": "get_subscriber",
+    "config": {
+      "subscriber_id": 123
+    },
+    "method": "GET",
+    "path": "/fb/subscriber/getInfo",
+    "response": {
+      "status": "success",
+      "data": {
+        "id": 123,
+        "name": "Fixture account"
+      }
+    }
+  },
+  {
+    "operation": "find_subscribers_by_name",
+    "config": {
+      "name": "Contact"
+    },
+    "method": "GET",
+    "path": "/fb/subscriber/findByName",
+    "response": {
+      "status": "success",
+      "data": [
+        {
+          "id": 123,
+          "name": "Fixture"
+        }
+      ]
+    }
+  },
+  {
+    "operation": "find_subscribers_by_custom_field",
+    "config": {
+      "field_id": 123,
+      "search_value": "Contact"
+    },
+    "method": "GET",
+    "path": "/fb/subscriber/findByCustomField",
+    "response": {
+      "status": "success",
+      "data": [
+        {
+          "id": 123,
+          "name": "Fixture"
+        }
+      ]
+    }
+  },
+  {
+    "operation": "find_subscriber_by_system_field",
+    "config": {
+      "email": "fixture@example.test"
+    },
+    "method": "GET",
+    "path": "/fb/subscriber/findBySystemField",
+    "response": {
+      "status": "success",
+      "data": {
+        "id": 123,
+        "name": "Fixture account"
+      }
+    }
+  },
+  {
+    "operation": "add_subscriber_tag",
+    "config": {
+      "subscriber_id": 123,
+      "tag_id": 123
+    },
+    "method": "POST",
+    "path": "/fb/subscriber/addTag",
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "add_subscriber_tag_by_name",
+    "config": {
+      "subscriber_id": 123,
+      "tag_name": "Contact"
+    },
+    "method": "POST",
+    "path": "/fb/subscriber/addTagByName",
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "remove_subscriber_tag",
+    "config": {
+      "subscriber_id": 123,
+      "tag_id": 123
+    },
+    "method": "POST",
+    "path": "/fb/subscriber/removeTag",
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "remove_subscriber_tag_by_name",
+    "config": {
+      "subscriber_id": 123,
+      "tag_name": "Contact"
+    },
+    "method": "POST",
+    "path": "/fb/subscriber/removeTagByName",
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "set_subscriber_custom_field",
+    "config": {
+      "subscriber_id": 123,
+      "field_id": 123,
+      "field_value": "text"
+    },
+    "method": "POST",
+    "path": "/fb/subscriber/setCustomField",
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "set_subscriber_custom_field_by_name",
+    "config": {
+      "subscriber_id": 123,
+      "field_name": "Contact",
+      "field_value": "text"
+    },
+    "method": "POST",
+    "path": "/fb/subscriber/setCustomFieldByName",
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "create_subscriber",
+    "config": {
+      "email": "fixture@example.test",
+      "has_opt_in_email": false
+    },
+    "method": "POST",
+    "path": "/fb/subscriber/createSubscriber",
+    "response": {
+      "status": "success",
+      "data": {
+        "id": 123,
+        "name": "Fixture account"
+      }
+    }
+  },
+  {
+    "operation": "update_subscriber",
+    "config": {
+      "subscriber_id": 123,
+      "first_name": "Changed"
+    },
+    "method": "POST",
+    "path": "/fb/subscriber/updateSubscriber",
+    "response": {
+      "status": "success",
+      "data": {
+        "id": 123,
+        "name": "Fixture account"
+      }
+    }
+  },
+  {
+    "operation": "send_flow",
+    "config": {
+      "subscriber_id": 123,
+      "flow_ns": "Contact"
+    },
+    "method": "POST",
+    "path": "/fb/sending/sendFlow",
+    "response": {
+      "status": "success"
+    }
+  }
+]
