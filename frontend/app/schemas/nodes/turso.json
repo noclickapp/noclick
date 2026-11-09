@@ -1,0 +1,852 @@
+{
+  "$defs": {
+    "CreateDatabase": {
+      "additionalProperties": false,
+      "description": "Create an empty database in an existing group.",
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_database",
+          "default": "create_database",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-]+$",
+          "title": "Name",
+          "type": "string"
+        },
+        "group": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group",
+          "type": "string"
+        },
+        "size_limit": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bytes or a size such as 256mb.",
+          "title": "Size Limit"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "name",
+        "group"
+      ],
+      "title": "CreateDatabase",
+      "type": "object"
+    },
+    "CreateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Name",
+          "type": "string"
+        },
+        "location": {
+          "description": "Location code from List Locations, for example aws-us-east-1.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "name",
+        "location"
+      ],
+      "title": "CreateGroup",
+      "type": "object"
+    },
+    "DeleteDatabase": {
+      "additionalProperties": false,
+      "description": "Delete this database. Turso's configured recovery policy applies.",
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "database_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-]+$",
+          "title": "Database Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_database",
+          "default": "delete_database",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "database_name"
+      ],
+      "title": "DeleteDatabase",
+      "type": "object"
+    },
+    "DeleteGroup": {
+      "additionalProperties": false,
+      "description": "Delete a group and its databases; Turso's configured recovery policy applies.",
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "group_name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "group_name"
+      ],
+      "title": "DeleteGroup",
+      "type": "object"
+    },
+    "GetDatabase": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "database_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-]+$",
+          "title": "Database Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_database",
+          "default": "get_database",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "database_name"
+      ],
+      "title": "GetDatabase",
+      "type": "object"
+    },
+    "GetDatabaseConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "database_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-]+$",
+          "title": "Database Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_database_configuration",
+          "default": "get_database_configuration",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "database_name"
+      ],
+      "title": "GetDatabaseConfiguration",
+      "type": "object"
+    },
+    "GetDatabaseStats": {
+      "additionalProperties": false,
+      "description": "Read query text and row counts; this does not execute SQL.",
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "database_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-]+$",
+          "title": "Database Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_database_stats",
+          "default": "get_database_stats",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "database_name"
+      ],
+      "title": "GetDatabaseStats",
+      "type": "object"
+    },
+    "GetDatabaseUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "database_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-]+$",
+          "title": "Database Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_database_usage",
+          "default": "get_database_usage",
+          "title": "Operation",
+          "type": "string"
+        },
+        "from_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive ISO 8601 timestamp; omitted uses Turso's current calendar month.",
+          "title": "From Time"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End ISO 8601 timestamp; omitted uses Turso's current calendar month.",
+          "title": "To Time"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "database_name"
+      ],
+      "title": "GetDatabaseUsage",
+      "type": "object"
+    },
+    "GetGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "group_name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "group_name"
+      ],
+      "title": "GetGroup",
+      "type": "object"
+    },
+    "GetGroupConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "group_name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_group_configuration",
+          "default": "get_group_configuration",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "group_name"
+      ],
+      "title": "GetGroupConfiguration",
+      "type": "object"
+    },
+    "GetOrganization": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug"
+      ],
+      "title": "GetOrganization",
+      "type": "object"
+    },
+    "GetOrganizationUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_organization_usage",
+          "default": "get_organization_usage",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug"
+      ],
+      "title": "GetOrganizationUsage",
+      "type": "object"
+    },
+    "ListDatabaseInstances": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "database_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-]+$",
+          "title": "Database Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_database_instances",
+          "default": "list_database_instances",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "database_name"
+      ],
+      "title": "ListDatabaseInstances",
+      "type": "object"
+    },
+    "ListDatabases": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_databases",
+          "default": "list_databases",
+          "title": "Operation",
+          "type": "string"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent database ID to list branches.",
+          "title": "Parent"
+        }
+      },
+      "required": [
+        "organization_slug"
+      ],
+      "title": "ListDatabases",
+      "type": "object"
+    },
+    "ListGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug"
+      ],
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "ListLocations": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListLocations",
+      "type": "object"
+    },
+    "ListOrganizationMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_organization_members",
+          "default": "list_organization_members",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_slug"
+      ],
+      "title": "ListOrganizationMembers",
+      "type": "object"
+    },
+    "ListOrganizations": {
+      "additionalProperties": false,
+      "description": "List organizations visible to the Platform API token.",
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListOrganizations",
+      "type": "object"
+    },
+    "TursoAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "turso_api_token",
+          "default": "turso_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Turso API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste a Turso Platform API token, not a database SQL token. Use the Turso CLI to mint a token scoped to your organization. Grant read for database reads, org:read for members and billing usage, and the write scopes your workflow needs. Group creation/deletion requires an organization-level token. NoClick sends it only to api.turso.tech using Bearer authentication.",
+      "x-credential-url": "https://docs.turso.tech/api-reference/authentication"
+    },
+    "UpdateDatabaseConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "database_name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-]+$",
+          "title": "Database Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_database_configuration",
+          "default": "update_database_configuration",
+          "title": "Operation",
+          "type": "string"
+        },
+        "size_limit": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Limit"
+        },
+        "block_reads": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Block Reads"
+        },
+        "block_writes": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Block Writes"
+        },
+        "delete_protection": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delete Protection"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "database_name"
+      ],
+      "title": "UpdateDatabaseConfiguration",
+      "type": "object"
+    },
+    "UpdateGroupConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "organization_slug": {
+          "description": "Organization slug, or your username for a personal organization.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Organization Slug",
+          "type": "string"
+        },
+        "group_name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_group_configuration",
+          "default": "update_group_configuration",
+          "title": "Operation",
+          "type": "string"
+        },
+        "delete_protection": {
+          "description": "Whether Turso prevents deleting this group and its databases.",
+          "title": "Delete Protection",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "organization_slug",
+        "group_name",
+        "delete_protection"
+      ],
+      "title": "UpdateGroupConfiguration",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_database": "#/$defs/CreateDatabase",
+          "create_group": "#/$defs/CreateGroup",
+          "delete_database": "#/$defs/DeleteDatabase",
+          "delete_group": "#/$defs/DeleteGroup",
+          "get_database": "#/$defs/GetDatabase",
+          "get_database_configuration": "#/$defs/GetDatabaseConfiguration",
+          "get_database_stats": "#/$defs/GetDatabaseStats",
+          "get_database_usage": "#/$defs/GetDatabaseUsage",
+          "get_group": "#/$defs/GetGroup",
+          "get_group_configuration": "#/$defs/GetGroupConfiguration",
+          "get_organization": "#/$defs/GetOrganization",
+          "get_organization_usage": "#/$defs/GetOrganizationUsage",
+          "list_database_instances": "#/$defs/ListDatabaseInstances",
+          "list_databases": "#/$defs/ListDatabases",
+          "list_groups": "#/$defs/ListGroups",
+          "list_locations": "#/$defs/ListLocations",
+          "list_organization_members": "#/$defs/ListOrganizationMembers",
+          "list_organizations": "#/$defs/ListOrganizations",
+          "update_database_configuration": "#/$defs/UpdateDatabaseConfiguration",
+          "update_group_configuration": "#/$defs/UpdateGroupConfiguration"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListOrganizations"
+        },
+        {
+          "$ref": "#/$defs/GetOrganization"
+        },
+        {
+          "$ref": "#/$defs/ListLocations"
+        },
+        {
+          "$ref": "#/$defs/ListDatabases"
+        },
+        {
+          "$ref": "#/$defs/CreateDatabase"
+        },
+        {
+          "$ref": "#/$defs/GetDatabase"
+        },
+        {
+          "$ref": "#/$defs/DeleteDatabase"
+        },
+        {
+          "$ref": "#/$defs/GetDatabaseConfiguration"
+        },
+        {
+          "$ref": "#/$defs/UpdateDatabaseConfiguration"
+        },
+        {
+          "$ref": "#/$defs/ListDatabaseInstances"
+        },
+        {
+          "$ref": "#/$defs/GetDatabaseUsage"
+        },
+        {
+          "$ref": "#/$defs/GetDatabaseStats"
+        },
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/CreateGroup"
+        },
+        {
+          "$ref": "#/$defs/GetGroup"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroup"
+        },
+        {
+          "$ref": "#/$defs/GetGroupConfiguration"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroupConfiguration"
+        },
+        {
+          "$ref": "#/$defs/ListOrganizationMembers"
+        },
+        {
+          "$ref": "#/$defs/GetOrganizationUsage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TursoAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Turso Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
