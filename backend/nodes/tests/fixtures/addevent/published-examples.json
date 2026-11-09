@@ -1,0 +1,375 @@
+{
+  "source": "https://docs.addevent.com/openapi/67a502770ad46a0037534f4c",
+  "version": "v2.14.0",
+  "examples": {
+    "invalid-request-body": {
+      "error_message": "There are a number of validation errors with the request",
+      "error_id": "00c3317d-ecdc-449d-84f5-8562bc1ff831",
+      "property_validation_errors": [
+        {
+          "name": "rrule",
+          "reason": "Not a valid RRule value"
+        },
+        {
+          "name": "title",
+          "reason": "Cannot have blank value"
+        }
+      ]
+    },
+    "invalid-query-parameters": {
+      "error_message": "Attribute Validation Error",
+      "invalid_param_responses": [
+        {
+          "name": "sort_by",
+          "reason": "Invalid sorting field provided"
+        }
+      ],
+      "error_id": "1-655f6e3c-2597d3171a91c593213d3e40"
+    },
+    "event-landing-page-templates": [
+      {
+        "id": "QnTHySwB6570",
+        "name": "Custom template 1",
+        "template_type": "event-landing",
+        "created": "2023-11-15 16:36:56",
+        "modified": "2023-11-15 19:50:44"
+      },
+      {
+        "id": "lpzuCRrA5894",
+        "name": "Custom template 2",
+        "template_type": "event-landing",
+        "created": "2023-06-30 13:12:17",
+        "modified": "2023-11-16 20:03:14"
+      }
+    ],
+    "calendar-landing-page-templates": [
+      {
+        "id": "oRmEBVdL6572",
+        "name": "Custom template 1",
+        "template_type": "calendar-landing",
+        "created": "2023-11-15 17:46:17",
+        "modified": "2023-11-18 23:57:14"
+      },
+      {
+        "id": "twqAxrYI5625",
+        "name": "Custom template 2",
+        "template_type": "calendar-landing",
+        "created": "2023-04-27 21:59:26",
+        "modified": "2023-04-27 21:59:26"
+      }
+    ],
+    "embeddable-calendar-templates": [
+      {
+        "id": "nzUuwJFv6571",
+        "name": "Custom template 1",
+        "template_type": "calendar-embed",
+        "created": "2023-11-15 16:59:37",
+        "modified": "2023-11-18 21:23:51"
+      },
+      {
+        "id": "jzshbPyO6159",
+        "name": "Custom template 2",
+        "template_type": "calendar-embed",
+        "created": "2023-09-06 04:04:16",
+        "modified": "2023-11-16 20:03:14"
+      }
+    ],
+    "rsvp-forms": [
+      {
+        "id": "8709VYGmXZOkJh",
+        "name": "Untitled RSVP form",
+        "created": "2023-11-10 01:57:20",
+        "modified": "2023-11-10 01:57:20"
+      },
+      {
+        "id": "8449QAPBysYekr",
+        "name": "form with additional question",
+        "created": "2023-10-16 17:40:44",
+        "modified": "2023-10-16 17:41:09"
+      }
+    ],
+    "timezones": [
+      {
+        "name": "Pacific/Midway",
+        "local_time": "2023-11-23 04:34:46",
+        "is_dst": false,
+        "utc_offset": -39600,
+        "utc_offset_hours": "-11:00",
+        "tzid_abbr": "SST"
+      },
+      {
+        "name": "Europe/Dublin",
+        "local_time": "2023-11-23 15:34:46",
+        "is_dst": true,
+        "utc_offset": 0,
+        "utc_offset_hours": "+00:00",
+        "tzid_abbr": "GMT"
+      }
+    ],
+    "event-body": {
+      "title": "Event name",
+      "datetime_start": "2024-06-01 10:00",
+      "datetime_end": "2024-06-01 11:00",
+      "timezone": "America/Los_Angeles",
+      "recurring_rule": "FREQ=DAILY;COUNT=2",
+      "landing_page_template_id": "default",
+      "rsvp_form_id": "default"
+    },
+    "event-min": {
+      "id": "evt-0f571af553d8437eb6a9ce22384fdcba",
+      "calendar_id": 1687480957492930,
+      "unique_key": "de16434237",
+      "title": "Event name",
+      "internal_name": "",
+      "datetime_start": "2023-07-02 15:00:00",
+      "datetime_end": "2023-07-02 16:00:00",
+      "recurring_rule": "",
+      "all_day_event": false,
+      "timezone": "America/Los_Angeles",
+      "description": "",
+      "location": "",
+      "location_id": 0,
+      "organizer_name": "",
+      "organizer_email": "",
+      "reminder": 30,
+      "free_busy": "default",
+      "color": 1,
+      "landing_page_template_id": "default",
+      "rsvp_enabled": false,
+      "rsvp": {
+        "settings": {
+          "rsvp_form_id": "default",
+          "seats_limited": false,
+          "seats_limit": 50,
+          "inactive": false,
+          "notify_emails": "",
+          "notify_frequency": "none"
+        },
+        "stats": {
+          "seats_left": 50,
+          "count_total": 0,
+          "count_going": 0,
+          "count_maybe": 0,
+          "count_cantgo": 0
+        }
+      },
+      "custom_data": {},
+      "link_long": "https://www.addevent.com/event/de16434237",
+      "link_short": "https://evt.to/aougueghw",
+      "created": "2023-07-19 23:46:13",
+      "modified": "2023-07-19 23:46:37"
+    },
+    "event-all": {
+      "id": "evt-0f571af553d8437eb6a9ce22384fdcba",
+      "calendar_id": 1687480957492930,
+      "unique_key": "de16434237",
+      "title": "Event Title",
+      "internal_name": "Internal Event Name",
+      "datetime_start": "2023-07-02 15:00:00",
+      "datetime_end": "2023-07-02 16:00:00",
+      "recurring_rule": "FREQ=DAILY;COUNT=2",
+      "all_day_event": false,
+      "timezone": "America/Los_Angeles",
+      "description": "This is a description of what the event is about.",
+      "location": "https://www.zoom.com/join/123456",
+      "location_id": 0,
+      "organizer_name": "Firstname Lastname",
+      "organizer_email": "emailaddress@addevent.com",
+      "reminder": 30,
+      "free_busy": "default",
+      "color": 1,
+      "landing_page_template_id": "QnTHySwB6570",
+      "rsvp_enabled": true,
+      "rsvp": {
+        "settings": {
+          "rsvp_form_id": "8709VYGmXZOkJh",
+          "seats_limited": false,
+          "seats_limit": 50,
+          "inactive": false,
+          "notify_emails": "",
+          "notify_frequency": "none"
+        },
+        "stats": {
+          "seats_left": 50,
+          "count_total": 20,
+          "count_going": 15,
+          "count_maybe": 3,
+          "count_cantgo": 2
+        }
+      },
+      "custom_data": {
+        "internal_id": 123456,
+        "bannerimage": "https://cdn.example.org/banner1.jpg"
+      },
+      "link_long": "https://www.addevent.com/event/de16434237",
+      "link_short": "https://evt.to/aougueghw",
+      "created": "2023-07-19 23:46:13",
+      "modified": "2023-07-19 23:46:37"
+    },
+    "event-search": {
+      "pagination": {
+        "current_page": 1,
+        "next_page": 1,
+        "previous_page": 1,
+        "total_items": 2,
+        "total_pages": 1,
+        "page_size": 10
+      },
+      "links": {
+        "next_page_url": "https://api.addevent.com/calevent/v2/events&page=1",
+        "previous_page_url": "https://api.addevent.com/calevent/v2/events&page=1"
+      },
+      "events": [
+        {
+          "$ref": "#/components/examples/event-min/value"
+        },
+        {
+          "$ref": "#/components/examples/event-all/value"
+        }
+      ]
+    },
+    "calendar-body": {
+      "title": "Calendar name",
+      "weekday_begin": "sunday",
+      "timezone": "America/Los_Angeles",
+      "palette_id": "default",
+      "landing_page_template_id": "default",
+      "embeddable_calendar_template_id": "default"
+    },
+    "calendar-all": {
+      "id": 1701121309493871,
+      "unique_key": "1d493871",
+      "title": "Calendar title",
+      "internal_name": "",
+      "description": "",
+      "is_default_calendar": true,
+      "timezone": "America/Los_Angeles",
+      "weekday_begin": "sunday",
+      "calendar_color": 1,
+      "palette_id": "default",
+      "landing_page_template_id": "default",
+      "embeddable_calendar_template_id": "default",
+      "stats": {
+        "subscribers_active_count": 25,
+        "subscribers_all_count": 32,
+        "events_count": 12
+      },
+      "created": "2023-08-20 21:41:48",
+      "modified": "2023-11-27 21:43:17",
+      "link_long": "https://www.addevent.dev/calendar/1d493871",
+      "link_short": "https://cal.ae/usgdhaw",
+      "custom_data": {}
+    },
+    "calendar-search": {
+      "pagination": {
+        "current_page": 1,
+        "next_page": 1,
+        "previous_page": 1,
+        "total_items": 1,
+        "total_pages": 1,
+        "page_size": 10
+      },
+      "links": {
+        "next_page_url": "https://api.addevent.com/calevent/v2/calendars&page=1",
+        "previous_page_url": "https://api.addevent.com/calevent/v2/calendars&page=1"
+      },
+      "calendars": [
+        {
+          "$ref": "#/components/examples/calendar-all/value"
+        }
+      ]
+    },
+    "rsvp-attendee-body": {
+      "email": "emailaddress@addevent.com",
+      "attending": "going",
+      "rsvp_form_data": {
+        "name": "Firstname Lastname"
+      }
+    },
+    "attendee-all": {
+      "id": "MNerUCWg1191",
+      "event_id": "evt-3a4a096ca3804b09b0839a6a2be2f8df",
+      "email": "emailaddress@addevent.com",
+      "rsvp_form_data": {
+        "name": "Firstname Lastname"
+      },
+      "rsvp_form_labels": {
+        "name": "Name",
+        "email": "Email"
+      },
+      "geo_location": {
+        "ip": "",
+        "city": "San Francisco",
+        "region": "California",
+        "country": "US",
+        "location": "37.781500, -122.402400",
+        "postal": 94107
+      },
+      "created": "2023-11-10 05:33:31",
+      "modified": "2023-11-20 16:00:01"
+    },
+    "attendee-search": {
+      "pagination": {
+        "current_page": 1,
+        "next_page": 1,
+        "previous_page": 1,
+        "total_items": 1,
+        "total_pages": 1,
+        "page_size": 10
+      },
+      "links": {
+        "next_page_url": "https://api.addevent.com/calevent/v2/rsvps&page=1",
+        "previous_page_url": "https://api.addevent.com/calevent/v2/rsvps&page=1"
+      },
+      "rsvps": [
+        {
+          "$ref": "#/components/examples/attendee-all/value"
+        }
+      ]
+    },
+    "subscriber-all": {
+      "id": "uf1699543535yj",
+      "calendar_id": 1698814128493614,
+      "subscriber_status": "active",
+      "calendar_type": "Google",
+      "sync_count": 18,
+      "synced": "2023-11-27 15:22:20",
+      "subscriber_form_data": {
+        "name": "Firstname Lastname",
+        "email": "emailaddress@addevent.com"
+      },
+      "subscriber_form_labels": {
+        "name": "Name",
+        "email": "Email"
+      },
+      "geo_location": {
+        "ip": "",
+        "city": "San Francisco",
+        "region": "California",
+        "country": "US",
+        "location": "37.781500, -122.402400",
+        "postal": 94107
+      },
+      "created": "2023-11-09 15:25:52"
+    },
+    "subscriber-search": {
+      "pagination": {
+        "current_page": 1,
+        "next_page": 1,
+        "previous_page": 1,
+        "total_items": 1,
+        "total_pages": 1,
+        "page_size": 10
+      },
+      "links": {
+        "next_page_url": "https://api.addevent.com/calevent/v2/subscribers&page=1",
+        "previous_page_url": "https://api.addevent.com/calevent/v2/subscribers&page=1"
+      },
+      "subscribers": [
+        {
+          "$ref": "#/components/examples/subscriber-all/value"
+        }
+      ]
+    }
+  }
+}
