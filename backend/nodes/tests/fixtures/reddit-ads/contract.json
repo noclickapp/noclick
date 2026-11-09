@@ -1,0 +1,175 @@
+{
+  "source": "https://ads-api.reddit.com/api/v3/openapi.json",
+  "version": "3",
+  "sha256": "76dc57359e265041d0c05cedb35a7569becc7ee107bf5e225b70b8497afb4078",
+  "operations": {
+    "get_me": {
+      "method": "GET",
+      "path": "/me",
+      "operation_id": "get_me",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "list_my_businesses": {
+      "method": "GET",
+      "path": "/me/businesses",
+      "operation_id": "list_my_businesses",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "get_business": {
+      "method": "GET",
+      "path": "/businesses/{business_id}",
+      "operation_id": "get_business",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "list_ad_accounts": {
+      "method": "GET",
+      "path": "/businesses/{business_id}/ad_accounts",
+      "operation_id": "list_ad_accounts_in_business",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "get_ad_account": {
+      "method": "GET",
+      "path": "/ad_accounts/{ad_account_id}",
+      "operation_id": "get_ad_account",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "list_campaigns": {
+      "method": "GET",
+      "path": "/ad_accounts/{ad_account_id}/campaigns",
+      "operation_id": "list_user_campaigns",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "get_campaign": {
+      "method": "GET",
+      "path": "/campaigns/{campaign_id}",
+      "operation_id": "get_campaign",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "create_campaign": {
+      "method": "POST",
+      "path": "/ad_accounts/{ad_account_id}/campaigns",
+      "operation_id": "create_campaign",
+      "scopes": [
+        "adsedit"
+      ]
+    },
+    "update_campaign": {
+      "method": "PATCH",
+      "path": "/campaigns/{campaign_id}",
+      "operation_id": "update_campaign",
+      "scopes": [
+        "adsedit"
+      ]
+    },
+    "list_ad_groups": {
+      "method": "GET",
+      "path": "/ad_accounts/{ad_account_id}/ad_groups",
+      "operation_id": "list_user_ad_groups",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "get_ad_group": {
+      "method": "GET",
+      "path": "/ad_groups/{ad_group_id}",
+      "operation_id": "get_ad_group",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "create_ad_group": {
+      "method": "POST",
+      "path": "/ad_accounts/{ad_account_id}/ad_groups",
+      "operation_id": "create_ad_group",
+      "scopes": [
+        "adsedit"
+      ]
+    },
+    "update_ad_group": {
+      "method": "PATCH",
+      "path": "/ad_groups/{ad_group_id}",
+      "operation_id": "update_ad_group",
+      "scopes": [
+        "adsedit"
+      ]
+    },
+    "list_ads": {
+      "method": "GET",
+      "path": "/ad_accounts/{ad_account_id}/ads",
+      "operation_id": "list_user_ads",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "get_ad": {
+      "method": "GET",
+      "path": "/ads/{ad_id}",
+      "operation_id": "get_ad",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "create_ad": {
+      "method": "POST",
+      "path": "/ad_accounts/{ad_account_id}/ads",
+      "operation_id": "create_ad",
+      "scopes": [
+        "adsedit"
+      ]
+    },
+    "update_ad": {
+      "method": "PATCH",
+      "path": "/ads/{ad_id}",
+      "operation_id": "update_ad",
+      "scopes": [
+        "adsedit"
+      ]
+    },
+    "get_report": {
+      "method": "POST",
+      "path": "/ad_accounts/{ad_account_id}/reports",
+      "operation_id": "get_report",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "list_custom_audiences": {
+      "method": "GET",
+      "path": "/ad_accounts/{ad_account_id}/custom_audiences",
+      "operation_id": "list_user_custom_audiences",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "list_pixels": {
+      "method": "GET",
+      "path": "/ad_accounts/{ad_account_id}/pixels",
+      "operation_id": "list_pixels_by_ad_account",
+      "scopes": [
+        "adsread"
+      ]
+    },
+    "list_profiles": {
+      "method": "GET",
+      "path": "/ad_accounts/{ad_account_id}/profiles",
+      "operation_id": "list_profiles_by_ad_account",
+      "scopes": [
+        "adsread"
+      ]
+    }
+  }
+}
