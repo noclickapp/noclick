@@ -1,0 +1,523 @@
+{
+  "source": "https://adminapi.eventify.io/swg/eventify-swagger-editor.json",
+  "version": "4.0.1",
+  "sha256": "b601fad730e2bfbc1288e026790c604fe0f176d262842ff42e194f957363624f",
+  "schemas": {
+    "CreateAppUserRequestBodySchema": {
+      "type": "object",
+      "required": [
+        "email",
+        "eventid",
+        "firstname",
+        "lastname",
+        "userpassword",
+        "form_number",
+        "isadmin",
+        "isactive",
+        "isnetworking",
+        "profileurl",
+        "details_form",
+        "exhibitoridfk",
+        "speakeridfk",
+        "sponsoridfk",
+        "usercategory",
+        "userinterests",
+        "userwaitlistmode"
+      ],
+      "properties": {
+        "email": {
+          "$ref": "#/components/schemas/EmailStringSchema"
+        },
+        "eventid": {
+          "$ref": "#/components/schemas/IntegerSchema"
+        },
+        "firstname": {
+          "$ref": "#/components/schemas/StringSchema"
+        },
+        "lastname": {
+          "$ref": "#/components/schemas/StringSchema"
+        },
+        "userpassword": {
+          "$ref": "#/components/schemas/StringSchema"
+        },
+        "form_number": {
+          "type": "integer",
+          "example": 123456
+        },
+        "isactive": {
+          "type": "integer",
+          "example": 1
+        },
+        "isadmin": {
+          "type": "integer",
+          "example": 0
+        },
+        "isnetworking": {
+          "type": "integer",
+          "example": 1
+        },
+        "profileurl": {
+          "$ref": "#/components/schemas/StringSchema"
+        },
+        "coverimage": {
+          "$ref": "#/components/schemas/StringSchema"
+        },
+        "audiourl": {
+          "$ref": "#/components/schemas/StringSchema"
+        },
+        "details_form": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/StringSchema"
+              },
+              "value": {
+                "$ref": "#/components/schemas/StringSchema"
+              }
+            }
+          }
+        },
+        "exhibitoridfk": {
+          "type": "integer",
+          "example": null
+        },
+        "speakeridfk": {
+          "type": "integer",
+          "example": null
+        },
+        "sponsoridfk": {
+          "type": "integer",
+          "example": null
+        },
+        "usercategory": {
+          "type": "string",
+          "example": "123,456,789"
+        },
+        "userinterests": {
+          "type": "string",
+          "example": "123,456,789"
+        },
+        "userwaitlistmode": {
+          "type": "integer",
+          "example": 0
+        },
+        "sendwelcomeemail": {
+          "type": "boolean",
+          "example": false
+        },
+        "checkedin": {
+          "type": "boolean",
+          "example": true
+        },
+        "checkintime": {
+          "type": "string",
+          "example": "2026-09-31 23:59:59"
+        },
+        "checkedout": {
+          "type": "boolean",
+          "example": true
+        },
+        "checkouttime": {
+          "type": "string",
+          "example": "2026-09-31 23:59:59"
+        }
+      }
+    },
+    "CreateAppUserSchemaSuccess": {
+      "description": "The response from the service with table response",
+      "type": "object",
+      "properties": {
+        "is_error": {
+          "type": "integer",
+          "example": 0
+        },
+        "message": {
+          "type": "string",
+          "example": "User Successfully Created"
+        },
+        "userresponse": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "object",
+              "properties": {
+                "resource": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "status_code": {
+              "type": "integer",
+              "example": 200
+            }
+          }
+        },
+        "welcome_email_response": {
+          "type": "string"
+        }
+      }
+    },
+    "SessionCreateSchema": {
+      "type": "object",
+      "required": [
+        "eventid",
+        "apptabid",
+        "scheduledateid",
+        "scheduletrackid",
+        "title",
+        "starttime",
+        "endtime",
+        "sessiontype",
+        "colorid",
+        "checkintype"
+      ],
+      "properties": {
+        "eventid": {
+          "type": "integer"
+        },
+        "apptabid": {
+          "$ref": "#/components/schemas/IntegerSchema"
+        },
+        "scheduledateid": {
+          "type": "integer"
+        },
+        "scheduletrackid": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "coverimage": {
+          "type": "string",
+          "example": null
+        },
+        "location": {
+          "type": "string"
+        },
+        "starttime": {
+          "type": "string",
+          "example": "yyyy-MM-dd HH:mm:ss"
+        },
+        "endtime": {
+          "type": "string",
+          "example": "yyyy-MM-dd HH:mm:ss"
+        },
+        "colorid": {
+          "type": "integer"
+        },
+        "speakerid": {
+          "type": "integer"
+        },
+        "checkintype": {
+          "type": "string",
+          "enum": [
+            "nocheckinneeded",
+            "showqr",
+            "scanqr"
+          ]
+        },
+        "sessiontype": {
+          "type": "string",
+          "enum": [
+            "general",
+            "private",
+            "additional",
+            "addprivate",
+            "rsvp"
+          ]
+        },
+        "tickets_linked": {
+          "$ref": "#/components/schemas/CSVIDSchema"
+        },
+        "rsvp": {
+          "type": "boolean"
+        },
+        "rsvp_capacity": {
+          "type": "string",
+          "enum": [
+            "unlimited",
+            "fixed"
+          ]
+        },
+        "capacity": {
+          "type": "integer",
+          "example": 50
+        },
+        "wait_list_enabled": {
+          "type": "boolean"
+        },
+        "tags": {
+          "$ref": "#/components/schemas/CSVIDSchema"
+        },
+        "file1": {
+          "type": "string",
+          "example": null
+        },
+        "file2": {
+          "type": "string",
+          "example": null
+        },
+        "file3": {
+          "type": "string",
+          "example": null
+        },
+        "file4": {
+          "type": "string",
+          "example": null
+        },
+        "file5": {
+          "type": "string",
+          "example": null
+        },
+        "videolink": {
+          "type": "string",
+          "example": null
+        },
+        "additionalvideo1": {
+          "type": "string"
+        },
+        "restrictstarttime1": {
+          "type": "boolean"
+        },
+        "additionalvideo2": {
+          "type": "string"
+        },
+        "restrictstarttime2": {
+          "type": "boolean"
+        },
+        "additionalvideo3": {
+          "type": "string"
+        },
+        "restrictstarttime3": {
+          "type": "boolean"
+        },
+        "additionalvideo4": {
+          "type": "string"
+        },
+        "restrictstarttime4": {
+          "type": "boolean"
+        },
+        "additionalvideo5": {
+          "type": "string"
+        },
+        "restrictstarttime5": {
+          "type": "boolean"
+        }
+      }
+    },
+    "EventListSchema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "appuserid": {
+            "$ref": "#/components/schemas/IntegerSchema"
+          },
+          "username": {
+            "$ref": "#/components/schemas/StringSchema"
+          },
+          "firstname": {
+            "$ref": "#/components/schemas/StringSchema"
+          },
+          "lastname": {
+            "$ref": "#/components/schemas/StringSchema"
+          },
+          "eventid": {
+            "$ref": "#/components/schemas/IntegerSchema"
+          },
+          "eventname": {
+            "$ref": "#/components/schemas/StringSchema"
+          }
+        }
+      }
+    },
+    "SalesOrdersListSchema": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "integer",
+          "example": 1
+        },
+        "count": {
+          "type": "integer",
+          "example": 32
+        },
+        "invoice_base_url": {
+          "type": "string",
+          "description": "CDN base URL to prefix onto any relative invoice path.",
+          "example": "https://cdn.eventify.io/"
+        },
+        "resource": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SalesOrderCommonItemSchema"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "couponcode": {
+                    "$ref": "#/components/schemas/StringSchema"
+                  },
+                  "vat": {
+                    "$ref": "#/components/schemas/StringSchema"
+                  },
+                  "company_details": {
+                    "type": "object",
+                    "properties": {
+                      "company_name": {
+                        "$ref": "#/components/schemas/StringSchema"
+                      },
+                      "street": {
+                        "$ref": "#/components/schemas/StringSchema"
+                      },
+                      "city": {
+                        "$ref": "#/components/schemas/StringSchema"
+                      },
+                      "postal": {
+                        "$ref": "#/components/schemas/StringSchema"
+                      },
+                      "country": {
+                        "$ref": "#/components/schemas/StringSchema"
+                      }
+                    }
+                  },
+                  "notes": {
+                    "$ref": "#/components/schemas/StringSchema"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "is_error": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Error code."
+        },
+        "message": {
+          "type": "string",
+          "description": "String description of the error."
+        }
+      }
+    },
+    "IntegerSchema": {
+      "description": "Simple ids",
+      "type": "integer",
+      "example": 12345678901234
+    },
+    "StringSchema": {
+      "description": "Simple string",
+      "type": "string"
+    },
+    "EmailStringSchema": {
+      "description": "Stringified JSON",
+      "type": "string",
+      "example": "abc@def.ghi"
+    },
+    "CreateSpeakerRequestBodySchema": {
+      "type": "object",
+      "required": [
+        "eventid",
+        "firstname",
+        "lastname"
+      ],
+      "properties": {
+        "eventid": {
+          "type": "integer"
+        },
+        "firstname": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "company": {
+          "type": "string"
+        },
+        "position": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "profileimage": {
+          "type": "string"
+        },
+        "displayorder": {
+          "type": "integer"
+        },
+        "file1": {
+          "type": "string",
+          "example": "<Double quote link or null>"
+        },
+        "file2": {
+          "type": "string"
+        },
+        "file3": {
+          "type": "string",
+          "example": null
+        },
+        "file4": {
+          "type": "string"
+        },
+        "file5": {
+          "type": "string",
+          "example": null
+        },
+        "categoryid": {
+          "$ref": "#/components/schemas/IntegerSchema"
+        },
+        "feature_position": {
+          "type": "integer"
+        },
+        "createuser": {
+          "type": "boolean",
+          "example": false
+        },
+        "attendee_form_number": {
+          "type": "integer"
+        },
+        "attendee_details_form": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "attendee_creation_description": "Brief description of the expected payload:\n- _eventid_ is **mandatory**.\n- _email, firstname, lastname, form_number_ should not be **null**.\n- _isadmin, isactive, isnetworking, userwaitlistmode_ are integer binary, so expected values are 0 or 1.\n- _userpassword_ length should be **minimum 6** and should not include special characters.\n- _form_number_ is a unique number assigned to the forms. Possible values can be fetched from _/myForms_ response in **Checkout Forms** section.\n- _details_form_ item order should match the same _details_form_ fetched from _/myForms_.  Follow given example to avoid fetal errors. If form item property `is_section` is **true** or `input_type` is  **dynamicfield**, then `value` property is not required in payload. For other items, `value` should never be  null, instead use either blank string or blank array accordingly.\n- _profileurl, coverimage, audiourl_ is not mandatory. Expected accessible URL or **null**.\n- _externalqr_token_ is an optional external QR code access property. Expected accessible URL or **null**.\n- _exhibitoridfk, sponsoridfk, speakeridfk_ are the respective ids to which this attendee will be associated to. Expected valid ids or **null**.\n- _usercategory_ is expected as a comma separated user category id string value. It **should not be null or empty string**. The category ids can be found in the fetched response of **/events/user_categories** in **Event** section. One **mandatory id** should be one that is assigned for a _attendee type_ user.\n- _userinterests_ is also expected as a comma separated user interest id string value. It can be null or empty string. The interest ids can be found in the fetched response of **/events/interest** in **Event** section.\n- _sendwelcomeemail_ is a boolean property. If `true` then we'll send an **Welcome Email** to them.\n- _checkedin, checkintime_ are for user checking in status for the event. These are not mandatory properties but provided in example for better understanding. Expected usage based on requirements. _checkintime_ is date-time combination as `yyyy-MM-dd HH:mm:ss` format. _checkedout, checkouttime_ are also similar.\n\n  Please note if flag property _checkedin or checkedout_ flag is added in the payload, _checkintime or checkouttime_ properties also becomes mandatory otherwise errors will be thrown.",
+  "speaker_update_description": "Here all the possible properties are mentioned. For patch not all these properties are mandatory. Send **only the properties that you want to update** along with these **mandatory properties**:\n- _speakerid_\n- _eventid_\n\nBasic payload properties are as defined.\n- `speakerid, eventid` is **mandatory**.\n- _firstname, lastname_ should not be empty.\n- for _files_ share you urls.\n- _createuser_ is a boolean field (true/false). Send this only for one time if this speaker is not created as attendee before. Once done, send value **false**.\n  - _attendee_form_number_ is only needed if `createuser` is **true** with email sent.\n  - _attendee_details_form_ is only needed if `createuser` is **true**. It is the same JSON response used to create an attendee. Send the same _form response_ here. \n    **NOTE**: The `form_number` and the `details_form` should always match or else it will cause error.\n- _email_ is **mandatory** if `createuser` is **True**."
+}
