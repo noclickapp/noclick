@@ -1,0 +1,25 @@
+{
+  "event_id": "42f14eec-d1dc-11ea-8bbb-080027c1cea9",
+  "event_type": "engagement",
+  "datetime": "2019-12-20T07:54:54+0000",
+  "url": "https://long.url.net/wiki/spaces/longer/data/665092146/",
+  "bitlink": "write4plebs.com/pendorama",
+  "passed_params": "",
+  "country": "US",
+  "referrer": "direct",
+  "device_type": "Desktop",
+  "webhook_guid": "W0123456789",
+  "organization_guid": "O1234567890",
+  "group_guid": "B0123456789",
+  "tags": [
+    "tagA",
+    "tagB"
+  ],
+  "time_zone": "America/New_York",
+  "references": {
+    "bitlink": "https://api-ssl.bitly.com/v4/bitlinks/write4plebs.com/pendorama",
+    "group": "https://api-ssl.bitly.com/v4/groups/B0123456789",
+    "organization": "https://api-ssl.bitly.com/v4/organizations/O1234567890",
+    "webhook": "https://api-ssl.bitly.com/v4/webhooks/W0123456789"
+  }
+}
