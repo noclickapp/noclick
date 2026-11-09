@@ -1,0 +1,1820 @@
+{
+  "source": "https://backend.botconversa.com.br/swagger/?format=openapi",
+  "operations": {
+    "list_bot_fields": {
+      "method": "GET",
+      "path": "/bot_fields/",
+      "operation": {
+        "operationId": "bot_fields_list",
+        "summary": "Retrieve list of bot fields",
+        "description": "type\n0 - string\n1 - float\n2 - date\n3 - datetime",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "required": [
+                  "key"
+                ],
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "title": "ID",
+                    "type": "integer",
+                    "readOnly": true
+                  },
+                  "key": {
+                    "title": "Key",
+                    "type": "string",
+                    "maxLength": 30,
+                    "minLength": 1
+                  },
+                  "type": {
+                    "title": "Type",
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1,
+                      2,
+                      3
+                    ]
+                  },
+                  "value": {
+                    "title": "Value",
+                    "type": "string",
+                    "readOnly": true
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "bot_fields"
+        ]
+      }
+    },
+    "list_campaigns": {
+      "method": "GET",
+      "path": "/campaigns/",
+      "operation": {
+        "operationId": "campaigns_list",
+        "summary": "Retrieve list of campaigns",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "required": [
+                  "name",
+                  "text",
+                  "share_type"
+                ],
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "title": "ID",
+                    "type": "integer",
+                    "readOnly": true
+                  },
+                  "bot": {
+                    "title": "Bot",
+                    "type": "integer",
+                    "x-nullable": true
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                  },
+                  "text": {
+                    "title": "Text",
+                    "type": "string",
+                    "maxLength": 300,
+                    "x-nullable": true
+                  },
+                  "share_type": {
+                    "title": "Share type",
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1
+                    ]
+                  },
+                  "to_flow": {
+                    "title": "To flow",
+                    "type": "integer",
+                    "x-nullable": true
+                  },
+                  "full_url": {
+                    "title": "Full url",
+                    "type": "string",
+                    "format": "uri",
+                    "maxLength": 1024,
+                    "x-nullable": true
+                  },
+                  "qr_code": {
+                    "title": "QR code",
+                    "type": "string",
+                    "readOnly": true,
+                    "x-nullable": true,
+                    "format": "uri"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
+    "list_custom_fields": {
+      "method": "GET",
+      "path": "/custom_fields/",
+      "operation": {
+        "operationId": "custom_fields_list",
+        "summary": "Retrieve list of custom fields",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "title": "ID",
+                    "type": "integer",
+                    "readOnly": true
+                  },
+                  "key": {
+                    "title": "Key",
+                    "type": "string",
+                    "readOnly": true,
+                    "minLength": 1
+                  },
+                  "type": {
+                    "title": "Type",
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1,
+                      2,
+                      3
+                    ],
+                    "readOnly": true
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "custom_fields"
+        ]
+      }
+    },
+    "list_flows": {
+      "method": "GET",
+      "path": "/flows/",
+      "operation": {
+        "operationId": "flows_list",
+        "summary": "Retrieve list of flows",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "title": "ID",
+                    "type": "integer",
+                    "readOnly": true
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string",
+                    "readOnly": true,
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "flows"
+        ]
+      }
+    },
+    "list_managers": {
+      "method": "GET",
+      "path": "/managers/",
+      "operation": {
+        "operationId": "managers_list",
+        "summary": "Retrieve list of managers",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "managers"
+        ]
+      }
+    },
+    "list_sequences": {
+      "method": "GET",
+      "path": "/sequences/",
+      "operation": {
+        "operationId": "sequences_list",
+        "summary": "Retrieve list of sequences",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "required": [
+                  "name"
+                ],
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "title": "ID",
+                    "type": "integer",
+                    "readOnly": true
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "sequences"
+        ]
+      }
+    },
+    "list_tags": {
+      "method": "GET",
+      "path": "/tags/",
+      "operation": {
+        "operationId": "tags_list",
+        "summary": "Retrieve list of tags",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "required": [
+                  "name"
+                ],
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "title": "ID",
+                    "type": "integer",
+                    "readOnly": true
+                  },
+                  "name": {
+                    "title": "Name",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "tags"
+        ]
+      }
+    },
+    "list_subscribers": {
+      "method": "GET",
+      "path": "/subscribers/",
+      "operation": {
+        "operationId": "subscribers_list",
+        "summary": "Retrieve paginated list of subscribers",
+        "description": "",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": [
+                "count",
+                "results"
+              ],
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "previous": {
+                  "type": "string",
+                  "format": "uri",
+                  "x-nullable": true
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "title": "ID",
+                        "type": "integer",
+                        "readOnly": true
+                      },
+                      "full_name": {
+                        "title": "Full name",
+                        "type": "string",
+                        "maxLength": 255
+                      },
+                      "first_name": {
+                        "title": "First name",
+                        "type": "string",
+                        "maxLength": 255
+                      },
+                      "last_name": {
+                        "title": "Last name",
+                        "type": "string",
+                        "maxLength": 255
+                      },
+                      "phone": {
+                        "title": "Phone",
+                        "type": "string",
+                        "maxLength": 128,
+                        "minLength": 1,
+                        "x-nullable": true
+                      },
+                      "ddd": {
+                        "title": "DDD",
+                        "type": "string",
+                        "maxLength": 10
+                      },
+                      "created_at": {
+                        "title": "Created at",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                      },
+                      "live_chat": {
+                        "title": "Live chat",
+                        "type": "string",
+                        "readOnly": true
+                      },
+                      "referrer": {
+                        "title": "Referrer",
+                        "type": "string",
+                        "readOnly": true
+                      },
+                      "referral_count": {
+                        "title": "Referral count",
+                        "type": "string",
+                        "readOnly": true
+                      },
+                      "campaigns": {
+                        "title": "Campaigns",
+                        "type": "string",
+                        "readOnly": true
+                      },
+                      "tags": {
+                        "title": "Tags",
+                        "type": "string",
+                        "readOnly": true
+                      },
+                      "variables": {
+                        "title": "Variables",
+                        "type": "string",
+                        "readOnly": true
+                      },
+                      "sequences": {
+                        "title": "Sequences",
+                        "type": "string",
+                        "readOnly": true
+                      },
+                      "wa_username": {
+                        "title": "WhatsApp Username",
+                        "type": "string",
+                        "maxLength": 35,
+                        "x-nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscribers"
+        ]
+      }
+    },
+    "get_campaign": {
+      "method": "GET",
+      "path": "/campaigns/{campaign_id}/",
+      "operation": {
+        "operationId": "campaigns_read",
+        "summary": "Retrieve info about campaign",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "required": [
+                "name",
+                "text",
+                "share_type"
+              ],
+              "type": "object",
+              "properties": {
+                "id": {
+                  "title": "ID",
+                  "type": "integer",
+                  "readOnly": true
+                },
+                "bot": {
+                  "title": "Bot",
+                  "type": "integer",
+                  "x-nullable": true
+                },
+                "name": {
+                  "title": "Name",
+                  "type": "string",
+                  "maxLength": 255,
+                  "minLength": 1
+                },
+                "text": {
+                  "title": "Text",
+                  "type": "string",
+                  "maxLength": 300,
+                  "x-nullable": true
+                },
+                "share_type": {
+                  "title": "Share type",
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1
+                  ]
+                },
+                "to_flow": {
+                  "title": "To flow",
+                  "type": "integer",
+                  "x-nullable": true
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
+    "find_subscriber_by_phone": {
+      "method": "GET",
+      "path": "/subscriber/get_by_phone/{phone}/",
+      "operation": {
+        "operationId": "subscriber_get_by_phone_read",
+        "summary": "Find subscriber by phone",
+        "description": "Phone number can be with or without +",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "title": "ID",
+                  "type": "integer",
+                  "readOnly": true
+                },
+                "full_name": {
+                  "title": "Full name",
+                  "type": "string",
+                  "maxLength": 255
+                },
+                "first_name": {
+                  "title": "First name",
+                  "type": "string",
+                  "maxLength": 255
+                },
+                "last_name": {
+                  "title": "Last name",
+                  "type": "string",
+                  "maxLength": 255
+                },
+                "phone": {
+                  "title": "Phone",
+                  "type": "string",
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "x-nullable": true
+                },
+                "ddd": {
+                  "title": "DDD",
+                  "type": "string",
+                  "maxLength": 10
+                },
+                "created_at": {
+                  "title": "Created at",
+                  "type": "string",
+                  "format": "date-time",
+                  "readOnly": true
+                },
+                "live_chat": {
+                  "title": "Live chat",
+                  "type": "string",
+                  "readOnly": true
+                },
+                "referrer": {
+                  "title": "Referrer",
+                  "type": "string",
+                  "readOnly": true
+                },
+                "referral_count": {
+                  "title": "Referral count",
+                  "type": "string",
+                  "readOnly": true
+                },
+                "campaigns": {
+                  "title": "Campaigns",
+                  "type": "string",
+                  "readOnly": true
+                },
+                "tags": {
+                  "title": "Tags",
+                  "type": "string",
+                  "readOnly": true
+                },
+                "variables": {
+                  "title": "Variables",
+                  "type": "string",
+                  "readOnly": true
+                },
+                "sequences": {
+                  "title": "Sequences",
+                  "type": "string",
+                  "readOnly": true
+                },
+                "wa_username": {
+                  "title": "WhatsApp Username",
+                  "type": "string",
+                  "maxLength": 35,
+                  "x-nullable": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "create_subscriber": {
+      "method": "POST",
+      "path": "/subscriber/",
+      "operation": {
+        "operationId": "subscriber_create",
+        "summary": "Create subscriber",
+        "description": "\nWhen creating a subscriber for WhatsApp messaging, you must ensure that the contact has\nprovided explicit consent (opt-in) to receive messages, in compliance with\n**Meta's WhatsApp Business Policy** and **BotConversa Terms of Service**.\nThe field `has_opt_in_whatsapp` is **required**.\nSubscribers cannot be created without providing this field and setting it to `true`.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "phone": {
+                  "description": "Phone",
+                  "type": "string"
+                },
+                "first_name": {
+                  "description": "First name",
+                  "type": "string"
+                },
+                "last_name": {
+                  "description": "Last name",
+                  "type": "string"
+                },
+                "has_opt_in_whatsapp": {
+                  "description": "Has opt in Whatsapp",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "Invalid data"
+              }
+            }
+          },
+          "401": {
+            "description": "Subscriber with this phone already exist",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "Invalid data"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "send_message": {
+      "method": "POST",
+      "path": "/subscriber/{subscriber_id}/send_message/",
+      "operation": {
+        "operationId": "subscriber_send_message_create",
+        "summary": "Send message to subscriber",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "description": "Type of message. Should be \"text\" or \"file\"",
+                  "type": "string"
+                },
+                "value": {
+                  "description": "Message. Can be text, float or link to image or file",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "send_flow": {
+      "method": "POST",
+      "path": "/subscriber/{subscriber_id}/send_flow/",
+      "operation": {
+        "operationId": "subscriber_send_flow_create",
+        "summary": "Send flow to subscriber",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "flow": {
+                  "description": "Flow id",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "change_conversation_status": {
+      "method": "POST",
+      "path": "/subscriber/{subscriber_id}/change_conversation_status/",
+      "operation": {
+        "operationId": "subscriber_change_conversation_status_create",
+        "summary": "Open/close conversation with subscriber",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "open_conversation": {
+                  "description": "True - open, False - close. Required.",
+                  "type": "boolean"
+                },
+                "manager": {
+                  "description": "Id of manager to set converstion to. Optional.",
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "set_custom_field": {
+      "method": "POST",
+      "path": "/subscriber/{subscriber_id}/custom_fields/{custom_field_id}/",
+      "operation": {
+        "operationId": "subscriber_custom_fields_create",
+        "summary": "Set value to custom field",
+        "description": "\nValue depends on type of custom field.\nString:\n    value - should be string\nNumber:\n    value - should be Number (may be provided as a string)\nDate:\n    value - should be string in format  %d.%m.%Y\nDateTime:\n    value - should be string in format  %d.%m.%Y %H:%M:%S\n",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "description": "string or number or date(dd.mm.yyyy) or datetime(dd.mm.yyyy HH:MM:SS)",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "clear_custom_field": {
+      "method": "DELETE",
+      "path": "/subscriber/{subscriber_id}/custom_fields/{custom_field_id}/",
+      "operation": {
+        "operationId": "subscriber_custom_fields_delete",
+        "summary": "Clear custom field",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "set_bot_field": {
+      "method": "POST",
+      "path": "/bot_fields/{bot_variable_id}/",
+      "operation": {
+        "operationId": "bot_fields_create",
+        "summary": "Set value to bot field",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "description": "Value of custom field",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "Format of value is not correct"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "bot_fields"
+        ]
+      }
+    },
+    "delete_subscriber": {
+      "method": "DELETE",
+      "path": "/subscriber/{subscriber_id}/delete/",
+      "operation": {
+        "operationId": "subscriber_delete_delete",
+        "summary": "Delete subscriber",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "add_subscriber_tag": {
+      "method": "POST",
+      "path": "/subscriber/{subscriber_id}/tags/{tag_id}/",
+      "operation": {
+        "operationId": "subscriber_tags_create",
+        "summary": "Add tag to subscriber",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "remove_subscriber_tag": {
+      "method": "DELETE",
+      "path": "/subscriber/{subscriber_id}/tags/{tag_id}/",
+      "operation": {
+        "operationId": "subscriber_tags_delete",
+        "summary": "Remove tag from subscriber",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "add_subscriber_campaign": {
+      "method": "POST",
+      "path": "/subscriber/{subscriber_id}/campaigns/{campaign_id}/",
+      "operation": {
+        "operationId": "subscriber_campaigns_create",
+        "summary": "Add subscriber to campaign",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "remove_subscriber_campaign": {
+      "method": "DELETE",
+      "path": "/subscriber/{subscriber_id}/campaigns/{campaign_id}/",
+      "operation": {
+        "operationId": "subscriber_campaigns_delete",
+        "summary": "Remove subscriber from campaign",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "add_subscriber_sequence": {
+      "method": "POST",
+      "path": "/subscriber/{subscriber_id}/sequences/{sequence_id}/",
+      "operation": {
+        "operationId": "subscriber_sequences_create",
+        "summary": "Add subscriber to sequence",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    },
+    "remove_subscriber_sequence": {
+      "method": "DELETE",
+      "path": "/subscriber/{subscriber_id}/sequences/{sequence_id}/",
+      "operation": {
+        "operationId": "subscriber_sequences_delete",
+        "summary": "Remove subscriber from sequence",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "examples": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "Invalid data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "User does not exist with id 1252"
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error_message": {
+                  "description": "Reason of error",
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "application/json": {
+                "error_message": "API-KEY is invalid"
+              }
+            }
+          }
+        },
+        "tags": [
+          "subscriber"
+        ]
+      }
+    }
+  },
+  "version": "BETA",
+  "contract_sha256": "23bef9250a1915495ddba36f0c42d2418d98bc4e7ddb05a00141d6fa475ed35e"
+}
