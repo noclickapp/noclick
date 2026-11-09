@@ -1,0 +1,187 @@
+[
+  {
+    "id": "D1",
+    "kind": "documented contract contradiction",
+    "description": "Literal instructional Authorization header values and noauth declarations contradict the documented Basic username:API-token authentication. All raw failures are solely this exact-header mismatch; downstream not-passed and not-parsed verdict messages follow from it. Every saved body was parsed without parser or fixture failures.",
+    "source": "https://apidoc.inforu.co.il/",
+    "collection_source": "https://documenter.gw.postman.com/api/collections/15332030/TzeWFTF1",
+    "documentation_evidence": [
+      "Get Quota describes Basic authentication explicitly.",
+      "Contact endpoint headers instruct Basic USER:TOKEN (Encode Base64)."
+    ],
+    "affected_cases": [
+      {
+        "operation": "send_sms",
+        "request": "POST /api/v2/SMS/SendSms",
+        "item": "0/0/0/0",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "e31dab41d282632126b3039c6c380c2dc2f7d3ef33a536bbeb8d7fc5e576e683"
+      },
+      {
+        "operation": "send_whatsapp_template",
+        "request": "POST /api/v2/WhatsApp/SendWhatsApp",
+        "item": "2/0/0",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "c0893e8518237347e97db9f737127b04dd746b7f6df2d3a3f4b5625302fc0c73"
+      },
+      {
+        "operation": "list_whatsapp_templates",
+        "request": "POST /api/v2/WhatsApp/GetTemplateList",
+        "item": "2/2/2/0",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "dffd7285e382208249d2f1497be2d209d0e2ebf86a6e6d19651b471438a53c40"
+      },
+      {
+        "operation": "get_whatsapp_template",
+        "request": "POST /api/v2/WhatsApp/GetTemplate",
+        "item": "2/2/2/1",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "42815ae8f6d9f2d76715159f646984566cfe314460118f5a951878fda5e20f21"
+      },
+      {
+        "operation": "send_email",
+        "request": "POST /api/v2/Umail/Message/Send",
+        "item": "3/0/1/0",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "66adad282ff1bcdb12d438ca31aa2d143fb73618c79cecbdaf4eb5e064ed8e6a"
+      },
+      {
+        "operation": "send_email_campaign",
+        "request": "POST /api/v2/Umail/Campaign/Send/",
+        "item": "3/0/0/0",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "1b0327a3735b4bfe43fab40450200dce78a1a9322bc597d3a56c4e01c8e21271"
+      },
+      {
+        "operation": "upsert_contacts",
+        "request": "POST /api/v2/Contact/CreateOrUpdateContacts",
+        "item": "6/0",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "eb7757968df1cfb346e311d5689420dc7e3482dc91f3481efc628b7fdf4b5b8f"
+      },
+      {
+        "operation": "get_contact",
+        "request": "POST /api/v2/Contact/GetContact",
+        "item": "6/3",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "a06001c6094496ee59faadc5ccfe9e86adb556ca68ad57d3474b42e368993768"
+      },
+      {
+        "operation": "list_contacts",
+        "request": "POST /api/v2/Contact/GetContactList",
+        "item": "6/4",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "53cc98be33741bb8d4365a5f3003d60bc13e642d7d0b981c253a604b3f3a114d"
+      },
+      {
+        "operation": "delete_contacts",
+        "request": "POST /api/v2/Contact/DeleteContacts",
+        "item": "6/2",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "fe783f18247c5326c68784ffe1cc04773727c4b60fba71600786ee7f58467f6c"
+      },
+      {
+        "operation": "upsert_group",
+        "request": "POST /api/v2/Contact/CreateOrUpdateGroup",
+        "item": "6/5",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "b91132faf43262579a1811ec09e19e5fd20d3934463b63b402b296837bc85c60"
+      },
+      {
+        "operation": "get_group",
+        "request": "POST /api/v2/Contact/GetGroup",
+        "item": "6/7",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "f6b0bbb5df74b5a4bac25f05032a9459cda44a645818d717facd1675f3c70b1c"
+      },
+      {
+        "operation": "list_groups",
+        "request": "POST /api/v2/Contact/GetGroupList",
+        "item": "6/8",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "0e5890a4fc19c6d7e8abddd0ce3cbee341a3bd57801edbed597a2f7f27c7655c"
+      },
+      {
+        "operation": "delete_group",
+        "request": "POST /api/v2/Contact/DeleteGroup",
+        "item": "6/6",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "0671fce2914e7bd96c9e4f195c537270c34d644157c64e8e1dd6ab94da3f7b0e"
+      },
+      {
+        "operation": "unsubscribe",
+        "request": "POST /api/V2/Contact/Unsubscribe",
+        "item": "6/9",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "eaca8a0b8445ad25180ada236af28f321ec0c5d7454a255c18a93b71585bc8ed"
+      },
+      {
+        "operation": "check_unsubscribed",
+        "request": "POST /api/v2/Contact/CheckIfUnsubscribe",
+        "item": "6/14",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "4237db9119cb6db5467bbd63141a534a18092641bfdde152ec538c11d42f313c"
+      },
+      {
+        "operation": "get_unsubscribe_history",
+        "request": "POST /api/v2/Contact/GetUnsubscribeHistory",
+        "item": "6/12",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "8734d0940f814fa5a5cda6fc0416a5150ed83c87539524e6470612ab93d9d425"
+      },
+      {
+        "operation": "list_unsubscribed",
+        "request": "POST /api/v2/Contact/GetUnsubscribeList",
+        "item": "6/11",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "df101560de907dba2e9ce88ff43b1add6176ad365c8d26d7a530070877cd29f7"
+      },
+      {
+        "operation": "list_unsubscribe_history",
+        "request": "POST /api/v2/Contact/GetUnsubscribeHistoryList",
+        "item": "6/13",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "691e64cd760efe4e195ea2cd56fac8fe8ed00ad3024d6725b6cdf0ee8904b21b"
+      },
+      {
+        "operation": "get_quota",
+        "request": "POST /api/v2/Admin/GetQuota",
+        "item": "7/1/0/0",
+        "example": 0,
+        "response_status": 200,
+        "response_sha256": "b3c7c74095531bdce518397b94137b5a3d407b5fb9084b4fe99db5b5f45eaad3"
+      },
+      {
+        "operation": "upsert_contacts",
+        "request": "POST /api/v2/Contact/CreateOrUpdateContacts",
+        "item": "6/0",
+        "example": 1,
+        "response_status": 401,
+        "response_sha256": "ead8f11e28367c7366acb5fc4d5d765bbf303121e9046b70ae4deb0bef776457"
+      }
+    ],
+    "docs": [
+      "https://apidoc.inforu.co.il/#95257309-f750-4cb7-83c7-9edf99faa2cd",
+      "https://apidoc.inforu.co.il/#befd143a-99bd-413d-807d-c655e9978244"
+    ]
+  }
+]

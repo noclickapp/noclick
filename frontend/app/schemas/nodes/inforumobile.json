@@ -1,0 +1,1165 @@
+{
+  "$defs": {
+    "CheckUnsubscribed": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_unsubscribed",
+          "default": "check_unsubscribed",
+          "title": "Operation",
+          "type": "string"
+        },
+        "List": {
+          "items": {
+            "$ref": "#/$defs/ContactSelector"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "List",
+          "type": "array"
+        }
+      },
+      "required": [
+        "List"
+      ],
+      "title": "CheckUnsubscribed",
+      "type": "object"
+    },
+    "Contact": {
+      "additionalProperties": false,
+      "properties": {
+        "Email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "PhoneNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phonenumber"
+        },
+        "FirstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "LastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "AddToGroupName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Addtogroupname"
+        }
+      },
+      "title": "Contact",
+      "type": "object"
+    },
+    "ContactSelector": {
+      "additionalProperties": false,
+      "properties": {
+        "Type": {
+          "enum": [
+            "Phone",
+            "Email",
+            "ContactRefId",
+            "ContactId"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "Value": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Type",
+        "Value"
+      ],
+      "title": "ContactSelector",
+      "type": "object"
+    },
+    "DeleteContacts": {
+      "additionalProperties": false,
+      "description": "Delete explicit contacts from all their groups.",
+      "properties": {
+        "operation": {
+          "const": "delete_contacts",
+          "default": "delete_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "List": {
+          "items": {
+            "$ref": "#/$defs/ContactSelector"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "List",
+          "type": "array"
+        }
+      },
+      "required": [
+        "List"
+      ],
+      "title": "DeleteContacts",
+      "type": "object"
+    },
+    "DeleteGroup": {
+      "additionalProperties": false,
+      "description": "Delete groups by explicit identifier. GroupName can match multiple groups.",
+      "properties": {
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "DeleteGroupBy": {
+          "enum": [
+            "GroupId",
+            "GroupNumber",
+            "GroupName"
+          ],
+          "title": "Deletegroupby",
+          "type": "string"
+        },
+        "Value": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "Configuration": {
+          "default": "WithoutDeleteContacts",
+          "enum": [
+            "WithoutDeleteContacts",
+            "WithDeleteContacts",
+            "EmptyGroupOnly"
+          ],
+          "title": "Configuration",
+          "type": "string"
+        }
+      },
+      "required": [
+        "DeleteGroupBy",
+        "Value"
+      ],
+      "title": "DeleteGroup",
+      "type": "object"
+    },
+    "EmailRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "Email": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "FirstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        }
+      },
+      "required": [
+        "Email"
+      ],
+      "title": "EmailRecipient",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "Type": {
+          "enum": [
+            "Phone",
+            "Email",
+            "ContactRefId",
+            "ContactId"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "Value": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "Configuration": {
+          "default": "WithoutGroups",
+          "enum": [
+            "WithGroups",
+            "WithoutGroups"
+          ],
+          "title": "Configuration",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Type",
+        "Value"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "GetGroupBy": {
+          "enum": [
+            "GroupId",
+            "GroupNumber",
+            "GroupName"
+          ],
+          "title": "Getgroupby",
+          "type": "string"
+        },
+        "Value": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "GetGroupBy",
+        "Value"
+      ],
+      "title": "GetGroup",
+      "type": "object"
+    },
+    "GetQuota": {
+      "additionalProperties": false,
+      "description": "Read remaining SMS, email and voice quotas for this account or a child level.",
+      "properties": {
+        "operation": {
+          "const": "get_quota",
+          "default": "get_quota",
+          "title": "Operation",
+          "type": "string"
+        },
+        "QuotaUsageType": {
+          "anyOf": [
+            {
+              "enum": [
+                "",
+                "SMS",
+                "Email",
+                "IVR"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quotausagetype",
+          "enum": [
+            "",
+            "SMS",
+            "Email",
+            "IVR"
+          ],
+          "x-enum-searchable": true
+        },
+        "Level": {
+          "anyOf": [
+            {
+              "enum": [
+                "Partner",
+                "Customer",
+                "Project",
+                "User"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level",
+          "enum": [
+            "Partner",
+            "Customer",
+            "Project",
+            "User"
+          ],
+          "x-enum-searchable": true
+        },
+        "LevelValue": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Levelvalue"
+        }
+      },
+      "title": "GetQuota",
+      "type": "object"
+    },
+    "GetUnsubscribeHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "Type": {
+          "enum": [
+            "Phone",
+            "Email",
+            "ContactRefId",
+            "ContactId"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "Value": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_unsubscribe_history",
+          "default": "get_unsubscribe_history",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Type",
+        "Value"
+      ],
+      "title": "GetUnsubscribeHistory",
+      "type": "object"
+    },
+    "GetWhatsAppTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_whatsapp_template",
+          "default": "get_whatsapp_template",
+          "title": "Operation",
+          "type": "string"
+        },
+        "TemplateId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Templateid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "TemplateId"
+      ],
+      "title": "GetWhatsAppTemplate",
+      "type": "object"
+    },
+    "InforUMobileCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "inforumobile_api_token",
+          "default": "inforumobile_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "username",
+        "api_token"
+      ],
+      "title": "InforUMobile API Token",
+      "type": "object",
+      "x-credential-instructions": "Enter your InforUMobile username and API token. NoClick encodes username:token as HTTP Basic authentication. Connecting reads your contact groups; it sends no messages.",
+      "x-credential-url": "https://documenter.getpostman.com/view/15332030/TzeWFTF1"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "description": "Read a contact page. Pass Data.LastFetchedId to continue.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "FilterBy": {
+          "enum": [
+            "CreatedDate",
+            "UpdatedDate"
+          ],
+          "title": "Filterby",
+          "type": "string"
+        },
+        "FromDate": {
+          "description": "YYYY/MM/DD, inclusive",
+          "title": "Fromdate",
+          "type": "string"
+        },
+        "ToDate": {
+          "description": "YYYY/MM/DD, inclusive",
+          "title": "Todate",
+          "type": "string"
+        },
+        "OnlyForGroupId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Onlyforgroupid"
+        },
+        "LastFetchedId": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Lastfetchedid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "FilterBy",
+        "FromDate",
+        "ToDate"
+      ],
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListGroups": {
+      "additionalProperties": false,
+      "description": "Read the account's contact groups. The pinned request has no filters.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "ListUnsubscribeHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_unsubscribe_history",
+          "default": "list_unsubscribe_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "FromDate": {
+          "description": "YYYY/MM/DD, inclusive",
+          "title": "Fromdate",
+          "type": "string"
+        },
+        "ToDate": {
+          "description": "YYYY/MM/DD, inclusive",
+          "title": "Todate",
+          "type": "string"
+        },
+        "Type": {
+          "enum": [
+            "Phone",
+            "Email"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "LastFetchedId": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Lastfetchedid",
+          "type": "integer"
+        },
+        "Action": {
+          "default": "All",
+          "enum": [
+            "All",
+            "Unsubscribe",
+            "Reactivate"
+          ],
+          "title": "Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "FromDate",
+        "ToDate",
+        "Type"
+      ],
+      "title": "ListUnsubscribeHistory",
+      "type": "object"
+    },
+    "ListUnsubscribed": {
+      "additionalProperties": false,
+      "description": "Read an unsubscribe page; continue with the returned LastFetchedId.",
+      "properties": {
+        "operation": {
+          "const": "list_unsubscribed",
+          "default": "list_unsubscribed",
+          "title": "Operation",
+          "type": "string"
+        },
+        "FromDate": {
+          "description": "YYYY/MM/DD, inclusive",
+          "title": "Fromdate",
+          "type": "string"
+        },
+        "ToDate": {
+          "description": "YYYY/MM/DD, inclusive",
+          "title": "Todate",
+          "type": "string"
+        },
+        "Type": {
+          "enum": [
+            "Phone",
+            "Email"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "LastFetchedId": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Lastfetchedid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "FromDate",
+        "ToDate",
+        "Type"
+      ],
+      "title": "ListUnsubscribed",
+      "type": "object"
+    },
+    "ListWhatsAppTemplates": {
+      "additionalProperties": false,
+      "description": "Read the connected user's WhatsApp templates.",
+      "properties": {
+        "operation": {
+          "const": "list_whatsapp_templates",
+          "default": "list_whatsapp_templates",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListWhatsAppTemplates",
+      "type": "object"
+    },
+    "PhoneRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "Phone": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Phone"
+      ],
+      "title": "PhoneRecipient",
+      "type": "object"
+    },
+    "SendEmail": {
+      "additionalProperties": false,
+      "description": "Send a new email campaign with explicit recipients and content.",
+      "properties": {
+        "operation": {
+          "const": "send_email",
+          "default": "send_email",
+          "title": "Operation",
+          "type": "string"
+        },
+        "CampaignName": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Campaignname",
+          "type": "string"
+        },
+        "CampaignRefId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaignrefid"
+        },
+        "FromAddress": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Fromaddress",
+          "type": "string"
+        },
+        "ReplyAddress": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replyaddress"
+        },
+        "FromName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fromname"
+        },
+        "Subject": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "Body": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "IncludeContacts": {
+          "items": {
+            "$ref": "#/$defs/EmailRecipient"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Includecontacts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "CampaignName",
+        "FromAddress",
+        "Subject",
+        "Body",
+        "IncludeContacts"
+      ],
+      "title": "SendEmail",
+      "type": "object"
+    },
+    "SendEmailCampaign": {
+      "additionalProperties": false,
+      "description": "Send an existing campaign to explicit recipients; optionally duplicate it.",
+      "properties": {
+        "operation": {
+          "const": "send_email_campaign",
+          "default": "send_email_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "CampaignId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Campaignid",
+          "type": "string"
+        },
+        "Duplicate": {
+          "description": "0 sends the existing campaign; 1 duplicates it.",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Duplicate",
+          "type": "integer"
+        },
+        "IncludeContacts": {
+          "items": {
+            "$ref": "#/$defs/EmailRecipient"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Includecontacts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "CampaignId",
+        "Duplicate",
+        "IncludeContacts"
+      ],
+      "title": "SendEmailCampaign",
+      "type": "object"
+    },
+    "SendSms": {
+      "additionalProperties": false,
+      "description": "Send an SMS to explicit recipients using a whitelisted sender.",
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string"
+        },
+        "Message": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "Recipients": {
+          "items": {
+            "$ref": "#/$defs/PhoneRecipient"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Recipients",
+          "type": "array"
+        },
+        "Settings": {
+          "$ref": "#/$defs/SmsSettings"
+        }
+      },
+      "required": [
+        "Message",
+        "Recipients",
+        "Settings"
+      ],
+      "title": "SendSms",
+      "type": "object"
+    },
+    "SendWhatsAppTemplate": {
+      "additionalProperties": false,
+      "description": "Send an existing WhatsApp template to explicit recipients.",
+      "properties": {
+        "operation": {
+          "const": "send_whatsapp_template",
+          "default": "send_whatsapp_template",
+          "title": "Operation",
+          "type": "string"
+        },
+        "TemplateId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Templateid",
+          "type": "string"
+        },
+        "TemplateParameters": {
+          "items": {
+            "$ref": "#/$defs/TemplateParameter"
+          },
+          "maxItems": 100,
+          "title": "Templateparameters",
+          "type": "array"
+        },
+        "Recipients": {
+          "items": {
+            "$ref": "#/$defs/TemplateRecipient"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Recipients",
+          "type": "array"
+        }
+      },
+      "required": [
+        "TemplateId",
+        "TemplateParameters",
+        "Recipients"
+      ],
+      "title": "SendWhatsAppTemplate",
+      "type": "object"
+    },
+    "SmsSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "Sender": {
+          "description": "Whitelisted sender: up to 11 characters without spaces, or up to 14 phone digits.",
+          "maxLength": 14,
+          "minLength": 1,
+          "title": "Sender",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Sender"
+      ],
+      "title": "SmsSettings",
+      "type": "object"
+    },
+    "TemplateParameter": {
+      "additionalProperties": false,
+      "properties": {
+        "Name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "Type": {
+          "enum": [
+            "Contact",
+            "Custom",
+            "Text"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "Value": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name",
+        "Type",
+        "Value"
+      ],
+      "title": "TemplateParameter",
+      "type": "object"
+    },
+    "TemplateRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "Phone": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "CouponCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Couponcode"
+        }
+      },
+      "required": [
+        "Phone"
+      ],
+      "title": "TemplateRecipient",
+      "type": "object"
+    },
+    "Unsubscribe": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "unsubscribe",
+          "default": "unsubscribe",
+          "title": "Operation",
+          "type": "string"
+        },
+        "UnsubscribeReason": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Unsubscribereason",
+          "type": "string"
+        },
+        "List": {
+          "items": {
+            "$ref": "#/$defs/UnsubscribeSelector"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "List",
+          "type": "array"
+        }
+      },
+      "required": [
+        "UnsubscribeReason",
+        "List"
+      ],
+      "title": "Unsubscribe",
+      "type": "object"
+    },
+    "UnsubscribeSelector": {
+      "additionalProperties": false,
+      "properties": {
+        "Type": {
+          "enum": [
+            "Phone",
+            "Email"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "Value": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Type",
+        "Value"
+      ],
+      "title": "UnsubscribeSelector",
+      "type": "object"
+    },
+    "UpsertContacts": {
+      "additionalProperties": false,
+      "description": "Create or update up to ten contacts for a final synchronous response.",
+      "properties": {
+        "operation": {
+          "const": "upsert_contacts",
+          "default": "upsert_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "List": {
+          "items": {
+            "$ref": "#/$defs/Contact"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "List",
+          "type": "array"
+        }
+      },
+      "required": [
+        "List"
+      ],
+      "title": "UpsertContacts",
+      "type": "object"
+    },
+    "UpsertGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "upsert_group",
+          "default": "upsert_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "GroupName": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Groupname",
+          "type": "string"
+        },
+        "GroupId": {
+          "description": "0 creates a group; an existing ID updates it.",
+          "minimum": 0,
+          "title": "Groupid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "GroupName",
+        "GroupId"
+      ],
+      "title": "UpsertGroup",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_unsubscribed": "#/$defs/CheckUnsubscribed",
+          "delete_contacts": "#/$defs/DeleteContacts",
+          "delete_group": "#/$defs/DeleteGroup",
+          "get_contact": "#/$defs/GetContact",
+          "get_group": "#/$defs/GetGroup",
+          "get_quota": "#/$defs/GetQuota",
+          "get_unsubscribe_history": "#/$defs/GetUnsubscribeHistory",
+          "get_whatsapp_template": "#/$defs/GetWhatsAppTemplate",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_groups": "#/$defs/ListGroups",
+          "list_unsubscribe_history": "#/$defs/ListUnsubscribeHistory",
+          "list_unsubscribed": "#/$defs/ListUnsubscribed",
+          "list_whatsapp_templates": "#/$defs/ListWhatsAppTemplates",
+          "send_email": "#/$defs/SendEmail",
+          "send_email_campaign": "#/$defs/SendEmailCampaign",
+          "send_sms": "#/$defs/SendSms",
+          "send_whatsapp_template": "#/$defs/SendWhatsAppTemplate",
+          "unsubscribe": "#/$defs/Unsubscribe",
+          "upsert_contacts": "#/$defs/UpsertContacts",
+          "upsert_group": "#/$defs/UpsertGroup"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SendSms"
+        },
+        {
+          "$ref": "#/$defs/SendWhatsAppTemplate"
+        },
+        {
+          "$ref": "#/$defs/ListWhatsAppTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetWhatsAppTemplate"
+        },
+        {
+          "$ref": "#/$defs/SendEmail"
+        },
+        {
+          "$ref": "#/$defs/SendEmailCampaign"
+        },
+        {
+          "$ref": "#/$defs/UpsertContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/DeleteContacts"
+        },
+        {
+          "$ref": "#/$defs/UpsertGroup"
+        },
+        {
+          "$ref": "#/$defs/GetGroup"
+        },
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroup"
+        },
+        {
+          "$ref": "#/$defs/Unsubscribe"
+        },
+        {
+          "$ref": "#/$defs/CheckUnsubscribed"
+        },
+        {
+          "$ref": "#/$defs/GetUnsubscribeHistory"
+        },
+        {
+          "$ref": "#/$defs/ListUnsubscribed"
+        },
+        {
+          "$ref": "#/$defs/ListUnsubscribeHistory"
+        },
+        {
+          "$ref": "#/$defs/GetQuota"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/InforUMobileCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Inforumobile Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

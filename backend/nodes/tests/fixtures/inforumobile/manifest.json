@@ -1,0 +1,15 @@
+{
+  "inforumobile": {
+    "file": "collection.json",
+    "sha256": "0ebae43c6c42fdcafc4a4700f6915651a2e137d7061c35c576f09eda9093c218",
+    "version": null,
+    "source_url": "https://documenter.gw.postman.com/api/collections/15332030/TzeWFTF1",
+    "node_type": "automation-inforumobile",
+    "credential": {
+      "credential_type": "inforumobile_api_token",
+      "username": "<token>",
+      "api_token": "<token>"
+    },
+    "format": "postman"
+  }
+}
