@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/virustotal.svg",
+  "source": "https://www.virustotal.com/gui/images/favicon.svg",
+  "license": "VirusTotal trademark; used to identify the VirusTotal integration",
+  "sha256": "f0d88cf32c5ee0030df2abb579468878f3fb8472e18ad74dfd1e5bf99d54351d"
+}

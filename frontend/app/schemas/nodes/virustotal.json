@@ -1,0 +1,723 @@
+{
+  "$defs": {
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Read the account that owns this API key.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetAnalysis": {
+      "additionalProperties": false,
+      "description": "Get the status and results of a URL or file analysis.",
+      "properties": {
+        "operation": {
+          "const": "get_analysis",
+          "default": "get_analysis",
+          "title": "Operation",
+          "type": "string"
+        },
+        "analysis_id": {
+          "description": "Analysis ID returned by a submission or rescan.",
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Analysis Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "analysis_id"
+      ],
+      "title": "GetAnalysis",
+      "type": "object"
+    },
+    "GetDomain": {
+      "additionalProperties": false,
+      "description": "Get a domain report.",
+      "properties": {
+        "domain": {
+          "description": "Domain name, for example example.com.",
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_domain",
+          "default": "get_domain",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "GetDomain",
+      "type": "object"
+    },
+    "GetFile": {
+      "additionalProperties": false,
+      "description": "Get a file report.",
+      "properties": {
+        "file_id": {
+          "description": "File SHA-256, SHA-1 or MD5 hash.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFile",
+      "type": "object"
+    },
+    "GetFileBehaviorSummary": {
+      "additionalProperties": false,
+      "description": "Get the summary of sandbox behavior reports for a file.",
+      "properties": {
+        "file_id": {
+          "description": "File SHA-256, SHA-1 or MD5 hash.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_file_behavior_summary",
+          "default": "get_file_behavior_summary",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFileBehaviorSummary",
+      "type": "object"
+    },
+    "GetIP": {
+      "additionalProperties": false,
+      "description": "Get an IP address report.",
+      "properties": {
+        "ip": {
+          "description": "IPv4 or IPv6 address.",
+          "maxLength": 45,
+          "minLength": 1,
+          "title": "Ip",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_ip",
+          "default": "get_ip",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ip"
+      ],
+      "title": "GetIP",
+      "type": "object"
+    },
+    "GetURL": {
+      "additionalProperties": false,
+      "description": "Get a URL report.",
+      "properties": {
+        "url_id": {
+          "description": "URL identifier: SHA-256 or URL-safe base64 of the URL without padding.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Url Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_url",
+          "default": "get_url",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url_id"
+      ],
+      "title": "GetURL",
+      "type": "object"
+    },
+    "ListDomainComments": {
+      "additionalProperties": false,
+      "description": "Get one page of comments for this domain.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation cursor from the preceding response's meta.cursor.",
+          "title": "Cursor"
+        },
+        "domain": {
+          "description": "Domain name, for example example.com.",
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_domain_comments",
+          "default": "list_domain_comments",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "ListDomainComments",
+      "type": "object"
+    },
+    "ListDomainVotes": {
+      "additionalProperties": false,
+      "description": "Get one page of votes for this domain.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation cursor from the preceding response's meta.cursor.",
+          "title": "Cursor"
+        },
+        "domain": {
+          "description": "Domain name, for example example.com.",
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_domain_votes",
+          "default": "list_domain_votes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "ListDomainVotes",
+      "type": "object"
+    },
+    "ListFileComments": {
+      "additionalProperties": false,
+      "description": "Get one page of comments for this file.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation cursor from the preceding response's meta.cursor.",
+          "title": "Cursor"
+        },
+        "file_id": {
+          "description": "File SHA-256, SHA-1 or MD5 hash.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_file_comments",
+          "default": "list_file_comments",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ListFileComments",
+      "type": "object"
+    },
+    "ListFileVotes": {
+      "additionalProperties": false,
+      "description": "Get one page of votes for this file.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation cursor from the preceding response's meta.cursor.",
+          "title": "Cursor"
+        },
+        "file_id": {
+          "description": "File SHA-256, SHA-1 or MD5 hash.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_file_votes",
+          "default": "list_file_votes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ListFileVotes",
+      "type": "object"
+    },
+    "ListIPComments": {
+      "additionalProperties": false,
+      "description": "Get one page of comments for this ip.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation cursor from the preceding response's meta.cursor.",
+          "title": "Cursor"
+        },
+        "ip": {
+          "description": "IPv4 or IPv6 address.",
+          "maxLength": 45,
+          "minLength": 1,
+          "title": "Ip",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_ip_comments",
+          "default": "list_ip_comments",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ip"
+      ],
+      "title": "ListIPComments",
+      "type": "object"
+    },
+    "ListIPVotes": {
+      "additionalProperties": false,
+      "description": "Get one page of votes for this ip.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation cursor from the preceding response's meta.cursor.",
+          "title": "Cursor"
+        },
+        "ip": {
+          "description": "IPv4 or IPv6 address.",
+          "maxLength": 45,
+          "minLength": 1,
+          "title": "Ip",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_ip_votes",
+          "default": "list_ip_votes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ip"
+      ],
+      "title": "ListIPVotes",
+      "type": "object"
+    },
+    "ListURLComments": {
+      "additionalProperties": false,
+      "description": "Get one page of comments for this url.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation cursor from the preceding response's meta.cursor.",
+          "title": "Cursor"
+        },
+        "url_id": {
+          "description": "URL identifier: SHA-256 or URL-safe base64 of the URL without padding.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Url Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_url_comments",
+          "default": "list_url_comments",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url_id"
+      ],
+      "title": "ListURLComments",
+      "type": "object"
+    },
+    "ListURLVotes": {
+      "additionalProperties": false,
+      "description": "Get one page of votes for this url.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Maximum results in this page.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation cursor from the preceding response's meta.cursor.",
+          "title": "Cursor"
+        },
+        "url_id": {
+          "description": "URL identifier: SHA-256 or URL-safe base64 of the URL without padding.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Url Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_url_votes",
+          "default": "list_url_votes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url_id"
+      ],
+      "title": "ListURLVotes",
+      "type": "object"
+    },
+    "RescanFile": {
+      "additionalProperties": false,
+      "description": "Request another analysis of a previously submitted file.",
+      "properties": {
+        "file_id": {
+          "description": "File SHA-256, SHA-1 or MD5 hash.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "rescan_file",
+          "default": "rescan_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "RescanFile",
+      "type": "object"
+    },
+    "RescanURL": {
+      "additionalProperties": false,
+      "description": "Request another analysis of a previously submitted URL.",
+      "properties": {
+        "url_id": {
+          "description": "URL identifier: SHA-256 or URL-safe base64 of the URL without padding.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Url Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "rescan_url",
+          "default": "rescan_url",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url_id"
+      ],
+      "title": "RescanURL",
+      "type": "object"
+    },
+    "ScanURL": {
+      "additionalProperties": false,
+      "description": "Submit a URL to VirusTotal for scanning.",
+      "properties": {
+        "operation": {
+          "const": "scan_url",
+          "default": "scan_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "description": "Public HTTP(S) URL to submit to VirusTotal.",
+          "maxLength": 16384,
+          "minLength": 1,
+          "pattern": "^https?://.+$",
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ScanURL",
+      "type": "object"
+    },
+    "VirusTotalAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "virustotal_api_key",
+          "default": "virustotal_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "VirusTotal API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your VirusTotal API key from your account's API key page. Your plan's permissions and quotas apply. Indicators submitted or queried may be scanned and shared with the community; do not use sensitive or confidential indicators.",
+      "x-credential-url": "https://www.virustotal.com/gui/my-apikey"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_account": "#/$defs/GetAccount",
+          "get_analysis": "#/$defs/GetAnalysis",
+          "get_domain": "#/$defs/GetDomain",
+          "get_file": "#/$defs/GetFile",
+          "get_file_behavior_summary": "#/$defs/GetFileBehaviorSummary",
+          "get_ip": "#/$defs/GetIP",
+          "get_url": "#/$defs/GetURL",
+          "list_domain_comments": "#/$defs/ListDomainComments",
+          "list_domain_votes": "#/$defs/ListDomainVotes",
+          "list_file_comments": "#/$defs/ListFileComments",
+          "list_file_votes": "#/$defs/ListFileVotes",
+          "list_ip_comments": "#/$defs/ListIPComments",
+          "list_ip_votes": "#/$defs/ListIPVotes",
+          "list_url_comments": "#/$defs/ListURLComments",
+          "list_url_votes": "#/$defs/ListURLVotes",
+          "rescan_file": "#/$defs/RescanFile",
+          "rescan_url": "#/$defs/RescanURL",
+          "scan_url": "#/$defs/ScanURL"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/GetFile"
+        },
+        {
+          "$ref": "#/$defs/GetURL"
+        },
+        {
+          "$ref": "#/$defs/GetDomain"
+        },
+        {
+          "$ref": "#/$defs/GetIP"
+        },
+        {
+          "$ref": "#/$defs/GetAnalysis"
+        },
+        {
+          "$ref": "#/$defs/ScanURL"
+        },
+        {
+          "$ref": "#/$defs/RescanFile"
+        },
+        {
+          "$ref": "#/$defs/RescanURL"
+        },
+        {
+          "$ref": "#/$defs/GetFileBehaviorSummary"
+        },
+        {
+          "$ref": "#/$defs/ListFileComments"
+        },
+        {
+          "$ref": "#/$defs/ListFileVotes"
+        },
+        {
+          "$ref": "#/$defs/ListURLComments"
+        },
+        {
+          "$ref": "#/$defs/ListURLVotes"
+        },
+        {
+          "$ref": "#/$defs/ListDomainComments"
+        },
+        {
+          "$ref": "#/$defs/ListDomainVotes"
+        },
+        {
+          "$ref": "#/$defs/ListIPComments"
+        },
+        {
+          "$ref": "#/$defs/ListIPVotes"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VirusTotalAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Virustotal Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

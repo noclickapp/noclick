@@ -1,0 +1,295 @@
+{
+  "body": {
+    "data": {
+      "attributes": {
+        "capabilities_tags": [
+          "str_win32_internet_api",
+          "cred_ff",
+          "win_mutex",
+          "keylogger",
+          "str_win32_winsock2_library",
+          "sniff_audio",
+          "network_dropper",
+          "ldpreload",
+          "win_files_operation",
+          "str_win32_wininet_library",
+          "inject_thread"
+        ],
+        "creation_date": 1589251011,
+        "crowdsourced_ids_results": [
+          {
+            "alert_context": [
+              {
+                "proto": "TCP",
+                "src_ip": "152.126.25.42",
+                "src_port": 80
+              }
+            ],
+            "alert_severity": "high",
+            "rule_category": "Potential Corporate Privacy Violation",
+            "rule_id": "32481",
+            "rule_msg": "POLICY-OTHER Remote non-JavaScript file found in script tag src attribute",
+            "rule_source": "snort"
+          }
+        ],
+        "crowdsourced_ids_stats": {
+          "high": 1,
+          "info": 0,
+          "low": 0,
+          "medium": 0
+        },
+        "crowdsourced_yara_results": [
+          {
+            "description": "Detects a very evil attack",
+            "match_in_subfile": true,
+            "rule_name": "evil_a_b",
+            "ruleset_id": "000abc43",
+            "ruleset_name": "evilness",
+            "source": "https://example.com/evil/ruleset"
+          }
+        ],
+        "downloadable": true,
+        "first_submission_date": 1592134853,
+        "gti_assessment": {
+          "verdict": {
+            "value": "VERDICT_MALICIOUS"
+          },
+          "severity": {
+            "value": "SEVERITY_HIGH"
+          },
+          "threat_score": {
+            "value": 80
+          },
+          "contributing_factors": {
+            "mandiant_confidence_score": 80,
+            "gti_confidence_score": 90
+          },
+          "gti_description_cards": {
+            "HIGHEST_IMPACT_FACTOR": [
+              {
+                "influence": "high",
+                "title": "Attributed to Mandiant Threat Actor",
+                "sub_title": "",
+                "collection_type": "threat-actor",
+                "related_links": [
+                  {
+                    "title": "APT1",
+                    "url": {
+                      "object_type": "collection",
+                      "id": "apt1"
+                    }
+                  }
+                ]
+              }
+            ],
+            "TECHNICAL_EVIDENCE": [
+              {
+                "influence": "medium",
+                "title": "Multi-Engine AV Detections: 24",
+                "sub_title": "",
+                "collection_type": "",
+                "related_links": []
+              }
+            ]
+          },
+          "description": "This indicator is highly malicious based on Mandiant intelligence and community detections."
+        },
+        "last_analysis_date": 1592141610,
+        "last_analysis_results": {
+          "ALYac": {
+            "category": "malicious",
+            "engine_name": "ALYac",
+            "engine_update": "20200614",
+            "engine_version": "1.1.1.5",
+            "method": "blacklist",
+            "result": "Trojan.GenericKDZ.67102"
+          },
+          "APEX": {
+            "category": "malicious",
+            "engine_name": "APEX",
+            "engine_update": "20200613",
+            "engine_version": "6.36",
+            "method": "blacklist",
+            "result": "Malicious"
+          },
+          "AVG": {
+            "category": "malicious",
+            "engine_name": "AVG",
+            "engine_update": "20200614",
+            "engine_version": "18.4.3895.0",
+            "method": "blacklist",
+            "result": "Win32:PWSX-gen [Trj]"
+          },
+          "Acronis": {
+            "category": "undetected",
+            "engine_name": "Acronis",
+            "engine_update": "20200603",
+            "engine_version": "1.1.1.76",
+            "method": "blacklist",
+            "result": null
+          }
+        },
+        "last_analysis_stats": {
+          "confirmed-timeout": 0,
+          "failure": 0,
+          "harmless": 0,
+          "malicious": 3,
+          "suspicious": 0,
+          "timeout": 0,
+          "type-unsupported": 0,
+          "undetected": 2
+        },
+        "last_modification_date": 1592141790,
+        "last_submission_date": 1592141610,
+        "md5": "5a430646b4d3c04f0b43b444ad48443f",
+        "meaningful_name": "o4oz44Z4E444.exe",
+        "names": [
+          "myfile.exe",
+          "o4oz44Z4E444.exe"
+        ],
+        "reputation": 0,
+        "sandbox_verdicts": {
+          "VirusTotal Jujubox": {
+            "category": "malicious",
+            "confidence": 70,
+            "malware_classification": [
+              "MALWARE",
+              "TROJAN"
+            ],
+            "malware_names": [
+              "XMRigMiner"
+            ],
+            "sandbox_name": "VirusTotal Jujubox"
+          }
+        },
+        "sha1": "54fdf53af86f90bf446f0a5fe26f6e4fd5f4c9fd",
+        "sha256": "3f6fa13af90cf967f0b5f5d07f413f9d1f39d2fa366f09ff760fcd3fd8bf6fbf",
+        "sigma_analysis_summary": {
+          "Sigma Integrated Rule Set (GitHub)": {
+            "high": 0,
+            "medium": 0,
+            "critical": 0,
+            "low": 1
+          },
+          "SOC Prime Threat Detection Marketplace": {
+            "high": 1,
+            "medium": 0,
+            "critical": 0,
+            "low": 0
+          }
+        },
+        "sigma_analysis_stats": {
+          "high": 1,
+          "medium": 0,
+          "critical": 0,
+          "low": 1
+        },
+        "sigma_analysis_results": [
+          {
+            "rule_title": "File deletion via CMD (via cmdline)",
+            "rule_source": "SOC Prime Threat Detection Marketplace",
+            "match_context": [
+              {
+                "values": {
+                  "TerminalSessionId": "0",
+                  "ProcessGuid": "C784477D-ED34-629E-4105-000000003000",
+                  "ProcessId": "4164",
+                  "Product": "Microsoft\u00ae Windows\u00ae Operating System",
+                  "Description": "Windows Command Processor",
+                  "Company": "Microsoft Corporation",
+                  "ParentProcessGuid": "C784477D-ED16-629E-2305-000000003000",
+                  "User": "NT AUTHORITY\\SYSTEM",
+                  "Hashes": "MD5=4E2ACF4F8A396486AB4268C94A6A245F,SHA256=9A7C58BD98D70631AA1473F7B57B426DB367D72429A5455B433A05EE251F3236,IMPHASH=8542FB14699D84D7E8DA92F66145C7FE",
+                  "OriginalFileName": "Cmd.Exe",
+                  "ParentImage": "C:\\Program Files\\rempl\\sedlauncher.exe",
+                  "FileVersion": "10.0.17134.1 (WinBuild.160101.0800)",
+                  "ParentProcessId": "5204",
+                  "CurrentDirectory": "C:\\Windows\\system32\\",
+                  "CommandLine": "C:\\Windows\\System32\\cmd.exe /c C:\\Windows\\System32\\ipconfig.exe /flushdns >C:\\Windows\\TEMP\\ipconfig.out 2>&1",
+                  "EventID": "1",
+                  "LogonGuid": "C784477D-EC60-629E-E703-000000000000",
+                  "LogonId": "999",
+                  "Image": "C:\\Windows\\System32\\cmd.exe",
+                  "IntegrityLevel": "System",
+                  "ParentCommandLine": "\"C:\\Program Files\\rempl\\sedlauncher.exe\"",
+                  "UtcTime": "2022-06-07 06:16:20.702",
+                  "RuleName": "-"
+                }
+              },
+              {
+                "values": {
+                  "TerminalSessionId": "0",
+                  "ProcessGuid": "C784477D-ED34-629E-4405-000000003000",
+                  "ProcessId": "1368",
+                  "Product": "Microsoft\u00ae Windows\u00ae Operating System",
+                  "Description": "Windows Command Processor",
+                  "Company": "Microsoft Corporation",
+                  "ParentProcessGuid": "C784477D-ED16-629E-2305-000000003000",
+                  "User": "NT AUTHORITY\\SYSTEM",
+                  "Hashes": "MD5=4E2ACF4F8A396486AB4268C94A6A245F,SHA256=9A7C58BD98D70631AA1473F7B57B426DB367D72429A5455B433A05EE251F3236,IMPHASH=8542FB14699D84D7E8DA92F66145C7FE",
+                  "OriginalFileName": "Cmd.Exe",
+                  "ParentImage": "C:\\Program Files\\rempl\\sedlauncher.exe",
+                  "FileVersion": "10.0.17134.1 (WinBuild.160101.0800)",
+                  "ParentProcessId": "5204",
+                  "CurrentDirectory": "C:\\Windows\\system32\\",
+                  "CommandLine": "C:\\Windows\\System32\\cmd.exe /c C:\\Windows\\System32\\netsh.exe interface ip delete arpcache >C:\\Windows\\TEMP\\ipconfig.out 2>&1",
+                  "EventID": "1",
+                  "LogonGuid": "C784477D-EC60-629E-E703-000000000000",
+                  "LogonId": "999",
+                  "Image": "C:\\Windows\\System32\\cmd.exe",
+                  "IntegrityLevel": "System",
+                  "ParentCommandLine": "\"C:\\Program Files\\rempl\\sedlauncher.exe\"",
+                  "UtcTime": "2022-06-07 06:16:20.741",
+                  "RuleName": "-"
+                }
+              }
+            ],
+            "rule_level": "high",
+            "rule_description": "Detects \"cmd\" utilization to self-delete files in some critical Windows destinations.",
+            "rule_author": "Ariel Millahuel",
+            "rule_id": "f9333cf120369debd56e4e238fffa10bdb2a1497c11e08a082befd02f9f3bdf2"
+          },
+          {
+            "rule_title": "Failed Code Integrity Checks",
+            "rule_source": "Sigma Integrated Rule Set (GitHub)",
+            "match_context": [
+              {
+                "values": {
+                  "EventID": "5038",
+                  "param1": "\\Device\\HarddiskVolume4\\Program Files (x86)\\sandbox\\driver\\sandbox-driver.sys"
+                }
+              }
+            ],
+            "rule_level": "low",
+            "rule_description": "Code integrity failures may indicate tampered executables.",
+            "rule_author": "Thomas Patzke",
+            "rule_id": "134564d292d785dff102940b8a1ee06dba2d462c5fb852124b3771a49d7885f1"
+          }
+        ],
+        "size": 374272,
+        "tags": [
+          "peexe",
+          "runtime-modules",
+          "assembly",
+          "direct-cpu-clock-access",
+          "detect-debug-environment"
+        ],
+        "times_submitted": 3,
+        "total_votes": {
+          "harmless": 0,
+          "malicious": 0
+        },
+        "type_description": "Win32 EXE",
+        "type_tag": "peexe",
+        "unique_sources": 3,
+        "vhash": "2350f6f515f29f93f147f0f0"
+      },
+      "id": "3f6fa13af90cf967f0b5f5d07f413f9d1f39d2fa366f09ff760fcd3fd8bf6fbf",
+      "links": {
+        "self": "https://www.virustotal.com/ui/files/3f6fa13af90cf967f0b5f5d07f413f9d1f39d2fa366f09ff760fcd3fd8bf6fbf"
+      },
+      "type": "file"
+    }
+  },
+  "source": "https://gtidocs.virustotal.com/reference/file-object.md"
+}
