@@ -1,0 +1,1240 @@
+{
+  "POST /webhooks": {
+    "body": {
+      "id": 1,
+      "url": "https://katanamrp.com",
+      "token": "73f82127d57a2cea",
+      "enabled": true,
+      "subscribed_events": [
+        "sales_order.created"
+      ],
+      "created_at": "2021-01-28T04:58:40.492Z",
+      "updated_at": "2021-01-28T04:58:40.493Z"
+    },
+    "source": "https://developer.katanamrp.com/docs/getting-started-with-katana-webhooks"
+  },
+  "GET /customers": {
+    "body": {
+      "data": [
+        {
+          "id": 12345,
+          "name": "Luke Skywalker",
+          "first_name": "Luke",
+          "last_name": "Skywalker",
+          "company": "Company",
+          "email": "luke.skywalker@example.com",
+          "comment": "Luke Skywalker was a Tatooine farmboy who rose from humble beginnings to become one of the\n              greatest Jedi the galaxy has ever known.",
+          "discount_rate": 100,
+          "phone": "123456",
+          "currency": "USD",
+          "reference_id": "ref-12345",
+          "category": "category-12345",
+          "custom_fields": {
+            "37460d24-ea57-416d-888e-bea7c0505642": "VIP",
+            "6afe78d2-2b95-4d71-92f5-1bc2be852afe": 5
+          },
+          "created_at": "2020-10-23T10:37:05.085Z",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "deleted_at": null,
+          "default_billing_id": 1,
+          "default_shipping_id": 2,
+          "addresses": [
+            {
+              "id": 1,
+              "customer_id": 12345,
+              "entity_type": "billing",
+              "first_name": "Luke",
+              "last_name": "Skywalker",
+              "company": "Company",
+              "phone": "123456789",
+              "line_1": "Line 1",
+              "line_2": "Line 2",
+              "city": "City",
+              "state": "State",
+              "zip": "Zip",
+              "country": "Country",
+              "updated_at": "2020-10-23T10:37:05.085Z",
+              "created_at": "2020-10-23T10:37:05.085Z"
+            },
+            {
+              "id": 2,
+              "customer_id": 12345,
+              "entity_type": "shipping",
+              "first_name": "Luke",
+              "last_name": "Skywalker",
+              "company": "Company",
+              "phone": "123456789",
+              "line_1": "Line 1",
+              "line_2": "Line 2",
+              "city": "City",
+              "state": "State",
+              "zip": "Zip",
+              "country": "Country",
+              "updated_at": "2020-10-23T10:37:05.085Z",
+              "created_at": "2020-10-23T10:37:05.085Z"
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/list-all-customers"
+  },
+  "PATCH /customers/{id}": {
+    "body": {
+      "id": 12345,
+      "name": "Luke Skywalker",
+      "first_name": "Luke",
+      "last_name": "Skywalker",
+      "company": "Company",
+      "email": "luke.skywalker@example.com",
+      "comment": "Luke Skywalker was a Tatooine farmboy who rose from humble beginnings to become one of the\n            greatest Jedi the galaxy has ever known.",
+      "discount_rate": 100,
+      "phone": "123456",
+      "currency": "USD",
+      "reference_id": "ref-12345",
+      "category": "category-12345",
+      "custom_fields": {
+        "37460d24-ea57-416d-888e-bea7c0505642": "VIP",
+        "6afe78d2-2b95-4d71-92f5-1bc2be852afe": 5
+      },
+      "created_at": "2020-10-23T10:37:05.085Z",
+      "updated_at": "2020-10-23T10:37:05.085Z",
+      "deleted_at": null,
+      "default_billing_id": 1,
+      "default_shipping_id": 2
+    },
+    "source": "https://developer.katanamrp.com/reference/updatecustomer"
+  },
+  "GET /locations": {
+    "body": {
+      "data": [
+        {
+          "id": 1,
+          "name": "Main location",
+          "legal_name": "Amazon",
+          "address_id": 1,
+          "address": {
+            "id": 1,
+            "city": "New York",
+            "country": "United States",
+            "line_1": "10 East 20th Example St",
+            "line_2": "",
+            "state": "New York",
+            "zip": "10000"
+          },
+          "is_primary": true,
+          "sales_allowed": true,
+          "purchase_allowed": true,
+          "manufacturing_allowed": true,
+          "created_at": "2020-10-23T10:37:05.085Z",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "deleted_at": null
+        },
+        {
+          "id": 2,
+          "name": "Secondary location",
+          "legal_name": "Amazon",
+          "address_id": null,
+          "address": null,
+          "is_primary": false,
+          "sales_allowed": false,
+          "purchase_allowed": true,
+          "manufacturing_allowed": false,
+          "created_at": "2020-10-23T10:37:05.085Z",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "deleted_at": null
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/list-all-locations"
+  },
+  "POST /manufacturing_orders": {
+    "body": {
+      "id": 21400,
+      "status": "NOT_STARTED",
+      "order_no": "SO-2 / 1",
+      "variant_id": 1418016,
+      "planned_quantity": 1,
+      "actual_quantity": null,
+      "batch_transactions": [],
+      "location_id": 2327,
+      "order_created_date": "2021-09-01T07:49:29.000Z",
+      "done_date": null,
+      "production_deadline_date": "2021-10-18T08:00:00.000Z",
+      "additional_info": "",
+      "is_linked_to_sales_order": true,
+      "ingredient_availability": "IN_STOCK",
+      "total_cost": 0,
+      "total_actual_time": 0,
+      "total_planned_time": 18000,
+      "sales_order_id": 1,
+      "sales_order_row_id": 1,
+      "sales_order_delivery_deadline": "2021-09-01T07:49:29.813Z",
+      "material_cost": 10,
+      "created_at": "2021-09-01T07:49:29.813Z",
+      "updated_at": "2021-10-15T14:05:47.625Z",
+      "subassemblies_cost": 10,
+      "operations_cost": 10,
+      "deleted_at": null,
+      "custom_fields": {
+        "37460d24-ea57-416d-888e-bea7c0505642": "expedited",
+        "6afe78d2-2b95-4d71-92f5-1bc2be852afe": 5
+      },
+      "serial_numbers": [
+        {
+          "id": 1,
+          "transaction_id": null,
+          "serial_number": "SN1",
+          "resource_type": "ManufacturingOrder",
+          "resource_id": 21400,
+          "transaction_date": "2023-02-10T10:06:14.435Z",
+          "quantity_change": 1
+        }
+      ],
+      "traceability": [
+        {
+          "batch_id": 1,
+          "serial_number_id": null,
+          "quantity": "2"
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/createmanufacturingorder"
+  },
+  "GET /manufacturing_orders": {
+    "body": {
+      "data": [
+        {
+          "id": 21400,
+          "status": "NOT_STARTED",
+          "order_no": "SO-2 / 1",
+          "variant_id": 1418016,
+          "planned_quantity": 1,
+          "actual_quantity": null,
+          "batch_transactions": [],
+          "location_id": 2327,
+          "order_created_date": "2021-09-01T07:49:29.000Z",
+          "done_date": null,
+          "production_deadline_date": "2021-10-18T08:00:00.000Z",
+          "additional_info": "",
+          "is_linked_to_sales_order": true,
+          "ingredient_availability": "IN_STOCK",
+          "total_cost": 0,
+          "total_actual_time": 0,
+          "total_planned_time": 18000,
+          "sales_order_id": 1,
+          "sales_order_row_id": 1,
+          "sales_order_delivery_deadline": "2021-09-01T07:49:29.813Z",
+          "material_cost": 10,
+          "created_at": "2021-09-01T07:49:29.813Z",
+          "updated_at": "2021-10-15T14:05:47.625Z",
+          "subassemblies_cost": 10,
+          "operations_cost": 10,
+          "deleted_at": null,
+          "custom_fields": {
+            "37460d24-ea57-416d-888e-bea7c0505642": "expedited",
+            "6afe78d2-2b95-4d71-92f5-1bc2be852afe": 5
+          },
+          "serial_numbers": [
+            {
+              "id": 1,
+              "transaction_id": null,
+              "serial_number": "SN1",
+              "resource_type": "ManufacturingOrder",
+              "resource_id": 21400,
+              "transaction_date": "2023-02-10T10:06:14.435Z",
+              "quantity_change": 1
+            }
+          ],
+          "traceability": [
+            {
+              "batch_id": 1,
+              "serial_number_id": null,
+              "quantity": "2"
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/getallmanufacturingorders"
+  },
+  "PATCH /manufacturing_orders/{id}": {
+    "body": {
+      "id": 21400,
+      "status": "NOT_STARTED",
+      "order_no": "SO-2 / 1",
+      "variant_id": 1418016,
+      "planned_quantity": 1,
+      "actual_quantity": null,
+      "batch_transactions": [],
+      "location_id": 2327,
+      "order_created_date": "2021-09-01T07:49:29.000Z",
+      "done_date": null,
+      "production_deadline_date": "2021-10-18T08:00:00.000Z",
+      "additional_info": "",
+      "is_linked_to_sales_order": true,
+      "ingredient_availability": "IN_STOCK",
+      "total_cost": 0,
+      "total_actual_time": 0,
+      "total_planned_time": 18000,
+      "sales_order_id": 1,
+      "sales_order_row_id": 1,
+      "sales_order_delivery_deadline": "2021-09-01T07:49:29.813Z",
+      "material_cost": 10,
+      "created_at": "2021-09-01T07:49:29.813Z",
+      "updated_at": "2021-10-15T14:05:47.625Z",
+      "subassemblies_cost": 10,
+      "operations_cost": 10,
+      "deleted_at": null,
+      "custom_fields": {
+        "37460d24-ea57-416d-888e-bea7c0505642": "expedited",
+        "6afe78d2-2b95-4d71-92f5-1bc2be852afe": 5
+      },
+      "serial_numbers": [
+        {
+          "id": 1,
+          "transaction_id": null,
+          "serial_number": "SN1",
+          "resource_type": "ManufacturingOrder",
+          "resource_id": 21400,
+          "transaction_date": "2023-02-10T10:06:14.435Z",
+          "quantity_change": 1
+        }
+      ],
+      "traceability": [
+        {
+          "batch_id": 1,
+          "serial_number_id": null,
+          "quantity": "2"
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/updatemanufacturingorder"
+  },
+  "GET /sales_orders/{id}": {
+    "body": {
+      "id": 1,
+      "customer_id": 1,
+      "order_no": "SO-3",
+      "source": "api",
+      "order_created_date": "2020-10-23T10:37:05.085Z",
+      "delivery_date": "2020-10-23T10:37:05.085Z",
+      "location_id": 1,
+      "status": "NOT_SHIPPED",
+      "currency": "USD",
+      "conversion_rate": 2,
+      "total": 150,
+      "total_in_base_currency": 75,
+      "conversion_date": "2020-10-23T10:37:05.085Z",
+      "product_availability": "IN_STOCK",
+      "product_expected_date": "2021-09-10T08:00:00.000Z",
+      "ingredient_availability": "PROCESSED",
+      "ingredient_expected_date": "2021-09-10T08:00:00.000Z",
+      "production_status": "DONE",
+      "invoicing_status": "invoiced",
+      "additional_info": "additional info",
+      "customer_ref": "my customer reference",
+      "picked_date": "2020-10-23T10:37:05.085Z",
+      "ecommerce_order_type": "shopify",
+      "ecommerce_store_name": "katana.myshopify.com",
+      "ecommerce_order_id": "19433769",
+      "created_at": "2020-10-23T10:37:05.085Z",
+      "updated_at": "2020-10-23T10:37:05.085Z",
+      "sales_order_rows": [
+        {
+          "sales_order_id": 1,
+          "id": 1,
+          "quantity": 2,
+          "variant_id": 1,
+          "tax_rate_id": 1,
+          "location_id": 1,
+          "price_per_unit": 75,
+          "total_discount": "10.00",
+          "price_per_unit_in_base_currency": 37.5,
+          "total": 150,
+          "total_in_base_currency": 75,
+          "conversion_rate": 2,
+          "conversion_date": "2020-10-23T10:37:05.085Z",
+          "product_availability": "IN_STOCK",
+          "product_expected_date": "2021-09-10T08:00:00.000Z",
+          "created_at": "2020-10-23T10:37:05.085Z",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "linked_manufacturing_order_id": 1,
+          "attributes": [
+            {
+              "key": "key",
+              "value": "value"
+            }
+          ],
+          "batch_transactions": [
+            {
+              "batch_id": 1,
+              "quantity": 5
+            },
+            {
+              "batch_id": null,
+              "quantity": 5
+            }
+          ],
+          "serial_numbers": [
+            1
+          ],
+          "traceability": [
+            {
+              "batch_id": 1,
+              "serial_number_id": null,
+              "bin_location_id": 3,
+              "quantity": "5"
+            },
+            {
+              "batch_id": null,
+              "serial_number_id": null,
+              "bin_location_id": null,
+              "quantity": "5"
+            }
+          ]
+        }
+      ],
+      "tracking_number": "12345678",
+      "tracking_number_url": "https://tracking-number-url",
+      "custom_fields": {
+        "37460d24-ea57-416d-888e-bea7c0505642": "PO-1234",
+        "6afe78d2-2b95-4d71-92f5-1bc2be852afe": 5
+      },
+      "billing_address_id": 1234,
+      "shipping_address_id": 1235,
+      "addresses": [
+        {
+          "id": 1234,
+          "sales_order_id": 12345,
+          "entity_type": "billing",
+          "first_name": "Luke",
+          "last_name": "Skywalker",
+          "company": "Company",
+          "phone": "123456",
+          "line_1": "Line 1",
+          "line_2": "Line 2",
+          "city": "City",
+          "state": "State",
+          "zip": "Zip",
+          "country": "Country",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "created_at": "2020-10-23T10:37:05.085Z"
+        },
+        {
+          "id": 1235,
+          "sales_order_id": 12345,
+          "entity_type": "shipping",
+          "first_name": "Luke",
+          "last_name": "Skywalker",
+          "company": "Company",
+          "phone": "123456",
+          "line_1": "Line 1",
+          "line_2": "Line 2",
+          "city": "City",
+          "state": "State",
+          "zip": "Zip",
+          "country": "Country",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "created_at": "2020-10-23T10:37:05.085Z"
+        }
+      ],
+      "shipping_fee": {
+        "id": 1,
+        "sales_order_id": 1,
+        "description": "",
+        "amount": "1.0000000000",
+        "tax_rate_id": 16582
+      }
+    },
+    "source": "https://developer.katanamrp.com/reference/retrieve-sales-order"
+  },
+  "GET /suppliers": {
+    "body": {
+      "data": [
+        {
+          "id": 1,
+          "name": "Luke Skywalker",
+          "email": "luke.skywalker@example.com",
+          "phone": "123456",
+          "comment": "Luke Skywalker was a Tatooine farmboy who rose from humble beginnings to become one of the\n              greatest Jedi the galaxy has ever known.",
+          "currency": "UAH",
+          "custom_fields": {
+            "2fa40b67-e0f1-46be-84b2-6441f2c976c3": "Net 30",
+            "b6c0cbb5-6ba0-4f6e-a6f4-2b6c3f4a57ea": 14
+          },
+          "created_at": "2020-10-23T10:37:05.085Z",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "deleted_at": null,
+          "default_address_id": 1,
+          "addresses": [
+            {
+              "id": 1,
+              "supplier_id": 12345,
+              "line_1": "Line 1",
+              "line_2": "Line 2",
+              "city": "City",
+              "state": "State",
+              "zip": "Zip",
+              "country": "Country",
+              "updated_at": "2020-10-23T10:37:05.085Z",
+              "created_at": "2020-10-23T10:37:05.085Z"
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/list-all-suppliers"
+  },
+  "POST /sales_orders": {
+    "body": {
+      "id": 1,
+      "customer_id": 1,
+      "order_no": "SO-3",
+      "source": "API",
+      "order_created_date": "2020-10-23T10:37:05.085Z",
+      "delivery_date": "2020-10-23T10:37:05.085Z",
+      "location_id": 1,
+      "picked_date": null,
+      "status": "NOT_SHIPPED",
+      "currency": "USD",
+      "conversion_rate": 2,
+      "total": 300,
+      "total_in_base_currency": 150,
+      "conversion_date": "2020-10-23T10:37:05.085Z",
+      "product_availability": "IN_STOCK",
+      "ingredient_availability": "PROCESSED",
+      "production_status": "DONE",
+      "invoicing_status": "invoiced",
+      "additional_info": "additional info",
+      "customer_ref": "my customer reference",
+      "ecommerce_order_type": "shopify",
+      "ecommerce_store_name": "katana.myshopify.com",
+      "ecommerce_order_id": "19433769",
+      "created_at": "2020-10-23T10:37:05.085Z",
+      "updated_at": "2020-10-23T10:37:05.085Z",
+      "deleted_at": null,
+      "sales_order_rows": [
+        {
+          "sales_order_id": 1,
+          "id": 1,
+          "quantity": 2,
+          "variant_id": 1,
+          "tax_rate_id": 1,
+          "location_id": 1,
+          "price_per_unit": 150,
+          "total": 300,
+          "total_in_base_currency": 150,
+          "conversion_rate": null,
+          "conversion_date": null,
+          "created_at": "2020-10-23T10:37:05.085Z",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "attributes": [
+            {
+              "key": "key",
+              "value": "value"
+            }
+          ],
+          "batch_transactions": [],
+          "serial_numbers": [],
+          "traceability": []
+        }
+      ],
+      "tracking_number": "12345678",
+      "tracking_number_url": "https://tracking-number-url",
+      "custom_fields": {
+        "37460d24-ea57-416d-888e-bea7c0505642": "PO-1234",
+        "6afe78d2-2b95-4d71-92f5-1bc2be852afe": 5
+      },
+      "billing_address_id": 1234,
+      "shipping_address_id": 1235,
+      "addresses": [
+        {
+          "id": 1234,
+          "sales_order_id": 12345,
+          "entity_type": "billing",
+          "first_name": "Luke",
+          "last_name": "Skywalker",
+          "company": "Company",
+          "phone": "123456",
+          "line_1": "Line 1",
+          "line_2": "Line 2",
+          "city": "City",
+          "state": "State",
+          "zip": "Zip",
+          "country": "Country",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "created_at": "2020-10-23T10:37:05.085Z"
+        },
+        {
+          "id": 1235,
+          "sales_order_id": 12345,
+          "entity_type": "shipping",
+          "first_name": "Luke",
+          "last_name": "Skywalker",
+          "company": "Company",
+          "phone": "123456",
+          "line_1": "Line 1",
+          "line_2": "Line 2",
+          "city": "City",
+          "state": "State",
+          "zip": "Zip",
+          "country": "Country",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "created_at": "2020-10-23T10:37:05.085Z"
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/create-sales-order"
+  },
+  "POST /purchase_orders": {
+    "body": {
+      "id": 1,
+      "status": "NOT_RECEIVED",
+      "billing_status": "NOT_BILLED",
+      "last_document_status": "NOT_SENT",
+      "order_no": "PO-1",
+      "entity_type": "regular",
+      "default_group_id": 9,
+      "supplier_id": 1,
+      "currency": "USD",
+      "expected_arrival_date": "2021-10-13T15:31:48.490Z",
+      "order_created_date": "2021-10-13T15:31:48.490Z",
+      "additional_info": "Please unpack",
+      "location_id": 1,
+      "tracking_location_id": null,
+      "total": 1,
+      "total_in_base_currency": 1,
+      "custom_fields": {
+        "37460d24-ea57-416d-888e-bea7c0505642": "expedited",
+        "6afe78d2-2b95-4d71-92f5-1bc2be852afe": 5
+      },
+      "created_at": "2021-02-03T13:13:07.110Z",
+      "updated_at": "2021-02-03T13:13:07.110Z",
+      "deleted_at": null,
+      "purchase_order_rows": [
+        {
+          "id": 1,
+          "quantity": 1,
+          "variant_id": 1,
+          "tax_rate_id": 1,
+          "price_per_unit": 1.5,
+          "purchase_uom_conversion_rate": 1.1,
+          "purchase_uom": "cm",
+          "created_at": "2021-02-03T13:13:07.121Z",
+          "updated_at": "2021-02-03T13:13:07.121Z",
+          "deleted_at": null,
+          "batch_transactions": [
+            {
+              "batch_id": 1,
+              "quantity": 1
+            }
+          ],
+          "traceability": [
+            {
+              "batch_id": 1,
+              "serial_number_id": null,
+              "bin_location_id": 3,
+              "quantity": "1"
+            }
+          ],
+          "currency": "USD",
+          "conversion_rate": null,
+          "conversion_date": null,
+          "received_date": "2021-02-03T13:13:07.000Z",
+          "purchase_order_id": 1,
+          "total": 1,
+          "total_in_base_currency": 1,
+          "landed_cost": "45.0000000000",
+          "group_id": 11,
+          "custom_fields": {
+            "9d1c4b52-7f38-4e0a-9a6d-3f2b8c1e4a70": "inspect on arrival"
+          }
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/createpurchaseorder"
+  },
+  "GET /sales_orders": {
+    "body": {
+      "data": [
+        {
+          "id": 1,
+          "customer_id": 1,
+          "order_no": "SO-3",
+          "source": "api",
+          "order_created_date": "2020-10-23T10:37:05.085Z",
+          "delivery_date": "2020-10-23T10:37:05.085Z",
+          "picked_date": "2020-10-23T10:37:05.085Z",
+          "location_id": 1,
+          "status": "NOT_SHIPPED",
+          "currency": "USD",
+          "conversion_rate": 2,
+          "total": 150,
+          "total_in_base_currency": 75,
+          "conversion_date": "2020-10-23T10:37:05.085Z",
+          "product_availability": "IN_STOCK",
+          "product_expected_date": "2021-09-10T08:00:00.000Z",
+          "ingredient_availability": "PROCESSED",
+          "ingredient_expected_date": "2021-09-10T08:00:00.000Z",
+          "production_status": "DONE",
+          "invoicing_status": "invoiced",
+          "additional_info": "additional info",
+          "customer_ref": "my customer reference",
+          "ecommerce_order_type": "shopify",
+          "ecommerce_store_name": "katana.myshopify.com",
+          "ecommerce_order_id": "19433769",
+          "created_at": "2020-10-23T10:37:05.085Z",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "sales_order_rows": [
+            {
+              "sales_order_id": 1,
+              "id": 1,
+              "quantity": 2,
+              "variant_id": 1,
+              "tax_rate_id": 1,
+              "location_id": 1,
+              "price_per_unit": 75,
+              "total_discount": "10.00",
+              "price_per_unit_in_base_currency": 37.5,
+              "total": 150,
+              "total_in_base_currency": 75,
+              "conversion_rate": 2,
+              "conversion_date": "2020-10-23T10:37:05.085Z",
+              "product_availability": "IN_STOCK",
+              "product_expected_date": "2021-09-10T08:00:00.000Z",
+              "created_at": "2020-10-23T10:37:05.085Z",
+              "updated_at": "2020-10-23T10:37:05.085Z",
+              "linked_manufacturing_order_id": 1,
+              "attributes": [
+                {
+                  "key": "key",
+                  "value": "value"
+                }
+              ],
+              "batch_transactions": [
+                {
+                  "batch_id": 1,
+                  "quantity": 5
+                },
+                {
+                  "batch_id": null,
+                  "quantity": 5
+                }
+              ],
+              "serial_numbers": [
+                1
+              ],
+              "traceability": [
+                {
+                  "batch_id": 1,
+                  "serial_number_id": null,
+                  "bin_location_id": 3,
+                  "quantity": "5"
+                },
+                {
+                  "batch_id": null,
+                  "serial_number_id": null,
+                  "bin_location_id": null,
+                  "quantity": "5"
+                }
+              ]
+            }
+          ],
+          "tracking_number": "12345678",
+          "tracking_number_url": "https://tracking-number-url",
+          "custom_fields": {
+            "37460d24-ea57-416d-888e-bea7c0505642": "PO-1234",
+            "6afe78d2-2b95-4d71-92f5-1bc2be852afe": 5
+          },
+          "billing_address_id": 1234,
+          "shipping_address_id": 1235,
+          "addresses": [
+            {
+              "id": 1234,
+              "sales_order_id": 12345,
+              "entity_type": "billing",
+              "first_name": "Luke",
+              "last_name": "Skywalker",
+              "company": "Company",
+              "phone": "123456",
+              "line_1": "Line 1",
+              "line_2": "Line 2",
+              "city": "City",
+              "state": "State",
+              "zip": "Zip",
+              "country": "Country",
+              "updated_at": "2020-10-23T10:37:05.085Z",
+              "created_at": "2020-10-23T10:37:05.085Z"
+            },
+            {
+              "id": 1235,
+              "sales_order_id": 12345,
+              "entity_type": "shipping",
+              "first_name": "Luke",
+              "last_name": "Skywalker",
+              "company": "Company",
+              "phone": "123456",
+              "line_1": "Line 1",
+              "line_2": "Line 2",
+              "city": "City",
+              "state": "State",
+              "zip": "Zip",
+              "country": "Country",
+              "updated_at": "2020-10-23T10:37:05.085Z",
+              "created_at": "2020-10-23T10:37:05.085Z"
+            }
+          ],
+          "shipping_fee": {
+            "id": 1,
+            "sales_order_id": 1,
+            "description": "",
+            "amount": "1.0000000000",
+            "tax_rate_id": 16582
+          }
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/list-all-sales-orders"
+  },
+  "GET /variants": {
+    "body": {
+      "data": [
+        {
+          "id": 1,
+          "sku": "EM",
+          "sales_price": 40,
+          "product_id": 1,
+          "material_id": null,
+          "purchase_price": 0,
+          "type": "product",
+          "created_at": "2020-10-23T10:37:05.085Z",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "deleted_at": null,
+          "internal_barcode": "0316",
+          "registered_barcode": "0785223088",
+          "supplier_item_codes": [
+            "978-0785223085",
+            "0785223088"
+          ],
+          "config_attributes": [
+            {
+              "config_name": "Type",
+              "config_value": "Standard"
+            }
+          ],
+          "product_or_material": {
+            "id": 1,
+            "name": "Standard-hilt lightsaber",
+            "uom": "pcs",
+            "category_name": "lightsaber",
+            "is_producible": true,
+            "default_supplier_id": 1,
+            "is_purchasable": true,
+            "type": "product",
+            "purchase_uom": "pcs",
+            "purchase_uom_conversion_rate": 1,
+            "batch_tracked": false,
+            "variants": [
+              {
+                "id": 1,
+                "sku": "EM",
+                "sales_price": 40,
+                "product_id": 1,
+                "purchase_price": 0,
+                "type": "product",
+                "created_at": "2020-10-23T10:37:05.085Z",
+                "updated_at": "2020-10-23T10:37:05.085Z",
+                "lead_time": 1,
+                "minimum_order_quantity": 3,
+                "config_attributes": [
+                  {
+                    "config_name": "Type",
+                    "config_value": "Standard"
+                  }
+                ],
+                "internal_barcode": "internalcode",
+                "registered_barcode": "registeredcode",
+                "supplier_item_codes": [
+                  "code"
+                ],
+                "custom_fields": [
+                  {
+                    "field_name": "Power level",
+                    "field_value": "Strong"
+                  }
+                ]
+              }
+            ],
+            "configs": [
+              {
+                "id": 1,
+                "name": "Type",
+                "values": [
+                  "Standard",
+                  "Double-bladed"
+                ],
+                "product_id": 1
+              }
+            ],
+            "additional_info": "additional info",
+            "created_at": "2020-10-23T10:37:05.085Z",
+            "updated_at": "2020-10-23T10:37:05.085Z"
+          }
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/list-all-variants"
+  },
+  "GET /products": {
+    "body": {
+      "data": [
+        {
+          "id": 1,
+          "name": "Standard-hilt lightsaber",
+          "uom": "pcs",
+          "category_name": "lightsaber",
+          "is_producible": true,
+          "default_supplier_id": 1,
+          "is_sellable": true,
+          "is_purchasable": true,
+          "is_auto_assembly": true,
+          "type": "product",
+          "purchase_uom": "pcs",
+          "purchase_uom_conversion_rate": 1,
+          "batch_tracked": true,
+          "operations_in_sequence": false,
+          "serial_tracked": false,
+          "archived_at": "2020-10-20T10:37:05.085Z",
+          "variants": [
+            {
+              "id": 1,
+              "sku": "EM",
+              "sales_price": 40,
+              "product_id": 1,
+              "purchase_price": 0,
+              "type": "product",
+              "created_at": "2020-10-23T10:37:05.085Z",
+              "updated_at": "2020-10-23T10:37:05.085Z",
+              "lead_time": 1,
+              "minimum_order_quantity": 3,
+              "config_attributes": [
+                {
+                  "config_name": "Type",
+                  "config_value": "Standard"
+                }
+              ],
+              "internal_barcode": "internalcode",
+              "registered_barcode": "registeredcode",
+              "supplier_item_codes": [
+                "code"
+              ],
+              "custom_fields": [
+                {
+                  "field_name": "Power level",
+                  "field_value": "Strong"
+                }
+              ]
+            }
+          ],
+          "configs": [
+            {
+              "id": 1,
+              "name": "Type",
+              "values": [
+                "Standard",
+                "Double-bladed"
+              ],
+              "product_id": 1
+            }
+          ],
+          "additional_info": "additional info",
+          "custom_field_collection_id": 1,
+          "created_at": "2020-10-23T10:37:05.085Z",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "supplier": {
+            "id": 1,
+            "name": "Luke Skywalker",
+            "email": "luke.skywalker@example.com",
+            "comment": "Luke Skywalker was a Tatooine farmboy who rose from humble beginnings to\n                    become one of the greatest Jedi the galaxy has ever known.",
+            "currency": "UAH",
+            "created_at": "2020-10-23T10:37:05.085Z",
+            "updated_at": "2020-10-23T10:37:05.085Z",
+            "deleted_at": null
+          }
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/list-all-products"
+  },
+  "PATCH /variants/{id}": {
+    "body": {
+      "id": 1,
+      "sku": "EM",
+      "sales_price": 40,
+      "product_id": 1,
+      "material_id": null,
+      "purchase_price": 0,
+      "type": "product",
+      "internal_barcode": "0315",
+      "registered_barcode": "0785223088",
+      "supplier_item_codes": [
+        "978-0785223085",
+        "0785223088"
+      ],
+      "created_at": "2020-10-23T10:37:05.085Z",
+      "updated_at": "2020-10-23T10:37:05.085Z",
+      "lead_time": 1,
+      "minimum_order_quantity": 3,
+      "config_attributes": [
+        {
+          "config_name": "Type",
+          "config_value": "Standard"
+        }
+      ],
+      "custom_fields": {
+        "a1b2c3d4-1111-2222-3333-444455556666": "Strong"
+      }
+    },
+    "source": "https://developer.katanamrp.com/reference/updatevariant"
+  },
+  "GET /products/{id}": {
+    "body": {
+      "id": 1,
+      "name": "Standard-hilt lightsaber",
+      "uom": "pcs",
+      "category_name": "lightsaber",
+      "is_producible": true,
+      "default_supplier_id": 1,
+      "is_sellable": true,
+      "is_purchasable": true,
+      "is_auto_assembly": true,
+      "type": "product",
+      "purchase_uom": "pcs",
+      "purchase_uom_conversion_rate": 1,
+      "batch_tracked": false,
+      "operations_in_sequence": false,
+      "archived_at": "2020-10-20T10:37:05.085Z",
+      "variants": [
+        {
+          "id": 1,
+          "sku": "EM",
+          "sales_price": 40,
+          "product_id": 1,
+          "purchase_price": 0,
+          "type": "product",
+          "created_at": "2020-10-23T10:37:05.085Z",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "lead_time": 1,
+          "minimum_order_quantity": 3,
+          "config_attributes": [
+            {
+              "config_name": "Type",
+              "config_value": "Standard"
+            }
+          ],
+          "internal_barcode": "internalcode",
+          "registered_barcode": "registeredcode",
+          "supplier_item_codes": [
+            "code"
+          ],
+          "custom_fields": [
+            {
+              "field_name": "Power level",
+              "field_value": "Strong"
+            }
+          ]
+        }
+      ],
+      "configs": [
+        {
+          "id": 1,
+          "name": "Type",
+          "values": [
+            "Standard",
+            "Double-bladed"
+          ],
+          "product_id": 1
+        }
+      ],
+      "additional_info": "additional info",
+      "custom_field_collection_id": 1,
+      "created_at": "2020-10-23T10:37:05.085Z",
+      "updated_at": "2020-10-23T10:37:05.085Z",
+      "supplier": {
+        "id": 1,
+        "name": "Luke Skywalker",
+        "email": "luke.skywalker@example.com",
+        "comment": "Luke Skywalker was a Tatooine farmboy who rose from humble beginnings to become one of the\n                    greatest Jedi the galaxy has ever known.",
+        "currency": "UAH",
+        "created_at": "2020-10-23T10:37:05.085Z",
+        "updated_at": "2020-10-23T10:37:05.085Z",
+        "deleted_at": null
+      }
+    },
+    "source": "https://developer.katanamrp.com/reference/getproduct"
+  },
+  "GET /variants/{id}": {
+    "body": {
+      "id": 1,
+      "sku": "EM",
+      "sales_price": 40,
+      "product_id": 1,
+      "material_id": null,
+      "purchase_price": 0,
+      "type": "product",
+      "created_at": "2020-10-23T10:37:05.085Z",
+      "updated_at": "2020-10-23T10:37:05.085Z",
+      "deleted_at": null,
+      "internal_barcode": "0316",
+      "registered_barcode": "0785223088",
+      "supplier_item_codes": [
+        "978-0785223085",
+        "0785223088"
+      ],
+      "config_attributes": [
+        {
+          "config_name": "Type",
+          "config_value": "Standard"
+        }
+      ],
+      "product_or_material": {
+        "id": 1,
+        "name": "Standard-hilt lightsaber",
+        "uom": "pcs",
+        "category_name": "lightsaber",
+        "is_producible": true,
+        "default_supplier_id": 1,
+        "is_purchasable": true,
+        "type": "product",
+        "purchase_uom": "pcs",
+        "purchase_uom_conversion_rate": 1,
+        "batch_tracked": false,
+        "variants": [
+          {
+            "id": 1,
+            "sku": "EM",
+            "sales_price": 40,
+            "product_id": 1,
+            "purchase_price": 0,
+            "type": "product",
+            "created_at": "2020-10-23T10:37:05.085Z",
+            "updated_at": "2020-10-23T10:37:05.085Z",
+            "lead_time": 1,
+            "minimum_order_quantity": 3,
+            "config_attributes": [
+              {
+                "config_name": "Type",
+                "config_value": "Standard"
+              }
+            ],
+            "internal_barcode": "internalcode",
+            "registered_barcode": "registeredcode",
+            "supplier_item_codes": [
+              "code"
+            ],
+            "custom_fields": [
+              {
+                "field_name": "Power level",
+                "field_value": "Strong"
+              }
+            ]
+          }
+        ],
+        "configs": [
+          {
+            "id": 1,
+            "name": "Type",
+            "values": [
+              "Standard",
+              "Double-bladed"
+            ],
+            "product_id": 1
+          }
+        ],
+        "additional_info": "additional info",
+        "created_at": "2020-10-23T10:37:05.085Z",
+        "updated_at": "2020-10-23T10:37:05.085Z"
+      }
+    },
+    "source": "https://developer.katanamrp.com/reference/getvariant"
+  },
+  "GET /materials": {
+    "body": {
+      "data": [
+        {
+          "id": 1,
+          "name": "Kyber Crystal",
+          "uom": "pcs",
+          "category_name": "Lightsaber components",
+          "default_supplier_id": 1,
+          "type": "material",
+          "purchase_uom": "pcs",
+          "purchase_uom_conversion_rate": 1,
+          "batch_tracked": false,
+          "is_sellable": false,
+          "archived_at": "2020-10-20T10:37:05.085Z",
+          "variants": [
+            {
+              "id": 1,
+              "product_id": null,
+              "material_id": 1,
+              "sku": "KC",
+              "sales_price": null,
+              "purchase_price": 45,
+              "config_attributes": [
+                {
+                  "config_name": "Type",
+                  "config_value": "Standard"
+                }
+              ],
+              "type": "material",
+              "deleted_at": null,
+              "internal_barcode": "internalcode",
+              "registered_barcode": "registeredcode",
+              "supplier_item_codes": [
+                "code"
+              ],
+              "lead_time": 1,
+              "minimum_order_quantity": 3,
+              "custom_fields": [
+                {
+                  "field_name": "Power level",
+                  "field_value": "Strong"
+                }
+              ],
+              "updated_at": "2020-10-23T10:37:05.085Z",
+              "created_at": "2020-10-23T10:37:05.085Z"
+            }
+          ],
+          "configs": [
+            {
+              "id": 1,
+              "name": "Type",
+              "values": [
+                "Standard",
+                "Double-bladed"
+              ],
+              "product_id": 1
+            }
+          ],
+          "additional_info": "additional info",
+          "custom_field_collection_id": 1,
+          "created_at": "2020-10-23T10:37:05.085Z",
+          "updated_at": "2020-10-23T10:37:05.085Z",
+          "supplier": {
+            "id": 1,
+            "name": "Luke Skywalker",
+            "email": "luke.skywalker@example.com",
+            "comment": "Luke Skywalker was a Tatooine farmboy who rose from humble beginnings to\n                    become one of the greatest Jedi the galaxy has ever known.",
+            "currency": "UAH",
+            "created_at": "2020-10-23T10:37:05.085Z",
+            "updated_at": "2020-10-23T10:37:05.085Z",
+            "deleted_at": null
+          }
+        }
+      ]
+    },
+    "source": "https://developer.katanamrp.com/reference/getallmaterials"
+  }
+}

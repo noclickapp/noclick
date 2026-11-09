@@ -1,0 +1,2049 @@
+{
+  "$defs": {
+    "KatanaMRPAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "katana_mrp_api_key",
+          "default": "katana_mrp_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Katana API Key",
+      "type": "object",
+      "x-credential-instructions": "In Katana, go to Settings > API and add an API key. Paste the key here without the Bearer prefix. NoClick sends it to api.katanamrp.com to access your Katana account.",
+      "x-credential-url": "https://developer.katanamrp.com/reference/api-authentication"
+    },
+    "KatanaMRPCreateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comment"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "KatanaMRPCreateCustomerConfig",
+      "type": "object"
+    },
+    "KatanaMRPCreateManufacturingOrderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_manufacturing_order",
+          "default": "create_manufacturing_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "variant_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Variant Id",
+          "type": "integer"
+        },
+        "planned_quantity": {
+          "maximum": 1000000000000000,
+          "minimum": 1e-05,
+          "title": "Planned Quantity",
+          "type": "number"
+        },
+        "location_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "order_no": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order No"
+        },
+        "production_deadline_date": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Production Deadline Date"
+        },
+        "additional_info": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Additional Info"
+        }
+      },
+      "required": [
+        "variant_id",
+        "planned_quantity",
+        "location_id"
+      ],
+      "title": "KatanaMRPCreateManufacturingOrderConfig",
+      "type": "object"
+    },
+    "KatanaMRPCreatePurchaseOrderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_purchase_order",
+          "default": "create_purchase_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "supplier_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Supplier Id",
+          "type": "integer"
+        },
+        "location_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "purchase_order_rows": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/KatanaMRPPurchaseOrderRow"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "title": "Purchase Order Rows (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "order_no": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order No"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "DRAFT",
+                "NOT_RECEIVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "DRAFT",
+            "NOT_RECEIVED"
+          ],
+          "x-enum-searchable": true
+        },
+        "expected_arrival_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date",
+          "title": "Expected Arrival Date"
+        },
+        "additional_info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Additional Info"
+        }
+      },
+      "required": [
+        "supplier_id",
+        "location_id",
+        "purchase_order_rows"
+      ],
+      "title": "KatanaMRPCreatePurchaseOrderConfig",
+      "type": "object"
+    },
+    "KatanaMRPCreateSalesOrderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_sales_order",
+          "default": "create_sales_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_id": {
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "sales_order_rows": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/KatanaMRPSalesOrderRow"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "title": "Sales Order Rows (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "order_no": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order No"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "PENDING",
+                "NOT_SHIPPED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "PENDING",
+            "NOT_SHIPPED"
+          ],
+          "x-enum-searchable": true
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "delivery_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delivery Date"
+        },
+        "additional_info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Additional Info"
+        }
+      },
+      "required": [
+        "customer_id",
+        "sales_order_rows"
+      ],
+      "title": "KatanaMRPCreateSalesOrderConfig",
+      "type": "object"
+    },
+    "KatanaMRPCreateSupplierConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_supplier",
+          "default": "create_supplier",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comment"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "KatanaMRPCreateSupplierConfig",
+      "type": "object"
+    },
+    "KatanaMRPGetProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Katana ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "KatanaMRPGetProductConfig",
+      "type": "object"
+    },
+    "KatanaMRPGetSalesOrderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Katana ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_sales_order",
+          "default": "get_sales_order",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "KatanaMRPGetSalesOrderConfig",
+      "type": "object"
+    },
+    "KatanaMRPGetUserInfoConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user_info",
+          "default": "get_user_info",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "KatanaMRPGetUserInfoConfig",
+      "type": "object"
+    },
+    "KatanaMRPGetVariantConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Katana ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_variant",
+          "default": "get_variant",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "KatanaMRPGetVariantConfig",
+      "type": "object"
+    },
+    "KatanaMRPListCustomersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number; Katana returns one page per run.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        }
+      },
+      "title": "KatanaMRPListCustomersConfig",
+      "type": "object"
+    },
+    "KatanaMRPListInventoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number; Katana returns one page per run.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_inventory",
+          "default": "list_inventory",
+          "title": "Operation",
+          "type": "string"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Id"
+        },
+        "include_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Archived"
+        }
+      },
+      "title": "KatanaMRPListInventoryConfig",
+      "type": "object"
+    },
+    "KatanaMRPListLocationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number; Katana returns one page per run.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "KatanaMRPListLocationsConfig",
+      "type": "object"
+    },
+    "KatanaMRPListManufacturingOrdersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number; Katana returns one page per run.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_manufacturing_orders",
+          "default": "list_manufacturing_orders",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order No"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "NOT_STARTED",
+                "BLOCKED",
+                "IN_PROGRESS",
+                "PARTIALLY_COMPLETED",
+                "DONE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "NOT_STARTED",
+            "BLOCKED",
+            "IN_PROGRESS",
+            "PARTIALLY_COMPLETED",
+            "DONE"
+          ],
+          "x-enum-searchable": true
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Id"
+        }
+      },
+      "title": "KatanaMRPListManufacturingOrdersConfig",
+      "type": "object"
+    },
+    "KatanaMRPListMaterialsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number; Katana returns one page per run.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_materials",
+          "default": "list_materials",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "category_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category Name"
+        }
+      },
+      "title": "KatanaMRPListMaterialsConfig",
+      "type": "object"
+    },
+    "KatanaMRPListProductsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number; Katana returns one page per run.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "category_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category Name"
+        },
+        "is_sellable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Sellable"
+        },
+        "is_producible": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Producible"
+        }
+      },
+      "title": "KatanaMRPListProductsConfig",
+      "type": "object"
+    },
+    "KatanaMRPListPurchaseOrdersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number; Katana returns one page per run.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_purchase_orders",
+          "default": "list_purchase_orders",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order No"
+        },
+        "supplier_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "DRAFT",
+                "NOT_RECEIVED",
+                "PARTIALLY_RECEIVED",
+                "RECEIVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "DRAFT",
+            "NOT_RECEIVED",
+            "PARTIALLY_RECEIVED",
+            "RECEIVED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "KatanaMRPListPurchaseOrdersConfig",
+      "type": "object"
+    },
+    "KatanaMRPListSalesOrdersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number; Katana returns one page per run.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_sales_orders",
+          "default": "list_sales_orders",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order No"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "PENDING",
+                "NOT_SHIPPED",
+                "READY_FOR_FULFILLMENT",
+                "PACKED",
+                "DELIVERED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "PENDING",
+            "NOT_SHIPPED",
+            "READY_FOR_FULFILLMENT",
+            "PACKED",
+            "DELIVERED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "KatanaMRPListSalesOrdersConfig",
+      "type": "object"
+    },
+    "KatanaMRPListSuppliersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number; Katana returns one page per run.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_suppliers",
+          "default": "list_suppliers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "KatanaMRPListSuppliersConfig",
+      "type": "object"
+    },
+    "KatanaMRPListVariantsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One-based page number; Katana returns one page per run.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_variants",
+          "default": "list_variants",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Id"
+        },
+        "material_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Material Id"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "product",
+                "material"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "product",
+            "material"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "KatanaMRPListVariantsConfig",
+      "type": "object"
+    },
+    "KatanaMRPOnSalesOrderDeliveredConfig": {
+      "description": "The provider publishes a concrete delivery payload for this event.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_sales_order_delivered",
+          "default": "on_sales_order_delivered",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Sales Order Delivered",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "KatanaMRPOnSalesOrderDeliveredConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KatanaMRPPurchaseOrderRow": {
+      "additionalProperties": false,
+      "properties": {
+        "variant_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Variant Id",
+          "type": "integer"
+        },
+        "quantity": {
+          "maximum": 100000000000000000,
+          "minimum": 0,
+          "title": "Quantity",
+          "type": "number"
+        },
+        "price_per_unit": {
+          "maximum": 100000000000000000,
+          "minimum": 0,
+          "title": "Price Per Unit",
+          "type": "number"
+        },
+        "tax_rate_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Rate Id"
+        }
+      },
+      "required": [
+        "variant_id",
+        "quantity",
+        "price_per_unit"
+      ],
+      "title": "KatanaMRPPurchaseOrderRow",
+      "type": "object"
+    },
+    "KatanaMRPSalesOrderRow": {
+      "additionalProperties": false,
+      "properties": {
+        "variant_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Variant Id",
+          "type": "integer"
+        },
+        "quantity": {
+          "maximum": 100000000000000000,
+          "minimum": 0,
+          "title": "Quantity",
+          "type": "number"
+        },
+        "price_per_unit": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000000000,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price Per Unit"
+        },
+        "tax_rate_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Rate Id"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location Id"
+        }
+      },
+      "required": [
+        "variant_id",
+        "quantity"
+      ],
+      "title": "KatanaMRPSalesOrderRow",
+      "type": "object"
+    },
+    "KatanaMRPUpdateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Katana ID",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comment"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "KatanaMRPUpdateCustomerConfig",
+      "type": "object"
+    },
+    "KatanaMRPUpdateManufacturingOrderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Katana ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_manufacturing_order",
+          "default": "update_manufacturing_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "NOT_STARTED",
+                "BLOCKED",
+                "IN_PROGRESS",
+                "PARTIALLY_COMPLETED",
+                "DONE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "NOT_STARTED",
+            "BLOCKED",
+            "IN_PROGRESS",
+            "PARTIALLY_COMPLETED",
+            "DONE"
+          ],
+          "x-enum-searchable": true
+        },
+        "planned_quantity": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000000,
+              "minimum": 1e-05,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Planned Quantity"
+        },
+        "actual_quantity": {
+          "anyOf": [
+            {
+              "maximum": 1000000000000000,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Quantity"
+        },
+        "production_deadline_date": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Production Deadline Date"
+        },
+        "additional_info": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Additional Info"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "KatanaMRPUpdateManufacturingOrderConfig",
+      "type": "object"
+    },
+    "KatanaMRPUpdateSalesOrderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Katana ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_sales_order",
+          "default": "update_sales_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "PENDING",
+                "NOT_SHIPPED",
+                "READY_FOR_FULFILLMENT",
+                "PACKED",
+                "DELIVERED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "PENDING",
+            "NOT_SHIPPED",
+            "READY_FOR_FULFILLMENT",
+            "PACKED",
+            "DELIVERED"
+          ],
+          "x-enum-searchable": true
+        },
+        "order_no": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order No"
+        },
+        "delivery_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delivery Date"
+        },
+        "tracking_number": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tracking Number"
+        },
+        "tracking_number_url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tracking Number Url"
+        },
+        "additional_info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Additional Info"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "KatanaMRPUpdateSalesOrderConfig",
+      "type": "object"
+    },
+    "KatanaMRPUpdateVariantConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Katana ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_variant",
+          "default": "update_variant",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sku"
+        },
+        "sales_price": {
+          "anyOf": [
+            {
+              "maximum": 100000000000,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sales Price"
+        },
+        "purchase_price": {
+          "anyOf": [
+            {
+              "maximum": 100000000000,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purchase Price"
+        },
+        "lead_time": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Time"
+        },
+        "minimum_order_quantity": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Order Quantity"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "KatanaMRPUpdateVariantConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_customer": "#/$defs/KatanaMRPCreateCustomerConfig",
+          "create_manufacturing_order": "#/$defs/KatanaMRPCreateManufacturingOrderConfig",
+          "create_purchase_order": "#/$defs/KatanaMRPCreatePurchaseOrderConfig",
+          "create_sales_order": "#/$defs/KatanaMRPCreateSalesOrderConfig",
+          "create_supplier": "#/$defs/KatanaMRPCreateSupplierConfig",
+          "get_product": "#/$defs/KatanaMRPGetProductConfig",
+          "get_sales_order": "#/$defs/KatanaMRPGetSalesOrderConfig",
+          "get_user_info": "#/$defs/KatanaMRPGetUserInfoConfig",
+          "get_variant": "#/$defs/KatanaMRPGetVariantConfig",
+          "list_customers": "#/$defs/KatanaMRPListCustomersConfig",
+          "list_inventory": "#/$defs/KatanaMRPListInventoryConfig",
+          "list_locations": "#/$defs/KatanaMRPListLocationsConfig",
+          "list_manufacturing_orders": "#/$defs/KatanaMRPListManufacturingOrdersConfig",
+          "list_materials": "#/$defs/KatanaMRPListMaterialsConfig",
+          "list_products": "#/$defs/KatanaMRPListProductsConfig",
+          "list_purchase_orders": "#/$defs/KatanaMRPListPurchaseOrdersConfig",
+          "list_sales_orders": "#/$defs/KatanaMRPListSalesOrdersConfig",
+          "list_suppliers": "#/$defs/KatanaMRPListSuppliersConfig",
+          "list_variants": "#/$defs/KatanaMRPListVariantsConfig",
+          "on_sales_order_delivered": "#/$defs/KatanaMRPOnSalesOrderDeliveredConfig",
+          "update_customer": "#/$defs/KatanaMRPUpdateCustomerConfig",
+          "update_manufacturing_order": "#/$defs/KatanaMRPUpdateManufacturingOrderConfig",
+          "update_sales_order": "#/$defs/KatanaMRPUpdateSalesOrderConfig",
+          "update_variant": "#/$defs/KatanaMRPUpdateVariantConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KatanaMRPGetUserInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPListLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPListInventoryConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPListMaterialsConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPListVariantsConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPGetVariantConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPUpdateVariantConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPListSuppliersConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPCreateSupplierConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPListSalesOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPGetSalesOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPCreateSalesOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPUpdateSalesOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPListPurchaseOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPCreatePurchaseOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPListManufacturingOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPCreateManufacturingOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPUpdateManufacturingOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/KatanaMRPOnSalesOrderDeliveredConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KatanaMRPAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Katana-mrp Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
