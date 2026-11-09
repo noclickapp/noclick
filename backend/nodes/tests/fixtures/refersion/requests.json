@@ -1,0 +1,343 @@
+[
+  {
+    "operation": "list_affiliates",
+    "config": {
+      "operation": "list_affiliates"
+    },
+    "method": "GET",
+    "path": "/v2026-08/affiliates",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "get_affiliate_counts",
+    "config": {
+      "operation": "get_affiliate_counts"
+    },
+    "method": "GET",
+    "path": "/v2026-08/affiliates/count",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "get_affiliate_activity",
+    "config": {
+      "operation": "get_affiliate_activity",
+      "id": 12345
+    },
+    "method": "GET",
+    "path": "/v2026-08/affiliates/12345/activity",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "update_affiliate",
+    "config": {
+      "operation": "update_affiliate",
+      "affiliate_id": 12345,
+      "body": {
+        "id": 12345,
+        "status": "APPROVED",
+        "sendEmailNotifications": false
+      }
+    },
+    "method": "PATCH",
+    "path": "/v2026-08/affiliates/12345",
+    "query": {},
+    "body": {
+      "id": 12345,
+      "status": "APPROVED",
+      "sendEmailNotifications": false
+    }
+  },
+  {
+    "operation": "get_affiliate_link",
+    "config": {
+      "operation": "get_affiliate_link",
+      "affiliate_id": 12345
+    },
+    "method": "GET",
+    "path": "/v2026-08/affiliates/12345/link",
+    "query": {
+      "affiliateId": "12345"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_affiliate_custom_fields",
+    "config": {
+      "operation": "list_affiliate_custom_fields",
+      "affiliate_id": 12345
+    },
+    "method": "GET",
+    "path": "/v2026-08/affiliates/12345/custom-fields",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "update_affiliate_custom_field",
+    "config": {
+      "operation": "update_affiliate_custom_field",
+      "affiliate_id": 12345,
+      "custom_field_id": 12345,
+      "body": {
+        "affiliateId": 12345,
+        "customFieldId": 12345,
+        "value": "My new answer"
+      }
+    },
+    "method": "PATCH",
+    "path": "/v2026-08/affiliates/12345/custom-fields/12345",
+    "query": {},
+    "body": {
+      "affiliateId": 12345,
+      "customFieldId": 12345,
+      "value": "My new answer"
+    }
+  },
+  {
+    "operation": "delete_affiliate_custom_field",
+    "config": {
+      "operation": "delete_affiliate_custom_field",
+      "affiliate_id": 12345,
+      "custom_field_id": 12345
+    },
+    "method": "DELETE",
+    "path": "/v2026-08/affiliates/12345/custom-fields/12345",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "list_clicks",
+    "config": {
+      "operation": "list_clicks",
+      "created_at_min": "2025-09-25T00:00:00Z",
+      "created_at_max": "2025-09-25T23:59:59Z"
+    },
+    "method": "GET",
+    "path": "/v2026-08/clicks",
+    "query": {
+      "createdAtMin": "2025-09-25T00:00:00Z",
+      "createdAtMax": "2025-09-25T23:59:59Z"
+    },
+    "body": null
+  },
+  {
+    "operation": "create_manual_credit",
+    "config": {
+      "operation": "create_manual_credit",
+      "body": {
+        "affiliateId": 123456,
+        "commissionTotal": 19.99,
+        "currency": "USD",
+        "approvalStatus": "APPROVED"
+      }
+    },
+    "method": "POST",
+    "path": "/v2026-08/conversions/manual-credit",
+    "query": {},
+    "body": {
+      "affiliateId": 123456,
+      "commissionTotal": 19.99,
+      "currency": "USD",
+      "approvalStatus": "APPROVED"
+    }
+  },
+  {
+    "operation": "credit_order",
+    "config": {
+      "operation": "credit_order",
+      "body": {
+        "conversionQueueId": 456789,
+        "affiliateId": 123456,
+        "approvalStatus": "APPROVED"
+      }
+    },
+    "method": "POST",
+    "path": "/v2026-08/conversions/credit-order-id",
+    "query": {},
+    "body": {
+      "conversionQueueId": 456789,
+      "affiliateId": 123456,
+      "approvalStatus": "APPROVED"
+    }
+  },
+  {
+    "operation": "get_conversion_counts",
+    "config": {
+      "operation": "get_conversion_counts"
+    },
+    "method": "GET",
+    "path": "/v2026-08/conversions/count",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "list_conversions",
+    "config": {
+      "operation": "list_conversions"
+    },
+    "method": "GET",
+    "path": "/v2026-08/conversions",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "get_conversion",
+    "config": {
+      "operation": "get_conversion",
+      "id": 12345
+    },
+    "method": "GET",
+    "path": "/v2026-08/conversions/12345",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "update_conversion_status",
+    "config": {
+      "operation": "update_conversion_status",
+      "id": 12345,
+      "body": {
+        "status": "APPROVED"
+      }
+    },
+    "method": "PATCH",
+    "path": "/v2026-08/conversions/12345",
+    "query": {},
+    "body": {
+      "status": "APPROVED"
+    }
+  },
+  {
+    "operation": "list_offers",
+    "config": {
+      "operation": "list_offers"
+    },
+    "method": "GET",
+    "path": "/v2026-08/offers",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "update_offer",
+    "config": {
+      "operation": "update_offer",
+      "offer_id": 12345,
+      "body": {
+        "name": "Summer Sale Offer",
+        "commission": 10
+      }
+    },
+    "method": "PATCH",
+    "path": "/v2026-08/offers/12345",
+    "query": {},
+    "body": {
+      "name": "Summer Sale Offer",
+      "commission": 10
+    }
+  },
+  {
+    "operation": "duplicate_offer",
+    "config": {
+      "operation": "duplicate_offer",
+      "offer_id": 12345
+    },
+    "method": "POST",
+    "path": "/v2026-08/offers/12345/duplicate",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "delete_offer",
+    "config": {
+      "operation": "delete_offer",
+      "offer_id": 12345
+    },
+    "method": "DELETE",
+    "path": "/v2026-08/offers/12345",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "search_orders",
+    "config": {
+      "operation": "search_orders",
+      "search": "ORD-12345",
+      "affiliate_id": 12345
+    },
+    "method": "GET",
+    "path": "/v2026-08/orders",
+    "query": {
+      "search": "ORD-12345",
+      "affiliateId": "12345"
+    },
+    "body": null
+  },
+  {
+    "operation": "list_webhook_endpoints",
+    "config": {
+      "operation": "list_webhook_endpoints"
+    },
+    "method": "GET",
+    "path": "/v2026-08/webhooks/endpoints",
+    "query": {},
+    "body": null
+  },
+  {
+    "operation": "create_webhook_endpoint",
+    "config": {
+      "operation": "create_webhook_endpoint",
+      "body": {
+        "url": "https://merchant.example.com/hooks/refersion",
+        "topics": [
+          "conversion.created",
+          "payout.created"
+        ]
+      }
+    },
+    "method": "POST",
+    "path": "/v2026-08/webhooks/endpoints",
+    "query": {},
+    "body": {
+      "url": "https://merchant.example.com/hooks/refersion",
+      "topics": [
+        "conversion.created",
+        "payout.created"
+      ]
+    }
+  },
+  {
+    "operation": "update_webhook_endpoint",
+    "config": {
+      "operation": "update_webhook_endpoint",
+      "endpoint_id": "ep_2abcDEF456ghi",
+      "body": {
+        "topics": [
+          "conversion.created",
+          "payout.created"
+        ]
+      }
+    },
+    "method": "PATCH",
+    "path": "/v2026-08/webhooks/endpoints/ep_2abcDEF456ghi",
+    "query": {},
+    "body": {
+      "topics": [
+        "conversion.created",
+        "payout.created"
+      ]
+    }
+  },
+  {
+    "operation": "delete_webhook_endpoint",
+    "config": {
+      "operation": "delete_webhook_endpoint",
+      "endpoint_id": "ep_2abcDEF456ghi"
+    },
+    "method": "DELETE",
+    "path": "/v2026-08/webhooks/endpoints/ep_2abcDEF456ghi",
+    "query": {},
+    "body": null
+  }
+]
