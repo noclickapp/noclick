@@ -1,0 +1,2701 @@
+{
+  "$defs": {
+    "NinetyCommentIssueConfig": {
+      "description": "Add a comment to an Issue.",
+      "properties": {
+        "operation": {
+          "const": "comment_issue",
+          "default": "comment_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "issue_id": {
+          "description": "The Issue Id",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Issue Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "The comment text. HTML is sanitized upstream, so send plain text unless you specifically need formatting.",
+          "examples": [
+            "Agreed - lets revisit this next week."
+          ],
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issue_id",
+        "text"
+      ],
+      "title": "NinetyCommentIssueConfig",
+      "type": "object"
+    },
+    "NinetyCommentTodoConfig": {
+      "description": "Add a comment to a To-Do.",
+      "properties": {
+        "operation": {
+          "const": "comment_todo",
+          "default": "comment_todo",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "todo_id": {
+          "description": "The To-Do Id",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Todo Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "The comment text. HTML is sanitized upstream, so send plain text unless you specifically need formatting.",
+          "examples": [
+            "Agreed - lets revisit this next week."
+          ],
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "todo_id",
+        "text"
+      ],
+      "title": "NinetyCommentTodoConfig",
+      "type": "object"
+    },
+    "NinetyCreateHeadlineConfig": {
+      "description": "Create a Headline.",
+      "properties": {
+        "operation": {
+          "const": "create_headline",
+          "default": "create_headline",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "description": "The Headline itself, as one line of plain text",
+          "examples": [
+            "Acme renewed for another year"
+          ],
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "teamId": {
+          "description": "Id of the Team the Headline is for. Discoverable via `GET /teams/available`.",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "minLength": 1,
+          "title": "Teamid",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTML body of the Headline",
+          "examples": [
+            "<p>Three-year term, up 20% on the last contract.</p>"
+          ],
+          "title": "Description"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Id of the User the Headline is about or owned by. Defaults to the authenticated User, who is recorded as the creator either way. Must be in the same company - anyone else is rejected with a 403.",
+          "examples": [
+            "507f1f77bcf86cd799439012"
+          ],
+          "title": "Userid"
+        },
+        "isCascadedMessage": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Create a Cascading Message rather than a Headline",
+          "title": "Iscascadedmessage"
+        }
+      },
+      "required": [
+        "title",
+        "teamId"
+      ],
+      "title": "NinetyCreateHeadlineConfig",
+      "type": "object"
+    },
+    "NinetyCreateIssueConfig": {
+      "description": "Create an Issue.",
+      "properties": {
+        "operation": {
+          "const": "create_issue",
+          "default": "create_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "description": "Title of the Issue",
+          "examples": [
+            "Cash flow projections are off"
+          ],
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "teamId": {
+          "description": "Id of the team that owns the Issue",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "minLength": 1,
+          "title": "Teamid",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "enum": [
+                "SHORT_TERM",
+                "LONG_TERM"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Issue classification. Defaults to `SHORT_TERM` if not provided.",
+          "examples": [
+            "SHORT_TERM"
+          ],
+          "title": "Interval",
+          "enum": [
+            "SHORT_TERM",
+            "LONG_TERM"
+          ],
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTML description of the Issue",
+          "examples": [
+            "<p>Revenue projections are inconsistent with actuals.</p>"
+          ],
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Priority of the Issue on a 0-5 scale where **5 is the highest** priority and 1 the lowest. Omit or pass `0` for no priority.",
+          "examples": [
+            3
+          ],
+          "title": "Priority"
+        },
+        "linkedItemId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Id of a To-Do, Rock, or Milestone to link the new Issue to. Must be provided together with `linkedItemType`. The linked item must belong to the same company as the authenticated caller.",
+          "examples": [
+            "507f1f77bcf86cd799439015"
+          ],
+          "title": "Linkeditemid"
+        },
+        "linkedItemType": {
+          "anyOf": [
+            {
+              "enum": [
+                "todo",
+                "rock",
+                "milestone"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of item `linkedItemId` refers to.",
+          "examples": [
+            "rock"
+          ],
+          "title": "Linkeditemtype",
+          "enum": [
+            "todo",
+            "rock",
+            "milestone"
+          ],
+          "x-enum-searchable": true
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Id of the user to assign the Issue to. Defaults to the authenticated user. Must be a user in the authenticated user's company - assigning outside it is rejected.",
+          "examples": [
+            "507f1f77bcf86cd799439013"
+          ],
+          "title": "Userid"
+        }
+      },
+      "required": [
+        "title",
+        "teamId"
+      ],
+      "title": "NinetyCreateIssueConfig",
+      "type": "object"
+    },
+    "NinetyCreateMilestoneConfig": {
+      "description": "Create a Milestone.",
+      "properties": {
+        "operation": {
+          "const": "create_milestone",
+          "default": "create_milestone",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "rockId": {
+          "description": "The Id of the Rock this Milestone belongs to",
+          "examples": [
+            "507f1f77bcf86cd799439013"
+          ],
+          "minLength": 1,
+          "title": "Rockid",
+          "type": "string"
+        },
+        "title": {
+          "description": "The title of the Milestone",
+          "examples": [
+            "Complete UX wireframes"
+          ],
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "dueDate": {
+          "description": "The due date of the Milestone (ISO 8601)",
+          "examples": [
+            "2026-05-15T23:59:59.000Z"
+          ],
+          "minLength": 1,
+          "title": "Duedate",
+          "type": "string"
+        },
+        "teamId": {
+          "description": "The Id of the team the Milestone belongs to",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "minLength": 1,
+          "title": "Teamid",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description of the Milestone",
+          "examples": [
+            "Deliver final wireframes for review in Figma"
+          ],
+          "title": "Description"
+        },
+        "userOrdinal": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ordinal position of this Milestone for the user (0-based)",
+          "examples": [
+            0
+          ],
+          "title": "Userordinal"
+        },
+        "toDoId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Id of a related To-Do item, if any",
+          "examples": [
+            "507f1f77bcf86cd799439099"
+          ],
+          "title": "Todoid"
+        },
+        "isDone": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True if the Milestone is already done at creation time",
+          "examples": [
+            false
+          ],
+          "title": "Isdone"
+        },
+        "completedDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date the Milestone was completed (ISO 8601). Required when isDone is true.",
+          "examples": [
+            "2026-05-10T16:00:00.000Z"
+          ],
+          "title": "Completeddate"
+        }
+      },
+      "required": [
+        "rockId",
+        "title",
+        "dueDate",
+        "teamId"
+      ],
+      "title": "NinetyCreateMilestoneConfig",
+      "type": "object"
+    },
+    "NinetyCreateRockConfig": {
+      "description": "Create a Rock.",
+      "properties": {
+        "operation": {
+          "const": "create_rock",
+          "default": "create_rock",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "rock": {
+          "$ref": "#/$defs/NinetyRockData",
+          "description": "The Rock data"
+        },
+        "addCreatorToFollowersList": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, the authenticated user is added to the Rock's followers list",
+          "examples": [
+            false
+          ],
+          "title": "Addcreatortofollowerslist"
+        },
+        "linkedItemId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Id of a To-Do, Issue, or Milestone to link the new Rock to. Must be provided together with `linkedItemType`. The linked item must belong to the same company as the authenticated caller.",
+          "examples": [
+            "507f1f77bcf86cd799439015"
+          ],
+          "title": "Linkeditemid"
+        },
+        "linkedItemType": {
+          "anyOf": [
+            {
+              "enum": [
+                "todo",
+                "issue",
+                "milestone"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of item `linkedItemId` refers to.",
+          "examples": [
+            "issue"
+          ],
+          "title": "Linkeditemtype",
+          "enum": [
+            "todo",
+            "issue",
+            "milestone"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "rock"
+      ],
+      "title": "NinetyCreateRockConfig",
+      "type": "object"
+    },
+    "NinetyCreateTodoConfig": {
+      "description": "Create a To-Do.",
+      "properties": {
+        "operation": {
+          "const": "create_todo",
+          "default": "create_todo",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "description": "The title of the To-Do",
+          "examples": [
+            "Follow up with client"
+          ],
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description of the To-Do",
+          "examples": [
+            "Send the Q2 proposal"
+          ],
+          "title": "Description"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date in YYYY-MM-DD format",
+          "examples": [
+            "2024-03-15"
+          ],
+          "title": "Duedate"
+        },
+        "teamId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Id of the team to assign this To-Do to. Omit or pass an empty string for a personal To-Do.",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "title": "Teamid"
+        },
+        "repeat": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Recurrence pattern for the To-Do (e.g., `weekly`, `monthly`)",
+          "examples": [
+            "weekly"
+          ],
+          "title": "Repeat"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Id of the user to assign the To-Do to. Defaults to the authenticated user.",
+          "examples": [
+            "507f1f77bcf86cd799439013"
+          ],
+          "title": "Userid"
+        },
+        "linkedItemId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Id of a Rock, Issue, or Milestone to link this To-Do to. Must be provided together with `linkedItemType`. The linked item must belong to the same company as the authenticated caller.",
+          "examples": [
+            "507f1f77bcf86cd799439015"
+          ],
+          "title": "Linkeditemid"
+        },
+        "linkedItemType": {
+          "anyOf": [
+            {
+              "enum": [
+                "rock",
+                "issue",
+                "milestone"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of item `linkedItemId` refers to.",
+          "examples": [
+            "rock"
+          ],
+          "title": "Linkeditemtype",
+          "enum": [
+            "rock",
+            "issue",
+            "milestone"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "NinetyCreateTodoConfig",
+      "type": "object"
+    },
+    "NinetyDeleteIssueConfig": {
+      "description": "Delete an Issue.",
+      "properties": {
+        "operation": {
+          "const": "delete_issue",
+          "default": "delete_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "issue_id": {
+          "description": "The Issue Id",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Issue Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "NinetyDeleteIssueConfig",
+      "type": "object"
+    },
+    "NinetyDeleteTodoConfig": {
+      "description": "Delete a To-Do.",
+      "properties": {
+        "operation": {
+          "const": "delete_todo",
+          "default": "delete_todo",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "todo_id": {
+          "description": "The To-Do Id",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Todo Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "todo_id"
+      ],
+      "title": "NinetyDeleteTodoConfig",
+      "type": "object"
+    },
+    "NinetyGetIssueConfig": {
+      "description": "Get an Issue by Id.",
+      "properties": {
+        "operation": {
+          "const": "get_issue",
+          "default": "get_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "issue_id": {
+          "description": "The Issue Id",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Issue Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "NinetyGetIssueConfig",
+      "type": "object"
+    },
+    "NinetyGetMilestoneConfig": {
+      "description": "Get a Milestone by Id.",
+      "properties": {
+        "operation": {
+          "const": "get_milestone",
+          "default": "get_milestone",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "milestone_id": {
+          "description": "The Milestone Id",
+          "examples": [
+            "507f1f77bcf86cd799439014"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Milestone Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "milestone_id"
+      ],
+      "title": "NinetyGetMilestoneConfig",
+      "type": "object"
+    },
+    "NinetyGetRockConfig": {
+      "description": "Get a Rock by Id.",
+      "properties": {
+        "operation": {
+          "const": "get_rock",
+          "default": "get_rock",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "rock_id": {
+          "description": "The Rock Id",
+          "examples": [
+            "507f1f77bcf86cd799439013"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rock Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rock_id"
+      ],
+      "title": "NinetyGetRockConfig",
+      "type": "object"
+    },
+    "NinetyGetTodoConfig": {
+      "description": "Get a To-Do by Id.",
+      "properties": {
+        "operation": {
+          "const": "get_todo",
+          "default": "get_todo",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "todo_id": {
+          "description": "The To-Do Id",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Todo Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "todo_id"
+      ],
+      "title": "NinetyGetTodoConfig",
+      "type": "object"
+    },
+    "NinetyListIssuesConfig": {
+      "description": "List company Issues.",
+      "properties": {
+        "operation": {
+          "const": "list_issues",
+          "default": "list_issues",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of items to return",
+          "title": "Limit"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from a previous response's `pagination.nextToken`. Omit to fetch the first page.",
+          "title": "Nexttoken"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by completed status",
+          "examples": [
+            false
+          ],
+          "title": "Completed"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include archived Issues (excluded by default)",
+          "title": "Archived"
+        },
+        "deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include deleted Issues (excluded by default)",
+          "title": "Deleted"
+        },
+        "searchText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search text to match against title, description, and comments",
+          "examples": [
+            "follow up"
+          ],
+          "title": "Searchtext"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by title match",
+          "examples": [
+            "Cash flow projections are off"
+          ],
+          "title": "Title"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "createdDate",
+                "completedDate",
+                "title",
+                "id"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to sort results by. `id` sorts by creation order and is the default when omitted. `_id` is a deprecated alias for `id`, still accepted for existing callers.",
+          "title": "Sortby",
+          "enum": [
+            "createdDate",
+            "completedDate",
+            "title",
+            "id"
+          ],
+          "x-enum-searchable": true
+        },
+        "sortOrder": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort direction",
+          "title": "Sortorder",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "NinetyListIssuesConfig",
+      "type": "object"
+    },
+    "NinetyListMeasurablesConfig": {
+      "description": "List company Measurables.",
+      "properties": {
+        "operation": {
+          "const": "list_measurables",
+          "default": "list_measurables",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of items to return",
+          "title": "Limit"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from a previous response's `pagination.nextToken`. Omit to fetch the first page.",
+          "title": "Nexttoken"
+        },
+        "scoresFrom": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The earliest `periodDisplayDate` of the scores returned with each Measurable. Inclusive. Defaults to 365 days before `scoresTo`, and may be at most 366 days before it.",
+          "examples": [
+            "2025-10-06"
+          ],
+          "title": "Scoresfrom"
+        },
+        "scoresTo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The latest `periodDisplayDate` of the scores returned with each Measurable. Inclusive. Defaults to today in UTC.",
+          "examples": [
+            "2026-10-05"
+          ],
+          "title": "Scoresto"
+        }
+      },
+      "title": "NinetyListMeasurablesConfig",
+      "type": "object"
+    },
+    "NinetyListRocksConfig": {
+      "description": "List company Rocks.",
+      "properties": {
+        "operation": {
+          "const": "list_rocks",
+          "default": "list_rocks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of items to return",
+          "title": "Limit"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from a previous response's `pagination.nextToken`. Omit to fetch the first page.",
+          "title": "Nexttoken"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by completed status",
+          "examples": [
+            false
+          ],
+          "title": "Completed"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include archived Rocks (excluded by default)",
+          "title": "Archived"
+        },
+        "deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include deleted Rocks (excluded by default)",
+          "title": "Deleted"
+        },
+        "searchText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search text to match against title and description",
+          "examples": [
+            "onboarding"
+          ],
+          "title": "Searchtext"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by title match",
+          "examples": [
+            "Launch new customer onboarding flow"
+          ],
+          "title": "Title"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "createdDate",
+                "completedDate",
+                "title",
+                "dueDate",
+                "id"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to sort results by. Defaults to `dueDate`.",
+          "title": "Sortby",
+          "enum": [
+            "createdDate",
+            "completedDate",
+            "title",
+            "dueDate",
+            "id"
+          ],
+          "x-enum-searchable": true
+        },
+        "sortOrder": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort direction",
+          "title": "Sortorder",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "NinetyListRocksConfig",
+      "type": "object"
+    },
+    "NinetyListTeamsConfig": {
+      "description": "Get Teams.",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "NinetyListTeamsConfig",
+      "type": "object"
+    },
+    "NinetyListTodosConfig": {
+      "description": "List company To-Dos.",
+      "properties": {
+        "operation": {
+          "const": "list_todos",
+          "default": "list_todos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of items to return",
+          "title": "Limit"
+        },
+        "nextToken": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from a previous response's `pagination.nextToken`. Omit to fetch the first page.",
+          "title": "Nexttoken"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by completed status",
+          "examples": [
+            false
+          ],
+          "title": "Completed"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include archived To-Dos (excluded by default)",
+          "title": "Archived"
+        },
+        "deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include deleted To-Dos (excluded by default)",
+          "title": "Deleted"
+        },
+        "searchText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search text to match against title, description, and comments",
+          "examples": [
+            "follow up"
+          ],
+          "title": "Searchtext"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by title match",
+          "examples": [
+            "Follow up with client"
+          ],
+          "title": "Title"
+        },
+        "sortBy": {
+          "anyOf": [
+            {
+              "enum": [
+                "createdDate",
+                "completedDate",
+                "title"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to sort results by. Defaults to insertion order when omitted.",
+          "title": "Sortby",
+          "enum": [
+            "createdDate",
+            "completedDate",
+            "title"
+          ],
+          "x-enum-searchable": true
+        },
+        "sortOrder": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort direction",
+          "title": "Sortorder",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "NinetyListTodosConfig",
+      "type": "object"
+    },
+    "NinetyListUsersConfig": {
+      "description": "List Users in your company.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "includeInactive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include deactivated Users in the response. Defaults to `false`, so only active Users are returned.",
+          "examples": [
+            false
+          ],
+          "title": "Includeinactive"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the User at this email address, matched case-insensitively against the `primaryEmail` in the response. An address nobody in the company uses returns an empty array, not an error.",
+          "examples": [
+            "jane.doe@example.com"
+          ],
+          "title": "Email"
+        }
+      },
+      "title": "NinetyListUsersConfig",
+      "type": "object"
+    },
+    "NinetyPersonalTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "ninety_personal_token",
+          "default": "ninety_personal_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Ninety Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "In Ninety, open Settings \u2192 User \u2192 Developer Settings and generate a personal access token. Paste it here. The token acts with your Ninety permissions; company-wide reads may require an Owner or Admin. NoClick checks the connection by reading your Teams.",
+      "x-credential-url": "https://app.ninety.io/settings/user/developer-settings"
+    },
+    "NinetyPutNoteConfig": {
+      "description": "Create or update a Measurable note.",
+      "properties": {
+        "operation": {
+          "const": "put_note",
+          "default": "put_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kpi_id": {
+          "description": "The Id of the Measurable",
+          "examples": [
+            "64d6a32564d6a32564d6a325"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Kpi Id",
+          "type": "string"
+        },
+        "note": {
+          "description": "The note text",
+          "examples": [
+            "Great progress this week!"
+          ],
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "periodStartDate": {
+          "description": "The period start date in ISO 8601 format",
+          "examples": [
+            "2024-01-01T00:00:00.000Z"
+          ],
+          "minLength": 1,
+          "title": "Periodstartdate",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kpi_id",
+        "note",
+        "periodStartDate"
+      ],
+      "title": "NinetyPutNoteConfig",
+      "type": "object"
+    },
+    "NinetyPutScoreConfig": {
+      "description": "Create or update a Measurable score.",
+      "properties": {
+        "operation": {
+          "const": "put_score",
+          "default": "put_score",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kpi_id": {
+          "description": "The Id of the Measurable",
+          "examples": [
+            "64d6a32564d6a32564d6a325"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Kpi Id",
+          "type": "string"
+        },
+        "value": {
+          "description": "The score value",
+          "examples": [
+            100
+          ],
+          "title": "Value",
+          "type": "number"
+        },
+        "periodStartDate": {
+          "description": "The period start date in ISO 8601 format",
+          "examples": [
+            "2024-01-01T00:00:00.000Z"
+          ],
+          "minLength": 1,
+          "title": "Periodstartdate",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kpi_id",
+        "value",
+        "periodStartDate"
+      ],
+      "title": "NinetyPutScoreConfig",
+      "type": "object"
+    },
+    "NinetyRockData": {
+      "properties": {
+        "teamId": {
+          "description": "The Id of the team the Rock belongs to",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "minLength": 1,
+          "title": "Teamid",
+          "type": "string"
+        },
+        "title": {
+          "description": "The title of the Rock",
+          "examples": [
+            "Launch new customer onboarding flow"
+          ],
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "dueDate": {
+          "description": "The due date of the Rock (ISO 8601)",
+          "examples": [
+            "2026-06-30T23:59:59.000Z"
+          ],
+          "minLength": 1,
+          "title": "Duedate",
+          "type": "string"
+        },
+        "statusCode": {
+          "description": "The status of the Rock \u2014 `OFF_TRACK` \u00b7 `ON_TRACK` \u00b7 `DONE` \u00b7 `CANCELED` \u00b7 `DRAFT`",
+          "enum": [
+            "OFF_TRACK",
+            "ON_TRACK",
+            "DONE",
+            "CANCELED",
+            "DRAFT"
+          ],
+          "examples": [
+            "ON_TRACK"
+          ],
+          "minLength": 1,
+          "title": "Statuscode",
+          "type": "string"
+        },
+        "levelCode": {
+          "description": "The level of the Rock \u2014 `USER` \u00b7 `COMPANY_AND_DEPARTMENT` \u00b7 `COMPANY` \u00b7 `DEPARTMENT`",
+          "enum": [
+            "USER",
+            "COMPANY_AND_DEPARTMENT",
+            "COMPANY",
+            "DEPARTMENT"
+          ],
+          "examples": [
+            "USER"
+          ],
+          "minLength": 1,
+          "title": "Levelcode",
+          "type": "string"
+        },
+        "quarter": {
+          "description": "The quarter associated with the Rock \u2014 `Q1` \u00b7 `Q2` \u00b7 `Q3` \u00b7 `Q4` \u00b7 `None`",
+          "enum": [
+            "Q1",
+            "Q2",
+            "Q3",
+            "Q4",
+            "None"
+          ],
+          "examples": [
+            "Q2"
+          ],
+          "minLength": 1,
+          "title": "Quarter",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description of the Rock",
+          "examples": [
+            "Redesign the onboarding wizard to reduce drop-off by 20%"
+          ],
+          "title": "Description"
+        },
+        "additionalTeamIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of additional team Ids that can also view this Rock",
+          "examples": [
+            [
+              "507f1f77bcf86cd799439022",
+              "507f1f77bcf86cd799439033"
+            ]
+          ],
+          "title": "Additionalteamids"
+        },
+        "futureScope": {
+          "anyOf": [
+            {
+              "enum": [
+                "Current",
+                "Next",
+                "Later",
+                "Future"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The future scope of the Rock \u2014 `Current` \u00b7 `Next` \u00b7 `Later` \u00b7 `Future`",
+          "examples": [
+            "Current"
+          ],
+          "title": "Futurescope",
+          "enum": [
+            "Current",
+            "Next",
+            "Later",
+            "Future"
+          ],
+          "x-enum-searchable": true
+        },
+        "rockQuarterYearDueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The quarter-aligned year due date of the Rock (ISO 8601)",
+          "examples": [
+            "2026-06-30T23:59:59.999Z"
+          ],
+          "title": "Rockquarteryearduedate"
+        }
+      },
+      "required": [
+        "teamId",
+        "title",
+        "dueDate",
+        "statusCode",
+        "levelCode",
+        "quarter"
+      ],
+      "title": "NinetyRockData",
+      "type": "object"
+    },
+    "NinetyUpdateIssueConfig": {
+      "description": "Update an Issue.",
+      "properties": {
+        "operation": {
+          "const": "update_issue",
+          "default": "update_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "issue_id": {
+          "description": "The Issue Id",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Issue Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title of the Issue",
+          "title": "Title"
+        },
+        "teamId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Id of the team that owns the Issue",
+          "title": "Teamid"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "enum": [
+                "SHORT_TERM",
+                "LONG_TERM"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Interval classification for the Issue",
+          "title": "Interval",
+          "enum": [
+            "SHORT_TERM",
+            "LONG_TERM"
+          ],
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTML description of the Issue",
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Priority of the Issue on a 0-5 scale where **5 is the highest** priority and 1 the lowest. Pass `0` to clear the priority.",
+          "title": "Priority"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the Issue is completed",
+          "title": "Completed"
+        },
+        "linkedItemId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Id of a To-Do, Rock, or Milestone to link this existing Issue to. Must be provided together with `linkedItemType`. The linked item must belong to the same company as the authenticated caller.",
+          "examples": [
+            "507f1f77bcf86cd799439015"
+          ],
+          "title": "Linkeditemid"
+        },
+        "linkedItemType": {
+          "anyOf": [
+            {
+              "enum": [
+                "todo",
+                "rock",
+                "milestone"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of item `linkedItemId` refers to.",
+          "examples": [
+            "rock"
+          ],
+          "title": "Linkeditemtype",
+          "enum": [
+            "todo",
+            "rock",
+            "milestone"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "NinetyUpdateIssueConfig",
+      "type": "object"
+    },
+    "NinetyUpdateMilestoneConfig": {
+      "description": "Update a Milestone.",
+      "properties": {
+        "operation": {
+          "const": "update_milestone",
+          "default": "update_milestone",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "milestone_id": {
+          "description": "The Milestone Id",
+          "examples": [
+            "507f1f77bcf86cd799439014"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Milestone Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The title of the Milestone",
+          "examples": [
+            "Complete UX wireframes"
+          ],
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description of the Milestone",
+          "examples": [
+            "Deliver final wireframes for review in Figma"
+          ],
+          "title": "Description"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The due date of the Milestone (ISO 8601)",
+          "examples": [
+            "2026-05-15T23:59:59.000Z"
+          ],
+          "title": "Duedate"
+        },
+        "isDone": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true to mark the Milestone as done",
+          "examples": [
+            true
+          ],
+          "title": "Isdone"
+        },
+        "ownedByUserId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Id of the user who owns this Milestone",
+          "examples": [
+            "507f1f77bcf86cd799439012"
+          ],
+          "title": "Ownedbyuserid"
+        },
+        "completedDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date the Milestone was completed (ISO 8601). Provide when setting isDone to true.",
+          "examples": [
+            "2026-05-10T16:00:00.000Z"
+          ],
+          "title": "Completeddate"
+        },
+        "followers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of user Ids who are following this Milestone",
+          "examples": [
+            [
+              "507f1f77bcf86cd799439012",
+              "507f1f77bcf86cd799439016"
+            ]
+          ],
+          "title": "Followers"
+        }
+      },
+      "required": [
+        "milestone_id"
+      ],
+      "title": "NinetyUpdateMilestoneConfig",
+      "type": "object"
+    },
+    "NinetyUpdateRockConfig": {
+      "description": "Update a Rock.",
+      "properties": {
+        "operation": {
+          "const": "update_rock",
+          "default": "update_rock",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "rock_id": {
+          "description": "The Rock Id",
+          "examples": [
+            "507f1f77bcf86cd799439013"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rock Id",
+          "type": "string"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Id of the user who owns the Rock",
+          "examples": [
+            "507f1f77bcf86cd799439012"
+          ],
+          "title": "Userid"
+        },
+        "teamId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Id of the team the Rock belongs to",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "title": "Teamid"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The title of the Rock",
+          "examples": [
+            "Launch new customer onboarding flow"
+          ],
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description of the Rock",
+          "examples": [
+            "Redesign the onboarding wizard to reduce drop-off by 20%"
+          ],
+          "title": "Description"
+        },
+        "statusCode": {
+          "anyOf": [
+            {
+              "enum": [
+                "OFF_TRACK",
+                "ON_TRACK",
+                "DONE",
+                "CANCELED",
+                "DRAFT"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The status of the Rock \u2014 `OFF_TRACK` \u00b7 `ON_TRACK` \u00b7 `DONE` \u00b7 `CANCELED` \u00b7 `DRAFT`",
+          "examples": [
+            "ON_TRACK"
+          ],
+          "title": "Statuscode",
+          "enum": [
+            "OFF_TRACK",
+            "ON_TRACK",
+            "DONE",
+            "CANCELED",
+            "DRAFT"
+          ],
+          "x-enum-searchable": true
+        },
+        "levelCode": {
+          "anyOf": [
+            {
+              "enum": [
+                "USER",
+                "COMPANY_AND_DEPARTMENT",
+                "COMPANY",
+                "DEPARTMENT"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The level of the Rock \u2014 `USER` \u00b7 `COMPANY_AND_DEPARTMENT` \u00b7 `COMPANY` \u00b7 `DEPARTMENT`",
+          "examples": [
+            "USER"
+          ],
+          "title": "Levelcode",
+          "enum": [
+            "USER",
+            "COMPANY_AND_DEPARTMENT",
+            "COMPANY",
+            "DEPARTMENT"
+          ],
+          "x-enum-searchable": true
+        },
+        "quarter": {
+          "anyOf": [
+            {
+              "enum": [
+                "Q1",
+                "Q2",
+                "Q3",
+                "Q4",
+                "None"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The quarter associated with the Rock \u2014 `Q1` \u00b7 `Q2` \u00b7 `Q3` \u00b7 `Q4` \u00b7 `None`",
+          "examples": [
+            "Q2"
+          ],
+          "title": "Quarter",
+          "enum": [
+            "Q1",
+            "Q2",
+            "Q3",
+            "Q4",
+            "None"
+          ],
+          "x-enum-searchable": true
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The due date of the Rock (ISO 8601)",
+          "examples": [
+            "2026-06-30T23:59:59.000Z"
+          ],
+          "title": "Duedate"
+        },
+        "rockQuarterYearDueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The quarter-aligned year due date of the Rock (ISO 8601)",
+          "examples": [
+            "2026-06-30T23:59:59.999Z"
+          ],
+          "title": "Rockquarteryearduedate"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true to archive the Rock, false to unarchive it",
+          "examples": [
+            false
+          ],
+          "title": "Archived"
+        },
+        "futureScope": {
+          "anyOf": [
+            {
+              "enum": [
+                "Current",
+                "Next",
+                "Later",
+                "Future"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The future scope of the Rock \u2014 `Current` \u00b7 `Next` \u00b7 `Later` \u00b7 `Future`",
+          "examples": [
+            "Current"
+          ],
+          "title": "Futurescope",
+          "enum": [
+            "Current",
+            "Next",
+            "Later",
+            "Future"
+          ],
+          "x-enum-searchable": true
+        },
+        "additionalTeamIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of additional team Ids that can also view this Rock",
+          "examples": [
+            [
+              "507f1f77bcf86cd799439022"
+            ]
+          ],
+          "title": "Additionalteamids"
+        },
+        "linkedItemId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Id of a To-Do, Issue, or Milestone to link this existing Rock to. Must be provided together with `linkedItemType`. The linked item must belong to the same company as the authenticated caller.",
+          "examples": [
+            "507f1f77bcf86cd799439015"
+          ],
+          "title": "Linkeditemid"
+        },
+        "linkedItemType": {
+          "anyOf": [
+            {
+              "enum": [
+                "todo",
+                "issue",
+                "milestone"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of item `linkedItemId` refers to.",
+          "examples": [
+            "issue"
+          ],
+          "title": "Linkeditemtype",
+          "enum": [
+            "todo",
+            "issue",
+            "milestone"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "rock_id"
+      ],
+      "title": "NinetyUpdateRockConfig",
+      "type": "object"
+    },
+    "NinetyUpdateTodoConfig": {
+      "description": "Update a To-Do.",
+      "properties": {
+        "operation": {
+          "const": "update_todo",
+          "default": "update_todo",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "todo_id": {
+          "description": "The To-Do Id",
+          "examples": [
+            "507f1f77bcf86cd799439011"
+          ],
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Todo Id",
+          "type": "string"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the todo is completed",
+          "title": "Completed"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the todo is archived",
+          "title": "Archived"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date in ISO format",
+          "title": "Duedate"
+        },
+        "teamId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The team Id",
+          "title": "Teamid"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The title of the todo",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The description of the todo",
+          "title": "Description"
+        },
+        "repeat": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat pattern",
+          "title": "Repeat"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User Id to assign the To-Do to",
+          "title": "Userid"
+        },
+        "linkedItemId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Id of a Rock, Issue, or Milestone to link this existing To-Do to. Must be provided together with `linkedItemType`. The linked item must belong to the same company as the authenticated caller.",
+          "examples": [
+            "507f1f77bcf86cd799439015"
+          ],
+          "title": "Linkeditemid"
+        },
+        "linkedItemType": {
+          "anyOf": [
+            {
+              "enum": [
+                "rock",
+                "issue",
+                "milestone"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of item `linkedItemId` refers to.",
+          "examples": [
+            "rock"
+          ],
+          "title": "Linkeditemtype",
+          "enum": [
+            "rock",
+            "issue",
+            "milestone"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "todo_id"
+      ],
+      "title": "NinetyUpdateTodoConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "comment_issue": "#/$defs/NinetyCommentIssueConfig",
+          "comment_todo": "#/$defs/NinetyCommentTodoConfig",
+          "create_headline": "#/$defs/NinetyCreateHeadlineConfig",
+          "create_issue": "#/$defs/NinetyCreateIssueConfig",
+          "create_milestone": "#/$defs/NinetyCreateMilestoneConfig",
+          "create_rock": "#/$defs/NinetyCreateRockConfig",
+          "create_todo": "#/$defs/NinetyCreateTodoConfig",
+          "delete_issue": "#/$defs/NinetyDeleteIssueConfig",
+          "delete_todo": "#/$defs/NinetyDeleteTodoConfig",
+          "get_issue": "#/$defs/NinetyGetIssueConfig",
+          "get_milestone": "#/$defs/NinetyGetMilestoneConfig",
+          "get_rock": "#/$defs/NinetyGetRockConfig",
+          "get_todo": "#/$defs/NinetyGetTodoConfig",
+          "list_issues": "#/$defs/NinetyListIssuesConfig",
+          "list_measurables": "#/$defs/NinetyListMeasurablesConfig",
+          "list_rocks": "#/$defs/NinetyListRocksConfig",
+          "list_teams": "#/$defs/NinetyListTeamsConfig",
+          "list_todos": "#/$defs/NinetyListTodosConfig",
+          "list_users": "#/$defs/NinetyListUsersConfig",
+          "put_note": "#/$defs/NinetyPutNoteConfig",
+          "put_score": "#/$defs/NinetyPutScoreConfig",
+          "update_issue": "#/$defs/NinetyUpdateIssueConfig",
+          "update_milestone": "#/$defs/NinetyUpdateMilestoneConfig",
+          "update_rock": "#/$defs/NinetyUpdateRockConfig",
+          "update_todo": "#/$defs/NinetyUpdateTodoConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/NinetyListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyListTodosConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyGetTodoConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyCreateTodoConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyUpdateTodoConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyDeleteTodoConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyCommentTodoConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyListIssuesConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyGetIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyCreateIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyUpdateIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyDeleteIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyCommentIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyListRocksConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyGetRockConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyCreateRockConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyUpdateRockConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyGetMilestoneConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyCreateMilestoneConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyUpdateMilestoneConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyListMeasurablesConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyPutScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyPutNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/NinetyCreateHeadlineConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NinetyPersonalTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Ninety Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,321 @@
+[
+  {
+    "config": {
+      "operation": "list_teams"
+    },
+    "method": "GET",
+    "path": "/v1/teams",
+    "path_fields": {},
+    "status": 200,
+    "kind": "array"
+  },
+  {
+    "config": {
+      "operation": "list_users"
+    },
+    "method": "GET",
+    "path": "/v1/users",
+    "path_fields": {},
+    "status": 200,
+    "kind": "array"
+  },
+  {
+    "config": {
+      "operation": "list_todos"
+    },
+    "method": "GET",
+    "path": "/v1/todos/company",
+    "path_fields": {},
+    "status": 200,
+    "kind": "page"
+  },
+  {
+    "config": {
+      "operation": "get_todo",
+      "todo_id": "507f1f77bcf86cd799439011"
+    },
+    "method": "GET",
+    "path": "/v1/todos/{id}",
+    "path_fields": {
+      "id": "todo_id"
+    },
+    "status": 200,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "create_todo",
+      "title": "Follow up with client"
+    },
+    "method": "POST",
+    "path": "/v1/todos",
+    "path_fields": {},
+    "status": 201,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "update_todo",
+      "todo_id": "507f1f77bcf86cd799439011",
+      "title": "Follow up with client"
+    },
+    "method": "PATCH",
+    "path": "/v1/todos/{id}",
+    "path_fields": {
+      "id": "todo_id"
+    },
+    "status": 200,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "delete_todo",
+      "todo_id": "507f1f77bcf86cd799439011"
+    },
+    "method": "DELETE",
+    "path": "/v1/todos/{id}",
+    "path_fields": {
+      "id": "todo_id"
+    },
+    "status": 204,
+    "kind": "empty"
+  },
+  {
+    "config": {
+      "operation": "comment_todo",
+      "todo_id": "507f1f77bcf86cd799439011",
+      "text": "Agreed - lets revisit this next week."
+    },
+    "method": "POST",
+    "path": "/v1/todos/{id}/comments",
+    "path_fields": {
+      "id": "todo_id"
+    },
+    "status": 201,
+    "kind": "array"
+  },
+  {
+    "config": {
+      "operation": "list_issues"
+    },
+    "method": "GET",
+    "path": "/v1/issues/company",
+    "path_fields": {},
+    "status": 200,
+    "kind": "page"
+  },
+  {
+    "config": {
+      "operation": "get_issue",
+      "issue_id": "507f1f77bcf86cd799439011"
+    },
+    "method": "GET",
+    "path": "/v1/issues/{issueId}",
+    "path_fields": {
+      "issueId": "issue_id"
+    },
+    "status": 200,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "create_issue",
+      "title": "Cash flow projections are off",
+      "teamId": "507f1f77bcf86cd799439011"
+    },
+    "method": "POST",
+    "path": "/v1/issues",
+    "path_fields": {},
+    "status": 201,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "update_issue",
+      "issue_id": "507f1f77bcf86cd799439011",
+      "title": "Cash flow projections are off"
+    },
+    "method": "PATCH",
+    "path": "/v1/issues/{issueId}",
+    "path_fields": {
+      "issueId": "issue_id"
+    },
+    "status": 200,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "delete_issue",
+      "issue_id": "507f1f77bcf86cd799439011"
+    },
+    "method": "DELETE",
+    "path": "/v1/issues/{issueId}",
+    "path_fields": {
+      "issueId": "issue_id"
+    },
+    "status": 204,
+    "kind": "empty"
+  },
+  {
+    "config": {
+      "operation": "comment_issue",
+      "issue_id": "507f1f77bcf86cd799439011",
+      "text": "Agreed - lets revisit this next week."
+    },
+    "method": "POST",
+    "path": "/v1/issues/{issueId}/comments",
+    "path_fields": {
+      "issueId": "issue_id"
+    },
+    "status": 201,
+    "kind": "array"
+  },
+  {
+    "config": {
+      "operation": "list_rocks"
+    },
+    "method": "GET",
+    "path": "/v1/rocks/company",
+    "path_fields": {},
+    "status": 200,
+    "kind": "page"
+  },
+  {
+    "config": {
+      "operation": "get_rock",
+      "rock_id": "507f1f77bcf86cd799439013"
+    },
+    "method": "GET",
+    "path": "/v1/rocks/{id}",
+    "path_fields": {
+      "id": "rock_id"
+    },
+    "status": 200,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "create_rock",
+      "rock": {
+        "teamId": "507f1f77bcf86cd799439011",
+        "title": "Launch new customer onboarding flow",
+        "dueDate": "2026-06-30T23:59:59.000Z",
+        "statusCode": "ON_TRACK",
+        "levelCode": "USER",
+        "quarter": "Q2"
+      }
+    },
+    "method": "POST",
+    "path": "/v1/rocks",
+    "path_fields": {},
+    "status": 201,
+    "kind": "array"
+  },
+  {
+    "config": {
+      "operation": "update_rock",
+      "rock_id": "507f1f77bcf86cd799439013",
+      "title": "Launch new customer onboarding flow"
+    },
+    "method": "PATCH",
+    "path": "/v1/rocks/{id}",
+    "path_fields": {
+      "id": "rock_id"
+    },
+    "status": 200,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "get_milestone",
+      "milestone_id": "507f1f77bcf86cd799439014"
+    },
+    "method": "GET",
+    "path": "/v1/milestones/{id}",
+    "path_fields": {
+      "id": "milestone_id"
+    },
+    "status": 200,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "create_milestone",
+      "rockId": "507f1f77bcf86cd799439013",
+      "title": "Complete UX wireframes",
+      "dueDate": "2026-05-15T23:59:59.000Z",
+      "teamId": "507f1f77bcf86cd799439011"
+    },
+    "method": "POST",
+    "path": "/v1/milestones",
+    "path_fields": {},
+    "status": 201,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "update_milestone",
+      "milestone_id": "507f1f77bcf86cd799439014",
+      "title": "Complete UX wireframes"
+    },
+    "method": "PATCH",
+    "path": "/v1/milestones/{id}",
+    "path_fields": {
+      "id": "milestone_id"
+    },
+    "status": 200,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "list_measurables"
+    },
+    "method": "GET",
+    "path": "/v1/scorecard/kpis/company",
+    "path_fields": {},
+    "status": 200,
+    "kind": "page"
+  },
+  {
+    "config": {
+      "operation": "put_score",
+      "kpi_id": "64d6a32564d6a32564d6a325",
+      "value": 100,
+      "periodStartDate": "2024-01-01T00:00:00.000Z"
+    },
+    "method": "POST",
+    "path": "/v1/scorecard/kpis/{kpiId}/scores",
+    "path_fields": {
+      "kpiId": "kpi_id"
+    },
+    "status": 200,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "put_note",
+      "kpi_id": "64d6a32564d6a32564d6a325",
+      "note": "Great progress this week!",
+      "periodStartDate": "2024-01-01T00:00:00.000Z"
+    },
+    "method": "POST",
+    "path": "/v1/scorecard/kpis/{kpiId}/notes",
+    "path_fields": {
+      "kpiId": "kpi_id"
+    },
+    "status": 200,
+    "kind": "object"
+  },
+  {
+    "config": {
+      "operation": "create_headline",
+      "title": "Acme renewed for another year",
+      "teamId": "507f1f77bcf86cd799439011"
+    },
+    "method": "POST",
+    "path": "/v1/headlines",
+    "path_fields": {},
+    "status": 201,
+    "kind": "object"
+  }
+]
