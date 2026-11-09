@@ -1,0 +1,501 @@
+{
+  "source": "https://docs.tryfundable.ai/openapi.json",
+  "version": "2.0.0",
+  "sha256": "ae01f62881185f8fea38fc8e4775b15ac591b703f20387da2613025e7d16ec75",
+  "operations": {
+    "search_deals": {
+      "method": "POST",
+      "path": "/deals",
+      "config": {
+        "page_size": 10
+      },
+      "operation_id": "searchDeals"
+    },
+    "get_deal": {
+      "method": "GET",
+      "path": "/deals/{id}",
+      "config": {
+        "id": "4b20cafe-c22b-441a-8378-53436e1d9edf"
+      },
+      "operation_id": "getDealById"
+    },
+    "get_deal_investors": {
+      "method": "GET",
+      "path": "/deals/{id}/investors",
+      "config": {
+        "id": "4b20cafe-c22b-441a-8378-53436e1d9edf"
+      },
+      "operation_id": "getDealInvestors"
+    },
+    "get_company": {
+      "method": "GET",
+      "path": "/company",
+      "config": {
+        "id": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "operation_id": "getCompany"
+    },
+    "get_company_deals": {
+      "method": "GET",
+      "path": "/company/deals",
+      "config": {
+        "id": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "operation_id": "getCompanyDeals"
+    },
+    "search_company": {
+      "method": "GET",
+      "path": "/company/search",
+      "config": {
+        "name": "stripe"
+      },
+      "operation_id": "searchCompany"
+    },
+    "search_companies": {
+      "method": "POST",
+      "path": "/companies",
+      "config": {
+        "page_size": 10
+      },
+      "operation_id": "searchCompanies"
+    },
+    "list_investors": {
+      "method": "POST",
+      "path": "/investors",
+      "config": {
+        "page_size": 10
+      },
+      "operation_id": "listInvestors"
+    },
+    "get_investor": {
+      "method": "GET",
+      "path": "/investor",
+      "config": {
+        "id": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "operation_id": "getInvestorByIdentifier"
+    },
+    "get_investor_deals": {
+      "method": "GET",
+      "path": "/investor/deals",
+      "config": {
+        "id": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "operation_id": "getInvestorDeals"
+    },
+    "search_investors": {
+      "method": "GET",
+      "path": "/investor/search",
+      "config": {
+        "name": "sequoia"
+      },
+      "operation_id": "searchInvestors"
+    },
+    "search_people": {
+      "method": "POST",
+      "path": "/people",
+      "config": {
+        "page_size": 10
+      },
+      "operation_id": "searchPeople"
+    },
+    "get_person": {
+      "method": "GET",
+      "path": "/person",
+      "config": {
+        "id": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "operation_id": "getPerson"
+    },
+    "unlock_person_email": {
+      "method": "GET",
+      "path": "/person/email",
+      "config": {
+        "id": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "operation_id": "getPersonEmail"
+    },
+    "unlock_person_phone": {
+      "method": "GET",
+      "path": "/person/phone",
+      "config": {
+        "id": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "operation_id": "getPersonPhone"
+    },
+    "get_person_deals": {
+      "method": "GET",
+      "path": "/person/deals",
+      "config": {
+        "id": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "operation_id": "getPersonDeals"
+    },
+    "search_person": {
+      "method": "GET",
+      "path": "/person/search",
+      "config": {
+        "name": "jane doe"
+      },
+      "operation_id": "searchPerson"
+    },
+    "get_alerts": {
+      "method": "GET",
+      "path": "/alerts",
+      "config": {
+        "alert_ids": "550e8400-e29b-41d4-a716-446655440000,660e8400-e29b-41d4-a716-446655440001",
+        "start_date": "2024-01-01T00:00:00.000Z",
+        "end_date": "2024-12-31T23:59:59.999Z"
+      },
+      "operation_id": "getAlerts"
+    },
+    "list_alert_configurations": {
+      "method": "GET",
+      "path": "/alerts/configurations",
+      "config": {},
+      "operation_id": "getAlertConfigurations"
+    },
+    "search_locations": {
+      "method": "GET",
+      "path": "/location/search",
+      "config": {
+        "name": "san francisco"
+      },
+      "operation_id": "searchLocations"
+    },
+    "search_industries": {
+      "method": "GET",
+      "path": "/industry/search",
+      "config": {
+        "name": "artificial intelligence"
+      },
+      "operation_id": "searchIndustries"
+    }
+  },
+  "published_responses": {
+    "get_alerts_multipleAlerts": {
+      "operation": "get_alerts",
+      "body": {
+        "success": true,
+        "data": {
+          "alerts": [
+            {
+              "alertId": "550e8400-e29b-41d4-a716-446655440000",
+              "alertName": "Weekly AI Funding Deals",
+              "alertFrequency": "WEEKLY",
+              "totalDealCount": 25,
+              "deals": [
+                {
+                  "id": "deal1",
+                  "company_id": "comp1",
+                  "company_name": "Acme AI Corp",
+                  "company_guru_permalink": "acme-ai-corp",
+                  "round_type": "SERIES_A",
+                  "total_round_raised": 25,
+                  "date": "2024-01-15T00:00:00.000Z",
+                  "company_website": "acme.com",
+                  "company_linkedin": "https://linkedin.com/company/acme",
+                  "location": {
+                    "city": "San Francisco",
+                    "state": "California",
+                    "country": "United States",
+                    "region": "North America"
+                  },
+                  "deal_short_description": "Series A funding round",
+                  "deal_long_description": "Acme AI Corp raised $25M in Series A funding",
+                  "reasoning": "Matches AI startups criteria with focus on artificial intelligence",
+                  "articles": [
+                    {
+                      "link": "https://techcrunch.com/article1",
+                      "is_primary": true,
+                      "publishedDate": "2024-01-15T00:00:00.000Z"
+                    }
+                  ]
+                },
+                {
+                  "id": "deal3",
+                  "company_id": "comp3",
+                  "company_name": "ML Solutions Inc",
+                  "company_guru_permalink": "ml-solutions-inc",
+                  "round_type": "SERIES_B",
+                  "total_round_raised": 40,
+                  "date": "2024-01-10T00:00:00.000Z",
+                  "company_website": "mlsolutions.com",
+                  "company_linkedin": null,
+                  "location": {
+                    "city": "London",
+                    "state": null,
+                    "country": "United Kingdom",
+                    "region": "Europe"
+                  },
+                  "deal_short_description": "Series B funding",
+                  "deal_long_description": "ML Solutions raised $40M in Series B",
+                  "reasoning": "Machine learning focus aligns with your alert criteria",
+                  "articles": []
+                }
+              ]
+            },
+            {
+              "alertId": "660e8400-e29b-41d4-a716-446655440001",
+              "alertName": "Monthly Healthcare Seed Deals",
+              "alertFrequency": "MONTHLY",
+              "totalDealCount": 22,
+              "deals": [
+                {
+                  "id": "deal2",
+                  "company_id": "comp2",
+                  "company_name": "HealthTech Startup",
+                  "company_guru_permalink": "healthtech-startup",
+                  "round_type": "SEED",
+                  "total_round_raised": 5,
+                  "date": "2024-01-10T00:00:00.000Z",
+                  "company_website": "healthtech.io",
+                  "company_linkedin": "https://linkedin.com/company/healthtech",
+                  "location": {
+                    "city": "Boston",
+                    "state": "Massachusetts",
+                    "country": "United States",
+                    "region": "North America"
+                  },
+                  "deal_short_description": "Seed funding round",
+                  "deal_long_description": "HealthTech Startup raised $5M in seed funding",
+                  "reasoning": "Healthcare focus matches your seed round criteria",
+                  "articles": [
+                    {
+                      "link": "https://healthcarevc.com/article",
+                      "is_primary": true,
+                      "publishedDate": "2024-01-10T00:00:00.000Z"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "meta": {
+          "page": 0,
+          "page_size": 2,
+          "credits_used": 0
+        }
+      }
+    },
+    "get_alerts_noDealsFound": {
+      "operation": "get_alerts",
+      "body": {
+        "success": true,
+        "data": {
+          "alerts": []
+        },
+        "meta": {
+          "page": 0,
+          "page_size": 1,
+          "credits_used": 0
+        }
+      }
+    },
+    "list_alert_configurations_withConfigurations": {
+      "operation": "list_alert_configurations",
+      "body": {
+        "success": true,
+        "data": {
+          "configurations": [
+            {
+              "configuration_id": "550e8400-e29b-41d4-a716-446655440000",
+              "configuration_name": "AI Startups Series A",
+              "frequency": "WEEKLY",
+              "description": "Track AI and ML startups raising Series A funding",
+              "filters": {
+                "industries": [
+                  "artificial-intelligence",
+                  "machine-learning"
+                ],
+                "financing_types": [
+                  "Series A"
+                ],
+                "deal_size_min": 1000000,
+                "deal_size_max": 10000000,
+                "locations": [
+                  "san-francisco-bay-area",
+                  "new-york-new-york"
+                ],
+                "investors": [],
+                "companies": []
+              }
+            },
+            {
+              "configuration_id": "660e8400-e29b-41d4-a716-446655440001",
+              "configuration_name": "Healthcare Seed Rounds",
+              "frequency": "DAILY",
+              "description": "Daily alerts for healthcare seed funding",
+              "filters": {
+                "industries": [
+                  "health-care"
+                ],
+                "super_categories": [
+                  "biotechnology"
+                ],
+                "financing_types": [
+                  "Seed"
+                ],
+                "deal_size_min": 500000,
+                "deal_size_max": 5000000,
+                "num_employees": [
+                  "1-10",
+                  "11-50"
+                ],
+                "investors": [
+                  {
+                    "id": "sequoia-capital",
+                    "name": "Sequoia Capital"
+                  }
+                ],
+                "companies": []
+              }
+            },
+            {
+              "configuration_id": "770e8400-e29b-41d4-a716-446655440002",
+              "configuration_name": "Fintech Tracker",
+              "frequency": "MONTHLY",
+              "description": "Monthly roundup of fintech funding activity",
+              "filters": {
+                "industries": [
+                  "financial-services",
+                  "fintech"
+                ],
+                "financing_types": [
+                  "Series A",
+                  "Series B",
+                  "Series C"
+                ],
+                "locations": [
+                  "united-states"
+                ],
+                "companies": [
+                  {
+                    "id": "stripe",
+                    "name": "Stripe"
+                  },
+                  {
+                    "id": "plaid",
+                    "name": "Plaid"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "meta": {
+          "page": 0,
+          "page_size": 3,
+          "credits_used": 0
+        }
+      }
+    },
+    "list_alert_configurations_noConfigurations": {
+      "operation": "list_alert_configurations",
+      "body": {
+        "success": true,
+        "data": {
+          "configurations": []
+        },
+        "meta": {
+          "page": 0,
+          "page_size": 0,
+          "credits_used": 0
+        }
+      }
+    },
+    "search_locations_all_types": {
+      "operation": "search_locations",
+      "body": {
+        "success": true,
+        "data": {
+          "locations": [
+            {
+              "permalink": "san-francisco-california",
+              "name": "San Francisco",
+              "location_type": "CITY"
+            },
+            {
+              "permalink": "san-francisco-bay-area",
+              "name": "San Francisco Bay Area",
+              "location_type": "REGION"
+            },
+            {
+              "permalink": "california",
+              "name": "California",
+              "location_type": "STATE"
+            }
+          ]
+        },
+        "meta": {
+          "total_count": 3
+        }
+      }
+    },
+    "search_locations_cities_only": {
+      "operation": "search_locations",
+      "body": {
+        "success": true,
+        "data": {
+          "locations": [
+            {
+              "permalink": "san-francisco-california",
+              "name": "San Francisco",
+              "location_type": "CITY"
+            },
+            {
+              "permalink": "san-jose-california",
+              "name": "San Jose",
+              "location_type": "CITY"
+            }
+          ]
+        },
+        "meta": {
+          "total_count": 2
+        }
+      }
+    },
+    "search_industries_all_types": {
+      "operation": "search_industries",
+      "body": {
+        "success": true,
+        "data": {
+          "industries": [
+            {
+              "permalink": "artificial-intelligence",
+              "name": "Artificial Intelligence",
+              "industry_type": "INDUSTRY"
+            },
+            {
+              "permalink": "machine-learning",
+              "name": "Machine Learning",
+              "industry_type": "INDUSTRY"
+            }
+          ]
+        },
+        "meta": {
+          "total_count": 2
+        }
+      }
+    },
+    "search_industries_industries_only": {
+      "operation": "search_industries",
+      "body": {
+        "success": true,
+        "data": {
+          "industries": [
+            {
+              "permalink": "fintech-e067",
+              "name": "FinTech",
+              "industry_type": "INDUSTRY"
+            }
+          ]
+        },
+        "meta": {
+          "total_count": 1
+        }
+      }
+    }
+  }
+}
