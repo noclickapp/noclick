@@ -1,0 +1,26 @@
+{
+  "title": "Epic London Trip",
+  "description": "This trip is going to be epic",
+  "currency": "USD",
+  "start_date": "2026-05-07",
+  "end_date": "2026-05-12",
+  "min_people": 1,
+  "max_people": 25,
+  "visibility": "public",
+  "participant_fees": "none",
+  "participants_visibility": "me",
+  "images": [
+    {
+      "url": "https://filestack.com/12345"
+    }
+  ],
+  "destination": {
+    "title": "London"
+  },
+  "trip_options": [
+    {
+      "name": "Standard Package",
+      "type": "package"
+    }
+  ]
+}
