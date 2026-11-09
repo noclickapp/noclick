@@ -1,0 +1,675 @@
+[
+  {
+    "operation": "get_business",
+    "config": {},
+    "method": "GET",
+    "path": "/v1/business/12345678",
+    "params": {},
+    "body": null,
+    "response": {
+      "businessId": 12345678,
+      "name": "Dieci Lifestyle Spa",
+      "alias": "Dieci Lifestyle Spa - Livingston, NJ",
+      "emailId": "4568@livelovespa.com",
+      "phone": "(973) 716-0101",
+      "fax": "(973) 716-0102",
+      "websiteURL": "http://www.diecispa.com/",
+      "description": "Specialties\nBridal ServicesMakeup: Makeovers/Lessons/ Faux Lash applicationMassagesFacialsMicrocurrentMicrodermabrasionBody\u2026",
+      "keywords": "Hair Salons,Day Spas,Beauty Salon,Beauty Salons,Salons,Massage Therapists",
+      "services": "Beauty Salon, Hair Spa",
+      "logoURL": "http://d3cnqzq0ivprch.cloudfront.net/prod/css/images/logo.jpg",
+      "coverImageURL": "http://d3cnqzq0ivprch.cloudfront.net/common/css/images/profile/spa.jpg",
+      "gmbCover": "http://d3cnqzq0ivprch.cloudfront.net/common/css/images/profile/abcd.jpg",
+      "facebookCover": "http://d3cnqzq0ivprch.cloudfront.net/common/css/images/profile/fb.jpg",
+      "timezone": "Pacific Standard Time",
+      "isServiceAreaProvider": "Yes",
+      "serviceAreas": [
+        {
+          "description": "2390 Boston Street, Seattle, WA, 98109",
+          "placeId": "ChIJ9YasdSKZs0wRSt--7QSjsd3"
+        },
+        {
+          "description": "400 Boston Street, Seattle, WA, 98109",
+          "placeId": "ChIJ9aasdAOKZasdaSt--7QsdLja4"
+        }
+      ],
+      "languages": [
+        "English",
+        "Spanish"
+      ],
+      "payment": "Visa, MasterCard, American Express, Debit Cards, Check",
+      "hoursOfOperations": [
+        {
+          "day": "0",
+          "isOpen": 1,
+          "workingHours": [
+            {
+              "startHour": "09:00",
+              "endHour": "13:30"
+            },
+            {
+              "startHour": "14:30",
+              "endHour": "19:00"
+            }
+          ],
+          "comment": ""
+        },
+        {
+          "day": "1",
+          "isOpen": 1,
+          "workingHours": [
+            {
+              "startHour": "09:00",
+              "endHour": "13:30"
+            },
+            {
+              "startHour": "14:30",
+              "endHour": "19:00"
+            }
+          ],
+          "comment": ""
+        },
+        {
+          "day": "2",
+          "isOpen": 1,
+          "workingHours": [
+            {
+              "startHour": "09:00",
+              "endHour": "13:30"
+            },
+            {
+              "startHour": "14:30",
+              "endHour": "19:00"
+            }
+          ],
+          "comment": ""
+        },
+        {
+          "day": "3",
+          "isOpen": 1,
+          "workingHours": [
+            {
+              "startHour": "09:00",
+              "endHour": "13:30"
+            },
+            {
+              "startHour": "14:30",
+              "endHour": "19:00"
+            }
+          ],
+          "comment": ""
+        },
+        {
+          "day": "4",
+          "isOpen": 1,
+          "workingHours": [
+            {
+              "startHour": "09:00",
+              "endHour": "13:30"
+            },
+            {
+              "startHour": "14:30",
+              "endHour": "19:00"
+            }
+          ],
+          "comment": ""
+        },
+        {
+          "day": "5",
+          "isOpen": 1,
+          "workingHours": [
+            {
+              "startHour": "09:00",
+              "endHour": "13:30"
+            },
+            {
+              "startHour": "14:30",
+              "endHour": "19:00"
+            }
+          ],
+          "comment": ""
+        },
+        {
+          "day": "6",
+          "isOpen": 0
+        }
+      ],
+      "working24x7": 0,
+      "location": {
+        "address1": "90 W Mount Pleasant Ave",
+        "address2": "(btwn Preston Dr. &amp; N. Mitchell Ave.)",
+        "subLocality": "Auckland CBD",
+        "city": "Livingston",
+        "state": "NJ",
+        "zip": "07039",
+        "countryCode": "US",
+        "countryName": "United States of America"
+      },
+      "reviewCount": 53,
+      "avgRating": 3.4,
+      "status": "active",
+      "type": "Business",
+      "category": "Hair Salons,Day Spas,Beauty Salon,Beauty Salons,Salons,Massage Therapists",
+      "socialProfileURLs": {
+        "googleUrl": "null",
+        "facebookUrl": null,
+        "twitterUrl": null,
+        "linkedinUrl": null,
+        "youTubeUrl": null
+      },
+      "isSEOEnabled": "false",
+      "baseUrl": "https://birdeye.com/diecispa-755009344"
+    },
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "list_child_businesses",
+    "config": {
+      "pid": 12345678
+    },
+    "method": "GET",
+    "path": "/v1/business/child/all",
+    "params": {
+      "pid": "12345678"
+    },
+    "body": null,
+    "response": [
+      {
+        "id": 986031488,
+        "name": "Central Ohio Endodontics",
+        "alias": "Central Ohio Endodontics - Dublin, OH",
+        "address": {
+          "address1": "5152 Blazer Memorial Pkwy",
+          "address2": "Ste 102",
+          "subLocality": "Auckland CBD",
+          "city": "Dublin",
+          "state": "OH",
+          "zip": "43017",
+          "countryCode": "US",
+          "countryName": "United States of America"
+        },
+        "phone": "(614) 896-2801",
+        "type": "Business",
+        "status": "active",
+        "createdOn": "Dec 04, 2013",
+        "createdBy": "Sam Bilings"
+      },
+      {
+        "id": 768996864,
+        "name": "Environmental Pest Management",
+        "alias": "Environmental Pest Management - Westerville, OH",
+        "address": {
+          "address1": "200 Hoff Rd",
+          "address2": "Unit P",
+          "subLocality": "Auckland CBD",
+          "city": "Westerville",
+          "state": "OH",
+          "zip": "43082",
+          "countryCode": "US",
+          "countryName": "United States of America"
+        },
+        "phone": "(614) 771-8605",
+        "type": "Business",
+        "status": "active",
+        "createdOn": "Dec 05, 2013",
+        "createdBy": "Sam Bilings"
+      },
+      {
+        "id": 144670708364016,
+        "name": "Sub-reseller",
+        "alias": "Sub-reseller",
+        "status": "active",
+        "createdOn": "Nov 05, 2013",
+        "type": "Reseller",
+        "childCount": 1
+      },
+      {
+        "id": 144670708364322,
+        "name": "Holiday Inn",
+        "alias": "Holiday Inn",
+        "status": "active",
+        "createdOn": "Nov 01, 2013",
+        "type": "Enterprise-Location",
+        "childCount": 2
+      }
+    ],
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "list_reviews",
+    "config": {
+      "sindex": 10,
+      "count": 30
+    },
+    "method": "POST",
+    "path": "/v1/review/businessId/12345678",
+    "params": {
+      "sindex": "10",
+      "count": "30"
+    },
+    "body": {},
+    "response": [
+      {
+        "reviewId": "1858537291",
+        "rating": 0,
+        "comments": "Ordered earlier today, delivered fast..exactly what I ordered..thank you so much!",
+        "title": null,
+        "reviewer": {
+          "firstName": "Sandy Rowe",
+          "lastName": "Johncox",
+          "nickName": "Sandy Rowe Johncox",
+          "thumbnailUrl": "https://ddjkm7n7lx.cloudfront.net/reviewer/dc42f6d8b2b84dc0b688c43e616.jpeg",
+          "facebookId": "638309687"
+        },
+        "reviewURL": "https://www.facebook.com/Imp-Flow-17565744/reviews",
+        "sourceType": "Facebook",
+        "inlineReplyEnabled": false,
+        "reviewDate": "Jan 20, 2014",
+        "response": "Thanks",
+        "responseDate": "Feb 18, 2014",
+        "recommended": 1,
+        "extReferenceId": "loc-ext-ref",
+        "reviewOperationalStatus": "CREATED"
+      },
+      {
+        "reviewId": "73748574902",
+        "rating": 0,
+        "comments": "I am a long time customer and love Dieici. I am there at least once a week. I have never been disappointed with any service. I love all the girls. The customer service is beyond a 10. I also love the new addition Wish to the salon! Wish is a woman's clothing boutique. What could be better...beauty and fashion all in one spot!!! Dieci keeps getting better and better!",
+        "title": null,
+        "reviewer": {
+          "firstName": "Jennifer",
+          "lastName": "Bennett",
+          "nickName": "Jennifer Bennett",
+          "thumbnailUrl": "http://d2xt3xymj142xp.cloudfront.net/reviewer/9a070cf98f014f5d9b06987dcc9c48fe.jpeg",
+          "emailId": "jbennett@gmail.com",
+          "facebookId": null,
+          "city": "Cedar Knolls",
+          "state": " NJ"
+        },
+        "reviewUrl": "https://birdeye.com/imp-flower-15229573096",
+        "sourceType": "Direct Feedback",
+        "inlineReplyEnabled": true,
+        "reviewDate": "Jan 20, 2019",
+        "response": "Thanks",
+        "responseDate": "Feb 18, 2019",
+        "featured": 0,
+        "customerId": 7432167,
+        "extraParams": {
+          "key1": "value1",
+          "key2": "value2",
+          "key3": "value3"
+        },
+        "assitedByUser": [
+          {
+            "firstName": "Steve",
+            "lastName": "M.",
+            "emailId": "steve@test.com",
+            "phoneNum": ""
+          },
+          {
+            "firstName": "Smith",
+            "lastName": "S.",
+            "emailId": "smith@test.com",
+            "phoneNum": ""
+          }
+        ],
+        "extReferenceId": null,
+        "reviewOperationalStatus": "UPDATED"
+      }
+    ],
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "get_review_summary",
+    "config": {},
+    "method": "GET",
+    "path": "/v1/review/businessid/12345678/summary",
+    "params": {},
+    "body": null,
+    "response": {
+      "accepted": true
+    },
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "reply_to_review",
+    "config": {
+      "reviewId": "88778877",
+      "response": "Enter Reply here"
+    },
+    "method": "PUT",
+    "path": "/v1/review/reply/business/12345678/review/88778877",
+    "params": {},
+    "body": {
+      "response": "Enter Reply here"
+    },
+    "response": {
+      "response": "Thanks for reviewing us.",
+      "responseBy": "Default user",
+      "responseDate": 1604926421189
+    },
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "upsert_contact",
+    "config": {
+      "email": "michael@test.com",
+      "firstName": "Michael",
+      "lastName": "Scott",
+      "businessIds": [
+        161458406365307
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/customer-v2/external/saveCustomer",
+    "params": {
+      "businessId": "12345678"
+    },
+    "body": {
+      "email": "michael@test.com",
+      "firstName": "Michael",
+      "lastName": "Scott",
+      "businessIds": [
+        161458406365307
+      ]
+    },
+    "response": {
+      "id": 115339282
+    },
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "get_contact",
+    "config": {
+      "email": "test.user@test.com"
+    },
+    "method": "POST",
+    "path": "/v1/customer-v2/external/getCustomer",
+    "params": {
+      "businessId": "12345678"
+    },
+    "body": {
+      "email": "test.user@test.com"
+    },
+    "response": {
+      "id": 115339282,
+      "firstName": "Michael",
+      "lastName": "Scott",
+      "email": "test.user@test.com",
+      "phone": "(212) xxx-xxxx",
+      "countryCode": "US",
+      "blocked": false,
+      "emailOtin": true,
+      "smsOptin": true,
+      "source": "api",
+      "created": "January 12, 2021",
+      "mappings": [
+        {
+          "cid": 1234451,
+          "location": "new horizon",
+          "bid": 710687,
+          "businessNumber": 161458406365307
+        },
+        {
+          "cid": 1235452,
+          "location": "North Carolina",
+          "bid": 714169,
+          "businessNumber": 161072537475129
+        }
+      ],
+      "tags": [
+        "Tag One",
+        "Tag Two"
+      ],
+      "customFields": [
+        {
+          "fieldName": "Company",
+          "type": "text",
+          "fieldValue": "Dunder Mifflin"
+        },
+        {
+          "fieldName": "Product",
+          "type": "text",
+          "fieldValue": "Paper"
+        }
+      ],
+      "externalId": "ABC123",
+      "experienceScore": 8,
+      "experienceScoreSource": "review"
+    },
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "delete_contact",
+    "config": {
+      "id": "115339282",
+      "businessIds": [
+        161322681923726
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/customer-v2/external/deleteCustomer",
+    "params": {
+      "businessId": "12345678"
+    },
+    "body": {
+      "id": "115339282",
+      "businessIds": [
+        161322681923726
+      ]
+    },
+    "response": {
+      "accepted": true
+    },
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "get_contact_activity",
+    "config": {
+      "customerId": "115339282"
+    },
+    "method": "GET",
+    "path": "/v1/customer/history/115339282",
+    "params": {
+      "businessId": "12345678"
+    },
+    "body": null,
+    "response": [
+      {
+        "type": "Share review email",
+        "activityDate": "Mar 11, 2018 08:44 PM",
+        "action": "Sent",
+        "activityTimestamp": 1435290249000
+      },
+      {
+        "type": "Review request email",
+        "activityDate": "Mar 12, 2018 08:43 PM",
+        "action": "Sent",
+        "activityTimestamp": 1435290234000
+      },
+      {
+        "type": "Review request email",
+        "activityDate": "Mar 13, 2018 08:43 PM",
+        "action": "5-star review written on Birdeye",
+        "activityTimestamp": 1435290234000
+      },
+      {
+        "type": "Created",
+        "activityDate": "Mar 13, 2018 08:43 PM",
+        "action": "No Action",
+        "activityTimestamp": 1435290234000
+      }
+    ],
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "list_contacts",
+    "config": {
+      "page": 0,
+      "size": 30,
+      "sortby": "lastActivityOn"
+    },
+    "method": "POST",
+    "path": "/v2/customer/list",
+    "params": {
+      "businessId": "12345678",
+      "page": "0",
+      "size": "30",
+      "sortby": "lastActivityOn"
+    },
+    "body": {},
+    "response": {
+      "page": 0,
+      "size": 25,
+      "totalPages": 68,
+      "totalCount": 1679,
+      "customers": [
+        {
+          "customerId": 12345,
+          "name": "Dummy1",
+          "email": "sam@gmail.com",
+          "phone": "xxx-xxx-xxxx",
+          "lastActivityWithTime": "12 Aug 2019 02:05 PM PDT"
+        },
+        {
+          "customerId": 54321,
+          "name": "Summy2",
+          "email": "samuel@gmail.com",
+          "phone": "xxx-xxx-xxxx",
+          "lastActivityWithTime": "12 Aug 2019 02:05 PM PDT"
+        }
+      ]
+    },
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "list_review_sources",
+    "config": {},
+    "method": "GET",
+    "path": "/v1/aggregation/business/12345678",
+    "params": {},
+    "body": null,
+    "response": {
+      "accepted": true
+    },
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "add_review_source",
+    "config": {
+      "sourceAlias": "citysearch ",
+      "url": "http://www.citysearch.com/biz/maria-da-vittorio-san-francisco"
+    },
+    "method": "POST",
+    "path": "/v1/aggregation/business/12345678",
+    "params": {},
+    "body": {
+      "sourceAlias": "citysearch ",
+      "url": "http://www.citysearch.com/biz/maria-da-vittorio-san-francisco"
+    },
+    "response": {
+      "id": 237030543,
+      "sourceAlias": "citysearch",
+      "sourceName": "Citysearch",
+      "sourceUrl": "http://www.citysearch.com/biz/maria",
+      "Body": ""
+    },
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "delete_review_source",
+    "config": {
+      "aggregationID": 12345678
+    },
+    "method": "DELETE",
+    "path": "/v1/aggregation/business/12345678/aggregation/12345678",
+    "params": {},
+    "body": null,
+    "response": {
+      "accepted": true
+    },
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "list_surveys",
+    "config": {},
+    "method": "GET",
+    "path": "/v1/survey/business/12345678/all",
+    "params": {},
+    "body": null,
+    "response": [
+      {
+        "surveyId": 9,
+        "name": "JetBlue Customer Satisfaction Survey",
+        "status": "new",
+        "created": 1458844108000,
+        "lastModified": 1482174350000,
+        "responses": 97,
+        "questionCount": 13
+      },
+      {
+        "surveyId": 10,
+        "name": "JetBlue Membership Survey",
+        "status": "active",
+        "created": 1481554022000,
+        "lastModified": 1484867564000,
+        "responses": 20,
+        "questionCount": 18
+      }
+    ],
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "list_employees",
+    "config": {},
+    "method": "GET",
+    "path": "/v1/employee/12345678",
+    "params": {},
+    "body": null,
+    "response": [
+      {
+        "firstName": "sachin",
+        "lastName": "birdeye",
+        "emailId": "test@example.com",
+        "phone": "",
+        "imageUrl": ""
+      },
+      {
+        "firstName": "Kailash",
+        "lastName": "Yadav",
+        "emailId": "kailash12121@gmail.com",
+        "phone": "(989) 898-9898",
+        "imageUrl": "employees/574549fb79cff9.54677638.jpg"
+      },
+      {
+        "firstName": "Kailash",
+        "lastName": "Yadav",
+        "emailId": "1213@gmail.com",
+        "phone": "(989) 898-9898",
+        "imageUrl": "http://d2xt3xymj142xp.cloudfront.net/169830616/573db5844e0e66.08202399.png"
+      }
+    ],
+    "source": "https://docs.birdeye.com/api/openapi.yaml"
+  },
+  {
+    "operation": "check_in_customer",
+    "config": {
+      "name": "Steve Smith",
+      "emailId": "steves@abcd.com"
+    },
+    "method": "POST",
+    "path": "/v1/customer/checkin",
+    "params": {
+      "bid": "12345678"
+    },
+    "body": {
+      "name": "Steve Smith",
+      "emailId": "steves@abcd.com",
+      "smsEnabled": 0
+    },
+    "response": {
+      "customerId": 115339282
+    },
+    "source": "https://docs.birdeye.com/api/contact/customer-checkin.md"
+  }
+]

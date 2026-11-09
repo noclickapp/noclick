@@ -1,0 +1,1090 @@
+{
+  "$defs": {
+    "AddReviewSourceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "add_review_source",
+          "default": "add_review_source",
+          "title": "Add Review Source",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sourceAlias": {
+          "minLength": 1,
+          "title": "Source Alias",
+          "type": "string"
+        },
+        "url": {
+          "minLength": 1,
+          "title": "Review Profile URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sourceAlias",
+        "url"
+      ],
+      "title": "AddReviewSourceConfig",
+      "type": "object"
+    },
+    "BirdeyeAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "birdeye_api_key",
+          "default": "birdeye_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "business_id": {
+          "description": "The numeric ID of your business in Birdeye.",
+          "maxLength": 30,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Business ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "business_id"
+      ],
+      "title": "Birdeye API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Birdeye dashboard API key and business ID. The business read verifies access; other operations need their own account permissions.",
+      "x-credential-url": "https://docs.birdeye.com/"
+    },
+    "CheckInCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "check_in_customer",
+          "default": "check_in_customer",
+          "description": "Records a check-in and may send review requests according to your Birdeye settings.",
+          "title": "Check In Customer",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Customer Name",
+          "type": "string"
+        },
+        "emailId": {
+          "minLength": 1,
+          "title": "Customer Email",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Phone"
+        },
+        "smsEnabled": {
+          "default": 0,
+          "description": "Only choose 1 when the customer opted to receive SMS requests. Email requests may still be sent according to business settings.",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Customer Opted Into SMS",
+          "type": "integer"
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Contact ID"
+        }
+      },
+      "required": [
+        "name",
+        "emailId"
+      ],
+      "title": "CheckInCustomerConfig",
+      "type": "object"
+    },
+    "DeleteContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Remove Contact From Locations",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Removes the contact from the location business IDs below.",
+          "maxLength": 30,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "businessIds": {
+          "description": "Explicit location IDs. Required for creating a contact; removal only affects these locations.",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Location Business IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "businessIds"
+      ],
+      "title": "DeleteContactConfig",
+      "type": "object"
+    },
+    "DeleteReviewSourceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "delete_review_source",
+          "default": "delete_review_source",
+          "title": "Delete Review Source",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "aggregationID": {
+          "exclusiveMinimum": 0,
+          "title": "Aggregation ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "aggregationID"
+      ],
+      "title": "DeleteReviewSourceConfig",
+      "type": "object"
+    },
+    "GetBusinessConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "get_business",
+          "default": "get_business",
+          "title": "Get Business",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetBusinessConfig",
+      "type": "object"
+    },
+    "GetContactActivityConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "get_contact_activity",
+          "default": "get_contact_activity",
+          "title": "Get Contact Activity",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customerId": {
+          "maxLength": 30,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Startdate"
+        },
+        "endDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enddate"
+        }
+      },
+      "required": [
+        "customerId"
+      ],
+      "title": "GetContactActivityConfig",
+      "type": "object"
+    },
+    "GetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Contact Email",
+          "type": "string"
+        },
+        "experienceScore": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Experiencescore"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "GetContactConfig",
+      "type": "object"
+    },
+    "GetReviewSummaryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "get_review_summary",
+          "default": "get_review_summary",
+          "title": "Get Review Summary",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statuses"
+        }
+      },
+      "title": "GetReviewSummaryConfig",
+      "type": "object"
+    },
+    "ListChildBusinessesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "list_child_businesses",
+          "default": "list_child_businesses",
+          "title": "List Child Businesses",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pid": {
+          "exclusiveMinimum": 0,
+          "title": "Parent Business ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "pid"
+      ],
+      "title": "ListChildBusinessesConfig",
+      "type": "object"
+    },
+    "ListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sortby": {
+          "default": "lastActivityOn",
+          "title": "Sort By",
+          "type": "string"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Startdate"
+        },
+        "endDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enddate"
+        }
+      },
+      "title": "ListContactsConfig",
+      "type": "object"
+    },
+    "ListEmployeesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "list_employees",
+          "default": "list_employees",
+          "title": "List Employees",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListEmployeesConfig",
+      "type": "object"
+    },
+    "ListReviewSourcesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "list_review_sources",
+          "default": "list_review_sources",
+          "title": "List Review Sources",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListReviewSourcesConfig",
+      "type": "object"
+    },
+    "ListReviewsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "list_reviews",
+          "default": "list_reviews",
+          "title": "List Reviews",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sindex": {
+          "default": 0,
+          "maximum": 99999,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "count": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fromdate"
+        },
+        "toDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Todate"
+        },
+        "searchStr": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Searchstr"
+        },
+        "sources": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sources"
+        },
+        "ratings": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ratings"
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statuses"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "includeNonAggregatedReviews": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includenonaggregatedreviews"
+        }
+      },
+      "title": "ListReviewsConfig",
+      "type": "object"
+    },
+    "ListSurveysConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "list_surveys",
+          "default": "list_surveys",
+          "title": "List Surveys",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sortby": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sortby"
+        },
+        "sorder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sorder"
+        },
+        "searchStr": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Searchstr"
+        }
+      },
+      "title": "ListSurveysConfig",
+      "type": "object"
+    },
+    "ReplyToReviewConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "reply_to_review",
+          "default": "reply_to_review",
+          "title": "Reply To Review",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reviewId": {
+          "maxLength": 30,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Review ID",
+          "type": "string"
+        },
+        "response": {
+          "description": "Posts a public reply to the review.",
+          "minLength": 1,
+          "title": "Reply Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reviewId",
+        "response"
+      ],
+      "title": "ReplyToReviewConfig",
+      "type": "object"
+    },
+    "UpsertContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "business_id": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to use the business in the connection.",
+          "title": "Business ID"
+        },
+        "operation": {
+          "const": "upsert_contact",
+          "default": "upsert_contact",
+          "title": "Upsert Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Existing Contact ID"
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "countryCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Countrycode"
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externalid"
+        },
+        "businessIds": {
+          "description": "Explicit location IDs. Required for creating a contact; removal only affects these locations.",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Location Business IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "email",
+        "businessIds"
+      ],
+      "title": "UpsertContactConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_review_source": "#/$defs/AddReviewSourceConfig",
+          "check_in_customer": "#/$defs/CheckInCustomerConfig",
+          "delete_contact": "#/$defs/DeleteContactConfig",
+          "delete_review_source": "#/$defs/DeleteReviewSourceConfig",
+          "get_business": "#/$defs/GetBusinessConfig",
+          "get_contact": "#/$defs/GetContactConfig",
+          "get_contact_activity": "#/$defs/GetContactActivityConfig",
+          "get_review_summary": "#/$defs/GetReviewSummaryConfig",
+          "list_child_businesses": "#/$defs/ListChildBusinessesConfig",
+          "list_contacts": "#/$defs/ListContactsConfig",
+          "list_employees": "#/$defs/ListEmployeesConfig",
+          "list_review_sources": "#/$defs/ListReviewSourcesConfig",
+          "list_reviews": "#/$defs/ListReviewsConfig",
+          "list_surveys": "#/$defs/ListSurveysConfig",
+          "reply_to_review": "#/$defs/ReplyToReviewConfig",
+          "upsert_contact": "#/$defs/UpsertContactConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetBusinessConfig"
+        },
+        {
+          "$ref": "#/$defs/ListChildBusinessesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListReviewsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetReviewSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/ReplyToReviewConfig"
+        },
+        {
+          "$ref": "#/$defs/UpsertContactConfig"
+        },
+        {
+          "$ref": "#/$defs/GetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/GetContactActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/ListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListReviewSourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/AddReviewSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteReviewSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSurveysConfig"
+        },
+        {
+          "$ref": "#/$defs/ListEmployeesConfig"
+        },
+        {
+          "$ref": "#/$defs/CheckInCustomerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BirdeyeAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Birdeye Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find recent reviews",
+    "Reply to a review",
+    "Create or update a contact"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
