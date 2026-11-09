@@ -1,0 +1,5 @@
+{
+  "source": "https://dev.theeventscalendar.com/knowledgebase/introduction-to-the-events-calendar-rest-api/",
+  "excerpt": "Single-event response example under the request GET /wp-json/tribe/events/v1/events/6; copied as published, including the string-valued author.",
+  "usage": "Offline parser regression; not a conformance witness override."
+}

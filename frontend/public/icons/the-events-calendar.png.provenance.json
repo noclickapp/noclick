@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/the-events-calendar.png",
+  "source": "https://plugins.svn.wordpress.org/the-events-calendar/assets/icon-256x256.gif",
+  "license": "Official The Events Calendar plugin icon, used nominatively to identify the connected service. Trademark rights remain with The Events Calendar.",
+  "sha256": "c34ba7b15c8c734072c310c10d9b72712fd5146588e62962e65c1d54d271b642",
+  "transformation": "Converted the official GIF icon to PNG with macOS sips; no visual redesign."
+}
