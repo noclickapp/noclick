@@ -139,7 +139,7 @@ def test_all_operations_have_documented_scopes():
         and isinstance(prop["properties"].get("operation"), dict)
         and "const" in prop["properties"]["operation"]
     }
-    assert len(operations) == 25
+    assert len(operations) == 26
     assert operations == set(FIGMA_OPERATION_SCOPES)
     assert set(FIGMA_SCOPES.declared_scopes()) == set(FIGMA_OPERATION_SCOPES.values())
 

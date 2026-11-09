@@ -5,6 +5,10 @@ Figma does not allow public OAuth apps to enumerate folders, so file operations
 take a file key from its URL rather than presenting a misleading file picker.
 """
 
+import hmac
+import json
+import secrets
+
 from typing import Annotated, Any, Literal, Optional, Union
 from urllib.parse import quote
 
@@ -14,6 +18,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.scopes.figma import FIGMA_SCOPES
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 
 def _op(name: str, label: str, category: str, **extra: Any) -> Any:
@@ -251,13 +256,29 @@ class DeleteWebhook(BaseModel):
     webhook_id: str = Field(..., title="Webhook ID")
 
 
+class FigmaOnEventConfig(WebhookTriggerConfigBase):
+    """Start when a design changes, a comment arrives, or a library is published.
+
+    https://developers.figma.com/docs/rest-api/webhooks-events/
+    """
+    operation: Literal["on_event"] = _op("on_event", "On Figma Event", "Triggers", **{"x-is-trigger": True})
+    event_type: Literal[
+        "FILE_UPDATE", "FILE_DELETE", "FILE_VERSION_UPDATE", "FILE_COMMENT",
+        "LIBRARY_PUBLISH", "DEV_MODE_STATUS_UPDATE",
+    ] = Field("FILE_COMMENT", title="Event Type")
+    context: Literal["file", "project", "team"] = Field("file", title="Context")
+    context_id: str = Field(..., min_length=1, title="Context ID", description="File key, project ID, or team ID from its Figma URL")
+    webhook_url: Optional[str] = Field(None, title="Webhook URL", description="Registered with Figma automatically",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 FigmaConfig = Annotated[Union[
     GetCurrentUser, GetFile, GetFileMetadata, GetFileNodes, RenderImages,
     GetImageFills, ListVersions, ListComments, CreateComment, DeleteComment,
     ListReactions, AddReaction, DeleteReaction, ListFileComponents,
     ListFileComponentSets, ListFileStyles, ListDevResources, CreateDevResource,
     UpdateDevResource, DeleteDevResource, ListWebhooks, GetWebhook,
-    CreateWebhook, UpdateWebhook, DeleteWebhook,
+    CreateWebhook, UpdateWebhook, DeleteWebhook, FigmaOnEventConfig,
 ], Discriminator("operation")]
 
 
@@ -265,7 +286,7 @@ class FigmaNodeConfig(NodeConfig[FigmaConfig, FigmaCredential]):
     pass
 
 
-class FigmaNode(WorkflowNode):
+class FigmaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-figma"
     credential_provider_labels = {"figma": "Figma Account"}
     connection_evidence = ConnectionEvidence(
@@ -275,6 +296,95 @@ class FigmaNode(WorkflowNode):
         "Read a Figma file", "Render a Figma frame", "Post a comment on a design",
         "Link a Jira issue as a Figma dev resource", "List design system components",
     ]
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        op = FigmaOnEventConfig.model_validate(config)
+        token = credential.get("access_token")
+        if not token:
+            raise ValueError("Connect Figma before activating this trigger")
+        passcode = secrets.token_urlsafe(32)
+        data = await cls._request(token, "POST", "/v2/webhooks", body={
+            "event_type": op.event_type, "context": op.context, "context_id": op.context_id,
+            "endpoint": webhook_url, "passcode": passcode,
+        }, personal_token=credential.get("credential_type") == "figma_pat")
+        if not data.get("id"):
+            raise ValueError("Figma did not return a webhook ID")
+        return {"external_webhook_id": str(data["id"]), "signing_secret": passcode}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        webhook_id = (config or {}).get("external_webhook_id")
+        if not webhook_id or not credential:
+            return
+        await cls._request(credential["access_token"], "DELETE",
+            f"/v2/webhooks/{quote(str(webhook_id), safe='')}",
+            personal_token=credential.get("credential_type") == "figma_pat")
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {key: (config or {}).get(key) for key in ("event_type", "context", "context_id")}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # Figma returns the registration passcode in the body; it does not sign it.
+        secret = (config or {}).get("signing_secret")
+        if not secret:
+            return False
+        try:
+            payload = json.loads(body)
+        except (ValueError, UnicodeDecodeError):
+            return False
+        passcode = payload.get("passcode") if isinstance(payload, dict) else None
+        return isinstance(passcode, str) and hmac.compare_digest(passcode.encode(), str(secret).encode())
+
+    @classmethod
+    async def handle_control_event(cls, payload, config, *, pool, workflow_id, node_id):
+        return "Figma webhook connected" if payload.get("event_type") == "PING" else None
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return payload.get("event_type") == config.get("event_type", "FILE_COMMENT")
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        # The passcode authenticates delivery and must not become agent context.
+        return {key: value for key, value in payload.items() if key not in ("passcode", "_webhook")}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return None
+        event = output["data"] if "data" in output and isinstance(output["data"], dict) else output
+        kind = event.get("event_type")
+        if kind not in ("FILE_UPDATE", "FILE_DELETE", "FILE_VERSION_UPDATE", "FILE_COMMENT", "LIBRARY_PUBLISH", "DEV_MODE_STATUS_UPDATE"):
+            return None
+        file_key = event.get("file_key")
+        name = event.get("file_name") or file_key
+        lines = [f"Figma {kind.replace('_', ' ').lower()}: {name}"]
+        if kind != "FILE_UPDATE":
+            actor = event.get("triggered_by") or {}
+            if actor:
+                lines.append(f"By: {actor.get('handle')} (user_id={actor.get('id')})")
+        lines.extend([f"File: https://www.figma.com/file/{quote(str(file_key), safe='')}",
+                      f"file_key={file_key}", f"At: {event.get('timestamp')}"])
+        if kind == "FILE_COMMENT":
+            content = "".join(part.get("text", "") if "text" in part else f"@{part['mention']}" for part in event.get("comment", []))
+            lines.extend([f"Comment: {content}", f"comment_id={event.get('comment_id')}",
+                          f"Reply with create_comment file_key={file_key} comment_id={event.get('comment_id')}."])
+        elif kind == "FILE_VERSION_UPDATE":
+            lines.extend([f"version_id={event.get('version_id')}", str(event.get("description") or "")])
+        elif kind == "DEV_MODE_STATUS_UPDATE":
+            lines.extend([f"node_id={event.get('node_id')}", f"Status: {event.get('status')}"])
+        elif kind == "LIBRARY_PUBLISH":
+            lines.append(str(event.get("description") or ""))
+            for change in ("created", "modified", "deleted"):
+                for asset in ("components", "styles", "variables"):
+                    key = f"{change}_{asset}"
+                    items = event.get(key) or []
+                    if items:
+                        lines.append(f"{key}: " + json.dumps(items, ensure_ascii=False))
+        return {"text": "\n".join(lines), "conversation_key": str(file_key), "title": str(name)}
 
     @classmethod
     def get_config_model(cls):
@@ -332,6 +442,8 @@ class FigmaNode(WorkflowNode):
         op = self.config.config
         name = op.operation
         self.scope_registry.require(name)
+        if isinstance(op, FigmaOnEventConfig):
+            return self.resolve_trigger_payload(inputs, op.model_dump())
         token = await self._token(credential)
         method, path, params, body = "GET", "", None, None
         file = f"/v1/files/{quote(op.file_key, safe='')}" if hasattr(op, "file_key") else ""

@@ -7,6 +7,7 @@ from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 
 
 FIGMA_OPERATION_SCOPES = {
+    "on_event": "webhooks:write",
     "get_current_user": "current_user:read",
     "get_file": "file_content:read",
     "get_file_nodes": "file_content:read",
