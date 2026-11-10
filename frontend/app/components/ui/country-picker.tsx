@@ -1,21 +1,21 @@
 // A country: its flag, its name in English, and a searchable picker over a
 // list of them. The phone input picks a calling code with it; buying a number
 // picks the country to buy in.
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState, type ComponentType, type ReactNode } from 'react';
 import type { CountryCode } from 'libphonenumber-js';
-import * as Flags from 'country-flag-icons/react/3x2';
 import { Check, Globe, Search } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
+import { useLazyModule } from '~/hooks/useLazyModule';
+import { countryName } from '~/lib/countryName';
 import { cn } from '~/lib/utils';
 
-const regionNames = typeof Intl !== 'undefined' && 'DisplayNames' in Intl ? new Intl.DisplayNames(['en'], { type: 'region' }) : null;
-
-export function countryName(code: string): string {
-    return regionNames?.of(code) ?? code;
-}
+// Every country's flag is one module (about 250 drawings): it loads when a flag is first drawn.
+const FLAGS = () => import('country-flag-icons/react/3x2');
 
 export function CountryFlag({ country, className }: { country?: string; className?: string }) {
-    const Icon = country ? (Flags as Record<string, typeof Flags.US>)[country] : undefined;
+    const flags = useLazyModule(FLAGS);
+    if (country && !flags) return <span aria-hidden className={cn('inline-block h-4 w-6', className)} />;
+    const Icon = country ? (flags as Record<string, ComponentType<{ title?: string; className?: string }>> | undefined)?.[country] : undefined;
     if (!Icon) return <Globe className={cn('h-4 w-5 text-muted-foreground', className)} />;
     return <Icon title="" className={cn('h-4 w-6 rounded-[2px] object-cover', className)} />;
 }

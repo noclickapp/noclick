@@ -3,7 +3,7 @@
 import { useEffect, useId, useState } from 'react';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { FIELD, FIELD_LABEL } from '~/components/shell/fields';
-import { countryName } from '~/components/ui/country-picker';
+import { countryName } from '~/lib/countryName';
 import { PhoneNumberInput } from '~/components/ui/phone-number-input';
 import type { NumberHolder } from '~/hooks/usePhoneNumberPurchase';
 import { cn } from '~/lib/utils';

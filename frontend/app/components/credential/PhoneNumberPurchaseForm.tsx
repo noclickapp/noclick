@@ -10,7 +10,7 @@ import { capabilityLabels, formatNumber, holderNote, placeOf, reviewNote, textin
 import { RequirementFields, filingMissing, filingToSend, useFiling } from '~/components/phone/RequirementFields';
 import type { OAuthExchange } from '~/hooks/oauth/OAuthExchangeContext';
 import { TYPE_LABELS, usePhoneNumberPurchase, type NumberOrder, type PhonePurchaseQuote } from '~/hooks/usePhoneNumberPurchase';
-import { countryName } from '~/components/ui/country-picker';
+import { countryName } from '~/lib/countryName';
 import { formatUsd } from '~/lib/money';
 
 export type { PhonePurchaseQuote } from '~/hooks/usePhoneNumberPurchase';

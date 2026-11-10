@@ -1,7 +1,7 @@
 // How a number for sale reads: the number grouped the way its country writes it, the place it's in, what it can do,
 // what it costs, and what its country asks before it's sold.
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import { countryName } from '~/components/ui/country-picker';
+import { countryName } from '~/lib/countryName';
 import type { AvailableNumber } from '~/hooks/usePhoneNumberPurchase';
 import { formatUsd } from '~/lib/money';
 

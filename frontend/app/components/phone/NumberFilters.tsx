@@ -3,7 +3,8 @@
 // too. A pick searches at once; typed text searches on Enter or Search.
 import { useId, useMemo, useState, type FormEvent } from 'react';
 import { ChevronDown, Loader2, MapPin, Search } from 'lucide-react';
-import { CountryFlag, CountryPicker, countryName } from '~/components/ui/country-picker';
+import { CountryFlag, CountryPicker } from '~/components/ui/country-picker';
+import { countryName } from '~/lib/countryName';
 import { coverageDetail, TYPE_LABELS, type PhoneNumberPurchase, type PlaceKind } from '~/hooks/usePhoneNumberPurchase';
 import { cn } from '~/lib/utils';
 import { BUTTON_PRIMARY } from '~/components/shell/buttons';

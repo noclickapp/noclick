@@ -8,7 +8,7 @@ import { ArrowUpRight, Phone } from 'lucide-react';
 import { BuyAside, PayCard, type PayLink } from '~/components/coordinator/inline/commerce';
 import { GlyphTile, InlineCard, PILL_QUIET, Receipt, Row, Rows, Status } from '~/components/coordinator/inline/primitives';
 import { capabilityLabels, formatNumber, placeOf } from '~/components/phone/numberDisplay';
-import { countryName } from '~/components/ui/country-picker';
+import { countryName } from '~/lib/countryName';
 import { useCoordinatorJob } from '~/hooks/useCoordinatorJobs';
 import { TYPE_LABELS, usePhoneNumberPurchase, usePurchaseLinkTransport, type PhonePurchaseQuote } from '~/hooks/usePhoneNumberPurchase';
 import { failed, list, num, str, type CoordinatorToolCall, type JsonObject } from '~/lib/coordinatorToolCalls';

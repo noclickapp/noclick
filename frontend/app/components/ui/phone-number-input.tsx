@@ -16,9 +16,9 @@ import { ChevronDown } from 'lucide-react';
 import {
     CountryFlag,
     CountryPicker,
-    countryName,
     type CountryOption,
 } from '~/components/ui/country-picker';
+import { countryName } from '~/lib/countryName';
 import { useDetectedCountry } from '~/hooks/useDetectedCountry';
 import { cn } from '~/lib/utils';
 

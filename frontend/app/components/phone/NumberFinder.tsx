@@ -8,7 +8,7 @@ import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import { AlertCircle, ArrowLeft, ChevronRight, Clock3, FileText, Globe, Loader2 } from 'lucide-react';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '~/components/shell/buttons';
-import { countryName } from '~/components/ui/country-picker';
+import { countryName } from '~/lib/countryName';
 import { Skeleton } from '~/components/ui/skeleton';
 import type { AvailableNumber, NumberFiling, NumberOrder, PhoneNumberPurchase } from '~/hooks/usePhoneNumberPurchase';
 import { cn } from '~/lib/utils';

@@ -2,73 +2,75 @@
 // Contains provider enum, metadata mappings, and utility functions
 
 import type { ComponentType, ReactNode } from 'react';
-import OpenAI from '@lobehub/icons/es/OpenAI';
-import Anthropic from '@lobehub/icons/es/Anthropic';
-import Cohere from '@lobehub/icons/es/Cohere';
-import Azure from '@lobehub/icons/es/Azure';
-import Bedrock from '@lobehub/icons/es/Bedrock';
-import Aws from '@lobehub/icons/es/Aws';
-import VertexAI from '@lobehub/icons/es/VertexAI';
-import Ai21 from '@lobehub/icons/es/Ai21';
-import XAI from '@lobehub/icons/es/XAI';
-import Perplexity from '@lobehub/icons/es/Perplexity';
-import Cerebras from '@lobehub/icons/es/Cerebras';
-import Groq from '@lobehub/icons/es/Groq';
-import Together from '@lobehub/icons/es/Together';
-import Fireworks from '@lobehub/icons/es/Fireworks';
-import Anyscale from '@lobehub/icons/es/Anyscale';
-import Replicate from '@lobehub/icons/es/Replicate';
-import DeepInfra from '@lobehub/icons/es/DeepInfra';
-import Featherless from '@lobehub/icons/es/Featherless';
-import DeepSeek from '@lobehub/icons/es/DeepSeek';
-import AlibabaCloud from '@lobehub/icons/es/AlibabaCloud';
-import Volcengine from '@lobehub/icons/es/Volcengine';
-import Moonshot from '@lobehub/icons/es/Moonshot';
-import Gemini from '@lobehub/icons/es/Gemini';
-import PaLM from '@lobehub/icons/es/PaLM';
-import Mistral from '@lobehub/icons/es/Mistral';
-import HuggingFace from '@lobehub/icons/es/HuggingFace';
-import AlephAlpha from '@lobehub/icons/es/AlephAlpha';
-import Baseten from '@lobehub/icons/es/Baseten';
-import NPLCloud from '@lobehub/icons/es/NPLCloud';
-import Ollama from '@lobehub/icons/es/Ollama';
-import WorkersAI from '@lobehub/icons/es/WorkersAI';
-import Voyage from '@lobehub/icons/es/Voyage';
-import Inference from '@lobehub/icons/es/Inference';
-import Nvidia from '@lobehub/icons/es/Nvidia';
-import Novita from '@lobehub/icons/es/Novita';
-import Nebius from '@lobehub/icons/es/Nebius';
-import Vercel from '@lobehub/icons/es/Vercel';
-import IBM from '@lobehub/icons/es/IBM';
-import LobeHub from '@lobehub/icons/es/LobeHub';
-import Lambda from '@lobehub/icons/es/Lambda';
-import Hyperbolic from '@lobehub/icons/es/Hyperbolic';
-import Friendli from '@lobehub/icons/es/Friendli';
-import SambaNova from '@lobehub/icons/es/SambaNova';
-import Snowflake from '@lobehub/icons/es/Snowflake';
-import AssemblyAI from '@lobehub/icons/es/AssemblyAI';
-import ElevenLabs from '@lobehub/icons/es/ElevenLabs';
-import Recraft from '@lobehub/icons/es/Recraft';
-import Jina from '@lobehub/icons/es/Jina';
-import V0 from '@lobehub/icons/es/V0';
-import AzureAI from '@lobehub/icons/es/AzureAI';
-import Meta from '@lobehub/icons/es/Meta';
-import Dbrx from '@lobehub/icons/es/Dbrx';
-import Exa from '@lobehub/icons/es/Exa';
-import Fal from '@lobehub/icons/es/Fal';
-import Google from '@lobehub/icons/es/Google';
-import Kling from '@lobehub/icons/es/Kling';
-import OpenRouter from '~/components/icons/OpenRouterIcon';
+import { BrandAvatar, brandGlyph, type LoadBrandMarks } from '~/components/icons/lazyBrandIcon';
 import { HARNESS_BRANDS } from '~/lib/harnessBrand';
+
+const OpenAI: LoadBrandMarks = () => import('@lobehub/icons/es/OpenAI');
+const Anthropic: LoadBrandMarks = () => import('@lobehub/icons/es/Anthropic');
+const Cohere: LoadBrandMarks = () => import('@lobehub/icons/es/Cohere');
+const Azure: LoadBrandMarks = () => import('@lobehub/icons/es/Azure');
+const Bedrock: LoadBrandMarks = () => import('@lobehub/icons/es/Bedrock');
+const Aws: LoadBrandMarks = () => import('@lobehub/icons/es/Aws');
+const VertexAI: LoadBrandMarks = () => import('@lobehub/icons/es/VertexAI');
+const Ai21: LoadBrandMarks = () => import('@lobehub/icons/es/Ai21');
+const XAI: LoadBrandMarks = () => import('@lobehub/icons/es/XAI');
+const Perplexity: LoadBrandMarks = () => import('@lobehub/icons/es/Perplexity');
+const Cerebras: LoadBrandMarks = () => import('@lobehub/icons/es/Cerebras');
+const Groq: LoadBrandMarks = () => import('@lobehub/icons/es/Groq');
+const Together: LoadBrandMarks = () => import('@lobehub/icons/es/Together');
+const Fireworks: LoadBrandMarks = () => import('@lobehub/icons/es/Fireworks');
+const Anyscale: LoadBrandMarks = () => import('@lobehub/icons/es/Anyscale');
+const Replicate: LoadBrandMarks = () => import('@lobehub/icons/es/Replicate');
+const DeepInfra: LoadBrandMarks = () => import('@lobehub/icons/es/DeepInfra');
+const Featherless: LoadBrandMarks = () => import('@lobehub/icons/es/Featherless');
+const DeepSeek: LoadBrandMarks = () => import('@lobehub/icons/es/DeepSeek');
+const AlibabaCloud: LoadBrandMarks = () => import('@lobehub/icons/es/AlibabaCloud');
+const Volcengine: LoadBrandMarks = () => import('@lobehub/icons/es/Volcengine');
+const Moonshot: LoadBrandMarks = () => import('@lobehub/icons/es/Moonshot');
+const Gemini: LoadBrandMarks = () => import('@lobehub/icons/es/Gemini');
+const PaLM: LoadBrandMarks = () => import('@lobehub/icons/es/PaLM');
+const Mistral: LoadBrandMarks = () => import('@lobehub/icons/es/Mistral');
+const HuggingFace: LoadBrandMarks = () => import('@lobehub/icons/es/HuggingFace');
+const AlephAlpha: LoadBrandMarks = () => import('@lobehub/icons/es/AlephAlpha');
+const Baseten: LoadBrandMarks = () => import('@lobehub/icons/es/Baseten');
+const NPLCloud: LoadBrandMarks = () => import('@lobehub/icons/es/NPLCloud');
+const Ollama: LoadBrandMarks = () => import('@lobehub/icons/es/Ollama');
+const WorkersAI: LoadBrandMarks = () => import('@lobehub/icons/es/WorkersAI');
+const Voyage: LoadBrandMarks = () => import('@lobehub/icons/es/Voyage');
+const Inference: LoadBrandMarks = () => import('@lobehub/icons/es/Inference');
+const Nvidia: LoadBrandMarks = () => import('@lobehub/icons/es/Nvidia');
+const Novita: LoadBrandMarks = () => import('@lobehub/icons/es/Novita');
+const Nebius: LoadBrandMarks = () => import('@lobehub/icons/es/Nebius');
+const Vercel: LoadBrandMarks = () => import('@lobehub/icons/es/Vercel');
+const IBM: LoadBrandMarks = () => import('@lobehub/icons/es/IBM');
+const LobeHub: LoadBrandMarks = () => import('@lobehub/icons/es/LobeHub');
+const Lambda: LoadBrandMarks = () => import('@lobehub/icons/es/Lambda');
+const Hyperbolic: LoadBrandMarks = () => import('@lobehub/icons/es/Hyperbolic');
+const Friendli: LoadBrandMarks = () => import('@lobehub/icons/es/Friendli');
+const SambaNova: LoadBrandMarks = () => import('@lobehub/icons/es/SambaNova');
+const Snowflake: LoadBrandMarks = () => import('@lobehub/icons/es/Snowflake');
+const AssemblyAI: LoadBrandMarks = () => import('@lobehub/icons/es/AssemblyAI');
+const ElevenLabs: LoadBrandMarks = () => import('@lobehub/icons/es/ElevenLabs');
+const Recraft: LoadBrandMarks = () => import('@lobehub/icons/es/Recraft');
+const Jina: LoadBrandMarks = () => import('@lobehub/icons/es/Jina');
+const V0: LoadBrandMarks = () => import('@lobehub/icons/es/V0');
+const AzureAI: LoadBrandMarks = () => import('@lobehub/icons/es/AzureAI');
+const Meta: LoadBrandMarks = () => import('@lobehub/icons/es/Meta');
+const Dbrx: LoadBrandMarks = () => import('@lobehub/icons/es/Dbrx');
+const Exa: LoadBrandMarks = () => import('@lobehub/icons/es/Exa');
+const Fal: LoadBrandMarks = () => import('@lobehub/icons/es/Fal');
+const Google: LoadBrandMarks = () => import('@lobehub/icons/es/Google');
+const Kling: LoadBrandMarks = () => import('@lobehub/icons/es/Kling');
+const OpenRouter: LoadBrandMarks = () => import('~/components/icons/OpenRouterIcon');
 
 // Each Avatar's own glyph (the brand colour variant where the icon has one), for
 // surfaces that draw a provider's mark on their own tile instead of its avatar.
 const PROVIDER_GLYPHS = new WeakMap<object, ComponentType<{ className?: string; size?: number | string }>>();
 
-// Helper function to create colored icons - using Avatar variant which typically shows colored logos
-const createIcon = (IconComponent: any) => {
-    const avatar = <IconComponent.Avatar size={32} />;
-    PROVIDER_GLYPHS.set(avatar, IconComponent.Color ?? IconComponent);
+// A provider's avatar (its coloured logo), loaded as it's first drawn.
+const createIcon = (load: LoadBrandMarks) => {
+    const avatar = <BrandAvatar load={load} size={32} />;
+    PROVIDER_GLYPHS.set(avatar, brandGlyph(load));
     return avatar;
 };
 // Compact harness brand mark (from the shared HARNESS_BRANDS registry) at the 32px
