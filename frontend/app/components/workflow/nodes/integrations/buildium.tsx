@@ -27,7 +27,7 @@ const BuildiumNodeComponent = (props: NodeProps) => (
 export const BuildiumNode: NodeDefinition = {
     type: 'automation-buildium',
     label: 'Buildium',
-    description: 'Buildium property metadata, notes and task categories',
+    description: 'Buildium properties, notes, tasks and triggers for task changes and new tenants',
     category: 'industry',
     Icon: BuildiumIcon,
     iconColor: '',

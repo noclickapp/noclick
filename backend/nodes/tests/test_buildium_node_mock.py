@@ -80,7 +80,7 @@ def test_every_operation_discriminates_and_generates_native_schema_without_id_va
         parsed = adapter.validate_python({"operation": operation, **args})
         assert parsed.operation == operation
     schema = B.BuildiumNode.get_config_schema()
-    assert set(adapter.json_schema()["discriminator"]["mapping"]) == set(CASES)
+    assert set(adapter.json_schema()["discriminator"]["mapping"]) == set(CASES) | set(B.TRIGGERS)
     assert schema["$defs"]["BuildiumAPIKeyCredential"]["properties"]["client_secret"]["ui:sensitive"] is True
 
 

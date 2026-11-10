@@ -15,6 +15,7 @@ from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.dynamic_options import normalize_search, filter_options_by_search
 from nodes.core.oauth_scopes import Enforcement, ScopeRegistry, ScopeRequirement
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from utils.ssrf import assert_exact_url_origin
 
 ORIGIN = "https://api.buildium.com"
@@ -22,6 +23,7 @@ FAMILY = "buildium_api_key"
 NODE_TYPE = "automation-buildium"
 MAX_BYTES = 2 * 1024 * 1024
 OPS = ("check_connection", "list_properties", "get_property", "list_units", "get_unit", "list_tenants", "get_tenant", "list_listing_contacts", "get_listing_contact", "list_work_orders", "get_work_order", "list_tasks", "get_task", "list_task_categories", "get_task_category", "list_property_notes", "get_property_note", "create_property_note", "update_property_note", "create_task_category", "rename_task_category")
+TRIGGERS = ("on_new_or_updated_task", "on_new_tenant")
 _ORG_OMITTED = object()
 _PRIVATE = ContextVar("buildium_private_transport", default=False)
 
@@ -212,7 +214,23 @@ class RenameTaskCategory(GetTaskCategory):
     _name = field_validator("name", mode="before")(plain_text)
 
 
-BuildiumOperation = Annotated[Union[CheckConnection, ListProperties, GetProperty, ListUnits, GetUnit, ListTenants, GetTenant, ListListingContacts, GetListingContact, ListWorkOrders, GetWorkOrder, ListTasks, GetTask, ListTaskCategories, GetTaskCategory, ListPropertyNotes, GetPropertyNote, CreatePropertyNote, UpdatePropertyNote, CreateTaskCategory, RenameTaskCategory], Discriminator("operation")]
+class _Poll(PollTriggerConfigBase, _Operation):
+    property_id: Optional[str] = Field(None, title="Rental Property", description="Leave empty to watch the account. Watches up to 5,000 records; choose a property for larger accounts.", json_schema_extra=resource("property"))
+
+
+class OnNewOrUpdatedTask(_Poll):
+    operation: Literal["on_new_or_updated_task"] = Field("on_new_or_updated_task", title="On New or Updated Task", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New or Updated Task",
+    })
+
+
+class OnNewTenant(_Poll):
+    operation: Literal["on_new_tenant"] = Field("on_new_tenant", title="On New Tenant", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Tenant",
+    })
+
+
+BuildiumOperation = Annotated[Union[CheckConnection, ListProperties, GetProperty, ListUnits, GetUnit, ListTenants, GetTenant, ListListingContacts, GetListingContact, ListWorkOrders, GetWorkOrder, ListTasks, GetTask, ListTaskCategories, GetTaskCategory, ListPropertyNotes, GetPropertyNote, CreatePropertyNote, UpdatePropertyNote, CreateTaskCategory, RenameTaskCategory, OnNewOrUpdatedTask, OnNewTenant], Discriminator("operation")]
 
 
 class BuildiumNodeConfig(NodeConfig[BuildiumOperation, BuildiumAPIKeyCredential]):
@@ -304,17 +322,22 @@ SAFE_FIELDS = {
 }
 
 
+def response_identifier(value):
+    # Buildium's published response examples use zero-valued Int32 IDs.
+    return "0" if type(value) is int and value == 0 else identifier(value)
+
+
 def project(raw, kind):
     if not isinstance(raw, dict):
         raise RuntimeError("Buildium returned an invalid metadata record")
     try:
-        out = {"id": identifier(raw.get("Id"))}
+        out = {"id": response_identifier(raw.get("Id"))}
         for key in SAFE_FIELDS[kind]:
             value = raw.get(key)
             if value is None:
                 continue
             if key.endswith("Id"):
-                value = identifier(value)
+                value = response_identifier(value)
             elif not isinstance(value, (str, int, bool)) or isinstance(value, str) and len(value) > 65535:
                 raise ValueError()
             out[key] = value
@@ -322,7 +345,7 @@ def project(raw, kind):
             p = raw["Property"]
             if not isinstance(p, dict) or p.get("Type") not in {"Rental", "Association"}:
                 raise ValueError()
-            out["property_id"], out["property_type"] = identifier(p.get("Id")), p["Type"]
+            out["property_id"], out["property_type"] = response_identifier(p.get("Id")), p["Type"]
         if kind == "work_order" and raw.get("Task") is not None:
             out["task_id"] = identifier(raw["Task"].get("Id"))
         if kind == "note" and raw.get("LastUpdatedByUser") is not None:
@@ -428,11 +451,38 @@ async def records(data, cfg):
     return {"record": out, "readback_verified": True}
 
 
-class BuildiumNode(WorkflowNode):
+class BuildiumNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-buildium"
-    scope_registry = ScopeRegistry(provider="buildium", enforcement=Enforcement.STRICT, requirements={op: ScopeRequirement(scopes=(), credential_types=(FAMILY,)) for op in OPS})
+    scope_registry = ScopeRegistry(provider="buildium", enforcement=Enforcement.STRICT, requirements={op: ScopeRequirement(scopes=(), credential_types=(FAMILY,)) for op in OPS + TRIGGERS})
     connection_evidence = ConnectionEvidence(field="property_id", noun="rental properties", operation="check_connection")
-    edit_examples = ["List rental properties and their units", "Read task and work order metadata", "Add an internal property note", "Rename a custom task category"]
+    edit_examples = ["List rental properties and their units", "Read task and work order metadata", "Add an internal property note", "Rename a custom task category", "Start an agent when a task changes or a tenant is added"]
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("operation") not in TRIGGERS:
+            return super().resolve_agent_event(output)
+        rows = output.get("records", [])
+        if not rows:
+            return None
+        task = output["operation"] == "on_new_or_updated_task"
+        lines = []
+        for row in rows[:10]:
+            if task:
+                label = row.get("Title") or "Untitled task"
+                detail = f"task {row['id']}, {row.get('TaskType', '')}, status {row.get('TaskStatus', '')}, priority {row.get('Priority', '')}"
+                if row.get("property_id"):
+                    detail += f", {row.get('property_type')} property {row['property_id']}"
+                if row.get("UnitId"):
+                    detail += f", unit {row['UnitId']}"
+                detail += f", updated {row.get('LastUpdatedDateTime') or row.get('CreatedDateTime')}"
+            else:
+                label = " ".join(filter(None, [row.get("FirstName"), row.get("LastName")])) or "Unnamed tenant"
+                detail = f"tenant {row['id']}, created {row.get('CreatedDateTime')}"
+            lines.append(f"- {label} ({detail})")
+        if len(rows) > 10:
+            lines.append(f"- … and {len(rows) - 10} more; all records are in the trigger output")
+        event = "new or updated task(s)" if task else "new tenant(s)"
+        where = f" in rental property {output['property_id']}" if output.get("property_id") else " in the connected account"
+        return {"text": f"Buildium: {len(rows)} {event}{where}:\n" + "\n".join(lines), "conversation_key": None}
     @classmethod
     def get_config_model(cls):
         return BuildiumNodeConfig
@@ -491,8 +541,45 @@ class BuildiumNode(WorkflowNode):
         next_offset = result["next_offset"]
         token = None if next_offset is None else base64.urlsafe_b64encode(json.dumps({"scope": scope, "offset": next_offset}, separators=(",", ":")).encode()).decode().rstrip("=")
         return {"options": options, "next_page_token": token}
+    async def _poll_records(self, data, cfg):
+        task = isinstance(cfg, OnNewOrUpdatedTask)
+        kind = "task" if task else "tenant"
+        params = {"limit": 1000, "orderby": ("LastUpdatedDateTime" if task else "CreatedDateTime") + " desc,Id asc"}
+        if cfg.property_id:
+            if task:
+                params.update(entitytype="Rental", entityid=int(cfg.property_id))
+            else:
+                params["propertyids"] = [int(cfg.property_id)]
+        rows = []
+        offset = 0
+        for _ in range(5):
+            raw, headers = await request(data, "GET", PATHS[kind], params={**params, "offset": offset})
+            page = paginated(raw, headers, kind, offset, 1000)
+            if page["total_count"] > 5000:
+                raise ValueError("Buildium polling supports up to 5,000 records; choose a rental property")
+            rows.extend(page["records"])
+            offset = page["next_offset"]
+            if offset is None:
+                break
+        else:
+            raise RuntimeError("Buildium polling exceeded five pages; choose a rental property")
+        if len({r["id"] for r in rows}) != len(rows):
+            raise RuntimeError("Buildium records shifted during polling; retry the poll")
+        def event_id(row):
+            if not task:
+                return row["id"]
+            # LastUpdatedDateTime is nullable for tasks that have not been edited.
+            revision = row.get("LastUpdatedDateTime") or row.get("CreatedDateTime")
+            if not isinstance(revision, str) or not revision:
+                raise RuntimeError("Buildium task is missing its creation/update timestamp")
+            return row["id"] + ":" + revision
+        fresh = await self._filter_unseen(rows, event_id)
+        return {"operation": cfg.operation, "records": fresh, "event_count": len(fresh), "property_id": cfg.property_id}
+
     async def execute(self, inputs):
         if not isinstance(self.config, BuildiumNodeConfig) or self.config.credentials is None:
             raise ValueError("Connect a native Buildium account API key")
         data = self.config.credentials.model_dump()
+        if isinstance(self.config.config, _Poll):
+            return await self._poll_records(data, self.config.config)
         return await records(data, self.config.config.model_dump())
