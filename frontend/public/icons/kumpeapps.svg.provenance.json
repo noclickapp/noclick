@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/kumpeapps.svg",
+  "source": "https://raw.githubusercontent.com/kumpeapps/logos/main/kumpeapps/kumpe_full_brand_package/kumpe_double_k_fixed_v2.svg",
+  "found_at": "https://github.com/kumpeapps/logos/tree/main/kumpeapps/kumpe_full_brand_package",
+  "retrieved": "2026-11-11",
+  "license": "KumpeApps brand mark, used nominatively to identify the service; trademark rights remain with KumpeApps.",
+  "sha256": "ff26086fce25b51d00de6bf8513eb8ca64e47d3e40bca2bdf60f0d5a1c54670f",
+  "edits": [],
+  "notes": "Official double-K app mark supplied as a standalone SVG in the company brand package. The app icon combines this symbol with a shield and wordmark; this supplied standalone symbol avoids the wordmark. Original green #7EDB28 on transparency, unmodified."
+}

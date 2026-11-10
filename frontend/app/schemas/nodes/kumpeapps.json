@@ -1,0 +1,1938 @@
+{
+  "$defs": {
+    "AddAllowanceTransactionConfig": {
+      "additionalProperties": false,
+      "description": "adds new allowance transaction to kidUserID.",
+      "properties": {
+        "operation": {
+          "const": "add_allowance_transaction",
+          "default": "add_allowance_transaction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kidUserId": {
+          "description": "userID of the kid",
+          "title": "Kid User ID",
+          "type": "integer"
+        },
+        "amount": {
+          "description": "amount you wish to Add/Subtract (subtract value should be a negative value)",
+          "title": "Amount",
+          "type": "number"
+        },
+        "description": {
+          "description": "Description (reason) of allowance transaction",
+          "maxLength": 10000,
+          "title": "Description",
+          "type": "string"
+        },
+        "transactionType": {
+          "description": "Transaction Type (Add/Subtract)",
+          "enum": [
+            "Add",
+            "Subtract"
+          ],
+          "title": "Transaction Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kidUserId",
+        "amount",
+        "description",
+        "transactionType"
+      ],
+      "title": "AddAllowanceTransactionConfig",
+      "type": "object"
+    },
+    "CreateChildUserConfig": {
+      "additionalProperties": false,
+      "description": "adds new child user.",
+      "properties": {
+        "operation": {
+          "const": "create_child_user",
+          "default": "create_child_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "description": "username of user to create",
+          "maxLength": 10000,
+          "title": "Username",
+          "type": "string"
+        },
+        "password": {
+          "description": "password of user to create",
+          "maxLength": 10000,
+          "title": "Password",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "email": {
+          "description": "email address of user to create",
+          "maxLength": 10000,
+          "title": "Email",
+          "type": "string"
+        },
+        "firstName": {
+          "description": "First Name of user to create",
+          "maxLength": 10000,
+          "title": "First Name",
+          "type": "string"
+        },
+        "lastName": {
+          "description": "Last Name of user to create",
+          "maxLength": 10000,
+          "title": "Last Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username",
+        "password",
+        "email",
+        "firstName",
+        "lastName"
+      ],
+      "title": "CreateChildUserConfig",
+      "type": "object"
+    },
+    "CreateChoreConfig": {
+      "additionalProperties": false,
+      "description": "adds chore for given user.",
+      "properties": {
+        "operation": {
+          "const": "create_chore",
+          "default": "create_chore",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kidUsername": {
+          "description": "username of kid to assign the chore to.",
+          "maxLength": 10000,
+          "title": "Kid Username",
+          "type": "string"
+        },
+        "day": {
+          "anyOf": [
+            {
+              "enum": [
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Weekly",
+                "Today"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "day of week (Monday, Tuesday....) for the chore. For weekly chores put Weekly or leave blank",
+          "title": "Day",
+          "enum": [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Weekly",
+            "Today"
+          ],
+          "x-enum-searchable": true
+        },
+        "nfcTag": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "text field of nfc tag required to check off chore",
+          "title": "NFC Tag"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "status of chore (default is todo)",
+          "title": "Status"
+        },
+        "choreName": {
+          "description": "name of chore",
+          "maxLength": 10000,
+          "title": "Chore Name",
+          "type": "string"
+        },
+        "choreDescription": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "optional chore description",
+          "title": "Chore Description"
+        },
+        "choreNumber": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "number priority of chore (default is 5)",
+          "title": "Chore Number"
+        },
+        "blockDash": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "block dash option on this chore",
+          "title": "Block Dash"
+        },
+        "oneTime": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "mark as one time chore (does not repeat each week)",
+          "title": "One Time"
+        },
+        "extraAllowance": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ammount of allowance added at end of week for completing this chore",
+          "title": "Extra Allowance"
+        },
+        "optional": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "mark as optional chore",
+          "title": "Optional"
+        },
+        "reassignable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "mark as reassignable (default is true)",
+          "title": "Reassignable"
+        },
+        "canSteal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "mark as sibling can steal chore",
+          "title": "Can Steal"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "date (yyyy-mm-dd) that you wish the chore to start showing up. (default is today)",
+          "title": "Start Date"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "notes added to chore (visable only on reports, kids do not see this note, this is mostly just for the developer)",
+          "title": "Notes"
+        },
+        "requireObjectDetection": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "require use of camera to detect object detection tag order to check off chore",
+          "title": "Require Object Detection"
+        },
+        "objectDetectionTag": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "tag for object detection to search for (required if requireObjectDetection is true)",
+          "title": "Object Detection Tag"
+        },
+        "updatedByAutomation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "true if chore updated via API from an Automation System",
+          "title": "Updated By Automation"
+        },
+        "aiIcon": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes if AI Icons should be used (n for no, y for yes, e for yes- error)",
+          "title": "AI icon"
+        },
+        "isCalendar": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "True if this is a calendar note instead of a chore.",
+          "title": "Is Calendar"
+        }
+      },
+      "required": [
+        "kidUsername",
+        "choreName"
+      ],
+      "title": "CreateChoreConfig",
+      "type": "object"
+    },
+    "CreateShareLinkConfig": {
+      "additionalProperties": false,
+      "description": "Create Share Link.",
+      "properties": {
+        "operation": {
+          "const": "create_share_link",
+          "default": "create_share_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "linkUserId": {
+          "description": "User ID that the link should be authenticated to",
+          "maxLength": 10000,
+          "title": "Link User ID",
+          "type": "string"
+        },
+        "link": {
+          "description": "Link to share",
+          "enum": [
+            "https://khome.kumpeapps.com/portal/wish-list.php",
+            "https://khome.kumpeapps.com/portal/chores-today.php"
+          ],
+          "title": "Link",
+          "type": "string"
+        },
+        "scope": {
+          "description": "Authentication scope for link",
+          "enum": [
+            "WishList",
+            "WishListAdmin",
+            "Chores",
+            "ChoresAdmin"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "scope2": {
+          "anyOf": [
+            {
+              "enum": [
+                "WishList",
+                "WishListAdmin",
+                "Chores",
+                "ChoresAdmin"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Authentication scope for link",
+          "title": "Scope2",
+          "enum": [
+            "WishList",
+            "WishListAdmin",
+            "Chores",
+            "ChoresAdmin"
+          ],
+          "x-enum-searchable": true
+        },
+        "scope3": {
+          "anyOf": [
+            {
+              "enum": [
+                "WishList",
+                "WishListAdmin",
+                "Chores",
+                "ChoresAdmin"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Authentication scope for link",
+          "title": "Scope3",
+          "enum": [
+            "WishList",
+            "WishListAdmin",
+            "Chores",
+            "ChoresAdmin"
+          ],
+          "x-enum-searchable": true
+        },
+        "scope4": {
+          "anyOf": [
+            {
+              "enum": [
+                "WishList",
+                "WishListAdmin",
+                "Chores",
+                "ChoresAdmin"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Authentication scope for link",
+          "title": "Scope4",
+          "enum": [
+            "WishList",
+            "WishListAdmin",
+            "Chores",
+            "ChoresAdmin"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "linkUserId",
+        "link",
+        "scope"
+      ],
+      "title": "CreateShareLinkConfig",
+      "type": "object"
+    },
+    "CreateWishConfig": {
+      "additionalProperties": false,
+      "description": "Add item to kid's wishlist.",
+      "properties": {
+        "operation": {
+          "const": "create_wish",
+          "default": "create_wish",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kidUserId": {
+          "description": "userID of the kid",
+          "title": "Kid User ID",
+          "type": "integer"
+        },
+        "title": {
+          "description": "Item title",
+          "maxLength": 10000,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item Description",
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item Priority",
+          "title": "Priority"
+        },
+        "link": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL Link to item",
+          "title": "Link"
+        }
+      },
+      "required": [
+        "kidUserId",
+        "title"
+      ],
+      "title": "CreateWishConfig",
+      "type": "object"
+    },
+    "DeleteChoreConfig": {
+      "additionalProperties": false,
+      "description": "deletes chore for given chore id.",
+      "properties": {
+        "operation": {
+          "const": "delete_chore",
+          "default": "delete_chore",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "idChoreList": {
+          "description": "id of the chore you wish to delete",
+          "title": "Id Chore List",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "idChoreList"
+      ],
+      "title": "DeleteChoreConfig",
+      "type": "object"
+    },
+    "DeleteWishConfig": {
+      "additionalProperties": false,
+      "description": "Delete item from wishlist.",
+      "properties": {
+        "operation": {
+          "const": "delete_wish",
+          "default": "delete_wish",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "wishId": {
+          "description": "ID of wishlist item to delete",
+          "title": "Wish ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "wishId"
+      ],
+      "title": "DeleteWishConfig",
+      "type": "object"
+    },
+    "GetAllowanceConfig": {
+      "additionalProperties": false,
+      "description": "returns allowance balance and allowance transactions.",
+      "properties": {
+        "operation": {
+          "const": "get_allowance",
+          "default": "get_allowance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kidUserId": {
+          "description": "userID of the kid",
+          "title": "Kid User ID",
+          "type": "integer"
+        },
+        "transactionDays": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "number of days you wish to search allowance transactions (default is 90 days)",
+          "title": "Transaction Days"
+        }
+      },
+      "required": [
+        "kidUserId"
+      ],
+      "title": "GetAllowanceConfig",
+      "type": "object"
+    },
+    "GetCurrentUserConfig": {
+      "additionalProperties": false,
+      "description": "Gets user info.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "enableBool": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use bool values instead of Int 0/1",
+          "title": "Enable Bool"
+        }
+      },
+      "title": "GetCurrentUserConfig",
+      "type": "object"
+    },
+    "KumpeAppsAuthKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kumpeapps_auth_key",
+          "default": "kumpeapps_auth_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "auth_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Auth key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "auth_key"
+      ],
+      "title": "KumpeApps Auth Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing user auth key obtained through KumpeApps' documented /authentication/authkey flow. API access requires the developer's approval. Use the user auth key, not an app key; NoClick sends it as X-Auth only to restapi.kumpeapps.com.",
+      "x-credential-url": "https://api.kumpeapps.com/python/"
+    },
+    "ListChoresConfig": {
+      "additionalProperties": false,
+      "description": "returns list of chores for given user.",
+      "properties": {
+        "operation": {
+          "const": "list_chores",
+          "default": "list_chores",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kidUsername": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Username of kid you wish to search",
+          "title": "Kid Username"
+        },
+        "day": {
+          "anyOf": [
+            {
+              "enum": [
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Weekly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Day of week for chores (Weekly for weekly chores)",
+          "title": "Day",
+          "enum": [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Weekly"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Status of Chore to search",
+          "title": "Status"
+        },
+        "blockDash": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by blockDash parameter",
+          "title": "Block Dash"
+        },
+        "optional": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by optional parameter",
+          "title": "Optional"
+        },
+        "canSteal": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by canSteal parameter",
+          "title": "Can Steal"
+        },
+        "includeCalendar": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "include calendar notations (default is false)",
+          "title": "Include Calendar"
+        }
+      },
+      "title": "ListChoresConfig",
+      "type": "object"
+    },
+    "ListUsersConfig": {
+      "additionalProperties": false,
+      "description": "returns list of users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "isChild": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter Search by isChild flag",
+          "title": "Is Child"
+        },
+        "isActive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter Search by isActive flag",
+          "title": "Is Active"
+        },
+        "isAdmin": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter Search by isAdmin flag",
+          "title": "Is Admin"
+        },
+        "enableAllowance": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter Search by enableAllowance flag",
+          "title": "Enable Allowance"
+        },
+        "enableChores": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter Search by enableChores flag",
+          "title": "Enable Chores"
+        },
+        "userID": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "userID of user to search",
+          "title": "User ID"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Username of user to search",
+          "title": "Username"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address of user to search",
+          "title": "Email"
+        }
+      },
+      "title": "ListUsersConfig",
+      "type": "object"
+    },
+    "ListWishlistConfig": {
+      "additionalProperties": false,
+      "description": "Get list of wishlist items.",
+      "properties": {
+        "operation": {
+          "const": "list_wishlist",
+          "default": "list_wishlist",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "kidUserId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "userID of the kid",
+          "title": "Kid User ID"
+        }
+      },
+      "title": "ListWishlistConfig",
+      "type": "object"
+    },
+    "OnNewAllowanceTransactionConfig": {
+      "description": "Watch new allowance transactions within the provider's transactionDays window.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_allowance_transaction",
+          "default": "on_new_allowance_transaction",
+          "title": "On New Allowance Transaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Allowance Transaction",
+          "x-is-trigger": true
+        },
+        "kidUserId": {
+          "title": "Child user ID",
+          "type": "integer"
+        },
+        "transactionDays": {
+          "default": 90,
+          "description": "Poll transactions from this many days. Existing transactions form the initial baseline; outages longer than this window may miss transactions.",
+          "minimum": 1,
+          "title": "Transaction history days",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kidUserId"
+      ],
+      "title": "OnNewAllowanceTransactionConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "UpdateChoreConfig": {
+      "additionalProperties": false,
+      "description": "updates chore for given chore id.",
+      "properties": {
+        "operation": {
+          "const": "update_chore",
+          "default": "update_chore",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "idChoreList": {
+          "description": "id number of chore you wish to update",
+          "title": "Id Chore List",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "new status of chore",
+          "title": "Status"
+        },
+        "stolen": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "mark chore as stolen by sibling",
+          "title": "Stolen"
+        },
+        "stolenBy": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "username of sibling that stole the chore (required if stolen is true)",
+          "title": "Stolen By"
+        },
+        "nfcTag": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "text field of NFC tag that is required to be scanned to check off this chore (normally null)",
+          "title": "NFC Tag"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "notes field for chore",
+          "title": "Notes"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GPS latitude of where the chore was marked",
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GPS longitude of where the chore was marked",
+          "title": "Longitude"
+        },
+        "altitude": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GPS altitude of where the chore was marked",
+          "title": "Altitude"
+        },
+        "updatedByAutomation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "true if updated via API by automation system",
+          "title": "Updated By Automation"
+        },
+        "whereDay": {
+          "anyOf": [
+            {
+              "enum": [
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Weekly",
+                "Today"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where day equals...",
+          "title": "Where Day",
+          "enum": [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Weekly",
+            "Today"
+          ],
+          "x-enum-searchable": true
+        },
+        "whereStatus": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where status equals...",
+          "title": "Where Status"
+        },
+        "whereName": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where chore name equals...",
+          "title": "Where Name"
+        }
+      },
+      "required": [
+        "idChoreList"
+      ],
+      "title": "UpdateChoreConfig",
+      "type": "object"
+    },
+    "UpdateUserConfig": {
+      "additionalProperties": false,
+      "description": "updates user.",
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "userID": {
+          "description": "userID of the user you wish to update",
+          "title": "User ID",
+          "type": "integer"
+        },
+        "username": {
+          "description": "username of user to create",
+          "maxLength": 10000,
+          "title": "Username",
+          "type": "string"
+        },
+        "email": {
+          "description": "email address of user to create",
+          "maxLength": 10000,
+          "title": "Email",
+          "type": "string"
+        },
+        "firstName": {
+          "description": "First Name of user to create",
+          "maxLength": 10000,
+          "title": "First Name",
+          "type": "string"
+        },
+        "lastName": {
+          "description": "Last Name of user to create",
+          "maxLength": 10000,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "emoji": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "emoji character for user",
+          "title": "Emoji"
+        },
+        "tmdbKey": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User's TMdB Session Key",
+          "title": "TMDb Key"
+        },
+        "enableWishList": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "set status of Wish List module enabled",
+          "title": "Enable Wish List"
+        },
+        "enableChores": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "set status of chores module enabled",
+          "title": "Enable Chores"
+        },
+        "enableAllowance": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "set status of allowance module enabled",
+          "title": "Enable Allowance"
+        },
+        "enableAdmin": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "set status of isAdmin",
+          "title": "Enable Admin"
+        },
+        "enableTmdb": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "set status of enableTmdb (movie and tv search)",
+          "title": "Enable Tmdb"
+        },
+        "enableObjectDetection": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "set status of enableObjectDetection",
+          "title": "Enable Object Detection"
+        }
+      },
+      "required": [
+        "userID",
+        "username",
+        "email",
+        "firstName",
+        "lastName"
+      ],
+      "title": "UpdateUserConfig",
+      "type": "object"
+    },
+    "UpdateWishConfig": {
+      "additionalProperties": false,
+      "description": "Update item on kid's wishlist.",
+      "properties": {
+        "operation": {
+          "const": "update_wish",
+          "default": "update_wish",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "wishId": {
+          "description": "Wish list item ID to update",
+          "title": "Wish ID",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item title",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item Description",
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item Priority",
+          "title": "Priority"
+        },
+        "link": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL Link to item",
+          "title": "Link"
+        }
+      },
+      "required": [
+        "wishId"
+      ],
+      "title": "UpdateWishConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_allowance_transaction": "#/$defs/AddAllowanceTransactionConfig",
+          "create_child_user": "#/$defs/CreateChildUserConfig",
+          "create_chore": "#/$defs/CreateChoreConfig",
+          "create_share_link": "#/$defs/CreateShareLinkConfig",
+          "create_wish": "#/$defs/CreateWishConfig",
+          "delete_chore": "#/$defs/DeleteChoreConfig",
+          "delete_wish": "#/$defs/DeleteWishConfig",
+          "get_allowance": "#/$defs/GetAllowanceConfig",
+          "get_current_user": "#/$defs/GetCurrentUserConfig",
+          "list_chores": "#/$defs/ListChoresConfig",
+          "list_users": "#/$defs/ListUsersConfig",
+          "list_wishlist": "#/$defs/ListWishlistConfig",
+          "on_new_allowance_transaction": "#/$defs/OnNewAllowanceTransactionConfig",
+          "update_chore": "#/$defs/UpdateChoreConfig",
+          "update_user": "#/$defs/UpdateUserConfig",
+          "update_wish": "#/$defs/UpdateWishConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OnNewAllowanceTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateChildUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ListChoresConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateChoreConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateChoreConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteChoreConfig"
+        },
+        {
+          "$ref": "#/$defs/GetAllowanceConfig"
+        },
+        {
+          "$ref": "#/$defs/AddAllowanceTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/ListWishlistConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateWishConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateWishConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteWishConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateShareLinkConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KumpeAppsAuthKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kumpeapps Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
