@@ -144,7 +144,17 @@ def webhook_examples():
     ("on_contact_changed", "Contact"), ("on_work_item_changed", "Work"), ("on_note_changed", "Note")])
 async def test_webhook_lifecycle_and_manual_run(monkeypatch, operation, subscription_type):
     url = "https://example.com/webhook"
-    requests = transport(monkeypatch, {"TargetUrl": url, "WebhookType": subscription_type}, 201)
+    requests = []
+    def respond(request):
+        requests.append(request)
+        if request.method == "DELETE":
+            return httpx.Response(204)
+        return httpx.Response(201 if request.method == "POST" else 200,
+            json={"TargetUrl": url, "WebhookType": subscription_type})
+    def client(**kwargs):
+        assert kwargs["follow_redirects"] is False and kwargs["trust_env"] is False
+        return httpx.AsyncClient(transport=httpx.MockTransport(respond), **kwargs)
+    monkeypatch.setattr(native, "guarded_async_client", client)
     extra = await native.KarbonNode._register_external_webhook(webhook_url=url,
         credential=CREDENTIAL, config={"operation": operation}, node_id="karbon-test")
     assert extra["external_webhook_id"] == subscription_type
