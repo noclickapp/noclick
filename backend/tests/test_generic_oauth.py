@@ -591,6 +591,15 @@ def test_credential_schema_must_belong_to_declared_provider(spec, field):
         validate_oauth_credential_types({"example": spec}, [Node])
 
 
+def test_oauth_credentials_belong_to_their_provider():
+    """Every node's OAuth credential names the provider that declares its type. A fact of the code, so it's
+    checked here rather than by every process that imports the registry."""
+    from nodes.core.oauth_registry import oauth_providers, validate_oauth_credential_types
+    from nodes.core.registry import NODE_REGISTRY
+
+    validate_oauth_credential_types(oauth_providers(), NODE_REGISTRY.values())
+
+
 @pytest.mark.parametrize(
     "scope,requested", [("read", ["read", "write"]), ("", ["read"])]
 )

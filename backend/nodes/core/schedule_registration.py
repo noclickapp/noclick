@@ -229,7 +229,7 @@ class CronScheduleTriggerMixin:
             "is_active": True,
         }
 
-        node_type = next((k for k, v in NODE_REGISTRY.items() if v is cls), None)
+        node_type = NODE_REGISTRY.type_of(cls)
         if node_type is None:
             return {"values": values}
 

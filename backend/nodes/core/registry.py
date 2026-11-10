@@ -315,52 +315,88 @@ def resolve_node_type(node_type: Optional[str]) -> Optional[str]:
     return LEGACY_NODE_TYPE_ALIASES.get(node_type, node_type)
 
 
-class _NodeRegistry(Dict[str, Type[WorkflowNode]]):
-    """dict that resolves LEGACY_NODE_TYPE_ALIASES on lookup but not on iteration."""
+class _NodeRegistry(MutableMapping[str, Type[WorkflowNode]]):
+    """Node type -> class, resolving LEGACY_NODE_TYPE_ALIASES on lookup but not on iteration.
 
-    def get(self, key, default=None):  # type: ignore[override]
-        if dict.__contains__(self, key):
-            return dict.__getitem__(self, key)
-        alias = LEGACY_NODE_TYPE_ALIASES.get(key)
-        if alias is not None and dict.__contains__(self, alias):
-            return dict.__getitem__(self, alias)
-        return default
+    A self-registered integration is held as its ``Declaration`` until its type is
+    first looked up, then as its class. Listing the types imports nothing;
+    ``values()``/``items()`` import every integration, seconds of CPU and most of
+    a process's memory, so a request path shouldn't walk them.
+    """
 
-    def __getitem__(self, key):
-        if dict.__contains__(self, key):
-            return dict.__getitem__(self, key)
+    def __init__(self, entries: Mapping[str, Union[Type[WorkflowNode], Declaration]]):
+        self._entries: Dict[str, Union[Type[WorkflowNode], Declaration]] = dict(entries)
+
+    def _key(self, key):
+        if key in self._entries:
+            return key
         alias = LEGACY_NODE_TYPE_ALIASES.get(key)
-        if alias is not None:
-            return dict.__getitem__(self, alias)
+        if alias is not None and alias in self._entries:
+            return alias
         raise KeyError(key)
 
+    def __getitem__(self, key):
+        key = self._key(key)
+        entry = self._entries[key]
+        if isinstance(entry, Declaration):
+            entry = self._entries[key] = entry.load()
+        return entry
+
     def __contains__(self, key):
-        if dict.__contains__(self, key):
-            return True
-        alias = LEGACY_NODE_TYPE_ALIASES.get(key)
-        return alias is not None and dict.__contains__(self, alias)
+        try:
+            self._key(key)
+        except (KeyError, TypeError):
+            return False
+        return True
+
+    def __iter__(self):
+        return iter(self._entries)
+
+    def __len__(self):
+        return len(self._entries)
+
+    def __setitem__(self, key, value):
+        self._entries[key] = value
+
+    def __delitem__(self, key):
+        del self._entries[key]
+
+    def type_of(self, cls: type) -> Optional[str]:
+        """The type ``cls`` is registered under, found without importing any other integration."""
+        for key, entry in self._entries.items():
+            if entry is cls or (
+                isinstance(entry, Declaration)
+                and (entry.module, entry.class_name) == (cls.__module__, cls.__name__)
+                and self[key] is cls
+            ):
+                return key
+        return None
 
 
-from nodes.core.oauth_registry import oauth_providers, validate_oauth_credential_types
+from nodes.core.oauth_registry import oauth_providers  # noqa: E402
 
-DISCOVERED_NODE_ENTRIES = discover_nodes(Path(__file__).resolve().parents[1])
-NODE_REGISTRY: Dict[str, Type[WorkflowNode]] = _NodeRegistry(
+# OAuth provider declarations still fail startup; that each node's credential
+# names its provider is a fact of the code, checked by the suite
+# (test_oauth_credentials_belong_to_their_provider), not by every process.
+oauth_providers()
+
+DISCOVERED_NODE_ENTRIES = declare_nodes(Path(__file__).resolve().parents[1])
+NODE_REGISTRY: _NodeRegistry = _NodeRegistry(
     merge_node_entries(_NODE_REGISTRY_ENTRIES, DISCOVERED_NODE_ENTRIES)
 )
-validate_oauth_credential_types(oauth_providers(), NODE_REGISTRY.values())
 
-# Node types that use the SDK for inter-node communication — edges to/from them are rejected.
-# Derived from WorkflowNode.connectionless class attribute (single source of truth).
-CONNECTIONLESS_TYPES: frozenset[str] = frozenset(
-    ntype for ntype, cls in NODE_REGISTRY.items() if getattr(cls, 'connectionless', False)
-)
+
+def is_connectionless(node_type: str) -> bool:
+    """A node that talks over the SDK, never edges (WorkflowNode.connectionless)."""
+    cls = NODE_REGISTRY.get(node_type)
+    return bool(getattr(cls, 'connectionless', False))
 
 
 def validate_edge(source_type: str, target_type: str) -> str | None:
     """Return an error string if this edge is invalid, or None if OK."""
-    if source_type in CONNECTIONLESS_TYPES:
+    if is_connectionless(source_type):
         return f"Cannot add edge from {source_type}: uses SDK for communication, not edges"
-    if target_type in CONNECTIONLESS_TYPES:
+    if is_connectionless(target_type):
         return f"Cannot add edge to {target_type}: uses SDK for communication, not edges"
     return None
 

@@ -2595,11 +2595,11 @@ class WorkflowMCPHandler(DatabasePoolMixin, SocketIOHandler):
     def _get_interface_block_constraints() -> Dict[str, Dict[str, int]]:
         """Build block constraints from NODE_REGISTRY at runtime."""
         constraints: Dict[str, Dict[str, int]] = {}
-        for node_type, node_cls in NODE_REGISTRY.items():
+        for node_type in NODE_REGISTRY:
             if not node_type.startswith("interface-"):
                 continue
             block_type = node_type[len("interface-"):]
-            layout = getattr(node_cls, "grid_layout", None)
+            layout = getattr(NODE_REGISTRY[node_type], "grid_layout", None)
             if layout:
                 constraints[block_type] = layout
         return constraints

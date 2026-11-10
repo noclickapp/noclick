@@ -152,11 +152,11 @@ def _get_interface_block_constraints() -> Dict[str, Dict[str, int]]:
     so adding a new interface node automatically includes its constraints.
     """
     constraints: Dict[str, Dict[str, int]] = {}
-    for node_type, node_cls in NODE_REGISTRY.items():
+    for node_type in NODE_REGISTRY:
         if not node_type.startswith("interface-"):
             continue
         block_type = node_type[len("interface-"):]
-        layout = getattr(node_cls, "grid_layout", None)
+        layout = getattr(NODE_REGISTRY[node_type], "grid_layout", None)
         if layout:
             constraints[block_type] = layout
     return constraints
@@ -4090,7 +4090,7 @@ class NoClickMCPServer(DatabasePoolMixin):
         async def get_available_node_types(query: str = "") -> ToolResult | dict:
             results = []
             q = query.lower()
-            for node_type, node_class in NODE_REGISTRY.items():
+            for node_type in NODE_REGISTRY:
                 label = node_type.replace("automation-", "").replace("trigger-", "").replace("-", " ").title()
                 if not q or q in node_type.lower() or q in label.lower():
                     results.append({"node_type": node_type, "label": label})

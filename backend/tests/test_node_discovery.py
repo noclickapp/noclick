@@ -1,4 +1,4 @@
-"""Node discovery is opt-in, deterministic, and refuses duplicate types.
+"""Node discovery is opt-in, deterministic, lazy, and refuses duplicate types.
 
 Fixtures use a real importable package to catch import-time failures and caching.
 """
@@ -8,8 +8,16 @@ import uuid
 import pytest
 
 from nodes.core import discovery
-from nodes.core.discovery import discover_nodes, merge_node_entries
-from nodes.core.registry import DISCOVERED_NODE_ENTRIES, NODE_REGISTRY, _NODE_REGISTRY_ENTRIES
+from nodes.core.discovery import Declaration, declare_nodes, merge_node_entries
+from nodes.core.registry import DISCOVERED_NODE_ENTRIES, NODE_REGISTRY, _NODE_REGISTRY_ENTRIES, _NodeRegistry
+
+
+def discover_nodes(root, name):
+    """Declare, then load every declaration, as a lookup of each type would."""
+    return {
+        node_type: entry.load() if isinstance(entry, Declaration) else entry
+        for node_type, entry in declare_nodes(root, name).items()
+    }
 
 
 @pytest.fixture
@@ -44,11 +52,61 @@ def test_only_declaring_node_modules_import_once(package):
     assert first['automation-example'] is second['automation-example']
 
 
+def test_declaring_imports_nothing_until_the_type_is_looked_up(package):
+    root, name = package
+    write_node(root, 'example_node.py', 'automation-example')
+    write_node(root, 'other_node.py', 'automation-other')
+    registry = _NodeRegistry(declare_nodes(root, name))
+    assert list(registry) == ['automation-example', 'automation-other']
+    assert 'automation-other' in registry
+    assert name + '.example_node' not in sys.modules
+    assert name + '.other_node' not in sys.modules
+
+    cls = registry['automation-example']
+    assert cls.__module__ == name + '.example_node'
+    assert registry.get('automation-example') is cls
+    assert registry.type_of(cls) == 'automation-example'
+    assert name + '.other_node' not in sys.modules
+
+
+def test_type_of_finds_a_class_imported_before_its_lookup(package):
+    root, name = package
+    write_node(root, 'example_node.py', 'automation-example')
+    registry = _NodeRegistry(declare_nodes(root, name))
+    cls = __import__(name + '.example_node', fromlist=['Example']).Example
+    assert registry.type_of(cls) == 'automation-example'
+    assert registry['automation-example'] is cls
+
+
+def test_module_constant_declarations_are_read_without_importing(package):
+    root, name = package
+    (root / 'constant_node.py').write_text(
+        'raise RuntimeError("must not import while declaring")\n'
+        'NODE_TYPE = "automation-constant"\n'
+        'class Example:\n    integration_type = NODE_TYPE\n'
+    )
+    assert declare_nodes(root, name) == {
+        'automation-constant': Declaration('automation-constant', name + '.constant_node', 'Example'),
+    }
+
+
 def test_import_errors_are_not_hidden(package):
     root, name = package
     (root / 'broken_node.py').write_text('class Broken:\n    integration_type = "automation-broken"\nraise RuntimeError("broken import")')
+    registry = _NodeRegistry(declare_nodes(root, name))
     with pytest.raises(RuntimeError, match='broken import'):
-        discover_nodes(root, name)
+        registry['automation-broken']
+
+
+def test_a_declaration_that_is_not_a_node_fails_its_lookup(package):
+    root, name = package
+    (root / 'model_node.py').write_text(
+        'from pydantic import BaseModel\n'
+        'class Config(BaseModel):\n    integration_type: str = "automation-model"\n'
+    )
+    registry = _NodeRegistry(declare_nodes(root, name))
+    with pytest.raises(ValueError, match='Invalid integration class'):
+        registry['automation-model']
 
 
 def test_duplicate_discovered_types_fail(package):
@@ -114,3 +172,12 @@ def test_files_without_marker_are_never_parsed_or_imported(package, monkeypatch)
     monkeypatch.setattr(discovery.importlib, 'import_module', unexpected)
     assert discover_nodes(root, name) == {}
     assert name + '.legacy_node' not in sys.modules
+
+
+def test_every_declared_integration_loads_under_its_type():
+    """Lookups import an integration on first use, so its import errors surface here, not at startup."""
+    for node_type, entry in DISCOVERED_NODE_ENTRIES.items():
+        cls = NODE_REGISTRY[node_type]
+        assert vars(cls)['integration_type'] == node_type
+        if isinstance(entry, Declaration):
+            assert (cls.__module__, cls.__name__) == (entry.module, entry.class_name)
