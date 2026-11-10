@@ -1,7 +1,8 @@
-// Connecting an AI company, in a dialog opened from its Connections tile, through the same connect flow every app
-// uses (AiConnect over ConnectApp): a switch between its subscription sign-ins and its API key, the key as two steps
-// (open the company's console, then paste it), the accounts you already have with it, and asking someone who can.
-// The agent node's credential panel runs the same flow, so an account added here is the one an agent picks up.
+// Connecting an AI company, in a dialog opened from its Connections tile (or wherever a pick needs an AI account, as
+// Work's model picker does), through the same connect flow every app uses (AiConnect over ConnectApp): a switch between
+// its subscription sign-ins and its API key, the key as two steps (open the company's console, then paste it), the
+// accounts you already have with it, and asking someone who can. The agent node's credential panel runs the same
+// flow, so an account added here is the one an agent picks up.
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { CREDENTIALS_CHANGED_EVENT } from '~/components/shared/popups/CreateCredentialDialog';
@@ -16,9 +17,8 @@ import { AiConnect, companyMethods } from './AiConnect';
 import { AiMark, type AiCompany } from './aiAccounts';
 import { sourceLine } from './ConnectedList';
 
-// A sign-in here attaches to no node: the account is just added.
+// A sign-in here attaches to no node: the account is just added, and the map it reports holds only what landed.
 const NO_CREDENTIALS: Record<string, string> = {};
-const attachNowhere = () => {};
 
 /** Asking someone for the company's key: its link offers the company's plan beside the key where the plan holds the
  *  same account. */
@@ -36,16 +36,23 @@ function accountRow(account: ConnectedAccount): ConnectAccountRow {
 
 export function AiProviderDialog({
     company,
-    accounts,
+    accounts = [],
+    signIns,
     onOpenChange,
     onOpenAccount,
+    onConnected,
 }: {
     /** The company to connect; null closes the dialog. */
     company: AiCompany | null;
-    /** Every account you can use; the dialog lists the company's. */
-    accounts: ConnectedAccount[];
+    /** Every account you can use; the dialog lists the company's. Left out where the host lists them itself. */
+    accounts?: ConnectedAccount[];
+    /** The sign-ins to offer, where the host knows which run what it's for (a Claude plan, only for Claude Code); the
+     *  company's every one when left out. */
+    signIns?: readonly string[];
     onOpenChange: (open: boolean) => void;
-    onOpenAccount: (credentialId: string) => void;
+    onOpenAccount?: (credentialId: string) => void;
+    /** The account that landed, by its credential's id: a sign-in's or a saved key's. */
+    onConnected?: (credentialId: string) => void;
 }) {
     // The last company stays on screen while the dialog animates closed.
     const [shown, setShown] = useState(company);
@@ -59,7 +66,7 @@ export function AiProviderDialog({
         toast.success(`${shown.title} connected`);
         onOpenChange(false);
     }, [shown, onOpenChange]);
-    const methods = useMemo(() => (shown ? companyMethods(shown) : []), [shown]);
+    const methods = useMemo(() => (shown ? companyMethods(shown, signIns) : []), [shown, signIns]);
     const own = shown ? accounts.filter((a) => shown.credentialTypes.includes(a.credential.credential_type)) : [];
     // Asking someone reads as every connect dialog's ask does; otherwise the company's own name and what it runs.
     const header = shown && (asking ? connectDialogHeader(shown.title, 'ask') : { title: shown.title, description: shown.uses });
@@ -84,9 +91,15 @@ export function AiProviderDialog({
                     app={shown.title}
                     methods={methods}
                     credentialIds={NO_CREDENTIALS}
-                    onCredentialIdsChange={attachNowhere}
+                    onCredentialIdsChange={(ids) => {
+                        const landed = Object.values(ids)[0];
+                        if (landed) onConnected?.(landed);
+                    }}
                     onSignedIn={connected}
-                    onKeySaved={connected}
+                    onKeySaved={async (credential) => {
+                        onConnected?.(credential.id);
+                        await connected();
+                    }}
                     accounts={own.map(accountRow)}
                     onOpenAccount={onOpenAccount}
                     ask={askFor(shown, methods[methods.length - 1].credential_type)}
