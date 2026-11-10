@@ -9,6 +9,8 @@ NEXTDOOR_SCOPES = ScopeRegistry(
         "get_account": ScopeRequirement(("profile:read",)),
         "list_profiles": ScopeRequirement(("profile:read",)),
         "list_posts": ScopeRequirement(("post:read",)),
+        "on_new_post": ScopeRequirement(("post:read",)),
+        "on_new_comment": ScopeRequirement(("post:read",)),
         "create_post": ScopeRequirement(("post:write",)),
         "create_listing": ScopeRequirement(("post:write",)),
         "set_listing_sold": ScopeRequirement(("post:write",)),

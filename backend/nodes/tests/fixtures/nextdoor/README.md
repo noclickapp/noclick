@@ -8,6 +8,10 @@ share-api 1.0 contract, pinned by the integration conformance catalog. Sources:
 They retain the provider's descriptive placeholder values and array envelope.
 Tests use these shapes without inventing extra requirements on API responses.
 
+posts.json is the published Get your posts response example, including its
+comment and reply shape: https://developer.nextdoor.com/reference/get-your-posts.
+This feed returns the most recent posts and excludes business/entity profiles.
+
 The string response examples preserve the published values for these writes:
 
 - https://developer.nextdoor.com/reference/mark-fsf-sold

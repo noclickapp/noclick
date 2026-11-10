@@ -127,7 +127,7 @@ async def test_oauth_documented_access_token_refresh(monkeypatch):
 
 
 def test_scope_and_oauth_contract():
-    assert set(nd.ROUTES) == set(nd.NEXTDOOR_SCOPES)
+    assert set(nd.ROUTES) | {"on_new_post", "on_new_comment"} == set(nd.NEXTDOOR_SCOPES)
     assert nd.NEXTDOOR_SCOPES.require("create_comment").scopes == ("comment:write",)
     assert OAUTH_PROVIDER.token_auth == "basic"
     assert OAUTH_PROVIDER.identity_url == nd.BASE + "/me/"
@@ -154,3 +154,79 @@ async def test_documented_string_responses_are_preserved(wire):
         replies.append((200, example["body"]))
         result = await node(example["operation"], example["arguments"]).execute({})
         assert result["data"] == example["body"]
+
+
+@pytest.mark.parametrize("operation", ["on_new_post", "on_new_comment"])
+@pytest.mark.asyncio
+async def test_poll_baseline_new_items_and_duplicate_delivery(wire, operation):
+    import copy
+    from nodes.core.poll_trigger import poll_scope
+    calls, replies = wire
+    body = json.loads((Path(__file__).parent / "fixtures/nextdoor/posts.json").read_text())
+    trigger = node(operation, {"secure_profile_id": "mysecureprofileid"})
+    state = {}
+
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+
+    trigger._update_node_state = update
+    replies.append((200, body))
+    baseline = await trigger.execute({})
+    assert baseline["new_item_count"] == 0
+    assert trigger.trigger_produced_no_event(baseline)
+    assert nd.NextdoorNode.resolve_agent_event(baseline) is None
+    assert dict(calls[-1].url.params) == {"secure_profile_id": "mysecureprofileid"}
+    assert state["scope"] == poll_scope(nd.NextdoorNode, {"operation": operation, "secure_profile_id": "mysecureprofileid"})
+
+    changed = copy.deepcopy(body)
+    if operation == "on_new_post":
+        fresh = copy.deepcopy(body["posts"][0])
+        fresh["id"] = "new-post"
+        changed["posts"].append(fresh)
+    else:
+        fresh = copy.deepcopy(body["posts"][0]["comments"][0])
+        fresh["id"] = 2
+        fresh["parent_comment_id"] = 1
+        fresh["author_id"] = None
+        changed["posts"][0]["comments"].append(fresh)
+    replies.append((200, changed))
+    result = await trigger.execute({})
+    assert result["new_item_count"] == 1
+    assert trigger.trigger_emitted_event(result)
+    assert nd.NextdoorNode.should_propagate_output(result, {"operation": operation})
+    event = nd.NextdoorNode.resolve_agent_event(result)
+    assert ("new-post" if operation == "on_new_post" else "Comment 2") in event["text"]
+    assert ("post_body" if operation == "on_new_post" else "comment_body") in event["text"]
+    assert "post_url" in event["text"]
+    if operation == "on_new_comment":
+        assert "post_id" in event["text"] and "parent comment 1" in event["text"]
+    replies.append((200, changed))
+    assert (await trigger.execute({}))["new_item_count"] == 0
+
+    trigger.config.config.secure_profile_id = "another-profile"
+    replies.append((200, changed))
+    assert (await trigger.execute({}))["new_item_count"] == 0
+    assert dict(calls[-1].url.params) == {"secure_profile_id": "another-profile"}
+
+
+@pytest.mark.parametrize("body", [{}, {"posts": None}, {"posts": [{"id": "post", "comments": None}]}])
+@pytest.mark.asyncio
+async def test_poll_rejects_invalid_feed_without_changing_state(wire, body):
+    _, replies = wire
+    replies.append((200, body))
+    trigger = node("on_new_comment")
+    trigger._filter_unseen = AsyncMock()
+    with pytest.raises(ValueError, match="array"):
+        await trigger.execute({})
+    trigger._filter_unseen.assert_not_awaited()
+
+
+def test_poll_scope_ignores_canvas_metadata():
+    from nodes.core.poll_trigger import poll_scope
+    config = {"operation": "on_new_post", "secure_profile_id": "mysecureprofileid"}
+    assert poll_scope(nd.NextdoorNode, config) == poll_scope(nd.NextdoorNode, {**config, "label": "Renamed", "goal": "Watch posts"})
+    assert poll_scope(nd.NextdoorNode, config) != poll_scope(nd.NextdoorNode, {**config, "secure_profile_id": "other"})

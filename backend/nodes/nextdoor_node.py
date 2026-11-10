@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.scopes.nextdoor import NEXTDOOR_SCOPES
 
 BASE = "https://nextdoor.com/external/api/partner/v1"
@@ -38,6 +39,23 @@ class ListProfiles(BaseModel):
 
 class ListPosts(BaseModel):
     operation: Literal["list_posts"] = Field("list_posts", title="Get Your Posts")
+    secure_profile_id: Optional[str] = Field(None, title="Profile ID")
+
+
+class NextdoorPollConfig(PollTriggerConfigBase):
+    secure_profile_id: Optional[str] = Field(None, title="Profile ID", description="Omit for your primary profile. Nextdoor's recent-post feed does not support business or entity page profiles.")
+
+
+class OnNewPost(NextdoorPollConfig):
+    operation: Literal["on_new_post"] = Field("on_new_post", title="On New Post", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Post", "ui:hidden": True,
+    })
+
+
+class OnNewComment(NextdoorPollConfig):
+    operation: Literal["on_new_comment"] = Field("on_new_comment", title="On New Comment", description="Watch comments and replies on your recent posts. Older posts outside Nextdoor's feed are not monitored.", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On New Comment", "ui:hidden": True,
+    })
 
 
 class PostFields(BaseModel):
@@ -125,7 +143,7 @@ class SetCommenting(BaseModel):
 
 NextdoorOperation = Annotated[Union[GetAccount, ListProfiles, ListPosts, CreatePost,
     CreateListing, SetListingSold, CreateComment, EditComment, DeleteComment, EditPost,
-    DeletePost, ListAgencyBoundaries, SetCommenting], Field(discriminator="operation")]
+    DeletePost, ListAgencyBoundaries, SetCommenting, OnNewPost, OnNewComment], Field(discriminator="operation")]
 
 
 class NextdoorConfig(NodeConfig[NextdoorOperation, NextdoorOAuthCredential]):
@@ -150,7 +168,7 @@ ROUTES = {
 }
 
 
-class NextdoorNode(WorkflowNode):
+class NextdoorNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-nextdoor"
     scope_registry = NEXTDOOR_SCOPES
     connection_evidence = ConnectionEvidence(noun="Nextdoor account", identity_operation="get_account",
@@ -159,6 +177,47 @@ class NextdoorNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return NextdoorConfig
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in ("on_new_post", "on_new_comment"):
+            return bool(output.get("new_item_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        operation = output.get("operation")
+        if operation not in ("on_new_post", "on_new_comment"):
+            return super().resolve_agent_event(output)
+        items = output["items"]
+        if not items:
+            return None
+        lines = []
+        for item in items:
+            if operation == "on_new_post":
+                lines.append(f"Post {item['id']} by {item.get('author_id')}: {item.get('title') or ''}\n{item.get('body') or ''}\n{item.get('url') or ''}")
+            else:
+                comment, post = item["comment"], item["post"]
+                lines.append(f"Comment {comment['id']} by {comment.get('author_id') or 'unavailable author'} on post {post['id']} ({post.get('url') or ''}), parent comment {comment.get('parent_comment_id')}:\n{comment.get('body') or ''}")
+        return {"text": f"Nextdoor: {len(items)} new {'post(s)' if operation == 'on_new_post' else 'comment(s) or replies'}:\n" + "\n".join(lines), "conversation_key": None}
+
+    async def _poll_posts(self, body, operation):
+        if not isinstance(body, dict) or not isinstance(body.get("posts"), list):
+            raise ValueError("Expected Nextdoor's posts array")
+        posts = body["posts"]
+        if operation == "on_new_post":
+            items = posts
+            identify = lambda post: str(post["id"])
+        else:
+            items = []
+            for post in posts:
+                comments = post.get("comments", [])
+                if not isinstance(comments, list):
+                    raise ValueError("Expected Nextdoor's comments array")
+                items.extend({"comment": comment, "post": post} for comment in comments)
+            identify = lambda item: f"{item['post']['id']}:{item['comment']['id']}"
+        fresh = await self._filter_unseen(items, identify)
+        return {"status": "success", "operation": operation, "items": fresh, "new_item_count": len(fresh)}
 
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
@@ -183,8 +242,9 @@ class NextdoorNode(WorkflowNode):
             caller_path="execute")
         self.config.credentials = NextdoorOAuthCredential.model_validate(data)
         op = self.config.config
-        method, path, location = ROUTES[op.operation]
-        payload = op.model_dump(exclude={"operation"}, exclude_none=True)
+        is_poll = isinstance(op, NextdoorPollConfig)
+        method, path, location = ROUTES["list_posts" if is_poll else op.operation]
+        payload = ({"secure_profile_id": op.secure_profile_id} if op.secure_profile_id else {}) if is_poll else op.model_dump(exclude={"operation"}, exclude_none=True)
         if location == "query":
             # Arrays use repeated keys and boolean query values use JSON spelling.
             payload = {k: str(v).lower() if isinstance(v, bool) else v for k, v in payload.items()}
@@ -208,6 +268,8 @@ class NextdoorNode(WorkflowNode):
         body = response.json() if response.content else {}
         if not isinstance(body, (dict, list, str)):
             raise ValueError("Expected a Nextdoor JSON object, array or string")
+        if is_poll:
+            return await self._poll_posts(body, op.operation)
         if isinstance(body, dict) and (body.get("error") or body.get("success") is False or body.get("result") in ("error", "failure")):
             raise ValueError("Nextdoor returned an error response")
         return {"status": "success", "operation": op.operation, "data": body}

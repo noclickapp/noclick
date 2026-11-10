@@ -15,7 +15,7 @@ NextdoorIcon.displayName = 'NextdoorIcon';
 export const NextdoorNode: NodeDefinition = {
     type: 'automation-nextdoor',
     label: 'Nextdoor',
-    description: 'Publish posts, listings and comments on Nextdoor',
+    description: 'Publish on Nextdoor and trigger workflows on new posts or comments',
     category: 'social-media',
     Icon: NextdoorIcon,
     iconColor: '',
