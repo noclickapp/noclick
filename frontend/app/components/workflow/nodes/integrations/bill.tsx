@@ -1,6 +1,5 @@
 import { memo, type CSSProperties } from 'react';
 import { NodeProps } from '@xyflow/react';
-import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
 
