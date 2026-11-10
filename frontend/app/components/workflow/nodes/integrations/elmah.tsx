@@ -12,7 +12,7 @@ const ElmahIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/elmah.png"
+        src="/icons/elmah.svg"
         alt=""
         aria-hidden="true"
         className={className}
