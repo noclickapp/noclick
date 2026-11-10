@@ -1,0 +1,819 @@
+{
+  "$defs": {
+    "CakemailCancelCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Cancel a campaign.",
+      "properties": {
+        "operation": {
+          "const": "cancel_campaign",
+          "default": "cancel_campaign",
+          "title": "Cancel a campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "minimum": 1,
+          "title": "Campaign Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "CakemailCancelCampaignConfig",
+      "type": "object"
+    },
+    "CakemailCreateCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Create a campaign.",
+      "properties": {
+        "operation": {
+          "const": "create_campaign",
+          "default": "create_campaign",
+          "title": "Create a campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CakemailCreateCampaignConfig",
+      "type": "object"
+    },
+    "CakemailCreateContactConfig": {
+      "additionalProperties": false,
+      "description": "Add a contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Add a contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "resubscribe": {
+          "default": false,
+          "description": "Explicitly allow reactivating an unsubscribed contact",
+          "title": "Resubscribe",
+          "type": "boolean"
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "email"
+      ],
+      "title": "CakemailCreateContactConfig",
+      "type": "object"
+    },
+    "CakemailDeleteContactConfig": {
+      "additionalProperties": false,
+      "description": "Delete a contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete a contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_id"
+      ],
+      "title": "CakemailDeleteContactConfig",
+      "type": "object"
+    },
+    "CakemailGetAccountConfig": {
+      "additionalProperties": false,
+      "description": "Show my account details.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Show my account details",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CakemailGetAccountConfig",
+      "type": "object"
+    },
+    "CakemailGetCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Show a campaign details.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Show a campaign details",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "minimum": 1,
+          "title": "Campaign Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "CakemailGetCampaignConfig",
+      "type": "object"
+    },
+    "CakemailGetCampaignStatsConfig": {
+      "additionalProperties": false,
+      "description": "Show campaign report.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign_stats",
+          "default": "get_campaign_stats",
+          "title": "Show campaign report",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "minimum": 1,
+          "title": "Campaign Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "CakemailGetCampaignStatsConfig",
+      "type": "object"
+    },
+    "CakemailGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Show a contact details.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Show a contact details",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_id"
+      ],
+      "title": "CakemailGetContactConfig",
+      "type": "object"
+    },
+    "CakemailGetListConfig": {
+      "additionalProperties": false,
+      "description": "Show a list parameters.",
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Show a list parameters",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "CakemailGetListConfig",
+      "type": "object"
+    },
+    "CakemailGetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Get a template.",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get a template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "minimum": 1,
+          "title": "Template Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "CakemailGetTemplateConfig",
+      "type": "object"
+    },
+    "CakemailListCampaignsConfig": {
+      "additionalProperties": false,
+      "description": "Show all campaigns.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Show all campaigns",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "CakemailListCampaignsConfig",
+      "type": "object"
+    },
+    "CakemailListContactsConfig": {
+      "additionalProperties": false,
+      "description": "Show contacts of a list.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Show contacts of a list",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "CakemailListContactsConfig",
+      "type": "object"
+    },
+    "CakemailListListsConfig": {
+      "additionalProperties": false,
+      "description": "Show all lists.",
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Show all lists",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "CakemailListListsConfig",
+      "type": "object"
+    },
+    "CakemailListSegmentsConfig": {
+      "additionalProperties": false,
+      "description": "Show all segments.",
+      "properties": {
+        "operation": {
+          "const": "list_segments",
+          "default": "list_segments",
+          "title": "Show all segments",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "CakemailListSegmentsConfig",
+      "type": "object"
+    },
+    "CakemailListSendersConfig": {
+      "additionalProperties": false,
+      "description": "Show all senders.",
+      "properties": {
+        "operation": {
+          "const": "list_senders",
+          "default": "list_senders",
+          "title": "Show all senders",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "CakemailListSendersConfig",
+      "type": "object"
+    },
+    "CakemailListSuppressedEmailsConfig": {
+      "additionalProperties": false,
+      "description": "Show all suppressed emails.",
+      "properties": {
+        "operation": {
+          "const": "list_suppressed_emails",
+          "default": "list_suppressed_emails",
+          "title": "Show all suppressed emails",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "CakemailListSuppressedEmailsConfig",
+      "type": "object"
+    },
+    "CakemailListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "Show all templates.",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Show all templates",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "CakemailListTemplatesConfig",
+      "type": "object"
+    },
+    "CakemailOnComplianceConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_compliance_event",
+          "default": "on_compliance_event",
+          "title": "On Compliance Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "Email.Bounced",
+          "enum": [
+            "Email.Bounced",
+            "Email.ReportedAsSpam",
+            "Email.Unsubscribed",
+            "Email.GlobalUnsubscribed",
+            "Email.Rejected",
+            "Email.Error",
+            "Contact.Removed",
+            "SuppressedEmail.Added"
+          ],
+          "title": "Event",
+          "type": "string"
+        }
+      },
+      "title": "CakemailOnComplianceConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CakemailTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "cakemail_token",
+          "default": "cakemail_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Cakemail Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste a personal access token created with POST /users/self/pats. Grant the read/write scopes for the operations you use; triggers need webhooks:read and webhooks:write. Tokens are sent only to api.cakemail.dev.",
+      "x-credential-url": "https://api.cakemail.dev/docs"
+    },
+    "CakemailUnsubscribeContactConfig": {
+      "additionalProperties": false,
+      "description": "Unsubscribe a contact from a list.",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_contact",
+          "default": "unsubscribe_contact",
+          "title": "Unsubscribe a contact from a list",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_id"
+      ],
+      "title": "CakemailUnsubscribeContactConfig",
+      "type": "object"
+    },
+    "CakemailUpdateCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Update a campaign.",
+      "properties": {
+        "operation": {
+          "const": "update_campaign",
+          "default": "update_campaign",
+          "title": "Update a campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "minimum": 1,
+          "title": "Campaign Id",
+          "type": "integer"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "name"
+      ],
+      "title": "CakemailUpdateCampaignConfig",
+      "type": "object"
+    },
+    "CakemailUpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "Update a contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update a contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minimum": 1,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "contact_id": {
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_id",
+        "email"
+      ],
+      "title": "CakemailUpdateContactConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_campaign": "#/$defs/CakemailCancelCampaignConfig",
+          "create_campaign": "#/$defs/CakemailCreateCampaignConfig",
+          "create_contact": "#/$defs/CakemailCreateContactConfig",
+          "delete_contact": "#/$defs/CakemailDeleteContactConfig",
+          "get_account": "#/$defs/CakemailGetAccountConfig",
+          "get_campaign": "#/$defs/CakemailGetCampaignConfig",
+          "get_campaign_stats": "#/$defs/CakemailGetCampaignStatsConfig",
+          "get_contact": "#/$defs/CakemailGetContactConfig",
+          "get_list": "#/$defs/CakemailGetListConfig",
+          "get_template": "#/$defs/CakemailGetTemplateConfig",
+          "list_campaigns": "#/$defs/CakemailListCampaignsConfig",
+          "list_contacts": "#/$defs/CakemailListContactsConfig",
+          "list_lists": "#/$defs/CakemailListListsConfig",
+          "list_segments": "#/$defs/CakemailListSegmentsConfig",
+          "list_senders": "#/$defs/CakemailListSendersConfig",
+          "list_suppressed_emails": "#/$defs/CakemailListSuppressedEmailsConfig",
+          "list_templates": "#/$defs/CakemailListTemplatesConfig",
+          "on_compliance_event": "#/$defs/CakemailOnComplianceConfig",
+          "unsubscribe_contact": "#/$defs/CakemailUnsubscribeContactConfig",
+          "update_campaign": "#/$defs/CakemailUpdateCampaignConfig",
+          "update_contact": "#/$defs/CakemailUpdateContactConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CakemailGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailUnsubscribeContactConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailCreateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailUpdateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailCancelCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailListSendersConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailGetCampaignStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailListSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailListSuppressedEmailsConfig"
+        },
+        {
+          "$ref": "#/$defs/CakemailOnComplianceConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CakemailTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cakemail Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
