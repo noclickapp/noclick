@@ -1,0 +1,1289 @@
+{
+  "$defs": {
+    "DynatraceAddUserToGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_user_to_groups",
+          "default": "add_user_to_groups",
+          "title": "Add User To Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Add User To Groups"
+        },
+        "email": {
+          "title": "User email",
+          "type": "string"
+        },
+        "group_ids_json": {
+          "description": "Array of group UUID strings. Replace overwrites membership; [] removes all memberships.",
+          "maxLength": 40000,
+          "title": "Group UUIDs (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "email",
+        "group_ids_json"
+      ],
+      "title": "DynatraceAddUserToGroupsConfig",
+      "type": "object"
+    },
+    "DynatraceCreateGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Create Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Create Group"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "group_description": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "federated_values_json": {
+          "anyOf": [
+            {
+              "maxLength": 40000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "On update, omitting this field can change a SAML group to LOCAL. Supply all values you want to retain.",
+          "title": "Federated attribute values (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "DynatraceCreateGroupConfig",
+      "type": "object"
+    },
+    "DynatraceCreatePolicyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_policy",
+          "default": "create_policy",
+          "title": "Create Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Policies",
+          "x-display-name": "Create Policy"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "policy_description": {
+          "maxLength": 10000,
+          "title": "Policy description",
+          "type": "string"
+        },
+        "statement_query": {
+          "description": "Dynatrace IAM statement, for example ALLOW storage:logs:read;",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Policy statement",
+          "type": "string"
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "maxLength": 40000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "name",
+        "policy_description",
+        "statement_query"
+      ],
+      "title": "DynatraceCreatePolicyConfig",
+      "type": "object"
+    },
+    "DynatraceCreateUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Create User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Create User"
+        },
+        "email": {
+          "title": "User email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "DynatraceCreateUserConfig",
+      "type": "object"
+    },
+    "DynatraceDeleteGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Delete Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Delete Group"
+        },
+        "group_uuid": {
+          "title": "Group UUID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_uuid"
+      ],
+      "title": "DynatraceDeleteGroupConfig",
+      "type": "object"
+    },
+    "DynatraceDeletePolicyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_policy",
+          "default": "delete_policy",
+          "title": "Delete Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Policies",
+          "x-display-name": "Delete Policy"
+        },
+        "policy_uuid": {
+          "title": "Policy UUID",
+          "type": "string"
+        },
+        "force": {
+          "default": false,
+          "title": "Delete even if policy is in use",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "policy_uuid"
+      ],
+      "title": "DynatraceDeletePolicyConfig",
+      "type": "object"
+    },
+    "DynatraceGetPolicyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_policy",
+          "default": "get_policy",
+          "title": "Get Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Policies",
+          "x-display-name": "Get Policy"
+        },
+        "policy_uuid": {
+          "title": "Policy UUID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_uuid"
+      ],
+      "title": "DynatraceGetPolicyConfig",
+      "type": "object"
+    },
+    "DynatraceGetSubscriptionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Get Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Get Subscription"
+        },
+        "subscription_uuid": {
+          "title": "Subscription UUID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_uuid"
+      ],
+      "title": "DynatraceGetSubscriptionConfig",
+      "type": "object"
+    },
+    "DynatraceGetUserGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user_groups",
+          "default": "get_user_groups",
+          "title": "Get User Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get User Groups"
+        },
+        "email": {
+          "title": "User email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "DynatraceGetUserGroupsConfig",
+      "type": "object"
+    },
+    "DynatraceListAuditLogsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_audit_logs",
+          "default": "list_audit_logs",
+          "title": "List Audit Logs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audit logs",
+          "x-display-name": "List Audit Logs"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601, Unix epoch milliseconds, or now()-2d.",
+          "title": "Start time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601, Unix epoch milliseconds, or now().",
+          "title": "End time"
+        },
+        "audit_filter": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dynatrace audit filter expression.",
+          "title": "Audit filter"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Maximum audit events",
+          "type": "integer"
+        }
+      },
+      "title": "DynatraceListAuditLogsConfig",
+      "type": "object"
+    },
+    "DynatraceListEnvironmentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_environments",
+          "default": "list_environments",
+          "title": "List Environments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "List Environments"
+        }
+      },
+      "title": "DynatraceListEnvironmentsConfig",
+      "type": "object"
+    },
+    "DynatraceListGroupMembersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_group_members",
+          "default": "list_group_members",
+          "title": "List Group Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Group Members"
+        },
+        "group_uuid": {
+          "title": "Group UUID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_uuid"
+      ],
+      "title": "DynatraceListGroupMembersConfig",
+      "type": "object"
+    },
+    "DynatraceListGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Groups"
+        }
+      },
+      "title": "DynatraceListGroupsConfig",
+      "type": "object"
+    },
+    "DynatraceListPoliciesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_policies",
+          "default": "list_policies",
+          "title": "List Policies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Policies",
+          "x-display-name": "List Policies"
+        },
+        "policy_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exact policy name"
+        }
+      },
+      "title": "DynatraceListPoliciesConfig",
+      "type": "object"
+    },
+    "DynatraceListSubscriptionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "List Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "List Subscriptions"
+        }
+      },
+      "title": "DynatraceListSubscriptionsConfig",
+      "type": "object"
+    },
+    "DynatraceListUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "List Users"
+        },
+        "include_service_users": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include service users"
+        }
+      },
+      "title": "DynatraceListUsersConfig",
+      "type": "object"
+    },
+    "DynatraceOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "dynatrace_oauth",
+          "default": "dynatrace_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Bearer access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token expiry"
+        },
+        "account_uuid": {
+          "description": "Account Management > Identity & access management > OAuth clients.",
+          "title": "Account UUID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "account_uuid"
+      ],
+      "title": "Dynatrace OAuth",
+      "type": "object",
+      "x-credential-instructions": "Connect your Dynatrace account using OAuth. Enter the account UUID from Account Management. The OAuth client must allow the account-management permissions needed by these operations and openid, profile and offline_access for identity and refresh. The user must also have the corresponding account permissions. Register the NoClick callback URL with the client. Classic environment API tokens do not grant Account Management access.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://docs.dynatrace.com/docs/manage/identity-access-management/access-tokens-and-oauth-clients/oauth-clients",
+      "x-oauth-provider": "dynatrace",
+      "x-oauth-scopes": [
+        "account-audit-logs-read",
+        "account-env-read",
+        "account-idm-read",
+        "account-idm-write",
+        "account-uac-read",
+        "iam-policies-management",
+        "offline_access",
+        "openid",
+        "profile"
+      ]
+    },
+    "DynatraceOnNewAuditEventConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_audit_event",
+          "default": "on_new_audit_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Account Audit Event",
+          "x-is-trigger": true
+        },
+        "lookback_hours": {
+          "default": 24,
+          "description": "Poll this rolling time window. Existing events are baselined when armed. Use a schedule shorter than the window; outages beyond it can miss events.",
+          "maximum": 168,
+          "minimum": 1,
+          "title": "Lookback hours",
+          "type": "integer"
+        },
+        "audit_filter": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audit filter"
+        },
+        "limit": {
+          "default": 1000,
+          "description": "At this limit, results may be incomplete. Narrow the filter/window or increase the limit.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Maximum events per window",
+          "type": "integer"
+        },
+        "allow_partial_results": {
+          "default": false,
+          "description": "By default a warning or full page stops polling without consuming seen state. Enable to emit the returned events with an explicit incompleteness warning; events missing from the API response may be missed.",
+          "title": "Allow incomplete audit windows",
+          "type": "boolean"
+        }
+      },
+      "title": "DynatraceOnNewAuditEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "DynatraceRemoveUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "remove_user",
+          "default": "remove_user",
+          "title": "Remove User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Remove User"
+        },
+        "email": {
+          "title": "User email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "DynatraceRemoveUserConfig",
+      "type": "object"
+    },
+    "DynatraceRemoveUserFromGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "remove_user_from_groups",
+          "default": "remove_user_from_groups",
+          "title": "Remove User From Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Remove User From Groups"
+        },
+        "email": {
+          "title": "User email",
+          "type": "string"
+        },
+        "group_ids_json": {
+          "description": "Array of group UUID strings. Replace overwrites membership; [] removes all memberships.",
+          "maxLength": 40000,
+          "title": "Group UUIDs (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "email",
+        "group_ids_json"
+      ],
+      "title": "DynatraceRemoveUserFromGroupsConfig",
+      "type": "object"
+    },
+    "DynatraceReplaceUserGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "replace_user_groups",
+          "default": "replace_user_groups",
+          "title": "Replace User Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Replace User Groups"
+        },
+        "email": {
+          "title": "User email",
+          "type": "string"
+        },
+        "group_ids_json": {
+          "description": "Array of group UUID strings. Replace overwrites membership; [] removes all memberships.",
+          "maxLength": 40000,
+          "title": "Group UUIDs (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "email",
+        "group_ids_json"
+      ],
+      "title": "DynatraceReplaceUserGroupsConfig",
+      "type": "object"
+    },
+    "DynatraceUpdateGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Update Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Update Group"
+        },
+        "group_uuid": {
+          "title": "Group UUID",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "group_description": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "federated_values_json": {
+          "anyOf": [
+            {
+              "maxLength": 40000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "On update, omitting this field can change a SAML group to LOCAL. Supply all values you want to retain.",
+          "title": "Federated attribute values (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "group_uuid",
+        "name"
+      ],
+      "title": "DynatraceUpdateGroupConfig",
+      "type": "object"
+    },
+    "DynatraceUpdatePolicyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_policy",
+          "default": "update_policy",
+          "title": "Update Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Policies",
+          "x-display-name": "Update Policy"
+        },
+        "policy_uuid": {
+          "title": "Policy UUID",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "policy_description": {
+          "maxLength": 10000,
+          "title": "Policy description",
+          "type": "string"
+        },
+        "statement_query": {
+          "description": "Dynatrace IAM statement, for example ALLOW storage:logs:read;",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Policy statement",
+          "type": "string"
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "maxLength": 40000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "policy_uuid",
+        "name",
+        "policy_description",
+        "statement_query"
+      ],
+      "title": "DynatraceUpdatePolicyConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_user_to_groups": "#/$defs/DynatraceAddUserToGroupsConfig",
+          "create_group": "#/$defs/DynatraceCreateGroupConfig",
+          "create_policy": "#/$defs/DynatraceCreatePolicyConfig",
+          "create_user": "#/$defs/DynatraceCreateUserConfig",
+          "delete_group": "#/$defs/DynatraceDeleteGroupConfig",
+          "delete_policy": "#/$defs/DynatraceDeletePolicyConfig",
+          "get_policy": "#/$defs/DynatraceGetPolicyConfig",
+          "get_subscription": "#/$defs/DynatraceGetSubscriptionConfig",
+          "get_user_groups": "#/$defs/DynatraceGetUserGroupsConfig",
+          "list_audit_logs": "#/$defs/DynatraceListAuditLogsConfig",
+          "list_environments": "#/$defs/DynatraceListEnvironmentsConfig",
+          "list_group_members": "#/$defs/DynatraceListGroupMembersConfig",
+          "list_groups": "#/$defs/DynatraceListGroupsConfig",
+          "list_policies": "#/$defs/DynatraceListPoliciesConfig",
+          "list_subscriptions": "#/$defs/DynatraceListSubscriptionsConfig",
+          "list_users": "#/$defs/DynatraceListUsersConfig",
+          "on_new_audit_event": "#/$defs/DynatraceOnNewAuditEventConfig",
+          "remove_user": "#/$defs/DynatraceRemoveUserConfig",
+          "remove_user_from_groups": "#/$defs/DynatraceRemoveUserFromGroupsConfig",
+          "replace_user_groups": "#/$defs/DynatraceReplaceUserGroupsConfig",
+          "update_group": "#/$defs/DynatraceUpdateGroupConfig",
+          "update_policy": "#/$defs/DynatraceUpdatePolicyConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DynatraceListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceCreateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceGetUserGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceAddUserToGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceRemoveUserConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceReplaceUserGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceRemoveUserFromGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceCreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceUpdateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceDeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceListGroupMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceListPoliciesConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceGetPolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceCreatePolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceUpdatePolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceDeletePolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceListEnvironmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceListSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceGetSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceListAuditLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/DynatraceOnNewAuditEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DynatraceOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dynatrace Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add a user to a Dynatrace group",
+    "Create an account IAM policy",
+    "Watch for new account audit events"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

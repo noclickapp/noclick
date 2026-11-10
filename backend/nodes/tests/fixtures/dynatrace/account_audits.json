@@ -1,0 +1,40 @@
+{
+  "source": "https://docs.dynatrace.com/docs/dynatrace-api/account-management-api/account-audits-api/get-account-audits",
+  "body": {
+    "audits": [
+      {
+        "eventId": "af1f90c9-c667-6789-841b-d039b1rt3f98",
+        "timestamp": "2026-03-26T15:25:41.893Z",
+        "user": "user@company.com",
+        "resource": "POLICY",
+        "resourceName": "Standard User",
+        "eventProvider": "Identity & Account Management",
+        "eventType": "CREATE",
+        "accountUuid": "lk4oo10f-0a5t-566f-gn4f-56hy08c4hh89",
+        "authenticationClientId": "string",
+        "authenticationGrantType": "AUTHORIZATION_CODE",
+        "authenticationToken": "string",
+        "authenticationType": "OAUTH2",
+        "details": {
+          "json_before": "{property: \"value_old\"}",
+          "json_after": "{property: \"value_new\"}"
+        },
+        "eventOutcome": "SUCCESS",
+        "eventReason": "string",
+        "eventVersion": "1.0.0",
+        "originAddress": "0.0.0.0",
+        "originSession": "string",
+        "originType": "REST",
+        "originXForwardedFor": "192.168.1.1",
+        "resourceId": "th2adb56-5291-56hj-b759-03475ef9a5b0",
+        "tenantId": "rty45156",
+        "userOrganization": "CUSTOMER"
+      }
+    ],
+    "warnings": [
+      {
+        "message": "Your result has been limited to 1."
+      }
+    ]
+  }
+}
