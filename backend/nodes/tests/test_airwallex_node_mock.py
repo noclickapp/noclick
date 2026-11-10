@@ -132,3 +132,111 @@ async def test_malformed_account_list_cannot_prove_connection(monkeypatch, body)
     monkeypatch.setattr(native.httpx, 'AsyncClient', lambda **kw: original(transport=httpx.MockTransport(respond), **kw))
     with pytest.raises(ValueError, match='unexpected response shape'):
         await node({'operation': 'list_global_accounts'}).execute({})
+
+
+EVENTS = json.loads((Path(__file__).parent / 'fixtures/airwallex/webhook_events.json').read_text())
+
+
+@pytest.mark.parametrize('event,entry', EVENTS.items())
+def test_published_webhook_signature_routing_and_agent_turn(event, entry):
+    import hashlib
+    import hmac
+    body = json.dumps(entry['body']).encode()
+    timestamp = '1794330000123'  # Millisecond timestamp is hashed verbatim, as documented.
+    secret = 'whsec_fixture'
+    signature = hmac.new(secret.encode(), timestamp.encode() + body, hashlib.sha256).hexdigest()
+    headers = {'X-Signature': signature, 'X-Timestamp': timestamp}
+    operation = 'on_deposit_event' if event in native.DEPOSIT_EVENTS else 'on_transfer_event'
+    config = {'operation': operation, 'event_type': event, 'signing_secret': secret}
+    assert native.AirwallexNode.verify_webhook_signature(body, headers, config)
+    assert not native.AirwallexNode.verify_webhook_signature(body + b' ', headers, config)
+    assert not native.AirwallexNode.verify_webhook_signature(body, {}, config)
+    assert not native.AirwallexNode.verify_webhook_signature(body, headers, {**config, 'signing_secret': 'wrong'})
+    assert native.AirwallexNode.filter_trigger_payload(entry['body'], config)
+    other = next(name for name in (native.DEPOSIT_EVENTS if event in native.DEPOSIT_EVENTS else native.TRANSFER_EVENTS) if name != event)
+    assert not native.AirwallexNode.filter_trigger_payload(entry['body'], {'operation': operation, 'event_type': other})
+    output = native.AirwallexNode.resolve_trigger_payload(entry['body'], config)
+    turn = native.AirwallexNode.resolve_agent_event(output)
+    data = entry['body']['data']
+    assert turn['conversation_key'] == data['id']
+    assert event in turn['text'] and data['id'] in turn['text'] and entry['body']['id'] in turn['text']
+    assert data['reference'] in turn['text']
+    account = entry['body'].get('account_id') or entry['body'].get('accountId')
+    assert account in turn['text']
+    currency = data.get('currency') or data.get('transfer_currency')
+    amount = data.get('amount') or data.get('transfer_amount')
+    assert currency in turn['text'] and str(amount) in turn['text']
+    # The common delivery envelope also documents data.object (product examples use data).
+    wrapped = {**entry['body'], 'data': {'object': data}}
+    assert native.AirwallexNode.resolve_agent_event(wrapped) == turn
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('event', native.DEPOSIT_EVENTS + native.TRANSFER_EVENTS)
+async def test_webhook_register_exact_event_and_unregister(monkeypatch, event):
+    original = httpx.AsyncClient
+    calls = []
+    operation = 'on_deposit_event' if event in native.DEPOSIT_EVENTS else 'on_transfer_event'
+    config = {'operation': operation, 'event_type': event}
+    spec = native.AirwallexFullConfig.model_validate({'config': config, 'credentials': CREDENTIAL})
+    assert spec.config.event_type == event
+    def respond(request):
+        calls.append(request)
+        if request.url.path.endswith('/login'):
+            return httpx.Response(201, json=EXAMPLES['responses']['POST /api/v1/authentication/login']['body'])
+        if request.url.path.endswith('/create'):
+            # Provider-published createWebhook example (same API envelope for every event).
+            return httpx.Response(201, json=EXAMPLES['responses']['POST /api/v1/webhooks/create']['body'])
+        return httpx.Response(200, json=EXAMPLES['responses']['POST /api/v1/webhooks/{id}/delete']['body'])
+    monkeypatch.setattr(native.httpx, 'AsyncClient', lambda **kw: original(transport=httpx.MockTransport(respond), **kw))
+    kwargs = dict(webhook_url='https://example.hooks.example.test', credential=CREDENTIAL, config=config, node_id='airwallex-fixture')
+    registered = await native.AirwallexNode._register_external_webhook(**kwargs)
+    await native.AirwallexNode._register_external_webhook(**kwargs)
+    first = json.loads(calls[1].content)
+    second = json.loads(calls[3].content)
+    assert first['request_id'] != second['request_id']
+    assert {k: v for k, v in first.items() if k != 'request_id'} == {k: v for k, v in second.items() if k != 'request_id'}
+    assert first['events'] == [event] and first['version'] == '2026-08-21'
+    assert first['url'] == kwargs['webhook_url'] and len(first['request_id']) <= 50
+    # The provider's published 200 example says deleted:false: this must not confirm cleanup.
+    with pytest.raises(ValueError, match='confirm webhook deletion'):
+        await native.AirwallexNode._unregister_external_webhook(credential=CREDENTIAL, config=registered, node_id='airwallex-fixture')
+    assert calls[-1].method == 'POST'
+    assert calls[-1].url.path == '/api/v1/webhooks/wh_E6JwepZbKpppjYftl3JUEXPI-ocQiSHS/delete'
+    assert native.AirwallexNode.registration_fingerprint_fields(config) == {'event_type': event}
+
+
+@pytest.mark.asyncio
+async def test_trigger_manual_run_never_calls_provider_or_invents_event(monkeypatch):
+    def forbidden(**kwargs):
+        raise AssertionError('manual trigger execution must not access Airwallex')
+    monkeypatch.setattr(native.httpx, 'AsyncClient', forbidden)
+    for operation in native.TRIGGER_DEFAULTS:
+        output = await node({'operation': operation}).execute({})
+        assert output['status'] == 'no_event'
+
+
+@pytest.mark.asyncio
+async def test_registration_rejects_missing_secret_and_unregistration_failures(monkeypatch):
+    async def request(*args, **kwargs):
+        return {'id': 'wh_example'}
+    monkeypatch.setattr(native.AirwallexNode, '_request', request)
+    with pytest.raises(ValueError, match='signing secret'):
+        await native.AirwallexNode._register_external_webhook(webhook_url='https://example.hooks.example.test',
+            credential=CREDENTIAL, config={'operation': 'on_deposit_event'}, node_id='n')
+    async def rejected(*args, **kwargs):
+        raise ValueError('Airwallex HTTP 403: unauthorized')
+    monkeypatch.setattr(native.AirwallexNode, '_request', rejected)
+    with pytest.raises(ValueError, match='HTTP 403'):
+        await native.AirwallexNode._unregister_external_webhook(credential=CREDENTIAL,
+            config={'external_webhook_id': 'wh_example'}, node_id='n')
+    assert native.AirwallexNode.registration_fingerprint_fields({'operation': 'list_transfers'}) == {}
+
+
+@pytest.mark.asyncio
+async def test_webhook_delete_absent_endpoint_is_idempotent(monkeypatch):
+    async def absent(*args, **kwargs):
+        raise ValueError('Airwallex HTTP 404: not found')
+    monkeypatch.setattr(native.AirwallexNode, '_request', absent)
+    await native.AirwallexNode._unregister_external_webhook(credential=CREDENTIAL,
+        config={'external_webhook_id': 'wh_example'}, node_id='n')

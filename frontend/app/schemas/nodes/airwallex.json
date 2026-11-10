@@ -967,6 +967,286 @@
       "title": "ListTransfers",
       "type": "object"
     },
+    "OnDepositEvent": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically. Your API key needs webhook:write and access to the selected event.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_deposit_event",
+          "default": "on_deposit_event",
+          "title": "On Deposit Event",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Deposit Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "deposit.settled",
+          "enum": [
+            "deposit.pending",
+            "deposit.settled",
+            "deposit.rejected",
+            "deposit.reversed"
+          ],
+          "title": "Deposit event",
+          "type": "string"
+        }
+      },
+      "title": "OnDepositEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnTransferEvent": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically. Your API key needs webhook:write and access to the selected event.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_transfer_event",
+          "default": "on_transfer_event",
+          "title": "On Transfer Event",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Transfer Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "payout.transfer.sent",
+          "description": "PAID means processed by the banking partner; a transfer can still fail afterwards.",
+          "enum": [
+            "payout.transfer.in_approval",
+            "payout.transfer.scheduled",
+            "payout.transfer.overdue",
+            "payout.transfer.processing",
+            "payout.transfer.sent",
+            "payout.transfer.failed",
+            "payout.transfer.paid",
+            "payout.transfer.cancellation_requested",
+            "payout.transfer.cancelled"
+          ],
+          "title": "Transfer event",
+          "type": "string"
+        }
+      },
+      "title": "OnTransferEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "UpdateGlobalAccount": {
       "additionalProperties": false,
       "properties": {
@@ -1120,6 +1400,8 @@
           "list_financial_transactions": "#/$defs/ListTransactions",
           "list_global_accounts": "#/$defs/ListGlobalAccounts",
           "list_transfers": "#/$defs/ListTransfers",
+          "on_deposit_event": "#/$defs/OnDepositEvent",
+          "on_transfer_event": "#/$defs/OnTransferEvent",
           "update_global_account": "#/$defs/UpdateGlobalAccount",
           "validate_transfer": "#/$defs/ValidateTransfer"
         },
@@ -1173,6 +1455,12 @@
         },
         {
           "$ref": "#/$defs/UpdateGlobalAccount"
+        },
+        {
+          "$ref": "#/$defs/OnDepositEvent"
+        },
+        {
+          "$ref": "#/$defs/OnTransferEvent"
         }
       ],
       "title": "Config"
