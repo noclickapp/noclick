@@ -1,0 +1,418 @@
+{
+  "$defs": {
+    "FindNamespaceUUIDs": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "description": "For example mitre-attack-id; use List Namespaces to discover names.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "find_namespace_uuids",
+          "default": "find_namespace_uuids",
+          "title": "Find UUIDs by Namespace ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Find UUIDs by Namespace ID"
+        },
+        "namespaceid": {
+          "description": "For example T1216 in mitre-attack-id.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Namespace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "namespaceid"
+      ],
+      "title": "FindNamespaceUUIDs",
+      "type": "object"
+    },
+    "GenerateUUID": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "generate_uuid",
+          "default": "generate_uuid",
+          "title": "Generate UUID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Generate UUID"
+        }
+      },
+      "title": "GenerateUUID",
+      "type": "object"
+    },
+    "GetChildren": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "description": "UUID of a registered publisher, project or item.",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_children",
+          "default": "get_children",
+          "title": "Get Child UUIDs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Child UUIDs"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetChildren",
+      "type": "object"
+    },
+    "GetExpandedRelationships": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "description": "UUID of a registered publisher, project or item.",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_expanded_relationships",
+          "default": "get_expanded_relationships",
+          "title": "Get Expanded Relationships",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Expanded Relationships"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetExpandedRelationships",
+      "type": "object"
+    },
+    "GetInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_info",
+          "default": "get_info",
+          "title": "Get Service Information",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Service Information"
+        }
+      },
+      "title": "GetInfo",
+      "type": "object"
+    },
+    "GetParents": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "description": "UUID of a registered publisher, project or item.",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_parents",
+          "default": "get_parents",
+          "title": "Get Parent UUIDs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Parent UUIDs"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetParents",
+      "type": "object"
+    },
+    "GetRelationships": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "description": "UUID of a registered publisher, project or item.",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_relationships",
+          "default": "get_relationships",
+          "title": "Get Related Resource UUIDs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Related Resource UUIDs"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetRelationships",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ListNamespaceIDs": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "description": "For example mitre-attack-id; use List Namespaces to discover names.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_namespace_ids",
+          "default": "list_namespace_ids",
+          "title": "List IDs in Namespace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List IDs in Namespace"
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "ListNamespaceIDs",
+      "type": "object"
+    },
+    "ListNamespaces": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_namespaces",
+          "default": "list_namespaces",
+          "title": "List Namespaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Namespaces"
+        }
+      },
+      "title": "ListNamespaces",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "First index of the requested range.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "end": {
+          "default": 99,
+          "description": "Inclusive end index. Returns only this range, not the complete catalogue.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "End Index",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Projects"
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListPublishers": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "First index of the requested range.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "end": {
+          "default": 99,
+          "description": "Inclusive end index. Returns only this range, not the complete catalogue.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "End Index",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_publishers",
+          "default": "list_publishers",
+          "title": "List Publishers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Publishers"
+        }
+      },
+      "title": "ListPublishers",
+      "type": "object"
+    },
+    "Lookup": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "description": "UUID of a registered publisher, project or item.",
+          "title": "Resource UUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "lookup",
+          "default": "lookup",
+          "title": "Look Up Resource",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Look Up Resource"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "Lookup",
+      "type": "object"
+    },
+    "ProposeResource": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "propose_resource",
+          "default": "propose_resource",
+          "title": "Propose Resource for Review",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Propose Resource for Review"
+        },
+        "proposal": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "description": "JSON object to submit to CyCAT's review queue. CyCAT publishes no proposal field schema. A successful submission does not confirm publication.",
+          "title": "Proposal JSON",
+          "type": "object"
+        }
+      },
+      "required": [
+        "proposal"
+      ],
+      "title": "ProposeResource",
+      "type": "object"
+    },
+    "Search": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search Cybersecurity Resources",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search Cybersecurity Resources"
+        },
+        "searchquery": {
+          "description": "CyCAT full-text query, for example APT33.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "searchquery"
+      ],
+      "title": "Search",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "find_namespace_uuids": "#/$defs/FindNamespaceUUIDs",
+          "generate_uuid": "#/$defs/GenerateUUID",
+          "get_children": "#/$defs/GetChildren",
+          "get_expanded_relationships": "#/$defs/GetExpandedRelationships",
+          "get_info": "#/$defs/GetInfo",
+          "get_parents": "#/$defs/GetParents",
+          "get_relationships": "#/$defs/GetRelationships",
+          "list_namespace_ids": "#/$defs/ListNamespaceIDs",
+          "list_namespaces": "#/$defs/ListNamespaces",
+          "list_projects": "#/$defs/ListProjects",
+          "list_publishers": "#/$defs/ListPublishers",
+          "lookup": "#/$defs/Lookup",
+          "propose_resource": "#/$defs/ProposeResource",
+          "search": "#/$defs/Search"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Search"
+        },
+        {
+          "$ref": "#/$defs/Lookup"
+        },
+        {
+          "$ref": "#/$defs/FindNamespaceUUIDs"
+        },
+        {
+          "$ref": "#/$defs/GetRelationships"
+        },
+        {
+          "$ref": "#/$defs/GetExpandedRelationships"
+        },
+        {
+          "$ref": "#/$defs/GetChildren"
+        },
+        {
+          "$ref": "#/$defs/GetParents"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/ListPublishers"
+        },
+        {
+          "$ref": "#/$defs/ListNamespaces"
+        },
+        {
+          "$ref": "#/$defs/ListNamespaceIDs"
+        },
+        {
+          "$ref": "#/$defs/ProposeResource"
+        },
+        {
+          "$ref": "#/$defs/GenerateUUID"
+        },
+        {
+          "$ref": "#/$defs/GetInfo"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cycat Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
