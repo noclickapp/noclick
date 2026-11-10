@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/evetech.svg",
   "source": "https://developers.eveonline.com/docs/assets/images/eve-logo.svg",
-  "license": "CCP Games EVE Online trademark; provider-published logo used to identify the integration. https://developers.eveonline.com/license-agreement",
-  "sha256": "4da2e1a22d17fa449f3af158201f881c7185c63ddb57c60cd7d829f9f8c23f91"
+  "source_page": "https://developers.eveonline.com/docs/",
+  "date": "2026-11-11",
+  "license": "EVE Online trademark; official provider SVG used for integration identification. https://developers.eveonline.com/license-agreement",
+  "sha256": "e33b6dbff8c5747da20926f85ffda64b25db3515b520113631ad9a4c6ce3ad61",
+  "source_sha256": "4da2e1a22d17fa449f3af158201f881c7185c63ddb57c60cd7d829f9f8c23f91",
+  "edits": [
+    "Kept the first original compound path verbatim and removed all other paths (ONLINE wordmark and registration mark).",
+    "Cropped the viewBox to the single stylized E used by the provider\u2019s own favicon: 0 0.724609 39.7595 33.108791. The other letters in the original compound path are outside the crop. No path data was generated, traced, or modified.",
+    "Recoloured the retained fill to #000000 for the light theme.",
+    "Adjusted intrinsic width/height to the cropped viewBox; no background, padding, tile, or filter was added."
+  ],
+  "notes": "The provider\u2019s official favicon is the single E app mark, not its wide EVE ONLINE wordmark. Its raster favicon is used only to identify the correct glyph; all shipped vector geometry comes from the provider\u2019s original SVG.",
+  "favicon_source": "https://developers.eveonline.com/docs/assets/images/favicon.ico"
 }
