@@ -2,9 +2,12 @@
 
 Contract: https://kf.kobotoolbox.org/api/v2/schema/?format=json
 Token and server instructions: https://support.kobotoolbox.org/api.html
-Each operation issues exactly one request; export creation queues a task.
+Each action issues exactly one request; export creation queues a task.
+REST services deliver new submissions; edits do not send events.
 """
 from __future__ import annotations
+
+import json
 
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
@@ -15,6 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 
@@ -190,7 +194,16 @@ class DeleteExport(_Export):
     operation: Literal["delete_export"] = Field("delete_export", json_schema_extra={"ui:hidden": True})
 
 
-KobotoolboxConfig = Annotated[Union[GetAccount, ListProjects, GetProject, CreateProject, DeleteProject, GetFormContent, ListSubmissions, GetSubmission, DeleteSubmission, GetValidationStatus, SetValidationStatus, ClearValidationStatus, GetDeployment, DeployProject, SetDeploymentActive, ListExports, GetExport, CreateExport, DeleteExport], Field(discriminator="operation")]
+class OnNewSubmission(WebhookTriggerConfigBase, _Project):
+    """Start when a project receives a new submission; edits do not send events."""
+    operation: Literal["on_new_submission"] = Field("on_new_submission", title="New submission", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New submission",
+    })
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with KoboToolbox automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+KobotoolboxConfig = Annotated[Union[OnNewSubmission, GetAccount, ListProjects, GetProject, CreateProject, DeleteProject, GetFormContent, ListSubmissions, GetSubmission, DeleteSubmission, GetValidationStatus, SetValidationStatus, ClearValidationStatus, GetDeployment, DeployProject, SetDeploymentActive, ListExports, GetExport, CreateExport, DeleteExport], Field(discriminator="operation")]
 
 
 class KobotoolboxFullConfig(NodeConfig[KobotoolboxConfig, KobotoolboxAPITokenCredential]):
@@ -220,8 +233,9 @@ ROUTES = {
 }
 
 
-class KobotoolboxNode(WorkflowNode):
+class KobotoolboxNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-kobotoolbox"
+    webhook_signing_secret_not_issued = True
     connection_evidence = ConnectionEvidence(
         noun="KoboToolbox projects", operation="list_projects", identity_operation="get_account",
     )
@@ -230,9 +244,89 @@ class KobotoolboxNode(WorkflowNode):
     def get_config_model(cls):
         return KobotoolboxFullConfig
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"project_id": (config or {}).get("project_id")}
+
+    @staticmethod
+    async def _hook_request(credential, method, path, *, body=None):
+        credential = KobotoolboxAPITokenCredential.model_validate(credential or {})
+        async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
+            response = await client.request(method, credential.server + path,
+                headers={"Authorization": "Token " + credential.api_token, "Accept": "application/json"},
+                **({"json": body} if body is not None else {}))
+        expected = 201 if method == "POST" else 204
+        if response.status_code != expected:
+            if method == "DELETE" and response.status_code == 404:
+                return None
+            raise ValueError(f"KoboToolbox REST service request failed (HTTP {response.status_code})")
+        return response.json() if method == "POST" else None
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        project = _Project.model_validate({"project_id": config.get("project_id")}).project_id
+        # API contract: no_auth is the default; JSON sends the complete submission.
+        # https://kf.kobotoolbox.org/api/v2/docs/#tag/Survey-data-Rest-Services
+        data = await cls._hook_request(credential, "POST", f"/api/v2/assets/{project}/hooks/", body={
+            "name": f"NoClick {node_id}"[:255], "endpoint": webhook_url, "active": True,
+            "export_type": "json", "auth_level": "no_auth", "email_notification": False,
+        })
+        uid = data.get("uid") if isinstance(data, dict) else None
+        if not isinstance(uid, str) or not uid.isascii() or not uid.isalnum():
+            raise ValueError("KoboToolbox did not return a REST service UID")
+        # Keep its parent with the UID so a project edit still cleans up the old service.
+        return {"external_webhook_id": f"{project}:{uid}"}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        uid = (config or {}).get("external_webhook_id")
+        if not uid:
+            return
+        registered_project, uid = str(uid).split(":", 1)
+        project = _Project.model_validate({"project_id": registered_project}).project_id
+        await cls._hook_request(credential, "DELETE",
+            f"/api/v2/assets/{project}/hooks/{quote(str(uid), safe='')}/")
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # REST services support no_auth (default) or basic_auth, not payload signatures.
+        # We register no_auth, as described in the provider's Hook API contract.
+        return True
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return isinstance(payload, dict) and isinstance(payload.get("_id"), int)
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if (config or {}).get("operation") != "on_new_submission":
+            return None
+        return {"operation": "on_new_submission", "project_id": config["project_id"],
+                "data": {k: v for k, v in payload.items() if k != "_webhook"}}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("operation") != "on_new_submission":
+            return super().resolve_agent_event(output)
+        data = output.get("data") or {}
+        if not data.get("_id"):
+            return None
+        project, sid = output["project_id"], data["_id"]
+        who = data.get("_submitted_by") or "An anonymous respondent"
+        text = (f"KoboToolbox: {who} submitted response {sid} to project {project}.\n"
+                f"Received: {data.get('_submission_time') or 'time unavailable'}\n"
+                f"Submission: {json.dumps(data, ensure_ascii=False, default=str)[:12000]}\n"
+                f"To act: get_submission or set_validation_status with project_id={project} and submission_id={sid}.")
+        return {"text": text, "conversation_key": f"{project}:{sid}", "title": f"New submission {sid}"}
+
     async def execute(self, inputs):
         config = self.config.config
         credential = self.config.credentials
+        if isinstance(config, OnNewSubmission):
+            payload = (self.node_data.get("config") or {}).get("_triggerPayload")
+            if not payload:
+                return self.no_event_output(config.operation)
+            return self.resolve_trigger_payload(payload, config.model_dump())
         if credential is None:
             raise ValueError("Connect a KoboToolbox API token")
         method, template, expected_status = ROUTES[config.operation]

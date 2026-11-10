@@ -104,3 +104,75 @@ def test_manual_credential_defaults_and_server_boundary():
         with pytest.raises(ValidationError):
             native.KobotoolboxAPITokenCredential(api_token=TOKEN, server=server)
     assert set(native.ROUTES) == {case["config"]["operation"] for case in CASES}
+
+
+SUBMISSION = json.loads((Path(__file__).parent / "fixtures/kobotoolbox/submission_created.json").read_text())["body"]
+TRIGGER = {"operation": "on_new_submission", "project_id": "a4etXeWtqcoodSxLV8a6Uq"}
+
+
+@pytest.mark.asyncio
+async def test_rest_service_registration_and_cleanup(monkeypatch):
+    credential = {"api_token": TOKEN, "server": "https://eu.kobotoolbox.org"}
+    requests = transport(monkeypatch, 201, {"uid": "hZzzeedWxQoFHgibsTCysv"})
+    registered = await native.KobotoolboxNode._register_external_webhook(
+        webhook_url="https://test.hooks.example.test/hook", credential=credential, config=TRIGGER, node_id="test")
+    assert registered == {"external_webhook_id": TRIGGER["project_id"] + ":hZzzeedWxQoFHgibsTCysv"}
+    assert requests[0].method == "POST"
+    assert requests[0].url == "https://eu.kobotoolbox.org/api/v2/assets/a4etXeWtqcoodSxLV8a6Uq/hooks/"
+    assert json.loads(requests[0].content) == {
+        "name": "NoClick test", "endpoint": "https://test.hooks.example.test/hook", "active": True,
+        "export_type": "json", "auth_level": "no_auth", "email_notification": False,
+    }
+    assert requests[0].headers["Authorization"] == "Token " + TOKEN
+    requests = transport(monkeypatch, 204)
+    await native.KobotoolboxNode._unregister_external_webhook(
+        credential=credential, config={**TRIGGER, **registered, "project_id": "aDifferentProject"}, node_id="test")
+    assert requests[0].method == "DELETE"
+    assert requests[0].url.path == "/api/v2/assets/a4etXeWtqcoodSxLV8a6Uq/hooks/hZzzeedWxQoFHgibsTCysv/"
+    assert native.KobotoolboxNode.registration_fingerprint_fields(TRIGGER) == {"project_id": TRIGGER["project_id"]}
+    config = native.OnNewSubmission(**TRIGGER, **registered)
+    assert config.model_dump()["external_webhook_id"] == registered["external_webhook_id"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", [401, 403, 429, 500])
+async def test_registration_rejection_raises_without_token(monkeypatch, status):
+    transport(monkeypatch, status, {"detail": TOKEN})
+    with pytest.raises(ValueError, match=f"HTTP {status}") as exc:
+        await native.KobotoolboxNode._register_external_webhook(
+            webhook_url="https://test.hooks.example.test/hook", credential={"api_token": TOKEN}, config=TRIGGER, node_id="test")
+    assert TOKEN not in str(exc.value)
+
+
+@pytest.mark.asyncio
+async def test_documented_submission_delivery_and_manual_run():
+    cls = native.KobotoolboxNode
+    assert cls.verify_webhook_signature(json.dumps(SUBMISSION).encode(), {}, TRIGGER)
+    assert cls.filter_trigger_payload(SUBMISSION, TRIGGER)
+    assert not cls.filter_trigger_payload({"detail": "Not found"}, TRIGGER)
+    payload = {**SUBMISSION, "_webhook": {"headers": {"test": "transport-only"}}}
+    output = cls.resolve_trigger_payload(payload, TRIGGER)
+    assert output["data"] == SUBMISSION
+    assert output["project_id"] == TRIGGER["project_id"]
+    event = cls.resolve_agent_event(output)
+    assert "94571949" in event["text"]
+    assert "An anonymous respondent" in event["text"]
+    assert "submit_an_image" in event["text"] and "image-8_58_16.jpg" in event["text"]
+    assert "set_validation_status" in event["text"] and TRIGGER["project_id"] in event["text"]
+    assert event["conversation_key"] == TRIGGER["project_id"] + ":94571949"
+    assert "transport-only" not in event["text"]
+    trigger = node(dict(TRIGGER))
+    assert (await trigger.execute({"other_step": {"secret": "do not copy"}}))["status"] == "no_event"
+    trigger.node_data["config"]["_triggerPayload"] = payload
+    assert await trigger.execute({}) == output
+
+
+@pytest.mark.asyncio
+async def test_cleanup_already_removed_is_idempotent_and_uid_required(monkeypatch):
+    transport(monkeypatch, 404, {"detail": "Not found."})
+    await native.KobotoolboxNode._unregister_external_webhook(
+        credential={"api_token": TOKEN}, config={**TRIGGER, "external_webhook_id": TRIGGER["project_id"] + ":h123"}, node_id="test")
+    transport(monkeypatch, 201, {})
+    with pytest.raises(ValueError, match="REST service UID"):
+        await native.KobotoolboxNode._register_external_webhook(
+            webhook_url="https://test.hooks.example.test/hook", credential={"api_token": TOKEN}, config=TRIGGER, node_id="test")

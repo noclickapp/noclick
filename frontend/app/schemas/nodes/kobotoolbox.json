@@ -670,6 +670,144 @@
       "title": "ListSubmissions",
       "type": "object"
     },
+    "OnNewSubmission": {
+      "additionalProperties": false,
+      "description": "Start when a project receives a new submission; edits do not send events.",
+      "properties": {
+        "project_id": {
+          "description": "Project asset UID from the KoboToolbox project URL.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_submission",
+          "default": "on_new_submission",
+          "title": "New submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "New submission",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with KoboToolbox automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "OnNewSubmission",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "SetDeploymentActive": {
       "additionalProperties": false,
       "description": "Archive or reactivate an existing deployment.",
@@ -764,12 +902,16 @@
           "list_exports": "#/$defs/ListExports",
           "list_projects": "#/$defs/ListProjects",
           "list_submissions": "#/$defs/ListSubmissions",
+          "on_new_submission": "#/$defs/OnNewSubmission",
           "set_deployment_active": "#/$defs/SetDeploymentActive",
           "set_validation_status": "#/$defs/SetValidationStatus"
         },
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/OnNewSubmission"
+        },
         {
           "$ref": "#/$defs/GetAccount"
         },
