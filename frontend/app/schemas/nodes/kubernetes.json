@@ -1,0 +1,1539 @@
+{
+  "$defs": {
+    "CreateConfigmap": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "manifest_json": {
+          "description": "Complete resource object with apiVersion, kind, metadata.name and the desired spec/data. The namespace must match the selected namespace.",
+          "maxLength": 1000000,
+          "title": "Resource Manifest (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "create_configmap",
+          "default": "create_configmap",
+          "title": "Create Configmap",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "manifest_json"
+      ],
+      "title": "CreateConfigmap",
+      "type": "object"
+    },
+    "CreateDeployment": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "manifest_json": {
+          "description": "Complete resource object with apiVersion, kind, metadata.name and the desired spec/data. The namespace must match the selected namespace.",
+          "maxLength": 1000000,
+          "title": "Resource Manifest (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "create_deployment",
+          "default": "create_deployment",
+          "title": "Create Deployment",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "manifest_json"
+      ],
+      "title": "CreateDeployment",
+      "type": "object"
+    },
+    "CreateJob": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "manifest_json": {
+          "description": "Complete resource object with apiVersion, kind, metadata.name and the desired spec/data. The namespace must match the selected namespace.",
+          "maxLength": 1000000,
+          "title": "Resource Manifest (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Create Job",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "manifest_json"
+      ],
+      "title": "CreateJob",
+      "type": "object"
+    },
+    "CreatePod": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "manifest_json": {
+          "description": "Complete resource object with apiVersion, kind, metadata.name and the desired spec/data. The namespace must match the selected namespace.",
+          "maxLength": 1000000,
+          "title": "Resource Manifest (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "create_pod",
+          "default": "create_pod",
+          "title": "Create Pod",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "manifest_json"
+      ],
+      "title": "CreatePod",
+      "type": "object"
+    },
+    "CreateService": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "manifest_json": {
+          "description": "Complete resource object with apiVersion, kind, metadata.name and the desired spec/data. The namespace must match the selected namespace.",
+          "maxLength": 1000000,
+          "title": "Resource Manifest (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "create_service",
+          "default": "create_service",
+          "title": "Create Service",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "manifest_json"
+      ],
+      "title": "CreateService",
+      "type": "object"
+    },
+    "DeleteConfigmap": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "propagation_policy": {
+          "default": "Background",
+          "description": "How Kubernetes garbage-collects dependents. Deletion is asynchronous.",
+          "enum": [
+            "Background",
+            "Foreground",
+            "Orphan"
+          ],
+          "title": "Propagation Policy",
+          "type": "string"
+        },
+        "grace_period_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grace Period (Seconds)"
+        },
+        "operation": {
+          "const": "delete_configmap",
+          "default": "delete_configmap",
+          "title": "Delete Configmap",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name"
+      ],
+      "title": "DeleteConfigmap",
+      "type": "object"
+    },
+    "DeleteDeployment": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "propagation_policy": {
+          "default": "Background",
+          "description": "How Kubernetes garbage-collects dependents. Deletion is asynchronous.",
+          "enum": [
+            "Background",
+            "Foreground",
+            "Orphan"
+          ],
+          "title": "Propagation Policy",
+          "type": "string"
+        },
+        "grace_period_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grace Period (Seconds)"
+        },
+        "operation": {
+          "const": "delete_deployment",
+          "default": "delete_deployment",
+          "title": "Delete Deployment",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name"
+      ],
+      "title": "DeleteDeployment",
+      "type": "object"
+    },
+    "DeletePod": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "propagation_policy": {
+          "default": "Background",
+          "description": "How Kubernetes garbage-collects dependents. Deletion is asynchronous.",
+          "enum": [
+            "Background",
+            "Foreground",
+            "Orphan"
+          ],
+          "title": "Propagation Policy",
+          "type": "string"
+        },
+        "grace_period_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grace Period (Seconds)"
+        },
+        "operation": {
+          "const": "delete_pod",
+          "default": "delete_pod",
+          "title": "Delete Pod",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name"
+      ],
+      "title": "DeletePod",
+      "type": "object"
+    },
+    "DeleteService": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "propagation_policy": {
+          "default": "Background",
+          "description": "How Kubernetes garbage-collects dependents. Deletion is asynchronous.",
+          "enum": [
+            "Background",
+            "Foreground",
+            "Orphan"
+          ],
+          "title": "Propagation Policy",
+          "type": "string"
+        },
+        "grace_period_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grace Period (Seconds)"
+        },
+        "operation": {
+          "const": "delete_service",
+          "default": "delete_service",
+          "title": "Delete Service",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name"
+      ],
+      "title": "DeleteService",
+      "type": "object"
+    },
+    "GetConfigmap": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_configmap",
+          "default": "get_configmap",
+          "title": "Get Configmap",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name"
+      ],
+      "title": "GetConfigmap",
+      "type": "object"
+    },
+    "GetDeployment": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_deployment",
+          "default": "get_deployment",
+          "title": "Get Deployment",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name"
+      ],
+      "title": "GetDeployment",
+      "type": "object"
+    },
+    "GetPod": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_pod",
+          "default": "get_pod",
+          "title": "Get Pod",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name"
+      ],
+      "title": "GetPod",
+      "type": "object"
+    },
+    "GetPodLogs": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "container": {
+          "anyOf": [
+            {
+              "maxLength": 253,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required by Kubernetes for some multi-container pods.",
+          "title": "Container"
+        },
+        "tail_lines": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Tail Lines",
+          "type": "integer"
+        },
+        "since_seconds": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Since Seconds"
+        },
+        "previous": {
+          "default": false,
+          "title": "Previous Container Instance",
+          "type": "boolean"
+        },
+        "timestamps": {
+          "default": false,
+          "title": "Include Timestamps",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_pod_logs",
+          "default": "get_pod_logs",
+          "title": "Get Pod Logs",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name"
+      ],
+      "title": "GetPodLogs",
+      "type": "object"
+    },
+    "GetService": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Get Service",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name"
+      ],
+      "title": "GetService",
+      "type": "object"
+    },
+    "KubernetesBearerTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kubernetes_bearer_token",
+          "default": "kubernetes_bearer_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_server_url": {
+          "description": "Public HTTPS cluster API origin, for example https://cluster.example.com:6443.",
+          "title": "API Server URL",
+          "type": "string"
+        },
+        "token": {
+          "description": "An existing token with the RBAC permissions needed by your operations; omit the Bearer prefix.",
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Bearer Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "ca_certificate": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional base64 certificate-authority-data from kubeconfig, or a PEM CA certificate. Leave empty to use public trusted certificate authorities.",
+          "title": "CA Certificate Data",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "api_server_url",
+        "token"
+      ],
+      "title": "Kubernetes Bearer Token",
+      "type": "object",
+      "x-credential-instructions": "Paste the cluster API server URL and an existing bearer token, without the Bearer prefix. The API server must be publicly reachable over HTTPS. RBAC must allow listing namespaces for the connection check and the resources you automate. For a private certificate authority, paste the base64 certificate-authority-data from kubeconfig (or a PEM certificate). TLS verification is always enabled. Replace expiring tokens manually.",
+      "x-credential-url": "https://kubernetes.io/docs/reference/access-authn-authz/authentication/#putting-a-bearer-token-in-a-request"
+    },
+    "ListConfigmaps": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continue_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque metadata.continue from the previous page; keep the same selectors.",
+          "title": "Continue Token"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Kubernetes selector, for example app=nginx.",
+          "title": "Label Selector"
+        },
+        "field_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only fields supported by this Kubernetes resource kind.",
+          "title": "Field Selector"
+        },
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_configmaps",
+          "default": "list_configmaps",
+          "title": "List Configmaps",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "ListConfigmaps",
+      "type": "object"
+    },
+    "ListDeployments": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continue_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque metadata.continue from the previous page; keep the same selectors.",
+          "title": "Continue Token"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Kubernetes selector, for example app=nginx.",
+          "title": "Label Selector"
+        },
+        "field_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only fields supported by this Kubernetes resource kind.",
+          "title": "Field Selector"
+        },
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_deployments",
+          "default": "list_deployments",
+          "title": "List Deployments",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "ListDeployments",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continue_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque metadata.continue from the previous page; keep the same selectors.",
+          "title": "Continue Token"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Kubernetes selector, for example app=nginx.",
+          "title": "Label Selector"
+        },
+        "field_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only fields supported by this Kubernetes resource kind.",
+          "title": "Field Selector"
+        },
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListJobs": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continue_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque metadata.continue from the previous page; keep the same selectors.",
+          "title": "Continue Token"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Kubernetes selector, for example app=nginx.",
+          "title": "Label Selector"
+        },
+        "field_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only fields supported by this Kubernetes resource kind.",
+          "title": "Field Selector"
+        },
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "List Jobs",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "ListJobs",
+      "type": "object"
+    },
+    "ListNamespaces": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continue_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque metadata.continue from the previous page; keep the same selectors.",
+          "title": "Continue Token"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Kubernetes selector, for example app=nginx.",
+          "title": "Label Selector"
+        },
+        "field_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only fields supported by this Kubernetes resource kind.",
+          "title": "Field Selector"
+        },
+        "operation": {
+          "const": "list_namespaces",
+          "default": "list_namespaces",
+          "title": "List Namespaces",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListNamespaces",
+      "type": "object"
+    },
+    "ListNodes": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continue_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque metadata.continue from the previous page; keep the same selectors.",
+          "title": "Continue Token"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Kubernetes selector, for example app=nginx.",
+          "title": "Label Selector"
+        },
+        "field_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only fields supported by this Kubernetes resource kind.",
+          "title": "Field Selector"
+        },
+        "operation": {
+          "const": "list_nodes",
+          "default": "list_nodes",
+          "title": "List Nodes",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListNodes",
+      "type": "object"
+    },
+    "ListPods": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continue_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque metadata.continue from the previous page; keep the same selectors.",
+          "title": "Continue Token"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Kubernetes selector, for example app=nginx.",
+          "title": "Label Selector"
+        },
+        "field_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only fields supported by this Kubernetes resource kind.",
+          "title": "Field Selector"
+        },
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_pods",
+          "default": "list_pods",
+          "title": "List Pods",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "ListPods",
+      "type": "object"
+    },
+    "ListServices": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "continue_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque metadata.continue from the previous page; keep the same selectors.",
+          "title": "Continue Token"
+        },
+        "label_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Kubernetes selector, for example app=nginx.",
+          "title": "Label Selector"
+        },
+        "field_selector": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only fields supported by this Kubernetes resource kind.",
+          "title": "Field Selector"
+        },
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "List Services",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace"
+      ],
+      "title": "ListServices",
+      "type": "object"
+    },
+    "PatchConfigmap": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "patch_json": {
+          "description": "RFC 7386 merge patch. Arrays are replaced as a whole; null removes a field. For deployment images, include the complete containers array.",
+          "maxLength": 1000000,
+          "title": "JSON Merge Patch",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "patch_configmap",
+          "default": "patch_configmap",
+          "title": "Patch Configmap",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name",
+        "patch_json"
+      ],
+      "title": "PatchConfigmap",
+      "type": "object"
+    },
+    "PatchDeployment": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "patch_json": {
+          "description": "RFC 7386 merge patch. Arrays are replaced as a whole; null removes a field. For deployment images, include the complete containers array.",
+          "maxLength": 1000000,
+          "title": "JSON Merge Patch",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "patch_deployment",
+          "default": "patch_deployment",
+          "title": "Patch Deployment",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name",
+        "patch_json"
+      ],
+      "title": "PatchDeployment",
+      "type": "object"
+    },
+    "ScaleDeployment": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 63,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9]*[a-z0-9])?$",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "dry_run": {
+          "default": false,
+          "description": "Validate without persisting changes (dryRun=All).",
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "name": {
+          "maxLength": 253,
+          "minLength": 1,
+          "pattern": "^[a-z0-9](?:[-a-z0-9.]*[a-z0-9])?$",
+          "title": "Resource Name",
+          "type": "string"
+        },
+        "replicas": {
+          "description": "Desired deployment replicas; zero stops its pods.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Replicas",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "scale_deployment",
+          "default": "scale_deployment",
+          "title": "Scale Deployment",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "namespace",
+        "name",
+        "replicas"
+      ],
+      "title": "ScaleDeployment",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_configmap": "#/$defs/CreateConfigmap",
+          "create_deployment": "#/$defs/CreateDeployment",
+          "create_job": "#/$defs/CreateJob",
+          "create_pod": "#/$defs/CreatePod",
+          "create_service": "#/$defs/CreateService",
+          "delete_configmap": "#/$defs/DeleteConfigmap",
+          "delete_deployment": "#/$defs/DeleteDeployment",
+          "delete_pod": "#/$defs/DeletePod",
+          "delete_service": "#/$defs/DeleteService",
+          "get_configmap": "#/$defs/GetConfigmap",
+          "get_deployment": "#/$defs/GetDeployment",
+          "get_pod": "#/$defs/GetPod",
+          "get_pod_logs": "#/$defs/GetPodLogs",
+          "get_service": "#/$defs/GetService",
+          "list_configmaps": "#/$defs/ListConfigmaps",
+          "list_deployments": "#/$defs/ListDeployments",
+          "list_events": "#/$defs/ListEvents",
+          "list_jobs": "#/$defs/ListJobs",
+          "list_namespaces": "#/$defs/ListNamespaces",
+          "list_nodes": "#/$defs/ListNodes",
+          "list_pods": "#/$defs/ListPods",
+          "list_services": "#/$defs/ListServices",
+          "patch_configmap": "#/$defs/PatchConfigmap",
+          "patch_deployment": "#/$defs/PatchDeployment",
+          "scale_deployment": "#/$defs/ScaleDeployment"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListNamespaces"
+        },
+        {
+          "$ref": "#/$defs/ListNodes"
+        },
+        {
+          "$ref": "#/$defs/ListPods"
+        },
+        {
+          "$ref": "#/$defs/GetPod"
+        },
+        {
+          "$ref": "#/$defs/CreatePod"
+        },
+        {
+          "$ref": "#/$defs/DeletePod"
+        },
+        {
+          "$ref": "#/$defs/GetPodLogs"
+        },
+        {
+          "$ref": "#/$defs/ListDeployments"
+        },
+        {
+          "$ref": "#/$defs/GetDeployment"
+        },
+        {
+          "$ref": "#/$defs/CreateDeployment"
+        },
+        {
+          "$ref": "#/$defs/PatchDeployment"
+        },
+        {
+          "$ref": "#/$defs/DeleteDeployment"
+        },
+        {
+          "$ref": "#/$defs/ScaleDeployment"
+        },
+        {
+          "$ref": "#/$defs/ListServices"
+        },
+        {
+          "$ref": "#/$defs/GetService"
+        },
+        {
+          "$ref": "#/$defs/CreateService"
+        },
+        {
+          "$ref": "#/$defs/DeleteService"
+        },
+        {
+          "$ref": "#/$defs/ListConfigmaps"
+        },
+        {
+          "$ref": "#/$defs/GetConfigmap"
+        },
+        {
+          "$ref": "#/$defs/CreateConfigmap"
+        },
+        {
+          "$ref": "#/$defs/PatchConfigmap"
+        },
+        {
+          "$ref": "#/$defs/DeleteConfigmap"
+        },
+        {
+          "$ref": "#/$defs/ListJobs"
+        },
+        {
+          "$ref": "#/$defs/CreateJob"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KubernetesBearerTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kubernetes Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List pods in this namespace",
+    "Scale this deployment to three replicas",
+    "Create a Kubernetes job"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

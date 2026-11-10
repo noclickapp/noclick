@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/kubernetes.svg",
+  "source": "https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.svg",
+  "license": "Apache-2.0",
+  "sha256": "a8f6c3b81e588eb0eee4b5ae707ad11b16d0c5ce132719871e559eed0e61e6bf"
+}
