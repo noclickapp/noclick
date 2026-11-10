@@ -8,12 +8,14 @@ import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { ArrowUpRight, ChevronRight } from 'lucide-react';
 import { ConnectionVerdict } from '~/components/credential/ConnectionVerdict';
+import { BrandIcon } from '~/components/shared/BrandIcon';
 import type { ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from '~/components/shell/buttons';
 import { AskSomeoneForm, INLINE_ACTION, type AskSignIn, type AskTransport } from '~/components/workflow/CredentialRequestActions';
 import { kindFromBackendMethod, type CredentialMethodKind } from '~/lib/credentialMethodKind';
 import { cn } from '~/lib/utils';
 import { copyMethodOf, keyNoun, methodCopy, sourceLink, withArticle, type MethodCopy } from '~/utils/credentialCopy';
+import { getCredentialIcon } from '~/utils/credentialIcons';
 import type { ConnectResult, ConnectStage } from './connectHeader';
 import { FinalStep, Step } from './steps';
 
@@ -225,13 +227,16 @@ export function KeySteps({ method, app, children }: { method: ProvideCredentialM
     const copy = copyMethodOf(method);
     const { name, howTo } = methodCopy(copy, app);
     const source = sourceLink(copy);
+    // The app's own mark leads the link to its console, so it reads as that app's page at a glance.
+    const icon = getCredentialIcon(method.credential_type);
     if (!howTo && !source) return <div>{children}</div>;
     return (
         <ol className="space-y-6">
             <Step n={1} title={`Get ${withArticle(lowerName(name))}`}>
                 {howTo && <p className="text-[13.5px] leading-relaxed text-muted-foreground">{howTo}</p>}
                 {source && (
-                    <a href={source.href} target="_blank" rel="noopener noreferrer" className={cn(BUTTON_SECONDARY, howTo && 'mt-3')}>
+                    <a href={source.href} target="_blank" rel="noopener noreferrer" className={cn(BUTTON_SECONDARY, icon.hasServiceIcon && 'pl-3', howTo && 'mt-3')}>
+                        {icon.hasServiceIcon && <BrandIcon Icon={icon.Icon} iconColor={icon.iconColor} className="h-4 w-4 shrink-0" />}
                         Open {source.host}
                         <ArrowUpRight className="h-3.5 w-3.5" />
                     </a>

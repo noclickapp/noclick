@@ -21,7 +21,7 @@ import OpenAI from '@lobehub/icons/es/OpenAI';
 import OpenRouter from '~/components/icons/OpenRouterIcon';
 import GoogleIcon from '~/components/icons/GoogleIcon';
 import MicrosoftIcon from '~/components/icons/MicrosoftIcon';
-import { SiAtlassian, SiIntuit } from 'react-icons/si';
+import { SiAtlassian, SiClaude, SiIntuit } from 'react-icons/si';
 // Node brand icons come from the serialized node-icon singleton (dashboard loader),
 // NOT the node registry — keeps this util (used by the always-mounted command
 // palette + settings) off the registry's ~4.7MB node-component graph.
@@ -66,8 +66,9 @@ const SPECIAL_CREDENTIAL_ICONS: Record<string, IconCmp> = {
     agent_codex: OpenAIIcon,
     agent_codex_oauth: OpenAIIcon,
     agent_anthropic: AnthropicIcon,
-    agent_claude_code: AnthropicIcon,
-    agent_claude_code_oauth: AnthropicIcon,
+    // Claude (the plan and Claude Code) wears Claude's own spark, the mark people know it by; Anthropic's A is its API key.
+    agent_claude_code: SiClaude,
+    agent_claude_code_oauth: SiClaude,
     agent_openrouter: OpenRouterIcon,
     agent_opencode: imgIconComponent(HARNESS_BRANDS.opencode.markSrc, 'OpenCode'),
     agent_openclaw: imgIconComponent(HARNESS_BRANDS.openclaw.markSrc, 'OpenClaw'),
@@ -132,6 +133,9 @@ function buildCredentialIconMap(): Map<string, CredentialIconEntry> {
     return _iconCache;
 }
 
+/** The special marks that wear their brand's colour (Claude's spark, as HarnessMark draws it). */
+const SPECIAL_ICON_COLORS: Record<string, string> = { agent_claude_code: '#D97757', agent_claude_code_oauth: '#D97757' };
+
 export function getCredentialIcon(
     credentialType: string,
     metadata?: Record<string, unknown> | null,
@@ -143,7 +147,7 @@ export function getCredentialIcon(
         return { Icon: resolveMcpIcon(serverUrl), iconColor: '', hasServiceIcon: true };
     }
     const special = SPECIAL_CREDENTIAL_ICONS[credentialType];
-    if (special) return { Icon: special, iconColor: '', hasServiceIcon: true };
+    if (special) return { Icon: special, iconColor: SPECIAL_ICON_COLORS[credentialType] ?? '', hasServiceIcon: true };
 
     // Node-backed credential → carry the node's brand color (matches the canvas).
     const nodeEntry = buildCredentialIconMap().get(credentialType);

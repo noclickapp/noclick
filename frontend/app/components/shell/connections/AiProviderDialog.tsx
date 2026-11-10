@@ -15,6 +15,9 @@ import { companyAccountRow } from './accountNames';
 import type { ConnectedAccount } from './accounts';
 import { AiConnect, companyMethods } from './AiConnect';
 import { AiMark, type AiCompany } from './aiAccounts';
+import { BrandIcon } from '~/components/shared/BrandIcon';
+import { cn } from '~/lib/utils';
+import { getCredentialIcon } from '~/utils/credentialIcons';
 import { sourceLine } from './ConnectedList';
 
 // A sign-in here attaches to no node: the account is just added, and the map it reports holds only what landed.
@@ -37,7 +40,10 @@ function accountRow(account: ConnectedAccount): ConnectAccountRow {
 export function AiProviderDialog({
     company,
     accounts = [],
-    signIns,
+    only,
+    title,
+    description,
+    others = [],
     onOpenChange,
     onOpenAccount,
     onConnected,
@@ -46,9 +52,14 @@ export function AiProviderDialog({
     company: AiCompany | null;
     /** Every account you can use; the dialog lists the company's. Left out where the host lists them itself. */
     accounts?: ConnectedAccount[];
-    /** The sign-ins to offer, where the host knows which run what it's for (a Claude plan, only for Claude Code); the
-     *  company's every one when left out. */
-    signIns?: readonly string[];
+    /** The one way in to show (a sign-in's or a key's credential type), where the host knows which it's for; the
+     *  company's every one, as tabs, when left out. Its mark leads the title. */
+    only?: string;
+    /** In place of the company's name and what it runs, where the host says what it's for ("Connect Claude"). */
+    title?: string;
+    description?: string;
+    /** The other ways that run what it's for, as "Or run it on" pills under it. */
+    others?: OtherWay[];
     onOpenChange: (open: boolean) => void;
     onOpenAccount?: (credentialId: string) => void;
     /** The account that landed, by its credential's id: a sign-in's or a saved key's. */
@@ -66,10 +77,11 @@ export function AiProviderDialog({
         toast.success(`${shown.title} connected`);
         onOpenChange(false);
     }, [shown, onOpenChange]);
-    const methods = useMemo(() => (shown ? companyMethods(shown, signIns) : []), [shown, signIns]);
+    const methods = useMemo(() => (shown ? companyMethods(shown, only) : []), [shown, only]);
     const own = shown ? accounts.filter((a) => shown.credentialTypes.includes(a.credential.credential_type)) : [];
-    // Asking someone reads as every connect dialog's ask does; otherwise the company's own name and what it runs.
-    const header = shown && (asking ? connectDialogHeader(shown.title, 'ask') : { title: shown.title, description: shown.uses });
+    // Asking someone reads as every connect dialog's ask does; otherwise what the host says it's for, or the company's
+    // own name and what it runs.
+    const header = shown && (asking ? connectDialogHeader(shown.title, 'ask') : { title: title ?? shown.title, description: title ? description : shown.uses });
 
     return (
         <ShellDialog
@@ -80,8 +92,8 @@ export function AiProviderDialog({
             }}
             title={header?.title}
             description={header?.description}
-            mark={shown && <AiMark provider={shown.members[0]} size="lg" />}
-            markTile={false}
+            mark={shown && (only ? <TypeMark type={only} className="h-[22px] w-[22px]" /> : <AiMark provider={shown.members[0]} size="lg" />)}
+            markTile={!!only}
             size="sm"
             testId="ai-provider-dialog"
         >
@@ -105,6 +117,21 @@ export function AiProviderDialog({
                     ask={askFor(shown, methods[methods.length - 1].credential_type)}
                     onStage={(stage) => setAsking(stage === 'ask')}
                 />
+            )}
+            {others.length > 0 && !asking && (
+                <div role="group" aria-label="Or run it on" className="border-t border-border pb-6 pt-5 dark:border-foreground/[0.08]">
+                    <p className="text-center text-[13px] text-muted-foreground">Or run it on</p>
+                    <div className="mt-3 flex flex-wrap justify-center gap-2">
+                        {others.map((way) => (
+                            <button key={way.key} type="button" onClick={way.onPick} className={OTHER_WAY}>
+                                <span aria-hidden className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-background ring-1 ring-inset ring-foreground/[0.08] dark:bg-foreground/[0.08]">
+                                    <TypeMark type={way.credentialType} className="h-4 w-4" />
+                                </span>
+                                {way.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
             )}
         </ShellDialog>
     );

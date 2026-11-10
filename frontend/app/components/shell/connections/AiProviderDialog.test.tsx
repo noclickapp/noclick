@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 // Connections' AI company dialog, the one place an AI account connects from: it offers the company's sign-ins (or the
 // ones its host names) and its key, and tells its host which account landed, a plan by its sign-in and a key as saved.
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { registerAgentOAuthComponent, type AgentOAuthComponentProps } from '~/components/workflow/AgentOAuthConnect';
 import type { AiCompany } from './aiAccounts';
@@ -50,8 +50,8 @@ describe('the AI company dialog', () => {
         expect(onOpenChange).toHaveBeenCalledWith(false);
     });
 
-    it('offers only the sign-ins its host names, and tells it which key was saved', async () => {
-        const { onConnected, onOpenChange } = show({ signIns: [] });
+    it('shows only the way its host names, and tells it which key was saved', async () => {
+        const { onConnected, onOpenChange } = show({ only: 'agent_anthropic' });
         await screen.findByTestId('connect-app');
         expect(screen.queryByRole('button', { name: 'Sign in with Claude' })).toBeNull();
         expect(screen.queryByRole('tablist')).toBeNull();
@@ -59,5 +59,27 @@ describe('the AI company dialog', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Connect' }));
         await waitFor(() => expect(onConnected).toHaveBeenCalledWith('cred-key'));
         expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+
+    it('offers the other ways that run it as "Or run it on" pills, each with its mark, under its own title', async () => {
+        const onPick = vi.fn();
+        show({
+            only: 'agent_claude_code_oauth',
+            title: 'Connect Claude',
+            others: [
+                { key: 'anthropic', label: 'Anthropic key', credentialType: 'agent_anthropic', onPick: () => onPick('anthropic') },
+                { key: 'openrouter', label: 'OpenRouter key', credentialType: 'agent_openrouter', onPick: () => onPick('openrouter') },
+            ],
+        });
+        expect(await screen.findByRole('heading', { name: 'Connect Claude' })).toBeTruthy();
+        expect(screen.getByRole('button', { name: 'Sign in with Claude' })).toBeTruthy();
+        expect(screen.queryByText('Anthropic API key')).toBeNull();
+        const pills = within(screen.getByRole('group', { name: 'Or run it on' }));
+        expect(pills.getAllByRole('button')).toHaveLength(2);
+        expect(pills.getByRole('button', { name: 'Anthropic key' })).toBeTruthy();
+        // Each wears its mark (Anthropic's draws nothing in this test DOM; OpenRouter's does).
+        expect(pills.getByRole('button', { name: 'OpenRouter key' }).querySelector('[aria-hidden] svg')).toBeTruthy();
+        fireEvent.click(pills.getByRole('button', { name: 'OpenRouter key' }));
+        expect(onPick).toHaveBeenCalledWith('openrouter');
     });
 });

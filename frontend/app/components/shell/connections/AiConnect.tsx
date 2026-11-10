@@ -16,6 +16,7 @@ import { AGENT_SIGN_IN_NAMES, getAgentCredentialType } from '~/lib/agentCredenti
 import { isPlanLimitError } from '~/lib/planLimitErrors';
 import { cn } from '~/lib/utils';
 import { getProviderMetadata, type ModelProvider } from '~/types/provider';
+import { getCredentialIcon } from '~/utils/credentialIcons';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import { BUTTON_PRIMARY } from '../buttons';
 import type { AiCompany } from './aiAccounts';
@@ -113,9 +114,7 @@ function SignIn({
                 sendEvent={sendEvent}
                 renderStart={(start, note) => (
                     <div className="space-y-2.5">
-                        <button type="button" onClick={start} className={cn(BUTTON_PRIMARY, 'h-10 w-full justify-center')}>
-                            Sign in with {names.signInWith}
-                        </button>
+                        <PlanSignInButton type={type} label={`Sign in with ${names.signInWith}`} onClick={start} />
                         <p className="text-[12.5px] leading-snug text-muted-foreground">{note}</p>
                     </div>
                 )}
