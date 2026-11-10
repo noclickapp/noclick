@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/nextcloud.svg",
+  "source": "https://raw.githubusercontent.com/nextcloud/server/master/core/img/logo/logo.svg",
+  "license": "Nextcloud trademark; used to identify the Nextcloud integration (server repository AGPL-3.0-or-later)",
+  "sha256": "7b762288d5b7bf4d5d3fd83c5caac1792dc525f1aab4b70968cb9fb9a113867f"
+}
