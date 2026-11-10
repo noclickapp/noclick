@@ -1,0 +1,374 @@
+{
+  "$defs": {
+    "CreateClient": {
+      "additionalProperties": false,
+      "description": "Create a client without sending a notification.",
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Operation",
+          "type": "string"
+        },
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "CreateClient",
+      "type": "object"
+    },
+    "CreateLinkConfiguration": {
+      "additionalProperties": false,
+      "description": "Create a link custom field configuration applying to all jobs.\n\nRequires Custom Field Configurations read/write access and a Jobber\nConnect, Grow or Plus plan. Job write access alone does not grant this.",
+      "properties": {
+        "operation": {
+          "const": "create_link_configuration",
+          "default": "create_link_configuration",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Default Link Text",
+          "type": "string"
+        },
+        "url": {
+          "pattern": "^https?://\\S+$",
+          "title": "Default Link URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "text",
+        "url"
+      ],
+      "title": "CreateLinkConfiguration",
+      "type": "object"
+    },
+    "EditClientCustomFields": {
+      "additionalProperties": false,
+      "description": "Update numeric custom fields on a client using existing configurations.",
+      "properties": {
+        "operation": {
+          "const": "edit_client_custom_fields",
+          "default": "edit_client_custom_fields",
+          "title": "Operation",
+          "type": "string"
+        },
+        "client_id": {
+          "minLength": 1,
+          "title": "Client ID",
+          "type": "string"
+        },
+        "custom_fields": {
+          "items": {
+            "$ref": "#/$defs/NumericCustomField"
+          },
+          "minItems": 1,
+          "title": "Custom Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "client_id",
+        "custom_fields"
+      ],
+      "title": "EditClientCustomFields",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Read the connected account's name and ID.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetJob": {
+      "additionalProperties": false,
+      "description": "Read a job by its encoded ID; an absent job returns null.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string"
+        },
+        "job_id": {
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJob",
+      "type": "object"
+    },
+    "GetQuote": {
+      "additionalProperties": false,
+      "description": "Read a quote, its cost and client by encoded ID.",
+      "properties": {
+        "operation": {
+          "const": "get_quote",
+          "default": "get_quote",
+          "title": "Operation",
+          "type": "string"
+        },
+        "quote_id": {
+          "minLength": 1,
+          "title": "Quote ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "quote_id"
+      ],
+      "title": "GetQuote",
+      "type": "object"
+    },
+    "JobberOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "jobber_oauth",
+          "default": "jobber_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Jobber Account",
+      "type": "object",
+      "x-credential-instructions": "Connect a Jobber account using OAuth. Enable client read/write, job read, quote read and custom field configuration read/write scopes on your developer app. Custom fields require a Jobber Connect, Grow or Plus plan. Access tokens expire after one hour; keep refresh token rotation enabled.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developer.getjobber.com/apps",
+      "x-oauth-provider": "jobber",
+      "x-oauth-scopes": [
+        "read_clients",
+        "read_custom_field_configurations",
+        "read_jobs",
+        "read_quotes",
+        "write_clients",
+        "write_custom_field_configurations"
+      ]
+    },
+    "ListClients": {
+      "additionalProperties": false,
+      "description": "Read the first 25 clients, billing city and pagination cursors.",
+      "properties": {
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListClients",
+      "type": "object"
+    },
+    "ListCustomFieldConfigurations": {
+      "additionalProperties": false,
+      "description": "Read up to 50 custom field configurations across documented types.",
+      "properties": {
+        "operation": {
+          "const": "list_custom_field_configurations",
+          "default": "list_custom_field_configurations",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCustomFieldConfigurations",
+      "type": "object"
+    },
+    "ListJobs": {
+      "additionalProperties": false,
+      "description": "Read the first ten jobs with their job numbers and titles.",
+      "properties": {
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListJobs",
+      "type": "object"
+    },
+    "ListQuotes": {
+      "additionalProperties": false,
+      "description": "Read the first ten quotes, their status, title and cost.",
+      "properties": {
+        "operation": {
+          "const": "list_quotes",
+          "default": "list_quotes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListQuotes",
+      "type": "object"
+    },
+    "NumericCustomField": {
+      "additionalProperties": false,
+      "properties": {
+        "customFieldConfigurationId": {
+          "minLength": 1,
+          "title": "Custom Field Configuration ID",
+          "type": "string"
+        },
+        "valueNumeric": {
+          "title": "Numeric Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "customFieldConfigurationId",
+        "valueNumeric"
+      ],
+      "title": "NumericCustomField",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_client": "#/$defs/CreateClient",
+          "create_link_configuration": "#/$defs/CreateLinkConfiguration",
+          "edit_client_custom_fields": "#/$defs/EditClientCustomFields",
+          "get_account": "#/$defs/GetAccount",
+          "get_job": "#/$defs/GetJob",
+          "get_quote": "#/$defs/GetQuote",
+          "list_clients": "#/$defs/ListClients",
+          "list_custom_field_configurations": "#/$defs/ListCustomFieldConfigurations",
+          "list_jobs": "#/$defs/ListJobs",
+          "list_quotes": "#/$defs/ListQuotes"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListClients"
+        },
+        {
+          "$ref": "#/$defs/CreateClient"
+        },
+        {
+          "$ref": "#/$defs/EditClientCustomFields"
+        },
+        {
+          "$ref": "#/$defs/ListJobs"
+        },
+        {
+          "$ref": "#/$defs/GetJob"
+        },
+        {
+          "$ref": "#/$defs/ListQuotes"
+        },
+        {
+          "$ref": "#/$defs/GetQuote"
+        },
+        {
+          "$ref": "#/$defs/ListCustomFieldConfigurations"
+        },
+        {
+          "$ref": "#/$defs/CreateLinkConfiguration"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JobberOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Jobber Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
