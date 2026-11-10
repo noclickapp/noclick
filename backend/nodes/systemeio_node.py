@@ -1,5 +1,11 @@
-"""Systeme.io Public API v1 contacts, marketing and course enrollment operations."""
+"""Systeme.io Public API v1 operations and signed contact/sale webhook triggers."""
 from __future__ import annotations
+
+import hashlib
+import hmac
+import json
+import secrets
+from urllib.parse import quote
 
 from datetime import datetime
 from typing import Annotated, Literal, Union
@@ -9,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://api.systeme.io"
@@ -179,10 +186,28 @@ class DeleteEnrollment(_Input):
     enrollment_id: PositiveID
 
 
+# Registration and event shapes: https://developer.systeme.io/docs/webhooks
+SYSTEMEIO_EVENTS = (
+    "CONTACT_CREATED", "CONTACT_OPT_IN", "CONTACT_TAG_ADDED", "CONTACT_TAG_REMOVED",
+    "SALE_NEW", "SALE_CANCELED",
+)
+
+
+class OnEvent(WebhookTriggerConfigBase):
+    operation: Literal["on_event"] = Field("on_event", title="On systeme.io Event", json_schema_extra={
+        "const": "on_event", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On systeme.io Event",
+    })
+    event_type: Literal[*SYSTEMEIO_EVENTS] = Field("CONTACT_CREATED", title="Event",
+        description="Start when a contact is created, opts in, gains or loses a tag, or a sale is made or canceled.")
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with systeme.io automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 SystemeioOperation = Annotated[Union[
     ListContacts, GetContact, CreateContact, UpdateContact, DeleteContact, AssignTag, RemoveTag,
     ListTags, GetTag, CreateTag, UpdateTag, DeleteTag, ListCampaigns, GetCampaign, ListCampaignSteps,
-    ListCourses, GetCourse, EnrollContact, ListEnrollments, DeleteEnrollment,
+    ListCourses, GetCourse, EnrollContact, ListEnrollments, DeleteEnrollment, OnEvent,
 ], Field(discriminator="operation")]
 
 
@@ -218,7 +243,7 @@ WIRE_NAMES = {"starting_after": "startingAfter", "needs_confirmation": "needsCon
               "contact_id": "contactId", "tag_id": "tagId", "access_type": "accessType"}
 
 
-class SystemeioNode(WorkflowNode):
+class SystemeioNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-systemeio"
     connection_evidence = ConnectionEvidence(noun="contacts", operation="list_contacts", label_keys=("email", "id"))
 
@@ -226,10 +251,106 @@ class SystemeioNode(WorkflowNode):
     def get_config_model(cls):
         return SystemeioConfig
 
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, body=None):
+        key = SystemeioAPIKeyCredential.model_validate(credential).api_key
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, BASE_URL + path,
+                headers={"X-API-Key": key, "Accept": "application/json"},
+                **({"json": body} if body is not None else {}))
+        response.raise_for_status()
+        if response.status_code != (201 if method == "POST" else 204):
+            raise ValueError("Unexpected systeme.io webhook registration response")
+        return response.json() if method == "POST" else None
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        op = OnEvent.model_validate(config)
+        secret = secrets.token_hex(32)
+        result = await cls._webhook_request(credential, "POST", "/api/webhooks", {
+            "name": f"NoClick {node_id}"[:255], "url": webhook_url, "secret": secret,
+            "subscriptions": [{"event": op.event_type, "schemaVersion": 1}], "active": True,
+        })
+        if not isinstance(result, dict) or not isinstance(result.get("id"), str) or not result["id"]:
+            raise ValueError("systeme.io did not return a webhook ID")
+        return {"external_webhook_id": result["id"], "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        webhook_id = (config or {}).get("external_webhook_id")
+        if webhook_id and credential:
+            await cls._webhook_request(credential, "DELETE", "/api/webhooks/" + quote(str(webhook_id), safe=""))
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": (config or {}).get("event_type", "CONTACT_CREATED")}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        secret = (config or {}).get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "x-webhook-signature"), "")
+        if not secret or not isinstance(signature, str) or len(signature) != 64 or not signature.isascii():
+            return False
+        try:
+            # Provider requires PHP-style JSON encoding: compact, escaped Unicode and slashes.
+            payload = json.loads(body)
+            if not isinstance(payload, dict):
+                return False
+            normalized = json.dumps(payload, ensure_ascii=True, separators=(",", ":"), allow_nan=False).replace("/", "\\/")
+            expected = hmac.new(secret.encode(), normalized.encode(), hashlib.sha256).hexdigest()
+        except (ValueError, TypeError, UnicodeError):
+            return False
+        return hmac.compare_digest(signature, expected)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        headers = payload.get("_webhook", {}).get("headers", {})
+        event = next((v for k, v in headers.items() if k.lower() == "x-webhook-event"), None)
+        version = next((v for k, v in headers.items() if k.lower() == "x-webhook-schema-version"), None)
+        return event == config.get("event_type", "CONTACT_CREATED") and version == "1"
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if not cls.filter_trigger_payload(payload, config):
+            return None
+        return {"event": config.get("event_type", "CONTACT_CREATED"),
+                "data": {k: v for k, v in payload.items() if k != "_webhook"}}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        event, data = output.get("event"), output.get("data")
+        if event not in SYSTEMEIO_EVENTS or not isinstance(data, dict):
+            return super().resolve_agent_event(output)
+        action = {"CONTACT_CREATED": "Contact created", "CONTACT_OPT_IN": "Contact opted in",
+                  "CONTACT_TAG_ADDED": "Tag added", "CONTACT_TAG_REMOVED": "Tag removed",
+                  "SALE_NEW": "New sale", "SALE_CANCELED": "Sale canceled"}[event]
+        if event.startswith("CONTACT_"):
+            contact = data.get("contact") or {}
+            # The provider's tag-event examples nest the contact twice.
+            if "contact" in contact:
+                contact = contact["contact"]
+            text = f"systeme.io: {action} for {contact.get('email')} (contact ID {contact.get('id')})."
+            if event in {"CONTACT_TAG_ADDED", "CONTACT_TAG_REMOVED"}:
+                tag = data.get("tag") or {}
+                text += f" Tag: {tag.get('name')} (ID {tag.get('id')})."
+            source = contact.get("sourceURL")
+            if source:
+                text += f" Source: {source}."
+        else:
+            customer, order, plan = data.get("customer") or {}, data.get("order") or {}, data.get("pricePlan") or {}
+            step = data.get("funnelStep") or {}
+            text = (f"systeme.io: {action} for {customer.get('email')} (contact ID {customer.get('contactId')}); "
+                    f"order ID {order.get('id')}, plan {plan.get('name')} (ID {plan.get('id')}), "
+                    f"amount {plan.get('amount')} {plan.get('currency')} in provider units; "
+                    f"funnel step {step.get('name')} (ID {step.get('id')}).")
+        return {"text": text, "conversation_key": None}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a systeme.io API key")
         op = self.config.config
+        if isinstance(op, OnEvent):
+            return self.no_event_output(op.operation)
         method, template = ROUTES[op.operation]
         values = op.model_dump(mode="json", exclude_none=True, exclude={"operation"})
         path = template.format(**values)

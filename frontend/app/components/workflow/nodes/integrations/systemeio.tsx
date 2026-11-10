@@ -11,7 +11,7 @@ const SystemeioIcon = ({ className, style }: { className?: string; style?: CSSPr
 
 export const SystemeioNode: NodeDefinition = {
     type: 'automation-systemeio', category: 'marketing', label: 'systeme.io',
-    description: 'Manage contacts, tags, campaigns, courses and enrollments',
+    description: 'Start from contact and sale events; manage contacts, tags, campaigns, courses and enrollments',
     Icon: SystemeioIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={SystemeioIcon} iconColor="" />),

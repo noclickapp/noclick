@@ -118,3 +118,84 @@ def test_systemeio_manual_credential_default_and_evidence():
     for key in ["https://example.com/key", "<token>", "bad\nkey"]:
         with pytest.raises(ValueError):
             native.SystemeioAPIKeyCredential(api_key=key)
+
+
+EVENTS = json.loads((Path(__file__).parent / "fixtures/systemeio/webhooks.json").read_text())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("event", EVENTS)
+async def test_systemeio_webhook_lifecycle_and_agent_event(monkeypatch, event):
+    def reply(request):
+        if request.method == "POST":
+            return httpx.Response(201, json={"id": "01HV1BP7T3N981SM7R8F0ZM8YS", "active": True})
+        return httpx.Response(204)
+
+    requests = transport(monkeypatch, reply)
+    credential = {"credential_type": "systemeio_api_key", "api_key": TOKEN}
+    config = {"operation": "on_event", "event_type": event}
+    saved = await native.SystemeioNode._register_external_webhook(
+        webhook_url="https://example.com/webhook", credential=credential, config=config, node_id="test")
+    body = json.loads(requests[0].content)
+    assert body == {"name": "NoClick test", "url": "https://example.com/webhook", "secret": saved["signing_secret"],
+                    "active": True, "subscriptions": [{"event": event, "schemaVersion": 1}]}
+    assert len(saved["signing_secret"]) == 64
+    assert requests[0].url.path == "/api/webhooks"
+    assert requests[0].headers["X-API-Key"] == TOKEN
+    documented = EVENTS[event]
+    payload = {**documented["body"], "_webhook": {"headers": documented["headers"]}}
+    assert native.SystemeioNode.filter_trigger_payload(payload, config)
+    output = native.SystemeioNode.resolve_trigger_payload(payload, config)
+    assert output == {"event": event, "data": documented["body"]}
+    turn = native.SystemeioNode.resolve_agent_event(output)
+    assert "email@example.com" in turn["text"] and "12345" in turn["text"]
+    assert "systeme.io" in turn["text"] and turn["conversation_key"] is None
+    if event.startswith("SALE_"):
+        assert "Custom price plan" in turn["text"] and "94283" in turn["text"]
+    if event.startswith("CONTACT_TAG_"):
+        assert "another_tag" in turn["text"]
+    other = {"operation": "on_event", "event_type": "SALE_NEW" if event != "SALE_NEW" else "CONTACT_CREATED"}
+    assert not native.SystemeioNode.filter_trigger_payload(payload, other)
+    await native.SystemeioNode._unregister_external_webhook(
+        credential=credential, config={**config, **saved}, node_id="test")
+    assert len(requests) == 2 and requests[-1].method == "DELETE"
+    assert requests[-1].url.path == "/api/webhooks/01HV1BP7T3N981SM7R8F0ZM8YS"
+
+
+def test_systemeio_documented_signature_normalization():
+    import hashlib
+    import hmac
+
+    # Exact source payload and normalized bytes: https://developer.systeme.io/docs/webhooks
+    payload = {"contact": {"id": 123, "sourceURL": "http://example.com", "fields": [
+        {"fieldName": "Prénom", "slug": "first_name", "value": "Jean"}]}}
+    normalized = r'{"contact":{"id":123,"sourceURL":"http:\/\/example.com","fields":[{"fieldName":"Pr\u00e9nom","slug":"first_name","value":"Jean"}]}}'
+    secret = "test-signing-secret"
+    signature = hmac.new(secret.encode(), normalized.encode(), hashlib.sha256).hexdigest()
+    verify = native.SystemeioNode.verify_webhook_signature
+    config = {"signing_secret": secret}
+    headers = {"X-Webhook-Signature": signature}
+    assert verify(json.dumps(payload, ensure_ascii=False, indent=2).encode(), headers, config)
+    assert verify(normalized.encode(), {"x-webhook-signature": signature}, config)
+    changed = json.loads(normalized)
+    changed["contact"]["id"] = 124
+    assert not verify(json.dumps(changed).encode(), headers, config)
+    for body, head, conf in [(b"not json", headers, config), (b"[]", headers, config),
+                             (normalized.encode(), {}, config), (normalized.encode(), headers, {}),
+                             (normalized.encode(), {"X-Webhook-Signature": "é" * 64}, config),
+                             (normalized.encode(), headers, {"signing_secret": "wrong"})]:
+        assert not verify(body, head, conf)
+
+
+@pytest.mark.asyncio
+async def test_systemeio_trigger_manual_run_and_config():
+    trigger = node({"operation": "on_event"})
+    assert (await trigger.execute({}))["status"] == "no_event"
+    from nodes.core.webhook_trigger import WebhookTriggerConfigBase
+    assert isinstance(trigger.config.config, WebhookTriggerConfigBase)
+    assert native.OnEvent.model_json_schema()["properties"]["operation"]["x-is-trigger"] is True
+    for event in EVENTS:
+        assert native.SystemeioNode.registration_fingerprint_fields({"event_type": event}) == {"event_type": event}
+    payload = {**EVENTS["CONTACT_CREATED"]["body"], "_webhook": {"headers": {
+        "X-Webhook-Event": "CONTACT_CREATED", "X-Webhook-Schema-Version": "2"}}}
+    assert not native.SystemeioNode.filter_trigger_payload(payload, {"event_type": "CONTACT_CREATED"})
