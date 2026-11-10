@@ -1,0 +1,2091 @@
+{
+  "$defs": {
+    "HubFitAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "hubfit_api_key",
+          "default": "hubfit_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "HubFit API Key",
+      "type": "object",
+      "x-credential-instructions": "In HubFit Settings > API, create an API key (Ultimate plan, workspace owner). Paste the key alone. Select clients:read for connection verification and reads; clients:create, clients:write, messages:write, check-ins:review and tasks:write for their actions. Triggers require webhooks:write and an owner or admin key. The key acts as its owner in that workspace.",
+      "x-credential-url": "https://hubfit.com/developers/authentication"
+    },
+    "HubFitCreateClientConfig": {
+      "additionalProperties": false,
+      "description": "Create a client.",
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Create a client",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Clients",
+          "x-display-name": "Create a client",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The client's full name. Can't contain `@`.",
+          "maxLength": 50,
+          "minLength": 1,
+          "pattern": "^[^@]*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "maxLength": 254,
+          "title": "Email",
+          "type": "string"
+        },
+        "send_login_instructions": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Email the client their login instructions now.",
+          "title": "Send login instructions"
+        },
+        "onboarding_flow_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An onboarding flow to run for the new client, by an `id` from `GET /onboarding-flows`.",
+          "title": "Onboarding flow id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "onboarding_flow_id",
+            "searchable": true
+          }
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key when retrying this write within 24 hours.",
+          "title": "Idempotency key"
+        }
+      },
+      "required": [
+        "name",
+        "email"
+      ],
+      "title": "HubFitCreateClientConfig",
+      "type": "object"
+    },
+    "HubFitCreateClientNoteConfig": {
+      "additionalProperties": false,
+      "description": "Add a note to a client.",
+      "properties": {
+        "operation": {
+          "const": "create_client_note",
+          "default": "create_client_note",
+          "title": "Add a note to a client",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Add a note to a client",
+          "x-is-trigger": false
+        },
+        "client_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Client id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A heading for the note.",
+          "title": "Title"
+        },
+        "text": {
+          "description": "The note. Can't be blank.",
+          "maxLength": 5000,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        },
+        "visibility": {
+          "description": "`private` if only your team sees the note. `shared` if the client sees it in their app too; adding a shared note sends them a push notification with its text.",
+          "enum": [
+            "private",
+            "shared"
+          ],
+          "title": "Visibility",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key when retrying this write within 24 hours.",
+          "title": "Idempotency key"
+        }
+      },
+      "required": [
+        "client_id",
+        "text",
+        "visibility"
+      ],
+      "title": "HubFitCreateClientNoteConfig",
+      "type": "object"
+    },
+    "HubFitCreateTaskConfig": {
+      "additionalProperties": false,
+      "description": "Add a task.",
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Add a task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Add a task",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "What needs doing. Can't be blank.",
+          "maxLength": 200,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The day it's due, as `YYYY-MM-DD`, in your own calendar.",
+          "format": "date",
+          "title": "Due date"
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The team member to give it to (a coach who has joined your workspace). Defaults to you.",
+          "title": "Assignee id"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The client the task is about. Only your team sees the task; the client isn't told.",
+          "title": "Client id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": true
+          }
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key when retrying this write within 24 hours.",
+          "title": "Idempotency key"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "HubFitCreateTaskConfig",
+      "type": "object"
+    },
+    "HubFitGetCheckInSubmissionConfig": {
+      "additionalProperties": false,
+      "description": "Get a check-in submission.",
+      "properties": {
+        "operation": {
+          "const": "get_check_in_submission",
+          "default": "get_check_in_submission",
+          "title": "Get a check-in submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Check-in submissions",
+          "x-display-name": "Get a check-in submission",
+          "x-is-trigger": false
+        },
+        "submission_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Submission id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "submission_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "submission_id"
+      ],
+      "title": "HubFitGetCheckInSubmissionConfig",
+      "type": "object"
+    },
+    "HubFitGetClientConfig": {
+      "additionalProperties": false,
+      "description": "Get a client.",
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Get a client",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Clients",
+          "x-display-name": "Get a client",
+          "x-is-trigger": false
+        },
+        "client_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Client id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "HubFitGetClientConfig",
+      "type": "object"
+    },
+    "HubFitGetCompletedWorkoutConfig": {
+      "additionalProperties": false,
+      "description": "Get a completed workout.",
+      "properties": {
+        "operation": {
+          "const": "get_completed_workout",
+          "default": "get_completed_workout",
+          "title": "Get a completed workout",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Completed workouts",
+          "x-display-name": "Get a completed workout",
+          "x-is-trigger": false
+        },
+        "workout_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Workout id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workout_id"
+      ],
+      "title": "HubFitGetCompletedWorkoutConfig",
+      "type": "object"
+    },
+    "HubFitGetPackagePurchaseConfig": {
+      "additionalProperties": false,
+      "description": "Get a package purchase.",
+      "properties": {
+        "operation": {
+          "const": "get_package_purchase",
+          "default": "get_package_purchase",
+          "title": "Get a package purchase",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Package purchases",
+          "x-display-name": "Get a package purchase",
+          "x-is-trigger": false
+        },
+        "purchase_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Purchase id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "purchase_id"
+      ],
+      "title": "HubFitGetPackagePurchaseConfig",
+      "type": "object"
+    },
+    "HubFitGetQuestionnaireSubmissionConfig": {
+      "additionalProperties": false,
+      "description": "Get a questionnaire submission.",
+      "properties": {
+        "operation": {
+          "const": "get_questionnaire_submission",
+          "default": "get_questionnaire_submission",
+          "title": "Get a questionnaire submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Questionnaire submissions",
+          "x-display-name": "Get a questionnaire submission",
+          "x-is-trigger": false
+        },
+        "submission_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Submission id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "submission_id"
+      ],
+      "title": "HubFitGetQuestionnaireSubmissionConfig",
+      "type": "object"
+    },
+    "HubFitGetTaskConfig": {
+      "additionalProperties": false,
+      "description": "Get a task.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get a task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get a task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "A task `id` from `GET /tasks`.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Task id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "HubFitGetTaskConfig",
+      "type": "object"
+    },
+    "HubFitListCheckInSubmissionsConfig": {
+      "additionalProperties": false,
+      "description": "List check-in submissions.",
+      "properties": {
+        "operation": {
+          "const": "list_check_in_submissions",
+          "default": "list_check_in_submissions",
+          "title": "List check-in submissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Check-in submissions",
+          "x-display-name": "List check-in submissions",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "awaiting_review",
+                "reviewed",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "awaiting_review",
+          "title": "Status",
+          "enum": [
+            "awaiting_review",
+            "reviewed",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only this client's submissions.",
+          "title": "Client id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": true
+          }
+        },
+        "submitted_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only submissions received after this time, e.g. `2026-10-05T00:00:00Z` (encode a `+` offset as `%2B`). To fetch what's new since your last run, pass the time of that run.",
+          "format": "date-time",
+          "title": "Submitted after"
+        },
+        "submitted_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only submissions received before this time.",
+          "format": "date-time",
+          "title": "Submitted before"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `nextCursor` from the previous page.",
+          "title": "Cursor"
+        }
+      },
+      "title": "HubFitListCheckInSubmissionsConfig",
+      "type": "object"
+    },
+    "HubFitListClientNotesConfig": {
+      "additionalProperties": false,
+      "description": "List a client's notes.",
+      "properties": {
+        "operation": {
+          "const": "list_client_notes",
+          "default": "list_client_notes",
+          "title": "List a client's notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "List a client's notes",
+          "x-is-trigger": false
+        },
+        "client_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Client id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "How many notes a page holds. 10 unless you ask for more, and at most 50, fewer than other lists, as a note can be 5,000 characters.",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `nextCursor` from the previous page.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "HubFitListClientNotesConfig",
+      "type": "object"
+    },
+    "HubFitListClientsConfig": {
+      "additionalProperties": false,
+      "description": "List clients.",
+      "properties": {
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "List clients",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Clients",
+          "x-display-name": "List clients",
+          "x-is-trigger": false
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case-insensitive match on part of a name or email.",
+          "title": "Search"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only the client with exactly this email, ignoring case. Use it to find one specific client; `search` also matches partial emails.",
+          "title": "Email"
+        },
+        "tag_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only clients with this tag. An id from `GET /tags`.",
+          "title": "Tag id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "tag_id",
+            "searchable": true
+          }
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "archived",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "active",
+          "description": "`active` (the default) for current clients, `archived` for archived ones, `all` for both. An archived client is only ever listed: anything else about them answers `409 client_archived` until you unarchive them in HubFit.",
+          "title": "Status",
+          "enum": [
+            "active",
+            "archived",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `nextCursor` from the previous page.",
+          "title": "Cursor"
+        }
+      },
+      "title": "HubFitListClientsConfig",
+      "type": "object"
+    },
+    "HubFitListCompletedWorkoutsConfig": {
+      "additionalProperties": false,
+      "description": "List completed workouts.",
+      "properties": {
+        "operation": {
+          "const": "list_completed_workouts",
+          "default": "list_completed_workouts",
+          "title": "List completed workouts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Completed workouts",
+          "x-display-name": "List completed workouts",
+          "x-is-trigger": false
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only this client's workouts.",
+          "title": "Client id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": true
+          }
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only workouts from this day, included, as `YYYY-MM-DD`, in your own calendar (the timezone in your HubFit settings), as the app shows workouts to you.",
+          "format": "date",
+          "title": "Start date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only workouts up to this day, included, as `YYYY-MM-DD`, in your own calendar.",
+          "format": "date",
+          "title": "End date"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `nextCursor` from the previous page.",
+          "title": "Cursor"
+        }
+      },
+      "title": "HubFitListCompletedWorkoutsConfig",
+      "type": "object"
+    },
+    "HubFitListOnboardingFlowsConfig": {
+      "additionalProperties": false,
+      "description": "List onboarding flows.",
+      "properties": {
+        "operation": {
+          "const": "list_onboarding_flows",
+          "default": "list_onboarding_flows",
+          "title": "List onboarding flows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Onboarding flows",
+          "x-display-name": "List onboarding flows",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HubFitListOnboardingFlowsConfig",
+      "type": "object"
+    },
+    "HubFitListPackagePurchasesConfig": {
+      "additionalProperties": false,
+      "description": "List package purchases.",
+      "properties": {
+        "operation": {
+          "const": "list_package_purchases",
+          "default": "list_package_purchases",
+          "title": "List package purchases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Package purchases",
+          "x-display-name": "List package purchases",
+          "x-is-trigger": false
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only this client's purchases.",
+          "title": "Client id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": true
+          }
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only purchases from this day, included, as `YYYY-MM-DD`, in your own calendar (the timezone in your HubFit settings).",
+          "format": "date",
+          "title": "Start date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only purchases up to this day, included, as `YYYY-MM-DD`, in your own calendar.",
+          "format": "date",
+          "title": "End date"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `nextCursor` from the previous page.",
+          "title": "Cursor"
+        }
+      },
+      "title": "HubFitListPackagePurchasesConfig",
+      "type": "object"
+    },
+    "HubFitListTagsConfig": {
+      "additionalProperties": false,
+      "description": "List tags.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List tags",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HubFitListTagsConfig",
+      "type": "object"
+    },
+    "HubFitListTasksConfig": {
+      "additionalProperties": false,
+      "description": "List tasks.",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List tasks",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "open",
+          "description": "`open` (the default) or `completed`.",
+          "title": "Status",
+          "enum": [
+            "open",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only tasks about this client.",
+          "title": "Client id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": true
+          }
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only tasks assigned to this coach (an `assignee.id`).",
+          "title": "Assignee id"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `nextCursor` from the previous page.",
+          "title": "Cursor"
+        }
+      },
+      "title": "HubFitListTasksConfig",
+      "type": "object"
+    },
+    "HubFitOnCheckInSubmittedConfig": {
+      "description": "Receive the documented check_in_submission.created record reference.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_check_in_submitted",
+          "default": "on_check_in_submitted",
+          "title": "On check in submitted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On check in submitted",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with HubFit automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "HubFitOnCheckInSubmittedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "HubFitOnClientCreatedConfig": {
+      "description": "Receive the documented client.created record reference.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_client_created",
+          "default": "on_client_created",
+          "title": "On client created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On client created",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with HubFit automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "HubFitOnClientCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "HubFitOnPackagePurchasedConfig": {
+      "description": "Receive the documented package_purchase.created record reference.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_package_purchased",
+          "default": "on_package_purchased",
+          "title": "On package purchased",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On package purchased",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with HubFit automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "HubFitOnPackagePurchasedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "HubFitOnQuestionnaireSubmittedConfig": {
+      "description": "Receive the documented questionnaire_submission.created record reference.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_questionnaire_submitted",
+          "default": "on_questionnaire_submitted",
+          "title": "On questionnaire submitted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On questionnaire submitted",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with HubFit automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "HubFitOnQuestionnaireSubmittedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "HubFitOnWorkoutCompletedConfig": {
+      "description": "Receive the documented completed_workout.created record reference.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_workout_completed",
+          "default": "on_workout_completed",
+          "title": "On workout completed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On workout completed",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with HubFit automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "HubFitOnWorkoutCompletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "HubFitReviewCheckInSubmissionConfig": {
+      "additionalProperties": false,
+      "description": "Review a check-in submission.",
+      "properties": {
+        "operation": {
+          "const": "review_check_in_submission",
+          "default": "review_check_in_submission",
+          "title": "Review a check-in submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Check-in submissions",
+          "x-display-name": "Review a check-in submission",
+          "x-is-trigger": false
+        },
+        "submission_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Submission id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "submission_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your review comment, sent to the client. Can't be blank.",
+          "title": "Comment"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key when retrying this write within 24 hours.",
+          "title": "Idempotency key"
+        }
+      },
+      "required": [
+        "submission_id"
+      ],
+      "title": "HubFitReviewCheckInSubmissionConfig",
+      "type": "object"
+    },
+    "HubFitSendClientMessageConfig": {
+      "additionalProperties": false,
+      "description": "Send a message to a client.",
+      "properties": {
+        "operation": {
+          "const": "send_client_message",
+          "default": "send_client_message",
+          "title": "Send a message to a client",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Send a message to a client",
+          "x-is-trigger": false
+        },
+        "client_id": {
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Client id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "text": {
+          "description": "The message. Can't be blank.",
+          "maxLength": 5000,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key when retrying this write within 24 hours.",
+          "title": "Idempotency key"
+        }
+      },
+      "required": [
+        "client_id",
+        "text"
+      ],
+      "title": "HubFitSendClientMessageConfig",
+      "type": "object"
+    },
+    "HubFitUpdateTaskConfig": {
+      "additionalProperties": false,
+      "description": "Change a task.",
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Change a task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Change a task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "A task `id` from `GET /tasks`.",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Task id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`YYYY-MM-DD` in your own calendar, or `null` for no due date.",
+          "format": "date",
+          "title": "Due date"
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A coach who has joined your workspace, or `null` to unassign it.",
+          "title": "Assignee id"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-fA-F]{24}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The client it's about, or `null` for none.",
+          "title": "Client id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "client_id",
+            "searchable": true
+          }
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "open",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "HubFitUpdateTaskConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_client": "#/$defs/HubFitCreateClientConfig",
+          "create_client_note": "#/$defs/HubFitCreateClientNoteConfig",
+          "create_task": "#/$defs/HubFitCreateTaskConfig",
+          "get_check_in_submission": "#/$defs/HubFitGetCheckInSubmissionConfig",
+          "get_client": "#/$defs/HubFitGetClientConfig",
+          "get_completed_workout": "#/$defs/HubFitGetCompletedWorkoutConfig",
+          "get_package_purchase": "#/$defs/HubFitGetPackagePurchaseConfig",
+          "get_questionnaire_submission": "#/$defs/HubFitGetQuestionnaireSubmissionConfig",
+          "get_task": "#/$defs/HubFitGetTaskConfig",
+          "list_check_in_submissions": "#/$defs/HubFitListCheckInSubmissionsConfig",
+          "list_client_notes": "#/$defs/HubFitListClientNotesConfig",
+          "list_clients": "#/$defs/HubFitListClientsConfig",
+          "list_completed_workouts": "#/$defs/HubFitListCompletedWorkoutsConfig",
+          "list_onboarding_flows": "#/$defs/HubFitListOnboardingFlowsConfig",
+          "list_package_purchases": "#/$defs/HubFitListPackagePurchasesConfig",
+          "list_tags": "#/$defs/HubFitListTagsConfig",
+          "list_tasks": "#/$defs/HubFitListTasksConfig",
+          "on_check_in_submitted": "#/$defs/HubFitOnCheckInSubmittedConfig",
+          "on_client_created": "#/$defs/HubFitOnClientCreatedConfig",
+          "on_package_purchased": "#/$defs/HubFitOnPackagePurchasedConfig",
+          "on_questionnaire_submitted": "#/$defs/HubFitOnQuestionnaireSubmittedConfig",
+          "on_workout_completed": "#/$defs/HubFitOnWorkoutCompletedConfig",
+          "review_check_in_submission": "#/$defs/HubFitReviewCheckInSubmissionConfig",
+          "send_client_message": "#/$defs/HubFitSendClientMessageConfig",
+          "update_task": "#/$defs/HubFitUpdateTaskConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HubFitListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitCreateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitGetClientConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitListClientNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitCreateClientNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitSendClientMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitListOnboardingFlowsConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitListCompletedWorkoutsConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitGetCompletedWorkoutConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitListCheckInSubmissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitGetCheckInSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitReviewCheckInSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitGetQuestionnaireSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitListPackagePurchasesConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitGetPackagePurchaseConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitOnClientCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitOnCheckInSubmittedConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitOnWorkoutCompletedConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitOnPackagePurchasedConfig"
+        },
+        {
+          "$ref": "#/$defs/HubFitOnQuestionnaireSubmittedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HubFitAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hubfit Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add a HubFit client",
+    "Review a client's check-in",
+    "Send a client a message",
+    "Start when a client completes a workout"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,118 @@
+{
+  "check_in_event": {
+    "body": {
+      "id": "evt_6ad6af72e7830e73e784a170",
+      "type": "check_in_submission.created",
+      "createdAt": "2026-10-26T14:32:06.000Z",
+      "data": {
+        "id": "6ad6af25540e6a26540ffd23",
+        "clientId": "6ad6af41d3199442d31b2743"
+      }
+    },
+    "source": "https://hubfit.com/developers/webhooks"
+  },
+  "endpoint_created": {
+    "body": {
+      "data": {
+        "id": "6ad6affd3db7e9fc3db656fb",
+        "name": "CRM",
+        "url": "https://example.com/hubfit-webhooks",
+        "events": [
+          "client.created",
+          "check_in_submission.created"
+        ],
+        "status": "enabled",
+        "disabledReason": null,
+        "lastDelivery": {
+          "outcome": "delivered",
+          "statusCode": 200,
+          "attemptedAt": "2026-10-26T14:32:05.000Z"
+        },
+        "createdAt": "2026-03-02T15:04:11.000Z",
+        "updatedAt": "2026-10-26T09:12:40.000Z"
+      },
+      "secret": "whsec_EXAMPLE+ONLY+notARealHubFitSigningSecret+00="
+    },
+    "source": "https://hubfit.com/developers/api/webhook-endpoints#create-webhook-endpoint"
+  },
+  "note_created": {
+    "body": {
+      "data": {
+        "id": "6ad6af897f67308a7f68c38b",
+        "title": "Training days",
+        "text": "Moving to 4 sessions a week from November. Prefers mornings.",
+        "visibility": "private",
+        "createdAt": "2026-03-02T15:04:11.000Z"
+      }
+    },
+    "source": "https://hubfit.com/developers/api/notes#create-client-note"
+  },
+  "message_sent": {
+    "body": {
+      "data": {
+        "id": "6ad6af693b64cf683b633c6b",
+        "text": "Nice work this week! Your new program is in the app.",
+        "sentAt": "2026-10-26T14:32:05.000Z",
+        "client": {
+          "id": "6ad6af41d3199442d31b2743",
+          "name": "Jordan Miller"
+        }
+      }
+    },
+    "source": "https://hubfit.com/developers/api/messages#send-client-message"
+  },
+  "task_created": {
+    "body": {
+      "data": {
+        "id": "6ad6af8764ce168864cfa985",
+        "title": "Call Jordan about their new program",
+        "status": "open",
+        "dueDate": "2026-10-30",
+        "client": {
+          "id": "6ad6af41d3199442d31b2743",
+          "name": "Jordan Miller"
+        },
+        "assignee": {
+          "id": "6ad6af42386c5341386ac044",
+          "name": "Alex Carter"
+        },
+        "createdBy": {
+          "id": "6ad6af42386c5341386ac044",
+          "name": "Alex Carter"
+        },
+        "createdAt": "2026-03-02T15:04:11.000Z",
+        "updatedAt": "2026-10-26T09:12:40.000Z",
+        "completedAt": null,
+        "completedBy": null
+      }
+    },
+    "source": "https://hubfit.com/developers/api/tasks#create-task"
+  },
+  "task_updated": {
+    "body": {
+      "data": {
+        "id": "6ad6af8764ce168864cfa985",
+        "title": "Call Jordan about their new program",
+        "status": "open",
+        "dueDate": "2026-10-30",
+        "client": {
+          "id": "6ad6af41d3199442d31b2743",
+          "name": "Jordan Miller"
+        },
+        "assignee": {
+          "id": "6ad6af42386c5341386ac044",
+          "name": "Alex Carter"
+        },
+        "createdBy": {
+          "id": "6ad6af42386c5341386ac044",
+          "name": "Alex Carter"
+        },
+        "createdAt": "2026-03-02T15:04:11.000Z",
+        "updatedAt": "2026-10-26T09:12:40.000Z",
+        "completedAt": null,
+        "completedBy": null
+      }
+    },
+    "source": "https://hubfit.com/developers/api/tasks#update-task"
+  }
+}
