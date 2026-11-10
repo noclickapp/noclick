@@ -59,7 +59,9 @@ async def test_partner_registration_and_teardown(action):
     def handler(request):
         calls.append(request)
         if request.url.host == "auth.greenhouse.io":
-            assert request.content == b"grant_type=client_credentials"
+            assert dict(request.url.params) == {"grant_type": "client_credentials"}
+            assert request.headers["content-type"] == "application/json"
+            assert json.loads(request.content) == {}
             return httpx.Response(200, json={"access_token": "token"})
         assert request.headers["authorization"] == "Bearer token"
         if request.method == "POST":

@@ -1,6 +1,7 @@
 """Greenhouse Harvest v3 request and OAuth contract tests."""
 
 import base64
+import json
 from unittest.mock import Mock, patch
 
 import httpx
@@ -93,7 +94,9 @@ async def test_client_credentials_token_and_harvest_request():
         if request.url.host == "auth.greenhouse.io":
             assert request.url.path == "/token"
             assert request.headers["authorization"] == "Basic " + base64.b64encode(b"client-id:secret").decode()
-            assert request.content == b"grant_type=client_credentials&sub=123"
+            assert dict(request.url.params) == {"grant_type": "client_credentials"}
+            assert request.headers["content-type"] == "application/json"
+            assert json.loads(request.content) == {"sub": 123}
             return httpx.Response(200, json={"access_token": "short-lived-token"})
         assert request.url.host == "harvest.greenhouse.io"
         assert request.headers["authorization"] == "Bearer short-lived-token"
@@ -122,6 +125,9 @@ async def test_unauthorized_request_renews_token_once():
     def handler(request: httpx.Request) -> httpx.Response:
         nonlocal token_count, api_count
         if request.url.host == "auth.greenhouse.io":
+            assert dict(request.url.params) == {"grant_type": "client_credentials"}
+            assert request.headers["content-type"] == "application/json"
+            assert json.loads(request.content) == {}
             token_count += 1
             return httpx.Response(200, json={"access_token": f"token-{token_count}"})
         api_count += 1

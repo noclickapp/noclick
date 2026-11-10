@@ -505,12 +505,14 @@ class GreenhouseNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     @staticmethod
     async def _token(client: httpx.AsyncClient, credential: GreenhouseOAuthCredential) -> str:
-        body: Dict[str, Any] = {"grant_type": "client_credentials"}
+        body: Dict[str, Any] = {}
         if credential.sub is not None:
-            body["sub"] = str(credential.sub)
+            body["sub"] = credential.sub
         response = await client.post(
             TOKEN_URL, auth=(credential.client_id, credential.client_secret),
-            data=body, headers={"Accept": "application/json"},
+            # https://harvestdocs.greenhouse.io/reference/generate-token
+            params={"grant_type": "client_credentials"}, json=body,
+            headers={"Accept": "application/json"},
         )
         if response.status_code >= 400:
             raise ValueError(f"Greenhouse OAuth failed ({response.status_code}): {_error_message(response)}")
