@@ -1,0 +1,1873 @@
+{
+  "$defs": {
+    "LeadProsperAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "lead_prosper_api_token",
+          "default": "lead_prosper_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Lead Prosper API Token",
+      "type": "object",
+      "x-credential-instructions": "In Lead Prosper, open Settings \u2192 API and copy an account API token. Paste only the token. NoClick sends it as a Bearer header to api.leadprosper.io. Campaign reads verify access; write permissions depend on the token owner's role.",
+      "x-credential-url": "https://api.leadprosper.io/public/docs"
+    },
+    "LeadProsperCampaignStatisticsConfig": {
+      "additionalProperties": false,
+      "description": "Campaign statistics.",
+      "properties": {
+        "operation": {
+          "const": "campaign_statistics",
+          "default": "campaign_statistics",
+          "title": "Campaign statistics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Campaign statistics",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "start_date": {
+          "description": "Start of the window, `YYYY-MM-DD` or `YYYY-MM-DD HH:MM:SS`. Within the last 2 years.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End of the window, inclusive.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "End Date",
+          "type": "string"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA timezone the window is read in. Defaults to UTC.",
+          "title": "Timezone"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bucket size for the breakdown. `hour` only for a window of up to 7 days.",
+          "title": "Group",
+          "enum": [
+            "hour",
+            "day",
+            "week",
+            "month"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "LeadProsperCampaignStatisticsConfig",
+      "type": "object"
+    },
+    "LeadProsperCreateCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Create a campaign.",
+      "properties": {
+        "operation": {
+          "const": "create_campaign",
+          "default": "create_campaign",
+          "title": "Create a campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create a campaign",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "name": {
+          "description": "The campaign's name.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "public_name": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name shown to suppliers. `name` when left out.",
+          "title": "Public Name"
+        },
+        "campaign_type": {
+          "description": "How the campaign takes leads.",
+          "enum": [
+            "direct_post",
+            "ping_post_exchange",
+            "one_to_one"
+          ],
+          "title": "Campaign Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "campaign_type"
+      ],
+      "title": "LeadProsperCreateCampaignConfig",
+      "type": "object"
+    },
+    "LeadProsperCreateClientConfig": {
+      "additionalProperties": false,
+      "description": "Create a client.",
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Create a client",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create a client",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "company": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Company",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique within the account.",
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 15,
+              "minLength": 10,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stored as given.",
+          "title": "Phone"
+        }
+      },
+      "required": [
+        "company"
+      ],
+      "title": "LeadProsperCreateClientConfig",
+      "type": "object"
+    },
+    "LeadProsperGetCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Get a campaign.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Get a campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get a campaign",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "id": {
+          "description": "Campaign id.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "view": {
+          "anyOf": [
+            {
+              "enum": [
+                "short",
+                "basic",
+                "full"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How much of each campaign to return: a preset of `select`. Not with `select`.\n\n| `view` | Returns |\n|---|---|\n| `short` | `id`, `name`, `public_name`, `campaign_type`, `setup_complete`. For finding a campaign by name. |\n| `basic` (default) | `short`, plus `distribution` and `fields`; each supplier's `id`, `name`, `position`, `client`, `paused`, `test_mode`, `api_specs_url` and `pricing_summary`; each buyer's `id`, `name`, `position`, `client`, `paused`, `delivery.type`, `weight`, `weight_share`, `buyer_group_id` and `pricing_summary`. |\n| `full` | everything: also `settings`, each supplier's and buyer's `pricing` in the shape the update takes, a supplier's `bidding`, and a buyer's whole `delivery`. |",
+          "title": "View",
+          "enum": [
+            "short",
+            "basic",
+            "full"
+          ],
+          "x-enum-searchable": true
+        },
+        "buyers": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which buyers to include: `active` (the default) leaves out paused buyers, `all` includes them.",
+          "title": "Buyers",
+          "enum": [
+            "active",
+            "all"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "LeadProsperGetCampaignConfig",
+      "type": "object"
+    },
+    "LeadProsperGetLeadConfig": {
+      "additionalProperties": false,
+      "description": "Get a lead.",
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Get a lead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get a lead",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "id": {
+          "description": "Lead id.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Lead ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "LeadProsperGetLeadConfig",
+      "type": "object"
+    },
+    "LeadProsperListCampaignsConfig": {
+      "additionalProperties": false,
+      "description": "List campaigns.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "List campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List campaigns",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "view": {
+          "anyOf": [
+            {
+              "enum": [
+                "short",
+                "basic",
+                "full"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How much of each campaign to return: a preset of `select`. Not with `select`.\n\n| `view` | Returns |\n|---|---|\n| `short` | `id`, `name`, `public_name`, `campaign_type`, `setup_complete`. For finding a campaign by name. |\n| `basic` (default) | `short`, plus `distribution` and `fields`; each supplier's `id`, `name`, `position`, `client`, `paused`, `test_mode`, `api_specs_url` and `pricing_summary`; each buyer's `id`, `name`, `position`, `client`, `paused`, `delivery.type`, `weight`, `weight_share`, `buyer_group_id` and `pricing_summary`. |\n| `full` | everything: also `settings`, each supplier's and buyer's `pricing` in the shape the update takes, a supplier's `bidding`, and a buyer's whole `delivery`. |",
+          "title": "View",
+          "enum": [
+            "short",
+            "basic",
+            "full"
+          ],
+          "x-enum-searchable": true
+        },
+        "setup": {
+          "anyOf": [
+            {
+              "enum": [
+                "complete",
+                "incomplete",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which campaigns to list, by `setup_complete`: `complete`, those with at least one supplier and one buyer; `incomplete`, those still missing one; `all`, both. Defaults to `complete`.",
+          "title": "Setup",
+          "enum": [
+            "complete",
+            "incomplete",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "name_contains": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only campaigns whose name or public name contains this text. Case-insensitive.",
+          "title": "Name Contains"
+        },
+        "buyers": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which buyers to include. `active`, the default, leaves out buyers that are paused, because a paused buyer is not receiving leads; `all` includes them. Suppliers are unaffected either way - they always appear, with their own `paused` flag. Ignored under `view=short`, which carries no buyers at all.",
+          "title": "Buyers",
+          "enum": [
+            "active",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Campaigns per page. 100 is also the ceiling, so this can only ask for a smaller page.",
+          "title": "Limit"
+        },
+        "search_after": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `search_after` value from the previous page. Omit for the first page.",
+          "title": "Search After"
+        }
+      },
+      "title": "LeadProsperListCampaignsConfig",
+      "type": "object"
+    },
+    "LeadProsperListCapsConfig": {
+      "additionalProperties": false,
+      "description": "Read caps.",
+      "properties": {
+        "operation": {
+          "const": "list_caps",
+          "default": "list_caps",
+          "title": "Read caps",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Read caps",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "campaign": {
+          "description": "Campaign id.",
+          "minimum": 1,
+          "title": "Campaign",
+          "type": "integer"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "suppliers",
+                "buyers"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`suppliers` or `buyers`. Omit to cover both.",
+          "title": "Scope",
+          "enum": [
+            "suppliers",
+            "buyers"
+          ],
+          "x-enum-searchable": true
+        },
+        "target": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One supplier or buyer id. Omit to cover all of them within the scope.",
+          "title": "Target"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Entries per page.",
+          "title": "Limit"
+        },
+        "search_after": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `search_after` value from the previous page. Omit for the first page.",
+          "title": "Search After"
+        }
+      },
+      "required": [
+        "campaign"
+      ],
+      "title": "LeadProsperListCapsConfig",
+      "type": "object"
+    },
+    "LeadProsperListClientsConfig": {
+      "additionalProperties": false,
+      "description": "List clients.",
+      "properties": {
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "List clients",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List clients",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An email address, matched exactly.",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A phone number, exactly as stored.",
+          "title": "Phone"
+        },
+        "search_after": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `search_after` value from the previous page. Omit for the first page.",
+          "title": "Search After"
+        },
+        "include_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include clients that have been deleted.",
+          "title": "Include Deleted"
+        }
+      },
+      "title": "LeadProsperListClientsConfig",
+      "type": "object"
+    },
+    "LeadProsperListFiltersConfig": {
+      "additionalProperties": false,
+      "description": "List filters.",
+      "properties": {
+        "operation": {
+          "const": "list_filters",
+          "default": "list_filters",
+          "title": "List filters",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List filters",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "campaign": {
+          "description": "Campaign id.",
+          "minimum": 1,
+          "title": "Campaign",
+          "type": "integer"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "suppliers",
+                "buyers",
+                "buyer_groups",
+                "global"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`suppliers`, `buyers`, `buyer_groups` or `global`. Omit to cover every scope.",
+          "title": "Scope",
+          "enum": [
+            "suppliers",
+            "buyers",
+            "buyer_groups",
+            "global"
+          ],
+          "x-enum-searchable": true
+        },
+        "target": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One supplier or buyer id, or on `buyer_groups` one buyer group id. Omit to cover all of them within the scope.",
+          "title": "Target"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Entries per page.",
+          "title": "Limit"
+        },
+        "search_after": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `search_after` value from the previous page. Omit for the first page.",
+          "title": "Search After"
+        }
+      },
+      "required": [
+        "campaign"
+      ],
+      "title": "LeadProsperListFiltersConfig",
+      "type": "object"
+    },
+    "LeadProsperListLeadsConfig": {
+      "additionalProperties": false,
+      "description": "List leads.",
+      "properties": {
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "List leads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List leads",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "campaign": {
+          "description": "Campaign id.",
+          "minimum": 1,
+          "title": "Campaign",
+          "type": "integer"
+        },
+        "start_date": {
+          "description": "Start of the window, `YYYY-MM-DD` or `YYYY-MM-DD HH:MM:SS`.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End of the window, inclusive.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "End Date",
+          "type": "string"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA timezone the window is read in. Defaults to UTC.",
+          "title": "Timezone"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "accepted",
+                "duplicated",
+                "error"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only leads with this outcome.",
+          "title": "Status",
+          "enum": [
+            "accepted",
+            "duplicated",
+            "error"
+          ],
+          "x-enum-searchable": true
+        },
+        "supplier": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only leads from this supplier.",
+          "title": "Supplier"
+        },
+        "buyer": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only leads that reached this buyer. Excludes test leads, so it cannot be combined with `test=true`.",
+          "title": "Buyer"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only these `lead_data` fields, comma-separated - e.g. `email,state`. Everything else about a lead is always returned. Omit for all fields.",
+          "title": "Select"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leads per page, up to 500. Default 100. Page with `search_after` rather than raising this.",
+          "title": "Limit"
+        },
+        "test": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only test leads, or only live ones.",
+          "title": "Test"
+        },
+        "search_after": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste the decimal cursor from the previous lead page; sent as the documented integer query parameter.",
+          "title": "Search After"
+        }
+      },
+      "required": [
+        "campaign",
+        "start_date",
+        "end_date"
+      ],
+      "title": "LeadProsperListLeadsConfig",
+      "type": "object"
+    },
+    "LeadProsperOnNewLeadConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_lead",
+          "default": "on_new_lead",
+          "title": "On New Lead (Latest 500)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Lead (Latest 500)",
+          "x-is-trigger": true
+        },
+        "campaign": {
+          "minimum": 1,
+          "title": "Campaign ID",
+          "type": "integer"
+        },
+        "lookback_hours": {
+          "default": 48,
+          "description": "Monitor up to the latest 500 leads per poll in a rolling UTC window; already seen IDs are suppressed. Choose a window longer than the schedule interval and an interval short enough for campaign volume. The output includes the continuation cursor for further reads.",
+          "maximum": 168,
+          "minimum": 1,
+          "title": "Look back (hours)",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign"
+      ],
+      "title": "LeadProsperOnNewLeadConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "LeadProsperPauseBuyerConfig": {
+      "additionalProperties": false,
+      "description": "Pause a buyer.",
+      "properties": {
+        "operation": {
+          "const": "pause_buyer",
+          "default": "pause_buyer",
+          "title": "Pause a buyer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Pause a buyer",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "campaign": {
+          "description": "Campaign id.",
+          "minimum": 1,
+          "title": "Campaign",
+          "type": "integer"
+        },
+        "buyer": {
+          "description": "Buyer id.",
+          "minimum": 1,
+          "title": "Buyer",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign",
+        "buyer"
+      ],
+      "title": "LeadProsperPauseBuyerConfig",
+      "type": "object"
+    },
+    "LeadProsperPauseFilterConfig": {
+      "additionalProperties": false,
+      "description": "Pause a filter.",
+      "properties": {
+        "operation": {
+          "const": "pause_filter",
+          "default": "pause_filter",
+          "title": "Pause a filter",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Pause a filter",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "filter": {
+          "description": "Filter id. Globally unique.",
+          "minimum": 1,
+          "title": "Filter",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "filter"
+      ],
+      "title": "LeadProsperPauseFilterConfig",
+      "type": "object"
+    },
+    "LeadProsperPauseSupplierConfig": {
+      "additionalProperties": false,
+      "description": "Pause a supplier.",
+      "properties": {
+        "operation": {
+          "const": "pause_supplier",
+          "default": "pause_supplier",
+          "title": "Pause a supplier",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Pause a supplier",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "campaign": {
+          "description": "Campaign id.",
+          "minimum": 1,
+          "title": "Campaign",
+          "type": "integer"
+        },
+        "supplier": {
+          "description": "Supplier id.",
+          "minimum": 1,
+          "title": "Supplier",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign",
+        "supplier"
+      ],
+      "title": "LeadProsperPauseSupplierConfig",
+      "type": "object"
+    },
+    "LeadProsperResumeBuyerConfig": {
+      "additionalProperties": false,
+      "description": "Resume a buyer.",
+      "properties": {
+        "operation": {
+          "const": "resume_buyer",
+          "default": "resume_buyer",
+          "title": "Resume a buyer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Resume a buyer",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "campaign": {
+          "description": "Campaign id.",
+          "minimum": 1,
+          "title": "Campaign",
+          "type": "integer"
+        },
+        "buyer": {
+          "description": "Buyer id.",
+          "minimum": 1,
+          "title": "Buyer",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign",
+        "buyer"
+      ],
+      "title": "LeadProsperResumeBuyerConfig",
+      "type": "object"
+    },
+    "LeadProsperResumeFilterConfig": {
+      "additionalProperties": false,
+      "description": "Resume a filter.",
+      "properties": {
+        "operation": {
+          "const": "resume_filter",
+          "default": "resume_filter",
+          "title": "Resume a filter",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Resume a filter",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "filter": {
+          "description": "Filter id. Globally unique.",
+          "minimum": 1,
+          "title": "Filter",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "filter"
+      ],
+      "title": "LeadProsperResumeFilterConfig",
+      "type": "object"
+    },
+    "LeadProsperResumeSupplierConfig": {
+      "additionalProperties": false,
+      "description": "Resume a supplier.",
+      "properties": {
+        "operation": {
+          "const": "resume_supplier",
+          "default": "resume_supplier",
+          "title": "Resume a supplier",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Resume a supplier",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "campaign": {
+          "description": "Campaign id.",
+          "minimum": 1,
+          "title": "Campaign",
+          "type": "integer"
+        },
+        "supplier": {
+          "description": "Supplier id.",
+          "minimum": 1,
+          "title": "Supplier",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign",
+        "supplier"
+      ],
+      "title": "LeadProsperResumeSupplierConfig",
+      "type": "object"
+    },
+    "LeadProsperReturnLeadConfig": {
+      "additionalProperties": false,
+      "description": "Return a lead.",
+      "properties": {
+        "operation": {
+          "const": "return_lead",
+          "default": "return_lead",
+          "title": "Return a lead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Return a lead",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "lead_id": {
+          "description": "The lead to return.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "reason": {
+          "description": "Why it is being returned.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "portal_refund": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Also refund the buyer in the portal.",
+          "title": "Portal Refund"
+        }
+      },
+      "required": [
+        "lead_id",
+        "reason"
+      ],
+      "title": "LeadProsperReturnLeadConfig",
+      "type": "object"
+    },
+    "LeadProsperSetCapsConfig": {
+      "additionalProperties": false,
+      "description": "Set caps.",
+      "properties": {
+        "operation": {
+          "const": "set_caps",
+          "default": "set_caps",
+          "title": "Set caps",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Set caps",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "campaign": {
+          "description": "Campaign id.",
+          "minimum": 1,
+          "title": "Campaign",
+          "type": "integer"
+        },
+        "scope": {
+          "description": "`suppliers` or `buyers`.",
+          "enum": [
+            "suppliers",
+            "buyers"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "target": {
+          "description": "The supplier or buyer id.",
+          "minimum": 1,
+          "title": "Target",
+          "type": "integer"
+        },
+        "leads_day": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero means unlimited; omitted windows stay unchanged.",
+          "title": "Day leads cap"
+        },
+        "leads_week": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero means unlimited; omitted windows stay unchanged.",
+          "title": "Week leads cap"
+        },
+        "leads_month": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero means unlimited; omitted windows stay unchanged.",
+          "title": "Month leads cap"
+        },
+        "leads_total": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero means unlimited; omitted windows stay unchanged.",
+          "title": "Total leads cap"
+        },
+        "budget_day": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero means unlimited; omitted windows stay unchanged.",
+          "title": "Day budget cap"
+        },
+        "budget_week": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero means unlimited; omitted windows stay unchanged.",
+          "title": "Week budget cap"
+        },
+        "budget_month": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero means unlimited; omitted windows stay unchanged.",
+          "title": "Month budget cap"
+        },
+        "budget_total": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero means unlimited; omitted windows stay unchanged.",
+          "title": "Total budget cap"
+        }
+      },
+      "required": [
+        "campaign",
+        "scope",
+        "target"
+      ],
+      "title": "LeadProsperSetCapsConfig",
+      "type": "object"
+    },
+    "LeadProsperUpdateCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Update a campaign.",
+      "properties": {
+        "operation": {
+          "const": "update_campaign",
+          "default": "update_campaign",
+          "title": "Update a campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update a campaign",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "campaign": {
+          "description": "Campaign id.",
+          "minimum": 1,
+          "title": "Campaign",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The campaign's name.",
+          "title": "Name"
+        },
+        "public_name": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name shown to suppliers. `null` clears it, and `name` is shown.",
+          "title": "Public Name"
+        }
+      },
+      "required": [
+        "campaign"
+      ],
+      "title": "LeadProsperUpdateCampaignConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "campaign_statistics": "#/$defs/LeadProsperCampaignStatisticsConfig",
+          "create_campaign": "#/$defs/LeadProsperCreateCampaignConfig",
+          "create_client": "#/$defs/LeadProsperCreateClientConfig",
+          "get_campaign": "#/$defs/LeadProsperGetCampaignConfig",
+          "get_lead": "#/$defs/LeadProsperGetLeadConfig",
+          "list_campaigns": "#/$defs/LeadProsperListCampaignsConfig",
+          "list_caps": "#/$defs/LeadProsperListCapsConfig",
+          "list_clients": "#/$defs/LeadProsperListClientsConfig",
+          "list_filters": "#/$defs/LeadProsperListFiltersConfig",
+          "list_leads": "#/$defs/LeadProsperListLeadsConfig",
+          "on_new_lead": "#/$defs/LeadProsperOnNewLeadConfig",
+          "pause_buyer": "#/$defs/LeadProsperPauseBuyerConfig",
+          "pause_filter": "#/$defs/LeadProsperPauseFilterConfig",
+          "pause_supplier": "#/$defs/LeadProsperPauseSupplierConfig",
+          "resume_buyer": "#/$defs/LeadProsperResumeBuyerConfig",
+          "resume_filter": "#/$defs/LeadProsperResumeFilterConfig",
+          "resume_supplier": "#/$defs/LeadProsperResumeSupplierConfig",
+          "return_lead": "#/$defs/LeadProsperReturnLeadConfig",
+          "set_caps": "#/$defs/LeadProsperSetCapsConfig",
+          "update_campaign": "#/$defs/LeadProsperUpdateCampaignConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LeadProsperListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperCreateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperUpdateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperPauseBuyerConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperResumeBuyerConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperPauseSupplierConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperResumeSupplierConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperListCapsConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperSetCapsConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperListFiltersConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperPauseFilterConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperResumeFilterConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperGetLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperReturnLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperListClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperCreateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperCampaignStatisticsConfig"
+        },
+        {
+          "$ref": "#/$defs/LeadProsperOnNewLeadConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LeadProsperAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Lead-prosper Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Pause a Lead Prosper buyer",
+    "Set a buyer's daily lead cap",
+    "Return a Lead Prosper lead",
+    "Watch a campaign for new leads"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

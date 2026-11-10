@@ -1,0 +1,1683 @@
+{
+  "list_campaigns": {
+    "method": "GET",
+    "path": "/v2/campaigns",
+    "body": {
+      "status": "success",
+      "data": {
+        "campaigns": [
+          {
+            "id": 8977,
+            "name": "Home Services",
+            "public_name": "Home Services",
+            "campaign_type": "direct_post",
+            "setup_complete": true,
+            "distribution": {
+              "type": "round_robin",
+              "buyers_limit": 1
+            },
+            "suppliers": [
+              {
+                "id": 4651,
+                "name": "Harborview",
+                "position": 1,
+                "client": {
+                  "id": 48,
+                  "company": "Harborview"
+                },
+                "paused": false,
+                "test_mode": false,
+                "api_specs_url": "https://api.leadprosper.io/api-specs?hash=569a19vf1wg",
+                "pricing_summary": {
+                  "type": "static",
+                  "min": 0,
+                  "max": 0
+                }
+              },
+              {
+                "id": 4652,
+                "name": "Foxglove",
+                "position": 2,
+                "client": {
+                  "id": 49,
+                  "company": "Foxglove"
+                },
+                "paused": false,
+                "test_mode": false,
+                "api_specs_url": "https://api.leadprosper.io/api-specs?hash=2k9a76gb1dg",
+                "pricing_summary": {
+                  "type": "static",
+                  "min": 0,
+                  "max": 0
+                }
+              },
+              {
+                "id": 4653,
+                "name": "Harborview",
+                "position": 3,
+                "client": {
+                  "id": 48,
+                  "company": "Harborview"
+                },
+                "paused": false,
+                "test_mode": false,
+                "api_specs_url": "https://api.leadprosper.io/api-specs?hash=r2wh9mrf2p6",
+                "pricing_summary": {
+                  "type": "rev_share",
+                  "min": null,
+                  "max": null,
+                  "percentage": 30
+                }
+              }
+            ],
+            "buyers": [
+              {
+                "id": 4654,
+                "name": "Acme Buyer - Direct post",
+                "position": 1,
+                "client": {
+                  "id": 50,
+                  "company": "Granite Path"
+                },
+                "paused": true,
+                "delivery": {
+                  "type": "direct_post"
+                },
+                "weight": null,
+                "weight_share": null,
+                "buyer_group_id": null,
+                "pricing_summary": {
+                  "type": "dynamic",
+                  "min": 12.5,
+                  "max": 20
+                }
+              },
+              {
+                "id": 4655,
+                "name": "Acme Buyer - Lead store",
+                "position": 2,
+                "client": {
+                  "id": 50,
+                  "company": "Granite Path"
+                },
+                "paused": true,
+                "delivery": {
+                  "type": "lead_store"
+                },
+                "weight": null,
+                "weight_share": null,
+                "buyer_group_id": null,
+                "pricing_summary": {
+                  "type": "static",
+                  "min": 8,
+                  "max": 8
+                }
+              },
+              {
+                "id": 4656,
+                "name": "Acme Buyer - Email",
+                "position": 3,
+                "client": {
+                  "id": 50,
+                  "company": "Granite Path"
+                },
+                "paused": true,
+                "delivery": {
+                  "type": "email"
+                },
+                "weight": null,
+                "weight_share": null,
+                "buyer_group_id": null,
+                "pricing_summary": {
+                  "type": "static",
+                  "min": 5,
+                  "max": 5
+                }
+              }
+            ],
+            "fields": [
+              {
+                "name": "first_name",
+                "type": "text",
+                "post_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "Text",
+                  "description": "Any text"
+                }
+              },
+              {
+                "name": "last_name",
+                "type": "text",
+                "post_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "Text",
+                  "description": "Any text"
+                }
+              },
+              {
+                "name": "email",
+                "type": "email",
+                "post_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "john@doe.com",
+                  "description": "Valid formatted email address"
+                }
+              },
+              {
+                "name": "phone",
+                "type": "phone",
+                "post_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "6503271100",
+                  "description": "10 digits",
+                  "pattern": "^[0-9]{10}$"
+                }
+              },
+              {
+                "name": "gender",
+                "type": "enum",
+                "post_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "List of allowed values",
+                  "description": "Ex: Yes, No, Male, Female, etc"
+                },
+                "allowed_values": [
+                  "Male",
+                  "Female",
+                  "Other"
+                ]
+              }
+            ]
+          },
+          {
+            "id": 8979,
+            "name": "Auto Insurance",
+            "public_name": "Auto Insurance",
+            "campaign_type": "ping_post_exchange",
+            "setup_complete": true,
+            "distribution": null,
+            "suppliers": [
+              {
+                "id": 4657,
+                "name": "Harborview",
+                "position": 1,
+                "client": {
+                  "id": 48,
+                  "company": "Harborview"
+                },
+                "paused": false,
+                "test_mode": false,
+                "api_specs_url": "https://api.leadprosper.io/api-specs?hash=919bwgqf1qz",
+                "pricing_summary": null
+              }
+            ],
+            "buyers": [
+              {
+                "id": 4658,
+                "name": "Acme Buyer - Ping post",
+                "position": 1,
+                "client": {
+                  "id": 50,
+                  "company": "Granite Path"
+                },
+                "paused": true,
+                "delivery": {
+                  "type": "ping_post"
+                },
+                "weight": null,
+                "weight_share": null,
+                "buyer_group_id": null,
+                "pricing_summary": {
+                  "type": "real_time",
+                  "min": null,
+                  "max": null
+                }
+              }
+            ],
+            "fields": [
+              {
+                "name": "first_name",
+                "type": "text",
+                "post_required": false,
+                "ping_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "Text",
+                  "description": "Any text"
+                }
+              },
+              {
+                "name": "last_name",
+                "type": "text",
+                "post_required": false,
+                "ping_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "Text",
+                  "description": "Any text"
+                }
+              },
+              {
+                "name": "email",
+                "type": "email",
+                "post_required": false,
+                "ping_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "john@doe.com",
+                  "description": "Valid formatted email address"
+                }
+              },
+              {
+                "name": "phone",
+                "type": "phone",
+                "post_required": false,
+                "ping_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "6503271100",
+                  "description": "10 digits",
+                  "pattern": "^[0-9]{10}$"
+                }
+              },
+              {
+                "name": "gender",
+                "type": "enum",
+                "post_required": false,
+                "ping_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "List of allowed values",
+                  "description": "Ex: Yes, No, Male, Female, etc"
+                },
+                "allowed_values": [
+                  "Male",
+                  "Female",
+                  "Other"
+                ]
+              }
+            ]
+          },
+          {
+            "id": 8981,
+            "name": "Solar",
+            "public_name": "Solar",
+            "campaign_type": "one_to_one",
+            "setup_complete": true,
+            "distribution": null,
+            "suppliers": [
+              {
+                "id": 4659,
+                "name": "Harborview",
+                "position": 1,
+                "client": {
+                  "id": 48,
+                  "company": "Harborview"
+                },
+                "paused": false,
+                "test_mode": false,
+                "api_specs_url": "https://api.leadprosper.io/api-specs?hash=1r9a7gptqed",
+                "pricing_summary": null
+              }
+            ],
+            "buyers": [
+              {
+                "id": 4660,
+                "name": "Acme Buyer - One-to-one",
+                "position": 1,
+                "client": {
+                  "id": 50,
+                  "company": "Granite Path"
+                },
+                "paused": true,
+                "delivery": {
+                  "type": "ping_post"
+                },
+                "weight": null,
+                "weight_share": null,
+                "buyer_group_id": null,
+                "pricing_summary": {
+                  "type": "real_time",
+                  "min": null,
+                  "max": null
+                }
+              }
+            ],
+            "fields": [
+              {
+                "name": "first_name",
+                "type": "text",
+                "post_required": false,
+                "ping_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "Text",
+                  "description": "Any text"
+                }
+              },
+              {
+                "name": "last_name",
+                "type": "text",
+                "post_required": false,
+                "ping_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "Text",
+                  "description": "Any text"
+                }
+              },
+              {
+                "name": "email",
+                "type": "email",
+                "post_required": false,
+                "ping_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "john@doe.com",
+                  "description": "Valid formatted email address"
+                }
+              },
+              {
+                "name": "phone",
+                "type": "phone",
+                "post_required": false,
+                "ping_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "6503271100",
+                  "description": "10 digits",
+                  "pattern": "^[0-9]{10}$"
+                }
+              },
+              {
+                "name": "gender",
+                "type": "enum",
+                "post_required": false,
+                "ping_required": false,
+                "sensitive": false,
+                "api_specs_visible": true,
+                "customer_portal_visible": true,
+                "field_description": null,
+                "format": {
+                  "id": 1,
+                  "example": "List of allowed values",
+                  "description": "Ex: Yes, No, Male, Female, etc"
+                },
+                "allowed_values": [
+                  "Male",
+                  "Female",
+                  "Other"
+                ]
+              }
+            ]
+          }
+        ],
+        "search_after": null,
+        "has_more": false
+      }
+    },
+    "config": {
+      "operation": "list_campaigns"
+    }
+  },
+  "get_campaign": {
+    "method": "GET",
+    "path": "/v2/campaigns/{id}",
+    "body": {
+      "status": "success",
+      "data": {
+        "id": 8977,
+        "name": "Home Services",
+        "public_name": "Home Services",
+        "campaign_type": "direct_post",
+        "setup_complete": true,
+        "distribution": {
+          "type": "round_robin",
+          "buyers_limit": 1
+        },
+        "suppliers": [
+          {
+            "id": 4651,
+            "name": "Harborview",
+            "position": 1,
+            "client": {
+              "id": 48,
+              "company": "Harborview"
+            },
+            "paused": false,
+            "test_mode": false,
+            "api_specs_url": "https://api.leadprosper.io/api-specs?hash=569a19vf1wg",
+            "pricing_summary": {
+              "type": "static",
+              "min": 0,
+              "max": 0
+            }
+          },
+          {
+            "id": 4652,
+            "name": "Foxglove",
+            "position": 2,
+            "client": {
+              "id": 49,
+              "company": "Foxglove"
+            },
+            "paused": false,
+            "test_mode": false,
+            "api_specs_url": "https://api.leadprosper.io/api-specs?hash=2k9a76gb1dg",
+            "pricing_summary": {
+              "type": "static",
+              "min": 0,
+              "max": 0
+            }
+          },
+          {
+            "id": 4653,
+            "name": "Harborview",
+            "position": 3,
+            "client": {
+              "id": 48,
+              "company": "Harborview"
+            },
+            "paused": false,
+            "test_mode": false,
+            "api_specs_url": "https://api.leadprosper.io/api-specs?hash=r2wh9mrf2p6",
+            "pricing_summary": {
+              "type": "rev_share",
+              "min": null,
+              "max": null,
+              "percentage": 30
+            }
+          }
+        ],
+        "buyers": [
+          {
+            "id": 4654,
+            "name": "Acme Buyer - Direct post",
+            "position": 1,
+            "client": {
+              "id": 50,
+              "company": "Granite Path"
+            },
+            "paused": true,
+            "delivery": {
+              "type": "direct_post"
+            },
+            "weight": null,
+            "weight_share": null,
+            "buyer_group_id": null,
+            "pricing_summary": {
+              "type": "dynamic",
+              "min": 12.5,
+              "max": 20
+            }
+          },
+          {
+            "id": 4655,
+            "name": "Acme Buyer - Lead store",
+            "position": 2,
+            "client": {
+              "id": 50,
+              "company": "Granite Path"
+            },
+            "paused": true,
+            "delivery": {
+              "type": "lead_store"
+            },
+            "weight": null,
+            "weight_share": null,
+            "buyer_group_id": null,
+            "pricing_summary": {
+              "type": "static",
+              "min": 8,
+              "max": 8
+            }
+          },
+          {
+            "id": 4656,
+            "name": "Acme Buyer - Email",
+            "position": 3,
+            "client": {
+              "id": 50,
+              "company": "Granite Path"
+            },
+            "paused": true,
+            "delivery": {
+              "type": "email"
+            },
+            "weight": null,
+            "weight_share": null,
+            "buyer_group_id": null,
+            "pricing_summary": {
+              "type": "static",
+              "min": 5,
+              "max": 5
+            }
+          }
+        ],
+        "fields": [
+          {
+            "name": "first_name",
+            "type": "text",
+            "post_required": false,
+            "sensitive": false,
+            "api_specs_visible": true,
+            "customer_portal_visible": true,
+            "field_description": null,
+            "format": {
+              "id": 1,
+              "example": "Text",
+              "description": "Any text"
+            }
+          },
+          {
+            "name": "last_name",
+            "type": "text",
+            "post_required": false,
+            "sensitive": false,
+            "api_specs_visible": true,
+            "customer_portal_visible": true,
+            "field_description": null,
+            "format": {
+              "id": 1,
+              "example": "Text",
+              "description": "Any text"
+            }
+          },
+          {
+            "name": "email",
+            "type": "email",
+            "post_required": false,
+            "sensitive": false,
+            "api_specs_visible": true,
+            "customer_portal_visible": true,
+            "field_description": null,
+            "format": {
+              "id": 1,
+              "example": "john@doe.com",
+              "description": "Valid formatted email address"
+            }
+          },
+          {
+            "name": "phone",
+            "type": "phone",
+            "post_required": false,
+            "sensitive": false,
+            "api_specs_visible": true,
+            "customer_portal_visible": true,
+            "field_description": null,
+            "format": {
+              "id": 1,
+              "example": "6503271100",
+              "description": "10 digits",
+              "pattern": "^[0-9]{10}$"
+            }
+          },
+          {
+            "name": "gender",
+            "type": "enum",
+            "post_required": false,
+            "sensitive": false,
+            "api_specs_visible": true,
+            "customer_portal_visible": true,
+            "field_description": null,
+            "format": {
+              "id": 1,
+              "example": "List of allowed values",
+              "description": "Ex: Yes, No, Male, Female, etc"
+            },
+            "allowed_values": [
+              "Male",
+              "Female",
+              "Other"
+            ]
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "get_campaign",
+      "id": 112
+    }
+  },
+  "create_campaign": {
+    "method": "POST",
+    "path": "/v2/campaigns",
+    "body": {
+      "status": "success",
+      "data": {
+        "id": 8971,
+        "name": "Home Refinance",
+        "public_name": "Refinance",
+        "campaign_type": "direct_post",
+        "setup_complete": false,
+        "distribution": {
+          "type": "round_robin",
+          "buyers_limit": 1
+        },
+        "suppliers": [],
+        "buyers": [],
+        "fields": [
+          {
+            "name": "first_name",
+            "type": "text",
+            "post_required": false,
+            "sensitive": false,
+            "api_specs_visible": true,
+            "customer_portal_visible": true,
+            "field_description": null,
+            "format": {
+              "id": 1,
+              "example": "Text",
+              "description": "Any text"
+            }
+          },
+          {
+            "name": "last_name",
+            "type": "text",
+            "post_required": false,
+            "sensitive": false,
+            "api_specs_visible": true,
+            "customer_portal_visible": true,
+            "field_description": null,
+            "format": {
+              "id": 1,
+              "example": "Text",
+              "description": "Any text"
+            }
+          },
+          {
+            "name": "email",
+            "type": "email",
+            "post_required": false,
+            "sensitive": false,
+            "api_specs_visible": true,
+            "customer_portal_visible": true,
+            "field_description": null,
+            "format": {
+              "id": 1,
+              "example": "john@doe.com",
+              "description": "Valid formatted email address"
+            }
+          },
+          {
+            "name": "phone",
+            "type": "phone",
+            "post_required": false,
+            "sensitive": false,
+            "api_specs_visible": true,
+            "customer_portal_visible": true,
+            "field_description": null,
+            "format": {
+              "id": 1,
+              "example": "6503271100",
+              "description": "10 digits",
+              "pattern": "^[0-9]{10}$"
+            }
+          },
+          {
+            "name": "gender",
+            "type": "enum",
+            "post_required": false,
+            "sensitive": false,
+            "api_specs_visible": true,
+            "customer_portal_visible": true,
+            "field_description": null,
+            "format": {
+              "id": 1,
+              "example": "List of allowed values",
+              "description": "Ex: Yes, No, Male, Female, etc"
+            },
+            "allowed_values": [
+              "Male",
+              "Female",
+              "Other"
+            ]
+          }
+        ]
+      }
+    },
+    "config": {
+      "operation": "create_campaign",
+      "name": "Home Refinance",
+      "campaign_type": "direct_post"
+    }
+  },
+  "update_campaign": {
+    "method": "PATCH",
+    "path": "/v2/campaigns/{campaign}",
+    "body": {
+      "status": "success",
+      "data": {
+        "id": 8977,
+        "name": "Solar Leads",
+        "public_name": "Solar",
+        "campaign_type": "direct_post",
+        "setup_complete": true,
+        "distribution": {
+          "type": "round_robin",
+          "buyers_limit": 1
+        },
+        "settings": {
+          "exchange": null,
+          "one_to_one": null,
+          "pricing": {
+            "min_margin": null,
+            "min_sell_price": null
+          },
+          "supplier_response": {
+            "custom_keys": null,
+            "buyers": null,
+            "validation_errors": null,
+            "include_meta": false
+          },
+          "dupe_check": null,
+          "cross_campaign_dupe_check": null
+        }
+      }
+    },
+    "config": {
+      "operation": "update_campaign",
+      "campaign": 6889,
+      "name": "Home Refinance"
+    }
+  },
+  "pause_buyer": {
+    "method": "GET",
+    "path": "/v2/campaigns/{campaign}/buyer/{buyer}/pause",
+    "body": {
+      "status": "success",
+      "data": []
+    },
+    "config": {
+      "operation": "pause_buyer",
+      "campaign": 6889,
+      "buyer": 572
+    }
+  },
+  "resume_buyer": {
+    "method": "GET",
+    "path": "/v2/campaigns/{campaign}/buyer/{buyer}/resume",
+    "body": {
+      "status": "success",
+      "data": []
+    },
+    "config": {
+      "operation": "resume_buyer",
+      "campaign": 6889,
+      "buyer": 572
+    }
+  },
+  "pause_supplier": {
+    "method": "GET",
+    "path": "/v2/campaigns/{campaign}/supplier/{supplier}/pause",
+    "body": {
+      "status": "success",
+      "data": []
+    },
+    "config": {
+      "operation": "pause_supplier",
+      "campaign": 6889,
+      "supplier": 779
+    }
+  },
+  "resume_supplier": {
+    "method": "GET",
+    "path": "/v2/campaigns/{campaign}/supplier/{supplier}/resume",
+    "body": {
+      "status": "success",
+      "data": []
+    },
+    "config": {
+      "operation": "resume_supplier",
+      "campaign": 6889,
+      "supplier": 779
+    }
+  },
+  "list_caps": {
+    "method": "GET",
+    "path": "/v2/campaigns/{campaign}/caps/{scope}/{target}",
+    "body": {
+      "status": "success",
+      "data": {
+        "campaign_id": 8977,
+        "as_of": "2026-11-04T09:58:34Z",
+        "timezone": "America/Los_Angeles",
+        "caps": [
+          {
+            "scope": "buyers",
+            "target": {
+              "id": 4654,
+              "name": "Acme Buyer - Direct post",
+              "client": {
+                "id": 50,
+                "company": "Granite Path"
+              }
+            },
+            "paused": true,
+            "leads": {
+              "configured": true,
+              "rules": [
+                {
+                  "type": "day",
+                  "limit": 100,
+                  "used": 0,
+                  "remaining": 100,
+                  "reached": false
+                },
+                {
+                  "type": "total",
+                  "limit": 5000,
+                  "used": 0,
+                  "remaining": 5000,
+                  "reached": false
+                }
+              ]
+            },
+            "budget": {
+              "configured": false,
+              "rules": []
+            },
+            "ping": null,
+            "notifications": null
+          }
+        ],
+        "search_after": null,
+        "has_more": false
+      }
+    },
+    "config": {
+      "operation": "list_caps",
+      "campaign": 112
+    }
+  },
+  "set_caps": {
+    "method": "PATCH",
+    "path": "/v2/campaigns/{campaign}/caps/{scope}/{target}",
+    "body": {
+      "status": "success",
+      "data": {
+        "campaign_id": 8977,
+        "as_of": "2026-11-04T09:58:34Z",
+        "timezone": "America/Los_Angeles",
+        "caps": [
+          {
+            "scope": "buyers",
+            "target": {
+              "id": 4654,
+              "name": "Acme Buyer - Direct post",
+              "client": {
+                "id": 50,
+                "company": "Granite Path"
+              }
+            },
+            "paused": true,
+            "leads": {
+              "configured": true,
+              "rules": [
+                {
+                  "type": "day",
+                  "limit": 100,
+                  "used": 0,
+                  "remaining": 100,
+                  "reached": false
+                },
+                {
+                  "type": "total",
+                  "limit": 5000,
+                  "used": 0,
+                  "remaining": 5000,
+                  "reached": false
+                }
+              ]
+            },
+            "budget": {
+              "configured": false,
+              "rules": []
+            },
+            "ping": null,
+            "notifications": null
+          }
+        ],
+        "search_after": null,
+        "has_more": false
+      }
+    },
+    "config": {
+      "operation": "set_caps",
+      "campaign": 112,
+      "scope": "buyers",
+      "target": 571,
+      "leads_day": 100,
+      "leads_total": 5000
+    }
+  },
+  "list_filters": {
+    "method": "GET",
+    "path": "/v2/campaigns/{campaign}/filters/{scope}/{target}",
+    "body": {
+      "status": "success",
+      "data": {
+        "campaign_id": 112,
+        "filters": [
+          {
+            "id": 1498,
+            "scope": "buyers",
+            "target": {
+              "id": 571,
+              "name": "Acme Buyer - Email",
+              "client": {
+                "id": 50,
+                "company": "Granite Path"
+              }
+            },
+            "type": "FIELD",
+            "action": "BLOCK",
+            "condition": "MATCHES_ANY",
+            "field": "first_name",
+            "run_on": [],
+            "paused": false,
+            "values_count": 2,
+            "values_truncated": false,
+            "values": [
+              "sample-6a8d9ef17d32e",
+              "sample-6a8d9ef17d32f"
+            ]
+          }
+        ],
+        "search_after": null,
+        "has_more": false
+      }
+    },
+    "config": {
+      "operation": "list_filters",
+      "campaign": 112
+    }
+  },
+  "pause_filter": {
+    "method": "POST",
+    "path": "/v2/filters/{filter}/pause",
+    "body": {
+      "status": "success",
+      "data": {
+        "id": 4415,
+        "scope": "buyers",
+        "target": {
+          "id": 571,
+          "name": "Acme Buyer - Email",
+          "client": {
+            "id": 50,
+            "company": "Granite Path"
+          }
+        },
+        "type": "HTTP",
+        "action": "BLOCK",
+        "condition": null,
+        "field": null,
+        "run_on": [
+          "POST"
+        ],
+        "paused": true,
+        "request": {
+          "url": "https://verify.example.com/check",
+          "method": "POST",
+          "payload_type": "json",
+          "payload": "{\"email\": \"{{email}}\"}",
+          "headers": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "timeout": 30
+        },
+        "response": {
+          "type": "json",
+          "condition": "equal",
+          "key": "status",
+          "value": "rejected",
+          "continue_on_error": {
+            "enabled": true,
+            "status_patterns": [
+              "5xx"
+            ],
+            "excluded_codes": []
+          }
+        },
+        "custom_error_message": "Email not verified"
+      }
+    },
+    "config": {
+      "operation": "pause_filter",
+      "filter": 4415
+    }
+  },
+  "resume_filter": {
+    "method": "POST",
+    "path": "/v2/filters/{filter}/resume",
+    "body": {
+      "status": "success",
+      "data": {
+        "id": 4415,
+        "scope": "buyers",
+        "target": {
+          "id": 571,
+          "name": "Acme Buyer - Email",
+          "client": {
+            "id": 50,
+            "company": "Granite Path"
+          }
+        },
+        "type": "HTTP",
+        "action": "BLOCK",
+        "condition": null,
+        "field": null,
+        "run_on": [
+          "POST"
+        ],
+        "paused": false,
+        "request": {
+          "url": "https://verify.example.com/check",
+          "method": "POST",
+          "payload_type": "json",
+          "payload": "{\"email\": \"{{email}}\"}",
+          "headers": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "timeout": 30
+        },
+        "response": {
+          "type": "json",
+          "condition": "equal",
+          "key": "status",
+          "value": "rejected",
+          "continue_on_error": {
+            "enabled": true,
+            "status_patterns": [
+              "5xx"
+            ],
+            "excluded_codes": []
+          }
+        },
+        "custom_error_message": "Email not verified"
+      }
+    },
+    "config": {
+      "operation": "resume_filter",
+      "filter": 4415
+    }
+  },
+  "list_leads": {
+    "method": "GET",
+    "path": "/v2/leads",
+    "body": {
+      "leads": [
+        {
+          "id": "XT1MM6AB8JeApcHItO8n",
+          "lead_date_ms": "1787567060007",
+          "status": "ACCEPTED",
+          "error_code": 0,
+          "error_message": "",
+          "validation_error_provider": "",
+          "validation_error_description": "",
+          "test": false,
+          "cost": 0,
+          "revenue": 20,
+          "campaign_id": 6889,
+          "campaign_name": "Harborview",
+          "returned": true,
+          "return_reason": "test return",
+          "tags": [
+            "return"
+          ],
+          "lead_data": {
+            "first_name": "Jordan",
+            "last_name": "Bennett",
+            "email": "jordan.bennett@example.com",
+            "phone": "5551234567",
+            "zip_code": "10001",
+            "state": "NY",
+            "ip_address": "203.0.113.42",
+            "lp_subid1": "aff-1",
+            "lp_subid2": "creative-b"
+          },
+          "supplier": {
+            "id": 779,
+            "name": "Pinecrest Leads",
+            "client": {
+              "id": 48,
+              "company": "Harborview"
+            },
+            "outcome": {
+              "status": "ACCEPTED",
+              "family": "accepted",
+              "group": null,
+              "sub_group": null,
+              "details": null
+            }
+          },
+          "buyers": [
+            {
+              "id": 780,
+              "name": "Beacon Home Services",
+              "client": {
+                "id": 50,
+                "company": "Granite Path"
+              },
+              "status": "ACCEPTED",
+              "error_code": 0,
+              "error_message": "",
+              "sell_price": 20,
+              "returned": true,
+              "return_reason": "test return",
+              "attempted": true,
+              "outcome": {
+                "status": "ACCEPTED",
+                "family": "accepted",
+                "group": null,
+                "sub_group": null,
+                "details": null
+              }
+            }
+          ]
+        },
+        {
+          "id": "zeRMM6AB8GXak7GjWFgH",
+          "lead_date_ms": "1787567036422",
+          "status": "ERROR",
+          "error_code": 1029,
+          "error_message": "Rejected by filter: `state` is invalid",
+          "validation_error_provider": "",
+          "validation_error_description": "",
+          "test": false,
+          "cost": 0,
+          "revenue": 0,
+          "campaign_id": 6889,
+          "campaign_name": "Harborview",
+          "returned": false,
+          "return_reason": "",
+          "tags": [],
+          "lead_data": {
+            "first_name": "Jordan",
+            "last_name": "Bennett",
+            "email": "jordan.bennett@example.com",
+            "phone": "5551234567",
+            "zip_code": "10001",
+            "state": "NY",
+            "ip_address": "203.0.113.42",
+            "lp_subid1": "aff-1",
+            "lp_subid2": "creative-b"
+          },
+          "supplier": {
+            "id": 779,
+            "name": "Pinecrest Leads",
+            "client": {
+              "id": 48,
+              "company": "Harborview"
+            },
+            "outcome": {
+              "status": "ERROR",
+              "family": "refused",
+              "group": "filter",
+              "sub_group": "state",
+              "details": null
+            }
+          },
+          "buyers": []
+        }
+      ],
+      "search_after": "1787567036422"
+    },
+    "config": {
+      "operation": "list_leads",
+      "campaign": 6889,
+      "start_date": "2026-08-01",
+      "end_date": "2026-08-25"
+    }
+  },
+  "get_lead": {
+    "method": "GET",
+    "path": "/v2/lead/{id}",
+    "body": {
+      "id": "XT1MM6AB8JeApcHItO8n",
+      "lead_date_ms": "1787567060007",
+      "status": "ACCEPTED",
+      "error_code": 0,
+      "error_message": "",
+      "validation_error_provider": "",
+      "validation_error_description": "",
+      "test": false,
+      "cost": 0,
+      "revenue": 20,
+      "campaign_id": 6889,
+      "campaign_name": "Harborview",
+      "returned": true,
+      "return_reason": "test return",
+      "tags": [
+        "return"
+      ],
+      "lead_data": {
+        "first_name": "Jordan",
+        "last_name": "Bennett",
+        "email": "jordan.bennett@example.com",
+        "phone": "5551234567",
+        "zip_code": "10001",
+        "state": "NY",
+        "ip_address": "203.0.113.42",
+        "lp_subid1": "aff-1",
+        "lp_subid2": "creative-b"
+      },
+      "supplier": {
+        "id": 779,
+        "name": "Pinecrest Leads",
+        "client": {
+          "id": 48,
+          "company": "Harborview"
+        },
+        "outcome": {
+          "status": "ACCEPTED",
+          "family": "accepted",
+          "group": null,
+          "sub_group": null,
+          "details": null
+        }
+      },
+      "buyers": [
+        {
+          "id": 780,
+          "name": "Beacon Home Services",
+          "client": {
+            "id": 50,
+            "company": "Granite Path"
+          },
+          "status": "ACCEPTED",
+          "error_code": 0,
+          "error_message": "",
+          "sell_price": 20,
+          "returned": true,
+          "return_reason": "test return",
+          "attempted": true,
+          "outcome": {
+            "status": "ACCEPTED",
+            "family": "accepted",
+            "group": null,
+            "sub_group": null,
+            "details": null
+          }
+        }
+      ]
+    },
+    "config": {
+      "operation": "get_lead",
+      "id": "XT1MM6AB8JeApcHItO8n"
+    }
+  },
+  "return_lead": {
+    "method": "POST",
+    "path": "/v2/lead/return",
+    "body": {
+      "status": "success",
+      "data": []
+    },
+    "config": {
+      "operation": "return_lead",
+      "lead_id": "XT1MM6AB8JeApcHItO8n",
+      "reason": "test return"
+    }
+  },
+  "list_clients": {
+    "method": "GET",
+    "path": "/v2/clients",
+    "body": {
+      "status": "success",
+      "data": {
+        "clients": [
+          {
+            "id": 48,
+            "company": "Harborview",
+            "email": "user@example.com",
+            "first_name": "Drew",
+            "last_name": "Grant",
+            "phone": "5557582870",
+            "full_name": "Drew Grant",
+            "custom_properties": {
+              "cp1": "cp1s1",
+              "cp2": "cp2s1",
+              "cp3": "cp3s1"
+            }
+          },
+          {
+            "id": 49,
+            "company": "Foxglove",
+            "email": null,
+            "first_name": null,
+            "last_name": null,
+            "phone": null,
+            "full_name": "",
+            "custom_properties": {}
+          }
+        ],
+        "search_after": null,
+        "has_more": false
+      }
+    },
+    "config": {
+      "operation": "list_clients"
+    }
+  },
+  "create_client": {
+    "method": "POST",
+    "path": "/v2/clients",
+    "body": {
+      "status": "success",
+      "data": {
+        "id": 57,
+        "company": "Summit Lending",
+        "email": "user@example.com",
+        "first_name": "Jordan",
+        "last_name": "Carter",
+        "phone": "5557582870",
+        "full_name": "Jordan Carter",
+        "custom_properties": {}
+      }
+    },
+    "config": {
+      "operation": "create_client",
+      "company": "Summit Lending"
+    }
+  },
+  "campaign_statistics": {
+    "method": "GET",
+    "path": "/v2/stats",
+    "body": [
+      {
+        "campaign": {
+          "id": 6865,
+          "name": "Delta Reach",
+          "public_name": "Harborview",
+          "leads_total": 2,
+          "leads_accepted": 2,
+          "leads_duplicated": 0,
+          "leads_failed": 0,
+          "gross_accepted_rate": 100,
+          "return_rate": 0,
+          "net_accepted_rate": 100,
+          "total_buy": 0,
+          "total_sell": 0,
+          "profit": 0
+        },
+        "suppliers": [
+          {
+            "id": 719,
+            "name": "Supplier 1",
+            "client_id": 48,
+            "client_company": "Harborview",
+            "leads_total": 2,
+            "leads_accepted": 2,
+            "leads_duplicated": 0,
+            "leads_failed": 0,
+            "gross_accepted_rate": 100,
+            "leads_returned": 0,
+            "return_rate": 0,
+            "total_buy": 0,
+            "total_sell": 0,
+            "profit": 0,
+            "gross_cost": 0,
+            "gross_revenue": 0,
+            "gross_profit": 0,
+            "returned_cost": 0,
+            "returned_revenue": 0,
+            "net_leads_accepted": 2,
+            "net_accepted_rate": 100,
+            "net_profit": 0,
+            "net_cost": 0,
+            "net_revenue": 0,
+            "preping_total": 0,
+            "preping_accepted": 0,
+            "preping_failed": 0,
+            "pings_total": 4,
+            "pings_accepted": 3,
+            "pings_failed": 1,
+            "pings_avg_bid": 0,
+            "pings_post_ratio": 66.6667
+          }
+        ],
+        "buyers": [
+          {
+            "id": 767,
+            "name": "Acme Buyer - Ping Post",
+            "client_id": 50,
+            "client_company": "Granite Path",
+            "leads_total": 0,
+            "leads_accepted": 0,
+            "leads_duplicated": 0,
+            "leads_failed": 0,
+            "gross_accepted_rate": 0,
+            "leads_returned": 0,
+            "return_rate": 0,
+            "total_sell": 0,
+            "pings_total": 4,
+            "pings_accepted": 0,
+            "pings_failed": 4,
+            "returned_revenue": 0,
+            "gross_revenue": 0,
+            "net_leads_accepted": 0,
+            "net_accepted_rate": 0,
+            "net_revenue": 0
+          },
+          {
+            "id": 1290,
+            "name": "PP2",
+            "client_id": 50,
+            "client_company": "Granite Path",
+            "leads_total": 2,
+            "leads_accepted": 2,
+            "leads_duplicated": 0,
+            "leads_failed": 0,
+            "gross_accepted_rate": 100,
+            "leads_returned": 0,
+            "return_rate": 0,
+            "total_sell": 0,
+            "pings_total": 3,
+            "pings_accepted": 3,
+            "pings_failed": 0,
+            "returned_revenue": 0,
+            "gross_revenue": 0,
+            "net_leads_accepted": 2,
+            "net_accepted_rate": 100,
+            "net_revenue": 0
+          }
+        ]
+      },
+      {
+        "campaign": {
+          "id": 6867,
+          "name": "Foxglove",
+          "public_name": "Blue Harbor",
+          "leads_total": 3,
+          "leads_accepted": 3,
+          "leads_duplicated": 0,
+          "leads_failed": 0,
+          "gross_accepted_rate": 100,
+          "return_rate": 0,
+          "net_accepted_rate": 100,
+          "total_buy": 19.51,
+          "total_sell": 23.6,
+          "profit": 4.09
+        },
+        "suppliers": [
+          {
+            "id": 721,
+            "name": "Supplier 1",
+            "client_id": 48,
+            "client_company": "Harborview",
+            "leads_total": 3,
+            "leads_accepted": 3,
+            "leads_duplicated": 0,
+            "leads_failed": 0,
+            "gross_accepted_rate": 100,
+            "leads_returned": 0,
+            "return_rate": 0,
+            "total_buy": 19.51,
+            "total_sell": 23.6,
+            "profit": 4.09,
+            "gross_cost": 19.51,
+            "gross_revenue": 23.6,
+            "gross_profit": 4.09,
+            "returned_cost": 0,
+            "returned_revenue": 0,
+            "net_leads_accepted": 3,
+            "net_accepted_rate": 100,
+            "net_profit": 4.09,
+            "net_cost": 19.51,
+            "net_revenue": 23.6,
+            "preping_total": 0,
+            "preping_accepted": 0,
+            "preping_failed": 0,
+            "pings_total": 3,
+            "pings_accepted": 3,
+            "pings_failed": 0,
+            "pings_avg_bid": 0,
+            "pings_post_ratio": 100
+          }
+        ],
+        "buyers": [
+          {
+            "id": 722,
+            "name": "Beacon Home Services",
+            "client_id": 50,
+            "client_company": "Granite Path",
+            "leads_total": 2,
+            "leads_accepted": 0,
+            "leads_duplicated": 0,
+            "leads_failed": 2,
+            "gross_accepted_rate": 0,
+            "leads_returned": 0,
+            "return_rate": 0,
+            "total_sell": 0,
+            "pings_total": 3,
+            "pings_accepted": 3,
+            "pings_failed": 0,
+            "returned_revenue": 0,
+            "gross_revenue": 0,
+            "net_leads_accepted": 0,
+            "net_accepted_rate": 0,
+            "net_revenue": 0
+          },
+          {
+            "id": 1396,
+            "name": "Crestline Solar",
+            "client_id": 50,
+            "client_company": "Granite Path",
+            "leads_total": 2,
+            "leads_accepted": 2,
+            "leads_duplicated": 0,
+            "leads_failed": 0,
+            "gross_accepted_rate": 100,
+            "leads_returned": 0,
+            "return_rate": 0,
+            "total_sell": 14.6,
+            "pings_total": 3,
+            "pings_accepted": 3,
+            "pings_failed": 0,
+            "returned_revenue": 0,
+            "gross_revenue": 14.6,
+            "net_leads_accepted": 2,
+            "net_accepted_rate": 100,
+            "net_revenue": 14.6
+          },
+          {
+            "id": 1397,
+            "name": "Dunbar Auto",
+            "client_id": 50,
+            "client_company": "Granite Path",
+            "leads_total": 2,
+            "leads_accepted": 1,
+            "leads_duplicated": 0,
+            "leads_failed": 1,
+            "gross_accepted_rate": 50,
+            "leads_returned": 0,
+            "return_rate": 0,
+            "total_sell": 9,
+            "pings_total": 3,
+            "pings_accepted": 3,
+            "pings_failed": 0,
+            "returned_revenue": 0,
+            "gross_revenue": 9,
+            "net_leads_accepted": 1,
+            "net_accepted_rate": 50,
+            "net_revenue": 9
+          }
+        ]
+      }
+    ],
+    "config": {
+      "operation": "campaign_statistics",
+      "start_date": "2026-08-01",
+      "end_date": "2026-08-25"
+    }
+  }
+}
