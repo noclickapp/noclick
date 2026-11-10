@@ -1,0 +1,47 @@
+{
+  "source": "https://raw.githubusercontent.com/messagebird/openapi-specs/main/sms/openapi.yaml",
+  "body": {
+    "id": "cea5a8d4a82f4b7bb4a053296d5a9ba1",
+    "href": "https://rest.messagebird.com/messages/cea5a8d4a82f4b7bb4a053296d5a9ba1",
+    "direction": "mt",
+    "type": "sms",
+    "originator": "ValTesting",
+    "body": "Current time: 2022-06-23 12:41:23.828134 +0300 EEST m=+0.001717501",
+    "reference": null,
+    "validity": null,
+    "gateway": 10,
+    "typeDetails": {},
+    "datacoding": "plain",
+    "mclass": 1,
+    "scheduledDatetime": null,
+    "createdDatetime": "2022-06-23T09:41:24+00:00",
+    "recipients": {
+      "totalCount": 1,
+      "totalSentCount": 1,
+      "totalDeliveredCount": 1,
+      "totalDeliveryFailedCount": 0,
+      "items": [
+        {
+          "recipient": 380999999999,
+          "originator": null,
+          "status": "delivered",
+          "statusDatetime": "2022-06-23T09:41:31+00:00",
+          "recipientCountry": "Ukraine",
+          "recipientCountryPrefix": 380,
+          "recipientOperator": "life:)",
+          "messageLength": 66,
+          "statusErrorCode": null,
+          "statusReason": "successfully delivered",
+          "price": {
+            "amount": 1,
+            "currency": "TRC"
+          },
+          "mccmnc": "25506",
+          "mcc": "255",
+          "mnc": "06",
+          "messagePartCount": 1
+        }
+      ]
+    }
+  }
+}
