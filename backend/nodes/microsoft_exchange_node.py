@@ -124,6 +124,7 @@ class ExchangeNodeConfig(NodeConfig[ExchangeOperationConfig, ExchangeOAuthCreden
 
 class MicrosoftExchangeNode(WorkflowNode):
     integration_type = "automation-microsoft-exchange"
+    borrowed_credential_types = frozenset({"microsoft_outlook_oauth"})
     scope_registry = EXCHANGE_SCOPES
     credential_provider_labels = {"microsoft": "Microsoft Account"}
     connection_evidence = ConnectionEvidence(operation="list_messages", noun="messages", label_keys=("subject", "id"))

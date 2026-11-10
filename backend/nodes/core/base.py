@@ -582,6 +582,12 @@ class WorkflowNode(ABC):
     # into the provider's own settings (``WebhookManager.registers_itself``).
     self_registering_triggers: ClassVar[Dict[str, Tuple[str, ...]]] = {}
 
+    # Credential types this node accepts that another integration owns (Reddit
+    # Ads signs in with Reddit's OAuth). Every lookup of "the node for a
+    # credential type" goes to its one owner (credential_connect.owns_credential_type),
+    # never to whichever node registered first.
+    borrowed_credential_types: ClassVar[FrozenSet[str]] = frozenset()
+
     def __init__(
         self,
         node_id: str,

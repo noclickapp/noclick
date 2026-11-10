@@ -133,6 +133,7 @@ class EntraNodeConfig(NodeConfig[EntraOperationConfig, EntraOAuthCredential]):
 
 class MicrosoftEntraIdNode(WorkflowNode):
     integration_type = "automation-microsoft-entra-id"
+    borrowed_credential_types = frozenset({"microsoft_oauth"})
     credential_provider_labels = {"microsoft": "Microsoft Account"}
     scope_registry = ENTRA_SCOPES
     connection_evidence = ConnectionEvidence(operation="get_me", noun="Microsoft account")

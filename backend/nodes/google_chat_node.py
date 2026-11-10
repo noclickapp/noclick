@@ -118,6 +118,7 @@ class GoogleChatNode(WorkflowNode):
     """Manage spaces, messages, members, reactions, pins, and events in Chat."""
 
     integration_type = "automation-google-chat"
+    borrowed_credential_types = frozenset({"google_oauth"})
     scope_registry = CHAT_SCOPES
     connection_evidence = ConnectionEvidence(operation="list_spaces", noun="spaces")
     edit_examples = [

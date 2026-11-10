@@ -11,10 +11,10 @@ import re
 @lru_cache(maxsize=1)
 def connection_catalog():
     from nodes.core.registry import NODE_REGISTRY
-    from nodes.core.credential_connect import credential_classes_for_node, credential_type_of
+    from nodes.core.credential_connect import credential_classes_for_node, credential_type_of, owners_first
     from nodes.agent.node_op_tools import node_supports_op_tools
 
-    methods = {}
+    candidates = []
     providers = {}
     for node_type, cls in NODE_REGISTRY.items():
         supported = node_supports_op_tools(node_type)
@@ -26,15 +26,18 @@ def connection_catalog():
             schema = credential_cls.model_json_schema()
             if schema.get("x-credential-hidden"):
                 continue
-            methods.setdefault(kind, {
+            candidates.append((node_type, kind, {
                 "credential_type": kind,
                 "name": schema.get("title", kind),
                 "oauth_provider": schema.get("x-oauth-provider"),
                 "connection_method": schema.get("x-credential-type"),
-            })
+            }))
             types.append(kind)
         if supported and types:
             providers[node_type] = tuple(types)
+    methods = {}
+    for _, kind, method in owners_first(candidates):
+        methods.setdefault(kind, method)
     return methods, providers
 
 

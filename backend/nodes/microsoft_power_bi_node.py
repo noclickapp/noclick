@@ -111,6 +111,7 @@ async def _refresh_power_bi(refresh_token: str):
 
 class MicrosoftPowerBINode(WorkflowNode):
     integration_type = "automation-microsoft-power-bi"
+    borrowed_credential_types = frozenset({"microsoft_oauth"})
     credential_provider_labels = {"microsoft": "Microsoft Account"}
     scope_registry = POWER_BI_SCOPES
     connection_evidence = ConnectionEvidence(operation="list_workspaces", noun="Power BI workspaces")

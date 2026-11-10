@@ -219,6 +219,7 @@ class OneNoteNode(WorkflowNode):
     """Execute account-scoped Microsoft Graph OneNote actions."""
 
     integration_type = "automation-microsoft-onenote"
+    borrowed_credential_types = frozenset({"microsoft_oauth"})
     credential_provider_labels = {"microsoft": "Microsoft Account"}
     scope_registry = ONENOTE_SCOPES
     connection_evidence = ConnectionEvidence(

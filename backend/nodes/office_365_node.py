@@ -148,6 +148,7 @@ def _page_url(value: str, path: str) -> str:
 
 class Office365Node(WorkflowNode):
     integration_type = "automation-office-365"
+    borrowed_credential_types = frozenset({"microsoft_outlook_oauth"})
     credential_provider_labels = {"microsoft": "Microsoft Account"}
     scope_registry = OFFICE_365_SCOPES
     connection_evidence = ConnectionEvidence(identity_operation="get_profile", noun="Microsoft account")

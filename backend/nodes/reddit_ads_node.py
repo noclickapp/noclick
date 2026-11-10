@@ -126,6 +126,7 @@ class RedditAdsFullConfig(NodeConfig):
 
 class RedditAdsNode(WorkflowNode):
     integration_type = "automation-reddit-ads"
+    borrowed_credential_types = frozenset({"reddit_oauth"})
     credential_provider_labels = {"reddit": "Reddit Account"}
     scope_registry = REDDIT_ADS_SCOPES
     connection_evidence = ConnectionEvidence(noun="Reddit Ads account", identity_operation="get_me", identity_keys=("reddit_username", "email", "id"))

@@ -22,6 +22,7 @@ import {
     resolveNodeType,
     isAgentToolProviderType,
     isTriggerSource,
+    borrowsCredentialType,
 } from '~/utils/nodeMeta';
 
 export { LEGACY_NODE_TYPE_ALIASES, NODE_SCHEMA_TYPES, resolveNodeType, isAgentToolProviderType, isTriggerSource };
@@ -592,6 +593,11 @@ function getProviderLabel(providerKey: string): string {
  * credentials stored the title verbatim, e.g. `instagrampageaccesstokencredential`).
  */
 export function credentialKeysOf(nodeType: string): string[] {
+    return [...new Set(credentialClassKeys(nodeType).flatMap((c) => c.keys))];
+}
+
+/** credentialKeysOf per credential class, each marked when the node borrows its type from the integration that owns it. */
+function credentialClassKeys(nodeType: string): Array<{ keys: string[]; borrowed: boolean }> {
     const schema = NODE_SCHEMAS[nodeType];
     const credProp = schema?.$defs ? schema.properties?.credentials : undefined;
     if (!credProp) return [];
@@ -600,34 +606,38 @@ export function credentialKeysOf(nodeType: string): string[] {
     for (const entry of credProp.anyOf ?? []) {
         if (entry.$ref) refs.push(entry.$ref.split('/').pop()!);
     }
-    const keys = new Set<string>();
+    const classes: Array<{ keys: string[]; borrowed: boolean }> = [];
     for (const title of refs) {
         const defn = schema.$defs[title];
         if (!defn) continue;
-        keys.add(getCredentialTypeFromSchemaTitle(title));
-        keys.add(title.toLowerCase());
+        const keys = new Set([getCredentialTypeFromSchemaTitle(title), title.toLowerCase()]);
         const constVal = defn.properties?.credential_type?.const;
         if (constVal) keys.add(constVal);
+        keys.delete('');
+        classes.push({ keys: [...keys], borrowed: [...keys].some((key) => borrowsCredentialType(nodeType, key)) });
     }
-    keys.delete('');
-    return [...keys];
+    return classes;
 }
 
 /**
  * Node type → the credential keys that wear its mark: each key goes to the first node schema (in NODE_SCHEMA_TYPES
- * order) declaring it among those `hasIcon` accepts. Serialized with the node catalog (credentialKeys) so credential
- * icons resolve without the schemas.
+ * order) declaring it among those `hasIcon` accepts, the classes a node borrows from another integration only after
+ * every owner's, so a borrowed type wears its owner's mark. Serialized with the node catalog (credentialKeys) so
+ * credential icons resolve without the schemas.
  */
 export function credentialMarks(hasIcon: (nodeType: string) => boolean): Map<string, string[]> {
     requireAllLoaded('credentialMarks');
     const claimed = new Set<string>();
     const marks = new Map<string, string[]>();
-    for (const type of NODE_SCHEMA_TYPES) {
-        if (!hasIcon(type)) continue;
-        const keys = credentialKeysOf(type).filter((key) => !claimed.has(key));
-        if (!keys.length) continue;
-        keys.forEach((key) => claimed.add(key));
-        marks.set(type, keys);
+    for (const borrowed of [false, true]) {
+        for (const type of NODE_SCHEMA_TYPES) {
+            if (!hasIcon(type)) continue;
+            const keys = [...new Set(credentialClassKeys(type).filter((c) => c.borrowed === borrowed).flatMap((c) => c.keys))]
+                .filter((key) => !claimed.has(key));
+            if (!keys.length) continue;
+            keys.forEach((key) => claimed.add(key));
+            marks.set(type, [...(marks.get(type) ?? []), ...keys]);
+        }
     }
     return marks;
 }

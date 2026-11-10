@@ -5,6 +5,7 @@ export interface NodeMetaEntry {
     connectionless?: boolean;
     triggerOperations?: string[];
     platformVendorOperations?: string[];
+    borrowedCredentialTypes?: string[];
 }
 
 export interface PublicOAuthProvider {

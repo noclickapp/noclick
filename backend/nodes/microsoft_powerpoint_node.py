@@ -97,6 +97,7 @@ class PowerPointNodeConfig(NodeConfig[PowerPointOperationConfig, OneDriveOAuthCr
 
 class MicrosoftPowerPointNode(WorkflowNode):
     integration_type = "automation-microsoft-powerpoint"
+    borrowed_credential_types = frozenset({"microsoft_onedrive_oauth"})
     credential_provider_labels = {"microsoft": "Microsoft Account"}
     scope_registry = POWERPOINT_SCOPES
     connection_evidence = ConnectionEvidence(identity_operation="get_account", noun="Microsoft account", identity_keys=("displayName", "mail", "userPrincipalName", "id"))

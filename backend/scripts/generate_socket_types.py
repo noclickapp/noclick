@@ -1008,6 +1008,8 @@ def generate_node_schemas():
                 vendor_ops = _platform_vendor_operations(schema)
                 if vendor_ops:
                     meta_entry['platformVendorOperations'] = vendor_ops
+                if node_class.borrowed_credential_types:
+                    meta_entry['borrowedCredentialTypes'] = sorted(node_class.borrowed_credential_types)
                 # Keyed by the FULL registry type (automation-slack), matching
                 # the frontend's NODE_SCHEMAS keys and canvas node.type values.
                 node_type = SCHEMA_TO_TYPE[schema_name]

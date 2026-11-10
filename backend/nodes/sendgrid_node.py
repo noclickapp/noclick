@@ -7150,6 +7150,7 @@ def _email_body(values: dict[str, Any]) -> dict[str, Any]:
 
 class SendGridNode(WorkflowNode):
     integration_type = "automation-sendgrid"
+    borrowed_credential_types = frozenset({"sendgrid_api_key"})
     connection_evidence = ConnectionEvidence(identity_operation="test_connection", noun="SendGrid account")
     edit_examples = [
         "Send a transactional email with SendGrid",

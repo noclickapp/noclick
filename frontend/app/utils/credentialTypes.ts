@@ -10,6 +10,7 @@ import {
 } from './credentialTypeMap';
 import { fixWordCasing } from './credentialLabels';
 import { getNodeIconData } from '~/lib/nodeIconRegistry';
+import { borrowsCredentialType } from './nodeMeta';
 import { serializedIconComponent } from '~/components/shared/SerializedIcon';
 type ServiceIconType = ComponentType<{ className?: string; style?: CSSProperties }>;
 
@@ -91,10 +92,12 @@ export function getServiceCredentialOptions(): ServiceCredentialOption[] {
     const options: ServiceCredentialOption[] = [];
     const seenPrimaryTypes = new Set<string>();
 
-    // The catalog lists nodes in the registry's order, so the first node to claim a primary type keeps it.
-    for (const node of Object.values(getNodeIconData())) {
-        const acceptedTypes = node.acceptedCredentialTypes;
-        if (!acceptedTypes?.length) continue;
+    // The catalog lists nodes in the registry's order: the first node to claim a primary type keeps it, a node
+    // borrowing its primary type from another integration only after that type's owner.
+    const nodes = Object.values(getNodeIconData()).filter((node) => node.acceptedCredentialTypes?.length);
+    const borrowed = (node: (typeof nodes)[number]) => borrowsCredentialType(node.type, node.acceptedCredentialTypes![0]);
+    for (const node of [...nodes.filter((node) => !borrowed(node)), ...nodes.filter(borrowed)]) {
+        const acceptedTypes = node.acceptedCredentialTypes!;
 
         const primaryType = acceptedTypes[0];
         if (seenPrimaryTypes.has(primaryType)) continue;

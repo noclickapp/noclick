@@ -50,6 +50,12 @@ export function isAgentToolProviderType(nodeType: string | undefined | null): bo
     return !!(nodeType && NODE_META[resolveNodeType(nodeType)]?.agentToolProvider === true);
 }
 
+/** Whether the node accepts a credential type another integration owns (borrowed_credential_types on its class):
+ *  a lookup of "the node for a credential type" passes it by for the owner. */
+export function borrowsCredentialType(nodeType: string, credentialType: string): boolean {
+    return NODE_META[resolveNodeType(nodeType)]?.borrowedCredentialTypes?.includes(credentialType) ?? false;
+}
+
 /** SDK-based node types (x-connectionless) that talk through @noclick/sdk, not edges. */
 export const CONNECTIONLESS_TYPES: ReadonlySet<string> = new Set(
     NODE_SCHEMA_TYPES.filter((type) => NODE_META[type].connectionless === true),

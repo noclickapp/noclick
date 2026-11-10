@@ -66,9 +66,10 @@ def _oauth_providers_by_type() -> dict[str, str]:
     if _oauth_provider_cache is not None:
         return _oauth_provider_cache
 
-    providers: dict[str, str] = {}
+    candidates = []
+    from nodes.core.credential_connect import owners_first
     from nodes.core.registry import NODE_REGISTRY
-    for node_class in NODE_REGISTRY.values():
+    for node_type, node_class in NODE_REGISTRY.items():
         try:
             schema = node_class.get_config_schema()
         except Exception:
@@ -77,7 +78,10 @@ def _oauth_providers_by_type() -> dict[str, str]:
         for title, defn in schema.get('$defs', {}).items():
             provider, cred_type = defn.get('x-oauth-provider'), _resolve_credential_type(title, defn)
             if provider and cred_type:
-                providers.setdefault(cred_type, provider)
+                candidates.append((node_type, cred_type, provider))
+    providers: dict[str, str] = {}
+    for _, cred_type, provider in owners_first(candidates):
+        providers.setdefault(cred_type, provider)
 
     _oauth_provider_cache = providers
     return providers
@@ -272,25 +276,20 @@ def _build_caches() -> tuple[dict[str, list[dict]], dict[str, list[dict]], dict[
     siblings_cache: dict[str, list[dict]] = {}
     methods_cache: dict[str, dict] = {}
     try:
+        from nodes.core.credential_connect import owners_first
         from nodes.core.registry import NODE_REGISTRY
 
-        seen_types: set[str] = set()
-        for node_class in NODE_REGISTRY.values():
+        definitions = []
+        sibling_groups = []
+        for node_type, node_class in NODE_REGISTRY.items():
             try:
                 schema = node_class.get_config_schema()
                 defs = schema.get('$defs', {})
 
-                # --- Build field + per-type method cache entries ---
                 for title, defn in defs.items():
                     cred_type = _resolve_credential_type(title, defn)
-                    if not cred_type or cred_type in seen_types:
-                        continue
-                    seen_types.add(cred_type)
-                    if defn.get('x-credential-type') != 'oauth':
-                        fields_cache[cred_type] = _extract_fields_from_schema(defn)
-                    method = _method_dict_from_defn(title, defn)
-                    if method:
-                        methods_cache[cred_type] = method
+                    if cred_type:
+                        definitions.append((node_type, cred_type, title, defn))
 
                 # --- Build sibling groups from the credentials anyOf union ---
                 cred_prop = schema.get('properties', {}).get('credentials', {})
@@ -311,11 +310,24 @@ def _build_caches() -> tuple[dict[str, list[dict]], dict[str, list[dict]], dict[
                     if method:
                         sibling_methods.append(method)
 
-                # Map every credential_type in this group to the full list
                 for method in sibling_methods:
-                    siblings_cache[method['credential_type']] = sibling_methods
+                    sibling_groups.append((node_type, method['credential_type'], sibling_methods))
             except Exception:
                 continue
+
+        # --- Field + per-type method cache entries, then each type's sibling group ---
+        seen_types: set[str] = set()
+        for _, cred_type, title, defn in owners_first(definitions):
+            if cred_type in seen_types:
+                continue
+            seen_types.add(cred_type)
+            if defn.get('x-credential-type') != 'oauth':
+                fields_cache[cred_type] = _extract_fields_from_schema(defn)
+            method = _method_dict_from_defn(title, defn)
+            if method:
+                methods_cache[cred_type] = method
+        for _, cred_type, sibling_methods in owners_first(sibling_groups):
+            siblings_cache.setdefault(cred_type, sibling_methods)
     except Exception as e:
         logger.warning(f"Failed to build credential caches: {e}")
     return fields_cache, siblings_cache, methods_cache
