@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/easybroker-archive.svg",
+  "source": "https://api.easybroker.com/docs#/components/schemas/UserForList (profile_image_url example): https://www.easybroker.com/assets/product/logo-be4da843987ccd1c05e26f8703f1787847471b36d08bdb1ec8a91ce4007b0e98.svg",
+  "license": "EasyBroker brand mark used nominatively to identify the connected service; trademark rights remain with EasyBroker.",
+  "sha256": "be4da843987ccd1c05e26f8703f1787847471b36d08bdb1ec8a91ce4007b0e98"
+}

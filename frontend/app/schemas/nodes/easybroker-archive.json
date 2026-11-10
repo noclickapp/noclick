@@ -1,0 +1,3275 @@
+{
+  "$defs": {
+    "ContactAddressBody": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The contact address type (e.g. Home, Work, Other).",
+          "title": "Type"
+        },
+        "street": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "administrative_division": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Administrative Division"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country name (English or Spanish) or two-letter code.",
+          "title": "Country"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        }
+      },
+      "title": "ContactAddressBody",
+      "type": "object"
+    },
+    "ContactBody": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "private_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private Description"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The contact origin name. A new source is created if one with this name doesn't exist.",
+          "title": "Source"
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The EasyBroker account email of the agent assigned to the contact.",
+          "title": "Agent"
+        },
+        "probability": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead probability level.",
+          "title": "Probability",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One of your account's contact status names, exactly as shown on EasyBroker. A name that matches none or several of them returns a 422 error.",
+          "title": "Status"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the contact's tag list with this exact set.",
+          "title": "Tags"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactEmailBody"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the contact's emails with this exact list (existing entries with matching type and email are preserved; missing entries are removed).",
+          "title": "Emails"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactPhoneBody"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the contact's phone numbers with this exact list (matching is done by type and digits, ignoring formatting).",
+          "title": "Phones"
+        },
+        "addresses": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ContactAddressBody"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the contact's addresses with this exact list.",
+          "title": "Addresses"
+        }
+      },
+      "title": "ContactBody",
+      "type": "object"
+    },
+    "ContactEmailBody": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The contact email type (e.g. Home, Work, Other).",
+          "title": "Type"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "ContactEmailBody",
+      "type": "object"
+    },
+    "ContactPhoneBody": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The contact phone type (e.g. Home, Work, Mobile, Pager, Home fax, Work fax).",
+          "title": "Type"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        }
+      },
+      "title": "ContactPhoneBody",
+      "type": "object"
+    },
+    "ContactRequestBody": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required if the request does not provide a property_id",
+          "title": "Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required if the request does not provide neither a property id nor an email",
+          "title": "Phone"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required if the request does not provide neither a property id nor a phone number",
+          "title": "Email"
+        },
+        "property_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If the request provides this parameter, it should also provide a name, email or phone number",
+          "title": "Property Id"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required if the request does not provide a property_id",
+          "title": "Message"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "ContactRequestBody",
+      "type": "object"
+    },
+    "EasyBrokerAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "easybroker_archive_api_key",
+          "default": "easybroker_archive_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "EasyBroker API Key",
+      "type": "object",
+      "x-credential-instructions": "As an account administrator, copy your API key from EasyBroker General Settings and paste it here. NoClick sends it in X-Authorization to api.easybroker.com. Connecting reads your account's contacts.",
+      "x-credential-url": "https://dev.easybroker.com/docs/api-de-easybroker"
+    },
+    "EasyBrokerCreateContactRequestConfig": {
+      "additionalProperties": false,
+      "description": "Creates or updates a new lead in EasyBroker that is interested in the provided property.",
+      "properties": {
+        "operation": {
+          "const": "create_contact_request",
+          "default": "create_contact_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create a contact request",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "body": {
+          "$ref": "#/$defs/ContactRequestBody",
+          "description": "EasyBroker fields as documented; updates to image arrays replace existing images.",
+          "title": "Request body"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "EasyBrokerCreateContactRequestConfig",
+      "type": "object"
+    },
+    "EasyBrokerCreatePropertyConfig": {
+      "additionalProperties": false,
+      "description": "Creates a new property in your EasyBroker account, which will be published to all your connected apps.",
+      "properties": {
+        "operation": {
+          "const": "create_property",
+          "default": "create_property",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create a property",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "body": {
+          "$ref": "#/$defs/PropertyBody",
+          "description": "EasyBroker fields as documented; updates to image arrays replace existing images.",
+          "title": "Request body"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "EasyBrokerCreatePropertyConfig",
+      "type": "object"
+    },
+    "EasyBrokerGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Returns the detailed information of a contact from your EasyBroker account.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Retrieve a contact",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "contact_id": {
+          "description": "The ID of the specified contact",
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "EasyBrokerGetContactConfig",
+      "type": "object"
+    },
+    "EasyBrokerGetLocationsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a location name and the children of a given location <neighborhood, city, state>. If no parameter provided, the states from the country registered in your account will be returned. Send `postal_code` instead of `query` to retrieve the city a postal code belongs to together with its neighborhoods mapped to that postal code.",
+      "properties": {
+        "operation": {
+          "const": "get_locations",
+          "default": "get_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Retrieve a location",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Location to find",
+          "title": "Query"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal code to find. Returns the city it belongs to with the neighborhoods mapped to that postal code as its localities. Takes precedence over `query`. Some neighborhoods don't have a postal code mapped yet, so a 404 doesn't mean the location doesn't exist: search it by name with `query` instead.",
+          "title": "Postal Code"
+        }
+      },
+      "title": "EasyBrokerGetLocationsConfig",
+      "type": "object"
+    },
+    "EasyBrokerGetPropertyConfig": {
+      "additionalProperties": false,
+      "description": "Returns the detailed information of a property from your EasyBroker account.",
+      "properties": {
+        "operation": {
+          "const": "get_property",
+          "default": "get_property",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Retrieve a property",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "property_id": {
+          "description": "The public or internal ID of the specified property",
+          "title": "Property Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "property_id"
+      ],
+      "title": "EasyBrokerGetPropertyConfig",
+      "type": "object"
+    },
+    "EasyBrokerListCollaborationsConfig": {
+      "additionalProperties": false,
+      "description": "Returns a list of collaborations from your organization.",
+      "properties": {
+        "operation": {
+          "const": "list_collaborations",
+          "default": "list_collaborations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List all collaborations",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "page": {
+          "default": 1,
+          "description": "Content's page",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results per page (Maximum: 50)",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "EasyBrokerListCollaborationsConfig",
+      "type": "object"
+    },
+    "EasyBrokerListContactRequestsConfig": {
+      "additionalProperties": false,
+      "description": "Returns a list of the contact requests in a given period or for a specific property, if no parameters are provided all the contact requests will be returned",
+      "properties": {
+        "operation": {
+          "const": "list_contact_requests",
+          "default": "list_contact_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List all contact requests",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "page": {
+          "default": 1,
+          "description": "Content's page",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results per page (Maximum: 50)",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "happened_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact requests created after the given date",
+          "title": "Happened After"
+        },
+        "happened_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact requests created before the given date",
+          "title": "Happened Before"
+        },
+        "property_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of a property to retrieve the contact requests for",
+          "title": "Property Id"
+        }
+      },
+      "title": "EasyBrokerListContactRequestsConfig",
+      "type": "object"
+    },
+    "EasyBrokerListContactsConfig": {
+      "additionalProperties": false,
+      "description": "Returns a list of contacts from your organization.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List all contacts",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "page": {
+          "default": 1,
+          "description": "Content's page",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results per page (Maximum: 50)",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search_updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve contacts updated after the given time.",
+          "title": "Search Updated After"
+        },
+        "search_updated_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve contacts updated before the given time.",
+          "title": "Search Updated Before"
+        },
+        "search_created_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve contacts created after the given time.",
+          "title": "Search Created After"
+        },
+        "search_created_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve contacts created before the given time.",
+          "title": "Search Created Before"
+        },
+        "search_last_activity_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve contacts whose last activity was after the given time.",
+          "title": "Search Last Activity After"
+        },
+        "search_last_activity_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve contacts whose last activity was before the given time. Contacts without activity are excluded.",
+          "title": "Search Last Activity Before"
+        },
+        "search_statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This parameter allows you to filter contacts with the selected statuses. You must provide one of your account's status names exactly as they are shown on EasyBroker.",
+          "title": "Search Statuses"
+        },
+        "search_probabilities": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This parameter allows you to filter contacts with the selected probabilities",
+          "title": "Search Probabilities"
+        },
+        "search_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This parameter allows you to filter listings from one specific tag.",
+          "title": "Search Tag"
+        },
+        "search_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This parameter allows you to filter contacts based on the assigned agent's email.",
+          "title": "Search Email"
+        },
+        "search_offices": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This parameter allows you to filter contacts by office names.",
+          "title": "Search Offices"
+        },
+        "search_sources": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve contact listing from multiple sources.",
+          "title": "Search Sources"
+        }
+      },
+      "title": "EasyBrokerListContactsConfig",
+      "type": "object"
+    },
+    "EasyBrokerListFeaturesConfig": {
+      "additionalProperties": false,
+      "description": "Returns a list of the property features available in your organization's country.\nYou can also provide a `locale` parameter to define the language you want the name of the features to be in.",
+      "properties": {
+        "operation": {
+          "const": "list_features",
+          "default": "list_features",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List all property features",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "page": {
+          "default": 1,
+          "description": "Content's page",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results per page (Maximum: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "es",
+                "pt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The language you want the results to be in. If not provided it defaults to your organization's language.",
+          "title": "Locale",
+          "enum": [
+            "en",
+            "es",
+            "pt"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "EasyBrokerListFeaturesConfig",
+      "type": "object"
+    },
+    "EasyBrokerListListingStatusesConfig": {
+      "additionalProperties": false,
+      "description": "Returns a list of property listing statuses from your organization.",
+      "properties": {
+        "operation": {
+          "const": "list_listing_statuses",
+          "default": "list_listing_statuses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List all property listing statuses",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "page": {
+          "default": 1,
+          "description": "Content's page",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results per page (Maximum: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search_updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve listing statuses for properties updated after the given time.",
+          "title": "Search Updated After"
+        },
+        "search_updated_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve listing statuses for properties updated before the given time.",
+          "title": "Search Updated Before"
+        },
+        "search_statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "published",
+                  "not_published",
+                  "reserved",
+                  "sold",
+                  "rented",
+                  "suspended",
+                  "flagged",
+                  "disapproved"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Statuses"
+        }
+      },
+      "title": "EasyBrokerListListingStatusesConfig",
+      "type": "object"
+    },
+    "EasyBrokerListPropertiesConfig": {
+      "additionalProperties": false,
+      "description": "Returns a list of properties from your organization.",
+      "properties": {
+        "operation": {
+          "const": "list_properties",
+          "default": "list_properties",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List all properties",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "page": {
+          "default": 1,
+          "description": "Content's page",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results per page (Maximum: 50)",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search_property_types": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Property type symbols from the `property_types` endpoint. Names remain accepted for backward compatibility.",
+          "title": "Search Property Types"
+        },
+        "search_updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Updated After"
+        },
+        "search_updated_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Updated Before"
+        },
+        "search_operation_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "sale",
+                "rental",
+                "temporary_rental"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Operation Type",
+          "enum": [
+            "sale",
+            "rental",
+            "temporary_rental"
+          ],
+          "x-enum-searchable": true
+        },
+        "search_min_price": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "operation_type is required",
+          "title": "Search Min Price"
+        },
+        "search_max_price": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "operation_type is required",
+          "title": "Search Max Price"
+        },
+        "search_min_bedrooms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Min Bedrooms"
+        },
+        "search_min_bathrooms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Min Bathrooms"
+        },
+        "search_min_parking_spaces": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Min Parking Spaces"
+        },
+        "search_min_construction_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "construction size in square meters",
+          "title": "Search Min Construction Size"
+        },
+        "search_max_construction_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "construction size in square meters",
+          "title": "Search Max Construction Size"
+        },
+        "search_min_lot_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "lot size in square meters",
+          "title": "Search Min Lot Size"
+        },
+        "search_max_lot_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "lot size in square meters",
+          "title": "Search Max Lot Size"
+        },
+        "search_statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "published",
+                  "not_published",
+                  "reserved",
+                  "sold",
+                  "rented",
+                  "suspended",
+                  "flagged",
+                  "disapproved"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Statuses"
+        },
+        "search_sort_by": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "updated_at-asc",
+                  "updated_at-desc"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Sort By"
+        }
+      },
+      "title": "EasyBrokerListPropertiesConfig",
+      "type": "object"
+    },
+    "EasyBrokerListPropertyIntegrationsConfig": {
+      "additionalProperties": false,
+      "description": "Returns, for every property in your organization connected to at least one portal, its publication status across all connected portals. Results are paginated by property, so `limit` counts properties rather than portal listings.",
+      "properties": {
+        "operation": {
+          "const": "list_property_integrations",
+          "default": "list_property_integrations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List property integrations",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "page": {
+          "default": 1,
+          "description": "Content's page",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results per page (Maximum: 50)",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search_updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only include properties whose most recently updated integration changed after this time.",
+          "title": "Search Updated After"
+        },
+        "search_updated_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only include properties whose most recently updated integration changed before this time.",
+          "title": "Search Updated Before"
+        },
+        "search_integration_partner_symbol": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only include properties connected to this partner. Each property still lists all of its connected portals.",
+          "title": "Search Integration Partner Symbol"
+        }
+      },
+      "title": "EasyBrokerListPropertyIntegrationsConfig",
+      "type": "object"
+    },
+    "EasyBrokerListPropertyTypesConfig": {
+      "additionalProperties": false,
+      "description": "Returns a list of the property types from your organization's country.\nYou can also provide a `locale` parameter to define the language you want the name of the property types to be in.",
+      "properties": {
+        "operation": {
+          "const": "list_property_types",
+          "default": "list_property_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List all property types",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "page": {
+          "default": 1,
+          "description": "Content's page",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results per page (Maximum: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "es",
+                "pt"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The language you want the results to be in. If not provided it defaults to your organization's language.",
+          "title": "Locale",
+          "enum": [
+            "en",
+            "es",
+            "pt"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "EasyBrokerListPropertyTypesConfig",
+      "type": "object"
+    },
+    "EasyBrokerListUsersConfig": {
+      "additionalProperties": false,
+      "description": "Returns a list of active users from your organization.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List all users",
+          "x-is-trigger": false,
+          "x-method-kind": "read"
+        },
+        "page": {
+          "default": 1,
+          "description": "Content's page",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results per page (Maximum: 50)",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "EasyBrokerListUsersConfig",
+      "type": "object"
+    },
+    "EasyBrokerOnNewContactRequestConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_contact_request",
+          "default": "on_new_contact_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Contact Request",
+          "x-is-trigger": true
+        },
+        "since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional lower time bound. First poll baselines existing records; subsequent polls emit newly seen IDs or versions. Polls read every page in this scope, at most 10000 records.",
+          "title": "Since"
+        },
+        "property_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only monitor requests for this property.",
+          "title": "Property Id"
+        }
+      },
+      "title": "EasyBrokerOnNewContactRequestConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "EasyBrokerOnNewOrUpdatedContactConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_contact",
+          "default": "on_new_or_updated_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Or Updated Contact",
+          "x-is-trigger": true
+        },
+        "since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional lower time bound. First poll baselines existing records; subsequent polls emit newly seen IDs or versions. Polls read every page in this scope, at most 10000 records.",
+          "title": "Since"
+        }
+      },
+      "title": "EasyBrokerOnNewOrUpdatedContactConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "EasyBrokerOnNewOrUpdatedPropertyConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_property",
+          "default": "on_new_or_updated_property",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Or Updated Property",
+          "x-is-trigger": true
+        },
+        "since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional lower time bound. First poll baselines existing records; subsequent polls emit newly seen IDs or versions. Polls read every page in this scope, at most 10000 records.",
+          "title": "Since"
+        }
+      },
+      "title": "EasyBrokerOnNewOrUpdatedPropertyConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "EasyBrokerUpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "Updates an existing contact in your EasyBroker account. Only the fields you send are modified. For `emails`, `phones`, `addresses` and `tags`, the value you send fully replaces the current list \u2014 matching entries are preserved, missing entries are removed and new entries are appended (order is ignored).",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update a contact",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "contact_id": {
+          "description": "The ID of the specified contact",
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "body": {
+          "$ref": "#/$defs/ContactBody",
+          "description": "Only supplied fields change. Arrays replace the complete existing list.",
+          "title": "Contact changes"
+        }
+      },
+      "required": [
+        "contact_id",
+        "body"
+      ],
+      "title": "EasyBrokerUpdateContactConfig",
+      "type": "object"
+    },
+    "EasyBrokerUpdatePropertyConfig": {
+      "additionalProperties": false,
+      "description": "Updates an existing property in your EasyBroker account.",
+      "properties": {
+        "operation": {
+          "const": "update_property",
+          "default": "update_property",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update a property",
+          "x-is-trigger": false,
+          "x-method-kind": "write"
+        },
+        "property_id": {
+          "description": "The public or internal ID of the specified property",
+          "title": "Property Id",
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/$defs/PropertyBody",
+          "description": "EasyBroker fields as documented; updates to image arrays replace existing images.",
+          "title": "Request body"
+        }
+      },
+      "required": [
+        "property_id",
+        "body"
+      ],
+      "title": "EasyBrokerUpdatePropertyConfig",
+      "type": "object"
+    },
+    "PropertyBody": {
+      "additionalProperties": false,
+      "properties": {
+        "property_type": {
+          "description": "The property type symbol returned by the `property_types` endpoint. Names remain accepted for backward compatibility.",
+          "title": "Property Type",
+          "type": "string"
+        },
+        "title": {
+          "description": "The property listing title.",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "description": "The property listing description.",
+          "title": "Description",
+          "type": "string"
+        },
+        "status": {
+          "description": "The property status",
+          "enum": [
+            "published",
+            "sold",
+            "rented",
+            "reserved",
+            "suspended",
+            "not_published"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "private_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A private description visible only to your team.",
+          "title": "Private Description"
+        },
+        "operations": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/PropertyOperationSaleOrRentalBody"
+              },
+              {
+                "$ref": "#/$defs/PropertyOperationTemporaryRentalBody"
+              }
+            ]
+          },
+          "title": "Operations",
+          "type": "array"
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The EasyBroker account email of the agent assigned to the property.",
+          "title": "Agent"
+        },
+        "show_prices": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An option that allows you to show or hide the EB listing prices.",
+          "title": "Show Prices"
+        },
+        "bedrooms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of bedrooms.",
+          "title": "Bedrooms"
+        },
+        "bathrooms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of bathrooms.",
+          "title": "Bathrooms"
+        },
+        "half_bathrooms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of half bathrooms.",
+          "title": "Half Bathrooms"
+        },
+        "parking_spaces": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of parking spaces.",
+          "title": "Parking Spaces"
+        },
+        "age": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "enum": [
+                "under_construction",
+                "new_construction"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One of \"under_construction\", \"new_construction\" or the year the property was built. The year may be sent as an integer or a four-digit string.",
+          "title": "Age"
+        },
+        "conservation_state": {
+          "anyOf": [
+            {
+              "enum": [
+                "new",
+                "excellent",
+                "good",
+                "regular",
+                "bad",
+                "to_remodel"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The condition of the property. Send `null` to leave it unspecified. Not available for building, commercial or land property types; the value is ignored for those.",
+          "title": "Conservation State",
+          "enum": [
+            "new",
+            "excellent",
+            "good",
+            "regular",
+            "bad",
+            "to_remodel"
+          ],
+          "x-enum-searchable": true
+        },
+        "floor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The floor number in which the property is located, useful for apartments. It can be set to a custom value such as 'Penthouse'",
+          "title": "Floor"
+        },
+        "floors": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of floors in the building.",
+          "title": "Floors"
+        },
+        "rental_maintenance_included": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether monthly maintenance is included in the rental price. Required when rental is active and maintenance_amount is provided; otherwise it is cleared to `null` when rental is inactive.",
+          "title": "Rental Maintenance Included"
+        },
+        "maintenance_amount": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Monthly maintenance amount. When rental is active, rental_maintenance_included must be specified; the amount is required when that field is `false`.",
+          "title": "Maintenance Amount"
+        },
+        "maintenance_currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Currency code for the maintenance amount. Defaults to the operation currency (rental, sale or temporary rental, in that order) when omitted.",
+          "title": "Maintenance Currency"
+        },
+        "internal_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A unique id used in your organization. It can only contain letters, numbers and a small set of special characters (- _ , . &  /)",
+          "title": "Internal Id"
+        },
+        "location": {
+          "$ref": "#/$defs/PropertyLocationBody"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array of strings, each one is a tag that will be associated with the property.",
+          "title": "Tags"
+        },
+        "features": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array with the names of all the features for this property. You can get the full list of features from the features endpoint.",
+          "title": "Features"
+        },
+        "share_commission": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An option to specify whether your agency is willing to share the commission with other agencies in the EasyBroker agency network.",
+          "title": "Share Commission"
+        },
+        "collaboration_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes on conditions or details for collaborations.",
+          "title": "Collaboration Notes"
+        },
+        "images": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/PropertyImageBody"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array of objects, each one containing an image url and a title. Images are processed asynchronously and might take some time to appear in your listing. The API does not expose processing status; retrieve the property again and check its images array. For an existing listing, this array replaces the existing images. Image requirements: URL must be a valid HTTP/HTTPS URL with file extension (.jpg, .jpeg, .png, .gif, .heic, .webp), maximum 6MB per image, minimum 500px width or height, valid image MIME type, up to 50 images per listing.",
+          "title": "Images"
+        },
+        "videos": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array of strings, each one is a youtube video link that will be associated with the property.",
+          "title": "Videos"
+        },
+        "virtual_tour": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A link to a virtual tour of the property.",
+          "title": "Virtual Tour"
+        },
+        "show_exact_location": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set it to 'true' to show the exact address location and map location or 'false' to hide it.",
+          "title": "Show Exact Location"
+        },
+        "construction_size": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "In square meters",
+          "title": "Construction Size"
+        },
+        "lot_size": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "In square meters",
+          "title": "Lot Size"
+        },
+        "lot_length": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "In meters",
+          "title": "Lot Length"
+        },
+        "lot_width": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "In meters",
+          "title": "Lot Width"
+        },
+        "covered_space": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "In square meters. Not Available in Mexico.",
+          "title": "Covered Space"
+        },
+        "uncovered_space": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "In square meters. Only available in Mexico and Argentina.",
+          "title": "Uncovered Space"
+        },
+        "exclusive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether the listing is exclusive. Set to `null` if not specified.",
+          "title": "Exclusive"
+        },
+        "shared_commission_percentage": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates the percentage of the agency fee that is shared. At the moment, it can only be set to 50% or `null` if not specified.",
+          "title": "Shared Commission Percentage"
+        }
+      },
+      "required": [
+        "property_type",
+        "title",
+        "description",
+        "status",
+        "operations",
+        "location"
+      ],
+      "title": "PropertyBody",
+      "type": "object"
+    },
+    "PropertyCommissionBody": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "amount",
+                "percentage",
+                "months"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The month type is only available for rental commission.",
+          "title": "Type",
+          "enum": [
+            "amount",
+            "percentage",
+            "months"
+          ],
+          "x-enum-searchable": true
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Commission value corresponding to the specified type. For commission type \"months\", valid values are: 0.5, 1, 1.5, 2, 3, 4, 5.",
+          "title": "Value"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only applicable for the \"amount\" type.",
+          "title": "Currency"
+        }
+      },
+      "title": "PropertyCommissionBody",
+      "type": "object"
+    },
+    "PropertyImageBody": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "PropertyImageBody",
+      "type": "object"
+    },
+    "PropertyLocationBody": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A location string containing the neighborhood, city and the administrative division where the property is located. It must match a location found through the locations endpoint. The neighborhood is required to publish in Mexico but is not required in other countries or to create or update unpublished properties.",
+          "title": "Name"
+        },
+        "street": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The street where the property is located.",
+          "title": "Street"
+        },
+        "exterior_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The property address exterior number.",
+          "title": "Exterior Number"
+        },
+        "interior_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The property address interior number.",
+          "title": "Interior Number"
+        },
+        "cross_street": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The property address cross street.",
+          "title": "Cross Street"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The property address postal code.",
+          "title": "Postal Code"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The latitude where the property is located.",
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The longitude where the property is located.",
+          "title": "Longitude"
+        }
+      },
+      "title": "PropertyLocationBody",
+      "type": "object"
+    },
+    "PropertyOperationSaleOrRentalBody": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "sale",
+            "rental"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "active": {
+          "description": "Indicates whether this operation is active or not.",
+          "title": "Active",
+          "type": "boolean"
+        },
+        "amount": {
+          "exclusiveMinimum": 0,
+          "maximum": 100000000000,
+          "title": "Amount",
+          "type": "number"
+        },
+        "currency": {
+          "title": "Currency",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "enum": [
+                "total",
+                "square_meter",
+                "hectare"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates the property price unit. Defaults to \"total\"",
+          "title": "Unit",
+          "enum": [
+            "total",
+            "square_meter",
+            "hectare"
+          ],
+          "x-enum-searchable": true
+        },
+        "commission": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PropertyCommissionBody"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "foreclosure": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether the property is up for auction. This option is available only to agencies in Mexico.",
+          "title": "Foreclosure"
+        },
+        "adjudicated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Indicates whether the property has been legally awarded to a creditor. This option is available only to agencies in Mexico.",
+          "title": "Adjudicated"
+        }
+      },
+      "required": [
+        "type",
+        "active",
+        "amount",
+        "currency"
+      ],
+      "title": "PropertyOperationSaleOrRentalBody",
+      "type": "object"
+    },
+    "PropertyOperationTemporaryRentalBody": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "temporary_rental",
+          "default": "temporary_rental",
+          "title": "Type",
+          "type": "string"
+        },
+        "active": {
+          "description": "Indicates whether this operation is active or not.",
+          "title": "Active",
+          "type": "boolean"
+        },
+        "currency": {
+          "title": "Currency",
+          "type": "string"
+        },
+        "rates": {
+          "items": {
+            "$ref": "#/$defs/TemporaryRentalRateBody"
+          },
+          "minItems": 1,
+          "title": "Rates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "active",
+        "currency",
+        "rates"
+      ],
+      "title": "PropertyOperationTemporaryRentalBody",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "TemporaryRentalRateBody": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "amount": {
+          "exclusiveMinimum": 0,
+          "maximum": 100000000000,
+          "title": "Amount",
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "amount"
+      ],
+      "title": "TemporaryRentalRateBody",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact_request": "#/$defs/EasyBrokerCreateContactRequestConfig",
+          "create_property": "#/$defs/EasyBrokerCreatePropertyConfig",
+          "get_contact": "#/$defs/EasyBrokerGetContactConfig",
+          "get_locations": "#/$defs/EasyBrokerGetLocationsConfig",
+          "get_property": "#/$defs/EasyBrokerGetPropertyConfig",
+          "list_collaborations": "#/$defs/EasyBrokerListCollaborationsConfig",
+          "list_contact_requests": "#/$defs/EasyBrokerListContactRequestsConfig",
+          "list_contacts": "#/$defs/EasyBrokerListContactsConfig",
+          "list_features": "#/$defs/EasyBrokerListFeaturesConfig",
+          "list_listing_statuses": "#/$defs/EasyBrokerListListingStatusesConfig",
+          "list_properties": "#/$defs/EasyBrokerListPropertiesConfig",
+          "list_property_integrations": "#/$defs/EasyBrokerListPropertyIntegrationsConfig",
+          "list_property_types": "#/$defs/EasyBrokerListPropertyTypesConfig",
+          "list_users": "#/$defs/EasyBrokerListUsersConfig",
+          "on_new_contact_request": "#/$defs/EasyBrokerOnNewContactRequestConfig",
+          "on_new_or_updated_contact": "#/$defs/EasyBrokerOnNewOrUpdatedContactConfig",
+          "on_new_or_updated_property": "#/$defs/EasyBrokerOnNewOrUpdatedPropertyConfig",
+          "update_contact": "#/$defs/EasyBrokerUpdateContactConfig",
+          "update_property": "#/$defs/EasyBrokerUpdatePropertyConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/EasyBrokerListCollaborationsConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerListContactRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerCreateContactRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerListFeaturesConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerListListingStatusesConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerGetLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerListPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerCreatePropertyConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerGetPropertyConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerUpdatePropertyConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerListPropertyIntegrationsConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerListPropertyTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerOnNewContactRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerOnNewOrUpdatedContactConfig"
+        },
+        {
+          "$ref": "#/$defs/EasyBrokerOnNewOrUpdatedPropertyConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EasyBrokerAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Easybroker-archive Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,55 @@
+{
+  "source": "https://api.easybroker.com/docs",
+  "contact_request": {
+    "id": 123,
+    "name": "John Smith",
+    "phone": "5559090909",
+    "email": "mail@example.com",
+    "contact_id": 123,
+    "property_id": "EB-XXXX01",
+    "message": "I'm interested in this property. Please contact me.",
+    "source": "mydomain.com",
+    "happened_at": "2020-03-01T23:26:53.402Z"
+  },
+  "contact": {
+    "id": 123,
+    "full_name": "John Smith",
+    "phone": "5559090909",
+    "email": "mail@example.com",
+    "agent": "Jane Johnson",
+    "source": "mydomain.com",
+    "status": "Contacted",
+    "last_activity_at": "2020-03-01T23:26:53.402Z",
+    "created_at": "2020-03-01T23:26:53.402Z",
+    "updated_at": "2020-03-01T23:26:53.402Z"
+  },
+  "property": {
+    "agent": "John Smith",
+    "public_id": "EB-XXX123",
+    "title": "Beautiful property in Condesa",
+    "title_image_full": "https://assets.easybroker.com/property_images/123/456/EB-010101.jpg?s=3f9a1c2e7b6d4a08&version=1713484800",
+    "title_image_thumb": "https://assets.easybroker.com/property_images/123/456/EB-010101.jpg?s=3f9a1c2e7b6d4a08&version=1713484800&width=200",
+    "location": "Condesa, Cuauhtemoc",
+    "property_type": "Apartment",
+    "updated_at": "2020-03-01T23:26:53.402Z",
+    "show_prices": true,
+    "share_commission": true
+  },
+  "property_body": {
+    "property_type": "house",
+    "title": "Beautiful property in Condesa.",
+    "description": "This property is very well-lit in a lovely neighborhood overlooking a park.",
+    "status": "not_published",
+    "location": {
+      "name": "Carmen Serdan, Monterrey, Nuevo Le\u00f3n"
+    },
+    "operations": [
+      {
+        "type": "sale",
+        "active": true,
+        "amount": 500000.0,
+        "currency": "USD"
+      }
+    ]
+  }
+}
