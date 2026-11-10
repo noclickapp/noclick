@@ -1,0 +1,4 @@
+{
+  "source": "https://developers.google.com/resources/api-libraries/documentation/books/v1/python/latest/books_v1.mylibrary.annotations.html#list",
+  "notes": "Fields copied from Google's documented Annotation response form. Google publishes A String placeholders rather than account data; optional fields not used by the trigger are omitted. Test mutations are synthetic and labeled in the test."
+}

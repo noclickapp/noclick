@@ -1,0 +1,1761 @@
+{
+  "$defs": {
+    "AnnotationInput": {
+      "additionalProperties": false,
+      "properties": {
+        "volumeId": {
+          "minLength": 1,
+          "title": "Book ID",
+          "type": "string"
+        },
+        "layerId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Layerid"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your note or other annotation data.",
+          "title": "Data"
+        },
+        "selectedText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selectedtext"
+        },
+        "beforeSelectedText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Beforeselectedtext"
+        },
+        "afterSelectedText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Afterselectedtext"
+        },
+        "highlightStyle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Highlightstyle"
+        },
+        "pageIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pageids"
+        },
+        "clientVersionRanges": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AnnotationRanges"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "volumeId"
+      ],
+      "title": "AnnotationInput",
+      "type": "object"
+    },
+    "AnnotationRange": {
+      "additionalProperties": false,
+      "properties": {
+        "startPosition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Startposition"
+        },
+        "endPosition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endposition"
+        },
+        "startOffset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Startoffset"
+        },
+        "endOffset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endoffset"
+        }
+      },
+      "title": "AnnotationRange",
+      "type": "object"
+    },
+    "AnnotationRanges": {
+      "additionalProperties": false,
+      "properties": {
+        "contentVersion": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contentversion"
+        },
+        "gbTextRange": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AnnotationRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "gbImageRange": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AnnotationRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "cfiRange": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AnnotationRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "imageCfiRange": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AnnotationRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "AnnotationRanges",
+      "type": "object"
+    },
+    "GoogleBooksAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "google_books_access_token",
+          "default": "google_books_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Google Books Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an OAuth access token authorized for https://www.googleapis.com/auth/books. API keys cannot access your private library or make changes. A pasted token works until it expires; replace it to renew access.",
+      "x-credential-url": "https://developers.google.com/oauthplayground/"
+    },
+    "GoogleBooksAddVolumeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_volume",
+          "default": "add_volume",
+          "title": "Add Volume",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Add Volume",
+          "x-is-trigger": false
+        },
+        "shelf": {
+          "minLength": 1,
+          "title": "Shelf",
+          "type": "string"
+        },
+        "volume_id": {
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shelf",
+        "volume_id"
+      ],
+      "title": "GoogleBooksAddVolumeConfig",
+      "type": "object"
+    },
+    "GoogleBooksClearBookshelfConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "clear_bookshelf",
+          "default": "clear_bookshelf",
+          "title": "Clear Bookshelf",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Clear Bookshelf",
+          "x-is-trigger": false
+        },
+        "shelf": {
+          "minLength": 1,
+          "title": "Shelf",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shelf"
+      ],
+      "title": "GoogleBooksClearBookshelfConfig",
+      "type": "object"
+    },
+    "GoogleBooksCreateAnnotationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_annotation",
+          "default": "create_annotation",
+          "title": "Create Annotation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Create Annotation",
+          "x-is-trigger": false
+        },
+        "annotation": {
+          "$ref": "#/$defs/AnnotationInput",
+          "title": "Annotation"
+        }
+      },
+      "required": [
+        "annotation"
+      ],
+      "title": "GoogleBooksCreateAnnotationConfig",
+      "type": "object"
+    },
+    "GoogleBooksDeleteAnnotationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_annotation",
+          "default": "delete_annotation",
+          "title": "Delete Annotation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Delete Annotation",
+          "x-is-trigger": false
+        },
+        "annotation_id": {
+          "minLength": 1,
+          "title": "Annotation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "annotation_id"
+      ],
+      "title": "GoogleBooksDeleteAnnotationConfig",
+      "type": "object"
+    },
+    "GoogleBooksGetMyBookshelfConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_my_bookshelf",
+          "default": "get_my_bookshelf",
+          "title": "Get My Bookshelf",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Get My Bookshelf",
+          "x-is-trigger": false
+        },
+        "shelf": {
+          "minLength": 1,
+          "title": "Shelf",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shelf"
+      ],
+      "title": "GoogleBooksGetMyBookshelfConfig",
+      "type": "object"
+    },
+    "GoogleBooksGetPublicBookshelfConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_public_bookshelf",
+          "default": "get_public_bookshelf",
+          "title": "Get Public Bookshelf",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Get Public Bookshelf",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "shelf": {
+          "minLength": 1,
+          "title": "Shelf",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id",
+        "shelf"
+      ],
+      "title": "GoogleBooksGetPublicBookshelfConfig",
+      "type": "object"
+    },
+    "GoogleBooksGetReadingPositionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_reading_position",
+          "default": "get_reading_position",
+          "title": "Get Reading Position",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Get Reading Position",
+          "x-is-trigger": false
+        },
+        "volume_id": {
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        },
+        "content_version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Version"
+        }
+      },
+      "required": [
+        "volume_id"
+      ],
+      "title": "GoogleBooksGetReadingPositionConfig",
+      "type": "object"
+    },
+    "GoogleBooksGetVolumeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_volume",
+          "default": "get_volume",
+          "title": "Get Volume",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Get Volume",
+          "x-is-trigger": false
+        },
+        "volume_id": {
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "enum": [
+                "FULL",
+                "LITE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Projection",
+          "enum": [
+            "FULL",
+            "LITE"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "volume_id"
+      ],
+      "title": "GoogleBooksGetVolumeConfig",
+      "type": "object"
+    },
+    "GoogleBooksListAnnotationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_annotations",
+          "default": "list_annotations",
+          "title": "List Annotations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "List Annotations",
+          "x-is-trigger": false
+        },
+        "volume_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Volume Id"
+        },
+        "layer_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Layer Id"
+        },
+        "max_results": {
+          "default": 40,
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "updated_min": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated Min"
+        },
+        "updated_max": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated Max"
+        }
+      },
+      "title": "GoogleBooksListAnnotationsConfig",
+      "type": "object"
+    },
+    "GoogleBooksListMyBooksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_my_books",
+          "default": "list_my_books",
+          "title": "List My Books",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "List My Books",
+          "x-is-trigger": false
+        },
+        "max_results": {
+          "default": 40,
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        }
+      },
+      "title": "GoogleBooksListMyBooksConfig",
+      "type": "object"
+    },
+    "GoogleBooksListMyBookshelfVolumesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_my_bookshelf_volumes",
+          "default": "list_my_bookshelf_volumes",
+          "title": "List My Bookshelf Volumes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "List My Bookshelf Volumes",
+          "x-is-trigger": false
+        },
+        "shelf": {
+          "minLength": 1,
+          "title": "Shelf",
+          "type": "string"
+        },
+        "max_results": {
+          "default": 40,
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "enum": [
+                "FULL",
+                "LITE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Projection",
+          "enum": [
+            "FULL",
+            "LITE"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "shelf"
+      ],
+      "title": "GoogleBooksListMyBookshelfVolumesConfig",
+      "type": "object"
+    },
+    "GoogleBooksListMyBookshelvesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_my_bookshelves",
+          "default": "list_my_bookshelves",
+          "title": "List My Bookshelves",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "List My Bookshelves",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GoogleBooksListMyBookshelvesConfig",
+      "type": "object"
+    },
+    "GoogleBooksListPublicBookshelfVolumesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_public_bookshelf_volumes",
+          "default": "list_public_bookshelf_volumes",
+          "title": "List Public Bookshelf Volumes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "List Public Bookshelf Volumes",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "shelf": {
+          "minLength": 1,
+          "title": "Shelf",
+          "type": "string"
+        },
+        "max_results": {
+          "default": 40,
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id",
+        "shelf"
+      ],
+      "title": "GoogleBooksListPublicBookshelfVolumesConfig",
+      "type": "object"
+    },
+    "GoogleBooksListPublicBookshelvesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_public_bookshelves",
+          "default": "list_public_bookshelves",
+          "title": "List Public Bookshelves",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "List Public Bookshelves",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GoogleBooksListPublicBookshelvesConfig",
+      "type": "object"
+    },
+    "GoogleBooksListRecommendedVolumesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_recommended_volumes",
+          "default": "list_recommended_volumes",
+          "title": "List Recommended Volumes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "List Recommended Volumes",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GoogleBooksListRecommendedVolumesConfig",
+      "type": "object"
+    },
+    "GoogleBooksMoveVolumeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "move_volume",
+          "default": "move_volume",
+          "title": "Move Volume",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Move Volume",
+          "x-is-trigger": false
+        },
+        "shelf": {
+          "minLength": 1,
+          "title": "Shelf",
+          "type": "string"
+        },
+        "volume_id": {
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        },
+        "volume_position": {
+          "minimum": 0,
+          "title": "Volume Position",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "shelf",
+        "volume_id",
+        "volume_position"
+      ],
+      "title": "GoogleBooksMoveVolumeConfig",
+      "type": "object"
+    },
+    "GoogleBooksOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "google_oauth",
+          "default": "google_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 expiry, if known.",
+          "title": "Token Expiry"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Google Account"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Granted Scopes",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Google Books OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://console.cloud.google.com/apis/library/books.googleapis.com",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/books"
+      ]
+    },
+    "GoogleBooksOnAnnotationUpdatedConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_annotation_updated",
+          "default": "on_annotation_updated",
+          "title": "On New or Updated Annotation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Annotation",
+          "x-is-trigger": true
+        },
+        "volume_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional book to watch; otherwise watch your whole library.",
+          "title": "Book ID"
+        },
+        "updated_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive RFC 3339 lower bound for annotation updates.",
+          "title": "Updated Since"
+        }
+      },
+      "title": "GoogleBooksOnAnnotationUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleBooksRateRecommendedVolumeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rate_recommended_volume",
+          "default": "rate_recommended_volume",
+          "title": "Rate Recommended Volume",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Rate Recommended Volume",
+          "x-is-trigger": false
+        },
+        "volume_id": {
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        },
+        "rating": {
+          "enum": [
+            "HAVE_IT",
+            "NOT_INTERESTED"
+          ],
+          "title": "Rating",
+          "type": "string"
+        }
+      },
+      "required": [
+        "volume_id",
+        "rating"
+      ],
+      "title": "GoogleBooksRateRecommendedVolumeConfig",
+      "type": "object"
+    },
+    "GoogleBooksRemoveVolumeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "remove_volume",
+          "default": "remove_volume",
+          "title": "Remove Volume",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Remove Volume",
+          "x-is-trigger": false
+        },
+        "shelf": {
+          "minLength": 1,
+          "title": "Shelf",
+          "type": "string"
+        },
+        "volume_id": {
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shelf",
+        "volume_id"
+      ],
+      "title": "GoogleBooksRemoveVolumeConfig",
+      "type": "object"
+    },
+    "GoogleBooksSearchVolumesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_volumes",
+          "default": "search_volumes",
+          "title": "Search Volumes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Search Volumes",
+          "x-is-trigger": false
+        },
+        "q": {
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "max_results": {
+          "default": 40,
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "start_index": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "newest",
+                "relevance"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order By",
+          "enum": [
+            "newest",
+            "relevance"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "ebooks",
+                "free-ebooks",
+                "full",
+                "paid-ebooks",
+                "partial"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter",
+          "enum": [
+            "ebooks",
+            "free-ebooks",
+            "full",
+            "paid-ebooks",
+            "partial"
+          ],
+          "x-enum-searchable": true
+        },
+        "lang_restrict": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang Restrict"
+        },
+        "print_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "ALL",
+                "BOOKS",
+                "MAGAZINES"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Print Type",
+          "enum": [
+            "ALL",
+            "BOOKS",
+            "MAGAZINES"
+          ],
+          "x-enum-searchable": true
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "enum": [
+                "FULL",
+                "LITE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Projection",
+          "enum": [
+            "FULL",
+            "LITE"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "GoogleBooksSearchVolumesConfig",
+      "type": "object"
+    },
+    "GoogleBooksSetReadingPositionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "set_reading_position",
+          "default": "set_reading_position",
+          "title": "Set Reading Position",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Set Reading Position",
+          "x-is-trigger": false
+        },
+        "volume_id": {
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        },
+        "position": {
+          "minLength": 1,
+          "title": "Position",
+          "type": "string"
+        },
+        "timestamp": {
+          "minLength": 1,
+          "title": "Timestamp",
+          "type": "string"
+        },
+        "content_version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Version"
+        },
+        "action": {
+          "anyOf": [
+            {
+              "enum": [
+                "bookmark",
+                "chapter",
+                "next-page",
+                "prev-page",
+                "scroll",
+                "search"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Action",
+          "enum": [
+            "bookmark",
+            "chapter",
+            "next-page",
+            "prev-page",
+            "scroll",
+            "search"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "volume_id",
+        "position",
+        "timestamp"
+      ],
+      "title": "GoogleBooksSetReadingPositionConfig",
+      "type": "object"
+    },
+    "GoogleBooksUpdateAnnotationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_annotation",
+          "default": "update_annotation",
+          "title": "Update Annotation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Google Books",
+          "x-display-name": "Update Annotation",
+          "x-is-trigger": false
+        },
+        "annotation_id": {
+          "minLength": 1,
+          "title": "Annotation Id",
+          "type": "string"
+        },
+        "annotation": {
+          "$ref": "#/$defs/AnnotationInput",
+          "title": "Annotation"
+        }
+      },
+      "required": [
+        "annotation_id",
+        "annotation"
+      ],
+      "title": "GoogleBooksUpdateAnnotationConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_volume": "#/$defs/GoogleBooksAddVolumeConfig",
+          "clear_bookshelf": "#/$defs/GoogleBooksClearBookshelfConfig",
+          "create_annotation": "#/$defs/GoogleBooksCreateAnnotationConfig",
+          "delete_annotation": "#/$defs/GoogleBooksDeleteAnnotationConfig",
+          "get_my_bookshelf": "#/$defs/GoogleBooksGetMyBookshelfConfig",
+          "get_public_bookshelf": "#/$defs/GoogleBooksGetPublicBookshelfConfig",
+          "get_reading_position": "#/$defs/GoogleBooksGetReadingPositionConfig",
+          "get_volume": "#/$defs/GoogleBooksGetVolumeConfig",
+          "list_annotations": "#/$defs/GoogleBooksListAnnotationsConfig",
+          "list_my_books": "#/$defs/GoogleBooksListMyBooksConfig",
+          "list_my_bookshelf_volumes": "#/$defs/GoogleBooksListMyBookshelfVolumesConfig",
+          "list_my_bookshelves": "#/$defs/GoogleBooksListMyBookshelvesConfig",
+          "list_public_bookshelf_volumes": "#/$defs/GoogleBooksListPublicBookshelfVolumesConfig",
+          "list_public_bookshelves": "#/$defs/GoogleBooksListPublicBookshelvesConfig",
+          "list_recommended_volumes": "#/$defs/GoogleBooksListRecommendedVolumesConfig",
+          "move_volume": "#/$defs/GoogleBooksMoveVolumeConfig",
+          "on_annotation_updated": "#/$defs/GoogleBooksOnAnnotationUpdatedConfig",
+          "rate_recommended_volume": "#/$defs/GoogleBooksRateRecommendedVolumeConfig",
+          "remove_volume": "#/$defs/GoogleBooksRemoveVolumeConfig",
+          "search_volumes": "#/$defs/GoogleBooksSearchVolumesConfig",
+          "set_reading_position": "#/$defs/GoogleBooksSetReadingPositionConfig",
+          "update_annotation": "#/$defs/GoogleBooksUpdateAnnotationConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleBooksSearchVolumesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksGetVolumeConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksListMyBookshelvesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksGetMyBookshelfConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksListMyBookshelfVolumesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksAddVolumeConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksRemoveVolumeConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksMoveVolumeConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksClearBookshelfConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksListPublicBookshelvesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksGetPublicBookshelfConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksListPublicBookshelfVolumesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksListAnnotationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksCreateAnnotationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksUpdateAnnotationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksDeleteAnnotationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksGetReadingPositionConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksSetReadingPositionConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksListMyBooksConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksListRecommendedVolumesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksRateRecommendedVolumeConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksOnAnnotationUpdatedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleBooksAccessTokenCredential"
+        },
+        {
+          "$ref": "#/$defs/GoogleBooksOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-books Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
