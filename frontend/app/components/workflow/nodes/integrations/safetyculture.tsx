@@ -17,7 +17,7 @@ export const SafetyCultureNode: NodeDefinition = {
     type: 'automation-safetyculture',
     label: 'SafetyCulture',
     keywords: ['Mitti', 'iAuditor'],
-    description: 'Inspections, templates and actions in SafetyCulture (now Mitti)',
+    description: 'Trigger workflows when inspections start or complete, and manage SafetyCulture (now Mitti) inspections, templates and actions',
     category: 'industry',
     Icon: SafetyCultureIcon,
     iconColor: '',

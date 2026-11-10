@@ -1,4 +1,4 @@
-"""SafetyCulture (now Mitti) API v1.369.11.
+"""SafetyCulture (now Mitti) API v1.371.1.
 
 Contract: https://developer.mitti.com/openapi/safetyculture-api.json
 Host/rebrand: https://developer.mitti.com/docs/mitti-apps-guide
@@ -7,6 +7,8 @@ metadata unchanged; writes report the API acknowledgement, not a readback.
 """
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
@@ -17,6 +19,7 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validato
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://api.mitti.com"
@@ -163,10 +166,35 @@ class UpdateActionDueDate(_ActionUpdate):
     due_at: AwareDatetime | None = Field(None, description="UTC or offset date/time. Leave unset to clear the due date.")
 
 
+# Official payloads: /reference/webhooks and /reference/remove-owners-access-to-a-completed-inspection.
+TRIGGER_EVENTS = {
+    "on_inspection_started": "TRIGGER_EVENT_INSPECTION_HAS_STARTED",
+    "on_inspection_completed": "TRIGGER_EVENT_INSPECTION_COMPLETED_STATUS",
+}
+
+
+class _InspectionTrigger(WebhookTriggerConfigBase):
+    webhook_url: str | None = Field(None, title="Webhook URL",
+        description="Registered automatically for your organization. Requires Administrator permission for users, or Override permissions: Manage all data for service users.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+class OnInspectionStarted(_InspectionTrigger):
+    operation: Literal["on_inspection_started"] = Field("on_inspection_started", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "On Inspection Started"})
+
+
+class OnInspectionCompleted(_InspectionTrigger):
+    operation: Literal["on_inspection_completed"] = Field("on_inspection_completed", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "On Inspection Completed"})
+
+
 SafetyCultureConfig = Annotated[Union[ListGroups, SearchInspections, SearchTemplates, GetTemplate,
     GetInspection, CreateInspection, CompleteInspection, ListActions, GetAction, CreateAction,
     UpdateActionTitle, UpdateActionDescription, UpdateActionStatus, UpdateActionPriority,
-    UpdateActionDueDate], Field(discriminator="operation")]
+    UpdateActionDueDate, OnInspectionStarted, OnInspectionCompleted], Field(discriminator="operation")]
 
 
 class SafetyCultureFullConfig(NodeConfig[SafetyCultureConfig, SafetyCultureAPITokenCredential]):
@@ -193,7 +221,8 @@ ROUTES = {
 }
 
 
-class SafetyCultureNode(WorkflowNode):
+class SafetyCultureNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    webhook_replace_stale_endpoint = True
     integration_type = "automation-safetyculture"
     connection_evidence = ConnectionEvidence(operation="list_groups", noun="groups and organizations")
 
@@ -201,10 +230,112 @@ class SafetyCultureNode(WorkflowNode):
     def get_config_model(cls):
         return SafetyCultureFullConfig
 
+    @classmethod
+    async def _webhook_request(cls, token, method, path, *, body=None):
+        try:
+            async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
+                response = await client.request(method, BASE_URL + path,
+                    headers={"Authorization": "Bearer " + token, "Accept": "application/json"}, json=body)
+            if method == "DELETE" and response.status_code == 404:
+                return {}
+            if response.status_code != 200:
+                raise ValueError(f"SafetyCulture webhook request failed (HTTP {response.status_code})")
+            data = response.json()
+            if not isinstance(data, dict) or data.get("error") or data.get("errors") or (isinstance(data.get("code"), int) and data["code"] != 0):
+                raise ValueError("SafetyCulture returned an invalid webhook response")
+            return data
+        except httpx.RequestError:
+            raise ValueError("SafetyCulture webhook request could not be confirmed") from None
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = TRIGGER_EVENTS.get((config or {}).get("operation"))
+        if event is None:
+            raise ValueError("Choose a supported SafetyCulture trigger")
+        token = credential.get("api_token")
+        if not token:
+            raise ValueError("Connect a SafetyCulture API token")
+        # Read the organization's secret; never rotate it and break other consumers.
+        secret = (await cls._webhook_request(token, "GET", "/webhooks/v1/token")).get("token")
+        if not isinstance(secret, str) or not secret:
+            raise ValueError("SafetyCulture did not return its webhook signing secret")
+        data = await cls._webhook_request(token, "POST", "/webhooks/v1/webhooks",
+            body={"url": webhook_url, "trigger_events": [event]})
+        endpoint = data.get("webhook") or {}
+        endpoint_id = endpoint.get("webhook_id")
+        if not isinstance(endpoint_id, str) or not endpoint_id:
+            raise ValueError("SafetyCulture did not return a webhook ID")
+        return {"external_webhook_id": endpoint_id, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = (config or {}).get("external_webhook_id")
+        if not endpoint_id:
+            return
+        if not credential or not credential.get("api_token"):
+            raise ValueError("Connect SafetyCulture to remove its webhook")
+        await cls._webhook_request(credential["api_token"], "DELETE",
+            "/webhooks/v1/webhooks/" + quote(str(endpoint_id), safe=""))
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # https://developer.mitti.com/reference/webhooksservice_gettoken
+        secret = (config or {}).get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "x-safetyculture-signature"), "")
+        if not isinstance(secret, str) or not secret or not isinstance(signature, str):
+            return False
+        expected = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(signature.encode(), expected.encode())
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event_type = TRIGGER_EVENTS.get((config or {}).get("operation"))
+        if not event_type or event_type not in (payload.get("event") or {}).get("event_types", []):
+            return False
+        if config["operation"] == "on_inspection_completed":
+            return "inspection_completed_set" in (payload.get("data") or {})
+        return True
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if (config or {}).get("operation") in TRIGGER_EVENTS:
+            if not cls.filter_trigger_payload(payload, config):
+                return {"status": "no_event", "operation": config["operation"]}
+            return {"status": "success", "operation": config["operation"], "data": payload}
+        return None
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") not in TRIGGER_EVENTS:
+            return super().resolve_agent_event(output)
+        if output.get("status") == "no_event":
+            return None
+        payload = output["data"]
+        event = payload["event"]
+        actor = event["triggered_by"]
+        inspection_id = payload["resource"]["id"]
+        details = payload["data"]["details"]
+        action = "started" if output["operation"] == "on_inspection_started" else "completed"
+        lines = [f"SafetyCulture inspection {action}: {inspection_id}",
+            f"By {actor['user']} in organization {actor['organization']} at {event['date_triggered']}.",
+            f"Template: {details['template_id']}."]
+        if action == "completed":
+            completion = payload["data"]["inspection_completed_set"]
+            lines.append(f"Completed at {completion.get('complete_time', 'unknown time')}.")
+            site = completion.get("site") or {}
+            if site.get("folder_id"):
+                lines.append(f"Site: {site['folder_id']}.")
+        lines.append(f"Use get_inspection with inspection_id={inspection_id} to read the inspection and its answers.")
+        return {"text": "\n".join(lines), "conversation_key": str(inspection_id),
+            "title": f"Inspection {action}"}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a SafetyCulture API token")
         op = self.config.config
+        if op.operation in TRIGGER_EVENTS:
+            payload = (self.node_data or {}).get("config", {}).get("_triggerPayload", inputs)
+            return self.resolve_trigger_payload(payload, op.model_dump())
         method, path = ROUTES[op.operation]
         values = op.model_dump(mode="json", exclude={"operation"}, exclude_none=True)
         for field in ("template_id", "inspection_id", "action_id"):

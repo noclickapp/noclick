@@ -2,7 +2,7 @@
 import json
 from copy import deepcopy
 from pathlib import Path
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock
 
 import httpx
 import pytest
@@ -116,3 +116,87 @@ def test_safetyculture_dates_and_write_body_limits():
         sc.CreateAction(title="x" * 256)
     with pytest.raises(ValidationError):
         sc.UpdateActionDueDate(action_id=IDENTIFIER, due_at="2026-11-10T09:00:00")
+
+
+WEBHOOK_EVENTS = json.loads((Path(__file__).parent / "fixtures/safetyculture/webhook_events.json").read_text())["events"]
+
+
+@pytest.mark.parametrize("operation,event_type", sc.TRIGGER_EVENTS.items())
+@pytest.mark.asyncio
+async def test_safetyculture_trigger_lifecycle(transport, operation, event_type):
+    requests, replies = transport
+    replies.extend([(200, {"token": "org-signing-secret"}),
+                    (200, {"webhook": {"webhook_id": IDENTIFIER}}), (200, {})])
+    config = {"operation": operation}
+    registration = await sc.SafetyCultureNode._register_external_webhook(
+        webhook_url="https://example.com", credential=AUTH, config=config, node_id="test")
+    assert registration == {"external_webhook_id": IDENTIFIER, "signing_secret": "org-signing-secret"}
+    assert [(r.method, r.url.path) for r in requests] == [
+        ("GET", "/webhooks/v1/token"), ("POST", "/webhooks/v1/webhooks")]
+    assert json.loads(requests[1].content) == {"url": "https://example.com", "trigger_events": [event_type]}
+    await sc.SafetyCultureNode._unregister_external_webhook(
+        credential=AUTH, config={**config, **registration}, node_id="test")
+    assert requests[-1].method == "DELETE"
+    assert requests[-1].url.path == "/webhooks/v1/webhooks/" + IDENTIFIER
+    assert not replies
+
+
+@pytest.mark.parametrize("operation,event_type", sc.TRIGGER_EVENTS.items())
+@pytest.mark.asyncio
+async def test_safetyculture_documented_signed_event(operation, event_type):
+    import hashlib
+    import hmac
+    payload = deepcopy(WEBHOOK_EVENTS[event_type]["body"])
+    body = json.dumps(payload).encode()
+    config = {"operation": operation, "signing_secret": "org-secret"}
+    headers = {"X-SafetyCulture-Signature": hmac.new(b"org-secret", body, hashlib.sha256).hexdigest()}
+    node = sc.SafetyCultureNode
+    assert node.verify_webhook_signature(body, headers, config)
+    assert not node.verify_webhook_signature(body + b" ", headers, config)
+    assert not node.verify_webhook_signature(body, {}, config)
+    assert not node.verify_webhook_signature(body, headers, {"operation": operation})
+    assert node.filter_trigger_payload(payload, config)
+    output = node.resolve_trigger_payload(payload, config)
+    event = node.resolve_agent_event(output)
+    inspection_id = payload["resource"]["id"]
+    assert event["conversation_key"] == inspection_id
+    assert inspection_id in event["text"] and payload["event"]["triggered_by"]["user"] in event["text"]
+    assert payload["data"]["details"]["template_id"] in event["text"]
+    node_instance = node(node_id="test", node_type=node.integration_type,
+        node_data={}, config=sc.SafetyCultureFullConfig.model_validate({"config": {"operation": operation}, "credentials": AUTH}), sio=Mock())
+    assert await node_instance.execute(payload) == output
+    result = await run(operation, {})
+    assert result["status"] == "no_event" and node.resolve_agent_event(result) is None
+    schema = node.get_config_schema()
+    assert schema["$defs"]["OnInspectionStarted"]["properties"]["operation"]["x-is-trigger"]
+    assert schema["$defs"]["OnInspectionCompleted"]["properties"]["operation"]["x-is-trigger"]
+
+
+def test_safetyculture_filters_other_events_and_incomplete_inspections():
+    node = sc.SafetyCultureNode
+    started = deepcopy(WEBHOOK_EVENTS[sc.TRIGGER_EVENTS["on_inspection_started"]]["body"])
+    assert not node.filter_trigger_payload(started, {"operation": "on_inspection_completed"})
+    completed = deepcopy(WEBHOOK_EVENTS[sc.TRIGGER_EVENTS["on_inspection_completed"]]["body"])
+    assert not node.filter_trigger_payload(completed, {"operation": "on_inspection_started"})
+    completed["data"].pop("inspection_completed_set")
+    assert not node.filter_trigger_payload(completed, {"operation": "on_inspection_completed"})
+    assert not node.filter_trigger_payload({}, {"operation": "on_inspection_started"})
+
+
+@pytest.mark.asyncio
+async def test_safetyculture_does_not_register_without_signing_secret(transport):
+    requests, replies = transport
+    replies.append((200, {}))
+    with pytest.raises(ValueError, match="signing secret"):
+        await sc.SafetyCultureNode._register_external_webhook(webhook_url="https://example.com",
+            credential=AUTH, config={"operation": "on_inspection_started"}, node_id="test")
+    assert len(requests) == 1
+
+
+@pytest.mark.asyncio
+async def test_safetyculture_cleanup_already_deleted(transport):
+    requests, replies = transport
+    replies.append((404, {}))
+    await sc.SafetyCultureNode._unregister_external_webhook(credential=AUTH,
+        config={"external_webhook_id": IDENTIFIER}, node_id="test")
+    assert len(requests) == 1
