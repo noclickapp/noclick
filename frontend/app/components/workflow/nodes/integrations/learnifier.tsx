@@ -1,0 +1,21 @@
+// Learnifier's Admin API connects learner, course and enrollment workflows.
+// This definition makes the integration discoverable in the canvas and courses catalog.
+import { memo } from 'react';
+import type { CSSProperties } from 'react';
+import type { NodeProps } from '@xyflow/react';
+import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
+import type { NodeDefinition } from '~/components/workflow/nodes/types';
+
+const LearnifierIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+    <img src="/icons/learnifier.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, objectFit: 'contain' } as CSSProperties} />
+);
+
+export const LearnifierNode: NodeDefinition = {
+    type: 'automation-learnifier', category: 'courses', label: 'Learnifier',
+    description: 'Manage learners, courses, enrollment, groups and awards; watch activations and completions',
+    keywords: ['lms', 'learning', 'training', 'enrollment', 'participation'],
+    Icon: LearnifierIcon, iconColor: '',
+    dimensions: { width: 90, height: 90, iconSize: 48 },
+    component: memo((props: NodeProps) => <AutomationNode {...props} Icon={LearnifierIcon} iconColor="" />),
+};

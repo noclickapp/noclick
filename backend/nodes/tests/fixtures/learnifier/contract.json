@@ -1,0 +1,353 @@
+{
+  "source": "https://apidocs.learnifier.com/learnifier.json",
+  "version": "1.3.1",
+  "Participation": {
+    "properties": {
+      "externalId": {
+        "type": "string",
+        "description": "The external id (foreign key). Must not exceed 255 characters.",
+        "nullable": true
+      },
+      "expiration": {
+        "type": "string",
+        "description": "The timestamp when this participation will expire. Expiration never happens if this value is *null*. Expiration means that the user will no longer able to access it.",
+        "format": "date-time",
+        "nullable": true
+      },
+      "activated": {
+        "type": "boolean",
+        "description": "True if this participation has been activated and can be used",
+        "nullable": false
+      },
+      "activitiesTotal": {
+        "type": "number",
+        "description": "The total number of activities. This includes optional activities.",
+        "format": "int32",
+        "example": 5,
+        "nullable": true
+      },
+      "accessLink": {
+        "type": "string",
+        "description": "A link to access this particular participation. The link requires the user to login. Users that access the platform the first time must set a password. This value is null if this participation is not activated. *This link is sensitive. Make sure that only authorized  users can access it*.",
+        "format": "url",
+        "example": "http://www.example.com/accesslink/123451",
+        "nullable": true
+      },
+      "activitiesCompleted": {
+        "type": "number",
+        "description": "The number of activities completed",
+        "format": "int64",
+        "example": 3,
+        "nullable": true
+      },
+      "projectId": {
+        "type": "integer",
+        "description": "The id of the project this participation belongs to",
+        "format": "int64",
+        "nullable": false
+      },
+      "errorMessage": {
+        "type": "string",
+        "description": "An optional error message that may describe why the participation is in error state.",
+        "nullable": true
+      },
+      "firstAccess": {
+        "type": "string",
+        "description": "The timestamp when the participant accessed the project for the first time. This value can be null",
+        "format": "date-time",
+        "nullable": true
+      },
+      "firstActivation": {
+        "type": "string",
+        "description": "The timestamp when this participation was first activated. This value can be null",
+        "format": "date-time",
+        "nullable": true
+      },
+      "firstCompleted": {
+        "type": "string",
+        "description": "The timestamp when the participant completed their participation the first time. This value can be null",
+        "format": "date-time",
+        "nullable": true
+      },
+      "firstMail": {
+        "type": "string",
+        "description": "The timestamp when the first email was sent to this participant. This value can be null",
+        "format": "date-time",
+        "nullable": true
+      },
+      "id": {
+        "type": "integer",
+        "description": "Unique identifier representing this participation. Id numbers are never reused",
+        "format": "int64",
+        "nullable": false
+      },
+      "inError": {
+        "type": "boolean",
+        "description": "True if this participation is in an error state. The user is not able to access participations that are in error state.",
+        "nullable": false
+      },
+      "userId": {
+        "type": "string",
+        "description": "The id of the user this participation belongs to",
+        "format": "uuid",
+        "nullable": true
+      },
+      "lastAccess": {
+        "type": "string",
+        "description": "The timestamp when the participant accessed the project the last time. This value can be null",
+        "format": "date-time",
+        "nullable": true
+      },
+      "lastActivation": {
+        "type": "string",
+        "description": "The timestamp when this participation was last activated. This value can be null",
+        "format": "date-time",
+        "nullable": true
+      },
+      "lastMail": {
+        "type": "string",
+        "description": "The timestamp when the last mail was sent to this participant. This value can be null",
+        "format": "date-time",
+        "nullable": true
+      },
+      "customFields": {
+        "type": "array",
+        "description": "The custom fields of this participation, if any",
+        "items": {
+          "$ref": "#/components/schemas/CustomField"
+        },
+        "nullable": false
+      },
+      "completionStatus": {
+        "type": "string",
+        "description": "The completion status. Can be one of the following:\n",
+        "enum": [
+          "unknown",
+          "notAttempted",
+          "incomplete",
+          "completed"
+        ],
+        "nullable": true
+      },
+      "type": {
+        "type": "string",
+        "description": "Participation type",
+        "example": "PARTICIPATION",
+        "enum": [
+          "PARTICIPATION",
+          "WAITLIST",
+          "RESERVATION",
+          "WAITLIST_RESERVATION"
+        ],
+        "nullable": false
+      },
+      "waitlistSeat": {
+        "type": "integer",
+        "description": "The seat number of a waitlist participation. The first in queue has seat number 0. Not present when participation is not a WAITLIST participation.",
+        "format": "int64",
+        "nullable": false
+      },
+      "reservationId": {
+        "type": "string",
+        "description": "The reserved slots reservation id. Not present when reservation id was not set.",
+        "nullable": true
+      },
+      "reservationName": {
+        "type": "string",
+        "description": "The reserved slots reservation name. Not present when reservation id was not set.",
+        "nullable": true
+      }
+    }
+  },
+  "AddUser": {
+    "properties": {
+      "primaryEmail": {
+        "type": "string",
+        "description": "The primary email for the user. Used for communication from the platform.",
+        "example": "jane.doe@example.com",
+        "nullable": true
+      },
+      "username": {
+        "type": "string",
+        "description": "A username for the user. The username is case sensitive and must be unique.",
+        "example": "jdoe",
+        "nullable": true
+      },
+      "externalId": {
+        "type": "string",
+        "description": "The external id (foreign key). Must not exceed 255 characters.",
+        "nullable": true
+      },
+      "firstName": {
+        "type": "string",
+        "description": "The first (given) name of the user",
+        "example": "Jane",
+        "nullable": true
+      },
+      "displayName": {
+        "type": "string",
+        "description": "The name shown when the user is listed",
+        "example": "Jane Doe",
+        "nullable": true
+      },
+      "lastName": {
+        "description": "The last name (surname) of the user",
+        "example": "Doe",
+        "nullable": true
+      },
+      "manager": {
+        "description": "The user's manager. The manager must be a user in the same organization as the user.",
+        "type": "string",
+        "format": "uuid",
+        "example": "c141709b-fac8-454d-885b-c6b0c4fadcef",
+        "nullable": true
+      },
+      "homeOrg": {
+        "type": "integer",
+        "description": "The primary organization for the user. Must match the id of an Organization Unit.",
+        "format": "int64",
+        "example": 1234,
+        "nullable": true
+      },
+      "locale": {
+        "type": "string",
+        "description": "The user's preferred language/locale setting. Affects date and number formatting.",
+        "format": "locale",
+        "example": "en-US",
+        "nullable": true
+      },
+      "hardLock": {
+        "type": "boolean",
+        "description": "True if the user should be locked from the system",
+        "nullable": true
+      },
+      "customFields": {
+        "type": "array",
+        "description": "The custom fields the needs to be added, updated or removed (set value to null).",
+        "items": {
+          "$ref": "#/components/schemas/CustomField"
+        },
+        "nullable": true
+      },
+      "thumbnailPhoto": {
+        "type": "string",
+        "description": "A base64 encoded jpeg or png image",
+        "format": "base64",
+        "nullable": true,
+        "example": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAFD0lEQVRIx9VWa0xcRRSenbn3LrC70MYECiammtoSX7+aqGgjaY0RmrREnoUtUKgUbIKgCNtNMUhSCn0o2Zaa+Kua8KelNeEVH6k8LaKkKsGEC8s+WligCSw0qezu3XvHM3ubLfJajMHE2ZPNzNxzzndeM2eQsmVDhp+iIGVrh7zVAKE8kGXmpt/v93q9vmUDlrAZZPjHAHJgwESSJFUXpRSWNDDUiYoKDMv5NwWgssK/xAZT3f/jUGl5jfn0OZO5ocpcD5PSspqe3kH4BAzAFBQJDfBYe8DqlhvtjZZmc2V2RjLKScHZhxBQzmGcnoRMFZmNl5qvXW9VvVkPA62pHWQ8Hk9P70/GzBfjdyJLA0+pVpoXlAWeLgrSHE9loek8H/80yk57rrtnAJhBZE0MtDr0anBEcSQudntPK6EewevkPWPEZyW+iQBZiUckXgdHl4TbnfjJuG3i6IgaqNXJWBkiqBCwpaPzVnR0pOuO3m/nJBtWXBplGssOIsPcThQHgaUyg/12LNvI9J2IHTFRIAKCPp+0bohUw4HpxtedBcbnB9uwZ4Kj0xqxi9u/L7IwWy/ZAqrtzInCbB1sij0CnQE28nMrBpGWmx2BtEvLnfibB1B2wFF39vNX9yLq0y6NYTqjGWrnEdq+Z1ek1woAHGDAZM+zUbD5S4dAZ8nSGKE+IWEvOlN3BcRBydoeqMUuitZq84l6k4ZO8d5xAgaqALsfARDFyQDidzOAIQaAGZuLrzfhanMRiKtFtRIAnFLNP5r3fmYKopLgGyf+CZDEY918YoLhWKbOZ2PmA0kTpCBLn/iagYXIhf024h3nqKTNSkG5+WWqE8EoPQZQ01t80pyfjqhbgFKRrBj+wWSWUhdTLdtVwsoUppB5J6soKVBXIHIsA5WcNAdS7VsXoKi4Ki8N0UXeO0aUWazMYXAF5MFMphowHBxMpAnADsDPYeU+8HBwPvLT0ImSU6EASkwMYJ4H35st2nMfh9MHGOpHtgXNZ6mGegUMuqg5Vx3WbBHoNHigBdeL3wsFUPjuR0dTEX0g0Pu4rioi+YD+t294D6TRwWINehnZCXViqLFfO7mDbxrqTOHADCK5qeh4UWUIgPKK2oIsDkoIzipd0Hx7jdcboiYHOepkmWSH2YqhigBgcpAYDFHfXRfoIvaMMZHCLPJBRe0jgA0O2sVPLQcPIDotQBCWRGzt5Xc+ta3lSy2VNNIsIyqhm19pYdPax64QFqsZIXk/unChcVMH7WxD00u7EJ0M80AO7xKvk7Rd1R4/oktM0L+VyOiNBH3hEV3b1TCvk5OdhAXwXtgLz6C6hssbHTSAVc+aze6sOV1qTEJ//sFRB4GbgD7ETfXhqcn6vHQd0DtJusv14bDJPtnJw2HO+Db6pLpswuZYfnWvfdmpHeb34dEcY25tidbZraEuIjmJPEugnJQFrLg1UDzyLJYcYDi524WALceYNzwiqv0ndD9QM+F2u19+/dClU4ZbX6Dxbkxt2DtKJBFLcG+LzPDxLvz9FWSp1L+y7zAwq9EP0Q+Wd3m1h2RkZmr4HeX5MXPdmvFWzt5BgKzt3FyP5sOCaKyNTU1LU+O+3htgo54Mw+2eh3njZw0Ch2JjIqKfEIDiYnSwvHj+DHwChmCT2VRPXt3dwMDJKdcPXb39/QO9fbeB+voHYHlvckptkxs8KUIABEtLhVnxbAl+2vh1tNmHl7Rq/KuH13/3dPwfAPwFyVm2hEFMr5MAAAAASUVORK5CYII="
+      }
+    }
+  },
+  "AddParticipant": {
+    "properties": {
+      "extid": {
+        "type": "string",
+        "description": "An optional external id for the participation",
+        "nullable": true
+      },
+      "email": {
+        "type": "string",
+        "description": "The email of the user. If no user exists with the specified email a user will be created with default values and the specified email.",
+        "format": "email",
+        "example": "user@example.com",
+        "nullable": true
+      },
+      "userId": {
+        "type": "string",
+        "format": "uuid",
+        "example": "81590981-1e05-4fd5-aa15-15bc4b06cf7f",
+        "nullable": true
+      },
+      "username": {
+        "type": "string",
+        "description": "A username. Note that user names are case sensitive",
+        "example": "jdoe",
+        "nullable": true
+      },
+      "activate": {
+        "type": "boolean",
+        "description": "Should participant be activated after being created. It will be only activated if caller have sufficient permissions to do that",
+        "example": true,
+        "nullable": true
+      }
+    }
+  },
+  "OrgUnits": {
+    "properties": {
+      "orgUnits": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/OrgUnit"
+        },
+        "nullable": false
+      }
+    }
+  },
+  "OrgUnit": {
+    "required": [
+      "id",
+      "type"
+    ],
+    "properties": {
+      "id": {
+        "type": "integer",
+        "description": "Unique identifier representing a specific organization unit. Id numbers are never reused.",
+        "format": "int64",
+        "nullable": false
+      },
+      "externalId": {
+        "type": "string",
+        "description": "The external id (foreign key).",
+        "nullable": true
+      },
+      "displayName": {
+        "type": "string",
+        "description": "The name of the client.",
+        "example": "My Client",
+        "nullable": true
+      },
+      "type": {
+        "type": "string",
+        "description": "The organization unit type.\n",
+        "enum": [
+          "client"
+        ],
+        "nullable": true
+      },
+      "parentId": {
+        "type": "integer",
+        "description": "Unique identifier of the parent or *null* if there is no parent.",
+        "format": "int64",
+        "nullable": true
+      },
+      "customFields": {
+        "type": "array",
+        "description": "The custom fields of this organization unit, if any",
+        "items": {
+          "$ref": "#/components/schemas/CustomField"
+        },
+        "nullable": true
+      },
+      "disabled": {
+        "type": "boolean",
+        "description": "True if the organization is disabled.",
+        "nullable": false
+      },
+      "demo": {
+        "type": "boolean",
+        "description": "True if the organization is a demo.",
+        "nullable": false
+      },
+      "home": {
+        "type": "boolean",
+        "description": "True if the organization is the home organization",
+        "nullable": false
+      },
+      "clientNumber": {
+        "type": "string",
+        "description": "The organization number",
+        "nullable": true
+      }
+    }
+  }
+}
