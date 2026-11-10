@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/netbox.svg",
+  "source": "https://raw.githubusercontent.com/netbox-community/netbox/v4.7.4/netbox/project-static/img/netbox_icon.svg",
+  "source_page": "https://github.com/netbox-community/netbox/blob/v4.7.4/netbox/project-static/img/netbox_icon.svg",
+  "license": "Apache-2.0",
+  "sha256": "a80e71eca8315be12d1f005ed68847f7c7aed8b9bf71dabf8479cd40b96abae6",
+  "date": "2026-11-11",
+  "edits": [],
+  "notes": "Official NetBox app icon published by netbox-community. Unmodified blue and pale blue mark with transparent background; no dark/white boundary parts requiring a theme variant."
+}

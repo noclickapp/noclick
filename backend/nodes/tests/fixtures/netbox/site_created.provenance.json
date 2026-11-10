@@ -1,0 +1,6 @@
+{
+  "source": "https://netbox.readthedocs.io/en/stable/integrations/webhooks/#default-request-body",
+  "edits": [
+    "Removed ellipsis markers for omitted fields; retained all documented values."
+  ]
+}
