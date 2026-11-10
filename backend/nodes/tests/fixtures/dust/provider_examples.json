@@ -1,0 +1,167 @@
+{
+  "source": "https://dust.tt/api/doc",
+  "search_response_schema": {
+    "type": "object",
+    "properties": {
+      "documents": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "ID of the document"
+            },
+            "title": {
+              "type": "string",
+              "description": "Title of the document"
+            },
+            "content": {
+              "type": "string",
+              "description": "Content of the document"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Tags of the document"
+            },
+            "parents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Parents of the document"
+            },
+            "timestamp": {
+              "type": "number",
+              "description": "Timestamp of the document"
+            },
+            "data": {
+              "type": "object",
+              "description": "Data of the document"
+            },
+            "score": {
+              "type": "number",
+              "description": "Score of the document"
+            }
+          }
+        }
+      }
+    }
+  },
+  "document_schema": {
+    "type": "object",
+    "properties": {
+      "data_source_id": {
+        "type": "string",
+        "example": "3b7d9f1e5a"
+      },
+      "created": {
+        "type": "number",
+        "example": 1625097600
+      },
+      "document_id": {
+        "type": "string",
+        "example": "2c4a6e8d0f"
+      },
+      "title": {
+        "type": "string",
+        "description": "Title of the document",
+        "example": "Customer Support FAQ"
+      },
+      "mime_type": {
+        "type": "string",
+        "description": "MIME type of the table",
+        "example": "text/md"
+      },
+      "timestamp": {
+        "type": "number",
+        "example": 1625097600
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "example": [
+          "customer_support",
+          "faq"
+        ]
+      },
+      "parent_id": {
+        "type": "string",
+        "description": "ID of the document parent",
+        "items": {
+          "type": "string"
+        },
+        "example": "1234f4567c"
+      },
+      "parents": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "example": [
+          "7b9d1f3e5a",
+          "2c4a6e8d0f"
+        ]
+      },
+      "source_url": {
+        "type": "string",
+        "nullable": true,
+        "example": "https://example.com/support/article1"
+      },
+      "hash": {
+        "type": "string",
+        "example": "a1b2c3d4e5"
+      },
+      "text_size": {
+        "type": "number",
+        "example": 1024
+      },
+      "chunk_count": {
+        "type": "number",
+        "example": 5
+      },
+      "chunks": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        },
+        "example": [
+          {
+            "chunk_id": "9f1d3b5a7c",
+            "text": "This is the first chunk of the document.",
+            "embedding": [
+              0.1,
+              0.2,
+              0.3,
+              0.4
+            ]
+          },
+          {
+            "chunk_id": "4a2c6e8b0d",
+            "text": "This is the second chunk of the document.",
+            "embedding": [
+              0.5,
+              0.6,
+              0.7,
+              0.8
+            ]
+          }
+        ]
+      },
+      "text": {
+        "type": "string",
+        "example": "This is the full text content of the document. It contains multiple paragraphs and covers various topics related to customer support."
+      },
+      "token_count": {
+        "type": "number",
+        "nullable": true,
+        "example": 150
+      }
+    }
+  }
+}
