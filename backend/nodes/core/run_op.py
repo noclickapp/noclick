@@ -308,6 +308,44 @@ async def run_node_lookup(
 
     return {"options": options, "next_page_token": next_token}
 
+async def run_node_mcp_tool(
+    info: Dict[str, Any],
+    arguments: Optional[Dict[str, Any]],
+    *,
+    user_id: str,
+    pool=None,
+    organization_id: Optional[str] = None,
+    workflow_id: Optional[str] = None,
+    conversation_id: Optional[str] = None,
+) -> Dict[str, Any]:
+    """One tool of a vendor's MCP server (``build_node_mcp_tools``), called with the
+    provider's credential: resolved as a node_op's is (runner, then the owner it
+    lends), held to its approval rules, refreshed through the choke point."""
+    from nodes.core import vendor_mcp
+    from utils.credential_approval import admit_call
+
+    credential_id = info.get("credential_id")
+    if not credential_id:
+        return {"success": False, "error": "No account is connected to this tool's provider node."}
+    credential = await resolve_operation_credential(credential_id, user_id, pool, organization_id, workflow_id)
+    credential_type = credential.get("credential_type")
+    if vendor_mcp.mcp_credential_class(credential_type) is None:
+        return {"success": False, "error": "The account on this tool's provider node no longer connects through MCP."}
+    pending = await admit_call(
+        credential_id=credential_id, user_id=user_id, node_type=info.get("node_type") or "",
+        operation=f"mcp:{info['mcp_tool']}", arguments=arguments or {}, pool=pool,
+        organization_id=organization_id, workflow_id=workflow_id, conversation_id=conversation_id,
+    )
+    if pending:
+        return pending
+    async with credential_place(credential_id):
+        with caller_path_scope("execute"):
+            credential = await vendor_mcp.fresh_credential(
+                credential, credential_id=credential_id, user_id=user_id, pool=pool,
+            )
+        return await vendor_mcp.call_tool(credential_type, credential, info["mcp_tool"], arguments or {})
+
+
 async def run_node_op_tool(
     info: Dict[str, Any],
     arguments: Optional[Dict[str, Any]],
@@ -317,7 +355,7 @@ async def run_node_op_tool(
     organization_id: Optional[str] = None,
     conversation_id: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Dispatch one node_op / node_op_lookup tool call (build_node_op_tools
+    """Dispatch one node_op / node_op_lookup / node_mcp tool call (build_node_op_tools
     config shape) to the graph-free seam. Container-agnostic — shared by the
     hosted MCP endpoint and the shadow-tool cross-container fallback, so a
     tool call can execute on ANY backend container, not just the one holding
@@ -339,6 +377,12 @@ async def run_node_op_tool(
             conversation_id, info.get("name") or info.get("operation") or "tool", arguments, info)
     if must_rehearse(conversation_id):  # its fence can't be read: refused, never run for real
         return dict(UNFENCED_RESULT)
+
+    if info.get("tool_type") == "node_mcp":
+        return await run_node_mcp_tool(
+            info, arguments, user_id=user_id, organization_id=organization_id,
+            workflow_id=workflow_id, conversation_id=conversation_id,
+        )
 
     if info.get("tool_type") == "node_op_lookup":
         fields = info.get("fields") or {}

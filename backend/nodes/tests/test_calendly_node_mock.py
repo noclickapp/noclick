@@ -475,4 +475,5 @@ def test_credential_union_pat_and_oauth():
     import typing
     members = typing.get_args(CalendlyCredential)
     types = {m.model_fields["credential_type"].default for m in members}
-    assert types == {"calendly_oauth", "calendly_pat"}
+    # Calendly's own sign-in and token, and its MCP server (nodes/core/vendor_mcp.py).
+    assert types == {"calendly_oauth", "calendly_pat", "calendly_mcp"}

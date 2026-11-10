@@ -16,7 +16,7 @@ from datetime import datetime, timezone, timedelta
 
 import httpx
 from opentelemetry import trace
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from utils.ssrf import guarded_async_client
 
 logger = logging.getLogger(__name__)
@@ -24,6 +24,12 @@ logger = logging.getLogger(__name__)
 # Constants
 DISCOVERY_TIMEOUT = 10.0  # seconds
 TOKEN_REFRESH_BUFFER_MINUTES = 5
+_INITIALIZE = {
+    "jsonrpc": "2.0",
+    "id": 0,
+    "method": "initialize",
+    "params": {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "NoClick", "version": "1"}},
+}
 
 
 # ============================================================================
@@ -47,6 +53,12 @@ class OAuthDiscoveryResult:
     supports_dynamic_registration: bool = False
     code_challenge_methods_supported: Optional[List[str]] = None
     error: Optional[str] = None
+    # The scopes the resource itself names (its WWW-Authenticate ``scope``, else
+    # its protected resource metadata): what a client asks for, per the MCP spec.
+    resource_scopes: Optional[List[str]] = None
+    issuer: Optional[str] = None
+    # The server takes a Client ID Metadata Document's URL as a client_id.
+    client_id_metadata_document_supported: bool = False
 
 
 class MCPOAuthTokens(BaseModel):
@@ -60,6 +72,8 @@ class MCPOAuthTokens(BaseModel):
     # Server info for refresh
     token_endpoint: Optional[str] = None
     client_id: Optional[str] = None
+    # The token endpoint's whole answer (an id_token, an account name).
+    raw: Optional[Dict[str, Any]] = Field(default=None, exclude=True)
 
 
 # ============================================================================
@@ -111,8 +125,16 @@ async def discover_oauth_requirements(server_url: str) -> OAuthDiscoveryResult:
         timeout=DISCOVERY_TIMEOUT, follow_redirects=True
     ) as client:
         try:
-            # Step 1: Make unauthenticated request
+            # Step 1: Make unauthenticated request. A Streamable HTTP server may
+            # answer a GET 405 before it checks auth, so a GET that isn't 401 is
+            # asked again as the client's first POST (initialize).
             response = await client.get(server_url)
+            if response.status_code != 401:
+                response = await client.post(
+                    server_url,
+                    json=_INITIALIZE,
+                    headers={"Accept": "application/json, text/event-stream"},
+                )
 
             # If not 401, no OAuth required
             if response.status_code != 401:
@@ -124,6 +146,7 @@ async def discover_oauth_requirements(server_url: str) -> OAuthDiscoveryResult:
             # Step 2: Parse WWW-Authenticate header
             www_auth = response.headers.get("WWW-Authenticate", "")
             resource_metadata_url = _parse_resource_metadata_url(www_auth, server_url)
+            challenge_scope = _parse_challenge_param(www_auth, "scope")
 
             if not resource_metadata_url:
                 logger.info(
@@ -134,28 +157,37 @@ async def discover_oauth_requirements(server_url: str) -> OAuthDiscoveryResult:
                     client, server_url
                 )
 
-            if not resource_metadata_url:
-                logger.warning(
-                    f"[MCP OAuth] Could not discover OAuth metadata for {server_url}"
+            if resource_metadata_url:
+                # Step 3: Fetch Protected Resource Metadata
+                logger.info(
+                    f"[MCP OAuth] Fetching resource metadata from {resource_metadata_url}"
                 )
-                return OAuthDiscoveryResult(
-                    requires_oauth=True,
-                    error="Server requires authentication but no OAuth metadata found",
-                )
+                resource_response = await client.get(resource_metadata_url)
 
-            # Step 3: Fetch Protected Resource Metadata
-            logger.info(
-                f"[MCP OAuth] Fetching resource metadata from {resource_metadata_url}"
-            )
-            resource_response = await client.get(resource_metadata_url)
+                if resource_response.status_code != 200:
+                    return OAuthDiscoveryResult(
+                        requires_oauth=True,
+                        error=f"Failed to fetch resource metadata: {resource_response.status_code}",
+                    )
 
-            if resource_response.status_code != 200:
-                return OAuthDiscoveryResult(
-                    requires_oauth=True,
-                    error=f"Failed to fetch resource metadata: {resource_response.status_code}",
-                )
+                resource_metadata = resource_response.json()
+            else:
+                # The 2025-03-26 revision of the spec has no resource metadata: the
+                # MCP server's own origin is its authorization server.
+                from urllib.parse import urlparse
 
-            resource_metadata = resource_response.json()
+                parsed = urlparse(server_url)
+                origin = f"{parsed.scheme}://{parsed.netloc}"
+                if await _fetch_auth_server_metadata(client, origin) is None:
+                    logger.warning(
+                        f"[MCP OAuth] Could not discover OAuth metadata for {server_url}"
+                    )
+                    return OAuthDiscoveryResult(
+                        requires_oauth=True,
+                        error="Server requires authentication but no OAuth metadata found",
+                    )
+                resource_metadata = {"authorization_servers": [origin]}
+
             authorization_servers = resource_metadata.get("authorization_servers", [])
 
             if not authorization_servers:
@@ -179,6 +211,7 @@ async def discover_oauth_requirements(server_url: str) -> OAuthDiscoveryResult:
 
             # Extract provider name from auth server URL
             provider_name = _extract_provider_name(auth_server)
+            resource_scopes = challenge_scope.split() if challenge_scope else resource_metadata.get("scopes_supported")
 
             return OAuthDiscoveryResult(
                 requires_oauth=True,
@@ -194,6 +227,11 @@ async def discover_oauth_requirements(server_url: str) -> OAuthDiscoveryResult:
                 code_challenge_methods_supported=auth_metadata.get(
                     "code_challenge_methods_supported", ["S256"]
                 ),
+                resource_scopes=resource_scopes if isinstance(resource_scopes, list) else None,
+                issuer=auth_metadata.get("issuer") or auth_server,
+                client_id_metadata_document_supported=auth_metadata.get(
+                    "client_id_metadata_document_supported"
+                ) is True,
             )
 
         except httpx.TimeoutException:
@@ -221,14 +259,15 @@ def _parse_resource_metadata_url(
     if not www_authenticate:
         return None
 
-    # Look for resource_metadata="..."
+    return _parse_challenge_param(www_authenticate, "resource_metadata")
+
+
+def _parse_challenge_param(www_authenticate: str, name: str) -> Optional[str]:
+    """One quoted parameter of a WWW-Authenticate challenge (``scope="a b"``)."""
     import re
 
-    match = re.search(r'resource_metadata="([^"]+)"', www_authenticate)
-    if match:
-        return match.group(1)
-
-    return None
+    match = re.search(rf'(?:^|[\s,]){name}="([^"]*)"', www_authenticate or "")
+    return match.group(1) if match else None
 
 
 async def _try_wellknown_discovery(
@@ -367,6 +406,7 @@ async def exchange_code_for_tokens(
     client_id: str,
     redirect_uri: str,
     resource_url: Optional[str] = None,
+    client_secret: Optional[str] = None,
 ) -> MCPOAuthTokens:
     """
     Exchange authorization code for OAuth tokens.
@@ -395,6 +435,9 @@ async def exchange_code_for_tokens(
     # Add resource indicator if provided (RFC 8707)
     if resource_url:
         data["resource"] = resource_url
+    # A registration that issued a secret authenticates with it (client_secret_post).
+    if client_secret:
+        data["client_secret"] = client_secret
 
     async with guarded_async_client(timeout=30.0) as client:
         response = await client.post(
@@ -433,6 +476,7 @@ async def exchange_code_for_tokens(
             scope=token_data.get("scope"),
             token_endpoint=token_endpoint,
             client_id=client_id,
+            raw=token_data,
         )
 
 
@@ -441,6 +485,7 @@ async def refresh_access_token(
     token_endpoint: str,
     client_id: str,
     resource_url: Optional[str] = None,
+    client_secret: Optional[str] = None,
 ) -> MCPOAuthTokens:
     """
     Refresh an expired access token.
@@ -464,6 +509,8 @@ async def refresh_access_token(
 
     if resource_url:
         data["resource"] = resource_url
+    if client_secret:
+        data["client_secret"] = client_secret
 
     async with guarded_async_client(timeout=30.0) as client:
         response = await client.post(
@@ -546,6 +593,7 @@ async def register_dynamic_client(
     client_name: str,
     redirect_uris: List[str],
     client_uri: Optional[str] = None,
+    scope: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Register a dynamic OAuth client.
@@ -571,6 +619,8 @@ async def register_dynamic_client(
 
     if client_uri:
         data["client_uri"] = client_uri
+    if scope:
+        data["scope"] = scope
 
     async with guarded_async_client(timeout=30.0) as client:
         response = await client.post(

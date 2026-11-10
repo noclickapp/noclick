@@ -3705,7 +3705,10 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
         if is_node_op_provider(node_id, node_type, workflow_nodes, workflow_edges):
             output = build_provider_output(node_type, resolved_config)
             if output.get("credential_id"):
-                await describe_provider_credential(await self.get_pool(), output)
+                await describe_provider_credential(
+                    await self.get_pool(), output, user_id=user_id, workflow_id=workflow_id,
+                    organization_id=workflow_org_id,
+                )
             logger.info(
                 f"[WorkflowExecution] Node {node_id} ({node_type}) is an agent tool provider "
                 f"({len(output['allowed_operations'])} operation(s) allowlisted)"

@@ -19,14 +19,20 @@ from nodes.oauth.mcp_oauth import (
 from wss.schema import SocketIOHandler
 from wss.sender import send_event, ResponseEvent
 from wss.sender.responses import (
+    CredentialTestConnectionResponse,
     MCPOAuthDiscoverResponse,
     MCPOAuthExchangeResponse,
     MCPOAuthRegisterClientResponse,
+    McpConnectCredential,
+    McpConnectFinishResponse,
+    McpConnectStartResponse,
 )
 from wss.receiver.client_events import (
     MCPOAuthDiscoverRequest,
     MCPOAuthExchangeRequest,
     MCPOAuthRegisterClientRequest,
+    McpConnectFinishRequest,
+    McpConnectStartRequest,
 )
 
 logger = logging.getLogger(__name__)
@@ -49,6 +55,8 @@ class MCPOAuthHandler(DatabasePoolMixin, SocketIOHandler):
             "mcp:oauth:discover": self.discover_oauth,
             "mcp:oauth:exchange": self.exchange_oauth_code,
             "mcp:oauth:register-client": self.register_client,
+            "mcp:connect:start": self.connect_start,
+            "mcp:connect:finish": self.connect_finish,
         }
 
     async def setup_user(self, sid: str) -> None:
@@ -265,6 +273,71 @@ class MCPOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                     message=str(e)
                 ).model_dump()
             ))
+
+
+    async def connect_start(self, sid: str, request: McpConnectStartRequest) -> None:
+        """Start connecting an integration through its vendor's MCP server, as the signed-in person."""
+        from nodes.oauth.mcp_connect import McpConnectError, start
+
+        session = await self.sio.get_session(sid)
+        user_id = session.get('user_id')
+        if not user_id:
+            response = McpConnectStartResponse(success=False, error="User not authenticated")
+        else:
+            try:
+                started = await start(
+                    request.credential_type, redirect_uri=request.redirect_uri, principal=f"user:{user_id}",
+                    pool=await self.get_pool(),
+                )
+                response = McpConnectStartResponse(
+                    success=True, kind=started.kind, flow=started.flow,
+                    authorization_url=started.authorization_url, state=started.state,
+                )
+            except McpConnectError as e:
+                response = McpConnectStartResponse(success=False, error=str(e))
+        await send_event(self.sio, sid, ResponseEvent(request_id=request.request_id, data=response.model_dump()))
+
+    async def connect_finish(self, sid: str, request: McpConnectFinishRequest) -> None:
+        """Finish an MCP connect and store the proven credential as the signed-in person's."""
+        from nodes.oauth.mcp_connect import McpConnectError, finish
+        from repositories.credentials import create_credential_with_limit_check
+
+        session = await self.sio.get_session(sid)
+        user_id = session.get('user_id')
+        if not user_id:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id,
+                data=McpConnectFinishResponse(success=False, error="User not authenticated").model_dump()))
+            return
+        pool = await self.get_pool()
+        try:
+            connected = await finish(
+                request.flow, principal=f"user:{user_id}", code=request.code, state=request.state,
+                api_key=request.api_key, pool=pool,
+            )
+        except McpConnectError as e:
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data=McpConnectFinishResponse(success=False, error=str(e)).model_dump()))
+            return
+        async with pool.acquire() as conn:
+            row, error = await create_credential_with_limit_check(
+                conn, user_id, session.get('user_data', {}).get('subscription_tier', 'free'),
+                connected.credential_type, connected.name,
+                self.encryption.encrypt_credential(connected.credential_data), connected.metadata,
+            )
+        if error:
+            await send_event(self.sio, sid, ResponseEvent(request_id=request.request_id, data={}, error=error))
+            return
+        logger.info(f"[MCPOAuthHandler] Connected {connected.credential_type} {row['id']} for user {user_id}")
+        await send_event(self.sio, sid, ResponseEvent(
+            request_id=request.request_id,
+            data=McpConnectFinishResponse(
+                success=True,
+                credential=McpConnectCredential(
+                    id=str(row['id']), name=row['name'], credential_type=row['credential_type']),
+                verification=CredentialTestConnectionResponse.from_evidence(connected.evidence),
+            ).model_dump(),
+        ))
 
 
 def _extract_domain(url: str) -> str:

@@ -58,6 +58,8 @@ function accountLine(credential: CredentialInfo, app: string): string {
         return names.length > 3 ? `${names.slice(0, 3).join(', ')} +${names.length - 3}` : names.join(', ');
     }
     if (credential.credential_type.startsWith('mcp_')) return ['MCP server', serverHost(credential)].filter(Boolean).join(' · ');
+    // An app connected through its own MCP server: who signed in, when the sign-in said.
+    if (text(meta.mcp_server_url)) return ['Through MCP', text(meta.verified_as)].filter(Boolean).join(' · ');
     if (isDefaultName(credential) || credential.name.trim() === app) return addedLabel(credential.created_at);
     return credential.name;
 }

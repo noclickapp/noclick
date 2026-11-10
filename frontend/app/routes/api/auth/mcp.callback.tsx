@@ -1,10 +1,12 @@
 // MCP OAuth callback route.
 // Handles the redirect from MCP server's OAuth provider after user grants permission.
-// Passes the authorization code back to the opener window via postMessage.
+// Passes the authorization code back on the state's BroadcastChannel and to the opener window via postMessage.
 
 import { type LoaderFunctionArgs } from 'react-router';
 import { useLoaderData } from 'react-router';
 import { useEffect, useState } from 'react';
+import { oauthChannelName } from '~/lib/oauthChannel';
+import { MCP_CALLBACK_TYPE } from '~/lib/mcpCallback';
 
 interface LoaderData {
     success: boolean;
@@ -56,11 +58,30 @@ export default function MCPOAuthCallback() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
+        // An integration's MCP connect (useMcpConnect) listens on its state's channel, which a sign-in page that
+        // severed window.opener (COOP) can't break; its state is a UUID, the older MCP-node flow's isn't.
+        let channelSent = false;
+        if (data.state) {
+            try {
+                const channel = new BroadcastChannel(oauthChannelName('mcp', data.state));
+                channel.postMessage({ type: MCP_CALLBACK_TYPE, ...data });
+                channel.close();
+                channelSent = true;
+            } catch {
+                channelSent = false;
+            }
+        }
+        if (channelSent && !window.opener) {
+            setStatus(data.success ? 'success' : 'error');
+            if (data.success) setTimeout(() => window.close(), 1500);
+            else setErrorMessage(data.error_description || data.error || 'Unknown error');
+            return;
+        }
         // Send result back to opener window via postMessage
         if (window.opener) {
             window.opener.postMessage(
                 {
-                    type: 'mcp-oauth-callback',
+                    type: MCP_CALLBACK_TYPE,
                     ...data,
                 },
                 window.location.origin

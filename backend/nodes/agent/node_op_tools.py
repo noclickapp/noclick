@@ -513,11 +513,20 @@ def build_provider_output(node_type: str, raw_config: Dict[str, Any]) -> Dict[st
     return output
 
 
-async def describe_provider_credential(pool, output: Dict[str, Any]) -> None:
+async def describe_provider_credential(
+    pool,
+    output: Dict[str, Any],
+    *,
+    user_id: Optional[str] = None,
+    workflow_id: Optional[str] = None,
+    organization_id: Optional[str] = None,
+) -> None:
     """Stamp a provider output's ``credential_label`` (no secret: with the node
     label, what lets the agent tell same-type providers apart) and drop the
     allowlisted operations its credential's type can't run, which the agent
-    could only ever call to fail (a WhatsApp QR link offered the Cloud API)."""
+    could only ever call to fail (a WhatsApp QR link offered the Cloud API).
+    A credential connected through the vendor's MCP server stamps the server's
+    live tools instead (``mcp_tools``), which replace the node's operations."""
     if not pool or not output.get("credential_id"):
         return
     from nodes.core.registry import NODE_REGISTRY
@@ -530,6 +539,11 @@ async def describe_provider_credential(pool, output: Dict[str, Any]) -> None:
     node_class = NODE_REGISTRY.get(output["node_type"])
     credential_type = display.get("credential_type")
     if node_class is None or not credential_type:
+        return
+    from nodes.core.vendor_mcp import mcp_credential_class
+
+    if mcp_credential_class(credential_type) is not None:
+        await _stamp_mcp_tools(pool, output, credential_type, user_id, workflow_id, organization_id)
         return
 
     def runs(entry: Any) -> bool:
@@ -546,6 +560,99 @@ async def describe_provider_credential(pool, output: Dict[str, Any]) -> None:
             f"its {credential_type} credential can't run them"
         )
         output["allowed_operations"] = kept
+
+
+async def _stamp_mcp_tools(
+    pool,
+    output: Dict[str, Any],
+    credential_type: str,
+    user_id: Optional[str],
+    workflow_id: Optional[str],
+    organization_id: Optional[str],
+) -> None:
+    """List the vendor MCP server's tools as this run's caller sees them (the runner,
+    or the workflow owner who lent the credential) into ``output['mcp_tools']``. A
+    listing that fails leaves no tools and says why in ``mcp_error``."""
+    from nodes.core import vendor_mcp
+    from nodes.core.oauth_audit import caller_path_scope
+    from nodes.core.run_op import resolve_operation_credential
+
+    output["mcp_tools"] = []
+    app = vendor_mcp.server_of(credential_type).app
+    if not user_id:
+        output["mcp_error"] = f"{app}'s MCP tools are listed for the person running the agent; none is known here."
+        return
+    try:
+        credential = await resolve_operation_credential(
+            output["credential_id"], user_id, pool, organization_id, workflow_id,
+        )
+        with caller_path_scope("execute"):
+            credential = await vendor_mcp.fresh_credential(
+                credential, credential_id=output["credential_id"], user_id=user_id, pool=pool,
+            )
+        tools = await vendor_mcp.list_tools(credential_type, credential)
+    except Exception as e:  # noqa: BLE001 — a provider that can't list gives the agent no tools, never a failed run
+        logger.warning(f"[NodeOpTools] {output['node_type']}: {app}'s MCP tools could not be listed: {e}")
+        output["mcp_error"] = f"Couldn't list {app}'s MCP tools: {e}"
+        return
+    output["mcp_tools"] = [
+        {"name": t["name"], "description": t.get("description") or "", "inputSchema": t.get("inputSchema") or {}}
+        for t in tools
+    ]
+
+
+def _mcp_tool_name(slug: str, tool: str) -> str:
+    """``{slug}__{tool}`` as a function name models accept (letters, digits, _ and -; 64 long)."""
+    return f"{slug}__{re.sub(r'[^A-Za-z0-9_-]', '_', tool)}"[:64]
+
+
+def build_node_mcp_tools(
+    node_type: str,
+    mcp_tools: List[Dict[str, Any]],
+    *,
+    node_id: str,
+    credential_id: Optional[str] = None,
+    slug: Optional[str] = None,
+    provider_label: Optional[str] = None,
+    credential_label: Optional[str] = None,
+) -> Tuple[List[ChatCompletionToolParam], Dict[str, Dict[str, Any]]]:
+    """Agent tools for a provider connected through its vendor's MCP server: one
+    per tool the server listed, named and tagged as ``build_node_op_tools`` names
+    operations, run by ``run_node_mcp_tool`` (``tool_type='node_mcp'``)."""
+    slug = slug or _provider_slug(node_type)
+    tag = ""
+    if provider_label or credential_label:
+        parts = ([f"the '{provider_label}' node"] if provider_label else []) + (
+            [f"the '{credential_label}' credential"] if credential_label else [])
+        tag = f" Acts via {' using '.join(parts)}."
+    tool_params: List[ChatCompletionToolParam] = []
+    tool_configs: Dict[str, Dict[str, Any]] = {}
+    for tool in mcp_tools:
+        name = _mcp_tool_name(slug, tool["name"])
+        if name in tool_configs:
+            logger.warning(f"[NodeOpTools] {node_type}: MCP tools {tool['name']!r} and another share {name}; kept the first")
+            continue
+        schema = {k: v for k, v in (tool.get("inputSchema") or {}).items() if k != "$schema"}
+        parameters = {**schema, "type": "object", "properties": schema.get("properties") or {}}
+        description = (tool.get("description") or tool["name"]).strip()
+        if tag:
+            description = f"{description.rstrip('. ')}.{tag}"
+        tool_params.append(ChatCompletionToolParam(
+            type="function",
+            function=ChatCompletionToolParamFunctionChunk(name=name, description=description, parameters=parameters),
+        ))
+        tool_configs[name] = {
+            "node_id": node_id,
+            "tool_type": "node_mcp",
+            "node_type": node_type,
+            "mcp_tool": tool["name"],
+            # Audited as the operation, like a node_op's.
+            "operation": f"mcp:{tool['name']}",
+            "credential_id": credential_id,
+            "_description": description,
+            "_parameters": parameters,
+        }
+    return tool_params, tool_configs
 
 
 def allowlist_requires_credentials(node_type: str, operations: List[Any]) -> bool:

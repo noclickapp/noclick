@@ -22,8 +22,9 @@ import { AgentOAuthProvideMethod } from './AgentOAuthProvideMethod';
 import { provideLinkTransport, requestEnded } from './provideLinkTransport';
 import { useProvideExchangeStandIn } from '~/hooks/oauth/OAuthExchangeContext';
 import { WhatsAppQRCredentialForm } from '~/components/workflow/WhatsAppQRCredentialForm';
+import { McpConnectForm } from './McpConnectForm';
 import { KeySteps } from './connect/ConnectApp';
-import { copyMethodOf, howToGet } from '~/utils/credentialCopy';
+import { copyMethodOf, howToGet, methodLine } from '~/utils/credentialCopy';
 
 // One backend auth method (from GET /credential-request/{token}). Carries method_kind
 // plus everything the kind's component needs (oauth provider/scopes, fields).
@@ -48,6 +49,8 @@ export interface ProvideCredentialMethod {
     oauth_app?: boolean;
     agent_oauth_kind?: string | null;
     credential_fields: CredentialField[];
+    /** A vendor MCP way in (kind `mcp`): the server it connects through. */
+    mcp_server?: string | null;
 }
 
 // The uniform contract every kind component implements. The method carries the
@@ -219,6 +222,21 @@ function QrScanMethod({ method, apiBase, token, onProvided, onRequestEnded }: Cr
     );
 }
 
+/** mcp — the integration's own MCP server, signed into through the link's HTTP transport. */
+function McpMethod({ method, apiBase, token, serviceName, onProvided, onRequestEnded, note }: CredentialMethodConnectProps) {
+    const transport = provideLinkTransport(apiBase, token, method.credential_type, onRequestEnded);
+    const app = serviceName || method.label;
+    return (
+        <McpConnectForm
+            credentialType={method.credential_type}
+            app={app}
+            note={note ?? methodLine(copyMethodOf(method), app)}
+            sendEvent={transport}
+            onConnected={(_credential, verification) => onProvided(verification)}
+        />
+    );
+}
+
 /** A public credential link leads to an authenticated owner confirmation page.
  *  The owner returns here afterward so the existing builder answer can resume. */
 function PurchaseMethod({ token }: CredentialMethodConnectProps) {
@@ -240,6 +258,7 @@ const CREDENTIAL_METHOD_COMPONENTS: Record<CredentialMethodKind, ComponentType<C
     agent_oauth: AgentOAuthMethod,
     qr_scan: QrScanMethod,
     purchase: PurchaseMethod,
+    mcp: McpMethod,
 };
 
 /** Resolve a backend method's kind (single source: kindFromBackendMethod) and render

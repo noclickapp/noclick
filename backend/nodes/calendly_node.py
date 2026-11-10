@@ -39,6 +39,7 @@ import httpx
 from nodes.core.agent_events import bullet_lines
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.scopes.scheduling import CALENDLY_SCOPES
 from utils.ssrf import assert_exact_url_origin, guarded_async_client
@@ -138,7 +139,9 @@ class CalendlyPATCredential(BaseModel):
     )
 
 
-CalendlyCredential = Union[CalendlyOAuthCredential, CalendlyPATCredential]
+# Calendly's own MCP server: agents get its tools through a person's Calendly sign-in.
+CalendlyMcpCredential = mcp_credential("calendly", "https://mcp.calendly.com", app="Calendly")
+CalendlyCredential = Union[CalendlyOAuthCredential, CalendlyPATCredential, CalendlyMcpCredential]
 
 
 # ============================================================================

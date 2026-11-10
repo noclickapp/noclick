@@ -911,7 +911,7 @@ class AgentNode(WorkflowNode):
     ) -> None:
         """Expose one integration provider's allowlisted operations as node_op
         tools (shared by directly-wired providers and hosted-MCP bundles)."""
-        from nodes.agent.node_op_tools import build_node_op_tools
+        from nodes.agent.node_op_tools import build_node_mcp_tools, build_node_op_tools
 
         colliding = provider_type_counts.get(output["node_type"], 0) > 1
         label = output.get("label")
@@ -932,6 +932,21 @@ class AgentNode(WorkflowNode):
                 "branch": entry.get("branch") or None,
                 "credential_id": output.get("credential_id"),
             })
+        if "mcp_tools" in output:
+            # Connected through the vendor's MCP server: its live tools stand in for the node's operations.
+            op_params, op_configs = build_node_mcp_tools(
+                output["node_type"],
+                output["mcp_tools"],
+                node_id=node_id,
+                credential_id=output.get("credential_id"),
+                slug=slug_for(node_id, label) if colliding else None,
+                provider_label=(label or node_id) if colliding else None,
+                credential_label=output.get("credential_label") if colliding else None,
+            )
+            tool_params.extend(op_params)
+            tool_configs.update(op_configs)
+            logger.info(f"[AgentNode] Collected {len(op_params)} MCP tool(s) from {node_id} ({output['node_type']})")
+            return
         try:
             op_params, op_configs = build_node_op_tools(
                 output["node_type"],

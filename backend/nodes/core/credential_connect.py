@@ -340,7 +340,8 @@ def shape_credential(
 # ----------------------------------------------------------- linked fields
 
 # How NoClick links each kind of credential that declares ``linked_fields``.
-_LINKED_BY = {"qr_scan": "scan the QR code", "purchase": "buy the number", "oauth": "sign in"}
+_LINKED_BY = {"qr_scan": "scan the QR code", "purchase": "buy the number", "oauth": "sign in",
+              "mcp": "connect through MCP"}
 
 
 def _linked_index() -> Dict[str, str]:

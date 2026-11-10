@@ -11,11 +11,11 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { kindFromCredentialType, type CredentialMethodKind } from './credentialMethodKind';
 
-const KNOWN_KINDS: CredentialMethodKind[] = ['api_key', 'oauth', 'agent_oauth', 'qr_scan', 'purchase'];
+const KNOWN_KINDS: CredentialMethodKind[] = ['api_key', 'oauth', 'agent_oauth', 'qr_scan', 'purchase', 'mcp'];
 
 // x-credential-type values we've consciously accounted for. Field-based ones
 // (e.g. Reddit's "script": client_id/secret/username/password) resolve to api_key.
-const KNOWN_DISCRIMINATORS = ['oauth', 'qr_scan', 'purchase', 'script'];
+const KNOWN_DISCRIMINATORS = ['oauth', 'qr_scan', 'purchase', 'mcp', 'script'];
 KNOWN_DISCRIMINATORS.push('porkbun_api_key');
 KNOWN_DISCRIMINATORS.push('kajabi_access_token');
 KNOWN_DISCRIMINATORS.push('bytescale_secret_api_key');
@@ -43,6 +43,7 @@ describe('credentialMethodKind discriminator', () => {
         expect(kindFromCredentialType('oauth')).toBe('oauth');
         expect(kindFromCredentialType('qr_scan')).toBe('qr_scan');
         expect(kindFromCredentialType('purchase')).toBe('purchase');
+        expect(kindFromCredentialType('mcp')).toBe('mcp');
         expect(kindFromCredentialType('script')).toBe('api_key'); // field-based
         expect(kindFromCredentialType(undefined)).toBe('api_key');
         expect(kindFromCredentialType(null)).toBe('api_key');

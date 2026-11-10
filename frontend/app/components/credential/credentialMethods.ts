@@ -132,5 +132,6 @@ export function methodFromRequirement(req: CredentialRequirement): ProvideCreden
         requires_custom_client: s['x-oauth-requires-custom-client'] === true,
         oauth_redirect_uri: s['x-oauth-redirect-uri'] ?? null,
         credential_fields: kind === 'api_key' ? getFieldsFromSchema(s) : [],
+        mcp_server: typeof s['x-mcp-server'] === 'string' ? s['x-mcp-server'] : null,
     };
 }

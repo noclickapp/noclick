@@ -175,6 +175,8 @@ export function methodName(method: CopyMethod, app: string, provider = app): str
             return 'Scan a QR code';
         case 'purchase':
             return 'Buy a number';
+        case 'mcp':
+            return `Sign in with ${app} through MCP`;
         default: {
             // One value to paste is named as its own field is, so the switch to it and the form agree; when that value
             // is an address beside the secret (Weaviate's cluster URL and API key), the tab is the secret's.
@@ -199,6 +201,8 @@ export function methodLine(method: CopyMethod, app: string, provider = app): str
             return `Scan a code with ${app} on your phone.`;
         case 'purchase':
             return 'Pick a number and see its price before you buy it.';
+        case 'mcp':
+            return `Through ${app}'s MCP server: agents get ${app}'s tools. Workflow steps and triggers need ${app}'s own sign-in.`;
         default: {
             const required = requiredLabels(method);
             // One value to paste is named by its own field ("an internal integration token"); several by the key's name,

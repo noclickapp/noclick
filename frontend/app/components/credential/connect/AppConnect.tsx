@@ -1,7 +1,8 @@
 // Connecting an app's account from inside NoClick: ConnectApp over the in-app engine. A sign-in runs the OAuth popup
 // (useCredentialOAuth) and then asks the provider what the new account holds (credential:test_connection); a key goes
 // through the connect seam (credential:create), whose shape check, provider proof and verdict come back with it; a
-// WhatsApp number is a QR code and a phone number is bought. The Connections dialog and the node panel both draw it,
+// WhatsApp number is a QR code and a phone number is bought; the app's own MCP server signs in through MCP's auth
+// (McpConnectForm), proven by the tools it lists. The Connections dialog and the node panel both draw it,
 // so an account connects the same way wherever it's added.
 import { Loader2 } from 'lucide-react';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -11,6 +12,7 @@ import { CredentialCreatePanel, type CredentialSaveResult } from '~/components/c
 import type { ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
 import { OAuthConnectForm } from '~/components/credential/OAuthConnectForm';
 import { PhoneNumberPurchaseForm } from '~/components/credential/PhoneNumberPurchaseForm';
+import { McpConnectForm } from '~/components/credential/McpConnectForm';
 import { WhatsAppQRCredentialForm } from '~/components/workflow/WhatsAppQRCredentialForm';
 import { UpgradePopup } from '~/components/utils/UpgradePopup';
 import { useCredentialOAuth, type OAuthCreatedCredential } from '~/hooks/useCredentialOAuth';
@@ -251,6 +253,20 @@ function AppConnectForm({
                     onCredentialCreated={(credentialId) => {
                         void engine.loadCredentials();
                         void landedAfterProbe(method.credential_type, { id: credentialId, name: app, credential_type: method.credential_type });
+                    }}
+                />
+            );
+        }
+        if (kind === 'mcp') {
+            return (
+                <McpConnectForm
+                    credentialType={method.credential_type}
+                    app={app}
+                    note={ctx.note}
+                    onConnected={(credential, verification) => {
+                        invalidateCredentialsCache();
+                        void engine.loadCredentials();
+                        void landed(method.credential_type, credential, verification);
                     }}
                 />
             );

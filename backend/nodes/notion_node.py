@@ -24,6 +24,7 @@ import httpx
 from nodes.core.base import WorkflowNode, NodeConfig
 from utils.ssrf import guarded_async_client
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.oauth.notion_oauth import is_token_expired, refresh_access_token
 from nodes.core.dynamic_options import require_credential_token
@@ -110,7 +111,9 @@ class NotionOAuthCredential(BaseModel):
 
 
 # Union type for credentials - supports both Integration Token and OAuth
-NotionCredential = Union[NotionOAuthCredential, NotionIntegrationTokenCredential]
+# Notion's own MCP server: agents get its tools through a person's Notion sign-in.
+NotionMcpCredential = mcp_credential("notion", "https://mcp.notion.com/mcp", app="Notion")
+NotionCredential = Union[NotionOAuthCredential, NotionIntegrationTokenCredential, NotionMcpCredential]
 
 
 # ============================================================================

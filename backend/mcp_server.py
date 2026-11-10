@@ -5178,7 +5178,9 @@ class NoClickMCPServer(DatabasePoolMixin):
                         )
                         if provider_output.get("credential_id"):
                             from nodes.agent.node_op_tools import describe_provider_credential
-                            await describe_provider_credential(await self.get_pool(), provider_output)
+                            await describe_provider_credential(
+                                await self.get_pool(), provider_output, user_id=user_id, workflow_id=workflow_id,
+                            )
                         results.append({
                             "node_id": node_id,
                             "success": True,

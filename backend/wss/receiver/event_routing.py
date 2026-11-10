@@ -387,6 +387,8 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         "mcp:oauth:discover": Handler.MCP_OAUTH,
         "mcp:oauth:exchange": Handler.MCP_OAUTH,
         "mcp:oauth:register-client": Handler.MCP_OAUTH,
+        "mcp:connect:start": Handler.MCP_OAUTH,
+        "mcp:connect:finish": Handler.MCP_OAUTH,
 
         # Reddit OAuth events
         "reddit:oauth:exchange": Handler.REDDIT_OAUTH,

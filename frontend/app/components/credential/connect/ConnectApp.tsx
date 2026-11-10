@@ -84,6 +84,7 @@ function tabLabel(way: Way, ways: Way[], app: string): string {
     }
     if (way.kind === 'qr_scan') return 'QR code';
     if (way.kind === 'purchase') return 'Buy a number';
+    if (way.kind === 'mcp') return 'MCP';
     return keyNoun(copyMethodOf(way.method), app);
 }
 
@@ -131,7 +132,7 @@ export function ConnectApp({
     const ctx = (w: Way, showSources = true): ConnectMethodContext => ({
         showSources,
         howTo: w.copy.howTo,
-        note: w.kind === 'oauth' ? w.copy.line : null,
+        note: w.kind === 'oauth' || w.kind === 'mcp' ? w.copy.line : null,
         onConnected: (r) => {
             const landed = { ...r, kind: w.kind, credentialType: r.credentialType ?? w.method.credential_type };
             setResult(landed);

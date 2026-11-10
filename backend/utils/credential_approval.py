@@ -86,9 +86,19 @@ async def forbid_secret_export(credential_id, *, pool=None):
 
 async def admit_lookup(*, credential_id, user_id, node_type, arguments, pool=None,
                        organization_id=None, workflow_id=None, conversation_id=None, continuation=None):
+    return await admit_call(
+        credential_id=credential_id, user_id=user_id, node_type=node_type, operation="__lookup__",
+        arguments=arguments, pool=pool, organization_id=organization_id, workflow_id=workflow_id,
+        conversation_id=conversation_id, continuation=continuation,
+    )
+
+
+async def admit_call(*, credential_id, user_id, node_type, operation, arguments, pool=None,
+                     organization_id=None, workflow_id=None, conversation_id=None, continuation=None):
+    """A call that runs outside a node (a lookup, a vendor MCP tool) meets the credential's approval rules."""
     pool = pool or get_native_pool()
     row = await CredentialApprovalRepo(pool).admit(
-        credential_id=credential_id, user_id=user_id, node_type=node_type, operation="__lookup__",
+        credential_id=credential_id, user_id=user_id, node_type=node_type, operation=operation,
         arguments=arguments, organization_id=organization_id, workflow_id=workflow_id,
         conversation_id=conversation_id, continuation=continuation,
     )

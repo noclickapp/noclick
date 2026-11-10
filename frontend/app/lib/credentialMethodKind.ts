@@ -5,7 +5,8 @@
 // backend method) derive the kind HERE and render through the CredentialMethodConnect
 // registry — so dispatch can't drift, and adding a kind is one registry entry.
 
-export type CredentialMethodKind = 'api_key' | 'oauth' | 'agent_oauth' | 'qr_scan' | 'purchase';
+// `mcp` connects an integration through its vendor's own MCP server (backend nodes/core/vendor_mcp.py).
+export type CredentialMethodKind = 'api_key' | 'oauth' | 'agent_oauth' | 'qr_scan' | 'purchase' | 'mcp';
 
 /** Map an `x-credential-type` value to a schema-backed UI kind. Unknown/absent → api_key
  *  (plain fields), which is the correct default for any field-based credential. */
@@ -14,6 +15,7 @@ export function kindFromCredentialType(xCredentialType: string | null | undefine
         case 'oauth': return 'oauth';
         case 'qr_scan': return 'qr_scan';
         case 'purchase': return 'purchase';
+        case 'mcp': return 'mcp';
         default: return 'api_key';
     }
 }

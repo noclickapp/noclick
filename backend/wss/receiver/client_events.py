@@ -3084,6 +3084,24 @@ class MCPOAuthRegisterClientRequest(ClientEventBase):
     redirect_uris: List[str] = Field(..., description="Redirect URIs for the client")
 
 
+class McpConnectStartRequest(ClientEventBase):
+    """Start connecting an integration through its vendor's MCP server (nodes.oauth.mcp_connect)"""
+    event_name: ClassVar[str] = "mcp:connect:start"
+
+    credential_type: str = Field(..., description="The integration's MCP credential type, e.g. canva_mcp")
+    redirect_uri: str = Field(..., description="This app's MCP callback URL, where the sign-in returns")
+
+
+class McpConnectFinishRequest(ClientEventBase):
+    """Finish an MCP connect: exchange the sign-in's code (or take a key), prove it, store the credential"""
+    event_name: ClassVar[str] = "mcp:connect:finish"
+
+    flow: str = Field(..., description="The sealed flow mcp:connect:start answered")
+    code: Optional[str] = Field(None, description="The authorization code the sign-in returned")
+    state: Optional[str] = Field(None, description="The state the sign-in returned")
+    api_key: Optional[str] = Field(None, description="The bearer key, for a server that takes one instead of a sign-in")
+
+
 # ============================================================================
 # Workflow Resource Events
 # ============================================================================

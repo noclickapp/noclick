@@ -28,6 +28,7 @@ instance_provider_keys
 invite_redemptions
 local_cron_schedules
 mcp_feedback
+mcp_oauth_clients
 mcp_server_links
 organization_invites
 organization_members

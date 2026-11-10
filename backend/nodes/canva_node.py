@@ -36,6 +36,7 @@ from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.media_resolver import resolve_media_input
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
+from nodes.core.vendor_mcp import mcp_credential
 from nodes.oauth.canva_oauth import (
     get_canva_client_config,
     is_token_expired,
@@ -90,12 +91,11 @@ class CanvaOAuthCredential(BaseModel):
     model_config = ConfigDict(json_schema_extra={
         "x-credential-type": "oauth",
         "x-oauth-provider": "canva",
-        # Temporary: Canva's OAuth app is awaiting Canva's review. Remove this
-        # notice once the integration is approved and connecting is enabled.
-        "x-credential-notice": (
-            "The Canva integration is currently unavailable while its OAuth app "
-            "awaits approval from Canva. You'll be able to connect once it's approved."
-        ),
+        # Hidden while Canva reviews NoClick's OAuth app: until then people connect
+        # through Canva's MCP server (CanvaMcpCredential). Reveal by removing this flag;
+        # the PostHog flag reveals it for allow-listed accounts meanwhile.
+        "x-credential-hidden": True,
+        "x-credential-preview-flag": "canva-oauth-preview",
         "x-oauth-scopes": [
             "asset:read",
             "asset:write",
@@ -113,6 +113,11 @@ class CanvaOAuthCredential(BaseModel):
             "profile",
         ],
     })
+
+
+# Canva's MCP server on the Connect API: agents get its tools through a person's Canva sign-in, on NoClick's
+# Canva Developer Portal app with "Canva MCP" turned on (mcp.canva.com admits only clients on Canva's waitlist).
+CanvaMcpCredential = mcp_credential("canva", "https://api.canva.com/connect/v1/mcp", app="Canva", client_env="CANVA")
 
 
 # ============================================================================
@@ -1319,7 +1324,7 @@ CanvaConfig = Annotated[
 # ============================================================================
 
 
-class CanvaNodeConfig(NodeConfig[CanvaConfig, CanvaOAuthCredential]):
+class CanvaNodeConfig(NodeConfig[CanvaConfig, Union[CanvaOAuthCredential, CanvaMcpCredential]]):
     """Full configuration for Canva node including credentials"""
 
     pass

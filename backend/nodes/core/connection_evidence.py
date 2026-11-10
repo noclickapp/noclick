@@ -583,6 +583,16 @@ async def collect_evidence(
     from nodes.core.registry import NODE_REGISTRY
 
     node_cls = NODE_REGISTRY.get(node_type)
+    from nodes.core import vendor_mcp
+
+    if node_cls is not None and vendor_mcp.node_mcp_credential(node_cls) is not None:
+        # Connected through the vendor's MCP server: its proof is the tools it lists, never a REST call.
+        mcp_result = await vendor_mcp.stored_evidence(
+            credential_id=credential_id, credential_data=credential_data, user_id=user_id, pool=pool,
+            organization_id=organization_id, workflow_id=workflow_id,
+        )
+        if mcp_result is not None:
+            return mcp_result
     spec: Optional[ConnectionEvidence] = getattr(node_cls, "connection_evidence", None)
     if node_cls is None or spec is None:
         return EvidenceResult(reachable=None, noun="items")

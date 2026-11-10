@@ -168,10 +168,8 @@ def _method_kind(defn: dict) -> str:
     """UI dispatch kind for a credential method, from its `x-credential-type` discriminator.
     Generic: a new kind flows through as-is with no per-kind code here."""
     xct = defn.get('x-credential-type')
-    if xct == 'oauth':
-        return 'oauth'
-    if xct == 'qr_scan':
-        return 'qr_scan'
+    if xct in ('oauth', 'qr_scan', 'mcp'):
+        return xct
     return 'api_key'
 
 
@@ -250,6 +248,7 @@ def _method_dict_from_defn(title: str, defn: dict) -> Optional[dict]:
         'requires_custom_client': bool(defn.get('x-oauth-requires-custom-client')) if is_oauth else False,
         'oauth_redirect_uri': defn.get('x-oauth-redirect-uri') if is_oauth else None,
         'oauth_user_scopes': defn.get('x-oauth-user-scopes', []) if is_oauth else [],
+        'mcp_server': defn.get('x-mcp-server'),
     }
 
 
@@ -525,6 +524,8 @@ class CredentialMethod(BaseModel):
     # The requester brings its own OAuth app for this provider (``OAUTH_APPS``):
     # the sign-in asks GET /{token}/oauth-client/{provider} for its client id.
     oauth_app: bool = False
+    # A vendor MCP way in (method_kind 'mcp'): the server it connects through.
+    mcp_server: Optional[str] = None
 
 
 HELD_REQUESTER_NAME = "An app"
@@ -686,6 +687,7 @@ async def get_credential_request(token: str) -> CredentialRequestDetails:
             supports_custom_client=m.get('supports_custom_client', False),
             requires_custom_client=m.get('requires_custom_client', False),
             oauth_redirect_uri=m.get('oauth_redirect_uri'),
+            mcp_server=m.get('mcp_server'),
         )
         for m in method_dicts
     ]
@@ -1241,6 +1243,71 @@ async def _claim_fulfillment(pool, row, credential_id: str, credential_type: str
     logger.info(f"Credential request {row['id']} fulfilled with an existing {credential_type}: credential={credential_id}")
     _announce_fulfilled(pool, row, credential_id, credential_type)
     return True
+
+
+# ---------------------------------------------------------------------------
+# Connecting through a vendor's MCP server (nodes.oauth.mcp_connect) over the link
+# ---------------------------------------------------------------------------
+
+class McpStartBody(BaseModel):
+    credential_type: str
+    redirect_uri: str
+
+
+class McpFinishBody(BaseModel):
+    credential_type: str
+    flow: str
+    code: Optional[str] = None
+    state: Optional[str] = None
+    api_key: Optional[str] = None
+
+
+def _mcp_way_in(row, requested_type: str) -> str:
+    """``requested_type`` when it's a vendor MCP way in this request offers (its own
+    type or a sibling), so a link can't connect an unrelated integration."""
+    from nodes.core.vendor_mcp import mcp_credential_class
+
+    offered = {row['credential_type']} | {m['credential_type'] for m in _get_sibling_methods(row['credential_type'])}
+    if requested_type not in offered or mcp_credential_class(requested_type) is None:
+        raise HTTPException(status_code=400, detail="This link doesn't connect that through MCP")
+    return requested_type
+
+
+@router.post("/{token}/mcp/start")
+async def mcp_start(token: str, body: McpStartBody) -> dict[str, Any]:
+    from nodes.oauth.mcp_connect import McpConnectError, start
+
+    pool = get_native_pool()
+    row = await _load_active_request(token, pool)
+    credential_type = _mcp_way_in(row, body.credential_type)
+    try:
+        started = await start(credential_type, redirect_uri=body.redirect_uri, principal=f"request:{row['id']}",
+                              pool=pool)
+    except McpConnectError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from None
+    return {"kind": started.kind, "flow": started.flow, "authorization_url": started.authorization_url,
+            "state": started.state}
+
+
+@router.post("/{token}/mcp/finish")
+async def mcp_finish(token: str, body: McpFinishBody) -> dict[str, Any]:
+    from nodes.oauth.mcp_connect import McpConnectError, finish
+    from wss.sender.responses import CredentialTestConnectionResponse
+
+    pool = get_native_pool()
+    row = await _load_active_request(token, pool)
+    credential_type = _mcp_way_in(row, body.credential_type)
+    try:
+        connected = await finish(body.flow, principal=f"request:{row['id']}", code=body.code, state=body.state,
+                                 api_key=body.api_key, pool=pool)
+    except McpConnectError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from None
+    if connected.credential_type != credential_type:
+        raise HTTPException(status_code=400, detail="This connection was started for something else")
+    stored = await _store_and_fulfill(pool, row, credential_type, connected.credential_data, connected.name,
+                                      {**connected.metadata, 'provided_by': row['target_email']})
+    stored["verification"] = CredentialTestConnectionResponse.from_evidence(connected.evidence).model_dump()
+    return stored
 
 
 @router.post("/{token}/qr/start")

@@ -150,6 +150,10 @@ rather than branches:
 | `nodes/agent/harness_registry.py` | Agent turns run your installed CLI as a subprocess |
 | `utils/discord_gateway_bridge.py` | Discord message triggers: the Gateway listener runs in-process while `DISCORD_BOT_TOKEN` is set |
 
+### Integrations through their vendor's MCP server
+
+A vendor's own remote MCP server is one more way into its integration (credential kind `mcp`), declared as one credential class in the node's union in its own file: `NotionMcpCredential = mcp_credential("notion", "https://mcp.notion.com/mcp", app="Notion")` (`backend/nodes/core/vendor_mcp.py`). `backend/nodes/oauth/mcp_connect.py` runs the MCP auth spec (resource and authorization server metadata, then the app registered with the vendor via `client_env` → `<STEM>_CLIENT_ID/_SECRET`, else Dynamic Client Registration kept per server in `mcp_oauth_clients`, else the Client ID Metadata Document at `/mcp/client.json`; PKCE, `resource`), proves the account by `tools/list`, and the credential refreshes only through `ensure_fresh_oauth_token`. An agent wired to the node gets the server's live tools (`node_mcp`, `run_op.run_node_mcp_tool`); a workflow step needs the integration's own sign-in. Every surface draws `McpConnectForm`. Tests: `backend/tests/test_vendor_mcp_*.py` against `backend/tests/fixtures/fake_mcp_auth_server.py`, `frontend/tests/components/mcpConnectWayIn.test.tsx`.
+
 ### Agent workspace files
 
 `backend/utils/agent_workspace.py` is the shared file-listing and capability

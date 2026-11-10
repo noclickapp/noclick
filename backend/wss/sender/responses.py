@@ -3,7 +3,7 @@ Typed response models for socket.io events.
 These models provide type-safe responses that correspond to specific request types,
 enabling full type checking from backend to frontend.
 """
-from typing import List, Dict, Any, Optional, ClassVar
+from typing import Literal, List, Dict, Any, Optional, ClassVar
 from wss.sender.workflow_readiness_responses import WorkflowReadinessReport
 from pydantic import BaseModel, Field
 from datetime import datetime
@@ -2121,6 +2121,31 @@ class MCPOAuthRegisterClientResponse(BaseModel):
     success: bool = Field(..., description="Whether client registration was successful")
     client_id: Optional[str] = Field(None, description="Registered OAuth client ID")
     message: Optional[str] = Field(None, description="Success or error message")
+
+
+class McpConnectStartResponse(BaseModel):
+    """Response for mcp:connect:start"""
+    success: bool = Field(..., description="Whether the connect could start")
+    kind: Optional[Literal['oauth', 'key', 'none']] = Field(None, description="oauth = open authorization_url; key = ask for the server's bearer key; none = nothing to ask")
+    flow: Optional[str] = Field(None, description="Sealed; send it back with mcp:connect:finish")
+    authorization_url: Optional[str] = Field(None, description="Where the person signs in (kind oauth)")
+    state: Optional[str] = Field(None, description="The sign-in's state, which its callback returns")
+    error: Optional[str] = Field(None, description="Why it couldn't start, for the person")
+
+
+class McpConnectCredential(BaseModel):
+    """The credential an MCP connect stored"""
+    id: str = Field(..., description="Credential id")
+    name: str = Field(..., description="Credential name")
+    credential_type: str = Field(..., description="The integration's MCP credential type")
+
+
+class McpConnectFinishResponse(BaseModel):
+    """Response for mcp:connect:finish"""
+    success: bool = Field(..., description="Whether the account was connected")
+    credential: Optional[McpConnectCredential] = Field(None, description="The stored credential")
+    verification: Optional[CredentialTestConnectionResponse] = Field(None, description="What the server's tool list proved")
+    error: Optional[str] = Field(None, description="Why it didn't connect, for the person")
 
 
 # ============================================================================

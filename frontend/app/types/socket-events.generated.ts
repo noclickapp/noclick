@@ -3975,6 +3975,50 @@ export interface MailchimpOAuthExchangeRequest {
   [k: string]: unknown;
 }
 /**
+ * Finish an MCP connect: exchange the sign-in's code (or take a key), prove it, store the credential
+ */
+export interface McpConnectFinishRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * The sealed flow mcp:connect:start answered
+   */
+  flow: string;
+  /**
+   * The authorization code the sign-in returned
+   */
+  code?: string | null;
+  /**
+   * The state the sign-in returned
+   */
+  state?: string | null;
+  /**
+   * The bearer key, for a server that takes one instead of a sign-in
+   */
+  api_key?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Start connecting an integration through its vendor's MCP server (nodes.oauth.mcp_connect)
+ */
+export interface McpConnectStartRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * The integration's MCP credential type, e.g. canva_mcp
+   */
+  credential_type: string;
+  /**
+   * This app's MCP callback URL, where the sign-in returns
+   */
+  redirect_uri: string;
+  [k: string]: unknown;
+}
+/**
  * Exchange OAuth authorization code for tokens and store as credential
  */
 export interface MetaOAuthExchangeRequest {
@@ -10970,6 +11014,73 @@ export interface MailchimpOAuthExchangeResponse {
   message?: string | null;
 }
 /**
+ * The credential an MCP connect stored
+ */
+export interface McpConnectCredential {
+  /**
+   * Credential id
+   */
+  id: string;
+  /**
+   * Credential name
+   */
+  name: string;
+  /**
+   * The integration's MCP credential type
+   */
+  credential_type: string;
+}
+/**
+ * Response for mcp:connect:finish
+ */
+export interface McpConnectFinishResponse {
+  /**
+   * Whether the account was connected
+   */
+  success: boolean;
+  /**
+   * The stored credential
+   */
+  credential?: McpConnectCredential | null;
+  /**
+   * What the server's tool list proved
+   */
+  verification?: CredentialTestConnectionResponse | null;
+  /**
+   * Why it didn't connect, for the person
+   */
+  error?: string | null;
+}
+/**
+ * Response for mcp:connect:start
+ */
+export interface McpConnectStartResponse {
+  /**
+   * Whether the connect could start
+   */
+  success: boolean;
+  /**
+   * oauth = open authorization_url; key = ask for the server's bearer key; none = nothing to ask
+   */
+  kind?: ("oauth" | "key" | "none") | null;
+  /**
+   * Sealed; send it back with mcp:connect:finish
+   */
+  flow?: string | null;
+  /**
+   * Where the person signs in (kind oauth)
+   */
+  authorization_url?: string | null;
+  /**
+   * The sign-in's state, which its callback returns
+   */
+  state?: string | null;
+  /**
+   * Why it couldn't start, for the person
+   */
+  error?: string | null;
+}
+/**
  * Response for meta:oauth:exchange request
  */
 export interface MetaOAuthExchangeResponse {
@@ -14683,6 +14794,8 @@ export interface ClientToServerEvents {
   'linkedin:oauth:refresh': (data: LinkedInOAuthRefreshRequest) => void;
   'linkedin:oauth:validate': (data: LinkedInOAuthValidateRequest) => void;
   'mailchimp:oauth:exchange': (data: MailchimpOAuthExchangeRequest) => void;
+  'mcp:connect:finish': (data: McpConnectFinishRequest) => void;
+  'mcp:connect:start': (data: McpConnectStartRequest) => void;
   'mcp:oauth:discover': (data: MCPOAuthDiscoverRequest) => void;
   'mcp:oauth:exchange': (data: MCPOAuthExchangeRequest) => void;
   'mcp:oauth:register-client': (data: MCPOAuthRegisterClientRequest) => void;
@@ -15057,6 +15170,8 @@ export const ClientEventNames = {
   MCPOAuthExchangeRequest: 'mcp:oauth:exchange',
   MCPOAuthRegisterClientRequest: 'mcp:oauth:register-client',
   MailchimpOAuthExchangeRequest: 'mailchimp:oauth:exchange',
+  McpConnectFinishRequest: 'mcp:connect:finish',
+  McpConnectStartRequest: 'mcp:connect:start',
   MetaOAuthExchangeRequest: 'meta:oauth:exchange',
   MetaOAuthRefreshRequest: 'meta:oauth:refresh',
   MetaOAuthValidateRequest: 'meta:oauth:validate',
@@ -15425,6 +15540,8 @@ interface ClientEventMap {
   MCPOAuthExchangeRequest: MCPOAuthExchangeRequest
   MCPOAuthRegisterClientRequest: MCPOAuthRegisterClientRequest
   MailchimpOAuthExchangeRequest: MailchimpOAuthExchangeRequest
+  McpConnectFinishRequest: McpConnectFinishRequest
+  McpConnectStartRequest: McpConnectStartRequest
   MetaOAuthExchangeRequest: MetaOAuthExchangeRequest
   MetaOAuthRefreshRequest: MetaOAuthRefreshRequest
   MetaOAuthValidateRequest: MetaOAuthValidateRequest
@@ -15733,6 +15850,8 @@ export interface RequestResponseMap {
   MCPOAuthExchangeRequest: MCPOAuthExchangeResponse;
   MCPOAuthRegisterClientRequest: MCPOAuthRegisterClientResponse;
   MailchimpOAuthExchangeRequest: MailchimpOAuthExchangeResponse;
+  McpConnectFinishRequest: McpConnectFinishResponse;
+  McpConnectStartRequest: McpConnectStartResponse;
   MetaOAuthExchangeRequest: MetaOAuthExchangeResponse;
   MetaOAuthRefreshRequest: MetaOAuthRefreshResponse;
   MetaOAuthValidateRequest: MetaOAuthValidateResponse;
@@ -16492,6 +16611,14 @@ export const MCPOAuthRegisterClientRequest = {
 export const MailchimpOAuthExchangeRequest = {
   event_name: 'mailchimp:oauth:exchange' as const,
   create: (data: MailchimpOAuthExchangeRequest) => ({ event_name: 'mailchimp:oauth:exchange' as const, ...data })
+};
+export const McpConnectFinishRequest = {
+  event_name: 'mcp:connect:finish' as const,
+  create: (data: McpConnectFinishRequest) => ({ event_name: 'mcp:connect:finish' as const, ...data })
+};
+export const McpConnectStartRequest = {
+  event_name: 'mcp:connect:start' as const,
+  create: (data: McpConnectStartRequest) => ({ event_name: 'mcp:connect:start' as const, ...data })
 };
 export const MetaOAuthExchangeRequest = {
   event_name: 'meta:oauth:exchange' as const,
@@ -17453,6 +17580,8 @@ export const EventRouting = {
   'linkedin:oauth:refresh': 'API',
   'linkedin:oauth:validate': 'API',
   'mailchimp:oauth:exchange': 'API',
+  'mcp:connect:finish': 'API',
+  'mcp:connect:start': 'API',
   'mcp:oauth:discover': 'API',
   'mcp:oauth:exchange': 'API',
   'mcp:oauth:register-client': 'API',

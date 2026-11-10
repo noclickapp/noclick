@@ -45,6 +45,8 @@ function otherWay(method: ProvideCredentialMethod, name: string): string {
             return 'Scan a QR code instead';
         case 'agent_oauth':
             return 'Sign in with your plan instead';
+        case 'mcp':
+            return `Sign in with ${name} through MCP instead`;
         default:
             return `Use ${/^[aeiou]/i.test(method.label) ? 'an' : 'a'} ${method.label} instead`;
     }

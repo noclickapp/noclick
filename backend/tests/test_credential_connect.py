@@ -349,8 +349,9 @@ async def test_a_vendor_key_is_probed_alike_under_its_harness_or_model_type(monk
 
 
 def test_the_linked_fields_are_declared_by_their_credential_classes():
-    assert cc.linked_field_names() == {"connection_id", "number_sid", "guild_id", "team_id", "hub_id"}
-    assert {t for t in cc._class_index() if cc.linked_only(t)} == {"whatsapp_qr", "phone_number", "discord_bot_install"}
+    assert cc.linked_field_names() == {"connection_id", "number_sid", "guild_id", "team_id", "hub_id", "mcp_server_url"}
+    assert {t for t in cc._class_index() if cc.linked_only(t)} == {
+        "whatsapp_qr", "phone_number", "discord_bot_install", "canva_mcp", "notion_mcp", "calendly_mcp"}
 
 
 @pytest.mark.parametrize("credential_type,blob,field", [
@@ -366,6 +367,9 @@ def test_the_linked_fields_are_declared_by_their_credential_classes():
     ("slack_bot_token", {"bot_token": "xoxb-own", "team_id": "T0OTHER"}, "team_id"),
     ("hubspot_pat", {"access_token": "pat-own", "hub_id": "12345"}, "hub_id"),
     ("mcp_api_key", {"api_key": "k", "connection_id": "x"}, "connection_id"),
+    # A vendor MCP credential comes only from its connect flow: never a token typed in for some other server.
+    ("notion_mcp", {"mcp_server_url": "https://evil.example/mcp", "access_token": "t"}, "mcp_server_url"),
+    ("notion_integration_token", {"token": "secret_x", "mcp_server_url": "https://evil.example/mcp"}, "mcp_server_url"),
     ("agent_api_key", {"credentials": {"ANTHROPIC_API_KEY": "k"}, "connection_id": "x"}, "connection_id"),
 ])
 async def test_a_typed_blob_never_names_what_only_noclick_links(credential_type, blob, field):

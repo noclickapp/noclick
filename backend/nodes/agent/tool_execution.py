@@ -127,6 +127,7 @@ async def execute_tool(
     - 'filesystem': Upload files to R2
     - 'node_op': Run a single integration-node operation standalone
     - 'node_op_lookup': List valid options for a node's dynamic ID fields
+    - 'node_mcp': One tool of an integration's own MCP server (vendor_mcp)
     - 'email_reply': Locked reply to the inbound email that triggered the run
     """
     if tool_name not in tool_configs:
@@ -219,6 +220,14 @@ async def execute_tool(
             elif tool_type == "node_op_lookup":
                 result = await _execute_node_op_lookup(
                     node, tool_name, dispatch_arguments, tool_info
+                )
+            elif tool_type == "node_mcp":
+                from nodes.core.run_op import run_node_mcp_tool
+
+                result = await run_node_mcp_tool(
+                    tool_info, dispatch_arguments, user_id=node.user_id,
+                    organization_id=node.organization_id, workflow_id=node.workflow_id,
+                    conversation_id=getattr(node, "conversation_id", None),
                 )
             elif tool_type == "email_reply":
                 from nodes.agent.email_reply import execute_email_reply

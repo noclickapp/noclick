@@ -532,6 +532,26 @@ class NodeStateConflict(Exception):
     """
 
 
+def _mcp_aware_freshen(freshen):
+    """``freshen`` (a node's ``freshen_credential``), except that a vendor-MCP
+    credential is refreshed by ``vendor_mcp.fresh_credential``."""
+    import functools
+
+    @functools.wraps(freshen)
+    async def wrapper(cls, credential_data, *args, **kwargs):
+        from nodes.core import vendor_mcp
+
+        if credential_data and vendor_mcp.is_mcp_credential(credential_data):
+            return await vendor_mcp.fresh_credential(
+                credential_data, credential_id=kwargs.get("credential_id"), user_id=kwargs.get("user_id"),
+                pool=kwargs.get("pool"), caller_path="freshen",
+            )
+        return await freshen(cls, credential_data, *args, **kwargs)
+
+    wrapper._mcp_aware = True
+    return wrapper
+
+
 class WorkflowNode(ABC):
     """
     Abstract base class for all workflow nodes.
@@ -573,6 +593,15 @@ class WorkflowNode(ABC):
     # tests/test_connection_evidence_coverage.py, so a new credentialed node
     # must declare this (or land on the shrinking allowlist) to merge.
     connection_evidence: ClassVar[Optional["ConnectionEvidence"]] = None
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        # A credential made through the vendor's MCP server holds that server's
+        # token, which the node's own refresh (its REST OAuth app) would spend or
+        # revoke: every override hands such a credential to vendor_mcp's refresh.
+        own = cls.__dict__.get("freshen_credential")
+        if isinstance(own, classmethod) and not getattr(own.__func__, "_mcp_aware", False):
+            cls.freshen_credential = classmethod(_mcp_aware_freshen(own.__func__))
 
     # Trigger operations this node's own ``load_field_value`` registers with
     # the provider, as its config panel does, each with the credential types it
@@ -715,6 +744,12 @@ class WorkflowNode(ABC):
 
         if self.runs_as_trigger():
             inputs = {}
+
+        from nodes.core.vendor_mcp import refusal_for_step
+
+        refusal = refusal_for_step(getattr(self.config, "credentials", None))
+        if refusal:
+            raise ConfigValidationError(refusal)
 
         from utils.credential_approval import admit_node
         pending = await admit_node(self, inputs)

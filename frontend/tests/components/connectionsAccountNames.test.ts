@@ -17,6 +17,13 @@ describe('describeAccount', () => {
         expect(describeAccount(gmail, 'Gmail')).toEqual({ app: 'Gmail', line: 'ada@example.com' });
     });
 
+    it("says an app connected through its own MCP server is, and who signed in when it's known", () => {
+        const mcp = { mcp_server_url: 'https://mcp.notion.com/mcp', provider: 'mcp' };
+        const signedIn = credential({ credential_type: 'notion_mcp', name: 'Notion (MCP, ada@example.com)', metadata: { ...mcp, verified_as: 'ada@example.com' } });
+        expect(describeAccount(signedIn, 'Notion')).toEqual({ app: 'Notion', line: 'Through MCP · ada@example.com' });
+        expect(describeAccount(credential({ credential_type: 'notion_mcp', name: 'Notion (MCP)', metadata: mcp }), 'Notion').line).toBe('Through MCP');
+    });
+
     it("prefers the account's handle to its email, but not GitHub's placeholder", () => {
         const github = credential({ credential_type: 'github_oauth', name: 'Work', metadata: { login: 'adalovelace', email: 'ada@example.com' } });
         expect(describeAccount(github, 'GitHub').line).toBe('adalovelace');

@@ -19,7 +19,7 @@ export function connectDialogHeader(app: string, stage: ConnectStage, result?: C
     if (stage === 'ask') return { title: `Ask someone to connect ${app}`, description: 'For an account that isn’t yours. They connect it from a link.' };
     if (stage === 'done') {
         // Connected takes proof: the provider answering, or a sign-in it didn't refuse. A key nothing vouched for is saved.
-        const signedIn = (result?.kind === 'oauth' || result?.kind === 'agent_oauth') && result.verification?.reachable !== false;
+        const signedIn = (result?.kind === 'oauth' || result?.kind === 'agent_oauth' || result?.kind === 'mcp') && result.verification?.reachable !== false;
         return { title: result?.verification?.reachable === true || signedIn ? `${app} is connected` : `${app} is saved` };
     }
     return { title: `Connect ${app}`, description: `So NoClick can work in ${app} for you.` };

@@ -5,6 +5,7 @@
 //   - redirect OAuth   `{provider}:oauth:exchange`        -> POST /provide (code exchange)
 //   - agent device/PKCE `{provider}:auth:{start|poll|exchange}` -> /agent-oauth/{start,complete}
 //   - WhatsApp QR scan  `whatsapp:qr:{start|status}`        -> /qr/{start,status}
+//   - a vendor's MCP    `mcp:connect:{start|finish}`        -> /mcp/{start,finish}
 // Bound to the active method's credential_type. Shaped like sendEventAsync so it drops
 // straight into OAuthExchangeContext, AgentOAuthConnect's sendEvent, and the QR form's.
 
@@ -49,6 +50,30 @@ export function provideLinkTransport(
                 return { success: false, status: 'error', message: e.detail || 'WhatsApp connection failed' };
             }
             return await res.json();
+        }
+
+        // --- A vendor's MCP server (start → sign in → finish) ---
+        // Shaped like the socket's mcp:connect:* answers, which useMcpConnect reads.
+        if (name === 'mcp:connect:start' || name === 'mcp:connect:finish') {
+            const isStart = name === 'mcp:connect:start';
+            const res = await fetch(`${base}/mcp/${isStart ? 'start' : 'finish'}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(
+                    isStart
+                        ? { credential_type: credentialType, redirect_uri: event.redirect_uri }
+                        : { credential_type: credentialType, flow: event.flow, code: event.code, state: event.state, api_key: event.api_key }
+                ),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) return { success: false, error: typeof data.detail === 'string' ? data.detail : 'The connection failed' };
+            if (isStart) return { success: true, ...data };
+            return {
+                success: data.status === 'success',
+                credential: { id: data.credential_id, name: '', credential_type: credentialType },
+                verification: data.verification ?? null,
+                error: data.status === 'success' ? undefined : data.message,
+            };
         }
 
         if (name === 'oauth:device:start' || name === 'oauth:device:poll') {
