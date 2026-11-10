@@ -6,6 +6,10 @@ The published Host section specifies /v3, omitted by the OpenAPI servers URL.
 from __future__ import annotations
 
 import json
+import hashlib
+import hmac
+import secrets
+from urllib.parse import urlparse
 from typing import Annotated, Literal, Union
 
 import httpx
@@ -13,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -295,6 +300,24 @@ class CatsUpdateTaskConfig(_Task):
     is_completed: bool | None = None
 
 
+class _CatsWebhookConfig(WebhookTriggerConfigBase):
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with CATS automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+class CatsOnCandidateCreatedConfig(_CatsWebhookConfig):
+    operation: Literal["on_candidate_created"] = Field("on_candidate_created", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "New Candidate"})
+
+
+class CatsOnPipelineStatusChangedConfig(_CatsWebhookConfig):
+    operation: Literal["on_pipeline_status_changed"] = Field("on_pipeline_status_changed", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "Pipeline Status Changed"})
+
+
+TRIGGER_EVENTS = {"on_candidate_created": "candidate.created", "on_pipeline_status_changed": "pipeline.status_changed"}
+
+
 CatsOperation = Annotated[Union[
     CatsGetSiteConfig,
     CatsListCandidatesConfig,
@@ -320,7 +343,9 @@ CatsOperation = Annotated[Union[
     CatsListTasksConfig,
     CatsGetTaskConfig,
     CatsCreateTaskConfig,
-    CatsUpdateTaskConfig
+    CatsUpdateTaskConfig,
+    CatsOnCandidateCreatedConfig,
+    CatsOnPipelineStatusChangedConfig
 ], Field(discriminator="operation")]
 
 
@@ -366,7 +391,7 @@ def _redact(value, token):
     return value
 
 
-class CatsNode(WorkflowNode):
+class CatsNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-cats"
     connection_evidence = ConnectionEvidence(
         noun="companies", operation="list_companies", identity_operation="get_site",
@@ -378,11 +403,108 @@ class CatsNode(WorkflowNode):
     def get_config_model(cls):
         return CatsNodeConfig
 
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, body=None):
+        token = CatsAPIKeyCredential.model_validate(credential).api_key
+        try:
+            async with guarded_async_client(timeout=30.0, follow_redirects=False, trust_env=False) as client:
+                response = await client.request(method, BASE_URL + path,
+                    headers={"Authorization": "Token " + token, "Accept": "application/json"},
+                    **({"json": body} if body is not None else {}))
+        except httpx.HTTPError:
+            raise ValueError("CATS webhook request did not complete") from None
+        if response.status_code not in ({201} if method == "POST" else {204, 404, 410}):
+            raise ValueError(f"CATS webhook HTTP {response.status_code}")
+        return response
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = TRIGGER_EVENTS.get(config.get("operation"))
+        if event is None:
+            raise ValueError("Choose a CATS trigger")
+        secret = secrets.token_urlsafe(32)
+        response = await cls._webhook_request(credential, "POST", "/webhooks",
+            {"events": [event], "target_url": webhook_url, "secret": secret})
+        # Creates have no body; the documented Location identifies the resource.
+        location = urlparse(response.headers.get("Location", ""))
+        path = location.path.rstrip("/")
+        identifier = path.rsplit("/", 1)[-1]
+        if (location.netloc and (location.scheme != "https" or location.netloc != "api.catsone.com")) or not path.endswith("/webhooks/" + identifier) or not identifier.isascii() or not identifier.isdigit():
+            raise ValueError("CATS did not return a webhook Location")
+        return {"external_webhook_id": identifier, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        identifier = config.get("external_webhook_id")
+        if not identifier:
+            return
+        if not credential:
+            raise ValueError("Connect CATS to remove its webhook")
+        identifier = str(identifier)
+        if not identifier.isascii() or not identifier.isdigit():
+            raise ValueError("Invalid CATS webhook ID")
+        await cls._webhook_request(credential, "DELETE", "/webhooks/" + identifier)
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        secret = config.get("signing_secret")
+        lowered = {key.lower(): value for key, value in headers.items()}
+        request_id = lowered.get("x-request-id")
+        signature = lowered.get("x-signature")
+        if not secret or not request_id or not isinstance(signature, str) or not signature.isascii():
+            return False
+        digest = hmac.new(secret.encode(), body + request_id.encode(), hashlib.sha256).hexdigest()
+        return hmac.compare_digest(signature, "HMAC-SHA256 " + digest)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = TRIGGER_EVENTS.get(config.get("operation"))
+        if event is None or payload.get("event") != event:
+            return False
+        field = "candidate_id" if event == "candidate.created" else "pipeline_id"
+        identifier = payload.get(field)
+        return isinstance(identifier, int) and not isinstance(identifier, bool) and identifier > 0
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if config.get("operation") in TRIGGER_EVENTS:
+            return {key: value for key, value in payload.items() if key != "_webhook"}
+        return None
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return None
+        event = output.get("event")
+        if event == "candidate.created":
+            identifier = output.get("candidate_id")
+            text = f"New candidate in CATS: candidate {identifier}. Use get_candidate with candidate_id={identifier} to read their recruiting record."
+            title = f"New CATS candidate {identifier}"
+            key = f"candidate:{identifier}"
+        elif event == "pipeline.status_changed":
+            identifier = output.get("pipeline_id")
+            text = f"CATS pipeline {identifier} changed status from {output.get('previous_status_id')} to {output.get('new_status_id')}. Use get_pipeline with pipeline_id={identifier} to read the candidate and job."
+            title = f"CATS pipeline {identifier} status changed"
+            key = f"pipeline:{identifier}"
+        else:
+            return None
+        # Embeds are provider-defined: preserve contents without guessing fields.
+        if output.get("_embedded"):
+            text += "\nRecruiting record: " + json.dumps(output["_embedded"], ensure_ascii=False)[:6000]
+        if output.get("_links"):
+            text += "\nCATS links: " + json.dumps(output["_links"], ensure_ascii=False)[:2000]
+        return {"text": text, "title": title, "conversation_key": key}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a CATS API key")
         config = self.config.config
         token = self.config.credentials.api_key
+        if config.operation in TRIGGER_EVENTS:
+            payload = (self.node_data.get("config") or {}).get("_triggerPayload")
+            if not isinstance(payload, dict):
+                raise ValueError("CATS trigger needs a webhook delivery")
+            return self.resolve_trigger_payload(payload, config.model_dump())
         method, route = ROUTES[config.operation]
         values = config.model_dump(exclude_none=True, exclude={"operation"})
         if "{id}" in route:

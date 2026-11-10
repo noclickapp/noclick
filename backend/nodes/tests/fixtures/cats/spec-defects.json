@@ -4,6 +4,6 @@
     "issue": "OpenAPI servers URL omits /v3",
     "contract": "https://docs.catsone.com/openapi.yaml",
     "docs": "https://docs.catsone.com/#host",
-    "detail": "The pinned contract declares https://api.catsone.com and paths /site, /candidates, etc. The same contract description and current provider Host docs specify https://api.catsone.com/v3. Every node request follows that documented v3 base. This produces all 25 No spec operation blockers; no request-body or parser verdict is possible in the unmodified harness. Native tests separately validate each operation against the pinned body schema and provider response example."
+    "detail": "The published OpenAPI server omits /v3. Host docs and every API example use https://api.catsone.com/v3. This causes all 25 existing operations and both trigger registrations to report No spec operation; trigger signature, event filtering, payload and agent-event checks succeed. Native tests validate the existing operations and webhook lifecycle using provider examples. The unmodified catalog is retained."
   }
 ]

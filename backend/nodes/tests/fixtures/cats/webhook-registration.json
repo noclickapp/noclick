@@ -1,0 +1,25 @@
+{
+  "request_schema": {
+    "type": "object",
+    "properties": {
+      "events": {
+        "type": "array",
+        "description": "An array of one or more of the following event types: `candidate.created`, `job.created`, `contact.created`, `company.created`, `activity.created`, `user.created`, `pipeline.created`, `candidate.updated`, `job.updated`, `contact.updated`, `company.updated`, `activity.updated`, `user.updated`, `candidate.deleted`, `job.deleted`, `contact.deleted`, `company.deleted`, `activity.deleted`, `user.deleted`, `pipeline.deleted`, `job.status_changed`, `contact.status_changed`, `company.status_changed`, `pipeline.status_changed`",
+        "items": {}
+      },
+      "target_url": {
+        "type": "string",
+        "description": "URL to post the record to once the event is triggered."
+      },
+      "secret": {
+        "type": "string",
+        "description": "***Highly Recommended***. If provided, you can use this string to verify that authenticity of webhooks sent to `target_url`. All webhooks you subscribe to you will send a `X-Signature` header. To determine whether the `X-Signature` header is valid take the body of the webhook response, append the value of the `X-Request-Id` header to it, and then generate a `HMAC-SHA256` hash of it using your secret as a key. That final result should match the hash found in the `X-Signature` header. Here are two examples of the verification process in PHP and Python 3:\n\n```PHP\n$secret = 'yourSecretHere';\n$webhookBody = '{}';\n\n// `X-Request-Id` header\n$requestId = '5d6ce3f9-cce8-4b5b-a26e-396a6161eb99';\n\n// `X-Signature` header\n$signature = 'HMAC-SHA256 affc8d589f36580daa0d587ac0b314c123b59322cf4d018661e0a403cc76391f';\n\n$hash = hash_hmac('sha256', $requestBody . $requestId, $secret, false);\n\nif ($signature !== 'HMAC-SHA256 ' . $hash) {\n    // Reject it\n}\n```"
+      }
+    },
+    "required": [
+      "events",
+      "target_url"
+    ]
+  },
+  "source": "https://docs.catsone.com/openapi.yaml"
+}

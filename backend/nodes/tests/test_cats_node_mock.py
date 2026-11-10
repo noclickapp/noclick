@@ -164,3 +164,68 @@ async def test_cats_creation_exposes_documented_location_without_following(monke
     result = await node({"operation": "create_candidate", "first_name": "Ada", "last_name": "Lovelace"}).execute({})
     assert result["location"] == location
     assert len(requests) == 1
+
+
+# Scalar fields are copied from https://docs.catsone.com/#webhooks.
+# The documentation elides links and embeds; the fixture leaves those empty.
+EVENTS = json.loads((Path(__file__).parent / "fixtures/cats/webhook-events.json").read_text())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,event", native.TRIGGER_EVENTS.items())
+async def test_cats_webhook_lifecycle_and_delivery(monkeypatch, operation, event):
+    requests = transport(monkeypatch, lambda request: httpx.Response(
+        201 if request.method == "POST" else 204,
+        headers={"Location": "https://api.catsone.com/v3/webhooks/7637"}))
+    config = {"operation": operation}
+    registration = await native.CatsNode._register_external_webhook(
+        webhook_url="https://example.hooks.example.test/hook", credential={"api_key": TOKEN}, config=config, node_id="cats-test")
+    config.update(registration)
+    assert registration["external_webhook_id"] == "7637"
+    sent = json.loads(requests[0].content)
+    assert sent == {"events": [event], "target_url": "https://example.hooks.example.test/hook", "secret": config["signing_secret"]}
+    registration_contract = json.loads((Path(__file__).parent / "fixtures/cats/webhook-registration.json").read_text())
+    jsonschema.validate(sent, registration_contract["request_schema"])
+    assert requests[0].url.path == "/v3/webhooks"
+    assert requests[0].headers["Authorization"] == "Token " + TOKEN
+    payload = EVENTS[event]["body"]
+    import hashlib
+    import hmac
+    body = json.dumps(payload).encode()
+    request_id = "5d6ce3f9-cce8-4b5b-a26e-396a6161eb99"
+    signature = "HMAC-SHA256 " + hmac.new(config["signing_secret"].encode(), body + request_id.encode(), hashlib.sha256).hexdigest()
+    headers = {"X-Signature": signature, "X-Request-Id": request_id}
+    assert native.CatsNode.verify_webhook_signature(body, headers, config)
+    assert not native.CatsNode.verify_webhook_signature(body + b" ", headers, config)
+    assert not native.CatsNode.verify_webhook_signature(body, {**headers, "X-Request-Id": "other"}, config)
+    assert not native.CatsNode.verify_webhook_signature(body, {}, config)
+    assert not native.CatsNode.verify_webhook_signature(body, headers, {})
+    assert native.CatsNode.filter_trigger_payload(payload, config)
+    assert not native.CatsNode.filter_trigger_payload({**payload, "event": "unrelated"}, config)
+    output = native.CatsNode.resolve_trigger_payload({**payload, "_webhook": {"headers": headers}}, config)
+    assert output == payload
+    turn = native.CatsNode.resolve_agent_event(output)
+    identifier = payload["candidate_id" if event == "candidate.created" else "pipeline_id"]
+    assert str(identifier) in turn["text"]
+    assert "get_candidate" in turn["text"] if event == "candidate.created" else "get_pipeline" in turn["text"]
+    if event == "pipeline.status_changed":
+        assert str(payload["previous_status_id"]) in turn["text"]
+        assert str(payload["new_status_id"]) in turn["text"]
+    await native.CatsNode._unregister_external_webhook(credential={"api_key": TOKEN}, config=config, node_id="cats-test")
+    assert requests[1].method == "DELETE"
+    assert requests[1].url.path == "/v3/webhooks/7637"
+
+
+@pytest.mark.asyncio
+async def test_cats_registration_requires_location(monkeypatch):
+    transport(monkeypatch, httpx.Response(201))
+    with pytest.raises(ValueError, match="Location"):
+        await native.CatsNode._register_external_webhook(webhook_url="https://example.hooks.example.test/hook",
+            credential={"api_key": TOKEN}, config={"operation": "on_candidate_created"}, node_id="cats-test")
+
+
+@pytest.mark.asyncio
+async def test_cats_webhook_cleanup_does_not_silently_lose_registration():
+    with pytest.raises(ValueError, match="Connect CATS"):
+        await native.CatsNode._unregister_external_webhook(credential=None,
+            config={"external_webhook_id": "7637"}, node_id="cats-test")

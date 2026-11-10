@@ -1,0 +1,22 @@
+{
+  "candidate.created": {
+    "body": {
+      "event": "candidate.created",
+      "candidate_id": 6089361,
+      "_links": {},
+      "_embedded": {}
+    },
+    "source": "https://docs.catsone.com/#webhooks"
+  },
+  "pipeline.status_changed": {
+    "body": {
+      "event": "pipeline.status_changed",
+      "pipeline_id": 664681364,
+      "previous_status_id": 1343445,
+      "new_status_id": 1262311,
+      "_links": {},
+      "_embedded": {}
+    },
+    "source": "https://docs.catsone.com/#webhooks"
+  }
+}

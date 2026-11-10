@@ -25,7 +25,7 @@ export const CatsNode: NodeDefinition = {
     label: 'CATS',
     category: 'hr-recruiting',
     description:
-        'Manage recruiting candidates, companies, contacts, jobs, pipelines and tasks',
+        'Manage recruiting records and start workflows when candidates arrive or pipeline statuses change',
     keywords: ['catsone', 'recruiting', 'applicant tracking'],
     Icon: CatsIcon,
     iconColor: '',
