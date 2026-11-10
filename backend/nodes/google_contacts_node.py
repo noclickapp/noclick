@@ -16,7 +16,7 @@ import httpx
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.oauth.google_oauth import is_token_expired, refresh_access_token
-from nodes.scopes.google import GOOGLE_CONTACTS_SCOPES
+from nodes.scopes.google_contacts import GOOGLE_CONTACTS_SCOPES
 
 logger = logging.getLogger(__name__)
 

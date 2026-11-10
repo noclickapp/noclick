@@ -1,7 +1,8 @@
 """Google Cloud / Workspace-adjacent operation → OAuth scope requirements.
 
-Eleven nodes share one module because they share one vocabulary: every scope below
-is a ``https://www.googleapis.com/auth/...`` string, and Google publishes the
+Eleven nodes share one vocabulary (Search Console, Ads, Analytics and Business
+Profile keep their registries in modules of their own, built with ``_s`` from
+here): every scope is a ``https://www.googleapis.com/auth/...`` string, and Google publishes the
 accepted scope set per API method in its machine-readable discovery documents
 (``https://<api>.googleapis.com/$discovery/rest?version=<v>``). Every entry here
 was derived from those documents, cross-checked against
@@ -162,125 +163,6 @@ GOOGLE_TRANSLATE_SCOPES = ScopeRegistry(
         "v3_list_glossaries": _TRANSLATE,
         "v3_get_operation": _TRANSLATE,
         "on_batch_completed": _TRANSLATE,  # polls projects.locations.operations.list
-    },
-)
-
-
-# ---------------------------------------------------------------------------
-# Google Search Console — webmasters/v3 + searchconsole/v1
-# ---------------------------------------------------------------------------
-
-# Reads accept webmasters.readonly, which the node does not request; writes
-# accept only webmasters. One scope for both keeps the table honest.
-_GSC = _s("webmasters")
-
-GOOGLE_SEARCH_CONSOLE_SCOPES = ScopeRegistry(
-    provider="google-search-console",
-    requirements={
-        "list_sites": _GSC,
-        "get_site": _GSC,
-        "add_site": _GSC,
-        "delete_site": _GSC,
-        "list_sitemaps": _GSC,
-        "get_sitemap": _GSC,
-        "submit_sitemap": _GSC,
-        "delete_sitemap": _GSC,
-        "query_search_analytics": _GSC,
-        "inspect_url": _GSC,
-        # urlTestingTools.mobileFriendlyTest.run declares no scopes — it is a
-        # public testing endpoint that authenticates but authorizes nothing.
-        "mobile_friendly_test": ScopeRequirement(
-            scopes=(),
-            note="Public URL testing endpoint; requires no OAuth scope.",
-        ),
-    },
-)
-
-
-# ---------------------------------------------------------------------------
-# Google Ads — googleads.googleapis.com
-# ---------------------------------------------------------------------------
-
-# The Google Ads API has exactly one OAuth scope; every operation is a GAQL
-# search against customers/{id}/googleAds:search. Access is additionally gated by
-# a developer token, which is not an OAuth concern.
-_ADS = _s("adwords")
-
-GOOGLE_ADS_SCOPES = ScopeRegistry(
-    provider="google-ads",
-    requirements={
-        "run_gaql_query": _ADS,
-        "get_campaign_performance_metrics": _ADS,
-        "get_ad_group_performance_metrics": _ADS,
-        "get_keyword_performance_metrics": _ADS,
-        "get_search_terms_triggering_ads": _ADS,
-    },
-)
-
-
-# ---------------------------------------------------------------------------
-# Google Analytics (GA4) — analyticsdata/v1beta + analyticsadmin/v1beta
-# ---------------------------------------------------------------------------
-
-# Every operation is a read: the Data API reports accept analytics.readonly, and
-# so does accountSummaries.list behind the property dropdown.
-_GA = _s("analytics.readonly")
-
-GOOGLE_ANALYTICS_SCOPES = ScopeRegistry(
-    provider="google-analytics",
-    requirements={
-        "run_ga4_standard_report": _GA,  # properties.runReport
-        "run_ga4_realtime_report": _GA,  # properties.runRealtimeReport
-        "fetch_ga4_dimensions_and_metrics": _GA,  # properties.getMetadata
-    },
-)
-
-
-# ---------------------------------------------------------------------------
-# Google Business Profile — mybusiness*, businessprofileperformance
-# ---------------------------------------------------------------------------
-
-# The Business Profile APIs are split across five hosts but share a single
-# scope. Their discovery documents declare no per-method scopes; the scope is
-# published on the OAuth scopes reference as "Manage your Business Profile on
-# Google".
-_GBP = _s("business.manage")
-
-GOOGLE_BUSINESS_PROFILE_SCOPES = ScopeRegistry(
-    provider="google-business-profile",
-    requirements={
-        # mybusinessbusinessinformation/v1
-        "list_business_profile_locations": _GBP,
-        "get_location": _GBP,
-        "update_location": _GBP,
-        "get_location_attributes": _GBP,
-        "update_location_attributes": _GBP,
-        # mybusiness/v4 — reviews
-        "list_location_reviews": _GBP,
-        "get_review": _GBP,
-        "reply_to_review": _GBP,
-        "delete_review_reply": _GBP,
-        # mybusiness/v4 — local posts
-        "list_local_posts": _GBP,
-        "get_local_post": _GBP,
-        "create_local_post": _GBP,
-        "update_local_post": _GBP,
-        "delete_local_post": _GBP,
-        "get_local_post_insights": _GBP,
-        # mybusiness/v4 — media
-        "list_media": _GBP,
-        "get_media": _GBP,
-        "create_media": _GBP,
-        "delete_media": _GBP,
-        "list_customer_media": _GBP,
-        # businessprofileperformance/v1
-        "fetch_location_performance_metrics": _GBP,
-        "fetch_location_search_keywords": _GBP,
-        # mybusinessplaceactions/v1
-        "list_place_action_links": _GBP,
-        "create_place_action_link": _GBP,
-        "update_place_action_link": _GBP,
-        "delete_place_action_link": _GBP,
     },
 )
 

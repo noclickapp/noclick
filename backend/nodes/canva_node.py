@@ -41,7 +41,7 @@ from nodes.oauth.canva_oauth import (
     is_token_expired,
     refresh_access_token,
 )
-from nodes.scopes.content_storage import CANVA_SCOPES
+from nodes.scopes.canva import CANVA_SCOPES
 
 logger = logging.getLogger(__name__)
 

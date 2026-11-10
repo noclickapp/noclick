@@ -14,7 +14,7 @@ import httpx
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import require_credential_token
-from nodes.scopes.google_cloud import GOOGLE_SEARCH_CONSOLE_SCOPES
+from nodes.scopes.google_search_console import GOOGLE_SEARCH_CONSOLE_SCOPES
 
 logger = logging.getLogger(__name__)
 

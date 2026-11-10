@@ -26,7 +26,7 @@ import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.scopes.crm_records import APOLLO_SCOPES
+from nodes.scopes.apollo import APOLLO_SCOPES
 
 logger = logging.getLogger(__name__)
 

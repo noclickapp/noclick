@@ -15,7 +15,7 @@ from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import load_paginated_options, require_credential_token
 from nodes.oauth.google_oauth import is_token_expired, refresh_access_token
-from nodes.scopes.google_cloud import GOOGLE_ANALYTICS_SCOPES
+from nodes.scopes.google_analytics import GOOGLE_ANALYTICS_SCOPES
 
 logger = logging.getLogger(__name__)
 

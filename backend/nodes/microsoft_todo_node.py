@@ -16,7 +16,7 @@ import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.scopes.microsoft import MICROSOFT_TODO_SCOPES
+from nodes.scopes.microsoft_todo import MICROSOFT_TODO_SCOPES
 from nodes.oauth.microsoft_oauth import is_token_expired, refresh_access_token
 
 logger = logging.getLogger(__name__)

@@ -14,7 +14,7 @@ from typing import Dict, Any, Literal, Optional, Tuple, Union, List, Annotated
 from pydantic import BaseModel, ConfigDict, Discriminator, Field
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.scopes.microsoft import ONEDRIVE_SCOPES
+from nodes.scopes.onedrive import ONEDRIVE_SCOPES
 from nodes.core.dynamic_options import load_paginated_options, require_credential_token
 from utils.ssrf import assert_exact_url_origin, guarded_async_client
 import httpx

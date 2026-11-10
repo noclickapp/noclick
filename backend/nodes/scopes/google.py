@@ -1,10 +1,12 @@
 """Google Workspace operation → OAuth scope requirements.
 
-Eight nodes share one module because they share one scope vocabulary: Google
-issues a single token per credential whose granted scopes span every API the
-project enables, so ``drive`` requested by the Docs node is the same string the
-Drive node requests. One registry per node keyed on the operation name, since
-none of these nodes has a central request helper to key endpoints on.
+Eight nodes share one scope vocabulary: Google issues a single token per
+credential whose granted scopes span every API the project enables, so ``drive``
+requested by the Docs node is the same string the Drive node requests. Drive,
+Sheets, Calendar and Forms keep their registries here; Docs, Slides, Tasks and
+Contacts keep theirs in their own modules (``google_docs.py``, …), which read the
+notes below. One registry per node keyed on the operation name, since none of
+these nodes has a central request helper to key endpoints on.
 
 Requirements were derived from Google's API **discovery documents** (e.g.
 ``https://www.googleapis.com/discovery/v1/apis/drive/v3/rest``), which carry the
@@ -39,14 +41,10 @@ from __future__ import annotations
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 
 CALENDAR = "https://www.googleapis.com/auth/calendar"
-CONTACTS = "https://www.googleapis.com/auth/contacts"
-DOCUMENTS = "https://www.googleapis.com/auth/documents"
 DRIVE = "https://www.googleapis.com/auth/drive"
 FORMS_BODY = "https://www.googleapis.com/auth/forms.body"
 FORMS_RESPONSES_READONLY = "https://www.googleapis.com/auth/forms.responses.readonly"
-PRESENTATIONS = "https://www.googleapis.com/auth/presentations"
 SPREADSHEETS = "https://www.googleapis.com/auth/spreadsheets"
-TASKS = "https://www.googleapis.com/auth/tasks"
 
 
 def _table(groups: dict[str, tuple[str, ...]]) -> dict[str, ScopeRequirement]:
@@ -285,49 +283,6 @@ GOOGLE_CALENDAR_SCOPES = ScopeRegistry(
 
 
 # ---------------------------------------------------------------------------
-# Docs — docs/v1, except the document picker which lists via Drive.
-# ---------------------------------------------------------------------------
-GOOGLE_DOCS_SCOPES = ScopeRegistry(
-    provider="google-docs",
-    requirements=_table(
-        {
-            DOCUMENTS: (
-                "fetch_document_content",
-                "create_new_document",
-                "append_text_to_document",
-                "insert_text_in_document",
-                "replace_document_text",
-            ),
-            # Drive `files.list` filtered to the Docs mime type.
-            DRIVE: ("list_google_drive_documents",),
-        }
-    ),
-)
-
-
-# ---------------------------------------------------------------------------
-# Slides — slides/v1, except the presentation picker which lists via Drive.
-# ---------------------------------------------------------------------------
-GOOGLE_SLIDES_SCOPES = ScopeRegistry(
-    provider="google-slides",
-    requirements=_table(
-        {
-            PRESENTATIONS: (
-                "get_presentation_metadata",
-                "create_new_presentation",
-                "add_presentation_slide",
-                "delete_presentation_slide",
-                "get_slide_page",
-                "get_slide_thumbnail",
-            ),
-            # Drive `files.list` filtered to the Slides mime type.
-            DRIVE: ("list_google_drive_presentations",),
-        }
-    ),
-)
-
-
-# ---------------------------------------------------------------------------
 # Forms — forms/v1, except the form picker which lists via Drive.
 # ---------------------------------------------------------------------------
 # The only node here whose scopes genuinely split read from write: responses are
@@ -350,64 +305,6 @@ GOOGLE_FORMS_SCOPES = ScopeRegistry(
             ),
             # Drive `files.list` filtered to the Forms mime type.
             DRIVE: ("list_google_drive_forms",),
-        }
-    ),
-)
-
-
-# ---------------------------------------------------------------------------
-# Tasks — tasks/v1 throughout.
-# ---------------------------------------------------------------------------
-GOOGLE_TASKS_SCOPES = ScopeRegistry(
-    provider="google-tasks",
-    requirements=_table(
-        {
-            TASKS: (
-                # task lists
-                "list_all_task_lists",
-                "fetch_task_list",
-                "create_new_task_list",
-                "update_task_list_metadata",
-                "delete_task_list",
-                # tasks
-                "list_tasks_in_list",
-                "fetch_task_from_list",
-                "create_new_task",
-                "update_task_in_list",
-                "delete_task_from_list",
-                "move_task_to_position",
-                "clear_completed_tasks",
-            ),
-        }
-    ),
-)
-
-
-# ---------------------------------------------------------------------------
-# Contacts — People API v1, `people.*` and `contactGroups.*`.
-# ---------------------------------------------------------------------------
-# Only the user's own contacts are touched. `otherContacts.*` and the directory
-# methods need scopes of their own (`contacts.other.readonly`,
-# `directory.readonly`) and no operation calls them.
-GOOGLE_CONTACTS_SCOPES = ScopeRegistry(
-    provider="google-contacts",
-    requirements=_table(
-        {
-            CONTACTS: (
-                # contacts
-                "list_contacts",
-                "get_contact",
-                "search_contacts",
-                "create_contact",
-                "update_contact",
-                "delete_contact",
-                # contact groups
-                "list_contact_groups",
-                "get_contact_group",
-                "create_contact_group",
-                "update_contact_group",
-                "delete_contact_group",
-            ),
         }
     ),
 )

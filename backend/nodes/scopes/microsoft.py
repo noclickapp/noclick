@@ -1,8 +1,10 @@
 """Microsoft (Graph / Fabric) operation → OAuth scope requirements.
 
-Seven nodes share this module because they share a permission vocabulary: six
-speak Microsoft Graph (Outlook, OneDrive, Word, Excel, Teams, To Do) and OneLake
-speaks the two Azure/Fabric audiences that sit next to it.
+Seven nodes share a permission vocabulary: six speak Microsoft Graph (Outlook,
+OneDrive, Word, Excel, Teams, To Do) and OneLake speaks the two Azure/Fabric
+audiences that sit next to it. OneDrive, Word, Excel and To Do keep their
+registries in modules of their own (``onedrive.py``, ``word.py``, ``excel.py``,
+``microsoft_todo.py``).
 
 Four facts drive the shape here:
 
@@ -62,6 +64,10 @@ def _graph(*permissions: str) -> ScopeRequirement:
 
 def _onelake(scope: str, note: str = "") -> ScopeRequirement:
     return ScopeRequirement(scopes=(scope,), note=note)
+
+
+# OneDrive and Word are driveItem clients: every call they make resolves to this one permission.
+_FILES_ALL = _graph("Files.ReadWrite.All")
 
 
 # ===========================================================================
@@ -213,179 +219,6 @@ OUTLOOK_SCOPES = ScopeRegistry(
 
 
 # ===========================================================================
-# OneDrive  (automation-onedrive)
-# ===========================================================================
-# Requests: Files.ReadWrite.All, User.Read. Every driveItem method lists
-# Files.ReadWrite.All among its accepted (higher-privileged) permissions, so
-# the whole surface resolves to that one scope.
-
-_FILES_ALL = _graph("Files.ReadWrite.All")
-
-_ONEDRIVE_REQUIREMENTS: dict[str, ScopeRequirement] = {
-    # -- drive / discovery -------------------------------------------------
-    "get_drive_info": _FILES_ALL,  # Get drive
-    "get_special_folder": _FILES_ALL,  # drive: Get special folder
-    "list_recent_items": _FILES_ALL,  # drive: recent
-    "list_shared_items": _FILES_ALL,  # drive: sharedWithMe
-    "search_drive_items": _FILES_ALL,  # driveItem: search
-    "track_drive_changes": _FILES_ALL,  # driveItem: delta
-    # -- items: read -------------------------------------------------------
-    "get_item_metadata": _FILES_ALL,  # Get driveItem
-    "list_folder_contents": _FILES_ALL,  # driveItem: List children
-    "download_item": _FILES_ALL,  # driveItem: Get content
-    "get_item_download_stream": _FILES_ALL,  # Get driveItem + download URL
-    "get_item_preview_url": _FILES_ALL,  # driveItem: preview
-    "get_item_thumbnail": _FILES_ALL,  # driveItem: List thumbnails
-    "list_item_thumbnails": _FILES_ALL,  # driveItem: List thumbnails
-    "get_item_analytics": _FILES_ALL,  # Get itemAnalytics
-    # -- items: write ------------------------------------------------------
-    "create_folder": _FILES_ALL,  # driveItem: Create child
-    "upload_file": _FILES_ALL,  # driveItem: Upload content
-    "create_large_file_upload_session": _FILES_ALL,  # createUploadSession
-    "update_item_metadata": _FILES_ALL,  # Update driveItem
-    "move_item": _FILES_ALL,  # driveItem: Move
-    "copy_item": _FILES_ALL,  # driveItem: copy
-    "delete_item": _FILES_ALL,  # Delete driveItem
-    "permanently_delete_item": _FILES_ALL,  # driveItem: permanentDelete
-    # Restore from recycle bin documents Files.ReadWrite.All for personal
-    # accounts and is "Not supported" for work or school delegated access.
-    "restore_item_from_recycle_bin": ScopeRequirement(
-        scopes=(GRAPH + "Files.ReadWrite.All",),
-        note=(
-            "driveItem: restore is documented for personal Microsoft accounts "
-            "only; Microsoft lists it as not supported for work or school "
-            "delegated access."
-        ),
-    ),
-    # -- check in / out ----------------------------------------------------
-    "check_out_file": _FILES_ALL,  # driveItem: checkout
-    "check_in_file": _FILES_ALL,  # driveItem: checkin
-    "discard_file_checkout": _FILES_ALL,  # driveItem: discardCheckout
-    # -- versions ----------------------------------------------------------
-    "list_file_versions": _FILES_ALL,  # driveItem: List versions
-    "get_file_version": _FILES_ALL,  # Get driveItemVersion
-    "restore_file_version": _FILES_ALL,  # driveItemVersion: restoreVersion
-    # -- sharing / permissions ---------------------------------------------
-    "create_sharing_link": _FILES_ALL,  # driveItem: createLink
-    "send_sharing_invitation": _FILES_ALL,  # driveItem: invite
-    "grant_item_permission": _FILES_ALL,  # driveItem: invite
-    "list_item_permissions": _FILES_ALL,  # driveItem: List permissions
-    "update_item_permission": _FILES_ALL,  # Update permission
-    "delete_item_permission": _FILES_ALL,  # Delete permission
-    # -- following ---------------------------------------------------------
-    "follow_item": _FILES_ALL,  # driveItem: follow
-    "unfollow_item": _FILES_ALL,  # driveItem: unfollow
-}
-
-ONEDRIVE_SCOPES = ScopeRegistry(
-    provider="onedrive",
-    requirements=_ONEDRIVE_REQUIREMENTS,
-)
-
-
-# ===========================================================================
-# Word  (automation-word)
-# ===========================================================================
-# Requests: Files.ReadWrite.All, User.Read. Word is a driveItem client — every
-# operation is a /me/drive call, so it maps exactly like OneDrive.
-
-_WORD_REQUIREMENTS: dict[str, ScopeRequirement] = {
-    "list_onedrive_documents": _FILES_ALL,  # driveItem: List children
-    "search_onedrive_documents": _FILES_ALL,  # driveItem: search
-    "fetch_document_metadata": _FILES_ALL,  # Get driveItem
-    "create_blank_document": _FILES_ALL,  # driveItem: Upload content
-    "upload_word_document": _FILES_ALL,  # driveItem: Upload content
-    "copy_word_document": _FILES_ALL,  # driveItem: copy
-    "move_document_to_folder": _FILES_ALL,  # Update driveItem (parentReference)
-    "rename_word_document": _FILES_ALL,  # Update driveItem
-    "delete_word_document": _FILES_ALL,  # Delete / permanentDelete driveItem
-    "download_document_content": _FILES_ALL,  # driveItem: Get content
-    "convert_document_to_pdf": _FILES_ALL,  # Get content (format=pdf)
-    "convert_document_to_html": _FILES_ALL,  # Get content (format=html)
-    "fetch_document_preview_link": _FILES_ALL,  # driveItem: preview
-    "fetch_document_thumbnail": _FILES_ALL,  # driveItem: List thumbnails
-    "create_document_sharing_link": _FILES_ALL,  # driveItem: createLink
-    "share_document_with_user": _FILES_ALL,  # driveItem: invite
-    "list_document_permissions": _FILES_ALL,  # driveItem: List permissions
-    "update_document_permission_level": _FILES_ALL,  # Update permission
-    "remove_document_sharing_permission": _FILES_ALL,  # Delete permission
-    "list_document_version_history": _FILES_ALL,  # driveItem: List versions
-    "fetch_document_version": _FILES_ALL,  # driveItemVersion: Get content
-    "restore_document_to_previous_version": _FILES_ALL,  # restoreVersion
-}
-
-WORD_SCOPES = ScopeRegistry(
-    provider="word",
-    requirements=_WORD_REQUIREMENTS,
-)
-
-
-# ===========================================================================
-# Excel  (automation-excel)
-# ===========================================================================
-# Requests: Files.ReadWrite.All, User.Read.
-#
-# Every workbook endpoint (worksheets, ranges, tables, charts, names, sessions,
-# functions) documents exactly ONE delegated permission — Files.ReadWrite — with
-# "Not available" in the higher-privileged column, and the Excel resource page
-# repeats it ("Files.Read for read actions, Files.ReadWrite for read and write
-# actions"). The node never requests Files.ReadWrite, so nothing here can be
-# mapped without inventing an undocumented equivalence between Files.ReadWrite
-# and Files.ReadWrite.All. See the module docstring: recorded, not fixed.
-
-EXCEL_SCOPES = ScopeRegistry(
-    provider="excel",
-    requirements={},
-    unmapped=(
-        # MISSING SCOPE: Files.ReadWrite — for every operation below.
-        "add_table_column",
-        "add_table_row",
-        "add_worksheet",
-        "apply_table_column_filter",
-        "clear_range_contents",
-        "clear_table_column_filter",
-        "close_workbook_session",
-        "convert_table_to_range",
-        "create_chart",
-        "create_named_item",
-        "create_table_from_range",
-        "create_workbook_session",
-        "delete_chart",
-        "delete_range_and_shift_cells",
-        "delete_table",
-        "delete_table_column",
-        "delete_table_row",
-        "delete_worksheet",
-        "execute_excel_function",
-        "format_range",
-        "get_chart",
-        "get_chart_image",
-        "get_named_item",
-        "get_range_values",
-        "get_table",
-        "get_worksheet",
-        "get_worksheet_used_range",
-        "insert_blank_cells_in_range",
-        "list_named_items",
-        "list_table_columns",
-        "list_table_rows",
-        "list_workbook_tables",
-        "list_workbook_worksheets",
-        "list_worksheet_charts",
-        "merge_range_cells",
-        "recalculate_workbook",
-        "refresh_workbook_session",
-        "sort_range_by_column",
-        "sort_table_by_column",
-        "unmerge_range_cells",
-        "update_chart",
-        "update_range_values",
-        "update_worksheet",
-    ),
-)
-
-
-# ===========================================================================
 # Microsoft Teams  (automation-microsoft-teams)
 # ===========================================================================
 # Requests: User.Read, Team.ReadBasic.All, Team.Create, Channel.ReadBasic.All,
@@ -463,35 +296,6 @@ MICROSOFT_TEAMS_SCOPES = ScopeRegistry(
         # determinable from the operation alone.
         "on_change_notification",
     ),
-)
-
-
-# ===========================================================================
-# Microsoft To Do  (automation-microsoft-todo)
-# ===========================================================================
-# Requests: Tasks.Read, Tasks.ReadWrite, User.Read, offline_access.
-
-_TASKS_READ = _graph("Tasks.Read")
-_TASKS_WRITE = _graph("Tasks.ReadWrite")
-
-_TODO_REQUIREMENTS: dict[str, ScopeRequirement] = {
-    "list_task_lists": _TASKS_READ,  # user: List todoTaskLists
-    "get_task_list": _TASKS_READ,  # Get todoTaskList
-    "create_task_list": _TASKS_WRITE,  # user: Create todoTaskList
-    "update_task_list": _TASKS_WRITE,  # Update todoTaskList
-    # Delete todoTaskList prints Tasks.Read as least privileged and
-    # Tasks.ReadWrite as higher; the write permission is the honest one.
-    "delete_task_list": _TASKS_WRITE,
-    "list_tasks": _TASKS_READ,  # todoTaskList: List tasks
-    "get_task": _TASKS_READ,  # Get todoTask
-    "create_task": _TASKS_WRITE,  # todoTaskList: Create task
-    "update_task": _TASKS_WRITE,  # Update todoTask
-    "delete_task": _TASKS_WRITE,  # Delete todoTask
-}
-
-MICROSOFT_TODO_SCOPES = ScopeRegistry(
-    provider="microsoft-todo",
-    requirements=_TODO_REQUIREMENTS,
 )
 
 

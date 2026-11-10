@@ -22,7 +22,7 @@ import httpx
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import load_paginated_options, require_credential_token
-from nodes.scopes.google_cloud import GOOGLE_BUSINESS_PROFILE_SCOPES
+from nodes.scopes.google_business_profile import GOOGLE_BUSINESS_PROFILE_SCOPES
 
 logger = logging.getLogger(__name__)
 

@@ -12,7 +12,7 @@ from typing import Dict, Any, Literal, Optional, Union, List, Annotated
 from pydantic import BaseModel, ConfigDict, Discriminator, Field
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.scopes.microsoft import EXCEL_SCOPES
+from nodes.scopes.excel import EXCEL_SCOPES
 from nodes.core.dynamic_options import require_credential_token
 import httpx
 import json

@@ -363,7 +363,7 @@ def test_oidc_uses_auth_server(monkeypatch, operation, endpoint, public, payload
 
 def test_oidc_scopes_are_requested_without_dropping_existing_scopes():
     from nodes.canva_node import CanvaOAuthCredential
-    from nodes.scopes.content_storage import CANVA_SCOPES
+    from nodes.scopes.canva import CANVA_SCOPES
 
     required = CanvaNode.scope_registry.require("fetch_current_user_oidc_claims")
     assert set(required.scopes) == {"openid", "profile"}

@@ -20,7 +20,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 import httpx
-from nodes.scopes.content_storage import DROPBOX_SCOPES
+from nodes.scopes.dropbox import DROPBOX_SCOPES
 
 logger = logging.getLogger(__name__)
 
