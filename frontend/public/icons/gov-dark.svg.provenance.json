@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/gov-dark.svg",
+  "source": "https://raw.githubusercontent.com/bcgov/design-system/main/packages/react-components/src/assets/BCID_H_rgb_pos.svg",
+  "source_page": "https://github.com/bcgov/design-system/blob/main/packages/react-components/src/assets/BCID_H_rgb_pos.svg",
+  "license": "Government of British Columbia visual identity; official government mark, not covered by the Open Government Licence.",
+  "sha256": "37bc27e4cda5cdcb2ef5793631a3dbf30900c8ad03af7fbbd202da873892cf76",
+  "date": "2026-11-11",
+  "edits": [
+    "Removed the wordmark group; retained only the original emblem elements.",
+    "Cropped viewBox to the emblem.",
+    "Recoloured original dark blue #234075 elements white for dark tiles.",
+    "Removed the original white sky background so the emblem negative space is transparent and the dark variant retains the mountain silhouette."
+  ],
+  "notes": "Official provincial emblem used by the BC Data Catalogue header. Original path data is unchanged."
+}
