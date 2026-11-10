@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/telnyx-dark.svg",
+  "source": "https://telnyx.com/images/homepage-september-2026/footer-wordmark.svg",
+  "found_at": "https://telnyx.com/media-kit (and the telnyx.com footer)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the interlocking-triangle mark (elements 6-10)",
+    "removed the 'telnyx' wordmark (elements 0-5)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "black -> #FEFDF5 on all five mark paths (#FEFDF5 is Telnyx's own on-dark logo colour, from developers.telnyx.com's logo-dark.svg)"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: the media kit also has the logo in brand green (#00E3AA-ish), but only as PNG, and green fails on the light tile (the current PNG's triage flag). Shipped black on light and Telnyx's cream on dark; the dark file could use the brand green instead (recolour black -> #00E3AA).",
+  "license": "Telnyx brand mark, used nominatively to identify the connected service; trademark rights remain with Telnyx.",
+  "sha256": "cb2bf00bc398f99108323d78c2937d55beef6eccd9743ef3c4b7e3abeb1330a9"
+}
