@@ -1,0 +1,1247 @@
+{
+  "$defs": {
+    "BoldCommerceCancelSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "cancel_subscription",
+          "default": "cancel_subscription",
+          "title": "Cancel Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Cancel Subscription"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "BoldCommerceCancelSubscriptionConfig",
+      "type": "object"
+    },
+    "BoldCommerceGetCustomerConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Get Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Get Customer"
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "BoldCommerceGetCustomerConfig",
+      "type": "object"
+    },
+    "BoldCommerceGetOrderConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Get Subscription Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Get Subscription Order"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        },
+        "order_id": {
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscription_id",
+        "order_id"
+      ],
+      "title": "BoldCommerceGetOrderConfig",
+      "type": "object"
+    },
+    "BoldCommerceGetShopConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_shop",
+          "default": "get_shop",
+          "title": "Get Shop Information",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Get Shop Information"
+        }
+      },
+      "title": "BoldCommerceGetShopConfig",
+      "type": "object"
+    },
+    "BoldCommerceGetSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Get Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Get Subscription"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "BoldCommerceGetSubscriptionConfig",
+      "type": "object"
+    },
+    "BoldCommerceGetSubscriptionGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_subscription_group",
+          "default": "get_subscription_group",
+          "title": "Get Subscription Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Get Subscription Group"
+        },
+        "group_id": {
+          "minimum": 1,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "BoldCommerceGetSubscriptionGroupConfig",
+      "type": "object"
+    },
+    "BoldCommerceListCustomerAddressesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_customer_addresses",
+          "default": "list_customer_addresses",
+          "title": "List Customer Addresses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "List Customer Addresses"
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "BoldCommerceListCustomerAddressesConfig",
+      "type": "object"
+    },
+    "BoldCommerceListCustomerSubscriptionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_customer_subscriptions",
+          "default": "list_customer_subscriptions",
+          "title": "List Customer Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "List Customer Subscriptions"
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "BoldCommerceListCustomerSubscriptionsConfig",
+      "type": "object"
+    },
+    "BoldCommerceListCustomersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "List Customers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "List Customers"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "status": {
+          "default": "all",
+          "enum": [
+            "all",
+            "active",
+            "inactive"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "title": "BoldCommerceListCustomersConfig",
+      "type": "object"
+    },
+    "BoldCommerceListFutureOrdersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_future_orders",
+          "default": "list_future_orders",
+          "title": "List Future Subscription Orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "List Future Subscription Orders"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "BoldCommerceListFutureOrdersConfig",
+      "type": "object"
+    },
+    "BoldCommerceListOrdersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "List Subscription Orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "List Subscription Orders"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "BoldCommerceListOrdersConfig",
+      "type": "object"
+    },
+    "BoldCommerceListPaymentMethodsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_payment_methods",
+          "default": "list_payment_methods",
+          "title": "List Subscription Payment Methods",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "List Subscription Payment Methods"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "BoldCommerceListPaymentMethodsConfig",
+      "type": "object"
+    },
+    "BoldCommerceListSubscriptionGroupsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_subscription_groups",
+          "default": "list_subscription_groups",
+          "title": "List Subscription Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "List Subscription Groups"
+        }
+      },
+      "title": "BoldCommerceListSubscriptionGroupsConfig",
+      "type": "object"
+    },
+    "BoldCommerceListSubscriptionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "List Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "List Subscriptions"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "subscription_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive",
+                "processing",
+                "scheduled",
+                "paused"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subscription Status",
+          "enum": [
+            "active",
+            "inactive",
+            "processing",
+            "scheduled",
+            "paused"
+          ],
+          "x-enum-searchable": true
+        },
+        "bold_platform_customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bold Platform Customer ID"
+        },
+        "expand": {
+          "anyOf": [
+            {
+              "const": "customer",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expand"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        }
+      },
+      "title": "BoldCommerceListSubscriptionsConfig",
+      "type": "object"
+    },
+    "BoldCommerceOnCustomerEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Bold automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_customer_event",
+          "default": "on_customer_event",
+          "title": "On Customer Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Customer Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "customer_created",
+          "enum": [
+            "customer_created",
+            "customer_updated"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        }
+      },
+      "title": "BoldCommerceOnCustomerEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BoldCommerceOnOrderCreatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Bold automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_order_created",
+          "default": "on_order_created",
+          "title": "On Subscription Order Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Subscription Order Created",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "const": "subscription_order_created",
+          "default": "subscription_order_created",
+          "title": "Event Type",
+          "type": "string"
+        }
+      },
+      "title": "BoldCommerceOnOrderCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BoldCommerceOnSubscriptionEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Bold automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_subscription_event",
+          "default": "on_subscription_event",
+          "title": "On Subscription Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Subscription Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "subscription_created",
+          "enum": [
+            "subscription_created",
+            "subscription_updated",
+            "subscription_cancelled",
+            "subscription_paused",
+            "subscription_payment_failed"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        }
+      },
+      "title": "BoldCommerceOnSubscriptionEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BoldCommercePauseSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "pause_subscription",
+          "default": "pause_subscription",
+          "title": "Pause Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Pause Subscription"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "BoldCommercePauseSubscriptionConfig",
+      "type": "object"
+    },
+    "BoldCommerceReactivateSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "reactivate_subscription",
+          "default": "reactivate_subscription",
+          "title": "Reactivate Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Reactivate Subscription"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "BoldCommerceReactivateSubscriptionConfig",
+      "type": "object"
+    },
+    "BoldCommerceRecoverOrderConfig": {
+      "properties": {
+        "operation": {
+          "const": "recover_order",
+          "default": "recover_order",
+          "title": "Unskip Subscription Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Unskip Subscription Order"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        },
+        "date": {
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{2}:\\d{2})$",
+          "title": "Skipped Order Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_id",
+        "date"
+      ],
+      "title": "BoldCommerceRecoverOrderConfig",
+      "type": "object"
+    },
+    "BoldCommerceRemoveDiscountCodeConfig": {
+      "properties": {
+        "operation": {
+          "const": "remove_discount_code",
+          "default": "remove_discount_code",
+          "title": "Remove Discount Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Remove Discount Code"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "BoldCommerceRemoveDiscountCodeConfig",
+      "type": "object"
+    },
+    "BoldCommerceSkipOrderConfig": {
+      "properties": {
+        "operation": {
+          "const": "skip_order",
+          "default": "skip_order",
+          "title": "Skip Subscription Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Skip Subscription Order"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        },
+        "date": {
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{2}:\\d{2})$",
+          "title": "Order Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_id",
+        "date"
+      ],
+      "title": "BoldCommerceSkipOrderConfig",
+      "type": "object"
+    },
+    "BoldCommerceTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bold_commerce_token",
+          "default": "bold_commerce_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "shop_identifier": {
+          "description": "Your Bold shop identifier, without a URL or path.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Shop Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_token",
+        "shop_identifier"
+      ],
+      "title": "Bold Commerce API Access Token",
+      "type": "object",
+      "x-credential-instructions": "In Bold Account Center, open API access tokens and create a private token with the Subscriptions, Customers, Orders, Shops and Subscription Groups permissions needed by your workflows. Paste the token and your shop identifier. Find the identifier with GET https://api.boldcommerce.com/shops/v1/info, as described in Bold's Making API Calls guide. NoClick checks your shop information before saving.",
+      "x-credential-url": "https://account.boldcommerce.com/",
+      "x-help-url": "https://developer.boldcommerce.com/guides/subscriptions-v2/quick-start"
+    },
+    "BoldCommerceUpdateCustomerConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Update Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Update Customer"
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "first_name": {
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        },
+        "phone": {
+          "title": "Phone",
+          "type": "string"
+        },
+        "notes": {
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "notes"
+      ],
+      "title": "BoldCommerceUpdateCustomerConfig",
+      "type": "object"
+    },
+    "BoldCommerceUpdateDiscountCodeConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_discount_code",
+          "default": "update_discount_code",
+          "title": "Apply Discount Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Apply Discount Code"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        },
+        "discount_code": {
+          "minLength": 1,
+          "title": "Discount Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_id",
+        "discount_code"
+      ],
+      "title": "BoldCommerceUpdateDiscountCodeConfig",
+      "type": "object"
+    },
+    "BoldCommerceUpdateNextOrderDatetimeConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_next_order_datetime",
+          "default": "update_next_order_datetime",
+          "title": "Change Next Order Date",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Change Next Order Date"
+        },
+        "subscription_id": {
+          "minimum": 1,
+          "title": "Subscription Id",
+          "type": "integer"
+        },
+        "nextDate": {
+          "format": "date-time",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{2}:\\d{2})$",
+          "title": "Next Order Date",
+          "type": "string"
+        },
+        "includeFutureOrders": {
+          "default": false,
+          "title": "Adjust Future Orders Too",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "subscription_id",
+        "nextDate"
+      ],
+      "title": "BoldCommerceUpdateNextOrderDatetimeConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_subscription": "#/$defs/BoldCommerceCancelSubscriptionConfig",
+          "get_customer": "#/$defs/BoldCommerceGetCustomerConfig",
+          "get_order": "#/$defs/BoldCommerceGetOrderConfig",
+          "get_shop": "#/$defs/BoldCommerceGetShopConfig",
+          "get_subscription": "#/$defs/BoldCommerceGetSubscriptionConfig",
+          "get_subscription_group": "#/$defs/BoldCommerceGetSubscriptionGroupConfig",
+          "list_customer_addresses": "#/$defs/BoldCommerceListCustomerAddressesConfig",
+          "list_customer_subscriptions": "#/$defs/BoldCommerceListCustomerSubscriptionsConfig",
+          "list_customers": "#/$defs/BoldCommerceListCustomersConfig",
+          "list_future_orders": "#/$defs/BoldCommerceListFutureOrdersConfig",
+          "list_orders": "#/$defs/BoldCommerceListOrdersConfig",
+          "list_payment_methods": "#/$defs/BoldCommerceListPaymentMethodsConfig",
+          "list_subscription_groups": "#/$defs/BoldCommerceListSubscriptionGroupsConfig",
+          "list_subscriptions": "#/$defs/BoldCommerceListSubscriptionsConfig",
+          "on_customer_event": "#/$defs/BoldCommerceOnCustomerEventConfig",
+          "on_order_created": "#/$defs/BoldCommerceOnOrderCreatedConfig",
+          "on_subscription_event": "#/$defs/BoldCommerceOnSubscriptionEventConfig",
+          "pause_subscription": "#/$defs/BoldCommercePauseSubscriptionConfig",
+          "reactivate_subscription": "#/$defs/BoldCommerceReactivateSubscriptionConfig",
+          "recover_order": "#/$defs/BoldCommerceRecoverOrderConfig",
+          "remove_discount_code": "#/$defs/BoldCommerceRemoveDiscountCodeConfig",
+          "skip_order": "#/$defs/BoldCommerceSkipOrderConfig",
+          "update_customer": "#/$defs/BoldCommerceUpdateCustomerConfig",
+          "update_discount_code": "#/$defs/BoldCommerceUpdateDiscountCodeConfig",
+          "update_next_order_datetime": "#/$defs/BoldCommerceUpdateNextOrderDatetimeConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BoldCommerceGetShopConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceListCustomerAddressesConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceListCustomerSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceListSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceGetSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceUpdateDiscountCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceRemoveDiscountCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceUpdateNextOrderDatetimeConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceSkipOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceRecoverOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceCancelSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommercePauseSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceReactivateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceListOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceListFutureOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceListPaymentMethodsConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceListSubscriptionGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceGetSubscriptionGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceOnSubscriptionEventConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceOnCustomerEventConfig"
+        },
+        {
+          "$ref": "#/$defs/BoldCommerceOnOrderCreatedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BoldCommerceTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bold-commerce Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

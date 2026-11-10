@@ -1,0 +1,591 @@
+{
+  "source": "https://developer.boldcommerce.com/api/subscriptions",
+  "description": "Complete shop, customer, subscription, order and topic JSON examples copied from the provider-rendered API reference; not live recordings.",
+  "shop": {
+    "shop": {
+      "id": 1,
+      "shop_domain": "store-abc123def456.example.com",
+      "custom_domain": "example-store.example.com",
+      "shop_identifer": "zya0kzb8hu7ji",
+      "platform_type": "bigcommerce",
+      "timezone": "Europe/London",
+      "currency": "CAD",
+      "currency_format": "${{amount}}",
+      "shop_owner": "John Doe",
+      "admin_email": "john.doe@example.com",
+      "pii_redacted_at": "2019-11-20T20:31:55Z",
+      "created_at": "2019-11-20T20:31:55Z",
+      "updated_at": "2019-11-20T20:31:55Z",
+      "deleted_at": "2019-11-20T20:31:55Z"
+    }
+  },
+  "customer": {
+    "id": 2,
+    "platform_id": "123456790",
+    "cashier_public_id": null,
+    "first_name": "Jane",
+    "last_name": "Doe",
+    "email": "jane.doe@example.com",
+    "phone": "12045551234",
+    "notes": "Loyal customer",
+    "addresses": [
+      {
+        "id": 1,
+        "shop_identifier": "12345",
+        "platform_id": "14",
+        "customer_id": 2,
+        "platform_type": "shopify",
+        "platform_customer_id": "35",
+        "first_name": "John",
+        "last_name": "Doe",
+        "company": "Example Company",
+        "phone": "123-456-7890",
+        "street1": "123 example st.",
+        "street2": "101",
+        "city": "Toronto",
+        "province": "Ontario",
+        "province_code": "ON",
+        "country": "Canada",
+        "country_code": "CA",
+        "zip": "M5V 3L9",
+        "is_default": true,
+        "address_use": "billing",
+        "address_source": "platform",
+        "created_at": "2022-12-25T00:00:00Z",
+        "updated_at": "2022-12-25T00:00:00Z",
+        "deleted_at": "2022-12-25T00:00:00Z"
+      }
+    ],
+    "default_address": {
+      "id": 1,
+      "shop_identifier": "12345",
+      "platform_id": "14",
+      "customer_id": 2,
+      "platform_type": "shopify",
+      "platform_customer_id": "35",
+      "first_name": "John",
+      "last_name": "Doe",
+      "company": "Example Company",
+      "phone": "123-456-7890",
+      "street1": "123 example st.",
+      "street2": "101",
+      "city": "Toronto",
+      "province": "Ontario",
+      "province_code": "ON",
+      "country": "Canada",
+      "country_code": "CA",
+      "zip": "M5V 3L9",
+      "is_default": true,
+      "address_use": "billing",
+      "address_source": "platform",
+      "created_at": "2022-12-25T00:00:00Z",
+      "updated_at": "2022-12-25T00:00:00Z",
+      "deleted_at": "2022-12-25T00:00:00Z"
+    },
+    "subscription_summary": {
+      "bold_platform_customer_id": 2,
+      "next_order_date": "2020-01-20T18:00:00Z",
+      "last_order_date": "2019-11-20T20:55:27Z",
+      "active_subscription_count": 2,
+      "inactive_subscription_count": 1,
+      "subscription_order_count": 5,
+      "lifetime_value_usd": 152.12
+    },
+    "labels": [
+      {
+        "id": 12,
+        "customer_id": 21,
+        "name": "bsub_subscription_active",
+        "created_at": "2022-12-25T00:00:00Z",
+        "updated_at": "2022-12-25T00:00:00Z",
+        "deleted_at": "2022-12-25T00:00:00Z"
+      }
+    ],
+    "created_at": "2022-12-25T00:00:00Z"
+  },
+  "subscription": {
+    "id": 1,
+    "external_id": "string",
+    "customer": "null",
+    "shop_id": 1,
+    "next_order_datetime": "2020-01-20T18:00:00Z",
+    "next_payment_datetime": "2020-01-20T18:00:00Z",
+    "next_processing_datetime": "2020-01-20T18:00:00Z",
+    "subscription_status": "active",
+    "status_changed_at": "2019-11-20T20:31:55Z",
+    "sca_url": "https://bank.com/pCkWhtgQQVM8W/sca",
+    "payment_method_token": "jik1w6HrCn17CxXPcKwHTGqqvm8wLDd1PelY6k8mabglNmL8XKBnsde9PdgKZqnG",
+    "payment_gateway_public_id": "jik1w6HrCn17CxXPcKwHTGqqvm8wLDd1PelY6k8mabglNmL8XKBnsde9PdgKZqnG",
+    "payment_rrule": "DTSTART:20200120T180000Z\\nRRULE:FREQ=MONTHLY\\nEXDATE:20200220T180000Z",
+    "payment_rrule_text": "Monthly",
+    "order_rrule": "DTSTART:20200120T180000Z\\nRRULE:FREQ=MONTHLY\\nEXDATE:20200220T180000Z",
+    "order_rrule_text": "Monthly",
+    "last_payment_datetime": "2019-11-20T20:55:26Z",
+    "last_order_datetime": "2019-11-20T20:55:26Z",
+    "last_processed_datetime": "2019-11-20T20:55:26Z",
+    "current_retries": 3,
+    "charged_currency": "CAD",
+    "base_to_charged_exchange_rate": 1,
+    "base_currency": "CAD",
+    "line_items": [
+      {
+        "id": 1,
+        "subscription_id": 1,
+        "platform_id": "ABC123",
+        "platform_product_id": "1357908642",
+        "platform_variant_id": "2468097531",
+        "subscription_group_id": 1,
+        "subscription_group_billing_rules_id": 1,
+        "title": "Monthly Expansion Pack",
+        "product_name": "Monthly Expansion Pack",
+        "variant_name": "Default Title",
+        "sku": "SKU-113-Red",
+        "url": "https://example-store.example.com/monthly-expansion-pack",
+        "image": "",
+        "quantity": 1,
+        "price": 3500,
+        "price_charged": 3200,
+        "discounted_price": 3200,
+        "discounted_price_charged": 3200,
+        "full_price": 3200,
+        "full_price_charged": 3200,
+        "requires_shipping": false,
+        "grams": 2200,
+        "weight": 2.2,
+        "weight_unit": "kg",
+        "taxable": true,
+        "discounts": [
+          {
+            "id": 1,
+            "subscription_line_item_id": 1,
+            "shop_id": 5,
+            "full_price": 5,
+            "discount_type": "percentage",
+            "percentage_value": 10,
+            "fixed_value": 0,
+            "fixed_value_charged": 0,
+            "description": "Subscription discount (10%) for Monthly Expansion Pack",
+            "created_at": "2019-11-20T20:31:55Z",
+            "updated_at": "2019-11-20T20:31:55Z",
+            "deleted_at": "2019-11-20T20:31:55Z"
+          }
+        ],
+        "prepaid_metadata": {
+          "id": 1,
+          "line_item_id": 2,
+          "prepaid_duration": 2,
+          "current_recurrence_count": 2,
+          "prepaid_continue": "no_continue"
+        },
+        "line_item_attributes": [
+          {
+            "name": "size_preference",
+            "value": "XL",
+            "created_at": "2021-01-17T20:30:40Z",
+            "updated_at": "2021-01-17T20:30:40Z",
+            "subscription_id": 435989,
+            "line_item_id": 45734
+          }
+        ],
+        "created_at": "2019-11-20T20:31:55Z",
+        "updated_at": "2019-11-20T20:31:55Z"
+      }
+    ],
+    "shipping_lines": [
+      {
+        "id": 36217,
+        "name": "Standard Shipping",
+        "code": "Standard Shipping",
+        "price": 1000,
+        "value": 1000,
+        "value_charged": 1000,
+        "tag": "Shipping",
+        "created_at": "2019-10-20T20:31:55Z",
+        "updated_at": "2019-11-20T20:31:55Z",
+        "subscription_id": 1
+      }
+    ],
+    "billing_address": {
+      "id": 1,
+      "shop_identifier": "12345",
+      "platform_id": "14",
+      "customer_id": 2,
+      "platform_type": "shopify",
+      "platform_customer_id": "35",
+      "first_name": "John",
+      "last_name": "Doe",
+      "company": "Example Company",
+      "phone": "123-456-7890",
+      "street1": "123 example st.",
+      "street2": "101",
+      "city": "Toronto",
+      "province": "Ontario",
+      "province_code": "ON",
+      "country": "Canada",
+      "country_code": "CA",
+      "zip": "M5V 3L9",
+      "is_default": true,
+      "address_use": "billing",
+      "address_source": "platform",
+      "created_at": "2022-12-25T00:00:00Z",
+      "updated_at": "2022-12-25T00:00:00Z",
+      "deleted_at": "2022-12-25T00:00:00Z"
+    },
+    "shipping_address": {
+      "id": 1,
+      "shop_identifier": "12345",
+      "platform_id": "14",
+      "customer_id": 2,
+      "platform_type": "shopify",
+      "platform_customer_id": "35",
+      "first_name": "John",
+      "last_name": "Doe",
+      "company": "Example Company",
+      "phone": "123-456-7890",
+      "street1": "123 example st.",
+      "street2": "101",
+      "city": "Toronto",
+      "province": "Ontario",
+      "province_code": "ON",
+      "country": "Canada",
+      "country_code": "CA",
+      "zip": "M5V 3L9",
+      "is_default": true,
+      "address_use": "billing",
+      "address_source": "platform",
+      "created_at": "2022-12-25T00:00:00Z",
+      "updated_at": "2022-12-25T00:00:00Z",
+      "deleted_at": "2022-12-25T00:00:00Z"
+    },
+    "idempotency_key": "JwGdN55C4g1z5FXRO8Hp21CMxUxKyo6VcGSf3cUsjCgNyTtoeZcIsGM1We4p7pCe-0",
+    "placed_at": "2012-11-20T20:31:55Z",
+    "created_at": "2019-11-20T20:31:55Z",
+    "updated_at": "2019-11-20T20:31:55Z",
+    "percent_discount": 10,
+    "discount_code": "DISCOUNTCODE",
+    "customer_id": 1697912,
+    "billing_address_id": 11697812,
+    "shipping_address_id": 11697812,
+    "orders_processed": 1,
+    "last_failure_code": "card_expired",
+    "last_failure_details": {
+      "message": "The order couldn't process because the card was declined."
+    },
+    "last_failure_reason": "credit_card",
+    "note": "Staff note",
+    "order_note": "Customer note",
+    "order_count": 1
+  },
+  "order": {
+    "id": 1008130,
+    "subscription_id": 316561,
+    "shop_id": 6481,
+    "base_to_charged_exchange_rate": 1,
+    "base_currency": "CAD",
+    "order": {
+      "id": 185490,
+      "platform_id": 1,
+      "platform_customer_id": 123,
+      "shop_identifier": "zya0kzb8hu",
+      "line_items": [
+        {
+          "id": 1,
+          "subscription_id": 1,
+          "platform_id": "ABC123",
+          "platform_product_id": "1357908642",
+          "platform_variant_id": "2468097531",
+          "subscription_group_id": 1,
+          "subscription_group_billing_rules_id": 1,
+          "title": "Monthly Expansion Pack",
+          "product_name": "Monthly Expansion Pack",
+          "variant_name": "Default Title",
+          "sku": "SKU-113-Red",
+          "url": "https://example-store.example.com/monthly-expansion-pack",
+          "image": "",
+          "quantity": 1,
+          "price": 3500,
+          "price_charged": 3200,
+          "discounted_price": 3200,
+          "discounted_price_charged": 3200,
+          "full_price": 3200,
+          "full_price_charged": 3200,
+          "requires_shipping": false,
+          "grams": 2200,
+          "weight": 2.2,
+          "weight_unit": "kg",
+          "taxable": true,
+          "discounts": [
+            {
+              "id": 1,
+              "subscription_line_item_id": 1,
+              "shop_id": 5,
+              "full_price": 5,
+              "discount_type": "percentage",
+              "percentage_value": 10,
+              "fixed_value": 0,
+              "fixed_value_charged": 0,
+              "description": "Subscription discount (10%) for Monthly Expansion Pack",
+              "created_at": "2019-11-20T20:31:55Z",
+              "updated_at": "2019-11-20T20:31:55Z",
+              "deleted_at": "2019-11-20T20:31:55Z"
+            }
+          ],
+          "prepaid_metadata": {
+            "id": 1,
+            "line_item_id": 2,
+            "prepaid_duration": 2,
+            "current_recurrence_count": 2,
+            "prepaid_continue": "no_continue"
+          },
+          "line_item_attributes": [
+            {
+              "name": "size_preference",
+              "value": "XL",
+              "created_at": "2021-01-17T20:30:40Z",
+              "updated_at": "2021-01-17T20:30:40Z",
+              "subscription_id": 435989,
+              "line_item_id": 45734
+            }
+          ],
+          "created_at": "2019-11-20T20:31:55Z",
+          "updated_at": "2019-11-20T20:31:55Z"
+        }
+      ],
+      "billing_address": {
+        "id": 1,
+        "shop_identifier": "12345",
+        "platform_id": "14",
+        "customer_id": 2,
+        "platform_type": "shopify",
+        "platform_customer_id": "35",
+        "first_name": "John",
+        "last_name": "Doe",
+        "company": "Example Company",
+        "phone": "123-456-7890",
+        "street1": "123 example st.",
+        "street2": "101",
+        "city": "Toronto",
+        "province": "Ontario",
+        "province_code": "ON",
+        "country": "Canada",
+        "country_code": "CA",
+        "zip": "M5V 3L9",
+        "is_default": true,
+        "address_use": "billing",
+        "address_source": "platform",
+        "created_at": "2022-12-25T00:00:00Z",
+        "updated_at": "2022-12-25T00:00:00Z",
+        "deleted_at": "2022-12-25T00:00:00Z"
+      },
+      "shipping_addresses": [
+        {
+          "id": 1,
+          "shop_identifier": "12345",
+          "platform_id": "14",
+          "customer_id": 2,
+          "platform_type": "shopify",
+          "platform_customer_id": "35",
+          "first_name": "John",
+          "last_name": "Doe",
+          "company": "Example Company",
+          "phone": "123-456-7890",
+          "street1": "123 example st.",
+          "street2": "101",
+          "city": "Toronto",
+          "province": "Ontario",
+          "province_code": "ON",
+          "country": "Canada",
+          "country_code": "CA",
+          "zip": "M5V 3L9",
+          "is_default": true,
+          "address_use": "billing",
+          "address_source": "platform",
+          "created_at": "2022-12-25T00:00:00Z",
+          "updated_at": "2022-12-25T00:00:00Z",
+          "deleted_at": "2022-12-25T00:00:00Z"
+        }
+      ],
+      "subtotal": 1337,
+      "subtotal_charged": 1337,
+      "subtotal_tax": 144,
+      "subtotal_tax_charged": 144,
+      "shipping_subtotal": 1000,
+      "shipping_subtotal_charged": 1000,
+      "shipping_tax": 0,
+      "shipping_tax_charged": 0,
+      "total": 2204,
+      "total_charged": 2204,
+      "total_tax": 144,
+      "total_tax_charged": 144,
+      "fulfillment_status": "pending",
+      "source": "string",
+      "payment_method": "Shopify Payments",
+      "payment_method_details": {
+        "type": "credit_card",
+        "name": "John Doe",
+        "billing_address": {
+          "street": "123 Main Street",
+          "city": "Toronto",
+          "province": "Ontario",
+          "country": "Canada",
+          "zip": "H0H 0H0"
+        },
+        "public_id": "jik1w6HrCn17CxXPDkWhtgyqvm8wLDd1PelY6k8mabglNmL8XKBnsde9PdgKZqnG",
+        "update_method": "trigger_email",
+        "cc_type": "Visa",
+        "expiration": {
+          "date": "2020-5",
+          "timezone_type": "string",
+          "timezone": "UTC"
+        },
+        "last_four": "1111",
+        "is_default": true,
+        "paypal_email": "customer@example.com",
+        "update_url": {
+          "url": "http://example.com",
+          "expiry": "2019-08-24T14:15:22Z"
+        },
+        "embed_url": {
+          "url": "http://example.com",
+          "expiry": "2019-08-24T14:15:22Z"
+        }
+      },
+      "shipping_method": "Subscription shipping",
+      "shipping_rates": [
+        {
+          "id": 0,
+          "bold_subscription_id": 0,
+          "name": "string",
+          "code": "string",
+          "price": 0,
+          "price_charged": 0,
+          "value": 0,
+          "value_charged": 0,
+          "tag": "string",
+          "hash": "string"
+        }
+      ],
+      "tax_lines": [
+        {
+          "amount": 0,
+          "amount_charged": 0,
+          "name": "string",
+          "rate": 0
+        }
+      ],
+      "discounts": [
+        {
+          "discount_percentage": 10,
+          "discount_type": "percentage",
+          "text": "10PERCENTOFF",
+          "value": 0,
+          "value_charged": 0
+        }
+      ],
+      "order_number": 0,
+      "currency": "CAD",
+      "currency_charged": "string",
+      "currency_format": "string",
+      "currency_format_charged": "string",
+      "exchange_rate": 0,
+      "test": false,
+      "url": "https://example-store.example.com/account.php?action=view_order&order_id=1",
+      "updated_at": "2019-11-20T20:31:55Z",
+      "created_at": "2019-11-20T20:31:55Z",
+      "placed_at": "2019-11-20T20:31:55Z",
+      "deleted_at": "2021-07-09T18:13:27Z",
+      "subscription_id": 5266
+    },
+    "is_multi_currency": true,
+    "created_at": "2021-07-09T18:13:40Z",
+    "updated_at": "2021-07-09T18:13:40Z"
+  },
+  "topics": {
+    "webhook_topics": [
+      {
+        "id": 1,
+        "topic_name": "subscription_created"
+      },
+      {
+        "id": 2,
+        "topic_name": "subscription_updated"
+      },
+      {
+        "id": 3,
+        "topic_name": "subscription_order_created"
+      },
+      {
+        "id": 4,
+        "topic_name": "customer_created"
+      },
+      {
+        "id": 5,
+        "topic_name": "customer_updated"
+      },
+      {
+        "id": 6,
+        "topic_name": "subscription_order_transaction_failed"
+      },
+      {
+        "id": 7,
+        "topic_name": "subscription_order_max_retries_reached"
+      },
+      {
+        "id": 8,
+        "topic_name": "subscription_payment_method_updated"
+      },
+      {
+        "id": 9,
+        "topic_name": "subscription_upcoming_order"
+      },
+      {
+        "id": 10,
+        "topic_name": "subscription_expiring_payment"
+      },
+      {
+        "id": 12,
+        "topic_name": "subscription_cancelled"
+      },
+      {
+        "id": 13,
+        "topic_name": "subscription_paused"
+      },
+      {
+        "id": 14,
+        "topic_name": "subscription_resumed"
+      },
+      {
+        "id": 15,
+        "topic_name": "subscription_reactivated"
+      },
+      {
+        "id": 16,
+        "topic_name": "subscription_frequency_updated"
+      },
+      {
+        "id": 17,
+        "topic_name": "subscription_quantity_updated"
+      },
+      {
+        "id": 18,
+        "topic_name": "subscription_credit_card_updated"
+      },
+      {
+        "id": 19,
+        "topic_name": "subscription_shipping_address_updated"
+      },
+      {
+        "id": 20,
+        "topic_name": "subscription_payment_failed"
+      },
+      {
+        "id": 21,
+        "topic_name": "subscription_skipped"
+      },
+      {
+        "id": 22,
+        "topic_name": "subscription_line_items_added"
+      }
+    ]
+  }
+}
