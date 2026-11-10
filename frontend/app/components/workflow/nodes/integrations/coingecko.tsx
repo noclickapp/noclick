@@ -12,7 +12,7 @@ const CoinGeckoIcon = ({ className, style }: { className?: string; style?: CSSPr
 export const CoinGeckoNode: NodeDefinition = {
     type: 'automation-coingecko', label: 'CoinGecko',
     category: 'finance-accounting',
-    description: 'Read cryptocurrency prices, market charts, exchanges and global data',
+    description: 'Read crypto market data and trigger workflows on new liquidity pools or token metadata updates',
     Icon: CoinGeckoIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={CoinGeckoIcon} iconColor="" />),

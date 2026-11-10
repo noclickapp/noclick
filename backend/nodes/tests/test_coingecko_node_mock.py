@@ -4,6 +4,7 @@ Response bodies are copied without changes from CoinGecko's published Demo
 OpenAPI v3.0.0, pinned by the external conformance catalog. No live key is used.
 """
 import json
+from copy import deepcopy
 from pathlib import Path
 
 import httpx
@@ -15,6 +16,7 @@ from nodes.core.registry import NodeFactory
 
 TOKEN = "synthetic-coingecko-secret-42"
 EXAMPLES = json.loads((Path(__file__).parent / "fixtures/coingecko/demo_examples.json").read_text())
+TRIGGERS = json.loads((Path(__file__).parent / "fixtures/coingecko/trigger_examples.json").read_text())
 CONFIGS = {
     "get_prices": {"ids": "bitcoin,ethereum"},
     "get_token_prices": {"id": "ethereum", "contract_addresses": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"},
@@ -131,3 +133,93 @@ def test_invalid_routes_dates_paging_and_undeclared_parameters_fail(operation, c
 def test_secret_shape_rejects_urls_headers_and_placeholders(value):
     with pytest.raises(ValidationError):
         native.CoinGeckoAPIKeyCredential(api_key=value)
+
+
+def poll_state(monkeypatch):
+    state = {}
+
+    async def update(self, mutator, **kwargs):
+        new_state, result = mutator(deepcopy(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+
+    monkeypatch.setattr(native.CoinGeckoNode, "_update_node_state", update)
+    return state
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,network,path,params", [
+    ("on_new_pool", None, "/onchain/networks/new_pools", {"page": "1"}),
+    ("on_new_pool", "eth", "/onchain/networks/{network}/new_pools", {"page": "1"}),
+    ("on_updated_token", None, "/onchain/tokens/info_recently_updated", {}),
+    ("on_updated_token", "eth", "/onchain/tokens/info_recently_updated", {"network": "eth"}),
+])
+async def test_poll_documented_examples_baseline_dedup_and_agent_event(monkeypatch, operation, network, path, params):
+    state = poll_state(monkeypatch)
+    body = TRIGGERS[path]["body"]
+    requests = transport(monkeypatch, body)
+    trigger = node(operation, network=network)
+    output = await trigger.run({"another_node": {"untrusted": True}})
+    assert output["count"] == 0 and output["data"] == []
+    assert trigger.trigger_produced_no_event(output)
+    assert native.CoinGeckoNode.resolve_agent_event(output) is None
+    assert requests[0].url.path == "/api/v3" + path.replace("{network}", network or "")
+    assert dict(requests[0].url.params) == params
+    assert requests[0].headers["x-cg-demo-api-key"] == TOKEN
+    baseline = deepcopy(state)
+    assert (await node(operation, network=network).run({}))["count"] == 0
+    assert state == baseline
+    # An existing empty baseline exercises delivery of the provider's exact example.
+    state["seen_ids"] = []
+    trigger = node(operation, network=network)
+    output = await trigger.run({})
+    assert output["data"] == body["data"] and output["count"] == len(body["data"])
+    assert trigger.trigger_emitted_event(output)
+    event = native.CoinGeckoNode.resolve_agent_event(output)
+    for item in body["data"]:
+        assert item["id"] in event["text"]
+        assert item["attributes"]["name"] in event["text"]
+        assert item["attributes"]["address"] in event["text"]
+    assert "another_node" not in event["text"]
+    assert (await node(operation, network=network).run({}))["count"] == 0
+
+
+@pytest.mark.asyncio
+async def test_token_update_uses_metadata_version_and_repoint_rebaselines(monkeypatch):
+    state = poll_state(monkeypatch)
+    body = deepcopy(TRIGGERS["/onchain/tokens/info_recently_updated"]["body"])
+    transport(monkeypatch, body)
+    await node("on_updated_token").run({})
+    item = body["data"][0]
+    item["attributes"]["metadata_updated_at"] = "2026-05-29T01:52:27Z"
+    transport(monkeypatch, body)
+    output = await node("on_updated_token").run({})
+    assert output["data"] == [item]
+    assert (await node("on_updated_token").run({}))["count"] == 0
+    scope = state["scope"]
+    assert (await node("on_updated_token", network="eth").run({}))["count"] == 0
+    assert state["scope"] != scope
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body,status", [({"data": {}}, 200), ({"data": [{}]}, 200),
+    ({"error": "rate limit"}, 429), ({"data": [{"id": "pool", "attributes": {}}]}, 200)])
+async def test_poll_failures_preserve_state(monkeypatch, body, status):
+    state = poll_state(monkeypatch)
+    state["seen_ids"] = ["earlier"]
+    before = deepcopy(state)
+    transport(monkeypatch, body, status=status)
+    if status == 200:
+        with pytest.raises(ValueError, match="poll state was preserved"):
+            await node("on_new_pool").run({})
+    else:
+        assert (await node("on_new_pool").run({}))["status"] == "error"
+    assert state == before
+
+
+@pytest.mark.parametrize("network", ["../eth", "eth/other", "https://bad.test", "eth?x=1"])
+def test_poll_network_rejects_path_injection(network):
+    with pytest.raises(ValueError):
+        node("on_new_pool", network=network)
