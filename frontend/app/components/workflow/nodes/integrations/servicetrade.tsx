@@ -13,7 +13,7 @@ const ServiceTradeIcon = ({ className, style }: { className?: string; style?: CS
 
 export const ServiceTradeNode: NodeDefinition = {
     type: 'automation-servicetrade', category: 'industry', label: 'ServiceTrade',
-    description: 'Manage field-service jobs, appointments, contacts and locations; read companies, quotes, invoices and deficiencies',
+    description: 'Start workflows when ServiceTrade records change; manage field-service jobs, appointments, contacts and locations',
     keywords: ['field service', 'contractor', 'technician', 'maintenance', 'dispatch'],
     Icon: ServiceTradeIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

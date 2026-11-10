@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://api.servicetrade.com/api"
@@ -346,6 +347,26 @@ class ServiceTradeCreateCommentConfig(_Input):
     pinned: bool | None = Field(None, description='Set to `true` to pin the comment')
 
 
+# Entity constants and delivery format: /api/docs/tag/webhook and /description/entity-types.
+WEBHOOK_ENTITY_TYPES = {
+    "job": 3, "invoice": 6, "quote": 9, "appointment": 16,
+    "deficiency": 10, "company": 5, "contact": 22, "location": 11,
+}
+
+
+class ServiceTradeOnEventConfig(WebhookTriggerConfigBase):
+    operation: Literal["on_event"] = Field("on_event", title="On ServiceTrade Event", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "On ServiceTrade Event",
+    })
+    entity_type: Literal["job", "invoice", "quote", "appointment", "deficiency", "company", "contact", "location"] = Field(
+        "job", title="Entity", description="The kind of record to watch. Requires ServiceTrade admin.account permission.")
+    action: Literal["all", "created", "updated", "deleted"] = Field(
+        "all", title="Action", description="Start on creation, update, deletion, or all three. Updates include available field changes.")
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with ServiceTrade automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 ServiceTradeConfig = Annotated[Union[
     ServiceTradeListCompaniesConfig,
     ServiceTradeGetCompanyConfig,
@@ -371,7 +392,8 @@ ServiceTradeConfig = Annotated[Union[
     ServiceTradeUpdateLocationConfig,
     ServiceTradeCreateJobConfig,
     ServiceTradeUpdateJobConfig,
-    ServiceTradeCreateCommentConfig
+    ServiceTradeCreateCommentConfig,
+    ServiceTradeOnEventConfig
 ], Field(discriminator="operation")]
 
 
@@ -455,7 +477,8 @@ def _redact(value, token):
     return value
 
 
-class ServiceTradeNode(WorkflowNode):
+class ServiceTradeNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    webhook_signing_secret_not_issued = True
     integration_type = "automation-servicetrade"
     connection_evidence = ConnectionEvidence(noun="companies", operation="list_companies")
 
@@ -463,10 +486,102 @@ class ServiceTradeNode(WorkflowNode):
     def get_config_model(cls):
         return ServiceTradeFullConfig
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        parsed = cls.parse_config({"config": {"operation": "on_event", **(config or {})}}).config
+        return {"entity_type": parsed.entity_type, "action": parsed.action}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        parsed = cls.parse_config({"config": {"operation": "on_event", **(config or {})}}).config
+        token = ServiceTradeSessionToken.model_validate(credential).session_token
+        actions = ["created", "updated", "deleted"] if parsed.action == "all" else [parsed.action]
+        result = await cls._request(token, "POST", "/webhook", json={
+            "hookUrl": webhook_url, "enabled": True, "includeChangesets": True,
+            "entityEvents": [{"entityType": WEBHOOK_ENTITY_TYPES[parsed.entity_type], "actions": actions}],
+        })
+        if result["status"] != "success":
+            raise ValueError(f"ServiceTrade webhook registration failed: {result.get('message')}")
+        endpoint_id = result["data"].get("id")
+        if type(endpoint_id) is not int or endpoint_id < 1:
+            raise ValueError("ServiceTrade did not return a webhook ID")
+        return {"external_webhook_id": str(endpoint_id)}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = (config or {}).get("external_webhook_id")
+        if endpoint_id is None:
+            return
+        if not re.fullmatch(r"[1-9][0-9]*", str(endpoint_id)):
+            raise ValueError("Invalid ServiceTrade webhook ID")
+        token = ServiceTradeSessionToken.model_validate(credential).session_token
+        result = await cls._request(token, "DELETE", f"/webhook/{endpoint_id}")
+        if result["status"] != "success" and result.get("http_status") != 404:
+            raise ValueError(f"ServiceTrade webhook removal failed: {result.get('message')}")
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # No signature or signing secret is defined in ServiceTrade's delivery contract.
+        # The platform's unguessable per-node delivery URL is the capability.
+        return True
+
+    @classmethod
+    def _matching_events(cls, payload, config):
+        parsed = cls.parse_config({"config": {"operation": "on_event", **(config or {})}}).config
+        data = payload.get("data") if isinstance(payload, dict) else None
+        if not isinstance(data, list):
+            return []
+        matches = []
+        for event in data:
+            if not isinstance(event, dict):
+                continue
+            entity = event.get("entity")
+            if not isinstance(entity, dict) or entity.get("type") != parsed.entity_type:
+                continue
+            action = event.get("action")
+            if action in {"created", "updated", "deleted"} and parsed.action in {"all", action}:
+                matches.append(event)
+        return matches
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return bool(cls._matching_events(payload, config))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        events = cls._matching_events(payload, config)
+        return {"status": "success", "events": events, "event_count": len(events),
+                "message_id": payload.get("messageId"), "timestamp": payload.get("timestamp")}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or "events" not in output:
+            return super().resolve_agent_event(output)
+        events = output["events"]
+        if not events:
+            return None
+        lines = []
+        for event in events[:20]:
+            entity = event["entity"]
+            actor = f"user {event['userId']}" if "userId" in event and event["userId"] is not None else "system or unspecified user"
+            line = f"- {entity['type']} {entity['id']} {event['action']} by {actor} at {event['timestamp']}: {entity['uri']}"
+            if "changeset" in event:
+                for change in event["changeset"]:
+                    line += f"; {change['field']}: {change['oldValue']} → {change['newValue']}"
+            lines.append(line)
+        if len(events) > 20:
+            lines.append(f"- … and {len(events) - 20} more events (see trigger output)")
+        return {"text": "ServiceTrade record changes:\n" + "\n".join(lines), "conversation_key": None}
+
     async def execute(self, inputs):
         if not self.config or not self.config.credentials:
             raise ValueError("Connect a ServiceTrade session token")
         config = self.config.config
+        if isinstance(config, ServiceTradeOnEventConfig):
+            payload = (self.node_data.get("config") or {}).get("_triggerPayload")
+            if not payload:
+                return self.no_event_output(config.operation)
+            return self.resolve_trigger_payload(payload, config.model_dump())
         token = self.config.credentials.session_token
         method, route, collection = ROUTES[config.operation]
         values = config.model_dump(exclude_none=True, exclude={"operation"})
@@ -476,12 +591,30 @@ class ServiceTradeNode(WorkflowNode):
         values = _wire(values)
         kwargs = {"params": {k: ("true" if v is True else "false" if v is False else v)
                              for k, v in values.items()}} if method == "GET" else {"json": values}
+        result = await self._request(token, method, route, **kwargs)
+        if result["status"] != "success":
+            return result
+        data = result["data"]
+        if collection:
+            if not isinstance(data, dict) or not isinstance(data.get(collection), list):
+                raise ValueError("ServiceTrade response is missing its collection")
+            page, total = data.get("page"), data.get("totalPages")
+            if type(page) is not int or type(total) is not int or page < 1 or total < 0:
+                raise ValueError("ServiceTrade returned invalid pagination metadata")
+            result.update(items=data[collection], page=page, total_pages=total,
+                          next_page=page + 1 if page < total else None)
+        return result
+
+    @staticmethod
+    async def _request(token, method, route, **kwargs):
         try:
             async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
                 response = await client.request(method, BASE_URL + route, headers={
                     "Cookie": "PHPSESSID=" + token, "Accept": "application/json"}, **kwargs)
         except httpx.RequestError:
             raise ValueError("ServiceTrade request did not complete; a write may have taken effect. Check ServiceTrade before retrying.") from None
+        if method == "DELETE" and response.status_code == 204:
+            return {"status": "success", "data": None}
         if len(response.content) > 10000000:
             raise ValueError("ServiceTrade response exceeds the JSON size limit")
         try:
@@ -502,13 +635,4 @@ class ServiceTradeNode(WorkflowNode):
         # returned URLs or interpret absent data as an empty successful collection.
         if not isinstance(data, (dict, list)):
             raise ValueError("ServiceTrade response is missing its data object")
-        result = {"status": "success", "data": data}
-        if collection:
-            if not isinstance(data, dict) or not isinstance(data.get(collection), list):
-                raise ValueError("ServiceTrade response is missing its collection")
-            page, total = data.get("page"), data.get("totalPages")
-            if type(page) is not int or type(total) is not int or page < 1 or total < 0:
-                raise ValueError("ServiceTrade returned invalid pagination metadata")
-            result.update(items=data[collection], page=page, total_pages=total,
-                          next_page=page + 1 if page < total else None)
-        return _redact(result, token)
+        return _redact({"status": "success", "data": data}, token)

@@ -169,3 +169,108 @@ async def test_redirect_is_not_followed(transport):
     result = await run("list_companies")
     assert result["status"] == "error"
     assert len(transport[0]) == 1
+
+
+WEBHOOKS = json.loads((Path(__file__).parent / "fixtures/servicetrade/documented_webhooks.json").read_text())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("entity,constant", [("job", 3), ("invoice", 6), ("quote", 9), ("appointment", 16),
+    ("deficiency", 10), ("company", 5), ("contact", 22), ("location", 11)])
+async def test_webhook_registers_documented_filters_and_deletes_only_its_id(transport, entity, constant):
+    requests, responses = transport
+    responses.extend([(200, WEBHOOKS["registration"]), (204, b"")])
+    config = {"operation": "on_event", "entity_type": entity, "action": "updated"}
+    registration = await st.ServiceTradeNode._register_external_webhook(
+        webhook_url="https://example.hooks.example.test/webhook/fixture", credential=AUTH, config=config, node_id="fixture")
+    assert registration == {"external_webhook_id": "235"}
+    assert requests[0].method == "POST" and requests[0].url.path == "/api/webhook"
+    assert json.loads(requests[0].content) == {"hookUrl": "https://example.hooks.example.test/webhook/fixture",
+        "enabled": True, "includeChangesets": True,
+        "entityEvents": [{"entityType": constant, "actions": ["updated"]}]}
+    await st.ServiceTradeNode._unregister_external_webhook(credential=AUTH,
+        config={**config, **registration}, node_id="fixture")
+    assert requests[1].method == "DELETE" and requests[1].url.path == "/api/webhook/235"
+
+
+@pytest.mark.asyncio
+async def test_default_webhook_actions_and_registration_failure(transport):
+    requests, responses = transport
+    responses.append((200, WEBHOOKS["registration"]))
+    await st.ServiceTradeNode._register_external_webhook(webhook_url="https://example.hooks.example.test/hook",
+        credential=AUTH, config={"operation": "on_event"}, node_id="fixture")
+    assert json.loads(requests[0].content)["entityEvents"] == [{"entityType": 3, "actions": ["created", "updated", "deleted"]}]
+    responses.append((403, {"data": None, "messages": {"error": ["User not allowed to manage webhooks"]}}))
+    with pytest.raises(ValueError, match="User not allowed"):
+        await st.ServiceTradeNode._register_external_webhook(webhook_url="https://example.hooks.example.test/hook",
+            credential=AUTH, config={}, node_id="fixture")
+    assert len(requests) == 2
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", [403, 500])
+async def test_webhook_removal_errors_propagate(transport, status):
+    transport[1].append((status, {"data": None, "messages": {"error": ["Not allowed"]}}))
+    with pytest.raises(ValueError, match="removal failed"):
+        await st.ServiceTradeNode._unregister_external_webhook(credential=AUTH,
+            config={"external_webhook_id": "235"}, node_id="fixture")
+
+
+@pytest.mark.parametrize("sample", WEBHOOKS["events"].values())
+@pytest.mark.parametrize("entity", ["job", "invoice"])
+def test_documented_deliveries_preserve_batches_and_explain_actor_and_changes(sample, entity):
+    payload = deepcopy(sample["body"])
+    config = {"operation": "on_event", "entity_type": entity}
+    cls = st.ServiceTradeNode
+    assert cls.verify_webhook_signature(json.dumps(payload).encode(), {}, config)
+    assert cls.filter_trigger_payload(payload, config)
+    output = cls.resolve_trigger_payload(payload, config)
+    expected = [e for e in payload["data"] if e["entity"]["type"] == entity]
+    assert output["events"] == expected
+    assert output["event_count"] == len(expected)
+    assert output["message_id"] == payload["messageId"]
+    event = cls.resolve_agent_event(output)
+    assert event["conversation_key"] is None
+    for item in expected:
+        assert str(item["entity"]["id"]) in event["text"]
+        assert item["entity"]["uri"] in event["text"]
+        assert item["action"] in event["text"]
+        if "userId" in item:
+            assert f"user {item['userId']}" in event["text"]
+        for change in item.get("changeset", []):
+            assert change["field"] in event["text"]
+            assert str(change["newValue"]) in event["text"]
+
+
+@pytest.mark.asyncio
+async def test_execute_uses_only_injected_trigger_and_does_not_make_api_calls(transport):
+    payload = WEBHOOKS["events"]["notification_with_changesets"]["body"]
+    config = {"operation": "on_event", "action": "updated"}
+    node = st.ServiceTradeNode(node_id="fixture", node_type="automation-servicetrade",
+        node_data={"config": {**config, "_triggerPayload": payload}},
+        config=st.ServiceTradeNode.parse_config({"config": config, "credentials": AUTH}))
+    output = await node.execute({"unrelated_step": {"secret": "not an event"}})
+    assert [e["entity"]["id"] for e in output["events"]] == [35769]
+    assert st.ServiceTradeNode.resolve_agent_event(output)["text"].endswith("status: scheduled → completed")
+    node.node_data = {"config": config}
+    output = await node.execute({"data": payload["data"]})
+    assert output["status"] == "no_event" and output["data"] == {}
+    assert not transport[0]
+
+
+@pytest.mark.parametrize("payload", [{}, {"data": None}, {"data": {}}, {"data": []}, {"data": [None, {}, {"entity": None}]}])
+def test_empty_and_control_deliveries_never_fire(payload):
+    assert not st.ServiceTradeNode.filter_trigger_payload(payload, {"operation": "on_event"})
+
+
+def test_action_filter_and_fingerprint_follow_visible_configuration():
+    cls = st.ServiceTradeNode
+    payload = WEBHOOKS["events"]["notification"]["body"]
+    assert not cls.filter_trigger_payload(payload, {"entity_type": "job", "action": "deleted"})
+    assert not cls.filter_trigger_payload(payload, {"entity_type": "quote"})
+    first = cls.registration_fingerprint_fields({})
+    assert first == cls.registration_fingerprint_fields({"operation": "on_event", "webhook_url": "https://example.com"})
+    assert first != cls.registration_fingerprint_fields({"entity_type": "invoice"})
+    assert first != cls.registration_fingerprint_fields({"action": "updated"})
+    schema = cls.get_config_schema()
+    assert schema["$defs"]["ServiceTradeOnEventConfig"]["properties"]["operation"]["x-is-trigger"]

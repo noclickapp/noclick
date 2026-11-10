@@ -1,0 +1,114 @@
+{
+  "source": "https://api.servicetrade.com/openapi/openapi.json",
+  "registration": {
+    "data": {
+      "id": 235,
+      "uri": "https://api.servicetrade.com/api/webhook/235",
+      "hookUrl": "http://app.example.com/accounting/234536345/integration",
+      "enabled": true,
+      "confirmed": false,
+      "includeChangesets": false,
+      "entityEvents": null
+    }
+  },
+  "events": {
+    "notification": {
+      "body": {
+        "messageId": "22b80b92-fdea-4c2c-8f9d-bdfb0c7bf324",
+        "timestamp": "1401833057",
+        "data": [
+          {
+            "action": "created",
+            "timestamp": 1401833052,
+            "userId": 1234,
+            "entity": {
+              "type": "job",
+              "id": 34872,
+              "uri": "https://api.servicetrade.com/api/job/34872"
+            }
+          },
+          {
+            "action": "updated",
+            "timestamp": 1401833052,
+            "userId": 1234,
+            "entity": {
+              "type": "invoice",
+              "id": 9623,
+              "uri": "https://api.servicetrade.com/api/invoice/9623"
+            }
+          },
+          {
+            "action": "deleted",
+            "timestamp": 1401833052,
+            "userId": 1234,
+            "entity": {
+              "type": "attachment",
+              "id": 453845,
+              "uri": "https://api.servicetrade.com/api/attachment/453845"
+            }
+          }
+        ]
+      },
+      "source": "https://api.servicetrade.com/openapi/openapi.json"
+    },
+    "notification_with_changesets": {
+      "body": {
+        "messageId": "22b80b92-fdea-4c2c-8f9d-bdfb0c7bf324",
+        "timestamp": "1401833057",
+        "data": [
+          {
+            "action": "created",
+            "timestamp": 1401833052,
+            "entity": {
+              "type": "job",
+              "id": 34872,
+              "uri": "https://api.servicetrade.com/api/job/34872"
+            }
+          },
+          {
+            "action": "updated",
+            "timestamp": 1401833052,
+            "entity": {
+              "type": "invoice",
+              "id": 9623,
+              "uri": "https://api.servicetrade.com/api/invoice/9623"
+            },
+            "changeset": [
+              {
+                "field": "status",
+                "oldValue": "ok",
+                "newValue": "pending_accounting"
+              }
+            ]
+          },
+          {
+            "action": "updated",
+            "timestamp": 1401833052,
+            "entity": {
+              "type": "job",
+              "id": 35769,
+              "uri": "https://api.servicetrade.com/api/job/35769"
+            },
+            "changeset": [
+              {
+                "field": "status",
+                "oldValue": "scheduled",
+                "newValue": "completed"
+              }
+            ]
+          },
+          {
+            "action": "deleted",
+            "timestamp": 1401833052,
+            "entity": {
+              "type": "attachment",
+              "id": 453845,
+              "uri": "https://api.servicetrade.com/api/attachment/453845"
+            }
+          }
+        ]
+      },
+      "source": "https://api.servicetrade.com/openapi/openapi.json"
+    }
+  }
+}
