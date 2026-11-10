@@ -16,15 +16,10 @@ def connection_catalog():
 
     candidates = []
     providers = {}
-    for node_type, cls in NODE_REGISTRY.items():
-        supported = node_supports_op_tools(node_type)
+    for node_type, facts in every_node_facts().items():
         types = []
-        for credential_cls in credential_classes_for_node(cls):
-            kind = credential_type_of(credential_cls)
-            if not kind:
-                continue
-            schema = credential_cls.model_json_schema()
-            if schema.get("x-credential-hidden"):
+        for credential in facts["credentials"]:
+            if credential["hidden"]:
                 continue
             candidates.append((node_type, kind, {
                 "credential_type": kind,
@@ -33,7 +28,7 @@ def connection_catalog():
                 "connection_method": schema.get("x-credential-type"),
             }))
             types.append(kind)
-        if supported and types:
+        if facts["agent_tool_provider"] and types:
             providers[node_type] = tuple(types)
     methods = {}
     for _, kind, method in owners_first(candidates):

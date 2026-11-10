@@ -207,7 +207,14 @@ def resolve_credential_class(credential_type: Optional[str]) -> Optional[Tuple[s
     None covers types no node declares (agent OAuth sign-ins, legacy rows),
     which shape as-is.
     """
-    return _class_index().get(credential_type or "")
+    from nodes.core.catalog import credential_holders
+    from nodes.core.registry import NODE_REGISTRY
+
+    for node_type, _ in credential_holders(credential_type):
+        for cls in credential_classes_for_node(NODE_REGISTRY[node_type]):
+            if credential_type_of(cls) == credential_type:
+                return node_type, cls
+    return None
 
 
 # ----------------------------------------------------------------- shaping
@@ -333,13 +340,15 @@ def shape_credential(
 _LINKED_BY = {"qr_scan": "scan the QR code", "purchase": "buy the number", "oauth": "sign in"}
 
 
-@lru_cache(maxsize=1)
-def _linked_index() -> Dict[str, Type[BaseModel]]:
-    """Each field only NoClick's own linking flow sets -> the credential class declaring it."""
-    index: Dict[str, Type[BaseModel]] = {}
-    for _, cls in _class_index().values():
-        for name in getattr(cls, "linked_fields", ()):
-            index.setdefault(name, cls)
+def _linked_index() -> Dict[str, str]:
+    """Each field only NoClick's own linking flow sets -> the credential type declaring it (the node catalog)."""
+    from nodes.core.catalog import credential_types, credential_holders
+
+    index: Dict[str, str] = {}
+    for credential_type in credential_types():
+        for _, credential in credential_holders(credential_type):
+            for name in credential.get("linked_fields", ()):
+                index.setdefault(name, credential_type)
     return index
 
 
@@ -384,7 +393,7 @@ def linked_metadata(metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 def _linked_message(name: str) -> str:
-    cls = _linked_index()[name]
+    cls = resolve_credential_class(_linked_index()[name])[1]
     extra = cls.model_config.get("json_schema_extra")
     how = _LINKED_BY.get(extra.get("x-credential-type") if isinstance(extra, dict) else None, "connect it")
     return f"{_label(name, cls.model_fields[name])} is set by NoClick when you {how}; it can't be entered."

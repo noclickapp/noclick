@@ -183,6 +183,14 @@ class _Node:
     def get_config_model(cls):
         return None
 
+    @classmethod
+    def get_config_schema(cls):
+        return {}
+
+    @classmethod
+    def get_output_handles(cls):
+        return None
+
 
 @pytest.fixture
 def probe_registry(monkeypatch):

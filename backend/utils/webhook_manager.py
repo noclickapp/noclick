@@ -411,16 +411,12 @@ def _app_event_class_for_provider(provider: str):
     """Resolve an app-event provider slug (a webhook_subscriptions row's
     ``provider``) back to its node class — for orphan-row teardown where the
     node has already left the graph."""
+    from nodes.core.catalog import every_node_facts
     from nodes.core.registry import NODE_REGISTRY
-    from nodes.core.webhook_subscriptions import AppEventTriggerMixin
 
-    for node_class in NODE_REGISTRY.values():
-        if (
-            isinstance(node_class, type)
-            and issubclass(node_class, AppEventTriggerMixin)
-            and node_class._app_provider == provider
-        ):
-            return node_class
+    for node_type, facts in every_node_facts().items():
+        if facts["app_event_provider"] == provider:
+            return NODE_REGISTRY[node_type]
     return None
 
 
@@ -2567,26 +2563,9 @@ class WebhookManager:
     @staticmethod
     def _registerable_types() -> List[str]:
         """The node types a step of which can hold a registration."""
-        from nodes.core.registry import NODE_REGISTRY
-        from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
-        from nodes.core.webhook_subscriptions import AppEventTriggerMixin
-        from nodes.core.schedule_registration import CronScheduleTriggerMixin
+        from nodes.core.catalog import every_node_facts
 
-        return sorted(
-            t for t, c in NODE_REGISTRY.items()
-            if isinstance(c, type)
-            and (
-                issubclass(
-                    c,
-                    (
-                        ExternalWebhookTriggerMixin,
-                        AppEventTriggerMixin,
-                        CronScheduleTriggerMixin,
-                    ),
-                )
-                or bool(getattr(c, "self_registering_triggers", None))
-            )
-        )
+        return sorted(t for t, facts in every_node_facts().items() if facts["registers"])
 
     @staticmethod
     async def _resync_steps(

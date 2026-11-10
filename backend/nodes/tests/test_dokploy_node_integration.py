@@ -66,8 +66,7 @@ def test_actual_factory_and_public_provisioning_discovery(world, monkeypatch):
     node = NodeFactory.create_node(node_id='fixture', node_type=D.NODE_TYPE, node_data={'config': args('get_current_user'), 'credentials': AUTH}, sio=None, sid=None, user_id=USER)
     assert isinstance(node, D.DokployNode)
     monkeypatch.setattr(registry, 'NODE_REGISTRY', {D.NODE_TYPE: D.DokployNode})
-    for cache in ('_credential_fields_cache', '_credential_siblings_cache', '_credential_methods_cache'):
-        monkeypatch.setattr(routes, cache, None)
+    routes._credential_definition.cache_clear()
     method = routes._get_credential_method(D.FAMILY)
     assert method['credential_type'] == D.FAMILY and method['oauth_provider'] is None
     assert any(field['name'] == 'api_key' for field in method['credential_fields'])

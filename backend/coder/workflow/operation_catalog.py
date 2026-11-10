@@ -708,18 +708,9 @@ def known_credential_types() -> frozenset:
     """
     global _KNOWN_CREDENTIAL_TYPES
     if _KNOWN_CREDENTIAL_TYPES is None:
-        types = set(agent_credential_types())
-        for node_class in NODE_REGISTRY.values():
-            try:
-                schema = node_class.get_config_schema() or {}
-            except Exception:
-                continue
-            for cred_def in schema.get('$defs', {}).values():
-                ct_prop = cred_def.get('properties', {}).get('credential_type', {})
-                ct = ct_prop.get('const') or ct_prop.get('default')
-                if ct:
-                    types.add(ct)
-        _KNOWN_CREDENTIAL_TYPES = frozenset(types)
+        from nodes.core.catalog import credential_types
+
+        _KNOWN_CREDENTIAL_TYPES = frozenset(agent_credential_types()) | frozenset(credential_types())
     return _KNOWN_CREDENTIAL_TYPES
 
 

@@ -119,15 +119,17 @@ def _get_multi_output_nodes_info() -> str:
     which nodes have multiple outputs. This keeps the node class as the
     single source of truth for handle definitions.
     """
+    from nodes.core.catalog import every_node_facts
+
     lines = []
 
-    for node_type, node_class in NODE_REGISTRY.items():
+    for node_type, facts in every_node_facts().items():
         # Skip test nodes
         if node_type.startswith('test-'):
             continue
 
-        # Check if node has output handles defined
-        handles = node_class.get_output_handles()
+        # Check if node has output handles defined (the node catalog's copy of get_output_handles)
+        handles = facts["output_handles"]
         if handles:
             handle_descs = [f'"{h["id"]}" ({h["description"]})' for h in handles]
             lines.append(f"- {node_type}: handles are {', '.join(handle_descs)}")

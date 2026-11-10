@@ -608,21 +608,13 @@ def rehearsal_excluded_node_types() -> frozenset:
     the credential-less external actors. Agents are exempt — the agent running
     for real is the entire point.
     """
-    from nodes.core.registry import NODE_REGISTRY
+    from nodes.core.catalog import every_node_facts
 
-    found = set()
-    for node_type, node_cls in NODE_REGISTRY.items():
-        try:
-            schema = node_cls.get_config_schema()
-        except Exception:  # a broken schema fails its own tests, not the gate
-            continue
-        # A node with a real credential class renders `credentials` as an
-        # anyOf/$ref; credential-less nodes render `"type": "null"`. NOT the
-        # `x-credential-type` marker — that only stamps some providers, and
-        # missed every API-key node (Telegram was the tell).
-        cred = (schema.get("properties", {}) or {}).get("credentials") or {}
-        if isinstance(cred, dict) and (cred.get("$ref") or cred.get("anyOf")):
-            found.add(node_type)
+    # A node with a real credential class (the catalog's ``credentialed``: its
+    # `credentials` renders as an anyOf/$ref). NOT the `x-credential-type`
+    # marker — that only stamps some providers, and missed every API-key node
+    # (Telegram was the tell).
+    found = {node_type for node_type, facts in every_node_facts().items() if facts["credentialed"]}
     found.discard("agent")
     # Credential-less nodes with real external effects: the self-notification
     # email (charges credits, sends mail), raw HTTP, nested workflows (whose

@@ -7,6 +7,7 @@ via a token-based link received by email.
 import inspect
 import logging
 import re
+from functools import lru_cache
 from typing import Any, Optional
 from datetime import datetime, timezone
 import asyncpg
@@ -156,17 +157,9 @@ async def _oauth_app(pool, row, provider: Optional[str]) -> Optional[dict[str, s
 
 # ---------------------------------------------------------------------------
 # Credential field registry — maps credential_type → field definitions
-# Built lazily from node JSON schemas so the provision page renders correct fields.
+# Read per credential type from the schema of the node that declares it, found in
+# the node catalog, so a provide page imports that node's integration alone.
 # ---------------------------------------------------------------------------
-
-# Lazy-loaded caches built from node JSON schemas.
-# _credential_fields_cache: credential_type → field definitions (non-OAuth only)
-# _credential_siblings_cache: credential_type → list of all sibling credential methods
-# _credential_methods_cache: credential_type → its own full method dict (single source
-#   for the provide page, so even a no-sibling OAuth type carries scopes + connect flags)
-_credential_fields_cache: dict[str, list[dict]] | None = None
-_credential_siblings_cache: dict[str, list[dict]] | None = None
-_credential_methods_cache: dict[str, dict] | None = None
 
 
 def _resolve_credential_type(title: str, defn: dict) -> str | None:
@@ -267,8 +260,9 @@ def _method_dict_from_defn(title: str, defn: dict) -> Optional[dict]:
     }
 
 
-def _build_caches() -> tuple[dict[str, list[dict]], dict[str, list[dict]], dict[str, dict]]:
-    """Build field, sibling, and per-type method caches from node JSON schemas.
+def _schema_credential(node_type: str, credential_type: str) -> Optional[tuple[str, dict]]:
+    """``(title, definition)`` of the credential method ``node_type``'s schema pins to ``credential_type``."""
+    from nodes.core.registry import NODE_REGISTRY
 
     Returns (fields_cache, siblings_cache, methods_cache).
     """
@@ -333,28 +327,74 @@ def _build_caches() -> tuple[dict[str, list[dict]], dict[str, list[dict]], dict[
     return fields_cache, siblings_cache, methods_cache
 
 
-def _ensure_caches() -> None:
-    global _credential_fields_cache, _credential_siblings_cache, _credential_methods_cache
-    if _credential_fields_cache is None:
-        _credential_fields_cache, _credential_siblings_cache, _credential_methods_cache = _build_caches()
+@lru_cache(maxsize=None)
+def _credential_definition(credential_type: str) -> Optional[tuple[str, dict]]:
+    """The method of the first node, in registry order, whose schema pins ``credential_type``."""
+    from nodes.core.catalog import credential_holders
+
+    for node_type, credential in credential_holders(credential_type):
+        if credential["pinned"]:
+            found = _schema_credential(node_type, credential_type)
+            if found:
+                return found
+    return None
+
+
+def _node_sibling_methods(node_type: str) -> list[dict]:
+    """The methods ``node_type``'s credentials union offers when it offers more than one, hidden ones left out."""
+    from nodes.core.registry import NODE_REGISTRY
+
+    schema = NODE_REGISTRY[node_type].get_config_schema()
+    defs = schema.get('$defs', {})
+    refs = [e for e in schema.get('properties', {}).get('credentials', {}).get('anyOf', []) if '$ref' in e]
+    if len(refs) <= 1:
+        return []
+    methods = []
+    for ref in refs:
+        title = ref['$ref'].split('/')[-1]
+        defn = defs.get(title, {})
+        # x-credential-hidden methods (e.g. OAuth pending provider app
+        # approval) are hidden in-app — don't offer them here either.
+        if defn.get('x-credential-hidden'):
+            continue
+        method = _method_dict_from_defn(title, defn)
+        if method:
+            methods.append(method)
+    return methods
+
+
+@lru_cache(maxsize=None)
+def _sibling_methods(credential_type: str) -> tuple:
+    """The methods offered beside ``credential_type``: the last node in registry order whose union offers it
+    with others decides, as the whole-registry sweep this replaced let each later node overwrite the last."""
+    from nodes.core.catalog import credential_holders
+
+    for node_type, credential in reversed(credential_holders(credential_type)):
+        if credential["hidden"] or not credential["pinned"]:
+            continue
+        methods = _node_sibling_methods(node_type)
+        if any(method['credential_type'] == credential_type for method in methods):
+            return tuple(methods)
+    return ()
 
 
 def _get_credential_fields(credential_type: str) -> list[dict]:
     """Get field definitions for a credential type. Returns empty list for OAuth types."""
-    _ensure_caches()
-    return (_credential_fields_cache or {}).get(credential_type, [])
+    found = _credential_definition(credential_type)
+    if found is None or found[1].get('x-credential-type') == 'oauth':
+        return []
+    return _extract_fields_from_schema(found[1])
 
 
 def _get_sibling_methods(credential_type: str) -> list[dict]:
     """Get all auth methods for the same service (sibling credential types)."""
-    _ensure_caches()
-    return (_credential_siblings_cache or {}).get(credential_type, [])
+    return list(_sibling_methods(credential_type))
 
 
 def _get_credential_method(credential_type: str) -> Optional[dict]:
     """Get the credential's own method dict (single-method / no-sibling case)."""
-    _ensure_caches()
-    return (_credential_methods_cache or {}).get(credential_type)
+    found = _credential_definition(credential_type)
+    return _method_dict_from_defn(*found) if found else None
 
 
 # ---------------------------------------------------------------------------
