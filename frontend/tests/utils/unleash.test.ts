@@ -7,7 +7,8 @@ import schema from '~/schemas/nodes/unleash.json';
 describe('Unleash connection', () => {
     it('exposes the four documented webhook triggers', () => {
         const triggers = Object.values(schema.$defs).flatMap((definition) => {
-            const operation = 'properties' in definition ? definition.properties.operation : undefined;
+            const operation = 'properties' in definition && 'operation' in definition.properties
+                ? definition.properties.operation : undefined;
             return operation && 'x-is-trigger' in operation && operation['x-is-trigger'] ? [operation.const] : [];
         });
         expect(triggers.sort()).toEqual(['on_feature_created', 'on_feature_moved', 'on_feature_tagged', 'on_strategy_added']);
