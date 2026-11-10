@@ -1,0 +1,482 @@
+{
+  "cases": {
+    "get_account": {
+      "config": {
+        "operation": "get_account"
+      },
+      "body": {
+        "mobilenumber": "+46700000000",
+        "displayname": "Your name or company",
+        "id": "u5a9566c072160b318445d163949bf505",
+        "currency": "SEK",
+        "balance": 9670500,
+        "email": "help@46elks.com"
+      },
+      "source": "https://46elks.com/docs/get-account"
+    },
+    "list_subaccounts": {
+      "config": {
+        "operation": "list_subaccounts"
+      },
+      "body": {
+        "data": [
+          {
+            "balanceused": 35000,
+            "secret": "E358D00000000000000091594CAB0E97",
+            "created": "2018-02-05T15:06:36.113000",
+            "id": "af068677d00000000000000055adecf62",
+            "name": "Example_Subaccount"
+          },
+          {
+            "active": "no",
+            "balanceused": 35000,
+            "created": "2018-02-05T15:06:38.113000",
+            "deactivated": "2018-02-05T15:06:38.113000",
+            "id": "af068677d0000000000000005aflfgcf62",
+            "name": "Example_Subaccount_2"
+          }
+        ],
+        "next": "2018-02-05T15:06:33.318000"
+      },
+      "source": "https://46elks.com/docs/get-subaccounts"
+    },
+    "create_subaccount": {
+      "config": {
+        "operation": "create_subaccount",
+        "name": "Company XYZ"
+      },
+      "body": {
+        "secret": "D81DEF1B65E19A83DBCEA0BE0D89D082",
+        "created": "2014-12-08T13:18:07.625000",
+        "id": "af3d05a159669e1951c5301bc6a61bac",
+        "name": "This Co2"
+      },
+      "source": "https://46elks.com/docs/create-subaccount"
+    },
+    "get_subaccount": {
+      "config": {
+        "operation": "get_subaccount",
+        "id": "a70df59406a2b4643b96f3f10e1bfb7b1"
+      },
+      "body": {
+        "secret": "D81DEF1B65E19A83DBCEA0BE0D89D082",
+        "created": "2014-12-08T13:18:07.625000",
+        "usagelimit": 910000,
+        "id": "af3d05a159669e1951c5301bc6a61bac",
+        "name": "This Co",
+        "balanceused": 12300
+      },
+      "source": "https://46elks.com/docs/get-subaccount-id"
+    },
+    "update_subaccount": {
+      "config": {
+        "operation": "update_subaccount",
+        "id": "a70df59406a1b4643b96f3f10e1bfb7b1",
+        "name": "Company XYZ",
+        "usagelimit": 3423432400
+      },
+      "body": {
+        "secret": "D81DEF1B65E19A83DBCEA0BE0D89D082",
+        "created": "2014-12-08T13:18:07.625000",
+        "usagelimit": 99999999999,
+        "id": "af3d05a159669e1951c5301bc6a61bac",
+        "name": "This Co",
+        "usage": 12300
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "list_numbers": {
+      "config": {
+        "operation": "list_numbers"
+      },
+      "body": {
+        "data": [
+          {
+            "id": "n53c05a4e002ae26f790cbaf82b93bc37",
+            "category": "mobile",
+            "country": "se",
+            "expires": "2016-12-01T07:52:15",
+            "voice_start": "http://www.server.nu/incommuingcall",
+            "number": "+46766861475",
+            "capabilities": [
+              "sms",
+              "voice"
+            ],
+            "sms_replies": "yes",
+            "active": "yes"
+          },
+          {
+            "id": "n53c05a4e002ae26f790cbaf82b93bc38",
+            "category": "mobile",
+            "country": "se",
+            "expires": "2016-12-01T07:52:15",
+            "sms_url": "http://www.server.nu/incommuingcall",
+            "number": "+46766861476",
+            "capabilities": [
+              "sms",
+              "voice",
+              "mms"
+            ],
+            "active": "yes"
+          }
+        ]
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "allocate_number": {
+      "config": {
+        "operation": "allocate_number",
+        "country": "se"
+      },
+      "body": {
+        "id": "n53c05a4e002ae26f790cbaf82b93bc37",
+        "category": "mobile",
+        "country": "se",
+        "expires": "2016-12-01T07:52:15",
+        "voice_start": "http://www.server.nu/incommuingcall",
+        "number": "+46766861475",
+        "capabilities": [
+          "sms",
+          "voice"
+        ],
+        "sms_replies": "yes",
+        "active": "yes"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "get_number": {
+      "config": {
+        "operation": "get_number",
+        "id": "n70df59406a1b4643b96f3f10e1bfb7b1"
+      },
+      "body": {
+        "id": "n53c05a4e002ae26f790cbaf82b93bc37",
+        "category": "mobile",
+        "country": "se",
+        "expires": "2016-12-01T07:52:15",
+        "voice_start": "http://www.server.nu/incommuingcall",
+        "number": "+46766861475",
+        "capabilities": [
+          "sms",
+          "voice"
+        ],
+        "sms_replies": "yes",
+        "active": "yes"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "update_number": {
+      "config": {
+        "operation": "update_number",
+        "id": "n53c05a4e002ae26f790cbaf82b93bc37",
+        "sms_url": "http://www.server.com/incommingsms",
+        "voice_start": "http://www.server.com/incommingcall",
+        "mms_url": "http://www.server.com/incommingmms",
+        "sms_replies": "yes",
+        "active": "yes"
+      },
+      "body": {
+        "id": "n53c05a4e002ae26f790cbaf82b93bc37",
+        "category": "mobile",
+        "country": "se",
+        "expires": "2016-12-01T07:52:15",
+        "voice_start": "http://www.server.nu/incommuingcall",
+        "number": "+46766861475",
+        "capabilities": [
+          "sms",
+          "voice"
+        ],
+        "sms_replies": "yes",
+        "active": "yes"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "send_sms": {
+      "config": {
+        "operation": "send_sms",
+        "from": "TestElk",
+        "to": "+46723175800",
+        "message": "Hi! This is your message."
+      },
+      "body": {
+        "id": "s70df59406a1b4643b96f3f91e0bfb7b0",
+        "from": "Lasse",
+        "to": "+46723175800",
+        "message": "This is the message sent to the phone.",
+        "created": "2016-10-11T13:36:13.081000",
+        "cost": 3500,
+        "direction": "outgoing"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "list_sms": {
+      "config": {
+        "operation": "list_sms"
+      },
+      "body": {
+        "data": [
+          {
+            "id": "s70df59406a1b4643b96f3f91e0bfb7b0",
+            "from": "Lasse",
+            "to": "+46723175800",
+            "message": "This is the message sent to the phone.",
+            "created": "2016-10-11T13:36:13.081000",
+            "cost": 3500,
+            "direction": "outgoing"
+          },
+          {
+            "id": "s3633fa8e62f823e52fbc67ebf6925ab5",
+            "direction": "incoming",
+            "from": "Martin",
+            "created": "2016-08-18T09:55:31.116000",
+            "to": "+46766861475",
+            "message": "TEst 32423"
+          }
+        ]
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "get_sms": {
+      "config": {
+        "operation": "get_sms",
+        "id": "s70df59406a1b4643b96f3f10e1bfb7b1"
+      },
+      "body": {
+        "id": "s3633fa8e62f823e52fbc67ebf6925ab5",
+        "direction": "incoming",
+        "from": "Martin",
+        "created": "2016-08-18T09:55:31.116000",
+        "to": "+46766861475",
+        "message": "TEst 32423"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "delete_sms": {
+      "config": {
+        "operation": "delete_sms",
+        "id": "s70df59406a1b4643b96f3f10e1bfb7b1"
+      },
+      "body": {
+        "id": "s70df59406a1b4643b96f3f10e1bfb7b1",
+        "deleted": "2018-06-25T08:40:22.109482"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "send_mms": {
+      "config": {
+        "operation": "send_mms",
+        "from": "TestElk",
+        "to": "+46723175800",
+        "message": "Hi! This is your message."
+      },
+      "body": {
+        "direction": "outgoing",
+        "from": "+46766861218",
+        "created": "2016-11-03T12:44:56.180704",
+        "to": "+46723175800",
+        "cost": 12500,
+        "owner": "u5a0588130b2bfe9dec437a4df1056d15",
+        "message": "Hej!",
+        "id": "mf3d05c159aa49e1951c5301bc6af1bac"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "list_mms": {
+      "config": {
+        "operation": "list_mms"
+      },
+      "body": {
+        "data": [
+          {
+            "id": "m70df59406a1b4643b96f3f91e0bfb7b0",
+            "from": "Lasse",
+            "to": "+46723175800",
+            "message": "This is the message sent to the phone.",
+            "created": "2016-10-11T13:36:13.081000",
+            "cost": 12500,
+            "direction": "outgoing",
+            "images": [
+              "m70df59406a1b4643b96f3f91e0bfb7b0-i0"
+            ]
+          },
+          {
+            "id": "m3633fa8e62f823e52fbc67ebf6925ab5",
+            "direction": "incoming",
+            "from": "Martin",
+            "created": "2016-08-18T09:55:31.116000",
+            "to": "+46766861475",
+            "message": "TEst 32423",
+            "images": [
+              "m70df59406a1b4643b96f3f91e0bfb7b0-i0"
+            ]
+          }
+        ]
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "get_mms": {
+      "config": {
+        "operation": "get_mms",
+        "id": "s70df59406a1b4643b96f3f10e1bfb7b1"
+      },
+      "body": {
+        "id": "m84af96809ff8989f3668c93aaaedb69c",
+        "direction": "incoming",
+        "from": "+46723175800",
+        "created": "2016-08-18T09:55:31.116000",
+        "to": "+46766861475",
+        "message": "Message text.",
+        "images": [
+          "m84af96809ff8989f3668c93aaaedb69c-i0"
+        ]
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "delete_mms": {
+      "config": {
+        "operation": "delete_mms",
+        "id": "m70df59406a1b4643b96f3f10e1bfb7b1"
+      },
+      "body": {
+        "id": "m70df59406a1b4643b96f3f10e1bfb7b1",
+        "deleted": "2018-06-25T08:40:22.109482"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "start_call": {
+      "config": {
+        "operation": "start_call",
+        "from": "TestElk",
+        "to": "+46723175800",
+        "voice_start": "Hi! This is your message."
+      },
+      "body": {
+        "direction": "outgoing",
+        "from": "+46723175800",
+        "created": "2016-11-03T15:08:14.609873",
+        "to": "+46723175800",
+        "state": "ongoing",
+        "id": "c719b1eefbf65b1f89c013e6433dbf537"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "list_calls": {
+      "config": {
+        "operation": "list_calls"
+      },
+      "body": {
+        "data": [
+          {
+            "direction": "outgoing",
+            "from": "+46723175800",
+            "created": "2016-11-03T15:08:14.609000",
+            "to": "+46723175800",
+            "state": "failed",
+            "id": "c719b1eefbf65b1f89c013e6433dbf537"
+          },
+          {
+            "direction": "incoming",
+            "from": "+46723175800",
+            "to": "+46101994214",
+            "created": "2016-11-03T09:24:24.355000",
+            "actions": [
+              {
+                "connect": "+4634090510",
+                "result": "success"
+              }
+            ],
+            "start": "2016-11-03T09:24:24.333000",
+            "state": "success",
+            "cost": 1500,
+            "duration": 15,
+            "legs": [
+              {
+                "duration": 14,
+                "to": "+4634090510",
+                "state": "success",
+                "from": "+46723175800"
+              }
+            ],
+            "id": "c595183c042b1e43d1c8e79b9fd5cbcab"
+          }
+        ]
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "get_call": {
+      "config": {
+        "operation": "get_call",
+        "id": "c70df59406a1b4643b96f3f10e1bfb7b1"
+      },
+      "body": {
+        "direction": "incoming",
+        "from": "+46723175800",
+        "to": "+46101994214",
+        "created": "2016-11-03T09:24:24.355000",
+        "actions": [
+          {
+            "connect": "+4634090510",
+            "result": "success"
+          }
+        ],
+        "start": "2016-11-03T09:24:24.333000",
+        "state": "success",
+        "cost": 1500,
+        "duration": 15,
+        "legs": [
+          {
+            "duration": 14,
+            "to": "+4634090510",
+            "state": "success",
+            "from": "+46723175800"
+          }
+        ],
+        "id": "c595183c042b1e43d1c8e79b9fd5cbcab"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "delete_call": {
+      "config": {
+        "operation": "delete_call",
+        "id": "c70df59406a1b4643b96f3f10e1bfb7b1"
+      },
+      "body": {
+        "id": "c70df59406a1b4643b96f3f10e1bfb7b1",
+        "deleted": "2018-06-25T08:40:22.109482"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "list_recordings": {
+      "config": {
+        "operation": "list_recordings"
+      },
+      "body": {
+        "data": [
+          {
+            "duration": 1,
+            "id": "c361e5927d2c4d7dcf71a142dc0ec6d9b-r0",
+            "created": "2016-02-28T23:54:57.075000"
+          },
+          {
+            "duration": 2,
+            "id": "c110cf16e8a0e202b7efb345ba4571d2d-r0",
+            "created": "2015-02-24T15:09:08.146000"
+          }
+        ]
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    },
+    "get_recording": {
+      "config": {
+        "operation": "get_recording",
+        "id": "c814b5dd6ac2b5881834b710a1dedcad3-r0"
+      },
+      "body": {
+        "duration": 15,
+        "id": "c361e5927d2c4d7dcf71a142dc0ec6d9b-r0",
+        "created": "2016-02-28T23:54:57.075000"
+      },
+      "source": "https://raw.githubusercontent.com/46elks/46elks-getting-started/master/code-examples/Swagger/46elksAPI.yaml"
+    }
+  }
+}
