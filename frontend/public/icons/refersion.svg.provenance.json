@@ -1,16 +1,16 @@
 {
   "path": "frontend/public/icons/refersion.svg",
-  "source": "https://refersion.dev/img/refersion-logo.svg",
-  "found_at": "https://refersion.dev/ (Refersion's developer docs; Docusaurus navbar logo)",
-  "source_kind": "company docs",
-  "retrieved": "2026-11-10",
+  "source": "https://cdn.refersion.com/wp-content/uploads/2026/05/29120851/refersion-blue-icon-logo.svg",
+  "found_at": "https://www.refersion.com/ (the schema.org Organization 'logo' of the homepage, read from the Wayback copy because refersion.com answers curl with a Cloudflare 403)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
   "edits": [
     "cropped the viewBox to the mark (pad 0.02)",
     "cleaned",
-    "light file: #FFFFFF -> #221F4E on the mark (element 0), Refersion's own navy (--rfsn-navy in refersion.dev's CSS, the colour of its favicon tile)"
+    "no recolouring: the file is Refersion's own navy #221F4E"
   ],
   "variant": "light mode",
-  "notes": "DECISION: the only Refersion vector is the white mark (refersion.com's header logos and favicons are PNG; refersion.com has no press/brand page). Light file recolours it to Refersion's navy #221F4E (its own CSS variable and favicon tile) rather than shipping a tile; dark file keeps it white. The reviewer note suggested the navy tile, which exists only as PNG.",
+  "notes": "DECISION (rule 2c): the navy vanishes on the dark tile; Refersion's dark-background versions are white/off-white (refersion.dev logo, refersion.com logo.png #F9FFF1) and its navy favicon tile is PNG only, so the dark file is white. The light file now comes straight from Refersion's own coloured SVG (no recolour) instead of the dev docs' white mark recoloured; its proportions are the organisation logo's (slightly taller than the dev-docs file). Refersion uses two navies: #221F4E (this SVG, refersion.dev) and #112E45 (the new refersion.com favicon).",
   "license": "Refersion brand mark, used nominatively to identify the connected service; trademark rights remain with Refersion.",
-  "sha256": "2570c231dab19f64c594eec328ace71e6d5b0004b9e71f2630d78493fb980b8c"
+  "sha256": "89713d6494c72b08dcd8f04f18c2001bd6835fd4224ed9b508410d40e531ef6b"
 }

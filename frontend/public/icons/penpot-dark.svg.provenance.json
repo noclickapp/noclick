@@ -1,12 +1,17 @@
 {
   "path": "frontend/public/icons/penpot-dark.svg",
-  "source": "https://raw.githubusercontent.com/penpot/penpot/develop/frontend/resources/images/assets/penpot-logo-icon.svg",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "source": "https://nextcloud.kaleidos.net/public.php/webdav/logo%20_%20isotipo%20white.svg (share f9p5tHrpWNFX8En)",
+  "found_at": "https://penpot.app/media-kit ('Logo' link \u2192 https://nextcloud.kaleidos.net/index.php/s/f9p5tHrpWNFX8En, Kaleidos being Penpot's company)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-11",
   "edits": [
-    "dark mode: the unpainted (default black) shapes -> #FFFFFF"
+    "removed the three unpainted frame-background rects (elements 0-2)",
+    "cropped the viewBox to the mark (the file had none)",
+    "cleaned",
+    "dark file is the brand kit's own white isotipo (logo _ isotipo white.svg), same three rects removed, cropped and cleaned"
   ],
   "variant": "dark mode",
-  "license": "Penpot brand mark, used nominatively to identify the service; trademark rights remain with Penpot. Official source repository is MPL-2.0.",
-  "sha256": "f45bc9b2f97cdaee28bc4b0f568fda84918427a708fd505b6cf5000fe91c9cd3"
+  "notes": "DECISION: #151035 is a very dark navy (reads nearly black at 22-48px). The brand kit and site header use it for the mark; the app's own favicon (design.penpot.app/images/favicon.svg) and simple-icons use #000. No coloured version for dark backgrounds exists (only white), so the navy shows in light mode only. If Dhruv judges #151035 as monochrome, the current black/white files can stay.",
+  "license": "Penpot brand mark, used nominatively to identify the connected service; trademark rights remain with Penpot.",
+  "sha256": "08205e5e88c4d2ee58c282d9bda967e161e8d35873d35b273c0dc8d425942c20"
 }

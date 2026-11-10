@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/adafruit-io-dark.svg",
+  "source": "https://d2794n4cyhr13z.cloudfront.net/vite/production/assets/io-logo-black-j7jgv-Nl.svg",
+  "found_at": "https://io.adafruit.com/ (its bundle application-CxXUK8W_.js renders it as <img alt=\"Adafruit IO Logo\">; the IO+ variants io-plus-logo-black/white sit beside it)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "#000000 (the path's default fill) -> #FFFFFF on the whole mark; the flower stays a cut-out"
+  ],
+  "variant": "dark mode",
+  "notes": "Monochrome brand. Shipped as 'fixed' because the current adafruit-io.svg is Adafruit's safari-pinned-tab.svg, a potrace auto-trace ('Created by potrace 1.11') of the striped app icon, black square included, and it has no dark file (the app inverts it with CSS). The replacement is the app's own clean vector of the IO logo. DECISION: only if you prefer the striped app-icon look; it exists only as PNG and that potrace trace.",
+  "license": "Adafruit IO brand mark, used nominatively to identify the connected service; trademark rights remain with Adafruit IO.",
+  "sha256": "fd6dc472ca5b8aac1eaea769f31be0b5ffe7680450c89bae7ad906faebeeda79"
+}

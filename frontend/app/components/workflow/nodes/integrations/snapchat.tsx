@@ -9,7 +9,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const SnapchatIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <ThemedBrandImg light="/icons/snapchat.svg" dark="/icons/snapchat-dark.svg" className={className} style={style} {...props} ref={ref} />
+        <ThemedBrandImg {...props} light="/icons/snapchat.svg" className={className} style={style} ref={ref} />
     ),
 );
 SnapchatIcon.displayName = 'SnapchatIcon';

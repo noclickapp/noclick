@@ -46,12 +46,6 @@
       "sha256": "0f906f619421c6b7097d5d8dceb1e44e29e3bcfadad38c3e9137c143a4a625e1"
     },
     {
-      "path": "frontend/public/icons/ringcentral.svg",
-      "source": "https://www.ringcentral.com/whyringcentral/pressimages.html → https://assets.ringcentral.com/us/brand-library/logos/ringcentral-logo.zip (SVG/RingCentral logo fullcolor.svg; unmodified)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "2d5e096c5c3a2caaa2504f13e3b91680a98434a60416cdb433b45830b619a9d7"
-    },
-    {
       "path": "frontend/public/icons/ashby-brand-vector.svg",
       "source": "https://www.ashbyhq.com (Ashby published brand artwork)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -62,12 +56,6 @@
       "source": "https://www.ashbyhq.com (Ashby published brand artwork)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "86288a586b5ec2c1ad4945fc47a402afba70b48c798fe51ba399096a6504aec0"
-    },
-    {
-      "path": "frontend/public/icons/ashby-preferred-brand.svg",
-      "source": "https://www.ashbyhq.com (Ashby published brand artwork)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "cafe857be8a30f891baa46dac0badc5e8a21262eb3142da6a5b5b0f293d27852"
     },
     {
       "path": "frontend/public/icons/ashby.svg",
@@ -148,12 +136,6 @@
       "sha256": "4901dca1ef2a0ef9306cfd0f722b1885785645af6d8a965603e03faf37c040a2"
     },
     {
-      "path": "frontend/public/icons/basedash.svg",
-      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "4fd8622365bc977c0494117608a389bc072a0101668bab8f34a4438e1895bece"
-    },
-    {
       "path": "frontend/public/icons/beehiiv.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -188,12 +170,6 @@
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "00e201d76b821bfd88bd3286e4381d993acc0fb298f886a80928015f14bd0613"
-    },
-    {
-      "path": "frontend/public/icons/canva.svg",
-      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "9a75504b50d4f39dd4379875bc64a2293a053b6f0180f6a179ba92667583ce19"
     },
     {
       "path": "frontend/public/icons/chroma.svg",
@@ -332,12 +308,6 @@
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "49dd07160480870e26d49cc0e86f621b847f44c162d542b79193a37faa5ba9f7"
-    },
-    {
-      "path": "frontend/public/icons/fellow.svg",
-      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "85a3daac1ae0c387de99ec7102a7e800f7175f7b4631d47efe5765aa5d30488d"
     },
     {
       "path": "frontend/public/icons/findymail.svg",
@@ -694,12 +664,6 @@
       "sha256": "db6fe559fde944a7f0254d03ca7a640aecf3c4eff7276d8d6dedeb18c165b775"
     },
     {
-      "path": "frontend/public/icons/ramp.svg",
-      "source": "https://ramp.com/about-us (official press kit: https://assets.ramp.com/nextjs/ramp_september_2026_media_kit.zip; logos/ramp-logo-black.svg, unmodified)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "5b770d1951f8cb006dac3dd5597420cb079a6a6f2afa6c3687aa5060dc5b7106"
-    },
-    {
       "path": "frontend/public/icons/recurly.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -820,12 +784,6 @@
       "sha256": "ca8e8d0963b7d445151e416b05a1373a495993430171788ee2c13530453d5772"
     },
     {
-      "path": "frontend/public/icons/voyage.svg",
-      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "c05ff28b41085897c1bb4f464f0c52386e6b8c04163331041d9f0c4f12400261"
-    },
-    {
       "path": "frontend/public/icons/weaviate.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -884,18 +842,6 @@
       "source": "https://developers.aprimo.com/img/AprimoLogo.svg (unmodified official Aprimo developer documentation logo)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "a405c6980cb61f0bd78fccb6721218083ebd8b557d22e13abea99573431a8d0c"
-    },
-    {
-      "path": "frontend/public/icons/okta-brand.png",
-      "source": "https://www.okta.com/newsroom/ → https://www.okta.com/sites/default/files/2026-09/logos-09-2026.zip → Logos & boileplates/Okta Logos/Okta Aura Stack/Okta_Aura Stack_Black_RGB.png",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "853fb0f369e38c6ef598d5c2de1a2b7c0649671604150924db936ade7deab38c"
-    },
-    {
-      "path": "frontend/public/icons/rippling.svg",
-      "source": "https://www.rippling.com/company/newsroom — https://assets.ctfassets.net/k0itp0ir7ty4/3E4spjZts7XCMtyaT2mHHj/20a9ea4e44ec7d760f6e108c1cc0fafb/Rippling-Logos.zip (Full/SVG/Rippling Logo black.svg; unmodified)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "e7b0a052281be8b93a2c660a62f23e5594367b9087bc86a25c790384e1c587d8"
     },
     {
       "path": "frontend/public/icons/statuspage.svg",
@@ -1042,18 +988,6 @@
       "sha256": "77b3338cfc0150bd1bd44ae4df8770c4132f23148701b34efe98fa5cf1f03eea"
     },
     {
-      "path": "frontend/public/icons/gusto.svg",
-      "source": "https://prod.gusto-assets.com/media/Gusto-brand-guidelines.pdf (official brand guidelines, page 4, links to https://www.dropbox.com/s/7su8t41u8q0sfo1/20190726_Gusto%20Logos.zip?dl=1; unmodified RGB_Web/Gusto logo_f45d48.svg)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "5a48f92a78e4c1871ba8b9251032342531546ea0188979ae32bd6750ea70a3ae"
-    },
-    {
-      "path": "frontend/public/icons/deel.svg",
-      "source": "https://website-media.deel.com/logo_revamp_164ddaed0c.svg (unmodified official Deel logo published on https://www.deel.com/press/)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "a080552355dceee57dc107143aa3327cf437fb477597590d66e1607a6baba384"
-    },
-    {
       "path": "frontend/public/icons/invoiceninja-brand.png",
       "source": "https://invoiceninja.com/referrals-program/ (official Invoice Ninja brand artwork: https://invoiceninja.com/wp-content/uploads/2026/04/logo-small-1-300x300.png)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -1064,30 +998,6 @@
       "source": "https://partners.kajabi.com/get-started (Kajabi Branding & Logo Guide → Kajabi_Branding_Logos.zip → Color_Icon.png; unmodified official icon)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "e9de5f1c933ae4aeb28b762bad25a04eafc1e353ad422c610307db202f52fbb9"
-    },
-    {
-      "path": "frontend/public/icons/pdfco-brand.svg",
-      "source": "https://pdf.co/ (official PDF.co brand artwork: https://pdf.co/_next/static/immutable/media/main_logo.20-meh3u918j3.svg)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "6555ed6894bb214432fc17ed563f1ca0e6c6c965f51302330e5453bd084e020b"
-    },
-    {
-      "path": "frontend/public/icons/personio-brand.png",
-      "source": "https://files.readme.io/344ccf55e2da6ae08fc012392cc1b7d36c6f8806128c7cbbca6f44ffcc127cac-small-Personio_Wordmark_Black.png (unmodified Personio wordmark published at https://developer.personio.de/v1.0/reference/get_company-employees)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "d480073c704f4f37c349823757672c60b3b34855ba46fb6ebfbaa31f7c4b5eed"
-    },
-    {
-      "path": "frontend/public/icons/quo.svg",
-      "source": "https://www.quo.com/press (official brand logo: https://cdn.prod.website-files.com/6899ec2c2b29c1edf8c20f15/690cc288998d6ee0ff32c586_quo-logo.svg)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "6927d59ffca73356e09168a1778d4272bc508d7ca90727e47bfcfa8e847184a5"
-    },
-    {
-      "path": "frontend/public/icons/sumup.svg",
-      "source": "https://circuit.sumup.com/?path=/docs/brand-sumuplogo--docs (official SumUp brand page; unmodified logomark from https://raw.githubusercontent.com/sumup-oss/circuit-ui/main/packages/icons/web/v2/sum_up_logomark_32.svg)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "6607190e7c99513a13351e29df9d6547c8f31a6a9a97410482684af93f927f85"
     },
     {
       "path": "frontend/public/icons/cloudzero-brand-vector.svg",
@@ -1124,12 +1034,6 @@
       "source": "https://acculynx.com/wp-content/uploads/2023/05/acculynx-logo-navy-orange-gray.svg (unmodified official wordmark)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "0436324eb341e48bb5e9e5e7819045f3fa18b92e7bd58e5bcd36f5e7cc0f261e"
-    },
-    {
-      "path": "frontend/public/icons/acculynx-preferred-brand.svg",
-      "source": "https://acculynx.com/wp-content/uploads/2023/05/acculynx-logo-navy-orange-gray.svg (brand symbol cropped from the official wordmark and placed on a white rounded background)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "36aa0f55bc9345e504fb2a5850c3679f4359b9f1815dcb8390ec0f10d2222078"
     },
     {
       "path": "frontend/public/icons/cliniko-brand-vector.svg",
@@ -1270,12 +1174,6 @@
       "sha256": "9a3a6f769c3c57c5d1b436054ad84af1844771dba7c5d059cab9877d3ef4ec4f"
     },
     {
-      "path": "frontend/public/icons/singlestore-brand-vector.svg",
-      "source": "https://www.singlestore.com/ (official brand artwork retained from the integration; source and SHA-256 recorded in its original icon commit)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "44db5f6ed9ab092698189845615eb79cd310e5f462c8a904ea2f96d85f100594"
-    },
-    {
       "path": "frontend/public/icons/singlestore-brand.png",
       "source": "https://www.singlestore.com/ (official brand artwork retained from the integration; source and SHA-256 recorded in its original icon commit)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -1288,40 +1186,16 @@
       "sha256": "dc6418d084f67095fe339ecade69034e75024117fe9d572dc7ec8a8871977ea3"
     },
     {
-      "path": "frontend/public/icons/skyvia-preferred-brand.svg",
-      "source": "https://skyvia.com/assets/img/sprite.svg#logo (Skyvia published logo, cropped to the standalone mark and placed on a white tile)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "9fd5172959c7ffdeb538de173b1090b1f5535410956516c76af59134eb685592"
-    },
-    {
-      "path": "frontend/public/icons/stackitdns-brand-vector.svg",
-      "source": "https://stackit.com/de (STACKIT published brand artwork)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "4e354e3fc93d32159f8b59dca7903c0052bc927245a4a842f9f05ea665fce784"
-    },
-    {
       "path": "frontend/public/icons/stackitdns-brand.png",
       "source": "https://stackit.com/de (STACKIT published brand artwork)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "092d32e15b6d63fd656797eddbd98c40aeb804abef7a3cda8babde2d390eb31a"
     },
     {
-      "path": "frontend/public/icons/stackitdns.svg",
-      "source": "https://github.com/noclickapp/noclick-cloud/commit/17c4bc706df18a069bfe25a9799c5dde54060850 (STACKIT mark supplied by the original integration)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "c117f2693292365162077e9b61d910ec737a2cd223b7adf30b8f4d4b508fa0bd"
-    },
-    {
       "path": "frontend/public/icons/statuspal.png",
       "source": "https://www.statuspal.io/favicon/apple-touch-icon.png (unmodified official StatusPal touch icon; byte-for-byte verified)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "189a1006eca506a7b82f84f622703a6c45f8d965038dd84d960955b449c01684"
-    },
-    {
-      "path": "frontend/public/icons/statuspal-brand-vector.svg",
-      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/statuspal.svg (Statuspal path unchanged; SVG wrapper adds dimensions)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "a728d9ef7c5a2f66f4d380fbaa645ab11c05d65c4ff701447de627f3bdded549"
     },
     {
       "path": "frontend/public/icons/statuspal.provenance.md",
@@ -1346,12 +1220,6 @@
       "source": "https://getstream.io/ (Chat navigation link product mark)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "98da32f528baec2bf83b08fc258415568719f11d44d385bd0022ff875fa9a70d"
-    },
-    {
-      "path": "frontend/public/icons/supernormal.svg",
-      "source": "https://mintcdn.com/supernormal/CyH9SFd6gs3Z71rV/logo/dark.svg (Supernormal official API documentation logo; isolated brand symbol with currentColor fill and local clip ID)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "3ea7a71fd59ce63062185e5e42ea4eb5d2a4a88243572ee16f022ba257d4f3b2"
     },
     {
       "path": "frontend/public/icons/talkjs.svg",
@@ -1408,12 +1276,6 @@
       "sha256": "d3d459dc09d6eed04e6a8283409e6b5e930d2625b0b9cc505a8b9ea937558135"
     },
     {
-      "path": "frontend/public/icons/websupport-preferred-brand.svg",
-      "source": "https://www.websupport.sk/ (Websupport brand artwork; imported by integration commits 013f7959945c75957d557d9d3cb057d3a2c54820, 1eebed27fbd9c830f39e190ec00e56d8990d578d and b3fa4b6a721a0ee303a9212e8b04592df603946d)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "a5606c77772bd9dbb192d76930d44fce4335f39f92af5cf1577a2fd2b060b423"
-    },
-    {
       "path": "frontend/public/icons/websupport.svg",
       "source": "https://www.websupport.sk/ (Websupport brand artwork; imported by integration commits 013f7959945c75957d557d9d3cb057d3a2c54820, 1eebed27fbd9c830f39e190ec00e56d8990d578d and b3fa4b6a721a0ee303a9212e8b04592df603946d)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -1430,12 +1292,6 @@
       "source": "https://developer.dnsimple.com/v2/ (original inline DNSimple Developer logo)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "2a8a240ea91e04789add9baa5431fc9587af29eedd2fb741af18a4c390b3b259"
-    },
-    {
-      "path": "frontend/public/icons/dnsimple-brand-vector.svg",
-      "source": "https://dnsimple.com (official pinned-tab vector brand mark; source recorded in commit 57928082f)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "267a052c14f44c17cb7b455f8f0a49f397059f8cd0e7797c8861852f3399a869"
     },
     {
       "path": "frontend/public/icons/dnsimple-brand.png",

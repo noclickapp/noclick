@@ -1,16 +1,17 @@
 {
   "path": "frontend/public/icons/recraft-dark.svg",
-  "source": "https://www.dropbox.com/scl/fi/2zei1mcz58oeat53u8xk0/Recraft_pr_assets.zip?rlkey=slpc98pjwk99np74ul17st1fk (entry Recraft_assets/Recraft Logos/Svg/logo Black.svg)",
-  "found_at": "https://www.recraft.ai/press-releases ('recraft_assets.zip' link)",
-  "source_kind": "brand kit",
-  "retrieved": "2026-11-10",
+  "source": "https://static.recraft.ai/apps/images/home/logo.svg",
+  "found_at": "https://www.recraft.ai/ (header <a aria-label=\"Recraft home\"><img src=.../home/logo.svg>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "cropped the viewBox to the mark (pad 0.02)",
+    "cropped the viewBox to the R (pad 0.02)",
     "cleaned",
-    "black -> #FFFFFF on the 'R' (element 0), which vanishes on the dark tile"
+    "light file: rgb(255,255,255) -> #000000 on the R (element 0), black as on Recraft's light surfaces",
+    "none: the dark file is the header logo's white R as published (cropped, cleaned)"
   ],
   "variant": "dark mode",
-  "notes": "DECISION: I shipped the bare R (black on light, white on dark) rather than the kit's app-icon tile 'Icon White' (white R on a black rx=115 tile): that tile is the brand's own, but on NoClick's dark tile it disappears (icon_check lost_dark 0.75), leaving a floating white R anyway. If the reviewer prefers the tile, use src2/Icon_White.svg as is.",
+  "notes": "DECISION: the brand is monochrome (it would be 'monochrome-brand'), but the current files use the press kit's blocky R (Recraft_pr_assets.zip, 'logo Black.svg', June 2025), which is NOT the R on recraft.ai today: the site header and app icon use a rounder R. These finals replace it with the site's current R, black on light and white on dark. Keep the current files if you prefer the press-kit drawing.",
   "license": "Recraft brand mark, used nominatively to identify the connected service; trademark rights remain with Recraft.",
-  "sha256": "f53332b17df3775c5b7e1452f20495deb2fc2534cab5606ba90cb0af0a32302a"
+  "sha256": "88f0f552fc53eee15b20ab658fd75dd4e27f1cfdcec0915abd4b08d142f591e2"
 }

@@ -7,7 +7,7 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://parcellab.com
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <ThemedBrandImg light="/icons/parcellab-brand-vector.svg" dark="/icons/parcellab-brand-vector-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/parcellab-brand-vector.svg" className={className} style={style} />
 );
 
 export const ParcelLabNode: NodeDefinition = {

@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const ActionstepIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/actionstep.svg" dark="/icons/actionstep-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/actionstep.svg" className={className} style={style} />
 );
 
 export const ActionstepNode: NodeDefinition = {

@@ -1,18 +1,17 @@
 {
   "path": "frontend/public/icons/smartsheet-preferred-brand-dark.svg",
-  "source": "https://www.smartsheet.com/sites/default/files/smartsheet-logo-blue-new.svg",
-  "found_at": "https://www.smartsheet.com/ (global nav header logo <img alt=\"Smartsheet Logo\">)",
-  "source_kind": "company site (header logo)",
-  "retrieved": "2026-11-10",
+  "source": "https://developers.smartsheet.com/assets/smartsheet-favicon-16x16.bf0c47badf7cf30c36d31ccaa39dbae23262c622253f8f3dbbdfeb90cf8d1950.9c1bb791.svg",
+  "found_at": "https://developers.smartsheet.com/ (<link rel=\"icon\"> of Smartsheet's developer portal)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "kept the navy check mark (element 10); removed the \"smartsheet\" wordmark",
-    "cropped the viewBox to the mark",
-    "removed the Illustrator comment",
-    "no white rect (the current file's white square is not in the source)",
-    "#0E2947 -> #FFFFFF on the mark (element 0); the check counter stays open"
+    "light file: removed the favicon's white fill behind the check (element 0), so the check is the open cut-out as in the logo",
+    "cropped the viewBox with 2% padding",
+    "cleaned",
+    "dark file: the favicon unchanged (navy #003059 sheet with its own white check fill), cropped and cleaned the same way; no recolouring"
   ],
   "variant": "dark mode",
-  "notes": "No white Smartsheet logo is published on the site, hence the recoloured dark file. The 2022 horizontal logo (src2) has the same mark in #041C4E; brandfolder.com/portals/smartsheet-brand (Smartsheet's brand portal) is a JS app I could not read.",
+  "notes": "The dark file keeps the navy: the white check carries it on the dark tile and the navy sheet reads as a dark-blue shape around it. The navy is the app icon's #003059 rather than the header's #0E2947 (Smartsheet uses both).",
   "license": "Smartsheet brand mark, used nominatively to identify the connected service; trademark rights remain with Smartsheet.",
-  "sha256": "35840fb14e9ec27eb9513e7fc165fb0eaea7826eb4863644719b35eb86a95543"
+  "sha256": "12e8fdf003402b1f0d681f739c8aed574386bb81198b1b3abd502db20ba47cd1"
 }

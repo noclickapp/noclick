@@ -1,16 +1,17 @@
 {
   "path": "frontend/public/icons/thecompaniesapi-dark.svg",
-  "source": "https://www.thecompaniesapi.com/images/bases/BaseEmblem/emblem-dark.svg",
+  "source": "https://www.thecompaniesapi.com/images/bases/BaseEmblem/emblem-light.svg",
   "found_at": "https://www.thecompaniesapi.com/ (the site's emblem component, <img src=/images/bases/BaseEmblem/emblem-light.svg> and emblem-dark.svg)",
   "source_kind": "company site (header logo)",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "cropped the viewBox to the emblem with 2% padding",
+    "the light emblem as published (indigo #4C51BF + slate #2D3748)",
+    "cropped the viewBox with 2% padding",
     "cleaned",
-    "used the company's own dark-theme emblem (both halves white), cropped the same way"
+    "#2D3748 -> #FFFFFF on the slate half (element 1), which vanishes on the dark tile; the indigo half (element 0) keeps #4C51BF, which reads on the dark tile"
   ],
   "variant": "dark mode",
-  "notes": "DECISION: the company's own dark emblem is all white (its dark header logo is too), so the indigo half is lost on the dark theme. If the reviewer prefers to keep the indigo, recolour only #2D3748 -> #FFFFFF in the light emblem instead.",
+  "notes": "The light file is unchanged from the current one. The company's own dark emblem is all white; the new dark file departs from it on purpose to keep the indigo (Dhruv's colour rule 3).",
   "license": "The Companies API brand mark, used nominatively to identify the connected service; trademark rights remain with The Companies API.",
-  "sha256": "4fdab5896ce80f0d51252ee2e8821d76dfbeb7d57cbc2abcf69c1732c79e802f"
+  "sha256": "95840075046383019f4371f3ebaa38f51b223f30fad30be4ac30b81e6d61934f"
 }

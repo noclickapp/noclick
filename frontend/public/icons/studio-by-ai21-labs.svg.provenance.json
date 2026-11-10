@@ -1,17 +1,15 @@
 {
   "path": "frontend/public/icons/studio-by-ai21-labs.svg",
   "source": "https://www.ai21.com/wp-content/uploads/2026/02/ai21-logo-footer.svg",
-  "found_at": "https://www.ai21.com/ (footer logo; studio.ai21.com now redirects to ai21.com)",
+  "found_at": "https://www.ai21.com/ (footer logo: the same square tile + 'a', drawn black)",
   "source_kind": "company site (header logo)",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "removed the black square tile behind the letter (element 0)",
-    "cropped the viewBox to the 'a'",
-    "stripped editor metadata",
-    "light file: white -> #000000"
+    "recoloured the tile (element 0) black -> #E72164, AI21's pink: the exact colour of its favicon/apple-touch tile (231,33,100) and the pink its site CSS uses (btn--pink, ::selection, main.min.css)",
+    "viewBox set to the tile (pad 0: the tile is the app icon)",
+    "cleaned"
   ],
-  "variant": "light mode",
-  "notes": "DECISION: AI21's logo is the 'AI21' wordmark (the current PNG), so this uses its own icon mark, the single 'a' from its footer/favicon. The site shows that 'a' in a tile, black in the footer SVG and pink in the PNG favicon; I dropped the tile and ship a black 'a' for light and a white 'a' for dark. If the tile should stay, the footer file can ship as-is (black tile, white 'a'), though the black tile disappears on the dark theme; no SVG of the pink favicon tile exists.",
+  "notes": "DECISION: AI21's coloured app icon exists only as a bitmap; no SVG of the pink tile exists (site, docs.ai21.com Mintlify assets, AI21Labs GitHub). This final is AI21's own footer SVG with its tile recoloured to AI21's own pink (#E72164, from its favicon and CSS), so the colour is the brand's, not chosen, but the file as a whole was assembled by that one recolour: confirm or keep the current black/white 'a'. The coloured tile works in both themes (one file).",
   "license": "AI21 Labs brand mark, used nominatively to identify the connected service; trademark rights remain with AI21 Labs.",
-  "sha256": "a8dd78bdfc47de0c06eba1709f0ace8a3d819e6f3acdb97976b917ede177af76"
+  "sha256": "31d08c7f71771977a19cd145997ce4a52a562b2a29d6c961274e10935b724434"
 }

@@ -3,13 +3,14 @@
   "source": "https://www.thecompaniesapi.com/images/bases/BaseEmblem/emblem-light.svg",
   "found_at": "https://www.thecompaniesapi.com/ (the site's emblem component, <img src=/images/bases/BaseEmblem/emblem-light.svg> and emblem-dark.svg)",
   "source_kind": "company site (header logo)",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "cropped the viewBox to the emblem with 2% padding",
+    "the light emblem as published (indigo #4C51BF + slate #2D3748)",
+    "cropped the viewBox with 2% padding",
     "cleaned"
   ],
   "variant": "light mode",
-  "notes": "DECISION: the company's own dark emblem is all white (its dark header logo is too), so the indigo half is lost on the dark theme. If the reviewer prefers to keep the indigo, recolour only #2D3748 -> #FFFFFF in the light emblem instead.",
+  "notes": "The light file is unchanged from the current one. The company's own dark emblem is all white; the new dark file departs from it on purpose to keep the indigo (Dhruv's colour rule 3).",
   "license": "The Companies API brand mark, used nominatively to identify the connected service; trademark rights remain with The Companies API.",
   "sha256": "1d954bdc98e82dda075e9092b08e9a94fdae147e292e4c66a67b23d061660881"
 }

@@ -1,17 +1,17 @@
 {
   "path": "frontend/public/icons/veryfi-dark.svg",
-  "source": "https://cdn.veryfi.com/wp-content/themes/veryfi_2.0/assets/Veryfi-Logos-Media-Pack.zip (Veryfi Logos Zip/LogoMark/V_LogoMark__White.svg)",
+  "source": "https://cdn.veryfi.com/wp-content/themes/veryfi_2.0/assets/Veryfi-Logos-Media-Pack.zip (Veryfi Logos Zip/LogoMark/V_LogoMark__Darkmode_Green.svg)",
   "found_at": "https://www.veryfi.com/brand/ (media pack download)",
   "source_kind": "brand kit",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "none to the drawing: the kit's LogoMark file is the navy (#171C3A) V alone",
-    "cropped the viewBox to the V with 2% padding",
+    "light file: the kit's Navy V as published (unchanged from the current file)",
+    "cropped the viewBox with 2% padding",
     "cleaned",
-    "dark file is the kit's own white V (LogoMark/V_LogoMark__White.svg), cropped and cleaned the same way"
+    "dark file: the kit's own Darkmode Green V (V_LogoMark__Darkmode_Green.svg, #00FA6C, same geometry as the Navy V), cropped and cleaned the same way; no recolouring"
   ],
   "variant": "dark mode",
-  "notes": "DECISION: the same media pack (dated 2025-12) also has a green V for light mode (#00AA00, V_LogoMark__Lightmode_Green.svg) and dark mode (#00FA6C, V_LogoMark__Darkmode_Green.svg). I used navy/white because the site icon, the header logo and the brand page's lead logo are navy; the green pair is a drop-in swap if the reviewer prefers it.",
+  "notes": "DECISION: the V changes colour between themes (navy in light, the kit's dark-mode green in dark), because the brand's only coloured version for dark backgrounds is green. If you'd rather it stay one colour family, the kit's Lightmode Green V (#00AA00, V_LogoMark__Lightmode_Green.svg; passes icon_check on light) pairs with the same dark file; navy stays the brand's primary logo colour.",
   "license": "Veryfi brand mark, used nominatively to identify the connected service; trademark rights remain with Veryfi.",
-  "sha256": "70b05cf14cd50216d0ee340806c3f09a593374317e7889dfede6cedb164342c3"
+  "sha256": "79e14d3e900dcc876a32d40ebf6295367ba1918347da240d58d78a1cf248d660"
 }

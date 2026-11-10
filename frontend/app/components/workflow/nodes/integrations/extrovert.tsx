@@ -2,11 +2,12 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 
 const ExtrovertIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/extrovert.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <ThemedBrandImg {...props} light="/icons/extrovert.svg" dark="/icons/extrovert-dark.svg" ref={ref} className={className} style={{ ...style, objectFit: 'contain' }} />
     ),
 );
 ExtrovertIcon.displayName = 'ExtrovertIcon';

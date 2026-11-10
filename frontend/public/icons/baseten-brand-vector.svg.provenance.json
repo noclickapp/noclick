@@ -1,12 +1,14 @@
 {
   "path": "frontend/public/icons/baseten-brand-vector.svg",
-  "source": "https://www.baseten.co (provider brand vector, carried from noclickapp/noclick4#2478 commit 2058245129a3d8d774c91ce5a962460c9e037554)",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "source": "https://github.com/basetenlabs/baseten-switch/blob/dca111a707d2b3b026d37c62813fe02c848f8fcd/mac/BasetenSwitch/Assets/AppIcon.svg",
+  "found_at": "https://github.com/basetenlabs/baseten-switch (Baseten's own macOS app, org basetenlabs; file committed 2026-07-27)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-11",
   "edits": [
-    "none: the source file as published"
+    "cropped the viewBox to the tile (dropped the transparent 54-unit margin around it; no pad, it is an app-icon tile)",
+    "cleaned"
   ],
-  "variant": "light mode",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "1770bb14344be1cb30d4330f7caa0c378aeba291678108f483af01e94d4e9635"
+  "notes": "DECISION: the only official SVG with Baseten's colour is this app icon, whose tile is #16D766, a shade darker than the #19E76E of the website favicon and site CSS. Shipped as published; if you prefer the website green, `svgtool recolor ... \"#16D766=#19E76E\"` is a one-line change. The bare mark in Baseten's header and docs is near-black (monochrome); the colour lives in its app icon / favicon tile, which is why the tile is kept (icon_check notes it).",
+  "license": "Baseten brand mark, used nominatively to identify the connected service; trademark rights remain with Baseten.",
+  "sha256": "bbf1e1d702be4e469e53d1a37d3585301fca2af714d188e5946285dafe0510c1"
 }

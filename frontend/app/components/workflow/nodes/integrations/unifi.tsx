@@ -7,7 +7,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const UnifiIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <ThemedBrandImg light="/icons/unifi.svg" dark="/icons/unifi-dark.svg" className={className} style={style} {...props} ref={ref} />
+        <ThemedBrandImg {...props} light="/icons/unifi.svg" className={className} style={style} ref={ref} />
     ),
 );
 UnifiIcon.displayName = 'UnifiIcon';

@@ -8,7 +8,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const SpeechmaticsIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <ThemedBrandImg light="/icons/speechmatics.svg" dark="/icons/speechmatics-dark.svg" className={className} style={style} {...props} ref={ref} />
+        <ThemedBrandImg {...props} light="/icons/speechmatics.svg" className={className} style={style} ref={ref} />
     ),
 );
 SpeechmaticsIcon.displayName = 'SpeechmaticsIcon';

@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const IterableIcon = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <ThemedBrandImg light="/icons/iterable-preferred-brand.svg" dark="/icons/iterable-preferred-brand-dark.svg" className={className} style={style} {...props} ref={ref} />
+        <ThemedBrandImg {...props} light="/icons/iterable-preferred-brand.svg" dark="/icons/iterable-preferred-brand-dark.svg" className={className} style={style} ref={ref} />
     ),
 );
 IterableIcon.displayName = 'IterableIcon';

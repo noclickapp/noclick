@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const BlinqIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/blinq.svg" dark="/icons/blinq-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/blinq.svg" className={className} style={style} />
 );
 
 export const BlinqNode: NodeDefinition = {

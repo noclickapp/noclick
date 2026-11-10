@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const TelnyxIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/telnyx.svg" dark="/icons/telnyx-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/telnyx.svg" className={className} style={style} />
 );
 
 export const TelnyxNode: NodeDefinition = {

@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const GetTheReferralIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/get-the-referral.svg" dark="/icons/get-the-referral-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/get-the-referral.svg" className={className} style={style} />
 );
 
 export const GetTheReferralNode: NodeDefinition = {

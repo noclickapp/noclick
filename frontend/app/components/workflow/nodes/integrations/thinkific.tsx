@@ -12,7 +12,7 @@ const ThinkificIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <ThemedBrandImg light="/icons/thinkific.svg" dark="/icons/thinkific-dark.svg" className={className} style={style} {...props} ref={ref} />
+    <ThemedBrandImg {...props} light="/icons/thinkific.svg" dark="/icons/thinkific-dark.svg" className={className} style={style} ref={ref} />
 ));
 ThinkificIcon.displayName = 'ThinkificIcon';
 

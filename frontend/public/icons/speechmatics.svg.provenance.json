@@ -3,14 +3,13 @@
   "source": "https://www.speechmatics.com/_next/static/media/SM-Logo-main.b945b6cd.svg",
   "found_at": "https://www.speechmatics.com/ and https://www.speechmatics.com/brand (the site's own logo files)",
   "source_kind": "company site (header logo)",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
     "removed the 'SPEECHMATICS' wordmark (element 0)",
-    "cropped the viewBox to the symbol",
-    "stripped editor metadata"
+    "cropped the viewBox to the symbol (2% pad)",
+    "cleaned"
   ],
-  "variant": "light mode",
-  "notes": "The brand page's own 'SVG' downloads (static/assets/logos/logo_speechmatics_black.svg / _white.svg) only wrap a PNG pattern, so they were not used; the site's SM-Logo files are real vectors. The white logo's symbol is drawn very slightly differently (ring a touch thicker) from the teal one; the light file alone passes icon_check on dark, but teal on near-black is low-contrast, so the dark file uses Speechmatics' own white version.",
+  "notes": "The current dark file is Speechmatics' white logo. The teal passes icon_check on the dark tile (lost_dark 0), so by rule 3 it stays teal: one file for both themes. DECISION: contrast on the dark tiles is low (1.6:1 on #111). If that's too faint, the current white dark file (SM-Logo-White, the brand's own dark-background logo) is the alternative; the app icon tile is PNG only.",
   "license": "Speechmatics brand mark, used nominatively to identify the connected service; trademark rights remain with Speechmatics.",
   "sha256": "57e178620a2f3a0258385668197babd4e155f01aae785da78a2e3baceafba6a6"
 }

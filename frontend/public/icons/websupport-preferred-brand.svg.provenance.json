@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/websupport-preferred-brand.svg",
+  "source": "https://www.websupport.sk/",
+  "found_at": "https://www.websupport.sk/ (header <svg class=\"svg-icon logo__small fill-navy text-navy dark:text-white dark:fill-white\">; .text-navy = rgb(44,56,67) in app.css / tw-utils.css; <meta name=\"theme-color\" content=\"#2c3843\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "took the header's standalone mark (logo__small: full ring with the w), not the big lockup's symbol",
+    "painted the unpainted path #2C3843, the colour the site's fill-navy class gives it",
+    "cropped the viewBox with 2% padding",
+    "cleaned (dropped the CSS class attribute)"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: #2C3843 is a dark slate that Websupport's own CSS names \"navy\"; it reads close to black. If Dhruv counts it as grey, this is monochrome-brand instead and only the cleaner standalone mark (full ring, no white tile) is the gain. Its SVG favicon (/favicon.svg) is a potrace auto-trace, not used; the navy-disc app icon exists only as PNG.",
+  "license": "Websupport brand mark, used nominatively to identify the connected service; trademark rights remain with Websupport.",
+  "sha256": "8d2a9721702e65ed31d237550d5a8e2ab69072bd9777064b6d4d9927559a5944"
+}

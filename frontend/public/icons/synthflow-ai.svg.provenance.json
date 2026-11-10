@@ -1,12 +1,14 @@
 {
   "path": "frontend/public/icons/synthflow-ai.svg",
-  "source": "https://cdn.prod.website-files.com/67558e246490829b0a44ad8e/6ae9bd02dbac69872aa394e0_img-systems-hub-mark.svg",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "source": "https://drive.google.com/uc?export=download&id=1zYAzOopVitokdY4RxHdoUMY6DC0Df3xD",
+  "found_at": "https://synthflow.ai/brand ('Download brand assets' -> public Drive folder 'Synthflow Logomark', file Synthflow-AI-logomark-violet.svg)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-11",
   "edits": [
-    "none: the source file as published"
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
   ],
-  "variant": "light mode",
-  "license": "Synthflow trademark; official website asset used to identify the Synthflow AI integration",
-  "sha256": "c9ad14607f1e05289bb554b560ff71994ab04047d6fa034b423d266f33b5df0d"
+  "notes": "The current light file is the site's 'systems hub' mark in Midnight Purple #110229 (near-black), and the dark file recoloured it white, so the violet never showed. The violet '.S' reads on both tiles; the disc version (favicon) exists only as PNG/EPS in the kit.",
+  "license": "Synthflow brand mark, used nominatively to identify the connected service; trademark rights remain with Synthflow.",
+  "sha256": "b9884e3044b8756bb8ee0a828f3cd8606113c8b713abe615f486b005c60a2c45"
 }

@@ -7,7 +7,7 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Statuspal path from Simple Icons; see statuspal.provenance.md.
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <ThemedBrandImg light="/icons/statuspal-brand-vector.svg" dark="/icons/statuspal-brand-vector-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/statuspal-brand-vector.svg" className={className} style={style} />
 );
 
 const StatusPalIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(

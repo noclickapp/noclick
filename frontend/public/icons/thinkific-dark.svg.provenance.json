@@ -1,12 +1,17 @@
 {
   "path": "frontend/public/icons/thinkific-dark.svg",
-  "source": "https://www.thinkific.com/partner-marketing-kit/ \u2192 Logo pack https://drive.google.com/file/d/15YtGz4sGUcEgeQZUM5BgMuLBh8CWdl8a/view; unmodified 01 Logos/Thinkific/01 Icon/01 Digital (RGB)/SVG/thinkific-mark-rooted-rgb.svg",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "source": "https://www.thinkific.com/wp-content/themes/thinkific/assets/images/logo-white.svg",
+  "found_at": "https://www.thinkific.com/ (header <img src=.../assets/images/logo-dark.svg>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "dark mode: #271526 -> #FFFFFF (and unpainted default-black shapes)"
+    "kept the mark's two paths (pill and dot, elements 0-1), removed the 'thinkific' wordmark paths",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "Thinkific's own logo for dark backgrounds (logo-white.svg, same geometry): kept the pill and dot (elements 0-1), removed the wordmark, cropped, cleaned; cream #F3F1EC as published"
   ],
   "variant": "dark mode",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "89d708c6294ed98ef16fb364415144eb21c4086546617e4de1b8f09f02168ba5"
+  "notes": "DECISION: the plum #271526 vanishes on the dark tile and Thinkific has no coloured dark-background version or app-icon tile; its own dark version is cream #F3F1EC, which replaces the current #FFFFFF recolour (a near-identical look, but Thinkific's own file and colour). The light file is the same plum mark as before, now taken from the header logo so both themes come from one pair; if Dhruv prefers keeping the logo pack's standalone mark for light, the current thinkific.svg is equivalent.",
+  "license": "Thinkific brand mark, used nominatively to identify the connected service; trademark rights remain with Thinkific.",
+  "sha256": "7bcc2234d8693947b74d3a9fac3cafcd9c9cab3d5cf6f9d638b2458f093d3229"
 }

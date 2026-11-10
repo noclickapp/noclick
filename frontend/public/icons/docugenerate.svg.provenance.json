@@ -1,16 +1,14 @@
 {
   "path": "frontend/public/icons/docugenerate.svg",
   "source": "https://www.docugenerate.com/favicon.svg",
-  "found_at": "https://app.docugenerate.com/ and https://api.docugenerate.com/ (<link rel=\"icon\"> SVG favicon; the app serves the identical file at /favicon.svg)",
+  "found_at": "https://www.docugenerate.com/ (<link rel=icon type=image/svg+xml>)",
   "source_kind": "company site (SVG favicon)",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "none to the drawing: the favicon is the three stacked documents with text lines alone, in #0D47A1",
-    "cropped the viewBox to the mark",
-    "stripped editor metadata"
+    "none to the drawing: the current light file (the favicon, viewBox padded to the mark) now serves both themes",
+    "dropped docugenerate-dark.svg"
   ],
-  "variant": "light mode",
-  "notes": "The deep blue reads on the dark tile (icon_check: nothing lost) but is dim there; if the reviewer wants more contrast in dark mode, DocuGenerate's own white version of the mark is in its header logo (downloads/docugenerate/src2/logo.svg, elements 0-7).",
+  "notes": "DECISION: #0D47A1 is readable but dim on the dark tile (about 2.1:1 on #111). If Dhruv wants more contrast there, DocuGenerate's own white mark is in its header logo (downloads/docugenerate/src2/logo.svg, the current dark file); the colour rule says keep the blue.",
   "license": "DocuGenerate brand mark, used nominatively to identify the connected service; trademark rights remain with DocuGenerate.",
   "sha256": "b0d720694e378deb90ca952ac01266bd9dc4ef9a1b337ab6a441429a10e38eb7"
 }

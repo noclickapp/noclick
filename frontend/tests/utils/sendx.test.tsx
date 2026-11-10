@@ -71,7 +71,7 @@ describe('SendX metadata and editor', () => {
         expect(SendXNode.type).toBe(type);
         expect(renderToStaticMarkup(<Icon />)).toContain('src="/icons/sendx.svg"');
         const sha = createHash('sha256').update(readFileSync(resolve(__dirname, '../../public/icons/sendx.svg'))).digest('hex');
-        expect(sha).toBe('13275b500ea61bf633a153025b131584a8afdfef18474babeb14ba859cd9aa25');
+        expect(sha).toBe('05ae01767b3fb938e5fd5c0a746f16f06128959b5706bea0578f53034988e6f1');
         expect(JSON.parse(readFileSync(resolve(__dirname, '../../public/icons/sendx.svg.provenance.json'), 'utf8')).sha256).toBe(sha);
     });
 });

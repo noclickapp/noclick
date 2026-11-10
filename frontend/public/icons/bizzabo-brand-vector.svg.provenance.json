@@ -1,12 +1,16 @@
 {
   "path": "frontend/public/icons/bizzabo-brand-vector.svg",
-  "source": "https://bizzabo.com",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "source": "https://www.bizzabo.com/resources/Bizzabo_External_Media_Kit.zip (External Media Kit/Bizzabo-Brand-Guidelines_Media.pdf, page 9 \"Dynamic logo variations\": the \"Social media combination\")",
+  "found_at": "https://www.bizzabo.com/press",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-11",
   "edits": [
-    "none: the source file as published"
+    "converted page 9 of the kit's brand-guidelines PDF (Adobe InDesign vector output, downloads/bizzabo/src5/kit/Bizzabo-Brand-Guidelines_Media.pdf) to SVG with `pdftocairo -svg -f 9 -l 9`: a format conversion of the PDF's own path operators, no tracing",
+    "kept only the yellow circle (element 56, a <use> of a four-curve #FFF000 path) and the B squiggle (element 57, #1A1A1A); dropped the rest of the page",
+    "cropped the viewBox with a 2% pad",
+    "cleaned"
   ],
-  "variant": "light mode",
-  "license": "Bizzabo brand mark, used nominatively to identify the service; trademark rights remain with its owner.",
-  "sha256": "f9d7c5edc4648bf1eb9c334adf33a32e592bcb6cc7ba5ce8709a99ef9d4182aa"
+  "notes": "Bizzabo's bare mark is #1A1A1A/white, but its favicon, social avatar and app icon all put the B on #FFF000, so the brand is coloured. The press kit has only PNGs and the guidelines PDF; the circle and B are real vectors in the PDF. DECISION: the SVG comes from a pdftocairo conversion of the brand-guidelines PDF, the only vector of the yellow mark; confirm you accept that as a brand-kit source. The file still carries the PDF page's unused font-glyph <defs> (about 38 KB, draws nothing): svgtool has no prune, so I left them rather than hand-edit. The circle (not a square tile) is what the website favicon uses. Note: bizzabo.com answers 520 to curl with a full Chrome user-agent; a plain \"Mozilla/5.0\" works.",
+  "license": "Bizzabo brand mark, used nominatively to identify the connected service; trademark rights remain with Bizzabo.",
+  "sha256": "ee07e3d0bb6c962ba8ce52fb2ccc01eb1d441f4244903ee5e31932d1320bf8e9"
 }

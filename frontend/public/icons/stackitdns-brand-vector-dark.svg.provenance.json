@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/stackitdns-brand-vector-dark.svg",
+  "source": "https://docs.stackit.cloud/favicon.svg",
+  "found_at": "https://docs.stackit.cloud/ (<link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\">)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "neutralised the favicon's prefers-color-scheme: dark rule (#fff -> #0A1E2D in its <style>) so the light file always draws navy",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "#0A1E2D -> #FFFFFF in the <style> (the favicon's own dark-scheme colour), cropped and cleaned the same way"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: STACKIT's colour is a near-black navy (#0A1E2D); its own logo file calls it 'Navyblue', so per the colour rule it's kept in light mode, and dark mode is white, which is what STACKIT itself shows on dark. The current file is the white S alone shipped for both themes, so it vanished on the light tile (vanishes-light); this fixes that. stackit-git's favicon (a Forgejo instance in the same org) uses teal #045462, which stackit.de and the docs don't use: not adopted. stackit.de's favicon/apple-touch PNGs sit behind a bot wall (they answer HTML).",
+  "license": "STACKIT brand mark, used nominatively to identify the connected service; trademark rights remain with STACKIT.",
+  "sha256": "58b2f5be2d7dee039ae52b55b40106dcf0b18594e1757b5b9dc2b0738e24b1c6"
+}

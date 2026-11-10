@@ -1,16 +1,17 @@
 {
   "path": "frontend/public/icons/batchdialer.svg",
   "source": "https://app.batchdialer.com/img/new-logo.svg",
-  "found_at": "https://app.batchdialer.com/ (app bundle static/js/CZnG2GsW.js: the sidebar-brand icon <img src=\"/img/new-logo.svg\" className=\"sidebar-brand__icon\">)",
+  "found_at": "https://app.batchdialer.com/ (app bundle static/js/CZnG2GsW.js: <img src=\"/img/new-logo.svg\" className=\"sidebar-brand__icon\">)",
   "source_kind": "company app/login page",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
     "none to the drawing (new-logo.svg is the mark alone)",
     "cropped the viewBox to the mark",
-    "cleaned"
+    "cleaned",
+    "(identical to the current batchdialer.svg)"
   ],
   "variant": "light mode",
-  "notes": "The mark is naturally wide (about 2.3:1); icon_check's wordmark-shape flag is its shape, there is no text in it. The app's other small icon, /img/logo1.svg (a plain two-tone B), is BatchLeads' logo in the product switcher, not BatchDialer's. The app's safari-pinned-tab.svg is a potrace trace and was not used.",
+  "notes": "DECISION: the navy half (top of the B and its dots) is dim on dark (1.52:1 on #18181b). Options: (1) this single coloured file; (2) navy to white in dark only, keeping the #3683BC blue: work/agents/c-lost1/alt/batchdialer-dark-navy-to-white.svg (derives from new-logo.svg, passes icon_check dark); (3) BatchDialer's own all-white dark logo (the current dark file). Delete batchdialer-dark.svg if (1) ships. icon_check's wordmark-shape flag is the mark's own 2.3:1 shape; there is no text in it. APPLIED: option (2), navy to white in dark only, keeping the blue.",
   "license": "BatchDialer brand mark, used nominatively to identify the connected service; trademark rights remain with BatchDialer.",
   "sha256": "0f07f2562748bcb81a5ed9197fc5ab8e09350b7fdf8393ff43eb80595e944da5"
 }

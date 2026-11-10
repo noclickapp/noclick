@@ -11,7 +11,7 @@ const CoinMarketCapIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <ThemedBrandImg light="/icons/coinmarketcap.svg" dark="/icons/coinmarketcap-dark.svg" className={className} style={style} {...props} ref={ref} />
+    <ThemedBrandImg {...props} light="/icons/coinmarketcap.svg" className={className} style={style} ref={ref} />
 ));
 CoinMarketCapIcon.displayName = 'CoinMarketCapIcon';
 

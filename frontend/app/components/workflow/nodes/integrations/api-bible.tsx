@@ -6,7 +6,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const ApiBibleIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <ThemedBrandImg light="/icons/api-bible.svg" dark="/icons/api-bible-dark.svg" className={className} style={style} {...props} ref={ref} />
+        <ThemedBrandImg {...props} light="/icons/api-bible.svg" className={className} style={style} ref={ref} />
     ),
 );
 ApiBibleIcon.displayName = 'ApiBibleIcon';

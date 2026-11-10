@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/skyvia-preferred-brand.svg",
+  "source": "https://skyvia.com/assets/img/sprite.svg (symbol id=\"logo\")",
+  "found_at": "https://skyvia.com/ (header and footer <svg class=\"icon icon-logo\"><use xlink:href=\"/assets/img/sprite.svg#logo\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "copied the sprite's #logo symbol into a standalone svg with its own viewBox 0 0 133 32 (downloads/skyvia/src4/sprite-logo-symbol.svg)",
+    "re-spaced its compressed arc flags so the compound path parses (work/agents/c-bw12/tools/respace_arcs.py; renders pixel-identical, work/agents/c-bw12/skyvia-sp.svg)",
+    "kept the cloud's subpaths 8-12, dropped the 'skyvia' wordmark subpaths 0-7",
+    "filled #277DFF, the colour the site CSS gives the logo (the symbol has no fill of its own)",
+    "cropped the viewBox to the cloud (2% pad)",
+    "cleaned"
+  ],
+  "notes": "The current file drew the sprite symbol unfilled, so it rendered default black, and added a white tile icon_check flags. The blue passes on both tiles (4.9:1 on #111, 3.8:1 on white), so it is one file. svgtool's derive can't parse the original's compressed arc flags, so derive was run against the pixel-identical re-spaced copy: all 5 parts derived.",
+  "license": "Skyvia brand mark, used nominatively to identify the connected service; trademark rights remain with Skyvia.",
+  "sha256": "6eab75690b02b0e3188d053e2e10be75d5db6ee07d1f625b0b85b5fa74f93608"
+}

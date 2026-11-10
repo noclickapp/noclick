@@ -12,7 +12,7 @@ const GorgiasIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <ThemedBrandImg light="/icons/gorgias.svg" dark="/icons/gorgias-dark.svg" className={className} style={style} {...props} ref={ref} />
+    <ThemedBrandImg {...props} light="/icons/gorgias.svg" className={className} style={style} ref={ref} />
 ));
 GorgiasIcon.displayName = 'GorgiasIcon';
 

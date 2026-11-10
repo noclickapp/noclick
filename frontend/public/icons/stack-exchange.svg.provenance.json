@@ -1,16 +1,15 @@
 {
   "path": "frontend/public/icons/stack-exchange.svg",
-  "source": "https://cdn.sstatic.net/Sites/stackexchange/Img/favicon.svg",
-  "found_at": "https://stackexchange.com/ (its favicon/apple-touch icon live under cdn.sstatic.net/Sites/stackexchange/Img/; the page's topbar and footer logo is the same symbol, svg-icon iconGlyphNew; page read through the Wayback snapshot of 2026-11-10 because stackexchange.com serves a Cloudflare challenge)",
-  "source_kind": "company site (SVG favicon)",
-  "retrieved": "2026-11-10",
+  "source": "https://stackoverflow.design/docs/public/brand/logo/symbol.svg",
+  "found_at": "https://stackoverflow.design/brand/logo (Stack Overflow's Stacks design system, Brand > Logo: the Symbol shown on its #FF5E00 field)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-11",
   "edits": [
-    "cropped the viewBox to the mark",
-    "stripped editor metadata",
-    "light file: the favicon's prefers-color-scheme:dark rule #ffffff -> #201c1d, so the light file stays Off-Black whatever the OS theme"
+    "kept both elements as published: the #FF5E00 field (element 0) and the #201C1D symbol (element 1)",
+    "viewBox set to a square around the symbol (266.259 11.090 433.009 433.009, from `svgtool crop --square --pad 0.29` on the symbol alone), so the field becomes the app icon's square tile with the symbol at the app icon's proportion (63% of the tile height, as in apple-touch-icon.png)",
+    "removed width/height; cleaned"
   ],
-  "variant": "light mode",
-  "notes": "DECISION: Stack Exchange has dropped its blue speech-bubble logo: stackexchange.com now uses Stack Overflow's 2025 'stack' symbol (its topbar logo and favicon), and calls the network 'Stack Overflow communities'. The current NoClick icon (cdn.sstatic.net/stackexchange/Img/apple-touch-icon.png) is the retired logo. The favicon decides its colour with a prefers-color-scheme rule; each file now pins one colour (light #201c1d, dark #FFFFFF) because NoClick's theme isn't the OS's.",
+  "notes": "One file for both themes: the brand's own app-icon tile (rule 2b), as the stack alone is Off-Black and the orange is the brand's. Alternative if you'd rather not have a tile: stackoverflow.co/favicon.svg, the bare stack in #FF5E00 (downloads/stack-exchange/src10/so-co-favicon.svg), reads on both themes too; that is Stack Overflow's company favicon rather than stackexchange.com's.",
   "license": "Stack Exchange (Stack Overflow) brand mark, used nominatively to identify the connected service; trademark rights remain with Stack Exchange (Stack Overflow).",
-  "sha256": "20cfe9b951d2a048d10f1ecaf5e87964d47f93f1baf12b3e36a5b8490e9fb746"
+  "sha256": "7b3d3a5bccde5b1a32a59a0c59759ad7aca2f37867444792eb567264a320ac6f"
 }

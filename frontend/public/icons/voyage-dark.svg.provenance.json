@@ -1,0 +1,19 @@
+{
+  "path": "frontend/public/icons/voyage-dark.svg",
+  "source": "https://www.voyageai.com/icon.svg",
+  "found_at": "https://www.voyageai.com/ (<link rel=\"icon\" href=\"/icon.svg\" type=\"image/svg+xml\"> and <link rel=\"apple-touch-icon\" href=\"/icon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "removed the white square (element 0) for light mode, keeping the V and its masked outline (elements 1-2)",
+    "cropped the viewBox to the V with 2% padding",
+    "cleaned",
+    "kept the whole favicon, white square included: it is Voyage's own app icon (the same file is its apple-touch-icon)",
+    "viewBox set exactly to the square (0 4 150 150), no padding",
+    "cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: the V is a single colour (#012E33), so it keeps that colour; it vanishes on the dark tile and Voyage has no dark-background V, so dark mode uses Voyage's own app icon (white square with the teal V), rule 2b. icon_check reports the dark file's white background: it is the app icon itself. Alternative (rule 2c) would be a white V in dark mode. Also note: since MongoDB bought Voyage, the site header shows MongoDB's leaf + \"Voyage AI\" in spring green #00ED64 (a lockup, and the leaf is MongoDB's mark); the V favicon is still Voyage's own mark.",
+  "license": "Voyage AI (by MongoDB) brand mark, used nominatively to identify the connected service; trademark rights remain with Voyage AI (by MongoDB).",
+  "sha256": "9743f1cde2d3f36189e3552f065ab5c3bac10abdc6a72151f117a448871ce354"
+}

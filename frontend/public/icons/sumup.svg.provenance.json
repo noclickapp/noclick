@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/sumup.svg",
+  "source": "https://static.sumup.com/favicons/favicon.svg",
+  "found_at": "https://www.sumup.com/ (SVG favicon with a prefers-color-scheme: dark variant; apple-touch-icon.png; header logo)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "light mode: the favicon's own colours (#03010F tile, white S); its prefers-color-scheme block removed"
+  ],
+  "variant": "light mode",
+  "notes": "SumUp's SVG favicon, with its own light and dark colours as two files. The previous file drew the S as a hole in a currentColor tile, so on the dark tile the S showed the dark background and the whole icon vanished.",
+  "license": "SumUp brand mark, used nominatively to identify the connected service; trademark rights remain with SumUp.",
+  "sha256": "e646a8f7e4fa78b2972fde0d796e80a29ac98f1cbded5008070d51a791362210"
+}

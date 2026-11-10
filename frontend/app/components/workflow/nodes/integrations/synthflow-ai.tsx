@@ -8,7 +8,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const SynthflowAiIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/synthflow-ai.svg" dark="/icons/synthflow-ai-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/synthflow-ai.svg" className={className} style={style} />
 );
 
 export const SynthflowAiNode: NodeDefinition = {

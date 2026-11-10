@@ -11,7 +11,7 @@ import { NodeDefinition } from '~/components/workflow/nodes/types';
 import type { CSSProperties as BrandCSSProperties } from 'react';
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <ThemedBrandImg light="/icons/setmore-brand.svg" dark="/icons/setmore-brand-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/setmore-brand.svg" className={className} style={style} />
 );
 
 export const SetmoreNode: NodeDefinition = {

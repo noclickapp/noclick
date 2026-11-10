@@ -1,16 +1,17 @@
 {
   "path": "frontend/public/icons/abyssale.svg",
   "source": "https://raw.githubusercontent.com/getabyssale/n8n-nodes-abyssale/HEAD/nodes/Abyssale/icons/abyssale-dark.svg",
-  "found_at": "https://github.com/getabyssale/n8n-nodes-abyssale (Abyssale's own n8n node, org getabyssale, which also hosts abyssale-sdk and abyssale-python-sdk)",
+  "found_at": "https://github.com/getabyssale/n8n-nodes-abyssale (Abyssale's own n8n node, org getabyssale)",
   "source_kind": "company GitHub/npm",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "removed the mint square background rect (element 0)",
-    "cropped the viewBox to the A",
-    "cleaned"
+    "removed the mint background rect (element 0)",
+    "#131314 -> #69FFAD on the A (element 1): the same file's own tile colour, and the app icon's A (#68FFAD)",
+    "cropped the viewBox to the A (pad 0.02)",
+    "cleaned",
+    "one file for both themes: dropped the black-A light file"
   ],
-  "variant": "light mode",
-  "notes": "DECISION: bare A (dark #131314 in light mode, mint #69FFAD in dark mode) or the n8n mint tile with the dark A kept as one file. The brand's app icon is the mint A on a dark teal (#0A363A) tile, but no SVG of that tile exists (webclip/favicons are PNG, abyssale.com/brand|press|media-kit are 404, the app's favicons are PNG). The company's own SVGs of the A are the n8n icons (black tile + lavender A, mint tile + #131314 A) and the app loader. I shipped the bare A: #131314 in light mode (matches the black Abyssale wordmark), mint #69FFAD in dark mode (matches the app icon's A). Reviewer may prefer the n8n mint tile with dark A kept as-is (downloads/abyssale/src10/abyssale-dark.svg) as one file for both themes.",
+  "notes": "Abyssale's A is mint wherever it appears as a mark (app icon, app loader on a light page); only the wordmark is black. Mint reads on both tiles (14:1 dark; 1.2:1 on white but fully saturated, icon_check 0% lost). DECISION: if the mint looks too pale on the light tile, the alternative is the n8n mint tile with its #131314 A kept as-is (downloads/abyssale/src10/abyssale-dark.svg) as one file for both themes; the real app icon (mint A on teal) exists only as PNG.",
   "license": "Abyssale brand mark, used nominatively to identify the connected service; trademark rights remain with Abyssale.",
-  "sha256": "7ac57431ff1ee7772bc8730a710d32770db894fa6ab6d45ddc988e218580e432"
+  "sha256": "853c44011603e08ce77fc8ad49048d75f4e3e1a9f17bed7e5b08729f15b3c426"
 }

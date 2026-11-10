@@ -7,12 +7,13 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };
 
 const BasedashIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/basedash.svg" alt="" className={className} style={style} {...props} />
+        <ThemedBrandImg {...props} light="/icons/basedash.svg" dark="/icons/basedash-dark.svg" ref={ref} className={className} style={style} />
     )
 );
 BasedashIcon.displayName = 'BasedashIcon';

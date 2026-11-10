@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const DocugenerateIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/docugenerate.svg" dark="/icons/docugenerate-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/docugenerate.svg" className={className} style={style} />
 );
 
 export const DocugenerateNode: NodeDefinition = {

@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/singlestore-brand-vector.svg",
+  "source": "https://www.singlestore.com/",
+  "found_at": "https://www.singlestore.com/ (header inline <svg viewBox=\"0 0 447 439\">, the home link's logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "copied the header's inline svg out of the saved page",
+    "cropped the viewBox (2% pad)",
+    "cleaned",
+    "light file: #FFFFFF -> #000000 on all 26 rays (the app icon's black)"
+  ],
+  "variant": "light mode",
+  "notes": "vanishes-light: the current single file is the white header logo, and 81% of it vanishes on the light tile (icon_check). Monochrome brand, so no colour to restore, but light/dark above are a ready fix: the light file recolours the rays black as the app icon shows them, the dark file is the header's white. Both derive from the header svg and pass icon_check. APPLIED: monochrome brand, new black/white pair so the mark reads on both tiles.",
+  "license": "SingleStore brand mark, used nominatively to identify the connected service; trademark rights remain with SingleStore.",
+  "sha256": "205461557165167e3e09f2cf4832c8c6da1f2d84bac73c7e9f58fcc09fdd06bb"
+}

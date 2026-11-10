@@ -9,7 +9,7 @@ import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://kit.com/brand
 
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <ThemedBrandImg light="/icons/kit-brand-vector.svg" dark="/icons/kit-brand-vector-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/kit-brand-vector.svg" className={className} style={style} />
 );
 
 export const KitNode: NodeDefinition = {

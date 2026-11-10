@@ -1,16 +1,14 @@
 {
   "path": "frontend/public/icons/shippo-brand-vector.svg",
-  "source": "https://cdn.prod.website-files.com/6462967bbf70fa5b5b227351/646f4a30ebd66f72e353f486_shippo-logo-mobile.svg",
-  "found_at": "goshippo.com site header (img.header__logo-mobile in the mobile menu header, e.g. on https://goshippo.com/press, saved as downloads/shippo/src1/press-404.html); the desktop header uses 646bd3ac70ee08fca9869afe_shippo-logo-dark.svg, the same mark with the wordmark",
-  "source_kind": "company site (header logo)",
-  "retrieved": "2026-11-10",
+  "source": "https://mintcdn.com/shippo-f4b7b609/MNzp7C4JbkmwernT/favicon.svg?fit=max&auto=format&n=MNzp7C4JbkmwernT&q=85&s=5b633a85ae6f5c45472dcb5720a3caa6",
+  "found_at": "https://docs.goshippo.com/ (Shippo's Mintlify docs: the configured \"favicon\"; the docs header logo/light.svg draws the same capybara in #2E434C, logo/dark.svg in white)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-11",
   "edits": [
-    "used the header's mark-only mobile logo (no wordmark)",
-    "cropped the viewBox to the mark",
+    "cropped the viewBox to the capybara (2% pad)",
     "cleaned"
   ],
-  "variant": "light mode",
-  "notes": "goshippo.com's favicon draws the capybara in navy on a white disc (PNG only); the site's vector logo is near-black #1B1D1D, which I kept. The dark variant replaces the CSS invert the old icon relied on.",
+  "notes": "DECISION: Shippo draws its capybara in three dark tints: #1B1D1D on goshippo.com's header (what the current files use, white in dark mode), #0E242D on its app icon (PNG only) and slate #2E434C in its docs SVGs. The slate is the only coloured vector and passes icon_check on both tiles (1.8:1 on #111), so it is one file for both themes. If Dhruv reads Shippo as monochrome, the current files (#1B1D1D / white) are fine as they are.",
   "license": "Shippo brand mark, used nominatively to identify the connected service; trademark rights remain with Shippo.",
-  "sha256": "590ff1400b5d9b389024d7a4d7d88a58305ba9f39c246fe67f200d8ad1e85eb5"
+  "sha256": "f0bd695004d7050293649f3d2cf38c2c5c8dce313e098bf41361f63f6c5100bd"
 }

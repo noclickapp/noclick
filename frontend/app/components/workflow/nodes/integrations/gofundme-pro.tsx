@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const GoFundMeProIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/gofundme-pro.svg" dark="/icons/gofundme-pro-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/gofundme-pro.svg" className={className} style={style} />
 );
 
 export const GoFundMeProNode: NodeDefinition = {

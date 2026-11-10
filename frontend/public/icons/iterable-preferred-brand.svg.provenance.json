@@ -1,13 +1,15 @@
 {
   "path": "frontend/public/icons/iterable-preferred-brand.svg",
   "source": "https://d32xow8vqwhzlc.cloudfront.net/bimi-logo.svg",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "found_at": "Iterable's BIMI logo (the provenance of the current file)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "removed the light background shape (element 0) that sat behind the mark",
-    "cropped the viewBox to the mark"
+    "none to the four #160F29 arcs; cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
   ],
   "variant": "light mode",
-  "license": "Brand mark of its owner, shown nominatively to identify the connected service; no trademark rights are claimed or granted.",
-  "sha256": "d52c4150bcffdf736d73585e9de261d14e9f1da5576370b6ede226810b355d16"
+  "notes": "DECISION: midnight #160F29 vanishes on the dark tile, and Iterable has no coloured version for dark backgrounds or coloured favicon tile (its dark favicon and header logo are cream #FFFAF6). So light keeps the brand colour and dark now uses Iterable's own cream logo instead of the earlier #FFFFFF recolour (rule 2c, with the brand's own light colour).",
+  "license": "Iterable brand mark, used nominatively to identify the connected service; trademark rights remain with Iterable.",
+  "sha256": "d074cb7f5e4c671a0daec32ad99f0ab3af473ef0fff2ea1bc578558824896ab4"
 }

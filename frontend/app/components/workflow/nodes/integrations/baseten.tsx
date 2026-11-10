@@ -7,7 +7,7 @@ import { NodeDefinition } from '~/components/workflow/nodes/types';
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://www.baseten.co.
 const BasetenIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/baseten-brand-vector.svg" dark="/icons/baseten-brand-vector-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/baseten-brand-vector.svg" className={className} style={style} />
 );
 
 const BasetenNodeComponent = (props: NodeProps) => (

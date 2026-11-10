@@ -1,16 +1,14 @@
 {
   "path": "frontend/public/icons/coinmarketcap.svg",
-  "source": "https://s2.coinmarketcap.com/static/cloud/img/coinmarketcap_1.svg",
-  "found_at": "https://coinmarketcap.com/ (header logo)",
-  "source_kind": "company site (header logo)",
-  "retrieved": "2026-11-10",
+  "source": "https://s2.coinmarketcap.com/static/cloud/img/menu/MenuCmcIconV3.svg",
+  "found_at": "https://coinmarketcap.com/ (the site nav's icon for CoinMarketCap itself, linked from the homepage markup)",
+  "source_kind": "company site (nav icon)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "kept the ring-and-M symbol (subpaths 0-1 of the single compound path), removed the 'CoinMarketCap' wordmark subpaths (2-20)",
-    "cropped the viewBox to the symbol",
-    "cleaned"
+    "cleaned",
+    "kept the 0 0 32 32 viewBox (the disc fills it); removed width/height"
   ],
-  "variant": "light mode",
-  "notes": "Replaces the tiny-wordmark file with the symbol in CoinMarketCap's own black (#17181B) and white versions. Alternative if the reviewer wants the blue: the site's own nav icon https://s2.coinmarketcap.com/static/cloud/img/menu/MenuCmcIconV3.svg (downloads/coinmarketcap/src3/) is the white symbol on a #486DF7 disc; the app icon itself is a blue square, which no SVG I found carries.",
+  "notes": "Not monochrome: the app icon and favicon are blue; only the header lockup is black/white. One file for both themes (the brand's own coloured icon, COLOUR_BRIEF rule 2(b)). DECISION: the app icon is a rounded blue square with a gradient, which exists only as PNG; this is CoinMarketCap's own SVG of the icon as a #486DF7 disc, a lighter blue than the app icon's. No press kit (/press, /press-kit, /brand 404), the GitHub org has no SVGs, and guessed CDN names (coinmarketcap_blue_1.svg ...) are 403.",
   "license": "CoinMarketCap brand mark, used nominatively to identify the connected service; trademark rights remain with CoinMarketCap.",
-  "sha256": "98c375133481cd337c33b3e610368ace23934bec4832e51f35b094ba81246d77"
+  "sha256": "7d2d0e22e5a07a2c1d4245f0af138df0b3cddc74a90629090453284ad540a19f"
 }

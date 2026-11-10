@@ -45,19 +45,15 @@ describe('native Supernormal wiring', () => {
     expect(defs.SupernormalRecordingsConfig.properties.per_page).toBeUndefined();
   });
 
-  it('shows the exact dark artwork in light mode and its white copy in dark, under the real canvas filter', () => {
+  it('shows the blue bolt in both themes under the real canvas filter', () => {
     const filter = 'drop-shadow(0 0 3px black)';
     const html = renderToStaticMarkup(<SupernormalIcon style={{ width: 48, height: 48, filter }} />);
-    const [light, dark, ...more] = html.match(/<img[^>]*>/g) ?? [];
-    expect(more).toEqual([]);
-    expect(light).toContain('src="/icons/supernormal.svg"');
-    expect(light).toContain('class="dark:hidden"');
-    expect(dark).toContain('src="/icons/supernormal-dark.svg"');
-    expect(dark).toContain('class="hidden dark:block"');
-    for (const img of [light, dark]) {
-      expect(img).toContain('object-fit:contain');
-      expect(img).toContain(`filter:${filter}`);
-    }
+    const imgs = html.match(/<img[^>]*>/g) ?? [];
+    expect(imgs).toHaveLength(1);
+    expect(imgs[0]).toContain('src="/icons/supernormal.svg"');
+    expect(imgs[0]).not.toContain('dark:');
+    expect(imgs[0]).toContain('object-fit:contain');
+    expect(imgs[0]).toContain(`filter:${filter}`);
     const disabled = renderToStaticMarkup(<SupernormalIcon style={{ filter: 'grayscale(100%) brightness(0.4) drop-shadow(0 0 3px black)' }} />);
     expect(disabled).toContain('filter:grayscale(100%) brightness(0.4)');
     expect(disabled).not.toContain('invert(');

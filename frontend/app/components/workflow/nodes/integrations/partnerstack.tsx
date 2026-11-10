@@ -7,7 +7,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const PartnerStackIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <ThemedBrandImg light="/icons/partnerstack.svg" dark="/icons/partnerstack-dark.svg" className={className} style={style} {...props} ref={ref} />
+        <ThemedBrandImg {...props} light="/icons/partnerstack.svg" dark="/icons/partnerstack-dark.svg" className={className} style={style} ref={ref} />
     ),
 );
 PartnerStackIcon.displayName = 'PartnerStackIcon';

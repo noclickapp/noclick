@@ -8,7 +8,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const TypefullyIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/typefully.svg" dark="/icons/typefully-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/typefully.svg" className={className} style={style} />
 );
 
 export const TypefullyNode: NodeDefinition = {

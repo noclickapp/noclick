@@ -1,16 +1,16 @@
 {
   "path": "frontend/public/icons/partnerstack-dark.svg",
-  "source": "https://cdn.prod.website-files.com/655381e691678a2583615d93/6a0f4f28d2aeb639c6cda4a8_partnerstack-brand-assets-2026.zip (SVG/PartnerStack-logo-pack-2026_Icon-only (White).svg)",
+  "source": "https://cdn.prod.website-files.com/655381e691678a2583615d93/6a0f4f28d2aeb639c6cda4a8_partnerstack-brand-assets-2026.zip (SVG/PartnerStack-logo-pack-2026_Icon-only (Full-color).svg)",
   "found_at": "https://partnerstack.com/brand (Brand Guide, logo download)",
   "source_kind": "brand kit",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
+    "cropped the viewBox to the icon (2% pad)",
     "cleaned (removed the Illustrator comment)",
-    "cropped the viewBox to the mark",
-    "dark file is the brand kit's own 'Icon-only (White)' SVG, cleaned and cropped (no recolouring)"
+    "#0A1567 -> #FFFFFF on the navy part of the small circle (element 2, class st2), which vanishes on the dark tile; the blue #434EE1 and lavender #B6BCF7 parts keep their colours"
   ],
   "variant": "dark mode",
-  "notes": "DECISION: dark mode uses PartnerStack's own white icon from the brand kit (the kit's horizontal white logo uses this same white mark on dark), as the rule asks; it is monochrome with the overlap left open. The full-colour icon loses its navy #0A1567 piece on the dark tile. If the reviewer prefers colour in dark mode, the alternative is the full-colour file with #0a1567 recoloured to a lighter brand tone, which the kit does not provide.",
+  "notes": "DECISION: colour rule 2c: the kit has no colour version for dark backgrounds and the site's favicon/webclip are the bare icon (no tile), so the dark file keeps the blue and lavender and turns only the navy piece white. The light file is unchanged from the current one.",
   "license": "PartnerStack brand mark, used nominatively to identify the connected service; trademark rights remain with PartnerStack.",
-  "sha256": "0f84223607183dd8d82361049a1f639253f417bf78a93808842b72e760598b20"
+  "sha256": "dd4de601dffa9941f12d939878bd5401a37fe9aa2a18c7dd995b692edab3b261"
 }

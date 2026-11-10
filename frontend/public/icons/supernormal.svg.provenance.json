@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/supernormal.svg",
+  "source": "https://www.supernormal.com/",
+  "found_at": "https://www.supernormal.com/ (inline <svg> bolt mark in the page, id svg11544206703; extracted with extract_svg.py)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "fill var(--token-a4bf6599-\u2026, rgb(77,169,255)) -> #0F8EFF: the page defines that token as #0F8EFF (the value it renders; the rgb fallback is never shown), matching the favicon's #0F8BFF",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "The current files (black bolt + inverted white copy) dropped the blue. The source's fill was a Framer CSS variable; I wrote in the value the same page assigns to that variable.",
+  "license": "Supernormal brand mark, used nominatively to identify the connected service; trademark rights remain with Supernormal.",
+  "sha256": "19c76fe8ae72f9d6163b290e463f7a31645bcb6e937086367049ce7ae22bf940"
+}

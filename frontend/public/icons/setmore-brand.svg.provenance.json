@@ -1,14 +1,15 @@
 {
   "path": "frontend/public/icons/setmore-brand.svg",
-  "source": "https://www.setmore.com/ \u2014 official Setmore brand asset, unmodified",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "source": "https://assets.setmore.com/website/v2/images/favicon/tree-icon/favicon.svg",
+  "found_at": "https://www.setmore.com/ (<link rel=\"icon\" type=\"image/svg+xml\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "added viewBox=\"0 0 48 48\" from the width/height it already had",
-    "removed the light background shape (element 0) that sat behind the mark",
-    "cropped the viewBox to the mark"
+    "removed the favicon's white disc (element 0) behind the tree",
+    "cropped the viewBox to the tree (2% pad)",
+    "cleaned"
   ],
-  "variant": "light mode",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "12dc674a865e50d6bf45b3c90c14698fb6f0e35c84eabe3f8941e52e28724e56"
+  "notes": "The current dark file recoloured the green tree white. The #1B3D32 green passes icon_check on the dark tile (lost_dark 0), so by rule 3 it stays green: one file for both themes. DECISION: contrast on the dark tiles is low (1.6:1 on #111, 1.4:1 on #1b1b1e). If that's too faint, the brand's own SVG favicon with its white disc (downloads/setmore/src2/favicon.svg) keeps the green in dark mode; the current white dark file matches Setmore's own all-white dark-background logo.",
+  "license": "Setmore brand mark, used nominatively to identify the connected service; trademark rights remain with Setmore.",
+  "sha256": "59835a4983920ee78bd6c37cf837870cf914681f1dde4f21812cd8336563ef2d"
 }

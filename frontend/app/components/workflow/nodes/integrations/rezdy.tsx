@@ -11,7 +11,7 @@ const RezdyIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <ThemedBrandImg light="/icons/rezdy.svg" dark="/icons/rezdy-dark.svg" className={className} style={style} {...props} ref={ref} />
+    <ThemedBrandImg {...props} light="/icons/rezdy.svg" className={className} style={style} ref={ref} />
 ));
 RezdyIcon.displayName = 'RezdyIcon';
 

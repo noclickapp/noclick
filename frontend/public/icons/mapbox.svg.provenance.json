@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/mapbox.svg",
-  "source": "https://static-assets.mapbox.com/branding/favicon/v2/safari-pinned-tab.svg?v=gAd4JjrGWl",
-  "license": "Mapbox brand mark used nominatively to identify Mapbox; trademark rights remain with Mapbox.",
-  "sha256": "db614a0ecd6ce82b986e7e5e2fe55c9baa3fbbc617bb499f45266006aaa0fc12"
+  "source": "https://www.mapbox.com/ (inline <svg viewBox=\"0 0 126 28\"> in the header link, class nav_logo w-embed, copied verbatim)",
+  "found_at": "https://www.mapbox.com/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "kept only the mark (elements 6-7: the circle with the pin cut out, and the star); removed the 'mapbox' wordmark (elements 0-5)",
+    "fill currentColor -> #000000",
+    "cropped the viewBox to the mark (2% pad)",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Mapbox is monochrome, so no colour to restore. But the current mapbox.svg (both themes) is a potrace trace of the 256px favicon (its metadata says so) and is black only, so it vanishes on the dark tile (see work/agents/c-bw8/mapbox.png). The two files here replace it with the header logo's real vector mark: black on light, white on dark (Mapbox's own white version). Optional, but recommended. APPLIED: monochrome brand, new black/white pair so the mark reads on both tiles.",
+  "license": "Mapbox brand mark, used nominatively to identify the connected service; trademark rights remain with Mapbox.",
+  "sha256": "27e328586176312d81c62fd2012ac34e6a990f3a4297755944cad887e6dd446a"
 }

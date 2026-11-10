@@ -3,10 +3,10 @@ import type { CSSProperties } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 const MarketstackIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/marketstack.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <ThemedBrandImg light="/icons/marketstack.svg" dark="/icons/marketstack-dark.svg" className={className} style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const MarketstackNode: NodeDefinition = {

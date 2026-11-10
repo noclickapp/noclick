@@ -7,10 +7,10 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://www.singlestore.com/
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/singlestore-brand-vector.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <ThemedBrandImg light="/icons/singlestore-brand-vector.svg" dark="/icons/singlestore-brand-vector-dark.svg" className={className} style={{ ...style, objectFit: 'contain' }} />
 );
 
 const SingleStoreIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(

@@ -1,15 +1,17 @@
 {
   "path": "frontend/public/icons/winston-ai.svg",
   "source": "https://mintcdn.com/winstonai/beTS5nQ014LXzWZn/favicon.svg",
-  "found_at": "https://docs.gowinston.ai/ (Mintlify docs config \"favicon\"; same file as the current icon's recorded source)",
+  "found_at": "https://docs.gowinston.ai/ (Mintlify docs config \"favicon\"); the colourway from https://gowinston.ai/ favicons and the header logos winston-ai-logo.svg / winston-ai-logo-white-blue.svg",
   "source_kind": "company docs",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "light file is the docs favicon unchanged in drawing (black disc, white W); cropped the viewBox to the disc (512x504) with no padding",
+    "#FFFFFF -> #3452FE on the W (element 1)",
+    "removed the disc (element 0): on a white tile Winston's white disc is invisible and only the blue W shows, as its own favicon does",
+    "cropped the viewBox to the W with 2% padding",
     "cleaned"
   ],
   "variant": "light mode",
-  "notes": "DECISION: Winston uses two colourways of the same W disc: blue W on white (homepage favicon, web app icon: the main one) and white W on black (docs favicon, the only one published as SVG). Light mode keeps the docs SVG as is; dark mode uses the main white/blue colourway, recoloured from the same file. The reviewer may prefer the white/blue colourway in both modes (on a white tile its white disc then disappears and only the blue W shows, as on the homepage); that file would be the dark file as is. The site header and docs logos are 'winston ai' wordmarks with no separate mark.",
+  "notes": "The light file was the docs favicon's black disc with a white W, so light mode had no colour. Now both modes show the blue W; dark keeps the white disc as the app icon has it. The blue W colourway is published only as PNG, so both files are the docs SVG recoloured to it.",
   "license": "Winston AI brand mark, used nominatively to identify the connected service; trademark rights remain with Winston AI.",
-  "sha256": "0b0a5e681997601e194f39c3848b152357cc38d601470bb5ad85f3dc09c7348a"
+  "sha256": "105bda9c3ddb8ec0f51d53a0da1a8ddb994643230a92b10e37dab521a3229226"
 }

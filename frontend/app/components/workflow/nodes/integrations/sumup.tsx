@@ -2,12 +2,12 @@ import { memo, forwardRef } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 // Official SumUp Circuit design-system brand artwork; see asset-provenance.json.
 const SumUpIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/sumup.svg" alt="" className={className}
-            style={{ ...style, objectFit: 'contain' }} {...props} />
+        <ThemedBrandImg {...props} light="/icons/sumup.svg" dark="/icons/sumup-dark.svg" ref={ref} className={className} style={{ ...style, objectFit: 'contain' }} />
     )
 );
 SumUpIcon.displayName = 'SumUpIcon';

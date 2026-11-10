@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const MattermostIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/mattermost.svg" dark="/icons/mattermost-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/mattermost.svg" className={className} style={style} />
 );
 
 export const MattermostNode: NodeDefinition = {

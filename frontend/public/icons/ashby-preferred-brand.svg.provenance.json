@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/ashby-preferred-brand.svg",
+  "source": "https://cdn.ashbyprd.com/cdn_assets/282bf4e16649686ec2e237f3e6522b0f145b1f17/favicon.svg",
+  "found_at": "https://app.ashbyhq.com/signin (<link rel=\"icon\" type=\"image/svg+xml\">)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "none to the drawing: the file is Ashby's app icon (white serif A on its own #473BCE rounded tile), used as the one file for both themes",
+    "cleaned"
+  ],
+  "notes": "Ashby is a coloured brand: its wordmark renders #473BCE and every app icon is the white A on a purple tile. The current file is the A cut from the header wordmark, set black on a white tile that is not Ashby's (icon_check flagged it as a white background). The tile in the final is the brand's own app icon, so it stays (icon_check notes the coloured tile). The A is Ashby's own monogram form (its favicon), so the Text rule is met.",
+  "license": "Ashby brand mark, used nominatively to identify the connected service; trademark rights remain with Ashby.",
+  "sha256": "ccf136f5149c3850fdd0a7ab3e2a99dd05884a1ccd1953ac33c925635ea685ac"
+}

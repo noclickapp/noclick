@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/statuspal-brand-vector.svg",
+  "source": "https://www.statuspal.io/",
+  "found_at": "https://www.statuspal.io/ (inline <svg> header logo: purple tower + 'StatusPal' wordmark; extracted with extract_svg.py)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "kept the tower mark (element 0, #4934BF)",
+    "removed the black 'StatusPal' wordmark (element 1)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "The current files (black tower, and an inverted white copy for dark) had no recorded source and dropped the purple. The purple is mid-dark on the dark tile but reads; the app-icon tile (white tower on purple) exists only as a PNG.",
+  "license": "StatusPal brand mark, used nominatively to identify the connected service; trademark rights remain with StatusPal.",
+  "sha256": "538ca7b1237d9102396c9e3b66d36d20ee617870497985fd93711480111feff7"
+}

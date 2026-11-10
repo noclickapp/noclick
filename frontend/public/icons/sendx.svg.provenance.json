@@ -1,16 +1,14 @@
 {
   "path": "frontend/public/icons/sendx.svg",
-  "source": "https://www.sendx.io/assets/brand/sendx/sendx-icon-black.svg",
+  "source": "https://www.sendx.io/assets/brand/sendx/sendx-icon-gold.svg",
   "found_at": "https://www.sendx.io/brand (brand kit: icon black/gold/white, app icon black/gold/white, wordmark)",
   "source_kind": "brand kit",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "used the brand kit's standalone black paper-plane icon (no wordmark)",
-    "cropped the viewBox to the mark",
-    "cleaned"
+    "cropped the viewBox to the plane (2% pad)",
+    "cleaned (title/aria metadata)"
   ],
-  "variant": "light mode",
-  "notes": "DECISION: SendX's app icon is the gold plane on a black rounded square (sendx-app-icon-black.svg in the same kit). I shipped the bare plane instead, because the black tile disappears into the dark theme: black in light mode (as their black logo), the kit's gold plane in dark mode (as their favicon/app icon). If the reviewer prefers the tile, downloads/sendx/src2/sendx-app-icon-black.svg is the kit's app icon as one file.",
+  "notes": "The current light file is the kit's black plane, so gold showed only in dark mode. The kit's gold icon passes icon_check on both tiles (gold on white is 1.4:1 but the stroke reads), so it is now the one file for both themes. DECISION: if the gold plane looks too faint on white, the kit's app icon downloads/sendx/src2/sendx-app-icon-black.svg (gold plane on a black rounded square, exactly what the favicon and apple-touch icon show) works as one file for both themes.",
   "license": "SendX brand mark, used nominatively to identify the connected service; trademark rights remain with SendX.",
-  "sha256": "13275b500ea61bf633a153025b131584a8afdfef18474babeb14ba859cd9aa25"
+  "sha256": "05ae01767b3fb938e5fd5c0a746f16f06128959b5706bea0578f53034988e6f1"
 }

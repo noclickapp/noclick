@@ -7,7 +7,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const JumpCloudIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <ThemedBrandImg light="/icons/jumpcloud.svg" dark="/icons/jumpcloud-dark.svg" className={className} style={style} {...props} ref={ref} />
+        <ThemedBrandImg {...props} light="/icons/jumpcloud.svg" dark="/icons/jumpcloud-dark.svg" className={className} style={style} ref={ref} />
     ),
 );
 JumpCloudIcon.displayName = 'JumpCloudIcon';

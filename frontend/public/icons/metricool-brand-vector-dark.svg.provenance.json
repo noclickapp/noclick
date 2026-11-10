@@ -1,16 +1,16 @@
 {
   "path": "frontend/public/icons/metricool-brand-vector-dark.svg",
-  "source": "https://drive.google.com/uc?export=download&id=1S2AI-i4aoVwqGVxUHRSMA-lsgHF-a7X0 (Brand Assets > Isotype > SVG > Isotype_White.svg)",
+  "source": "https://drive.google.com/uc?export=download&id=1igJyKNbY0CkLFHjWyujTIQr_pjl2BEKH (Brand Assets > Isotype > SVG > Isotype_Dark.svg)",
   "found_at": "https://metricool.com/newsroom/ ('Brand Assets' button -> Google Drive folder 16iZAnclaIklx--tOPKhOhiN24RPlSyoV)",
   "source_kind": "brand kit",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "cropped the viewBox to the isotype",
+    "cropped the viewBox to the isotype (2% pad)",
     "cleaned",
-    "dark file is the brand kit's own Isotype_White.svg, cropped and cleaned"
+    "#2D1928 -> #E7FF56 on the isotype (its one path), the lime Metricool itself puts its logo in on its dark footer (metricool-verde.webp, sampled #e7fe55/#e6ff55; #E7FF56 in the site CSS)"
   ],
   "variant": "dark mode",
-  "notes": "DECISION: the 'oo' isotype is Metricool's mark and is naturally 2.2:1 wide, so icon_check's wordmark-shape flag is a false positive (there is no text). The brand kit has the isotype in black, dark plum and white only (SVG and PNG), no lime tile; the lime-tile app icon exists only as the site's PNG favicons, so I shipped the plum isotype on light and the white one on dark.",
+  "notes": "DECISION: plum vanishes on the dark tile. The brand kit has the isotype only in black, plum and white (no lime SVG, no SVG of the lime-tile app icon, which exists only as the site's PNG favicons; the app.metricool.com SVG favicon is an older grey isotype). Metricool's own logo for dark backgrounds is lime (its footer), so the dark file is the kit's isotype recoloured to that lime instead of white (rule 2a). If a lime recolour of the isotype is not wanted, keep the current white isotype (the kit's Isotype_White.svg) for dark. icon_check's 'wordmark-shape' flag is a false positive: the 2.2:1 'oo' isotype is Metricool's mark, no text.",
   "license": "Metricool brand mark, used nominatively to identify the connected service; trademark rights remain with Metricool.",
-  "sha256": "55cf660f7b04c0610e1e9cc9c8c651bf81ed3633980dfb5d60dd980f80665340"
+  "sha256": "352832ee0626e40304cd338b9183559b9c7e5d7282b75750b58cc525324b9e69"
 }

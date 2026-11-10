@@ -1,15 +1,16 @@
 {
   "path": "frontend/public/icons/recraft.svg",
-  "source": "https://www.dropbox.com/scl/fi/2zei1mcz58oeat53u8xk0/Recraft_pr_assets.zip?rlkey=slpc98pjwk99np74ul17st1fk (entry Recraft_assets/Recraft Logos/Svg/logo Black.svg)",
-  "found_at": "https://www.recraft.ai/press-releases ('recraft_assets.zip' link)",
-  "source_kind": "brand kit",
-  "retrieved": "2026-11-10",
+  "source": "https://static.recraft.ai/apps/images/home/logo.svg",
+  "found_at": "https://www.recraft.ai/ (header <a aria-label=\"Recraft home\"><img src=.../home/logo.svg>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "cropped the viewBox to the mark (pad 0.02)",
-    "cleaned"
+    "cropped the viewBox to the R (pad 0.02)",
+    "cleaned",
+    "light file: rgb(255,255,255) -> #000000 on the R (element 0), black as on Recraft's light surfaces"
   ],
   "variant": "light mode",
-  "notes": "DECISION: I shipped the bare R (black on light, white on dark) rather than the kit's app-icon tile 'Icon White' (white R on a black rx=115 tile): that tile is the brand's own, but on NoClick's dark tile it disappears (icon_check lost_dark 0.75), leaving a floating white R anyway. If the reviewer prefers the tile, use src2/Icon_White.svg as is.",
+  "notes": "DECISION: the brand is monochrome (it would be 'monochrome-brand'), but the current files use the press kit's blocky R (Recraft_pr_assets.zip, 'logo Black.svg', June 2025), which is NOT the R on recraft.ai today: the site header and app icon use a rounder R. These finals replace it with the site's current R, black on light and white on dark. Keep the current files if you prefer the press-kit drawing.",
   "license": "Recraft brand mark, used nominatively to identify the connected service; trademark rights remain with Recraft.",
-  "sha256": "1a0cad90d10989f7f5e1cb707c5bca6b528eb7fa1c0f3f4039ff4b6ddf7f14d6"
+  "sha256": "95f8f9e76c7e00270d81a2bb432d7c74665ff91559d37487d2d8a917d4539d6f"
 }

@@ -1,12 +1,15 @@
 {
   "path": "frontend/public/icons/companycam.svg",
-  "source": "https://assets.c.companycam.com/safari-pinned-tab.svg",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "source": "https://companycam.com/ (inline <svg width=200 height=200> in the off-canvas nav's .header-logo link, clip-path offcanvas-llb-logo-clip0, copied byte-for-byte)",
+  "found_at": "https://companycam.com/ (the header lockup <svg viewbox=\"0 0 1207 202\"> starts with the same tile beside the CompanyCam wordmark)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "none: the source file as published"
+    "fixed attribute case: viewbox -> viewBox and gradientunits -> gradientUnits (the page's HTML parser camel-cases them; in a standalone file they were ignored)",
+    "cleaned",
+    "kept the 0 0 200 200 viewBox (the tile fills it)"
   ],
-  "variant": "light mode",
-  "license": "CompanyCam trademark; official provider asset used to identify the integration.",
-  "sha256": "5aa4b8e8bcbadf8172271d356b2ec51b199ec5465b52926cb3aac188eef9b0f4"
+  "notes": "The current and original file (assets.c.companycam.com/safari-pinned-tab.svg) is a retired mark, a solid black camera with a plain pin; CompanyCam's current mark is this blue tile with the outline camera and C-pin. One file for both themes: the tile is CompanyCam's own app icon and the symbol of its header logo, so its background stays (rule 6). Also checked: the 2021 press kit zip (PNG logos and a .ai only) and companycam.com/brand (redirects to a JS brand portal, dam.companycam.com).",
+  "license": "CompanyCam brand mark, used nominatively to identify the connected service; trademark rights remain with CompanyCam.",
+  "sha256": "3ac0ace162af2ffcfd436fba29b08faaf66bd755d94da9276dd97d433188890a"
 }

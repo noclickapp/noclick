@@ -1,12 +1,17 @@
 {
   "path": "frontend/public/icons/voucherify-brand-vector-dark.svg",
-  "source": "https://voucherify.io",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "source": "https://app.voucherify.io/images/logo/voucherify_logo--primary.svg",
+  "found_at": "https://app.voucherify.io/ (main-EP53XYDN.js: `var Vst=\"/images/logo/voucherify_logo--primary.svg\"`; the same bundle sets the brand colour `color:\"#163ed4\"`)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-11",
   "edits": [
-    "dark mode: the unpainted (default black) shapes -> #FFFFFF"
+    "removed the \"voucherify\" wordmark paths (elements 0-10), keeping the % mark (elements 11-13)",
+    "cropped the viewBox to the mark with 2% padding",
+    "cleaned",
+    "#001254 -> #FFFFFF on the whole % (navy vanishes on the dark tile); white is Voucherify's own dark-background colour (docs dark logo voucherify_logo_white.png, app voucherify_logo_white.png)"
   ],
   "variant": "dark mode",
-  "license": "Official Voucherify brand artwork, used to identify the integration.",
-  "sha256": "ac59eb1045e38144323a2d1c4faab73f052b75a0cb63f8651355638bfdc1a538"
+  "notes": "DECISION: Voucherify's most recognisable form is its app icon, a #163ED4 blue tile with a white %, but it exists only as PNG (website favicon, docs favicon, app favicon.png; no SVG in its site, docs, app bundle or GitHub org). The only coloured official SVG is the app's primary logo in navy #001254, used here for light mode; that navy vanishes on the dark tile and Voucherify has no coloured dark-background version, so dark mode is the white % (rule 2c). Navy reads close to black on a white tile. If Dhruv wants the blue look, the only route is an official SVG of the blue tile, which Voucherify does not publish.",
+  "license": "Voucherify brand mark, used nominatively to identify the connected service; trademark rights remain with Voucherify.",
+  "sha256": "dc99e56c4d9d8f2ca9bd4bfbf52433960ab41ce3fe5a1b345dbb5c7b70f1210e"
 }

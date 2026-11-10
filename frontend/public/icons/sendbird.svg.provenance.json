@@ -1,12 +1,16 @@
 {
   "path": "frontend/public/icons/sendbird.svg",
-  "source": "https://raw.githubusercontent.com/sendbird/quickstart-calls-reactjs/8982466e9a85c7c29875b4ed04c3671ff7363298/sample-01/public/icons/ic-logo-black-01.svg",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "source": "https://sendbird.com/",
+  "found_at": "https://sendbird.com/ (header logo, inline <svg> 32x32, the same mark as the old file)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "none: the source file as published"
+    "the header's mark as published (#0E1017)",
+    "cropped the viewBox with 2% padding",
+    "cleaned"
   ],
   "variant": "light mode",
-  "license": "Sendbird trademark; official publisher asset used to identify the Sendbird integration",
-  "sha256": "f0ef3ad11545a07bbb22e78d7e702bea492a4438e7aa819bdfac05df6f4b2365"
+  "notes": "DECISION: the current light file (sendbird.svg) still draws the retired #353761 purple. If you want the light file to match Sendbird's current mark, swap in downloads/sendbird/final2/sendbird.svg (#0E1017) and its white dark file; otherwise the current pair is fine as a monochrome-brand dark file. APPLIED: the current near-black mark (#0E1017) and its white dark file, replacing the retired purple.",
+  "license": "Sendbird brand mark, used nominatively to identify the connected service; trademark rights remain with Sendbird.",
+  "sha256": "e0c7cf7f59bf55677072f9545b7ac12a08ce54908b5c9825e8ad58ad9cc0e9ad"
 }

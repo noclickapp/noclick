@@ -1,16 +1,15 @@
 {
   "path": "frontend/public/icons/gofundme-pro.svg",
   "source": "https://www.gofundme.com/nextassets/shared/favicon.svg",
-  "found_at": "https://www.gofundme.com/ (<link href=\"/nextassets/shared/favicon.svg\" rel=\"icon\" type=\"image/svg+xml\">)",
+  "found_at": "https://www.gofundme.com/ (<link href=\"/nextassets/shared/favicon.svg\" rel=\"icon\" type=\"image/svg+xml\">; apple-touch-icon.png is the same lime tile)",
   "source_kind": "parent company site",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "removed the two square background rects (white element 0, lime #CCF88E element 1)",
-    "cleaned",
-    "cropped the viewBox to the sunrise mark (pad 0.02)"
+    "removed the white rect (element 0) that sits hidden under the lime tile",
+    "kept the lime #CCF88E tile: it is GoFundMe's own favicon and app icon",
+    "cleaned"
   ],
-  "variant": "light mode",
-  "notes": "Pro's own site has only a wordmark SVG (logo-gofundme-pro.svg, src3) and PNG icons, so the mark comes from the parent's SVG favicon. The sunrise is wide (1.92:1). Alternative for the reviewer: GoFundMe's own app tile (sunrise on the lime #CCF88E square, the untouched favicon.svg) would read on both themes in one file, but Pro's favicon shows the sunrise on white, so I dropped the lime tile.",
-  "license": "GoFundMe Pro (GoFundMe) brand mark, used nominatively to identify the connected service; trademark rights remain with GoFundMe Pro (GoFundMe).",
-  "sha256": "35ff39993a3ebaf4c5ffe27847535d7409eb88fcacacc496d2efe9b2105cf76b"
+  "notes": "One file for both themes: delete gofundme-pro-dark.svg. DECISION: the lime tile is the parent GoFundMe's app icon; GoFundMe Pro's own favicon (PNG) is the green sunrise without a tile. If Dhruv prefers Pro's look, the alternative is the current pair (green sunrise light / white dark, rule 2c). The tile is square with sharp corners, as GoFundMe publishes it.",
+  "license": "GoFundMe Pro brand mark, used nominatively to identify the connected service; trademark rights remain with GoFundMe Pro.",
+  "sha256": "226c6aab3ae7df503f6d30d3b205fcfd40cb486b36244cb834f4a044f2577a76"
 }

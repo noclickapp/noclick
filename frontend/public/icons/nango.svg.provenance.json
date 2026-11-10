@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/nango.svg",
   "source": "https://raw.githubusercontent.com/NangoHQ/nango/master/docs/favicon-black.svg",
+  "found_at": "https://github.com/NangoHQ/nango/tree/master/docs (docs favicons); nango.dev serves favicon-*.png (light) and favicon-dark-*.png (dark scheme)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "cleaned",
+    "cropped the viewBox to the disc (pad 0.02)"
+  ],
+  "variant": "light mode",
+  "notes": "Monochrome brand. Verdict 'fixed' only because NoClick ships one file for both themes (nango.svg, no invert) and its black disc vanishes on the dark tile; this adds Nango's own white version as nango-dark.svg. No colour to restore.",
   "license": "Nango brand mark, used nominatively to identify the connected service; trademark rights remain with Nango.",
-  "sha256": "2ba448a0a4a9b315f0fcbc2a2453757f84dc822c49435ba28d7aeee35e8c43a6"
+  "sha256": "27ba3012d066090e7dc12fa8110488b19638aac69d6e910a8a456dd5b5792b47"
 }

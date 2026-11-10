@@ -8,7 +8,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const CompanycamIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/companycam.svg" dark="/icons/companycam-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/companycam.svg" className={className} style={style} />
 );
 
 export const CompanycamNode: NodeDefinition = {

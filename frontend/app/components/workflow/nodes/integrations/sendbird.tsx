@@ -7,7 +7,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const SendbirdIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <ThemedBrandImg light="/icons/sendbird.svg" dark="/icons/sendbird-dark.svg" className={className} style={style} {...props} ref={ref} />
+        <ThemedBrandImg {...props} light="/icons/sendbird.svg" dark="/icons/sendbird-dark.svg" className={className} style={style} ref={ref} />
     ),
 );
 SendbirdIcon.displayName = 'SendbirdIcon';

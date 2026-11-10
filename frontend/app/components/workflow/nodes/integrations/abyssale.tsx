@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const AbyssaleIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/abyssale.svg" dark="/icons/abyssale-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/abyssale.svg" className={className} style={style} />
 );
 
 export const AbyssaleNode: NodeDefinition = {

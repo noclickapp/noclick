@@ -1,17 +1,15 @@
 {
   "path": "frontend/public/icons/telnyx.svg",
   "source": "https://telnyx.com/images/homepage-september-2026/footer-wordmark.svg",
-  "found_at": "https://telnyx.com/media-kit (and the telnyx.com footer)",
+  "found_at": "https://telnyx.com/ footer (linked from https://telnyx.com/media-kit)",
   "source_kind": "company site (header logo)",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "kept the interlocking-triangle mark (elements 6-10)",
-    "removed the 'telnyx' wordmark (elements 0-5)",
-    "cropped the viewBox to the mark",
-    "cleaned"
+    "kept the interlocking-triangle mark (elements 6-10); removed the 'telnyx' wordmark (elements 0-5)",
+    "cropped the viewBox to the mark; cleaned",
+    "black -> #00E3AA on the five mark paths: Telnyx Green as the media kit specifies it for the logo on dark backgrounds, and as the favicon draws the mark"
   ],
-  "variant": "light mode",
-  "notes": "DECISION: the media kit also has the logo in brand green (#00E3AA-ish), but only as PNG, and green fails on the light tile (the current PNG's triage flag). Shipped black on light and Telnyx's cream on dark; the dark file could use the brand green instead (recolour black -> #00E3AA).",
+  "notes": "One file for both themes, like the favicon: green passes icon_check on white and on the dark tiles. DECISION: the green is the brand's specified colour applied to its own black vector (no green SVG is published). If you'd rather follow the media kit's on-light usage, keep the current black file for light mode and use this green file for dark only (the media kit pairs black-on-cream with green-on-black).",
   "license": "Telnyx brand mark, used nominatively to identify the connected service; trademark rights remain with Telnyx.",
-  "sha256": "d61710b3497cd16038d716d5e4d35f89d23a15fd19493e21a35aac302f924781"
+  "sha256": "4892296c01b62870cc41c1f9a98c409d8e91ae8db9ae0169534e02c2a513e291"
 }

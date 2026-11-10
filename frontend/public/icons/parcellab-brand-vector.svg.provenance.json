@@ -1,12 +1,13 @@
 {
   "path": "frontend/public/icons/parcellab-brand-vector.svg",
-  "source": "https://parcellab.com (parcelLab official brand artwork, imported from noclickapp/noclick4#2803)",
-  "source_kind": "the current official file (edited)",
-  "retrieved": "2026-11-10",
+  "source": "https://parcellab.com/wp-content/uploads/2025/04/ParcelLab-Favicon-1.svg",
+  "found_at": "https://parcellab.com/wp-json/wp/v2/media?search=favicon (media 27263, the original upload behind the site icon parcellab.com links as cropped-ParcelLab-Favicon-1-*.webp)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "none: the source file as published"
+    "cleaned (no geometry or colour changed); kept the #3D3AD3 rx48 tile: it is the brand's own app icon"
   ],
-  "variant": "light mode",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no trademark rights claimed or granted",
-  "sha256": "60af1c2c39e69cbbf3154bfc52d3a8efb65fac3b89076e9b058c2d3a4f1a71c6"
+  "notes": "One file for both themes (rule 2b: the brand's own app-icon tile). The current black/white files came from the bare mark, which the site draws in black (header) or white; the colour only lives in the tile. File name changes from parcellab-brand-vector.svg to parcellab.svg. Older navy (#002172, #000C41) parcelLab glyphs in its GitHub repos are the pre-2025 brand.",
+  "license": "parcelLab brand mark, used nominatively to identify the connected service; trademark rights remain with parcelLab.",
+  "sha256": "060e5d39da3f467691bc859ef7de03513282350e837cac347fb68679017c15c8"
 }

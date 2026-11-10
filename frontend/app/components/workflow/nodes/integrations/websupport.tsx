@@ -8,11 +8,11 @@ import { type NodeDefinition } from '~/components/workflow/nodes/types';
 
 // Unmodified compact brand asset from https://www.websupport.sk/
 import type { CSSProperties as BrandCSSProperties } from 'react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 
 // Sourced brand artwork: https://www.websupport.sk/
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/websupport-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <ThemedBrandImg light="/icons/websupport-preferred-brand.svg" dark="/icons/websupport-preferred-brand-dark.svg" className={className} style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const WebsupportIcon = ({ style, ...props }: ImgHTMLAttributes<HTMLImageElement>) => (

@@ -1,15 +1,13 @@
 {
   "path": "frontend/public/icons/mattermost.svg",
-  "source": "https://mattermost.com/images/mattermost-icon-dark.svg",
-  "found_at": "https://mattermost.com/newsroom/ (the site's Organization logo in its JSON-LD; the header lockup draws the same icon paths in currentColor)",
-  "source_kind": "company site (header logo)",
-  "retrieved": "2026-11-10",
+  "source": "https://mattermost.com/favicon.svg",
+  "found_at": "https://mattermost.com/ (<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\" sizes=\"any\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-11",
   "edits": [
-    "cropped the viewBox to the mark",
-    "cleaned"
+    "cleaned (removed the comment); viewBox already tight to the disc"
   ],
-  "variant": "light mode",
-  "notes": "DECISION: Mattermost's site draws its mark monochrome (currentColor), so this is near-black #1B1D22 on light and white on dark, the company's own two files. If a colour tile is preferred: mattermost.com/favicon.svg (saved as downloads/mattermost/src4/favicon.svg) is the same mark in white on a royal-blue #1C58D9 disc, one file for both themes; its own comment says the disc is there for visibility on dark browser chrome, so I did not treat it as the app icon. Both files keep the source's preserveAspectRatio=\"none\"; the cropped viewBox is square (24.95 x 24.96), so it doesn't distort.",
+  "notes": "DECISION: one file for both themes, the site's own favicon (white mark on a royal-blue #1C58D9 disc), per colour rule 2b. Its blue is brighter than the iOS app icon's #28427B square, for which no vector exists. Alternative under rule 2c: light = the brand's own icon-denim.svg (downloads/mattermost/src6/icon-denim.svg, Denim #1E325C) and dark = its icon-white.svg, which keeps colour only in light mode.",
   "license": "Mattermost brand mark, used nominatively to identify the connected service; trademark rights remain with Mattermost.",
-  "sha256": "8a9c74ea7d8652d1bce300f4c49492caf0b15277221398d0949b815c697b66d4"
+  "sha256": "6d8024783a59ee7b3d99aa7bfa002eca9bc6f4edf8d8124b15ab47d1e986ede0"
 }

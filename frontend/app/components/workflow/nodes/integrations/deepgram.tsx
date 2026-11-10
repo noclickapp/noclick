@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Official brand artwork from https://deepgram.com/.
 const DeepgramIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/deepgram-brand-vector.svg" dark="/icons/deepgram-brand-vector-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/deepgram-brand-vector.svg" className={className} style={style} />
 );
 
 const DeepgramNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={DeepgramIcon} iconColor="" />;

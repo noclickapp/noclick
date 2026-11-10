@@ -9,7 +9,7 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Vector brand artwork from https://www.sendx.io/
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <ThemedBrandImg light="/icons/sendx.svg" dark="/icons/sendx-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/sendx.svg" className={className} style={style} />
 );
 
 export const SendXNode: NodeDefinition = {

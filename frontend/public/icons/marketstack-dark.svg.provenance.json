@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/marketstack-dark.svg",
+  "source": "https://apilayer.com/wp-content/themes/hello-theme-child/assets/apilayer/images/marketstack.svg",
+  "found_at": "https://apilayer.com/ (product tabs: <img src=\".../images/marketstack.svg\" alt=\"marketstack-icon\">; marketstack is 'Powered by APILayer')",
+  "source_kind": "parent company site",
+  "retrieved": "2026-11-11",
+  "edits": [
+    "kept only the bars mark (element 2); removed APILayer's white rounded tab tile and its #E4EBEF border (elements 0-1), which are APILayer's UI chrome, not marketstack's icon",
+    "#27344A -> #02283E on the bars: APILayer draws every product icon in its own UI slate #27344A (ipstack, aviationstack too); #02283E is marketstack's own navy from its app icon and site CSS",
+    "cropped the viewBox to the mark (2% pad)",
+    "cleaned",
+    "#02283E -> #FFFFFF on the bars (the navy vanishes on the dark tile); marketstack's own logo for dark backgrounds draws the bars white"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: the current file is a PNG (navy tile, white bars), and marketstack publishes no SVG of its own (site_images, images/logo, favicons all PNG; ledger). The only vector is its parent APILayer's product icon. Rule 2 for dark: marketstack's own dark-background logo is white (rule 2a gives no colour), its navy-tile app icon exists only as PNG (2b), so (c): navy on light, white on dark. Alternatives: keep the current PNG tile for both themes (right colours, but raster), or keep APILayer's #27344A as published instead of marketstack's #02283E.",
+  "license": "marketstack (APILayer) brand mark, used nominatively to identify the connected service; trademark rights remain with marketstack (APILayer).",
+  "sha256": "f9e9754bbac67c898e311a3a3ec791b0ab0098735a908069e8baff924f7c02d5"
+}

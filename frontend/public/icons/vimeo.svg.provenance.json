@@ -1,16 +1,17 @@
 {
   "path": "frontend/public/icons/vimeo.svg",
   "source": "https://drive.usercontent.google.com/download?id=1gN9dRDamlsqXLfO3c0a3Ank2IgbA6VKY&export=download ('Logo - Lettermark - Black.svg')",
-  "found_at": "https://vimeo.com/press/media-kit ('Logo and icon' \u2192 'Download logo', Google Drive folder 1q-PgIDXBY5-s9MpVnHJrkUwvarXBD-Lp)",
+  "found_at": "https://vimeo.com/press/media-kit ('Logo and icon' -> 'Download logo', Google Drive folder 1q-PgIDXBY5-s9MpVnHJrkUwvarXBD-Lp)",
   "source_kind": "brand kit",
-  "retrieved": "2026-11-10",
+  "retrieved": "2026-11-11",
   "edits": [
-    "none to the drawing: the kit's lettermark is the 'v' alone (#0E1216)",
-    "cropped the viewBox to the v with 2% padding",
-    "cleaned"
+    "light file: the kit's black lettermark as published (unchanged from the current file)",
+    "cropped the viewBox with 2% padding",
+    "cleaned",
+    "the kit's white lettermark, cropped and cleaned the same way",
+    "#F4F6F8 -> #17D5FF (Vimeo Blue, as the media kit specifies it and as the kit's blue lettermark and the app icon draw the v on dark)"
   ],
-  "variant": "light mode",
-  "notes": "DECISION: Vimeo's app icon is the cyan (#17D5FF) v on a near-black (#141A20) square (the media kit's Lettermark_Blue_Square.png and the site favicon), but the kit has that tile only as PNG; its SVGs are the bare lettermark in black and in white, which I used for light and dark. If the reviewer wants the familiar cyan, the white lettermark recoloured #F4F6F8 \u2192 #17D5FF is the kit's own path in the app icon's colour (fine on dark, too faint on white).",
+  "notes": "DECISION: the blue v is the brand's colour on dark, so the dark file shows it; on light the file stays the kit's black v (Vimeo shows its logo black on white and puts the blue v only on Vimeo Black). The blue file also passes icon_check on light, so you could use vimeo-dark.svg for both themes if you want the blue everywhere. The blue is the kit's colour on the kit's own vector; no blue SVG is published. APPLIED: the Vimeo Blue v in both themes (it reads on the light tile too), so the colour survives in light mode as well.",
   "license": "Vimeo brand mark, used nominatively to identify the connected service; trademark rights remain with Vimeo.",
-  "sha256": "9f8e474962c123ca3ebd649869ff83b73f18ef2eb9e09007108ee730f9fb8f12"
+  "sha256": "c0565de2269b633484beb3139272eb9ccb4a39709c2b52cd742b657406feeba2"
 }

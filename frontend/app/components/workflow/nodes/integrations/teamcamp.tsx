@@ -8,7 +8,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 const TeamcampIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <ThemedBrandImg light="/icons/teamcamp.svg" dark="/icons/teamcamp-dark.svg" className={className} style={style} />
+    <ThemedBrandImg light="/icons/teamcamp.svg" className={className} style={style} />
 );
 
 export const TeamcampNode: NodeDefinition = {
