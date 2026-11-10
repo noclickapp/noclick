@@ -113,10 +113,11 @@ export function authorMember(author: ChannelAuthor, members: ChannelMember[]): C
     }
 }
 
-/** The agents an agent's message hands the work to: those it @-mentions. */
+/** The agents an agent's message hands the work to: the others it @-mentions (naming itself hands nothing on). */
 export function handoffsOf(author: ChannelAuthor, mentions: string[], members: ChannelMember[]): ChannelMember[] {
     if (author.type !== 'agent' && author.type !== 'workflow_agent' && author.type !== 'a2a') return [];
-    return mentions.map((name) => members.find((m) => m.name === name && m.kind !== 'you')).filter((m): m is ChannelMember => !!m);
+    const itself = (m: ChannelMember) => (author.type === 'agent' ? m.agentId === author.id : m.id === author.id);
+    return mentions.map((name) => members.find((m) => m.name === name && m.kind !== 'you')).filter((m): m is ChannelMember => !!m && !itself(m));
 }
 
 /** An agent in your Automations: its workflow's agent node. */

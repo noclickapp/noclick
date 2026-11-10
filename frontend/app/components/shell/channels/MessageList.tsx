@@ -380,14 +380,16 @@ function RepliesBar({ msg, members, user, onOpen }: { msg: ChannelMessage; membe
     );
 }
 
-/** Who pinned: NoClick's line names them ("Priya Shah pinned a message…"). */
-function pinnerOf(msg: ChannelMessage, members: ChannelMember[]): string {
+/** Who pinned: the pinned message's own pin where it's in view (so you read your pin as yours), else NoClick's line,
+ *  which names them ("Priya Shah pinned a message…"). */
+function pinnerOf(msg: ChannelMessage, target: ChannelMessage | undefined, members: ChannelMember[]): string {
+    if (target?.pinned) return firstName(target.pinned.by, members);
     const named = /^(.+?) pinned a message/.exec(msg.text)?.[1];
     return named ? named.split(' ')[0] : firstName(msg.author, members);
 }
 
 /** The quiet line pinning leaves in the timeline, as Slack's. */
-function PinLine({ msg, members, actions }: { msg: ChannelMessage; members: ChannelMember[]; actions: MessageActions }) {
+function PinLine({ msg, target, members, actions }: { msg: ChannelMessage; target?: ChannelMessage; members: ChannelMember[]; actions: MessageActions }) {
     const pinned = msg.event?.messageId;
     return (
         <div className={cn('flex items-center gap-3 py-1.5 text-xs text-muted-foreground', GUTTER)} data-testid="pin-line">
@@ -395,7 +397,7 @@ function PinLine({ msg, members, actions }: { msg: ChannelMessage; members: Chan
                 <Pin className="h-3.5 w-3.5" strokeWidth={2} />
             </span>
             <span className="min-w-0 truncate">
-                <span className="font-medium text-foreground/80">{pinnerOf(msg, members)}</span> pinned{' '}
+                <span className="font-medium text-foreground/80">{pinnerOf(msg, target, members)}</span> pinned{' '}
                 {pinned && actions.onOpenMessage ? (
                     <button type="button" onClick={() => actions.onOpenMessage?.(pinned)} className={LINKISH}>
                         a message
@@ -425,6 +427,7 @@ export function MessageRow({
     onDismiss,
     actions = {},
     compact,
+    pinTarget,
 }: {
     msg: ChannelMessage;
     prev?: ChannelMessage;
@@ -437,8 +440,10 @@ export function MessageRow({
     actions?: MessageActions;
     /** A narrow column (a thread beside its channel): a smaller gutter. */
     compact?: boolean;
+    /** For a pin's line, the message it pinned, where it's loaded. */
+    pinTarget?: ChannelMessage;
 }) {
-    if (msg.event?.type === 'pinned') return <PinLine msg={msg} members={members} actions={actions} />;
+    if (msg.event?.type === 'pinned') return <PinLine msg={msg} target={pinTarget} members={members} actions={actions} />;
     const noclick = byNoClick(msg.author);
     const app = msg.author.type === 'app';
     const author = authorMember(msg.author, members);
@@ -571,6 +576,7 @@ export function MessageList({
     }, [messages, today]);
     // "Most recent" covers the newest day; the menu lists the ones before it, newest first.
     const earlier = useMemo(() => days.slice(0, -1).reverse(), [days]);
+    const byId = useMemo(() => new Map(messages.map((m) => [m.id, m])), [messages]);
 
     const jump = (target: JumpTarget) => {
         const el = root.current;
@@ -594,7 +600,19 @@ export function MessageList({
                         <DayPill label={label} earlier={earlier} onJump={jump} />
                     </div>
                     {items.map(({ msg, prev }) => (
-                        <MessageRow key={msg.id} msg={msg} prev={prev} members={members} user={user} channels={channels} onChannel={onChannel} onReact={onReact} onDismiss={onDismiss} actions={actions} />
+                        <MessageRow
+                            key={msg.id}
+                            msg={msg}
+                            prev={prev}
+                            members={members}
+                            user={user}
+                            channels={channels}
+                            onChannel={onChannel}
+                            onReact={onReact}
+                            onDismiss={onDismiss}
+                            actions={actions}
+                            pinTarget={msg.event?.type === 'pinned' ? byId.get(msg.event.messageId) : undefined}
+                        />
                     ))}
                 </section>
             ))}
