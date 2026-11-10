@@ -4,7 +4,7 @@
 import { Suspense, type ComponentType } from 'react';
 import { BriefcaseBusiness } from 'lucide-react';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
-import { HAIRLINE } from '~/components/dashboard/primitives';
+import { HAIRLINE } from '~/components/dashboard/surfaces';
 import { PAGE_TITLE } from '~/components/shell/titles';
 import { cn } from '~/lib/utils';
 

@@ -12,8 +12,9 @@ import { formatCredentialTypeLabel } from '~/utils/credentialTypes';
 import { MONTHS } from './formatters';
 import type { AgentTurn, AttentionItem, AttentionKind, DayBucket, NotificationEntry, RunRow, WorkflowRef } from './types';
 
-export const SURFACE =
-    'rounded-xl border border-border bg-card [--surface:hsl(var(--card))] dark:border-foreground/[0.08] dark:bg-foreground/[0.02] dark:[--surface:color-mix(in_srgb,hsl(var(--foreground))_2%,hsl(var(--background)))]';
+import { HAIRLINE, ROW_HOVER, SURFACE } from './surfaces';
+
+export { HAIRLINE, ROW_HOVER, SURFACE };
 
 /** Props that make a clickable row a real control: role, tab stop, Enter/Space. */
 export function clickableRow(onActivate?: () => void) {
@@ -30,8 +31,6 @@ export function clickableRow(onActivate?: () => void) {
         },
     };
 }
-export const HAIRLINE = 'border-border dark:border-foreground/[0.08]';
-export const ROW_HOVER = 'transition-colors hover:bg-foreground/[0.03]';
 
 /** Hairlines between stacked rows. Drawn as a pseudo-element line rather than
  *  `divide-y`, whose line is the row's own top border and so bends around the
