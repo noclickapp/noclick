@@ -1,0 +1,20 @@
+{
+  "source": "https://api.crm.walcu.com/.well-known/service-desc",
+  "kind": "synthetic schema-shaped test data, not a provider-authored example",
+  "record": {
+    "_id": "0123456789abcdef01234567",
+    "dealer_id": "dealer-1",
+    "client_id": "0123456789abcdef01234567",
+    "updated_at": "2026-11-10",
+    "primary_contact": {
+      "name": {
+        "first_name": "Alex",
+        "last_name": "Smith"
+      },
+      "emails": [
+        "alex@example.test"
+      ]
+    },
+    "inquiry": "Interested in a test drive"
+  }
+}
