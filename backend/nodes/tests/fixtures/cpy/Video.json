@@ -1,0 +1,32 @@
+{
+  "id": 42,
+  "uuid": "9c9de5e8-0a1e-484a-b099-e80766180a6d",
+  "shortUUID": "2y84q2MQUMWPbiEcxNXMgC",
+  "createdAt": "2017-10-01T10:52:46.396000Z",
+  "publishedAt": "2018-10-01T10:52:46.396000Z",
+  "updatedAt": "2021-05-04T08:01:01.502000Z",
+  "originallyPublishedAt": "2010-10-01T10:52:46.396000Z",
+  "category": {
+    "id": 15,
+    "label": "Science & Technology"
+  },
+  "licence": {
+    "id": 2,
+    "label": "Attribution - Share Alike"
+  },
+  "language": {
+    "id": "en",
+    "label": "English"
+  },
+  "truncatedDescription": "**[Want to help to translate this video?](https://weblate.framasoft.org/projects/what-is-peertube-video/)**\\r\\n\\r\\n\n**Take back the control of your videos! [#JoinPeertube](https://joinpeertube.org)**\\r\\n*A decentralized video hosting network, based on fr...\n",
+  "duration": 1419,
+  "aspectRatio": 1.778,
+  "name": "What is PeerTube?",
+  "embedPath": "/videos/embed/a65bc12f-9383-462e-81ae-8207e8b434ee",
+  "views": 1337,
+  "likes": 42,
+  "dislikes": 7,
+  "channel": {
+    "id": 42
+  }
+}

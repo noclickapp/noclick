@@ -1,0 +1,71 @@
+{
+  "total": 1,
+  "data": [
+    {
+      "id": 42,
+      "url": "https://example.com",
+      "avatars": [
+        {
+          "path": "string",
+          "fileUrl": "string",
+          "width": 0,
+          "height": 0,
+          "createdAt": "2024-01-15T09:30:00Z",
+          "updatedAt": "2024-01-15T09:30:00Z"
+        }
+      ],
+      "host": "example.com",
+      "hostRedundancyAllowed": true,
+      "followingCount": 0,
+      "followersCount": 0,
+      "createdAt": "2024-01-15T09:30:00Z",
+      "updatedAt": "2024-01-15T09:30:00Z",
+      "displayName": "Videos of Framasoft",
+      "description": "Videos made with <3 by Framasoft",
+      "support": "Please support our work on https://soutenir.framasoft.org/en/ <3",
+      "publicEmail": "user@example.com",
+      "isLocal": true,
+      "banners": [
+        {
+          "path": "string",
+          "fileUrl": "string",
+          "width": 0,
+          "height": 0,
+          "createdAt": "2024-01-15T09:30:00Z",
+          "updatedAt": "2024-01-15T09:30:00Z"
+        }
+      ],
+      "ownerAccount": {
+        "id": 42,
+        "url": "https://example.com",
+        "avatars": [
+          {
+            "path": "string",
+            "fileUrl": "string",
+            "width": 0,
+            "height": 0,
+            "createdAt": "2024-01-15T09:30:00Z",
+            "updatedAt": "2024-01-15T09:30:00Z"
+          }
+        ],
+        "host": "example.com",
+        "hostRedundancyAllowed": true,
+        "followingCount": 0,
+        "followersCount": 0,
+        "createdAt": "2024-01-15T09:30:00Z",
+        "updatedAt": "2024-01-15T09:30:00Z",
+        "displayName": "string",
+        "description": "string"
+      },
+      "videosCount": 0,
+      "viewsPerDay": [
+        {
+          "date": "2024-01-15T09:30:00Z",
+          "views": 0
+        }
+      ],
+      "viewsGroupInterval": "day",
+      "totalViews": 0
+    }
+  ]
+}

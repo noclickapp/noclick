@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/cpy.svg",
+  "source": "https://raw.githubusercontent.com/Chocobozzz/PeerTube/3f04da2213316eebe6a280a7c7f37fba356e41a6/client/src/assets/images/logo.svg",
+  "license": "PeerTube official brand mark, used nominatively to identify the service; trademark rights remain with Framasoft. Source repository is AGPL-3.0-or-later.",
+  "sha256": "a5602dc4a27bcfbcfbbbd23ccb444dd15ba856f8b535cf43ad164694e2ce2816"
+}
