@@ -85,11 +85,16 @@ def assign_mount_dirs(setups: List[Dict[str, Any]]) -> None:
         setup["dir"] = chosen
 
 
-# A clone is tried this many times, a pause longer each time, before the mount fails with git's own exit: the first
-# clone of a just-moved agent met a cold credential proxy's redirect (2026-11-10), and a branch pushed seconds before
-# can be a moment from readable. Each retry says so on stderr (``CLONE_RETRY_MARK``), which the logs keep.
-CLONE_TRIES = 3
+# A clone that fails in a way that can pass is tried this many times, 5, 10 then 15 s apart (about as long as the
+# credential proxy's slowest cold start), before the mount fails with git's own exit: the first clone of a just-moved
+# agent met the redirect in front of a proxy still starting (2026-11-10). A refused login or a missing repo or branch
+# fails at once, in git's own words. Each retry says so on stderr (``CLONE_RETRY_MARK``), which the logs keep.
+CLONE_TRIES = 4
 CLONE_RETRY_MARK = "noclick: the clone failed; trying it again"
+# What git says of a failure that can pass (matched case-insensitively): a redirect in front of a starting server,
+# an HTTP 5xx, a connection refused or reset, a broken transfer, a timeout.
+CLONE_TRANSIENT = ("unable to update url base from redirection", "error: 5[0-9][0-9]", "http 5[0-9][0-9]",
+                   "connection refused", "connection reset", "rpc failed", "timed out", "timeout")
 
 
 def clone_retries(output: str) -> int:
@@ -139,14 +144,20 @@ def build_git_mount_script(setup: Dict[str, Any], workdir: str) -> str:
         + auth +
         f"if [ ! -d {shlex.quote(target)}/.git ]; then\n"
         "  tries=0\n"
-        f"  until git clone {clone_args}{shlex.quote(setup['clone_url'])} {shlex.quote(target)}; do\n"
+        "  said=$(mktemp)\n"
+        f"  until git clone {clone_args}{shlex.quote(setup['clone_url'])} {shlex.quote(target)} 2>\"$said\"; do\n"
         "    status=$?\n"
+        "    cat \"$said\" >&2\n"
         "    tries=$((tries + 1))\n"
-        f"    if [ \"$tries\" -ge {CLONE_TRIES} ]; then exit \"$status\"; fi\n"
+        f"    if [ \"$tries\" -ge {CLONE_TRIES} ] || ! grep -qiE {shlex.quote('|'.join(CLONE_TRANSIENT))} \"$said\"; then\n"
+        "      rm -f \"$said\"\n"
+        "      exit \"$status\"\n"
+        "    fi\n"
         f"    echo \"{CLONE_RETRY_MARK} (exit $status, try $tries of {CLONE_TRIES})\" >&2\n"
         f"    rm -rf {shlex.quote(target)}\n"
-        "    sleep $((tries * 2))\n"
+        "    sleep $((tries * 5))\n"
         "  done\n"
+        "  rm -f \"$said\"\n"
         "fi\n"
         f"git -C {shlex.quote(target)} config user.name {shlex.quote(setup['git_user'])}\n"
         f"git -C {shlex.quote(target)} config user.email {shlex.quote(setup['git_email'])}\n"
