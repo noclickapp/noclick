@@ -1,0 +1,173 @@
+{
+  "oauthProviders": [
+    {
+      "provider": "zoho_books",
+      "authorizeUrl": "{accounts}/oauth/v2/auth",
+      "scopes": [
+        "AaaServer.profile.READ",
+        "ZohoBooks.accountants.CREATE",
+        "ZohoBooks.accountants.DELETE",
+        "ZohoBooks.accountants.READ",
+        "ZohoBooks.accountants.UPDATE",
+        "ZohoBooks.banking.CREATE",
+        "ZohoBooks.banking.DELETE",
+        "ZohoBooks.banking.READ",
+        "ZohoBooks.banking.UPDATE",
+        "ZohoBooks.bills.CREATE",
+        "ZohoBooks.bills.DELETE",
+        "ZohoBooks.bills.READ",
+        "ZohoBooks.bills.UPDATE",
+        "ZohoBooks.categories.CREATE",
+        "ZohoBooks.categories.DELETE",
+        "ZohoBooks.categories.READ",
+        "ZohoBooks.categories.UPDATE",
+        "ZohoBooks.contacts.CREATE",
+        "ZohoBooks.contacts.DELETE",
+        "ZohoBooks.contacts.READ",
+        "ZohoBooks.contacts.UPDATE",
+        "ZohoBooks.creditnotes.CREATE",
+        "ZohoBooks.creditnotes.DELETE",
+        "ZohoBooks.creditnotes.READ",
+        "ZohoBooks.creditnotes.UPDATE",
+        "ZohoBooks.customerpayments.CREATE",
+        "ZohoBooks.customerpayments.DELETE",
+        "ZohoBooks.customerpayments.READ",
+        "ZohoBooks.customerpayments.UPDATE",
+        "ZohoBooks.custommodules.ALL",
+        "ZohoBooks.debitnotes.CREATE",
+        "ZohoBooks.debitnotes.DELETE",
+        "ZohoBooks.debitnotes.READ",
+        "ZohoBooks.debitnotes.UPDATE",
+        "ZohoBooks.deliverychallans.CREATE",
+        "ZohoBooks.deliverychallans.DELETE",
+        "ZohoBooks.deliverychallans.READ",
+        "ZohoBooks.deliverychallans.UPDATE",
+        "ZohoBooks.estimates.CREATE",
+        "ZohoBooks.estimates.DELETE",
+        "ZohoBooks.estimates.READ",
+        "ZohoBooks.estimates.UPDATE",
+        "ZohoBooks.expenses.CREATE",
+        "ZohoBooks.expenses.DELETE",
+        "ZohoBooks.expenses.READ",
+        "ZohoBooks.expenses.UPDATE",
+        "ZohoBooks.fixedasset.CREATE",
+        "ZohoBooks.fixedasset.DELETE",
+        "ZohoBooks.fixedasset.READ",
+        "ZohoBooks.fixedasset.UPDATE",
+        "ZohoBooks.invoices.CREATE",
+        "ZohoBooks.invoices.DELETE",
+        "ZohoBooks.invoices.READ",
+        "ZohoBooks.invoices.UPDATE",
+        "ZohoBooks.items.CREATE",
+        "ZohoBooks.items.DELETE",
+        "ZohoBooks.items.READ",
+        "ZohoBooks.items.UPDATE",
+        "ZohoBooks.projects.CREATE",
+        "ZohoBooks.projects.DELETE",
+        "ZohoBooks.projects.READ",
+        "ZohoBooks.projects.UPDATE",
+        "ZohoBooks.purchaseorders.CREATE",
+        "ZohoBooks.purchaseorders.DELETE",
+        "ZohoBooks.purchaseorders.READ",
+        "ZohoBooks.purchaseorders.UPDATE",
+        "ZohoBooks.purchasereturns.CREATE",
+        "ZohoBooks.purchasereturns.DELETE",
+        "ZohoBooks.purchasereturns.READ",
+        "ZohoBooks.purchasereturns.UPDATE",
+        "ZohoBooks.salesorders.CREATE",
+        "ZohoBooks.salesorders.DELETE",
+        "ZohoBooks.salesorders.READ",
+        "ZohoBooks.salesorders.UPDATE",
+        "ZohoBooks.settings.CREATE",
+        "ZohoBooks.settings.DELETE",
+        "ZohoBooks.settings.READ",
+        "ZohoBooks.settings.UPDATE",
+        "ZohoBooks.vendorpayments.CREATE",
+        "ZohoBooks.vendorpayments.DELETE",
+        "ZohoBooks.vendorpayments.READ",
+        "ZohoBooks.vendorpayments.UPDATE"
+      ],
+      "pkce": false,
+      "clientIdEnv": "ZOHO_BOOKS_CLIENT_ID",
+      "clientSecretEnv": "ZOHO_BOOKS_CLIENT_SECRET",
+      "redirectUriEnv": "ZOHO_BOOKS_REDIRECT_URI",
+      "authorizeParams": {
+        "access_type": "offline",
+        "prompt": "consent"
+      },
+      "credentialType": "zoho_books_oauth",
+      "contextFields": {
+        "accounts": {
+          "source": "input",
+          "pattern": null,
+          "choices": [
+            "https://accounts.zoho.com",
+            "https://accounts.zoho.eu",
+            "https://accounts.zoho.in",
+            "https://accounts.zoho.com.au",
+            "https://accounts.zoho.com.cn",
+            "https://accounts.zoho.jp",
+            "https://accounts.zoho.sa",
+            "https://accounts.zohocloud.ca"
+          ],
+          "kind": "origin",
+          "label": "Data centre",
+          "callbackName": null
+        },
+        "accounts_server": {
+          "source": "callback",
+          "pattern": null,
+          "choices": [
+            "https://accounts.zoho.com",
+            "https://accounts.zoho.eu",
+            "https://accounts.zoho.in",
+            "https://accounts.zoho.com.au",
+            "https://accounts.zoho.com.cn",
+            "https://accounts.zoho.jp",
+            "https://accounts.zoho.sa",
+            "https://accounts.zohocloud.ca"
+          ],
+          "kind": "origin",
+          "label": null,
+          "callbackName": "accounts-server"
+        },
+        "api_domain": {
+          "source": "token",
+          "pattern": null,
+          "choices": [
+            "https://www.zohoapis.com",
+            "https://www.zohoapis.eu",
+            "https://www.zohoapis.in",
+            "https://www.zohoapis.com.au",
+            "https://www.zohoapis.com.cn",
+            "https://www.zohoapis.jp",
+            "https://www.zohoapis.sa",
+            "https://www.zohoapis.ca"
+          ],
+          "kind": "origin",
+          "label": null,
+          "callbackName": null
+        }
+      },
+      "scopeSeparator": ","
+    }
+  ],
+  "$comment": "Auto-generated by backend/scripts/generate_socket_types.py \u2014 do not edit.",
+  "type": "automation-zoho-books",
+  "nodeMeta": {
+    "agentToolProvider": true,
+    "triggerOperations": [
+      "on_invoice_updated",
+      "on_contact_updated",
+      "on_payment_updated"
+    ]
+  },
+  "credentialTypes": {
+    "Zoho Books OAuth": "zoho_books_oauth",
+    "ZohoBooksOAuthCredential": "zoho_books_oauth"
+  },
+  "providerLabels": {
+    "zoho_books": "Zoho Books OAuth"
+  },
+  "autoSelectCredential": true
+}
