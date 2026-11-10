@@ -15,6 +15,7 @@ import {
     requirementsFromSchema,
 } from '~/components/credential/credentialMethods';
 import schema from '~/schemas/nodes/isn.json';
+import meta from '~/schemas/nodeMeta/isn.json';
 
 describe('ISN integration metadata', () => {
     beforeAll(() => loadNodeSchemas(['automation-isn']));
@@ -46,6 +47,35 @@ describe('ISN integration metadata', () => {
             operation: 'get_order',
             order_id: 'order-42',
             all_controls: false,
+        });
+    });
+    it('discovers order event triggers and keeps their configuration scoped', () => {
+        expect(meta.nodeMeta.triggerOperations).toEqual([
+            'on_order_event',
+            'on_order_status_changed',
+        ]);
+        expect(
+            schema.$defs.ISNOnOrderEventConfig.properties.operation[
+                'x-is-trigger'
+            ]
+        ).toBe(true);
+        expect(
+            schema.$defs.ISNOnOrderStatusChangedConfig.properties.operation[
+                'x-is-trigger'
+            ]
+        ).toBe(true);
+        expect(
+            filterConfigForExecution('automation-isn', {
+                operation: 'on_order_status_changed',
+                office_id: 'office-42',
+                order_id: 'order-42',
+                event_type: 'OrderPaid',
+                client_id: 'unrelated',
+            })
+        ).toEqual({
+            operation: 'on_order_status_changed',
+            office_id: 'office-42',
+            order_id: 'order-42',
         });
     });
 });

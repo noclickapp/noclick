@@ -8,10 +8,13 @@ response without inventing pagination parameters.
 from __future__ import annotations
 
 import base64
+import hashlib
+import hmac
 import re
+import time
 from datetime import datetime
 from typing import Annotated, Literal, Union
-from urllib.parse import urlsplit
+from urllib.parse import quote, urlsplit
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -19,6 +22,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import SSRFError, guarded_async_client
 
 CREDENTIAL_TYPE = "isn_api_key"
@@ -44,7 +48,7 @@ class ISNAPIKeyCredential(BaseModel):
     model_config = ConfigDict(title="ISN API Key", extra="ignore", hide_input_in_errors=True,
         json_schema_extra={
             "x-credential-url": "https://json.inspectionsupport.net/",
-            "x-credential-instructions": "Paste your account's JSON API URL and the API access key and secret key used as the Basic-auth username and password. Use API keys with the permissions your workflow needs. The connection check reads the current user; it does not verify write permissions.",
+            "x-credential-instructions": "Paste your account's JSON API URL and the API access key and secret key used as the Basic-auth username and password. Webhook triggers require keys belonging to a user with OWNER privilege. The connection check reads the current user; it does not verify write or webhook permissions.",
         })
     credential_type: Literal["isn_api_key"] = Field("isn_api_key", json_schema_extra={"ui:hidden": True})
     api_base_url: str = Field(..., title="ISN JSON API URL", description="Your account URL ending in /json, for example https://goisn.net/greenway/json")
@@ -276,7 +280,40 @@ class ISNListPackagesConfig(_Input):
     includedeleted: bool | None = None
     view: Literal["slim"] | None = None
 
+
+# API subscription names differ from delivery actions. Both come from the
+# provider's REST OpenAPI and https://developer.inspectionsupport.com/webhooks/.
+ORDER_EVENTS = {
+    "OrderCreated": "ORDER_CREATED", "OrderScheduled": "ORDER_SCHEDULED",
+    "OrderSigned": "ORDER_SIGNED", "OrderPaid": "ORDER_PAID",
+    "OrderNotPaid": "ORDER_NOT_PAID", "OrderCompleted": "ORDER_COMPLETED",
+    "OrderUpdated": "ORDER_UPDATED", "OrderDateTime": "ORDER_DATETIME",
+}
+
+
+class _ISNWebhookConfig(WebhookTriggerConfigBase, _Input):
+    office_id: str | None = Field(None, title="Office ID", description="Optional office UUID; defaults to your primary office")
+    order_id: str | None = Field(None, title="Order ID", description="Optional order UUID or numeric ID; leave empty for every order in the office")
+    webhook_url: str | None = Field(None, title="Webhook URL", json_schema_extra={
+        "ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+class ISNOnOrderEventConfig(_ISNWebhookConfig):
+    """Start a workflow when an inspection order is created, updated or reaches a milestone."""
+    operation: Literal["on_order_event"] = Field("on_order_event", title="On Order Event", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Order Event"})
+    event_type: Literal["OrderCreated", "OrderScheduled", "OrderSigned", "OrderPaid", "OrderNotPaid", "OrderCompleted", "OrderUpdated", "OrderDateTime"] = Field(
+        "OrderCreated", title="Order Event", description="Choose the order milestone that starts this workflow")
+
+
+class ISNOnOrderStatusChangedConfig(_ISNWebhookConfig):
+    """Start a workflow when an order changes status or is rescheduled."""
+    operation: Literal["on_order_status_changed"] = Field("on_order_status_changed", title="On Order Status Changed", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Order Status Changed"})
+
 ISNOperation = Annotated[Union[
+    ISNOnOrderEventConfig,
+    ISNOnOrderStatusChangedConfig,
     ISNGetCurrentUserConfig,
     ISNListOrdersConfig,
     ISNGetOrderConfig,
@@ -352,7 +389,7 @@ def _redact(value, credential):
     return value
 
 
-class ISNNode(WorkflowNode):
+class ISNNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-isn"
     connection_evidence = ConnectionEvidence(
         noun="ISN account", identity_operation="get_current_user",
@@ -363,12 +400,123 @@ class ISNNode(WorkflowNode):
     def get_config_model(cls):
         return ISNFullConfig
 
+    @classmethod
+    def _subscription(cls, config):
+        if config.get("operation") == "on_order_status_changed":
+            return "OrderStatusChanged", "ORDER_STATUS_CHANGED"
+        if config.get("operation") == "on_order_event":
+            event = config.get("event_type") or "OrderCreated"
+            if event in ORDER_EVENTS:
+                return event, ORDER_EVENTS[event]
+        raise ValueError("Choose an ISN order trigger")
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {key: (config or {}).get(key) for key in ("event_type", "office_id", "order_id")}
+
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, *, config, body=None):
+        # The REST surface uses the same tenant, host and Basic API keys as JSON.
+        keys = ISNAPIKeyCredential.model_validate(credential)
+        rest_url = keys.api_base_url.removesuffix("/json") + "/rest"
+        auth = base64.b64encode((keys.access_key + ":" + keys.secret_key).encode()).decode()
+        async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
+            response = await client.request(method, rest_url + path,
+                headers={"Authorization": "Basic " + auth, "Accept": "application/json"},
+                params={"office": config["office_id"]} if config.get("office_id") else {},
+                **({"json": body} if body is not None else {}))
+        try:
+            data = response.json()
+        except ValueError:
+            raise ValueError("ISN returned an invalid webhook response") from None
+        if not 200 <= response.status_code < 300 or not isinstance(data, dict) or data.get("status") != "ok":
+            raise ValueError(f"ISN webhook request failed (HTTP {response.status_code}); check OWNER privilege")
+        return data
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        parsed = cls.parse_config({"config": config}).config
+        config = parsed.model_dump(exclude_none=True)
+        event, _ = cls._subscription(config)
+        body = {"url": webhook_url, "name": f"NoClick {node_id}", "events": [event],
+                "method": "POST", "signed": True, "track": True}
+        if config.get("order_id"):
+            body["order"] = config["order_id"]
+        data = await cls._webhook_request(credential, "POST", "/webhooks", config=config, body=body)
+        webhook = data.get("webhook")
+        identifier = webhook.get("id") if isinstance(webhook, dict) else None
+        secret = data.get("secret")
+        if not identifier or not isinstance(secret, str) or not secret:
+            raise ValueError("ISN did not return a webhook ID and signing secret")
+        return {"external_webhook_id": str(identifier), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        identifier = (config or {}).get("external_webhook_id")
+        if identifier and credential:
+            await cls._webhook_request(credential, "DELETE", "/webhooks/" + quote(str(identifier), safe=""), config=config)
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        secret = (config or {}).get("signing_secret")
+        header = next((v for k, v in headers.items() if k.lower() == "x-isn-signature"), "")
+        parts = dict(p.strip().split("=", 1) for p in header.split(",") if "=" in p)
+        timestamp, signature = parts.get("t", ""), parts.get("v1", "")
+        if not secret or not re.fullmatch(r"[0-9]{1,20}", timestamp) or abs(time.time() - int(timestamp)) > 300 or not re.fullmatch(r"[0-9a-f]{64}", signature):
+            return False
+        expected = hmac.new(secret.encode(), timestamp.encode() + b"." + body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, signature)
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        try:
+            _, action = cls._subscription(config)
+        except ValueError:
+            return False
+        return (isinstance(payload, dict) and payload.get("action") == action
+                and bool(payload.get("event_id")) and bool(payload.get("order_id")))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if not cls.filter_trigger_payload(payload, config):
+            return cls.no_event_output(config.get("operation", "ISN trigger"))
+        return {"status": "success", "operation": config["operation"],
+                "data": {k: v for k, v in payload.items() if k != "_webhook"}}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("operation") not in {"on_order_event", "on_order_status_changed"}:
+            return super().resolve_agent_event(output)
+        data = output.get("data")
+        if not isinstance(data, dict) or not data.get("order_id"):
+            return None
+        action, order_id = data.get("action"), data["order_id"]
+        lines = [f"ISN {action}: order {data.get('order_oid')} (order_id={order_id})",
+                 f"Company: {data.get('ck')}; at {data.get('utc')}"]
+        if action == "ORDER_STATUS_CHANGED":
+            lines += [f"Changed by: {data.get('changed_by_name') or 'ISN automation'} (user_id={data.get('changed_by')})",
+                      f"Status: {data.get('old_status')} → {data.get('new_status')}"]
+            if data.get("transition") == "RESCHEDULED":
+                lines.append(f"Rescheduled: {data.get('old_datetime')} → {data.get('new_datetime')}")
+        elif action in ORDER_EVENTS.values():
+            lines += [f"Inspection: {data.get('type')} at {data.get('address')}; scheduled {data.get('datetime')}",
+                      f"Client: {data.get('client_first')} {data.get('client_last')} ({data.get('client_email')})",
+                      f"Inspector: {data.get('inspector')}; report {data.get('report_number')}"]
+            actor = {"ORDER_CREATED": "created_by", "ORDER_SCHEDULED": "scheduled_by", "ORDER_COMPLETED": "completed_by"}.get(action)
+            if actor:
+                lines.append(f"By: {data.get(actor + '_name')} (user_id={data.get(actor)})")
+        lines += [f"Event ID: {data.get('event_id')}",
+                  f"To act: get_order or update_order with order_id={order_id}."]
+        return {"text": "\n".join(lines), "conversation_key": str(order_id)}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect an ISN API key")
         credential = self.config.credentials
         config = self.config.config
         operation = config.operation
+        if isinstance(config, _ISNWebhookConfig):
+            return self.no_event_output(operation)
         method, route, is_list = ROUTES[operation]
         values = config.model_dump(exclude={"operation"}, exclude_none=True)
         identifier = next((values.pop(k) for k in ("order_id", "client_id", "agent_id", "contact_id", "service_id") if k in values), None) if "{" in route else None

@@ -36,7 +36,7 @@
       ],
       "title": "ISN API Key",
       "type": "object",
-      "x-credential-instructions": "Paste your account's JSON API URL and the API access key and secret key used as the Basic-auth username and password. Use API keys with the permissions your workflow needs. The connection check reads the current user; it does not verify write permissions.",
+      "x-credential-instructions": "Paste your account's JSON API URL and the API access key and secret key used as the Basic-auth username and password. Webhook triggers require keys belonging to a user with OWNER privilege. The connection check reads the current user; it does not verify write or webhook permissions.",
       "x-credential-url": "https://json.inspectionsupport.net/"
     },
     "ISNCancelOrderConfig": {
@@ -899,6 +899,330 @@
       "title": "ISNListUsersConfig",
       "type": "object"
     },
+    "ISNOnOrderEventConfig": {
+      "additionalProperties": false,
+      "description": "Start a workflow when an inspection order is created, updated or reaches a milestone.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "office_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional office UUID; defaults to your primary office",
+          "title": "Office ID"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional order UUID or numeric ID; leave empty for every order in the office",
+          "title": "Order ID"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_order_event",
+          "default": "on_order_event",
+          "title": "On Order Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Order Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "OrderCreated",
+          "description": "Choose the order milestone that starts this workflow",
+          "enum": [
+            "OrderCreated",
+            "OrderScheduled",
+            "OrderSigned",
+            "OrderPaid",
+            "OrderNotPaid",
+            "OrderCompleted",
+            "OrderUpdated",
+            "OrderDateTime"
+          ],
+          "title": "Order Event",
+          "type": "string"
+        }
+      },
+      "title": "ISNOnOrderEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ISNOnOrderStatusChangedConfig": {
+      "additionalProperties": false,
+      "description": "Start a workflow when an order changes status or is rescheduled.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "office_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional office UUID; defaults to your primary office",
+          "title": "Office ID"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional order UUID or numeric ID; leave empty for every order in the office",
+          "title": "Order ID"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_order_status_changed",
+          "default": "on_order_status_changed",
+          "title": "On Order Status Changed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Order Status Changed",
+          "x-is-trigger": true
+        }
+      },
+      "title": "ISNOnOrderStatusChangedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "ISNUpdateOrderConfig": {
       "additionalProperties": false,
       "description": "Update selected order fields; omitted fields are not sent.",
@@ -1117,12 +1441,20 @@
           "list_packages": "#/$defs/ISNListPackagesConfig",
           "list_services": "#/$defs/ISNListServicesConfig",
           "list_users": "#/$defs/ISNListUsersConfig",
+          "on_order_event": "#/$defs/ISNOnOrderEventConfig",
+          "on_order_status_changed": "#/$defs/ISNOnOrderStatusChangedConfig",
           "update_order": "#/$defs/ISNUpdateOrderConfig",
           "update_service": "#/$defs/ISNUpdateServiceConfig"
         },
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/ISNOnOrderEventConfig"
+        },
+        {
+          "$ref": "#/$defs/ISNOnOrderStatusChangedConfig"
+        },
         {
           "$ref": "#/$defs/ISNGetCurrentUserConfig"
         },

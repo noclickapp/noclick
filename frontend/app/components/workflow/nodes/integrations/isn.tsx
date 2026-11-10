@@ -32,7 +32,7 @@ export const ISNNode: NodeDefinition = {
     label: 'ISN',
     keywords: ['Inspection Support Network', 'home inspections'],
     description:
-        'Manage inspections, clients, agents, services, notes and scheduling',
+        'React to inspection order events and manage clients, agents, services and scheduling',
     Icon: ISNIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

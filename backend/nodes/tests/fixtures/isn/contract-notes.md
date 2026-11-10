@@ -22,3 +22,22 @@ of provider-authored responses or live-account testing. Each of the 22 actions
 maps to one documented operation. Lists preserve the API arrays without
 inventing pagination. Writes report provider acknowledgment with
 `readback_verified: false`; transport failures leave the write outcome unverified.
+
+## Webhook trigger evidence
+
+Registration and deletion use the provider's REST API OpenAPI version 8665:
+https://developer.inspectionsupport.com/specs/isn/openapi.json
+The REST surface uses the same Basic access/secret keys and company as JSON;
+webhook management requires OWNER privilege. `rest-openapi.json` retains the
+unchanged relevant operations and their referenced components from that pin,
+with its full-document SHA-256. The conformance catalog holds the full document.
+
+The delivery examples in `webhook-events.json` are copied verbatim from
+https://developer.inspectionsupport.com/webhooks/ (order completion, status
+change, and rescheduling). That page documents the common order-event shape,
+the API subscription names versus payload actions, and `X-ISN-Signature`:
+HMAC-SHA256 over `{timestamp}.{raw body}`, using the secret string as UTF-8,
+with a five-minute tolerance. Registration explicitly requests signed, tracked
+POST deliveries and stores the create-only secret. The trigger returns the
+event ID for consumers to identify redeliveries; it does not promise exactly-once
+delivery. Manual runs report no event. No live account was used.
