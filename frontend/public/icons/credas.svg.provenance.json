@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/credas.svg",
+  "source": "https://credas.com/wp-content/uploads/2024/04/Credas_RGB_RV.svg",
+  "source_page": "https://credas.com/",
+  "retrieved_at": "2026-11-11",
+  "license": "Credas trademark; official publisher artwork used to identify the integration.",
+  "sha256": "6c4a455f24228c2388a71258837ea2e2bd485d82d4e69eb7de2564916aff6ae1",
+  "edits": [
+    "Kept all 29 original yellow symbol paths without changing their path data; deleted the white wordmark, tagline and unused definitions.",
+    "Cropped the viewBox to 1.5 1.8 49.5 57.5 around the symbol; preserved the official #f9ba2c fill and transparent background.",
+    "Removed the unused root id/version and generator comment; replaced each retained st1 class with its unchanged explicit #f9ba2c fill."
+  ],
+  "notes": "Current Credas identity symbol extracted from the official website header logo. The yellow fingerprint C is the app mark, not the Credas wordmark. No paths were generated or traced; no background or CSS filter was added. The mark uses the same yellow in both themes.",
+  "source_sha256": "8ba6e8082fbb822596bc706af168197243fa963a3a5191fa0534de964dcaad50"
+}
