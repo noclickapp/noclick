@@ -1,0 +1,27 @@
+{
+  "source": "https://docs.usglobalmail.com/api/api-reference/mails/list",
+  "body": {
+    "data": [
+      {
+        "id": "string",
+        "is_read": true,
+        "mail_status": "string",
+        "mail_type": "string",
+        "folder_id": "string",
+        "sender_name": "string",
+        "recipient_name": "string",
+        "arrival_date": "2024-01-15T09:30:00Z",
+        "envelope_image_url": "string",
+        "quarantine_reason": "string",
+        "scan": {
+          "uuid": "string",
+          "status": "string",
+          "category": "string",
+          "label": "string"
+        }
+      }
+    ],
+    "next_cursor": "string",
+    "total_count": 1
+  }
+}
