@@ -1,0 +1,1267 @@
+{
+  "source": "https://demo.platforms.bookingsync.com/api-docs/swagger/api/ota/v1/swagger.json",
+  "sha256": "fc99c7ba5e5ad041207ee1fec7b1db09c236676398fa9ad58add8d37a73e32af",
+  "examples": {
+    "AccountResponseExample": {
+      "data": {
+        "attributes": {
+          "name": "Name",
+          "email": "smily@example.com",
+          "phones": {
+            "phone": "",
+            "mobile": "+31666666666"
+          }
+        },
+        "id": "1",
+        "type": "accounts",
+        "links": {
+          "self": "https://my-ota.com/api/ota/v1/accounts/1"
+        }
+      }
+    },
+    "AccountNotFoundResponseExample": {
+      "errors": [
+        {
+          "title": "Record not found",
+          "detail": "The record identified by 123 could not be found.",
+          "code": "404",
+          "status": "404"
+        }
+      ]
+    },
+    "AccountsResponseExample": {
+      "data": [
+        {
+          "attributes": {
+            "name": "Name",
+            "email": "smily@example.com",
+            "phones": {
+              "phone": "",
+              "mobile": "+31666666666"
+            }
+          },
+          "id": "1",
+          "links": {
+            "self": "https://my-ota.com/api/ota/v1/accounts/1"
+          },
+          "type": "accounts"
+        }
+      ]
+    },
+    "RentalResponseExample": {
+      "data": {
+        "attributes": {
+          "address1": "Address 1",
+          "address2": "Address 2",
+          "adults-max": 5,
+          "balance-due-in-days-before-check-in": 30,
+          "bathrooms": [
+            {
+              "bath-count": 1,
+              "id": "21",
+              "name-translations": {
+                "en": "description in English",
+                "fr": "description en fran\u00e7ais"
+              },
+              "shower-count": 1,
+              "wc-count": 1
+            }
+          ],
+          "bedrooms-count": 1,
+          "bedrooms": [
+            {
+              "air-mattress-beds-count": 1,
+              "bunk-beds-count": 1,
+              "crib-beds-count": 1,
+              "double-beds-count": 1,
+              "floor-mattress-beds-count": 1,
+              "futon-beds-count": 1,
+              "id": "22",
+              "kingsize-beds-count": 1,
+              "name-translations": {
+                "en": "description in English",
+                "fr": "description en fran\u00e7ais"
+              },
+              "queensize-beds-count": 1,
+              "single-beds-count": 1,
+              "sofa-beds-count": 1,
+              "toddler-beds-count": 1
+            }
+          ],
+          "certifications": {
+            "clevacances": "1_cle",
+            "accueil_velo": "accueil_velo",
+            "gites_de_france": "1_epi",
+            "meubles_de_tourisme": "1_etoile"
+          },
+          "charge-damage-deposit-on-arrival": false,
+          "checkin-details-translations": {
+            "en": "Check-in details in English",
+            "fr": "D\u00e9tails d'entr\u00e9e en fran\u00e7ais"
+          },
+          "children-max": 2,
+          "city": "Paris",
+          "country-code": "FR",
+          "currency": "EUR",
+          "damage-deposit": "500.0",
+          "description-translations": {
+            "en": "description in English",
+            "fr": "description en fran\u00e7ais"
+          },
+          "downpayment-percentage": 30,
+          "fees": [
+            {
+              "always-applied": true,
+              "currency": "EUR",
+              "downpayment-percentage": "10.0",
+              "id": "21",
+              "kind": "cleaning",
+              "maximum-bookable": 5,
+              "maximum-possible-rate": "200.0",
+              "name-translations": {
+                "en": "Cleaning"
+              },
+              "periods": [],
+              "rate": "151.12",
+              "rate-kind": "fixed",
+              "required": true,
+              "taxes": [
+                {
+                  "conditions": [
+                    {
+                      "comparator": ">=",
+                      "kind": "length_of_stay",
+                      "value": "20"
+                    },
+                    {
+                      "comparator": "<=",
+                      "kind": "length_of_stay",
+                      "value": "55"
+                    }
+                  ],
+                  "end-date": "2021-01-01",
+                  "id": "123",
+                  "name-translations": {
+                    "en": "VAT",
+                    "fr": "VAT"
+                  },
+                  "percentage": "20.0",
+                  "start-date": "2020-01-01",
+                  "tax-included-in-rate": true
+                }
+              ]
+            }
+          ],
+          "floor": 3,
+          "full-bathrooms-count": 2,
+          "guests-access-translations": {
+            "en": "guests access in English",
+            "fr": "acc\u00e8s invit\u00e9s en fran\u00e7ais"
+          },
+          "guests-interaction-translations": {
+            "en": "guests interaction in English",
+            "fr": "interaction avec les invit\u00e9s en fran\u00e7ais"
+          },
+          "headline-translations": {
+            "en": "headline in English",
+            "fr": "titre en fran\u00e7ais"
+          },
+          "lat": 12.1212,
+          "living-rooms": [
+            {
+              "air-mattress-beds-count": 0,
+              "bunk-beds-count": 1,
+              "crib-beds-count": 0,
+              "double-beds-count": 1,
+              "floor-mattress-beds-count": 0,
+              "futon-beds-count": 0,
+              "id": "31",
+              "kingsize-beds-count": 1,
+              "queensize-beds-count": 1,
+              "single-beds-count": 1,
+              "sofa-beds-count": 1,
+              "toddler-beds-count": 0
+            }
+          ],
+          "lng": 12.1212,
+          "name": "Rental Name",
+          "neighborhood-overview-translations": {
+            "en": "neighborhood overview in English",
+            "fr": "aper\u00e7u du quartier en fran\u00e7ais"
+          },
+          "neighborhood-transit-translations": {
+            "en": "neighborhood transit in English",
+            "fr": "transit de quartier en fran\u00e7ais"
+          },
+          "permit-number": "123",
+          "position": 1,
+          "public-notes-translations": {
+            "en": "public notes in English",
+            "fr": "notes publiques en fran\u00e7ais"
+          },
+          "refund-damage-deposit-in-days-after-check-out": 7,
+          "rental-type": "apartment",
+          "sleeps": 3,
+          "sleeps-max": 5,
+          "space-translations": {
+            "en": "space in English",
+            "fr": "espace en fran\u00e7ais"
+          },
+          "standalone-toilets-count": 1,
+          "state": "",
+          "summary-translations": {
+            "en": "summary in English",
+            "fr": "r\u00e9sum\u00e9 en fran\u00e7ais"
+          },
+          "surface": 150,
+          "surface-unit": "metric",
+          "vr-bathrooms-count": 2.5,
+          "website-url-translations": {
+            "en": "https://rental-website.com/en",
+            "fr": "https://rental-website.com/fr"
+          },
+          "zip": "12345",
+          "account": {
+            "id": "12012",
+            "name": "Business Name",
+            "email": "smily@example.com",
+            "phones": {
+              "phone": "",
+              "mobile": "+31666666666"
+            }
+          },
+          "amenities": [
+            "bbq"
+          ],
+          "availability": {
+            "map": "1001101101110",
+            "start-date": "2020-01-01",
+            "id": "1"
+          },
+          "daily-change-over": {
+            "map": "NNNDDDOOOIII",
+            "start-date": "2020-01-01",
+            "id": "1"
+          },
+          "photos": [
+            {
+              "compact-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+              "description-translations": {
+                "en": "English"
+              },
+              "giant-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+              "grande-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+              "height": 100,
+              "kind": "inside",
+              "large-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+              "medium-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+              "micro-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+              "position": 1,
+              "ratio": "0.1",
+              "small-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+              "thumb-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+              "width": 40,
+              "id": "1"
+            }
+          ],
+          "urls": [
+            {
+              "id": "1",
+              "label": "Booking.com",
+              "url": "https://booking.com/hotel/fr/00zz-apartment-with-terrace.en.html"
+            },
+            {
+              "id": "2",
+              "label": "Airbnb",
+              "url": "https://www.airbnb.com/rooms/00111222333444"
+            }
+          ],
+          "rates": [
+            {
+              "currency": "EUR",
+              "end-date": "2020-10-01",
+              "initial-nightly-rate": "5.0",
+              "initial-weekly-rate": "7.0",
+              "initial-monthly-rate": "12.0",
+              "final-nightly-rate": "5.0",
+              "final-weekly-rate": "7.0",
+              "final-monthly-rate": "12.0",
+              "minimum-stay": 3,
+              "start-date": "2020-01-01",
+              "id": "12"
+            }
+          ],
+          "rental-cancelation-policy": {
+            "id": "1",
+            "cancelation-policy": {
+              "en": "Lorem ipsum",
+              "fr": "Lorem ipsum"
+            },
+            "cancelation-policy-items": [
+              {
+                "id": "1",
+                "penalty-percentage": 10,
+                "eligible-days": 2,
+                "message": {
+                  "en": "Lorem ipsum",
+                  "fr": "Lorem ipsum"
+                }
+              }
+            ]
+          },
+          "rental-agreement": {
+            "id": "1",
+            "agreement-translations": {
+              "en": "Agreement",
+              "fr": "Accord"
+            }
+          },
+          "reviews": [
+            {
+              "comment": "Some text",
+              "country-code": "FR",
+              "name": "John Doe",
+              "rating": "3,",
+              "title": "Awesome stay!",
+              "id": "4"
+            }
+          ],
+          "taxes": [
+            {
+              "conditions": [
+                {
+                  "comparator": ">=",
+                  "kind": "length_of_stay",
+                  "value": "20"
+                },
+                {
+                  "comparator": "<=",
+                  "kind": "length_of_stay",
+                  "value": "55"
+                }
+              ],
+              "end-date": "2021-01-01",
+              "id": "123",
+              "name-translations": {
+                "en": "VAT",
+                "fr": "VAT"
+              },
+              "percentage": "20.0",
+              "start-date": "2020-01-01",
+              "tax-included-in-rate": true
+            }
+          ]
+        },
+        "id": "1",
+        "type": "rentals",
+        "links": {
+          "self": "https://my-ota.com/api/ota/v1/rentals/1"
+        }
+      }
+    },
+    "RentalsResponseExample": {
+      "data": [
+        {
+          "attributes": {
+            "address1": "Address 1",
+            "address2": "Address 2",
+            "adults-max": 5,
+            "balance-due-in-days-before-check-in": 30,
+            "bathrooms": [
+              {
+                "bath-count": 1,
+                "id": "21",
+                "name-translations": {
+                  "en": "description in English",
+                  "fr": "description en fran\u00e7ais"
+                },
+                "shower-count": 1,
+                "wc-count": 1
+              }
+            ],
+            "bedrooms-count": 1,
+            "bedrooms": [
+              {
+                "air-mattress-beds-count": 1,
+                "bunk-beds-count": 1,
+                "crib-beds-count": 1,
+                "double-beds-count": 1,
+                "floor-mattress-beds-count": 1,
+                "futon-beds-count": 1,
+                "id": "22",
+                "kingsize-beds-count": 1,
+                "name-translations": {
+                  "en": "description in English",
+                  "fr": "description en fran\u00e7ais"
+                },
+                "queensize-beds-count": 1,
+                "single-beds-count": 1,
+                "sofa-beds-count": 1,
+                "toddler-beds-count": 1
+              }
+            ],
+            "certifications": {
+              "clevacances": "1_cle",
+              "accueil_velo": "accueil_velo",
+              "gites_de_france": "1_epi",
+              "meubles_de_tourisme": "1_etoile"
+            },
+            "charge-damage-deposit-on-arrival": false,
+            "checkin-details-translations": {
+              "en": "Check-in details in English",
+              "fr": "D\u00e9tails d'entr\u00e9e en fran\u00e7ais"
+            },
+            "children-max": 2,
+            "city": "Paris",
+            "country-code": "FR",
+            "currency": "EUR",
+            "damage-deposit": "500.0",
+            "description-translations": {
+              "en": "description in English",
+              "fr": "description en fran\u00e7ais"
+            },
+            "fees": [
+              {
+                "always-applied": true,
+                "currency": "EUR",
+                "downpayment-percentage": "10.0",
+                "id": "21",
+                "kind": "cleaning",
+                "maximum-bookable": 5,
+                "maximum-possible-rate": "200.0",
+                "name-translations": {
+                  "en": "Cleaning"
+                },
+                "periods": [],
+                "rate": "151.12",
+                "rate-kind": "fixed",
+                "required": true,
+                "taxes": [
+                  {
+                    "conditions": [
+                      {
+                        "comparator": ">=",
+                        "kind": "length_of_stay",
+                        "value": "20"
+                      },
+                      {
+                        "comparator": "<=",
+                        "kind": "length_of_stay",
+                        "value": "55"
+                      }
+                    ],
+                    "end-date": "2021-01-01",
+                    "id": "123",
+                    "name-translations": {
+                      "en": "VAT",
+                      "fr": "VAT"
+                    },
+                    "percentage": "20.0",
+                    "start-date": "2020-01-01",
+                    "tax-included-in-rate": true
+                  }
+                ]
+              }
+            ],
+            "downpayment-percentage": 30,
+            "floor": 3,
+            "full-bathrooms-count": 2,
+            "guests-access-translations": {
+              "en": "guests access in English",
+              "fr": "acc\u00e8s invit\u00e9s en fran\u00e7ais"
+            },
+            "guests-interaction-translations": {
+              "en": "guests interaction in English",
+              "fr": "interaction avec les invit\u00e9s en fran\u00e7ais"
+            },
+            "headline-translations": {
+              "en": "headline in English",
+              "fr": "titre en fran\u00e7ais"
+            },
+            "lat": 12.1212,
+            "living-rooms": [
+              {
+                "air-mattress-beds-count": 0,
+                "bunk-beds-count": 1,
+                "crib-beds-count": 0,
+                "double-beds-count": 1,
+                "floor-mattress-beds-count": 0,
+                "futon-beds-count": 0,
+                "id": "31",
+                "kingsize-beds-count": 1,
+                "queensize-beds-count": 1,
+                "single-beds-count": 1,
+                "sofa-beds-count": 1,
+                "toddler-beds-count": 0
+              }
+            ],
+            "lng": 12.1212,
+            "name": "Rental Name",
+            "neighborhood-overview-translations": {
+              "en": "neighborhood overview in English",
+              "fr": "aper\u00e7u du quartier en fran\u00e7ais"
+            },
+            "neighborhood-transit-translations": {
+              "en": "neighborhood transit in English",
+              "fr": "transit de quartier en fran\u00e7ais"
+            },
+            "permit-number": "123",
+            "position": 1,
+            "public-notes-translations": {
+              "en": "public notes in English",
+              "fr": "notes publiques en fran\u00e7ais"
+            },
+            "refund-damage-deposit-in-days-after-check-out": 7,
+            "rental-type": "apartment",
+            "sleeps": 3,
+            "sleeps-max": 5,
+            "space-translations": {
+              "en": "space in English",
+              "fr": "espace en fran\u00e7ais"
+            },
+            "standalone-toilets-count": 1,
+            "state": "",
+            "summary-translations": {
+              "en": "summary in English",
+              "fr": "r\u00e9sum\u00e9 en fran\u00e7ais"
+            },
+            "surface": 150,
+            "surface-unit": "metric",
+            "vr-bathrooms-count": 2.5,
+            "website-url-translations": {
+              "en": "https://rental-website.com/en",
+              "fr": "https://rental-website.com/fr"
+            },
+            "zip": "12345",
+            "account": {
+              "id": "12012",
+              "name": "Business Name",
+              "email": "smily@example.com",
+              "phones": {
+                "phone": "",
+                "mobile": "+31666666666"
+              }
+            },
+            "amenities": [
+              "bbq"
+            ],
+            "availability": {
+              "map": "1001101101110",
+              "start-date": "2020-01-01",
+              "id": "1"
+            },
+            "daily-change-over": {
+              "map": "NNNDDDOOOIII",
+              "start-date": "2020-01-01",
+              "id": "1"
+            },
+            "photos": [
+              {
+                "compact-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+                "description-translations": {
+                  "en": "English"
+                },
+                "giant-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+                "grande-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+                "height": 100,
+                "kind": "inside",
+                "large-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+                "medium-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+                "micro-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+                "position": 1,
+                "ratio": "1.33",
+                "small-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+                "thumb-url": "https://cdn.bookingsync.io/libs/clearbox/1.2.11/assets/images/villa-doukato.jpg",
+                "width": 40,
+                "id": "1"
+              }
+            ],
+            "urls": [
+              {
+                "id": "1",
+                "label": "Booking.com",
+                "url": "https://booking.com/hotel/fr/00zz-apartment-with-terrace.en.html"
+              },
+              {
+                "id": "2",
+                "label": "Airbnb",
+                "url": "https://www.airbnb.com/rooms/00111222333444"
+              }
+            ],
+            "rates": [
+              {
+                "currency": "EUR",
+                "end-date": "2020-10-01",
+                "initial-nightly-rate": "5.0",
+                "initial-weekly-rate": "7.0",
+                "initial-monthly-rate": "12.0",
+                "final-nightly-rate": "5.0",
+                "final-weekly-rate": "7.0",
+                "final-monthly-rate": "12.0",
+                "minimum-stay": 3,
+                "start-date": "2020-01-01",
+                "id": "12"
+              }
+            ],
+            "rental-cancelation-policy": {
+              "id": "1",
+              "cancelation-policy-translations": {
+                "en": "Lorem ipsum",
+                "fr": "Lorem ipsum"
+              },
+              "cancelation-policy-items": [
+                {
+                  "id": "1",
+                  "penalty-percentage": 10,
+                  "eligible-days": 2,
+                  "message-translations": {
+                    "en": "Lorem ipsum",
+                    "fr": "Lorem ipsum"
+                  }
+                }
+              ]
+            },
+            "rental-agreement": {
+              "id": "1",
+              "agreement-translations": {
+                "en": "Agreement",
+                "fr": "Accord"
+              }
+            },
+            "reviews": [
+              {
+                "comment": "Some text",
+                "country-code": "FR",
+                "name": "John Doe",
+                "rating": "3,",
+                "title": "Awesome stay!",
+                "id": "4"
+              }
+            ],
+            "taxes": [
+              {
+                "conditions": [
+                  {
+                    "comparator": ">=",
+                    "kind": "length_of_stay",
+                    "value": "20"
+                  },
+                  {
+                    "comparator": "<=",
+                    "kind": "length_of_stay",
+                    "value": "55"
+                  }
+                ],
+                "end-date": "2021-01-01",
+                "id": "123",
+                "name-translations": {
+                  "en": "VAT",
+                  "fr": "VAT"
+                },
+                "percentage": "20.0",
+                "start-date": "2020-01-01",
+                "tax-included-in-rate": true
+              }
+            ]
+          },
+          "id": "1",
+          "links": {
+            "self": "https://my-ota.com/api/ota/v1/rentals/1"
+          },
+          "type": "rentals"
+        }
+      ]
+    },
+    "RentalNotFoundResponseExample": {
+      "errors": [
+        {
+          "title": "Record not found",
+          "detail": "The record identified by 123 could not be found.",
+          "code": "404",
+          "status": "404"
+        }
+      ]
+    },
+    "RentalsInvalidPageParameterResponseExample": {
+      "errors": [
+        {
+          "title": "Invalid page value",
+          "detail": "size exceeds maximum page size of 50.",
+          "code": "118",
+          "status": "400"
+        }
+      ]
+    },
+    "QuotesResponseExample": {
+      "data": [
+        {
+          "attributes": {
+            "start-at": "2020-09-04T16:00:00.000Z",
+            "end-at": "2020-09-11T10:00:00.000Z",
+            "adults": 2,
+            "children": 1,
+            "final-price": "176.0",
+            "currency": "EUR",
+            "rental-id": 1,
+            "price-details": {
+              "fees": [
+                {
+                  "id": 1,
+                  "kind": "fee_kind",
+                  "name-translations": {
+                    "en": "Cleaning Fee"
+                  },
+                  "amount": "120.0",
+                  "quantity": 1,
+                  "rentals-fee-id": 1
+                }
+              ],
+              "taxes": [
+                {
+                  "amount": "10.91",
+                  "kind": "tax_kind",
+                  "included": true,
+                  "name-translations": {
+                    "en": "VAT"
+                  },
+                  "percentage": "10.0"
+                }
+              ]
+            },
+            "booking-url": "https://www.bookingsync.com/en/instant-bookings/new?adults=2&children=1&encrypted_data=Y3J5cHQ%3D&end_at=2020-09-11&rental_id=1&start_at=2020-09-04"
+          },
+          "id": "1",
+          "link": {
+            "self": "https://my-ota.com/api/ota/v1/quotes/1"
+          },
+          "type": "quotes"
+        }
+      ]
+    },
+    "QuoteResponseExample": {
+      "data": {
+        "attributes": {
+          "start-at": "2020-09-04T16:00:00.000Z",
+          "end-at": "2020-09-11T10:00:00.000Z",
+          "adults": 2,
+          "children": 1,
+          "final-price": "176.0",
+          "currency": "EUR",
+          "rental-id": 1,
+          "price-details": {
+            "fees": [
+              {
+                "id": 10,
+                "kind": "fee_kind",
+                "required": true,
+                "name-translations": {
+                  "en": "Cleaning Fee"
+                },
+                "amount": "120.0",
+                "quantity": 1,
+                "rentals-fee-id": 1
+              }
+            ],
+            "taxes": [
+              {
+                "id": 100,
+                "amount": "10.91",
+                "kind": "tax_kind",
+                "included": true,
+                "name-translations": {
+                  "en": "VAT"
+                },
+                "taxable-id": 10,
+                "taxable-type": "Fee",
+                "percentage": "10.0"
+              }
+            ]
+          },
+          "booking-url": "https://www.bookingsync.com/en/instant-bookings/new?adults=2&children=1&encrypted_data=Y3J5cHQ%3D&end_at=2020-09-11&rental_id=1&start_at=2020-09-04"
+        },
+        "id": "1",
+        "link": {
+          "self": "https://my-ota.com/api/ota/v1/quotes/1"
+        },
+        "type": "quotes"
+      }
+    },
+    "QuoteRequestExample": {
+      "data": {
+        "attributes": {
+          "start-at": "2020-09-04",
+          "end-at": "2020-09-11",
+          "adults": 2,
+          "children": 1,
+          "rental-id": 1
+        },
+        "type": "quotes"
+      }
+    },
+    "BookingsResponseExample": {
+      "data": [
+        {
+          "attributes": {
+            "start-at": "2020-09-04T16:00:00.000Z",
+            "end-at": "2020-09-11T10:00:00.000Z",
+            "adults": 2,
+            "children": 1,
+            "final-price": "176.0",
+            "currency": "EUR",
+            "rental-id": 1,
+            "tentative-expires-at": "2020-09-03T06:44:59.379Z",
+            "cancelation-reason": null,
+            "cancelation-description": null,
+            "canceled-at": null,
+            "channel-cancelation-cost": null,
+            "channel-commission": null,
+            "client-first-name": "Rich",
+            "client-last-name": "Piana",
+            "client-email": "rich@piana.com",
+            "client-phone-number": "123123123",
+            "client-country-code": "US",
+            "client-preferred-locale": "fr",
+            "fees": [
+              {
+                "amount": "120.0",
+                "kind": "fee_kind",
+                "name-translations": {
+                  "en": "Cleaning Fee"
+                },
+                "times-booked": 1
+              }
+            ],
+            "taxes": [
+              {
+                "amount": "8.8",
+                "kind": "tax_kind",
+                "name-translations": {
+                  "en": "VAT"
+                },
+                "percentage": "10.0",
+                "tax-included-in-price": false
+              },
+              {
+                "amount": "10.91",
+                "kind": "tax_kind",
+                "name-translations": {
+                  "en": "VAT"
+                },
+                "percentage": "10.0",
+                "tax-included-in-price": true
+              }
+            ]
+          },
+          "id": "1",
+          "link": {
+            "self": "https://my-ota.com/api/ota/v1/bookings/1"
+          },
+          "type": "bookings"
+        }
+      ]
+    },
+    "BookingResponseExample": {
+      "data": {
+        "attributes": {
+          "start-at": "2020-09-04T16:00:00.000Z",
+          "end-at": "2020-09-11T10:00:00.000Z",
+          "adults": 2,
+          "children": 1,
+          "final-price": "176.0",
+          "currency": "EUR",
+          "rental-id": 1,
+          "tentative-expires-at": "2020-09-03T06:44:59.379Z",
+          "cancelation-reason": null,
+          "cancelation-description": null,
+          "channel-cancelation-cost": null,
+          "channel-commission": null,
+          "canceled-at": null,
+          "client-first-name": "Rich",
+          "client-last-name": "Piana",
+          "client-email": "rich@piana.com",
+          "client-phone-number": "123123123",
+          "client-country-code": "US",
+          "client-preferred-locale": "fr",
+          "fees": [
+            {
+              "amount": "120.0",
+              "kind": "fee_kind",
+              "name-translations": {
+                "en": "Cleaning Fee"
+              },
+              "times-booked": 1
+            }
+          ],
+          "taxes": [
+            {
+              "amount": "8.8",
+              "kind": "tax_kind",
+              "name-translations": {
+                "en": "VAT"
+              },
+              "percentage": "10.0",
+              "tax-included-in-price": false
+            },
+            {
+              "amount": "10.91",
+              "kind": "tax_kind",
+              "name-translations": {
+                "en": "VAT"
+              },
+              "percentage": "10.0",
+              "tax-included-in-price": true
+            }
+          ]
+        },
+        "id": "1",
+        "link": {
+          "self": "https://my-ota.com/api/ota/v1/bookings/1"
+        },
+        "type": "bookings"
+      }
+    },
+    "BookingRentalNotFoundResponseExample": {
+      "errors": [
+        {
+          "title": "not found",
+          "detail": "rental - not found",
+          "code": "100",
+          "source": {
+            "pointer": "/data/attributes/rental"
+          },
+          "status": "422"
+        }
+      ]
+    },
+    "BookingClosedPeriodResponseExample": {
+      "errors": [
+        {
+          "title": "period is not available for booking",
+          "detail": "start-at - period is not available for booking",
+          "code": "100",
+          "source": {
+            "pointer": "/data/attributes/start-at"
+          },
+          "status": "422"
+        },
+        {
+          "title": "period is not available for booking",
+          "detail": "end-at - period is not available for booking",
+          "code": "100",
+          "source": {
+            "pointer": "/data/attributes/end-at"
+          },
+          "status": "422"
+        }
+      ]
+    },
+    "BookingIncorrectPriceResponseExample": {
+      "errors": [
+        {
+          "title": "price is not correct, it is either too low or significantly higher than expected",
+          "detail": "final-price - price is not correct, it is either too low or significantly higher than expected",
+          "code": "100",
+          "source": {
+            "pointer": "/data/attributes/final-price"
+          },
+          "status": "422"
+        }
+      ]
+    },
+    "BookingUnexpectedErrorResponseExample": {
+      "errors": [
+        {
+          "code": "unprocessable_entity",
+          "details": "label has already been take"
+        }
+      ]
+    },
+    "BookingUnsupportedOccupancyResponseExample": {
+      "errors": [
+        {
+          "title": "period is not available for booking",
+          "detail": "start-at - period is not available for booking",
+          "code": "100",
+          "source": {
+            "pointer": "/data/attributes/start-at"
+          },
+          "status": "422"
+        },
+        {
+          "title": "period is not available for booking",
+          "detail": "end-at - period is not available for booking",
+          "code": "100",
+          "source": {
+            "pointer": "/data/attributes/end-at"
+          },
+          "status": "422"
+        }
+      ]
+    },
+    "QuoteRentalNotFoundResponseExample": {
+      "errors": [
+        {
+          "title": "not found",
+          "detail": "rental - not found",
+          "code": "100",
+          "source": {
+            "pointer": "/data/attributes/rental"
+          },
+          "status": "422"
+        }
+      ]
+    },
+    "QuoteClosedPeriodResponseExample": {
+      "errors": [
+        {
+          "title": "period is not available for booking",
+          "detail": "start-at - period is not available for booking",
+          "code": "100",
+          "source": {
+            "pointer": "/data/attributes/start-at"
+          },
+          "status": "422"
+        },
+        {
+          "title": "period is not available for booking",
+          "detail": "end-at - period is not available for booking",
+          "code": "100",
+          "source": {
+            "pointer": "/data/attributes/end-at"
+          },
+          "status": "422"
+        }
+      ]
+    },
+    "BookingCancelationRequestExample": {
+      "data": {
+        "attributes": {
+          "cancelation-reason": "canceled_by_traveller_other",
+          "cancelation-description": "health concern",
+          "channel-cancelation-cost": "80.0",
+          "currency": "USD"
+        },
+        "type": "bookings",
+        "id": "1"
+      }
+    },
+    "BookingRequestExample": {
+      "data": {
+        "attributes": {
+          "start-at": "2020-09-04T16:00:00.000Z",
+          "end-at": "2020-09-11T10:00:00.000Z",
+          "adults": 2,
+          "children": 1,
+          "final-price": "176.0",
+          "currency": "EUR",
+          "rental-id": 1,
+          "client-first-name": "Rich",
+          "client-last-name": "Piana",
+          "client-email": "rich@piana.com",
+          "client-phone-number": "123123123",
+          "client-country-code": "US",
+          "client-preferred-locale": "fr",
+          "channel-commission": "10.0"
+        },
+        "type": "bookings"
+      }
+    },
+    "BookingNotFoundResponseExample": {
+      "errors": [
+        {
+          "title": "Record not found",
+          "detail": "The record identified by 11111 could not be found.",
+          "code": "404",
+          "status": "404"
+        }
+      ]
+    },
+    "PaymentsResponseExample": {
+      "data": [
+        {
+          "attributes": {
+            "amount": "100.0",
+            "currency": "EUR",
+            "paid-at": "2020-09-10T05:30:18.321Z",
+            "kind": "credit-card",
+            "booking-id": 1
+          },
+          "id": "1",
+          "link": {
+            "self": "https://my-ota.com/api/ota/v1/payments/1"
+          },
+          "type": "payments"
+        }
+      ]
+    },
+    "PaymentResponseExample": {
+      "data": {
+        "attributes": {
+          "amount": "100.0",
+          "currency": "EUR",
+          "paid-at": "2020-09-10T05:30:18.321Z",
+          "kind": "credit-card",
+          "booking-id": 1
+        },
+        "id": "1",
+        "link": {
+          "self": "https://my-ota.com/api/ota/v1/payments/1"
+        },
+        "type": "payments"
+      }
+    },
+    "PaymentRequestExample": {
+      "data": {
+        "attributes": {
+          "amount": "100.0",
+          "currency": "EUR",
+          "paid-at": "2020-09-10T05:30:18.321Z",
+          "kind": "credit-card",
+          "booking-id": 1
+        },
+        "type": "payments"
+      }
+    },
+    "PaymentZeroAmountResponseExample": {
+      "errors": [
+        {
+          "title": "amount-in-cents - can't be zero",
+          "detail": "amount-in-cents - can't be zero",
+          "code": "100",
+          "source": {
+            "pointer": "/data"
+          },
+          "status": "422"
+        }
+      ]
+    },
+    "PaymentNotFoundResponseExample": {
+      "errors": [
+        {
+          "title": "Record not found",
+          "detail": "The record identified by 1 could not be found.",
+          "code": "404",
+          "status": "404"
+        }
+      ]
+    },
+    "LosRecordsResponseExample": {
+      "data": [
+        {
+          "attributes": {
+            "day": "2021-01-27",
+            "rates": [
+              "0.0",
+              "10.0",
+              "20.0",
+              "30.0",
+              "40.0",
+              "50.0",
+              "60.0",
+              "70.0",
+              "80.0",
+              "90.0",
+              "100.0",
+              "110.0",
+              "120.0",
+              "130.0",
+              "140.0",
+              "150.0",
+              "160.0",
+              "170.0",
+              "180.0",
+              "190.0",
+              "200.0",
+              "210.0",
+              "220.0",
+              "230.0",
+              "240.0",
+              "250.0",
+              "260.0",
+              "270.0",
+              "280.0",
+              "290.0"
+            ],
+            "currency": "EUR",
+            "min-occupancy": 1,
+            "max-occupancy": 5,
+            "kind": "final_price"
+          },
+          "id": "1",
+          "link": {
+            "self": "https://my-ota.com/api/ota/v1/los-records/1"
+          },
+          "type": "los-records"
+        }
+      ]
+    },
+    "LiveLosRecordsResponseExample": {
+      "data": [
+        {
+          "account_id": 200,
+          "currency": "USD",
+          "rental_id": 500,
+          "rows": [
+            [
+              "2026-08-13",
+              2,
+              4,
+              [
+                "110.00",
+                "120.00",
+                "130.00",
+                "140.00",
+                "150.00",
+                "160.00",
+                "170.00",
+                "180.00",
+                "190.00",
+                "200.00",
+                "0.00",
+                "220.00",
+                "230.00",
+                "240.00",
+                "250.00",
+                "260.00",
+                "270.00",
+                "280.00",
+                "290.00",
+                "300.00",
+                "310.00",
+                "320.00",
+                "330.00",
+                "340.00",
+                "350.00",
+                "360.00",
+                "370.00",
+                "380.00",
+                "390.00",
+                "400.00"
+              ]
+            ]
+          ]
+        }
+      ],
+      "meta": {
+        "has_more": true,
+        "next_cursor": "eyJsYXN0X3JlbnRhbF9pZCI6NTAxLCJzeW5jX2pvYl9pZCI6NDF9"
+      }
+    },
+    "LosRecordExportUrlsResponseExample": {
+      "data": [
+        {
+          "attributes": {
+            "url": "https://ota-platform-production.s3.eu-west-1.amazonaws.com/los_records_for_day_2021-01-01_for_application_1_for_kind_final_price.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20210101%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20210101T110736Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&X-Amz-Signature=b0a388469117838115d4370bdd4f94f730a6d72dc727da2dc2e852cccbd99766",
+            "day": "2021-01-01",
+            "kind": "final_price"
+          },
+          "id": "1",
+          "link": {
+            "self": "https://my-ota.bookingsync.com/api/ota/v1/los-record-export-urls/1"
+          },
+          "type": "los-record-export-urls"
+        }
+      ]
+    }
+  }
+}

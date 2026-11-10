@@ -1,0 +1,1639 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "SmilyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "smily_api_key",
+          "default": "smily_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "host": {
+          "description": "The HTTPS host supplied by Smily, for example https://my-channel.platforms.bookingsync.com.",
+          "title": "Channel API Host",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "host"
+      ],
+      "title": "Smily API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste the Channel API key and host supplied by the Smily Partners Team (partners@smily.com). This integration uses the Channel API; API v3 OAuth tokens belong to a different API.",
+      "x-credential-url": "https://channel-api.developers.bookingsync.com/guides/getting-started/"
+    },
+    "SmilyCancelBookingConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "cancel_booking",
+          "default": "cancel_booking",
+          "title": "Cancel Booking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Cancel Booking",
+          "x-is-trigger": false
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        },
+        "cancelation_description": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancelation Description"
+        },
+        "cancelation_reason": {
+          "enum": [
+            "canceled_by_owner_other",
+            "canceled_by_traveller_other",
+            "canceled_by_owner_incorrect_price",
+            "canceled_by_owner_rental_unbookable",
+            "canceled_by_traveller_minimum_age_not_met",
+            "canceled_by_traveller_travel_arrangements_infeasible",
+            "canceled_by_traveller_travel_arrangements_infeasible_due_to_visa",
+            "canceled_by_traveller_travel_arrangements_infeasible_due_to_covid",
+            "canceled_by_traveller_host_request_book_elsewhere",
+            "canceled_by_traveller_property_quality",
+            "canceled_by_owner_no_payment",
+            "canceled_by_owner_rental_overbooked",
+            "canceled_by_traveller_wrong_price",
+            "canceled_by_traveller_wrong_facilities",
+            "canceled_by_traveller_rebooking",
+            "canceled_by_traveller_personal"
+          ],
+          "title": "Cancelation Reason",
+          "type": "string"
+        },
+        "channel_cancelation_cost": {
+          "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Channel Cancelation Cost",
+          "type": "string"
+        },
+        "currency": {
+          "description": "ISO currency from the quote or original booking.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_id",
+        "cancelation_reason",
+        "channel_cancelation_cost",
+        "currency"
+      ],
+      "title": "SmilyCancelBookingConfig",
+      "type": "object"
+    },
+    "SmilyCreateBookingConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_booking",
+          "default": "create_booking",
+          "title": "Create Booking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Create Booking",
+          "x-is-trigger": false
+        },
+        "adults": {
+          "minimum": 0,
+          "title": "Adults",
+          "type": "integer"
+        },
+        "channel_commission": {
+          "anyOf": [
+            {
+              "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel Commission"
+        },
+        "children": {
+          "minimum": 0,
+          "title": "Children",
+          "type": "integer"
+        },
+        "client_country_code": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Country Code"
+        },
+        "client_email": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Client Email",
+          "type": "string"
+        },
+        "client_first_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Client First Name",
+          "type": "string"
+        },
+        "client_last_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Client Last Name",
+          "type": "string"
+        },
+        "client_phone_number": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Client Phone Number",
+          "type": "string"
+        },
+        "client_preferred_locale": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Preferred Locale"
+        },
+        "currency": {
+          "description": "ISO currency from the quote or original booking.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Currency",
+          "type": "string"
+        },
+        "end_at": {
+          "format": "date-time",
+          "title": "End At",
+          "type": "string"
+        },
+        "final_price": {
+          "description": "Use the price returned by Create Quote for the same stay.",
+          "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Final Price",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UUID reused only for retries of this identical write; successful responses are cached for six hours.",
+          "title": "Idempotency Key"
+        },
+        "rental_id": {
+          "exclusiveMinimum": 0,
+          "title": "Rental Id",
+          "type": "integer"
+        },
+        "start_at": {
+          "format": "date-time",
+          "title": "Start At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "adults",
+        "children",
+        "client_email",
+        "client_first_name",
+        "client_last_name",
+        "client_phone_number",
+        "currency",
+        "end_at",
+        "final_price",
+        "rental_id",
+        "start_at"
+      ],
+      "title": "SmilyCreateBookingConfig",
+      "type": "object"
+    },
+    "SmilyCreatePaymentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_payment",
+          "default": "create_payment",
+          "title": "Create Payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Create Payment",
+          "x-is-trigger": false
+        },
+        "amount": {
+          "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Amount",
+          "type": "string"
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        },
+        "currency": {
+          "description": "ISO currency from the quote or original booking.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Currency",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UUID reused only for retries of this identical write; successful responses are cached for six hours.",
+          "title": "Idempotency Key"
+        },
+        "paid_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paid At"
+        },
+        "payment_kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "wiretransfer",
+                "paypal",
+                "travel-cheque",
+                "credit-card"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Kind",
+          "enum": [
+            "wiretransfer",
+            "paypal",
+            "travel-cheque",
+            "credit-card"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "amount",
+        "booking_id",
+        "currency"
+      ],
+      "title": "SmilyCreatePaymentConfig",
+      "type": "object"
+    },
+    "SmilyCreateQuoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_quote",
+          "default": "create_quote",
+          "title": "Create Quote",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Create Quote",
+          "x-is-trigger": false
+        },
+        "adults": {
+          "minimum": 0,
+          "title": "Adults",
+          "type": "integer"
+        },
+        "children": {
+          "minimum": 0,
+          "title": "Children",
+          "type": "integer"
+        },
+        "end_at": {
+          "format": "date",
+          "title": "End At",
+          "type": "string"
+        },
+        "rental_id": {
+          "pattern": "^[0-9]+$",
+          "title": "Rental Id",
+          "type": "string"
+        },
+        "start_at": {
+          "format": "date",
+          "title": "Start At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "adults",
+        "children",
+        "end_at",
+        "rental_id",
+        "start_at"
+      ],
+      "title": "SmilyCreateQuoteConfig",
+      "type": "object"
+    },
+    "SmilyGetAccountConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Get Account",
+          "x-is-trigger": false
+        },
+        "account_id": {
+          "exclusiveMinimum": 0,
+          "title": "Account Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated JSON:API attributes to return.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "SmilyGetAccountConfig",
+      "type": "object"
+    },
+    "SmilyGetBookingConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_booking",
+          "default": "get_booking",
+          "title": "Get Booking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Get Booking",
+          "x-is-trigger": false
+        },
+        "booking_id": {
+          "exclusiveMinimum": 0,
+          "title": "Booking Id",
+          "type": "integer"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated JSON:API attributes to return.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "booking_id"
+      ],
+      "title": "SmilyGetBookingConfig",
+      "type": "object"
+    },
+    "SmilyGetPaymentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_payment",
+          "default": "get_payment",
+          "title": "Get Payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Get Payment",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated JSON:API attributes to return.",
+          "title": "Fields"
+        },
+        "payment_id": {
+          "exclusiveMinimum": 0,
+          "title": "Payment Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "SmilyGetPaymentConfig",
+      "type": "object"
+    },
+    "SmilyGetRentalConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_rental",
+          "default": "get_rental",
+          "title": "Get Rental",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rentals",
+          "x-display-name": "Get Rental",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated JSON:API attributes to return.",
+          "title": "Fields"
+        },
+        "rental_id": {
+          "exclusiveMinimum": 0,
+          "title": "Rental Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "rental_id"
+      ],
+      "title": "SmilyGetRentalConfig",
+      "type": "object"
+    },
+    "SmilyGetRentalLiveLosRecordsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_rental_live_los_records",
+          "default": "get_rental_live_los_records",
+          "title": "Get Rental Live LOS Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pricing",
+          "x-display-name": "Get Rental Live LOS Records",
+          "x-is-trigger": false
+        },
+        "changed_since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 checkpoint within retained history (one month). Omit for a full sync.",
+          "title": "Changed Since"
+        },
+        "kind": {
+          "default": "final_price",
+          "enum": [
+            "final_price",
+            "rental_price",
+            "rental_price_before_special_offers"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "rental_id": {
+          "exclusiveMinimum": 0,
+          "title": "Rental Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "rental_id"
+      ],
+      "title": "SmilyGetRentalLiveLosRecordsConfig",
+      "type": "object"
+    },
+    "SmilyListAccountsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List Accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "List Accounts",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated JSON:API attributes to return.",
+          "title": "Fields"
+        },
+        "filter_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Id"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated scalar attributes; prefix with - for descending order.",
+          "title": "Sort"
+        }
+      },
+      "title": "SmilyListAccountsConfig",
+      "type": "object"
+    },
+    "SmilyListBookingsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_bookings",
+          "default": "list_bookings",
+          "title": "List Bookings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "List Bookings",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated JSON:API attributes to return.",
+          "title": "Fields"
+        },
+        "filter_account_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Account Id"
+        },
+        "filter_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Id"
+        },
+        "filter_rental_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Rental Id"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated scalar attributes; prefix with - for descending order.",
+          "title": "Sort"
+        }
+      },
+      "title": "SmilyListBookingsConfig",
+      "type": "object"
+    },
+    "SmilyListLiveLosRecordsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_live_los_records",
+          "default": "list_live_los_records",
+          "title": "List Live LOS Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pricing",
+          "x-display-name": "List Live LOS Records",
+          "x-is-trigger": false
+        },
+        "changed_since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 checkpoint within retained history (one month). Omit for a full sync.",
+          "title": "Changed Since"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_cursor from the previous page with the same kind; omit changed_since.",
+          "title": "Cursor"
+        },
+        "kind": {
+          "default": "final_price",
+          "enum": [
+            "final_price",
+            "rental_price",
+            "rental_price_before_special_offers"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "title": "SmilyListLiveLosRecordsConfig",
+      "type": "object"
+    },
+    "SmilyListLosExportUrlsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_los_export_urls",
+          "default": "list_los_export_urls",
+          "title": "List LOS Export URLs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pricing",
+          "x-display-name": "List LOS Export URLs",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated JSON:API attributes to return.",
+          "title": "Fields"
+        },
+        "filter_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Id"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated scalar attributes; prefix with - for descending order.",
+          "title": "Sort"
+        }
+      },
+      "title": "SmilyListLosExportUrlsConfig",
+      "type": "object"
+    },
+    "SmilyListLosRecordsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_los_records",
+          "default": "list_los_records",
+          "title": "List LOS Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pricing",
+          "x-display-name": "List LOS Records",
+          "x-is-trigger": false
+        },
+        "day": {
+          "format": "date",
+          "title": "Day",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated JSON:API attributes to return.",
+          "title": "Fields"
+        },
+        "kind": {
+          "default": "final_price",
+          "enum": [
+            "final_price",
+            "rental_price",
+            "rental_price_before_special_offers"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "los_rental_id": {
+          "exclusiveMinimum": 0,
+          "title": "Los Rental Id",
+          "type": "integer"
+        },
+        "occupancy": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Occupancy"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated scalar attributes; prefix with - for descending order.",
+          "title": "Sort"
+        }
+      },
+      "required": [
+        "day",
+        "los_rental_id"
+      ],
+      "title": "SmilyListLosRecordsConfig",
+      "type": "object"
+    },
+    "SmilyListPaymentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_payments",
+          "default": "list_payments",
+          "title": "List Payments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "List Payments",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated JSON:API attributes to return.",
+          "title": "Fields"
+        },
+        "filter_booking_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Booking Id"
+        },
+        "filter_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Id"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated scalar attributes; prefix with - for descending order.",
+          "title": "Sort"
+        }
+      },
+      "title": "SmilyListPaymentsConfig",
+      "type": "object"
+    },
+    "SmilyListRentalsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_rentals",
+          "default": "list_rentals",
+          "title": "List Rentals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rentals",
+          "x-display-name": "List Rentals",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated JSON:API attributes to return.",
+          "title": "Fields"
+        },
+        "filter_account_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Account Id"
+        },
+        "filter_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Id"
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rental pagination must first be enabled by Smily. Omit to use the provider's default.",
+          "title": "Page Number"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rental pagination must first be enabled by Smily.",
+          "title": "Page Size"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated scalar attributes; prefix with - for descending order.",
+          "title": "Sort"
+        }
+      },
+      "title": "SmilyListRentalsConfig",
+      "type": "object"
+    },
+    "SmilyOnLOSRecordsChangedConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Full snapshot comparison; 15 minutes respects the documented full-sync allowance.",
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_los_records_changed",
+          "default": "on_los_records_changed",
+          "title": "On New or Updated LOS Prices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated LOS Prices",
+          "x-is-trigger": true
+        },
+        "rental_id": {
+          "description": "Watch the current LOS prices for this rental.",
+          "exclusiveMinimum": 0,
+          "title": "Rental ID",
+          "type": "integer"
+        },
+        "kind": {
+          "default": "final_price",
+          "enum": [
+            "final_price",
+            "rental_price",
+            "rental_price_before_special_offers"
+          ],
+          "title": "Price Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rental_id"
+      ],
+      "title": "SmilyOnLOSRecordsChangedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_booking": "#/$defs/SmilyCancelBookingConfig",
+          "create_booking": "#/$defs/SmilyCreateBookingConfig",
+          "create_payment": "#/$defs/SmilyCreatePaymentConfig",
+          "create_quote": "#/$defs/SmilyCreateQuoteConfig",
+          "get_account": "#/$defs/SmilyGetAccountConfig",
+          "get_booking": "#/$defs/SmilyGetBookingConfig",
+          "get_payment": "#/$defs/SmilyGetPaymentConfig",
+          "get_rental": "#/$defs/SmilyGetRentalConfig",
+          "get_rental_live_los_records": "#/$defs/SmilyGetRentalLiveLosRecordsConfig",
+          "list_accounts": "#/$defs/SmilyListAccountsConfig",
+          "list_bookings": "#/$defs/SmilyListBookingsConfig",
+          "list_live_los_records": "#/$defs/SmilyListLiveLosRecordsConfig",
+          "list_los_export_urls": "#/$defs/SmilyListLosExportUrlsConfig",
+          "list_los_records": "#/$defs/SmilyListLosRecordsConfig",
+          "list_payments": "#/$defs/SmilyListPaymentsConfig",
+          "list_rentals": "#/$defs/SmilyListRentalsConfig",
+          "on_los_records_changed": "#/$defs/SmilyOnLOSRecordsChangedConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SmilyListAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyListRentalsConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyGetRentalConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyCreateQuoteConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyListBookingsConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyGetBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyCreateBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyCancelBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyListPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyGetPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyCreatePaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyListLosRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyListLiveLosRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyGetRentalLiveLosRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyListLosExportUrlsConfig"
+        },
+        {
+          "$ref": "#/$defs/SmilyOnLOSRecordsChangedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SmilyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Smily Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
