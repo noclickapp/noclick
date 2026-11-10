@@ -95,7 +95,6 @@
       "properties": {
         "credential_type": {
           "const": "bookeo_oauth",
-          "default": "bookeo_oauth",
           "title": "Credential Type",
           "type": "string",
           "ui:hidden": true
@@ -175,6 +174,7 @@
         }
       },
       "required": [
+        "credential_type",
         "access_token"
       ],
       "title": "Bookeo OAuth",
