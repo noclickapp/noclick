@@ -25,11 +25,13 @@ _TYPE = re.compile(r"[a-z][a-z0-9-]*")
 
 @dataclass(frozen=True)
 class Declaration:
-    """A self-registered integration read from its source: where its class lives."""
+    """Where a node type's class lives, loaded at the type's first lookup: a self-registered
+    integration read from its source, or (``self_declared`` False) an entry registry.py lists by hand."""
 
     integration_type: str
     module: str
     class_name: str
+    self_declared: bool = True
 
     def load(self) -> type[WorkflowNode]:
         module = importlib.import_module(self.module)
@@ -38,7 +40,7 @@ class Declaration:
             not inspect.isclass(cls)
             or cls.__module__ != module.__name__
             or not issubclass(cls, WorkflowNode)
-            or vars(cls).get("integration_type") != self.integration_type
+            or (self.self_declared and vars(cls).get("integration_type") != self.integration_type)
         ):
             raise ValueError(f"Invalid integration class in {self.module}.{self.class_name}")
         return cls

@@ -8,284 +8,163 @@ and handles instantiation of nodes based on type.
 import logging
 from pathlib import Path
 from collections.abc import Mapping, MutableMapping
-from typing import Dict, Optional, Type, Any, Union
+from typing import Dict, Optional, Tuple, Type, Any, Union
 from nodes.core.base import WorkflowNode
 from nodes.core.discovery import Declaration, declare_nodes, merge_node_entries
-from nodes.telegram_node import TelegramNode
-from nodes.phone_node import PhoneNode
-from nodes.agent_node import AgentNode
-from nodes.google_sheets_node import GoogleSheetsNode
-from nodes.google_drive_node import GoogleDriveNode
-from nodes.gmail_node import GmailNode
-from nodes.iteration_node import IterationNode
-from nodes.delay_node import DelayNode
-from nodes.http_request_node import HttpRequestNode
-from nodes.linear_node import LinearNode
-from nodes.github_rest_node import GithubRestNode
-from nodes.stripe_node import StripeNode
-from nodes.cron_trigger_node import CronTriggerNode
-from nodes.discord_node import DiscordNode
-from nodes.dummy_node import DummyNode
-from nodes.google_calendar_node import GoogleCalendarNode
-from nodes.google_forms_node import GoogleFormsNode
-from nodes.hubspot_node import HubSpotNode
-from nodes.instagram_node import InstagramNode
-from nodes.facebook_node import FacebookNode
-from nodes.meta_node import MetaNode
-from nodes.instantly_node import InstantlyNode
-from nodes.jira_node import JiraNode
-from nodes.notion_node import NotionNode
-from nodes.outlook_mail_node import OutlookMailNode
-from nodes.redis_node import RedisNode
-from nodes.salesforce_node import SalesforceNode
-from nodes.serverless_function_node import ServerlessFunctionNode
-from nodes.shopify_node import ShopifyNode
-from nodes.slack_node import SlackNode
-from nodes.tool_node import ToolNode
-from nodes.mcp_server_node import MCPServerNode
-from nodes.noclick_node import NoClickNode
-from nodes.alarm_node import AlarmNode
-from nodes.filesystem_node import FilesystemNode
-from nodes.cloudflare_node import CloudflareNode
-from nodes.twilio_node import TwilioNode
-from nodes.webhook_trigger_node import WebhookTriggerNode
-from nodes.inbound_email_trigger_node import InboundEmailTriggerNode
-from nodes.send_email_node import SendEmailNode
-from nodes.table_node import TableNode
-from nodes.run_trigger_node import RunTriggerNode
-from nodes.submit_external_form_node import SubmitExternalFormNode
-from nodes.pipedrive_node import PipedriveNode
-from nodes.resend_node import ResendNode
-from nodes.phantombuster_node import PhantomBusterNode
-from nodes.cal_com_node import CalComNode
-from nodes.calendly_node import CalendlyNode
-from nodes.honeycomb_node import HoneycombNode
-from nodes.sentry_node import SentryNode
-from nodes.perplexity_node import PerplexityNode
-from nodes.posthog_node import PostHogNode
-from nodes.atlas_admin_node import AtlasAdminNode
-from nodes.mailgun_node import MailgunNode
-from nodes.gitlab_node import GitLabNode
-from nodes.box_node import BoxNode
-from nodes.clickup_node import ClickUpNode
-from nodes.devin_node import DevinNode
-from nodes.asana_node import AsanaNode
-from nodes.firestore_node import FirestoreNode
-from nodes.google_cloud_storage_node import GoogleCloudStorageNode
-from nodes.monday_node import MondayNode
-from nodes.parallel_node import ParallelNode
-from nodes.datadog_node import DatadogNode
-from nodes.loops_node import LoopsNode
-from nodes.exa_node import ExaNode
-from nodes.reducto_node import ReductoNode
-from nodes.fal_node import FalNode
-from nodes.brandfetch_node import BrandfetchNode
-from nodes.findymail_node import FindymailNode
-from nodes.beehiiv_node import BeehiivNode
-from nodes.hex_node import HexNode
-from nodes.clickhouse_node import ClickHouseNode
-from nodes.extend_node import ExtendNode
-from nodes.fellow_node import FellowNode
-from nodes.fathom_node import FathomNode
-from nodes.sigma_node import SigmaNode
-from nodes.trello_node import TrelloNode
-from nodes.firecrawl_node import FirecrawlNode
-from nodes.attio_node import AttioNode
-from nodes.intercom_node import IntercomNode
-from nodes.zendesk_node import ZendeskNode
-from nodes.confluence_node import ConfluenceNode
-from nodes.pagerduty_node import PagerDutyNode
-from nodes.google_meet_node import GoogleMeetNode
-from nodes.expensify_node import ExpensifyNode
-from nodes.freshsales_node import FreshsalesNode
-from nodes.launchdarkly_node import LaunchDarklyNode
-from nodes.appsheet_node import AppSheetNode
-from nodes.tableau_node import TableauNode
-from nodes.webflow_node import WebflowNode
-from nodes.google_translate_node import GoogleTranslateNode
-from nodes.bigquery_node import BigQueryNode
-from nodes.snowflake_node import SnowflakeNode
-from nodes.databricks_node import DatabricksNode
-from nodes.microsoft_teams_node import MicrosoftTeamsNode
-from nodes.gohighlevel_node import GoHighLevelNode
-from nodes.quickbooks_node import QuickBooksNode
-from nodes.zoom_node import ZoomNode
-from nodes.klaviyo_node import KlaviyoNode
-from nodes.onelake_node import OneLakeNode
-from nodes.threads_node import ThreadsNode
-from nodes.bamboohr_node import BambooHRNode
-from nodes.dv360_node import DV360Node
-from nodes.typeform_node import TypeformNode
-from nodes.filter_node import FilterNode
-from nodes.split_out_node import SplitOutNode
-from nodes.conditional_node import ConditionalNode
-from nodes.switch_node import SwitchNode
-from nodes.merge_node import MergeNode
-from nodes.state_manager_node import StateManagerNode
-from nodes.on_error_node import OnErrorNode
-from nodes.set_variable_node import SetVariableNode
-from nodes.approval_node import ApprovalNode
-from nodes.log_node import LogNode
-from nodes.whatsapp_node import WhatsAppNode
-from nodes.interface import (
-    FormInterfaceNode,
-    FileInterfaceNode,
-    DataframeInterfaceNode,
-    HtmlReactInterfaceNode,
-    FileUploadInterfaceNode,
-)
 
 logger = logging.getLogger(__name__)
 
 
 # Registry mapping node types to their implementation classes
-_NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
+# Node types registered by hand: type -> (module, class). Each imports at its type's first
+# lookup, as a self-registered integration does.
+_NODE_REGISTRY_ENTRIES: Dict[str, Tuple[str, str]] = {
     # Trigger nodes (entry points for workflows)
-    'trigger-run': RunTriggerNode,
-    'trigger-webhook': WebhookTriggerNode,
-    'trigger-email': InboundEmailTriggerNode,
-    'trigger-cron': CronTriggerNode,
+    'trigger-run': ('nodes.run_trigger_node', 'RunTriggerNode'),
+    'trigger-webhook': ('nodes.webhook_trigger_node', 'WebhookTriggerNode'),
+    'trigger-email': ('nodes.inbound_email_trigger_node', 'InboundEmailTriggerNode'),
+    'trigger-cron': ('nodes.cron_trigger_node', 'CronTriggerNode'),
 
     # Automation nodes
-    'automation-telegram': TelegramNode,
-    'automation-phone': PhoneNode,
-    'automation-http-request': HttpRequestNode,
-    'automation-linear': LinearNode,
-    'automation-github-rest': GithubRestNode,
-    'automation-stripe': StripeNode,
-    'automation-discord': DiscordNode,
-    'automation-hubspot': HubSpotNode,
-    'automation-instagram': InstagramNode,
-    'automation-facebook': FacebookNode,
-    'automation-meta': MetaNode,
-    'automation-instantly': InstantlyNode,
-    'automation-jira': JiraNode,
-    'automation-notion': NotionNode,
-    'automation-redis': RedisNode,
-    'automation-salesforce': SalesforceNode,
-    'automation-shopify': ShopifyNode,
-    'automation-slack': SlackNode,
-    'automation-pipedrive': PipedriveNode,
-    'automation-resend': ResendNode,
-    'automation-threads': ThreadsNode,
-    'automation-phantombuster': PhantomBusterNode,
-    'automation-cal-com': CalComNode,
-    'automation-calendly': CalendlyNode,
-    'automation-honeycomb': HoneycombNode,
-    'automation-sentry': SentryNode,
-    'automation-perplexity': PerplexityNode,
-    'automation-posthog': PostHogNode,
-    'automation-atlas-admin': AtlasAdminNode,
-    'automation-mailgun': MailgunNode,
-    'automation-gitlab': GitLabNode,
-    'automation-box': BoxNode,
-    'automation-clickup': ClickUpNode,
-    'automation-devin': DevinNode,
-    'automation-asana': AsanaNode,
-    'automation-firestore': FirestoreNode,
-    'automation-google-cloud-storage': GoogleCloudStorageNode,
-    'automation-monday': MondayNode,
-    'automation-parallel': ParallelNode,
-    'automation-datadog': DatadogNode,
-    'automation-loops': LoopsNode,
-    'automation-exa': ExaNode,
-    'automation-reducto': ReductoNode,
-    'automation-fal': FalNode,
-    'automation-brandfetch': BrandfetchNode,
-    'automation-findymail': FindymailNode,
-    'automation-beehiiv': BeehiivNode,
-    'automation-hex': HexNode,
-    'automation-clickhouse': ClickHouseNode,
-    'automation-extend': ExtendNode,
-    'automation-fellow': FellowNode,
-    'automation-fathom': FathomNode,
-    'automation-sigma': SigmaNode,
-    'automation-trello': TrelloNode,
-    'automation-firecrawl': FirecrawlNode,
-    'automation-attio': AttioNode,
-    'automation-intercom': IntercomNode,
-    'automation-zendesk': ZendeskNode,
-    'automation-confluence': ConfluenceNode,
-    'automation-pagerduty': PagerDutyNode,
-    'automation-google-meet': GoogleMeetNode,
-    'automation-expensify': ExpensifyNode,
-    'automation-freshsales': FreshsalesNode,
-    'automation-launchdarkly': LaunchDarklyNode,
-    'automation-appsheet': AppSheetNode,
-    'automation-tableau': TableauNode,
-    'automation-webflow': WebflowNode,
-    'automation-google-translate': GoogleTranslateNode,
-    'automation-bigquery': BigQueryNode,
-    'automation-snowflake': SnowflakeNode,
-    'automation-databricks': DatabricksNode,
-    'automation-microsoft-teams': MicrosoftTeamsNode,
-    'automation-gohighlevel': GoHighLevelNode,
-    'automation-quickbooks': QuickBooksNode,
-    'automation-zoom': ZoomNode,
-    'automation-klaviyo': KlaviyoNode,
-    'automation-onelake': OneLakeNode,
-    'automation-bamboohr': BambooHRNode,
-    'automation-dv360': DV360Node,
-    'automation-send-email': SendEmailNode,
-    'automation-table': TableNode,
-    'automation-typeform': TypeformNode,
-    'automation-twilio': TwilioNode,
-    'automation-cloudflare': CloudflareNode,
-    'automation-whatsapp': WhatsAppNode,
+    'automation-telegram': ('nodes.telegram_node', 'TelegramNode'),
+    'automation-phone': ('nodes.phone_node', 'PhoneNode'),
+    'automation-http-request': ('nodes.http_request_node', 'HttpRequestNode'),
+    'automation-linear': ('nodes.linear_node', 'LinearNode'),
+    'automation-github-rest': ('nodes.github_rest_node', 'GithubRestNode'),
+    'automation-stripe': ('nodes.stripe_node', 'StripeNode'),
+    'automation-discord': ('nodes.discord_node', 'DiscordNode'),
+    'automation-hubspot': ('nodes.hubspot_node', 'HubSpotNode'),
+    'automation-instagram': ('nodes.instagram_node', 'InstagramNode'),
+    'automation-facebook': ('nodes.facebook_node', 'FacebookNode'),
+    'automation-meta': ('nodes.meta_node', 'MetaNode'),
+    'automation-instantly': ('nodes.instantly_node', 'InstantlyNode'),
+    'automation-jira': ('nodes.jira_node', 'JiraNode'),
+    'automation-notion': ('nodes.notion_node', 'NotionNode'),
+    'automation-redis': ('nodes.redis_node', 'RedisNode'),
+    'automation-salesforce': ('nodes.salesforce_node', 'SalesforceNode'),
+    'automation-shopify': ('nodes.shopify_node', 'ShopifyNode'),
+    'automation-slack': ('nodes.slack_node', 'SlackNode'),
+    'automation-pipedrive': ('nodes.pipedrive_node', 'PipedriveNode'),
+    'automation-resend': ('nodes.resend_node', 'ResendNode'),
+    'automation-threads': ('nodes.threads_node', 'ThreadsNode'),
+    'automation-phantombuster': ('nodes.phantombuster_node', 'PhantomBusterNode'),
+    'automation-cal-com': ('nodes.cal_com_node', 'CalComNode'),
+    'automation-calendly': ('nodes.calendly_node', 'CalendlyNode'),
+    'automation-honeycomb': ('nodes.honeycomb_node', 'HoneycombNode'),
+    'automation-sentry': ('nodes.sentry_node', 'SentryNode'),
+    'automation-perplexity': ('nodes.perplexity_node', 'PerplexityNode'),
+    'automation-posthog': ('nodes.posthog_node', 'PostHogNode'),
+    'automation-atlas-admin': ('nodes.atlas_admin_node', 'AtlasAdminNode'),
+    'automation-mailgun': ('nodes.mailgun_node', 'MailgunNode'),
+    'automation-gitlab': ('nodes.gitlab_node', 'GitLabNode'),
+    'automation-box': ('nodes.box_node', 'BoxNode'),
+    'automation-clickup': ('nodes.clickup_node', 'ClickUpNode'),
+    'automation-devin': ('nodes.devin_node', 'DevinNode'),
+    'automation-asana': ('nodes.asana_node', 'AsanaNode'),
+    'automation-firestore': ('nodes.firestore_node', 'FirestoreNode'),
+    'automation-google-cloud-storage': ('nodes.google_cloud_storage_node', 'GoogleCloudStorageNode'),
+    'automation-monday': ('nodes.monday_node', 'MondayNode'),
+    'automation-parallel': ('nodes.parallel_node', 'ParallelNode'),
+    'automation-datadog': ('nodes.datadog_node', 'DatadogNode'),
+    'automation-loops': ('nodes.loops_node', 'LoopsNode'),
+    'automation-exa': ('nodes.exa_node', 'ExaNode'),
+    'automation-reducto': ('nodes.reducto_node', 'ReductoNode'),
+    'automation-fal': ('nodes.fal_node', 'FalNode'),
+    'automation-brandfetch': ('nodes.brandfetch_node', 'BrandfetchNode'),
+    'automation-findymail': ('nodes.findymail_node', 'FindymailNode'),
+    'automation-beehiiv': ('nodes.beehiiv_node', 'BeehiivNode'),
+    'automation-hex': ('nodes.hex_node', 'HexNode'),
+    'automation-clickhouse': ('nodes.clickhouse_node', 'ClickHouseNode'),
+    'automation-extend': ('nodes.extend_node', 'ExtendNode'),
+    'automation-fellow': ('nodes.fellow_node', 'FellowNode'),
+    'automation-fathom': ('nodes.fathom_node', 'FathomNode'),
+    'automation-sigma': ('nodes.sigma_node', 'SigmaNode'),
+    'automation-trello': ('nodes.trello_node', 'TrelloNode'),
+    'automation-firecrawl': ('nodes.firecrawl_node', 'FirecrawlNode'),
+    'automation-attio': ('nodes.attio_node', 'AttioNode'),
+    'automation-intercom': ('nodes.intercom_node', 'IntercomNode'),
+    'automation-zendesk': ('nodes.zendesk_node', 'ZendeskNode'),
+    'automation-confluence': ('nodes.confluence_node', 'ConfluenceNode'),
+    'automation-pagerduty': ('nodes.pagerduty_node', 'PagerDutyNode'),
+    'automation-google-meet': ('nodes.google_meet_node', 'GoogleMeetNode'),
+    'automation-expensify': ('nodes.expensify_node', 'ExpensifyNode'),
+    'automation-freshsales': ('nodes.freshsales_node', 'FreshsalesNode'),
+    'automation-launchdarkly': ('nodes.launchdarkly_node', 'LaunchDarklyNode'),
+    'automation-appsheet': ('nodes.appsheet_node', 'AppSheetNode'),
+    'automation-tableau': ('nodes.tableau_node', 'TableauNode'),
+    'automation-webflow': ('nodes.webflow_node', 'WebflowNode'),
+    'automation-google-translate': ('nodes.google_translate_node', 'GoogleTranslateNode'),
+    'automation-bigquery': ('nodes.bigquery_node', 'BigQueryNode'),
+    'automation-snowflake': ('nodes.snowflake_node', 'SnowflakeNode'),
+    'automation-databricks': ('nodes.databricks_node', 'DatabricksNode'),
+    'automation-microsoft-teams': ('nodes.microsoft_teams_node', 'MicrosoftTeamsNode'),
+    'automation-gohighlevel': ('nodes.gohighlevel_node', 'GoHighLevelNode'),
+    'automation-quickbooks': ('nodes.quickbooks_node', 'QuickBooksNode'),
+    'automation-zoom': ('nodes.zoom_node', 'ZoomNode'),
+    'automation-klaviyo': ('nodes.klaviyo_node', 'KlaviyoNode'),
+    'automation-onelake': ('nodes.onelake_node', 'OneLakeNode'),
+    'automation-bamboohr': ('nodes.bamboohr_node', 'BambooHRNode'),
+    'automation-dv360': ('nodes.dv360_node', 'DV360Node'),
+    'automation-send-email': ('nodes.send_email_node', 'SendEmailNode'),
+    'automation-table': ('nodes.table_node', 'TableNode'),
+    'automation-typeform': ('nodes.typeform_node', 'TypeformNode'),
+    'automation-twilio': ('nodes.twilio_node', 'TwilioNode'),
+    'automation-cloudflare': ('nodes.cloudflare_node', 'CloudflareNode'),
+    'automation-whatsapp': ('nodes.whatsapp_node', 'WhatsAppNode'),
 
     # Google integrations
-    'automation-google-sheets': GoogleSheetsNode,
-    'automation-google-drive': GoogleDriveNode,
-    'automation-gmail': GmailNode,
-    'automation-google-calendar': GoogleCalendarNode,
-    'automation-google-forms': GoogleFormsNode,
+    'automation-google-sheets': ('nodes.google_sheets_node', 'GoogleSheetsNode'),
+    'automation-google-drive': ('nodes.google_drive_node', 'GoogleDriveNode'),
+    'automation-gmail': ('nodes.gmail_node', 'GmailNode'),
+    'automation-google-calendar': ('nodes.google_calendar_node', 'GoogleCalendarNode'),
+    'automation-google-forms': ('nodes.google_forms_node', 'GoogleFormsNode'),
 
     # Microsoft integrations
-    'automation-outlook': OutlookMailNode,
+    'automation-outlook': ('nodes.outlook_mail_node', 'OutlookMailNode'),
 
     # AI Agent nodes
-    'agent': AgentNode,
-    'tool': ToolNode,
-    'mcp-server': MCPServerNode,
-    'noclick': NoClickNode,
-    'alarm': AlarmNode,
-    'filesystem': FilesystemNode,
+    'agent': ('nodes.agent_node', 'AgentNode'),
+    'tool': ('nodes.tool_node', 'ToolNode'),
+    'mcp-server': ('nodes.mcp_server_node', 'MCPServerNode'),
+    'noclick': ('nodes.noclick_node', 'NoClickNode'),
+    'alarm': ('nodes.alarm_node', 'AlarmNode'),
+    'filesystem': ('nodes.filesystem_node', 'FilesystemNode'),
 
     # Control flow nodes
-    'iteration': IterationNode,
-    'delay': DelayNode,
-    'filter': FilterNode,
-    'split-out': SplitOutNode,
-    'conditional': ConditionalNode,
-    'switch': SwitchNode,
-    'merge': MergeNode,
-    'approval': ApprovalNode,
-    'log': LogNode,
-    'automation-submit-external-form': SubmitExternalFormNode,
+    'iteration': ('nodes.iteration_node', 'IterationNode'),
+    'delay': ('nodes.delay_node', 'DelayNode'),
+    'filter': ('nodes.filter_node', 'FilterNode'),
+    'split-out': ('nodes.split_out_node', 'SplitOutNode'),
+    'conditional': ('nodes.conditional_node', 'ConditionalNode'),
+    'switch': ('nodes.switch_node', 'SwitchNode'),
+    'merge': ('nodes.merge_node', 'MergeNode'),
+    'approval': ('nodes.approval_node', 'ApprovalNode'),
+    'log': ('nodes.log_node', 'LogNode'),
+    'automation-submit-external-form': ('nodes.submit_external_form_node', 'SubmitExternalFormNode'),
 
     # Compute nodes
-    'automation-serverless-function': ServerlessFunctionNode,
+    'automation-serverless-function': ('nodes.serverless_function_node', 'ServerlessFunctionNode'),
 
     # State management nodes
-    'state-manager': StateManagerNode,
+    'state-manager': ('nodes.state_manager_node', 'StateManagerNode'),
 
     # Setup node (entry point for guided template onboarding)
 
     # On-error node (runs when workflow execution encounters an error)
-    'on-error': OnErrorNode,
+    'on-error': ('nodes.on_error_node', 'OnErrorNode'),
 
     # Set variable node (stores values as global variables)
-    'set-variable': SetVariableNode,
+    'set-variable': ('nodes.set_variable_node', 'SetVariableNode'),
 
     # Interface nodes (UI components for the workflow interface builder)
-    'interface-form': FormInterfaceNode,
-    'interface-file': FileInterfaceNode,
-    'interface-dataframe': DataframeInterfaceNode,
-    'interface-html-react': HtmlReactInterfaceNode,
-    'interface-file-upload': FileUploadInterfaceNode,
+    'interface-form': ('nodes.interface.form_node', 'FormInterfaceNode'),
+    'interface-file': ('nodes.interface.file_node', 'FileInterfaceNode'),
+    'interface-dataframe': ('nodes.interface.dataframe_node', 'DataframeInterfaceNode'),
+    'interface-html-react': ('nodes.interface.html_react_node', 'HtmlReactInterfaceNode'),
+    'interface-file-upload': ('nodes.interface.file_upload_node', 'FileUploadInterfaceNode'),
 
     # Test nodes (for testing only)
-    'test-dummy': DummyNode,
+    'test-dummy': ('nodes.dummy_node', 'DummyNode'),
 }
 
 # Backward-compat: the separate image/audio/video interface nodes were merged into
@@ -383,7 +262,11 @@ oauth_providers()
 
 DISCOVERED_NODE_ENTRIES = declare_nodes(Path(__file__).resolve().parents[1])
 NODE_REGISTRY: _NodeRegistry = _NodeRegistry(
-    merge_node_entries(_NODE_REGISTRY_ENTRIES, DISCOVERED_NODE_ENTRIES)
+    merge_node_entries(
+        {node_type: Declaration(node_type, module, name, self_declared=False)
+         for node_type, (module, name) in _NODE_REGISTRY_ENTRIES.items()},
+        DISCOVERED_NODE_ENTRIES,
+    )
 )
 
 

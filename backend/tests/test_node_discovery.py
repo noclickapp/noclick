@@ -181,3 +181,22 @@ def test_every_declared_integration_loads_under_its_type():
         assert vars(cls)['integration_type'] == node_type
         if isinstance(entry, Declaration):
             assert (cls.__module__, cls.__name__) == (entry.module, entry.class_name)
+
+
+def test_every_hand_registered_node_loads_from_its_module():
+    for node_type, (module, name) in _NODE_REGISTRY_ENTRIES.items():
+        cls = NODE_REGISTRY[node_type]
+        assert (cls.__module__, cls.__name__) == (module, name)
+
+
+def test_a_hand_registered_entry_imports_at_its_first_lookup(package):
+    root, name = package
+    (root / 'step_node.py').write_text(
+        'from nodes.core.base import WorkflowNode\n'
+        'class Step(WorkflowNode):\n    async def execute(self, inputs): return {}\n'
+    )
+    registry = _NodeRegistry({'step': Declaration('step', name + '.step_node', 'Step', self_declared=False)})
+    assert name + '.step_node' not in sys.modules
+    assert registry['step'].__name__ == 'Step'
+    with pytest.raises(ValueError, match='Invalid integration class'):
+        _NodeRegistry({'x': Declaration('x', name + '.step_node', 'Missing', self_declared=False)})['x']
