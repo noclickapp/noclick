@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/microsoft-graph-security.svg",
+  "source": "https://learn.microsoft.com/en-us/media/logos/logo-ms-social.svg",
+  "found_at": "https://learn.microsoft.com/en-us/graph/security-concept-overview",
+  "retrieved": "2026-11-11",
+  "edits": [],
+  "license": "Microsoft trademark; nominative identification",
+  "notes": "Official Microsoft symbol. Graph Security is an API without a separate app icon. The four coloured squares are the brand mark itself, not an added background.",
+  "sha256": "ec25fc196f07e70ebf0e51e583881c0b75c7c936bd6e77e14da4be6633ea345a"
+}
