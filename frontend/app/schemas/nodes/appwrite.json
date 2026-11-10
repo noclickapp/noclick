@@ -1,0 +1,1839 @@
+{
+  "$defs": {
+    "AppwriteAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "appwrite_api_key",
+          "default": "appwrite_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "endpoint": {
+          "default": "https://cloud.appwrite.io/v1",
+          "description": "Copy your project's endpoint, for example https://fra.cloud.appwrite.io/v1",
+          "title": "API Endpoint",
+          "type": "string"
+        },
+        "project_id": {
+          "maxLength": 36,
+          "minLength": 1,
+          "title": "Project ID",
+          "type": "string"
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "project_id",
+        "api_key"
+      ],
+      "title": "Appwrite API Key",
+      "type": "object",
+      "x-credential-instructions": "In your project's Settings \u2192 API keys, create a key with databases.read for connection verification and the scopes needed by your actions. Triggers need webhooks.write. Paste the project ID, API endpoint (including /v1), and key. Self-hosted endpoints must be publicly reachable HTTPS URLs.",
+      "x-credential-url": "https://cloud.appwrite.io/console"
+    },
+    "AppwriteCreateExecutionConfig": {
+      "properties": {
+        "function_id": {
+          "description": "Function ID.",
+          "title": "Function Id",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTP body of execution. Default value is empty string.",
+          "title": "Body"
+        },
+        "async_execution": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Execute code in the background. Default value is false.",
+          "title": "Async Execution"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTP path of execution. Path can include query params. Default value is /",
+          "title": "Path"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTP method of execution. Default value is POST.",
+          "title": "Method"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTP headers of execution. Defaults to empty.",
+          "title": "Headers JSON",
+          "ui:widget": "textarea"
+        },
+        "scheduled_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scheduled execution time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future with precision in minutes.",
+          "title": "Scheduled At"
+        },
+        "operation": {
+          "const": "create_execution",
+          "default": "create_execution",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Functions",
+          "x-display-name": "Create execution"
+        }
+      },
+      "required": [
+        "function_id"
+      ],
+      "title": "AppwriteCreateExecutionConfig",
+      "type": "object"
+    },
+    "AppwriteCreateRowConfig": {
+      "properties": {
+        "database_id": {
+          "description": "Database ID.",
+          "title": "Database Id",
+          "type": "string"
+        },
+        "table_id": {
+          "description": "Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable). Make sure to define columns before creating rows.",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "row_id": {
+          "description": "Row ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.",
+          "title": "Row Id",
+          "type": "string"
+        },
+        "data": {
+          "description": "Row data as JSON object.",
+          "title": "Data JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "permissions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array of permissions strings. By default, only the current user is granted all permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).",
+          "title": "Permissions JSON",
+          "ui:widget": "textarea"
+        },
+        "transaction_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Transaction ID for staging the operation.",
+          "title": "Transaction Id"
+        },
+        "operation": {
+          "const": "create_row",
+          "default": "create_row",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tablesdb",
+          "x-display-name": "Create row"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "row_id",
+        "data"
+      ],
+      "title": "AppwriteCreateRowConfig",
+      "type": "object"
+    },
+    "AppwriteCreateUserConfig": {
+      "properties": {
+        "user_id": {
+          "description": "User ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.",
+          "title": "User Id",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User email.",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.",
+          "title": "Phone"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Plain text user password. Must be at least 8 chars.",
+          "title": "Password",
+          "ui:widget": "password",
+          "writeOnly": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User name. Max length: 128 chars.",
+          "title": "Name"
+        },
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Create user"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "AppwriteCreateUserConfig",
+      "type": "object"
+    },
+    "AppwriteDeleteFileConfig": {
+      "properties": {
+        "bucket_id": {
+          "description": "Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).",
+          "title": "Bucket Id",
+          "type": "string"
+        },
+        "file_id": {
+          "description": "File ID.",
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Delete file"
+        }
+      },
+      "required": [
+        "bucket_id",
+        "file_id"
+      ],
+      "title": "AppwriteDeleteFileConfig",
+      "type": "object"
+    },
+    "AppwriteDeleteRowConfig": {
+      "properties": {
+        "database_id": {
+          "description": "Database ID.",
+          "title": "Database Id",
+          "type": "string"
+        },
+        "table_id": {
+          "description": "Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "row_id": {
+          "description": "Row ID.",
+          "title": "Row Id",
+          "type": "string"
+        },
+        "transaction_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Transaction ID for staging the operation.",
+          "title": "Transaction Id"
+        },
+        "operation": {
+          "const": "delete_row",
+          "default": "delete_row",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tablesdb",
+          "x-display-name": "Delete row"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "row_id"
+      ],
+      "title": "AppwriteDeleteRowConfig",
+      "type": "object"
+    },
+    "AppwriteGetBucketConfig": {
+      "properties": {
+        "bucket_id": {
+          "description": "Bucket unique ID.",
+          "title": "Bucket Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_bucket",
+          "default": "get_bucket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Get bucket"
+        }
+      },
+      "required": [
+        "bucket_id"
+      ],
+      "title": "AppwriteGetBucketConfig",
+      "type": "object"
+    },
+    "AppwriteGetExecutionConfig": {
+      "properties": {
+        "function_id": {
+          "description": "Function ID.",
+          "title": "Function Id",
+          "type": "string"
+        },
+        "execution_id": {
+          "description": "Execution ID.",
+          "title": "Execution Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_execution",
+          "default": "get_execution",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Functions",
+          "x-display-name": "Get execution"
+        }
+      },
+      "required": [
+        "function_id",
+        "execution_id"
+      ],
+      "title": "AppwriteGetExecutionConfig",
+      "type": "object"
+    },
+    "AppwriteGetFileConfig": {
+      "properties": {
+        "bucket_id": {
+          "description": "Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).",
+          "title": "Bucket Id",
+          "type": "string"
+        },
+        "file_id": {
+          "description": "File ID.",
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Get file"
+        }
+      },
+      "required": [
+        "bucket_id",
+        "file_id"
+      ],
+      "title": "AppwriteGetFileConfig",
+      "type": "object"
+    },
+    "AppwriteGetRowConfig": {
+      "properties": {
+        "database_id": {
+          "description": "Database ID.",
+          "title": "Database Id",
+          "type": "string"
+        },
+        "table_id": {
+          "description": "Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "row_id": {
+          "description": "Row ID.",
+          "title": "Row Id",
+          "type": "string"
+        },
+        "queries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.",
+          "title": "Queries JSON",
+          "ui:widget": "textarea"
+        },
+        "transaction_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Transaction ID to read uncommitted changes within the transaction.",
+          "title": "Transaction Id"
+        },
+        "operation": {
+          "const": "get_row",
+          "default": "get_row",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tablesdb",
+          "x-display-name": "Get row"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "row_id"
+      ],
+      "title": "AppwriteGetRowConfig",
+      "type": "object"
+    },
+    "AppwriteGetUserConfig": {
+      "properties": {
+        "user_id": {
+          "description": "User ID.",
+          "title": "User Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get user"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "AppwriteGetUserConfig",
+      "type": "object"
+    },
+    "AppwriteListBucketsConfig": {
+      "properties": {
+        "queries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations",
+          "title": "Queries JSON",
+          "ui:widget": "textarea"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter your list results. Max length: 256 chars.",
+          "title": "Search"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to false, the total count returned will be 0 and will not be calculated.",
+          "title": "Total"
+        },
+        "operation": {
+          "const": "list_buckets",
+          "default": "list_buckets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "List buckets"
+        }
+      },
+      "title": "AppwriteListBucketsConfig",
+      "type": "object"
+    },
+    "AppwriteListDatabasesConfig": {
+      "properties": {
+        "queries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name",
+          "title": "Queries JSON",
+          "ui:widget": "textarea"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter your list results. Max length: 256 chars.",
+          "title": "Search"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to false, the total count returned will be 0 and will not be calculated.",
+          "title": "Total"
+        },
+        "operation": {
+          "const": "list_databases",
+          "default": "list_databases",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tablesdb",
+          "x-display-name": "List databases"
+        }
+      },
+      "title": "AppwriteListDatabasesConfig",
+      "type": "object"
+    },
+    "AppwriteListFilesConfig": {
+      "properties": {
+        "bucket_id": {
+          "description": "Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).",
+          "title": "Bucket Id",
+          "type": "string"
+        },
+        "queries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, folder, signature, mimeType, sizeOriginal, chunksTotal, chunksUploaded",
+          "title": "Queries JSON",
+          "ui:widget": "textarea"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter your list results. Max length: 256 chars.",
+          "title": "Search"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to false, the total count returned will be 0 and will not be calculated.",
+          "title": "Total"
+        },
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "List files"
+        }
+      },
+      "required": [
+        "bucket_id"
+      ],
+      "title": "AppwriteListFilesConfig",
+      "type": "object"
+    },
+    "AppwriteListFunctionsConfig": {
+      "properties": {
+        "queries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, runtime, deploymentId, schedule, scheduleNext, schedulePrevious, timeout, entrypoint, commands, installationId",
+          "title": "Queries JSON",
+          "ui:widget": "textarea"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter your list results. Max length: 256 chars.",
+          "title": "Search"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to false, the total count returned will be 0 and will not be calculated.",
+          "title": "Total"
+        },
+        "operation": {
+          "const": "list_functions",
+          "default": "list_functions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Functions",
+          "x-display-name": "List functions"
+        }
+      },
+      "title": "AppwriteListFunctionsConfig",
+      "type": "object"
+    },
+    "AppwriteListRowsConfig": {
+      "properties": {
+        "database_id": {
+          "description": "Database ID.",
+          "title": "Database Id",
+          "type": "string"
+        },
+        "table_id": {
+          "description": "Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/products/databases/tables#create-table).",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "queries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.",
+          "title": "Queries JSON",
+          "ui:widget": "textarea"
+        },
+        "transaction_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Transaction ID to read uncommitted changes within the transaction.",
+          "title": "Transaction Id"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to false, the total count returned will be 0 and will not be calculated.",
+          "title": "Total"
+        },
+        "ttl": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "TTL (seconds) for caching list responses. Responses are stored in an in-memory key-value cache, keyed per project, table, schema version (columns and indexes), caller authorization roles, and the exact query \u2014 so users with different permissions never share cached entries. Schema changes invalidate cached entries automatically; row writes do not, so choose a TTL you are comfortable serving as stale data. Set to 0 to disable caching. Must be between 0 and 86400 (24 hours).",
+          "title": "Ttl"
+        },
+        "operation": {
+          "const": "list_rows",
+          "default": "list_rows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tablesdb",
+          "x-display-name": "List rows"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id"
+      ],
+      "title": "AppwriteListRowsConfig",
+      "type": "object"
+    },
+    "AppwriteListTablesConfig": {
+      "properties": {
+        "database_id": {
+          "description": "Database ID.",
+          "title": "Database Id",
+          "type": "string"
+        },
+        "queries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name, enabled, rowSecurity",
+          "title": "Queries JSON",
+          "ui:widget": "textarea"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter your list results. Max length: 256 chars.",
+          "title": "Search"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to false, the total count returned will be 0 and will not be calculated.",
+          "title": "Total"
+        },
+        "operation": {
+          "const": "list_tables",
+          "default": "list_tables",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tablesdb",
+          "x-display-name": "List tables"
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "AppwriteListTablesConfig",
+      "type": "object"
+    },
+    "AppwriteListTeamsConfig": {
+      "properties": {
+        "queries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, total, billingPlan",
+          "title": "Queries JSON",
+          "ui:widget": "textarea"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter your list results. Max length: 256 chars.",
+          "title": "Search"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to false, the total count returned will be 0 and will not be calculated.",
+          "title": "Total"
+        },
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "List teams"
+        }
+      },
+      "title": "AppwriteListTeamsConfig",
+      "type": "object"
+    },
+    "AppwriteListUsersConfig": {
+      "properties": {
+        "queries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, email, phone, status, passwordUpdate, registration, emailVerification, phoneVerification, passwordPwned, labels, impersonator, accessedAt",
+          "title": "Queries JSON",
+          "ui:widget": "textarea"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter your list results. Max length: 256 chars.",
+          "title": "Search"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to false, the total count returned will be 0 and will not be calculated.",
+          "title": "Total"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "List users"
+        }
+      },
+      "title": "AppwriteListUsersConfig",
+      "type": "object"
+    },
+    "AppwriteOnFileUploadedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_file_uploaded",
+          "default": "on_file_uploaded",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On File Uploaded",
+          "x-is-trigger": true
+        }
+      },
+      "title": "AppwriteOnFileUploadedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AppwriteOnRowCreatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_row_created",
+          "default": "on_row_created",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Row Created",
+          "x-is-trigger": true
+        }
+      },
+      "title": "AppwriteOnRowCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AppwriteOnRowUpdatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_row_updated",
+          "default": "on_row_updated",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Row Updated",
+          "x-is-trigger": true
+        }
+      },
+      "title": "AppwriteOnRowUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AppwriteOnUserCreatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_user_created",
+          "default": "on_user_created",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On User Created",
+          "x-is-trigger": true
+        }
+      },
+      "title": "AppwriteOnUserCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AppwriteUpdateRowConfig": {
+      "properties": {
+        "database_id": {
+          "description": "Database ID.",
+          "title": "Database Id",
+          "type": "string"
+        },
+        "table_id": {
+          "description": "Table ID.",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "row_id": {
+          "description": "Row ID.",
+          "title": "Row Id",
+          "type": "string"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Row data as JSON object. Include only columns and value pairs to be updated.",
+          "title": "Data JSON",
+          "ui:widget": "textarea"
+        },
+        "permissions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).",
+          "title": "Permissions JSON",
+          "ui:widget": "textarea"
+        },
+        "transaction_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Transaction ID for staging the operation.",
+          "title": "Transaction Id"
+        },
+        "operation": {
+          "const": "update_row",
+          "default": "update_row",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tablesdb",
+          "x-display-name": "Update row"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "row_id"
+      ],
+      "title": "AppwriteUpdateRowConfig",
+      "type": "object"
+    },
+    "AppwriteUpdateUserPreferencesConfig": {
+      "properties": {
+        "user_id": {
+          "description": "User ID.",
+          "title": "User Id",
+          "type": "string"
+        },
+        "prefs": {
+          "description": "Prefs key-value JSON object.",
+          "title": "Prefs JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "update_user_preferences",
+          "default": "update_user_preferences",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Update user preferences"
+        }
+      },
+      "required": [
+        "user_id",
+        "prefs"
+      ],
+      "title": "AppwriteUpdateUserPreferencesConfig",
+      "type": "object"
+    },
+    "AppwriteUpsertRowConfig": {
+      "properties": {
+        "database_id": {
+          "description": "Database ID.",
+          "title": "Database Id",
+          "type": "string"
+        },
+        "table_id": {
+          "description": "Table ID.",
+          "title": "Table Id",
+          "type": "string"
+        },
+        "row_id": {
+          "description": "Row ID.",
+          "title": "Row Id",
+          "type": "string"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Row data as JSON object. Include all required columns of the row to be created or updated.",
+          "title": "Data JSON",
+          "ui:widget": "textarea"
+        },
+        "permissions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).",
+          "title": "Permissions JSON",
+          "ui:widget": "textarea"
+        },
+        "transaction_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Transaction ID for staging the operation.",
+          "title": "Transaction Id"
+        },
+        "operation": {
+          "const": "upsert_row",
+          "default": "upsert_row",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tablesdb",
+          "x-display-name": "Upsert a row"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "row_id"
+      ],
+      "title": "AppwriteUpsertRowConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_execution": "#/$defs/AppwriteCreateExecutionConfig",
+          "create_row": "#/$defs/AppwriteCreateRowConfig",
+          "create_user": "#/$defs/AppwriteCreateUserConfig",
+          "delete_file": "#/$defs/AppwriteDeleteFileConfig",
+          "delete_row": "#/$defs/AppwriteDeleteRowConfig",
+          "get_bucket": "#/$defs/AppwriteGetBucketConfig",
+          "get_execution": "#/$defs/AppwriteGetExecutionConfig",
+          "get_file": "#/$defs/AppwriteGetFileConfig",
+          "get_row": "#/$defs/AppwriteGetRowConfig",
+          "get_user": "#/$defs/AppwriteGetUserConfig",
+          "list_buckets": "#/$defs/AppwriteListBucketsConfig",
+          "list_databases": "#/$defs/AppwriteListDatabasesConfig",
+          "list_files": "#/$defs/AppwriteListFilesConfig",
+          "list_functions": "#/$defs/AppwriteListFunctionsConfig",
+          "list_rows": "#/$defs/AppwriteListRowsConfig",
+          "list_tables": "#/$defs/AppwriteListTablesConfig",
+          "list_teams": "#/$defs/AppwriteListTeamsConfig",
+          "list_users": "#/$defs/AppwriteListUsersConfig",
+          "on_file_uploaded": "#/$defs/AppwriteOnFileUploadedConfig",
+          "on_row_created": "#/$defs/AppwriteOnRowCreatedConfig",
+          "on_row_updated": "#/$defs/AppwriteOnRowUpdatedConfig",
+          "on_user_created": "#/$defs/AppwriteOnUserCreatedConfig",
+          "update_row": "#/$defs/AppwriteUpdateRowConfig",
+          "update_user_preferences": "#/$defs/AppwriteUpdateUserPreferencesConfig",
+          "upsert_row": "#/$defs/AppwriteUpsertRowConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AppwriteListDatabasesConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteListTablesConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteListRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteGetRowConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteCreateRowConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteUpdateRowConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteUpsertRowConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteDeleteRowConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteCreateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteUpdateUserPreferencesConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteListBucketsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteGetBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteListFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteGetFileConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteDeleteFileConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteListFunctionsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteCreateExecutionConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteGetExecutionConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteOnFileUploadedConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteOnRowCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteOnRowUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/AppwriteOnUserCreatedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AppwriteAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Appwrite Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create an Appwrite row",
+    "Find Appwrite users",
+    "Run an Appwrite function",
+    "React when an Appwrite file finishes uploading"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
