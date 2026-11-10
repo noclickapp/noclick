@@ -1682,7 +1682,7 @@
                 "examples": {
                   "Access token": {
                     "value": {
-                      "accessToken": "REDACTED.SAMPLE.JWT"
+                      "accessToken": "REDACTED_PROVIDER_JWT_EXAMPLE"
                     }
                   }
                 }
@@ -5886,7 +5886,7 @@
             "type": "string",
             "nullable": false,
             "description": "Access token that allows SMBs to manage connections that have access to their data.",
-            "example": "REDACTED.SAMPLE.JWT"
+            "example": "REDACTED_PROVIDER_JWT_EXAMPLE"
           }
         }
       },

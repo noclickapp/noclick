@@ -92,3 +92,13 @@ def test_codat_documented_event_and_signature(event):
 def test_codat_manual_credential_has_default_type():
     credential = CodatAPIKeyCredential.model_validate({k: v for k, v in CREDENTIAL.items() if k != 'credential_type'})
     assert credential.credential_type == 'codat_api_key'
+
+
+def test_codat_vendored_contract_has_only_redacted_jwt_examples():
+    fixture = FIXTURES / 'conformance' / 'platform.json'
+    content = fixture.read_bytes()
+    manifest = json.loads((fixture.parent / 'manifest.json').read_text())['codat']['specs'][1]
+    assert content.count(b'REDACTED_PROVIDER_JWT_EXAMPLE') == 2
+    assert hashlib.sha256(content).hexdigest() == manifest['sha256']
+    assert manifest['upstream_sha256'] != manifest['sha256']
+    assert manifest['source_url'] == 'https://raw.githubusercontent.com/codatio/oas/main/json/Codat-Platform.json'

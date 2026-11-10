@@ -31,9 +31,11 @@
       },
       {
         "file": "platform.json",
-        "sha256": "90d5a009d658153e959b4fe5e4981fdb138cb7d82b85b8c4e6dcfeb343a109fb",
+        "sha256": "93dae13b467409ddb075f8afaf51c3d7d7f4006d3c09f30fc6ec2ab36360dba9",
         "version": "3.0.0",
-        "source_url": "https://raw.githubusercontent.com/codatio/oas/main/json/Codat-Platform.json"
+        "source_url": "https://raw.githubusercontent.com/codatio/oas/main/json/Codat-Platform.json",
+        "upstream_sha256": "90d5a009d658153e959b4fe5e4981fdb138cb7d82b85b8c4e6dcfeb343a109fb",
+        "sanitization": "Replaced two unrelated provider JWT examples with REDACTED_PROVIDER_JWT_EXAMPLE; contract schemas, routes and authentication requirements unchanged. Original upstream bytes remain pinned in the external conformance catalog."
       }
     ]
   }
