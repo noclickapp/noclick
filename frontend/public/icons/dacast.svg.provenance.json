@@ -1,0 +1,15 @@
+{
+  "actual_canvas_visual_check": false,
+  "bytes": 1957,
+  "discovery_url": "https://docs.dacast.com/docs/getting-started",
+  "height": 80,
+  "mime_type": "image/svg+xml",
+  "modified": false,
+  "purpose": "Exact original official public Dacast documentation icon, without redraw or external images; actual canvas check is pending.",
+  "sha256": "970fe8a57da22e838ee90e68edb0a9b05d3d521ff2f343b4345199ae3a3e1c02",
+  "source_url": "https://files.readme.io/ae1d528-Primary_icon.svg",
+  "width": 76,
+  "path": "frontend/public/icons/dacast.svg",
+  "source": "https://files.readme.io/ae1d528-Primary_icon.svg",
+  "license": "Dacast trademark; official documentation asset"
+}

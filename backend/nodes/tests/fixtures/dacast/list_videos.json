@@ -1,0 +1,102 @@
+{
+  "data": [
+    {
+      "abitrate": 125990,
+      "acodec": "aac",
+      "ads": "",
+      "asset_id": "8f2facdc-1a29-5903-bffb-8414b3ee5da5-vod-0f528305-eb86-d57b-ac12-2003fde4093a",
+      "associated_packages": "",
+      "autoplay": false,
+      "category_id": 0,
+      "container": "mpeg-4",
+      "countries_id": "",
+      "creation_date": "2026-08-20T12:28:18Z",
+      "custom_data": "",
+      "description": "",
+      "disk_usage": 16897018,
+      "duration": "00:00:30",
+      "enable_coupon": false,
+      "enable_payperview": false,
+      "enable_subscription": false,
+      "external_video_page": "http://",
+      "filename": "source.mp4",
+      "filesize": "14006984",
+      "folders": null,
+      "google_analytics": 0,
+      "group_id": 0,
+      "hds": "",
+      "hls": "https://view.dacast.com/0f528305-eb86-d57b-ac12-2003fde4093a/adaptive.m3u8",
+      "id": "0f528305-eb86-d57b-ac12-2003fde4093a",
+      "is_secured": true,
+      "noframe_security": 0,
+      "online": true,
+      "original_id": "0f528305-eb86-d57b-ac12-2003fde4093a",
+      "password": null,
+      "paywall-enabled": false,
+      "pictures": {
+        "splashscreen": [
+          "https://universe-files.dacast.com/14849acb-3100-6c2a-7d72-c9..."
+        ],
+        "thumbnail": [
+          "https://universe-files.dacast.com/5628b796-a353-6526-b71a-93..."
+        ]
+      },
+      "player_height": 0,
+      "player_width": 0,
+      "publish_on_dacast": true,
+      "referers_id": "",
+      "renditions": [
+        {
+          "bitrate": 502404,
+          "code": "ULD",
+          "framerate": "30",
+          "height": 270,
+          "id": "ff5eaee0-07e1-0f39-d767-df3ee31df37e",
+          "size_in_bytes": 2441148,
+          "width": 480
+        },
+        {
+          "bitrate": 1500534,
+          "code": "LD",
+          "framerate": "30",
+          "height": 360,
+          "id": "c1199e63-2159-0ed2-9ba4-7a2016635199",
+          "size_in_bytes": 6250527,
+          "width": 640
+        },
+        {
+          "bitrate": 2012740,
+          "code": "SD",
+          "framerate": "30",
+          "height": 540,
+          "id": "d64731f6-d21f-1407-9830-77b9bde8714a",
+          "size_in_bytes": 8205343,
+          "width": 960
+        }
+      ],
+      "save_date": "2026-08-20T12:28:18Z",
+      "share_code": {
+        "facebook": "https://iframe.dacast.com/vod/8f2facdc-1a29-5903-bffb-8414b3ee5da5/0f528305-eb86-d57b-ac12-2003fde4093a",
+        "gplus": "https://iframe.dacast.com/vod/8f2facdc-1a29-5903-bffb-8414b3ee5da5/0f528305-eb86-d57b-ac12-2003fde4093a",
+        "twitter": "https://iframe.dacast.com/vod/8f2facdc-1a29-5903-bffb-8414b3ee5da5/0f528305-eb86-d57b-ac12-2003fde4093a"
+      },
+      "splashscreen_id": 1,
+      "streamable": 0,
+      "subtitles": null,
+      "template_id": 0,
+      "thumbnail_id": 1,
+      "title": "My Video",
+      "vbitrate": 3538740,
+      "vcodec": "h264",
+      "video_height": 720,
+      "video_width": 1280
+    }
+  ],
+  "paging": {
+    "first": "/v2/vod?page=1&per_page=2",
+    "last": "/v2/vod?page=22&per_page=2",
+    "next": "/v2/vod?page=2&per_page=2",
+    "previous": null
+  },
+  "total_count": "43"
+}

@@ -1,0 +1,888 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "DacastAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "dacast_api_key",
+          "default": "dacast_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:sensitive": true,
+          "ui:widget": "password"
+        },
+        "approved_resources_json": {
+          "default": "{\"channels\":[],\"videos\":[],\"folders\":[],\"playlists\":[]}",
+          "description": "JSON string arrays of channel/video/playlist UUIDs and numeric-string folder IDs. Maximum 50 per family is a NoClick limit.",
+          "title": "Approved Resource IDs",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "monitor_all_folders": {
+          "default": false,
+          "description": "Allow the new-folder trigger to watch all folders, including newly created IDs outside the approved list. Manual reads still require approved IDs; names remain controlled by Include Resource Names.",
+          "title": "Monitor All Folders",
+          "type": "boolean"
+        },
+        "include_labels": {
+          "default": false,
+          "description": "Opt in to channel/video/playlist titles and folder names. Descriptions, all links, stream settings, passwords and custom content are always omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Dacast API Key",
+      "type": "object",
+      "x-credential-instructions": "Enter an existing API key and approve existing resource IDs. This node sends X-Api-Key and X-Format: default at the documented fixed API. Resource access is not a principal or account ownership check; actual API entitlement remains unknown until acceptance.",
+      "x-help-url": "https://docs.dacast.com/docs/getting-started"
+    },
+    "GetFolder": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Operation",
+          "type": "string"
+        },
+        "folder_id": {
+          "title": "Folder",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "folder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "dacast_folder"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "GetFolder",
+      "type": "object"
+    },
+    "GetVideo": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_video",
+          "default": "get_video",
+          "title": "Operation",
+          "type": "string"
+        },
+        "video_id": {
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "dacast_video"
+        },
+        "channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For a recording, optionally require its detail stream_id to match this freshly witnessed approved channel. Leave empty for an ordinary VOD.",
+          "title": "Recording Channel",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "channel_id",
+            "searchable": true
+          },
+          "x-resource-type": "dacast_channel"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "GetVideo",
+      "type": "object"
+    },
+    "ListChannels": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Documented page number. NoClick bounds page numbers; no returned paging URL is followed.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "At most 100 records per request. Video/channel APIs document 100; other routes have this conservative NoClick bound.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented title/name substring filter, repeated unchanged across picker pages.",
+          "title": "Title Filter"
+        },
+        "online": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional enabled/disabled filter. This does not mean someone is currently broadcasting.",
+          "title": "Enabled for Playback"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented YYYY-MM-DD filter; playlist dates are inclusive.",
+          "title": "Created After"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented YYYY-MM-DD filter; playlist dates are inclusive.",
+          "title": "Created Before"
+        },
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListChannels",
+      "type": "object"
+    },
+    "ListFolders": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Documented page number. NoClick bounds page numbers; no returned paging URL is followed.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented title/name substring filter, repeated unchanged across picker pages.",
+          "title": "Title Filter"
+        },
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFolders",
+      "type": "object"
+    },
+    "ListPlaylists": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Documented page number. NoClick bounds page numbers; no returned paging URL is followed.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "At most 100 records per request. Video/channel APIs document 100; other routes have this conservative NoClick bound.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented title/name substring filter, repeated unchanged across picker pages.",
+          "title": "Title Filter"
+        },
+        "online": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional enabled/disabled filter. This does not mean someone is currently broadcasting.",
+          "title": "Enabled for Playback"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented YYYY-MM-DD filter; playlist dates are inclusive.",
+          "title": "Created After"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented YYYY-MM-DD filter; playlist dates are inclusive.",
+          "title": "Created Before"
+        },
+        "operation": {
+          "const": "list_playlists",
+          "default": "list_playlists",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListPlaylists",
+      "type": "object"
+    },
+    "ListVideos": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Documented page number. NoClick bounds page numbers; no returned paging URL is followed.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "description": "At most 100 records per request. Video/channel APIs document 100; other routes have this conservative NoClick bound.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented title/name substring filter, repeated unchanged across picker pages.",
+          "title": "Title Filter"
+        },
+        "online": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional enabled/disabled filter. This does not mean someone is currently broadcasting.",
+          "title": "Enabled for Playback"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented YYYY-MM-DD filter; playlist dates are inclusive.",
+          "title": "Created After"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented YYYY-MM-DD filter; playlist dates are inclusive.",
+          "title": "Created Before"
+        },
+        "operation": {
+          "const": "list_videos",
+          "default": "list_videos",
+          "title": "Operation",
+          "type": "string"
+        },
+        "channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional documented stream_id filter. Its channel UUID is witnessed in the current channel catalog; the list filter alone does not prove each video's ancestry.",
+          "title": "Recording Channel",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "channel_id",
+            "searchable": true
+          },
+          "x-resource-type": "dacast_channel"
+        }
+      },
+      "title": "ListVideos",
+      "type": "object"
+    },
+    "OnNewFolder": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_folder",
+          "default": "on_new_folder",
+          "description": "Emit newly seen approved folders, or enable Monitor All Folders in the credential to watch newly created folder IDs.",
+          "title": "On New Folder",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On New Folder",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OnNewFolder",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "get_folder": "#/$defs/GetFolder",
+          "get_video": "#/$defs/GetVideo",
+          "list_channels": "#/$defs/ListChannels",
+          "list_folders": "#/$defs/ListFolders",
+          "list_playlists": "#/$defs/ListPlaylists",
+          "list_videos": "#/$defs/ListVideos",
+          "on_new_folder": "#/$defs/OnNewFolder"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OnNewFolder"
+        },
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/ListChannels"
+        },
+        {
+          "$ref": "#/$defs/ListVideos"
+        },
+        {
+          "$ref": "#/$defs/GetVideo"
+        },
+        {
+          "$ref": "#/$defs/ListFolders"
+        },
+        {
+          "$ref": "#/$defs/GetFolder"
+        },
+        {
+          "$ref": "#/$defs/ListPlaylists"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DacastAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dacast Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Read metadata for an approved video",
+    "List approved folders",
+    "Read a recording and verify its channel UUID"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
