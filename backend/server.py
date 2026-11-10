@@ -112,13 +112,11 @@ from utils.route_registry import apply_registered_routes, inline_webhook_routes,
 # side-effect-free for tests and tooling.
 from wss.receiver import SocketIOProxy
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
-from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
-from opentelemetry.instrumentation.asyncpg import AsyncPGInstrumentor
+from utils.process_setup import configure_process
 
 
-# Configure logging to show INFO level messages
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# INFO logs, and spans for outbound calls and queries (before any pool exists)
+configure_process()
 logger = logging.getLogger(__name__)
 
 # Load environment variables
@@ -338,7 +336,6 @@ async def app_lifespan(app: FastAPI):
     await run_shutdown_hooks("final")
 
 from utils.instagram_webhook_privacy import instagram_webhook_request_hook
-from utils.outbound_trace_privacy import OutboundTraceProvider
 
 # No /openapi.json, /docs or /redoc: these routes serve the engine's own clients (the frontend, sockets,
 # webhooks), not a published API, and a public schema would list every one of them.
@@ -346,16 +343,6 @@ NO_SCHEMA_ROUTES = dict(openapi_url=None, docs_url=None, redoc_url=None)
 
 fastapi_app = FastAPI(lifespan=app_lifespan, **NO_SCHEMA_ROUTES)
 FastAPIInstrumentor.instrument_app(fastapi_app, server_request_hook=instagram_webhook_request_hook)
-_outbound_trace_provider = OutboundTraceProvider()
-HTTPXClientInstrumentor().instrument(tracer_provider=_outbound_trace_provider)
-# LiteLLM's streaming completion path uses aiohttp, not httpx; both client
-# instrumentors are needed to capture all outbound LLM/API traffic.
-AioHttpClientInstrumentor().instrument(tracer_provider=_outbound_trace_provider)
-# asyncpg: per-query spans for DB-latency attribution. Must run before the
-# first pool is created so the monkey-patch is in place on every connection.
-# DatabasePoolMixin._db lazy-property defers pool creation until first request,
-# so module-top init here is comfortably ahead of it.
-AsyncPGInstrumentor().instrument()
 
 # Add CORS middleware
 fastapi_app.add_middleware(

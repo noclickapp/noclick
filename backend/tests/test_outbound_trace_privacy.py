@@ -230,10 +230,14 @@ def test_provider_late_binding_does_not_pin_noop(monkeypatch, tracing):
 
 
 def test_both_server_client_instrumentors_use_adapter():
-    tree = ast.parse((Path(__file__).parents[1] / "server.py").read_text())
+    backend = Path(__file__).parents[1]
+    tree = ast.parse((backend / "utils/process_setup.py").read_text())
     calls = [node for node in ast.walk(tree) if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
              and node.func.attr == "instrument" and isinstance(node.func.value, ast.Call)
              and isinstance(node.func.value.func, ast.Name)
              and node.func.value.func.id in {"HTTPXClientInstrumentor", "AioHttpClientInstrumentor"}]
     assert len(calls) == 2
-    assert all(any(k.arg == "tracer_provider" and isinstance(k.value, ast.Name) and k.value.id == "_outbound_trace_provider" for k in call.keywords) for call in calls)
+    assert all(any(k.arg == "tracer_provider" and isinstance(k.value, ast.Name) and k.value.id == "outbound" for k in call.keywords) for call in calls)
+    server = ast.parse((backend / "server.py").read_text())
+    assert any(isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "configure_process"
+               for node in ast.walk(server))
