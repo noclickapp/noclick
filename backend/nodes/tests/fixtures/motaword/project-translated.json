@@ -1,0 +1,39 @@
+{
+  "body": {
+    "type": "project",
+    "action": "translated",
+    "project": {
+      "id": 1,
+      "source_language": "string",
+      "target_languages": [
+        "string"
+      ],
+      "word_count": 123,
+      "price": {
+        "amount": 1.0,
+        "currency": "usd"
+      },
+      "status": "string",
+      "delivery_at": "2015-04-04",
+      "valid_until": "2015-04-04",
+      "callback_url": "string",
+      "custom": {},
+      "created_at": "2015-04-04",
+      "links": {
+        "self": {
+          "href": "https://api.motaword.com/v0/projects/1"
+        },
+        "documents": {
+          "href": "https://api.motaword.com/v0/projects/1/documents"
+        },
+        "styleguides": {
+          "href": "https://api.motaword.com/v0/projects/1/styleguides"
+        },
+        "glossaries": {
+          "href": "https://api.motaword.com/v0/projects/1/glossaries"
+        }
+      }
+    }
+  },
+  "source": "https://motaword.readme.io/reference/webhooks"
+}
