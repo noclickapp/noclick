@@ -22,6 +22,7 @@ import {
     AVAILABLE_NODES,
     getNodeMetadata,
 } from '~/components/workflow/nodes/nodeRegistry';
+import { serializeIcon } from '~/lib/serializeIcon.server';
 import { HARNESS_BRANDS, type HarnessSlug } from '~/lib/harnessBrand';
 import { inboundEmailDomain } from '~/lib/inboundEmail';
 import {
@@ -102,7 +103,7 @@ function serialize(type: string): SerializedNodeMeta | undefined {
                   // All catalog icons render without required props. Collapse
                   // the heterogeneous img/svg/lucide union only at this React
                   // overload boundary.
-                  renderToStaticMarkup(createElement(node.Icon as ComponentType)),
+                  serializeIcon(node.Icon as ComponentType),
                   type
               )
             : '',
