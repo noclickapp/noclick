@@ -1,0 +1,1440 @@
+{
+  "$defs": {
+    "BigOvenAddGroceryItemConfig": {
+      "additionalProperties": false,
+      "description": "Add a single item to your grocery list.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Item name",
+          "type": "string"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quantity"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "department": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department"
+        },
+        "operation": {
+          "const": "add_grocery_item",
+          "default": "add_grocery_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BigOvenAddGroceryItemConfig",
+      "type": "object"
+    },
+    "BigOvenAddRecipeToGroceryListConfig": {
+      "additionalProperties": false,
+      "description": "Add a recipe to your grocery list, scaled to the amount you need.",
+      "properties": {
+        "recipe_id": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "add_recipe_to_grocery_list",
+          "default": "add_recipe_to_grocery_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scale": {
+          "default": 1.0,
+          "exclusiveMinimum": 0,
+          "title": "Scale",
+          "type": "number"
+        },
+        "mark_as_pending": {
+          "default": false,
+          "title": "Mark As Pending",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "recipe_id"
+      ],
+      "title": "BigOvenAddRecipeToGroceryListConfig",
+      "type": "object"
+    },
+    "BigOvenClearCheckedItemsConfig": {
+      "additionalProperties": false,
+      "description": "Remove all checked items from your grocery list.",
+      "properties": {
+        "operation": {
+          "const": "clear_checked_items",
+          "default": "clear_checked_items",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BigOvenClearCheckedItemsConfig",
+      "type": "object"
+    },
+    "BigOvenClearGroceryListConfig": {
+      "additionalProperties": false,
+      "description": "Delete every item from your grocery list.",
+      "properties": {
+        "operation": {
+          "const": "clear_grocery_list",
+          "default": "clear_grocery_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BigOvenClearGroceryListConfig",
+      "type": "object"
+    },
+    "BigOvenCreateNoteConfig": {
+      "additionalProperties": false,
+      "description": "Add a recipe note with people, variations and meal date.",
+      "properties": {
+        "Notes": {
+          "minLength": 1,
+          "title": "Notes",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "Date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date/time of the meal.",
+          "title": "Date"
+        },
+        "People": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "People"
+        },
+        "Variations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variations"
+        },
+        "recipe_id": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "Notes",
+        "recipe_id"
+      ],
+      "title": "BigOvenCreateNoteConfig",
+      "type": "object"
+    },
+    "BigOvenCreateRecipeConfig": {
+      "additionalProperties": false,
+      "description": "Create a recipe with ingredients and cooking instructions.",
+      "properties": {
+        "Title": {
+          "minLength": 1,
+          "title": "Recipe title",
+          "type": "string"
+        },
+        "Instructions": {
+          "minLength": 1,
+          "title": "Instructions",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "Ingredients": {
+          "items": {
+            "$ref": "#/$defs/Ingredient"
+          },
+          "minItems": 1,
+          "title": "Ingredients",
+          "type": "array"
+        },
+        "Description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "Cuisine": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cuisine"
+        },
+        "Category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "YieldNumber": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Yieldnumber"
+        },
+        "YieldUnit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Yieldunit"
+        },
+        "TotalMinutes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Totalminutes"
+        },
+        "ActiveMinutes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Activeminutes"
+        },
+        "IsPrivate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isprivate"
+        },
+        "operation": {
+          "const": "create_recipe",
+          "default": "create_recipe",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "Title",
+        "Instructions",
+        "Ingredients"
+      ],
+      "title": "BigOvenCreateRecipeConfig",
+      "type": "object"
+    },
+    "BigOvenCreateReviewConfig": {
+      "additionalProperties": false,
+      "description": "Post your recipe review; BigOven updates your existing review if you already have one.",
+      "properties": {
+        "recipe_id": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_review",
+          "default": "create_review",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "StarRating": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Starrating",
+          "type": "integer"
+        },
+        "MakeAgain": {
+          "anyOf": [
+            {
+              "enum": [
+                "yes",
+                "no"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Makeagain",
+          "enum": [
+            "yes",
+            "no"
+          ],
+          "x-enum-searchable": true
+        },
+        "Comment": {
+          "minLength": 1,
+          "title": "Comment",
+          "type": "string"
+        },
+        "ActiveMinutes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Activeminutes"
+        },
+        "TotalMinutes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Totalminutes"
+        }
+      },
+      "required": [
+        "recipe_id",
+        "StarRating",
+        "Comment"
+      ],
+      "title": "BigOvenCreateReviewConfig",
+      "type": "object"
+    },
+    "BigOvenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bigoven_api_key",
+          "default": "bigoven_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "username": {
+          "minLength": 1,
+          "title": "BigOven username",
+          "type": "string"
+        },
+        "password": {
+          "minLength": 1,
+          "title": "BigOven password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "username",
+        "password"
+      ],
+      "title": "BigOven API Key and Account",
+      "type": "object",
+      "x-credential-instructions": "Paste your BigOven Build API key and your BigOven username and password. BigOven requires the API key on every request and Basic authentication to act on your recipes, notes, reviews and grocery list. NoClick checks your account with a read of /me.",
+      "x-credential-url": "https://api2.bigoven.com/"
+    },
+    "BigOvenDeleteGroceryItemConfig": {
+      "additionalProperties": false,
+      "description": "Delete one item from your grocery list.",
+      "properties": {
+        "guid": {
+          "minLength": 1,
+          "title": "Grocery item GUID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_grocery_item",
+          "default": "delete_grocery_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "guid"
+      ],
+      "title": "BigOvenDeleteGroceryItemConfig",
+      "type": "object"
+    },
+    "BigOvenDeleteNoteConfig": {
+      "additionalProperties": false,
+      "description": "Delete one of your recipe notes.",
+      "properties": {
+        "recipe_id": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        },
+        "note_id": {
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "recipe_id",
+        "note_id"
+      ],
+      "title": "BigOvenDeleteNoteConfig",
+      "type": "object"
+    },
+    "BigOvenDeleteRecipeConfig": {
+      "additionalProperties": false,
+      "description": "Delete a recipe you own.",
+      "properties": {
+        "recipe_id": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_recipe",
+          "default": "delete_recipe",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "recipe_id"
+      ],
+      "title": "BigOvenDeleteRecipeConfig",
+      "type": "object"
+    },
+    "BigOvenGetCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of recipes in a curated collection.",
+      "properties": {
+        "pg": {
+          "default": 1,
+          "description": "One provider page, numbered from 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "rpp": {
+          "default": 25,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_id": {
+          "minimum": 1,
+          "title": "Collection ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "BigOvenGetCollectionConfig",
+      "type": "object"
+    },
+    "BigOvenGetGroceryListConfig": {
+      "additionalProperties": false,
+      "description": "Read your grocery list, including checked and pending items.",
+      "properties": {
+        "operation": {
+          "const": "get_grocery_list",
+          "default": "get_grocery_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BigOvenGetGroceryListConfig",
+      "type": "object"
+    },
+    "BigOvenGetMeConfig": {
+      "additionalProperties": false,
+      "description": "Read your BigOven account profile.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BigOvenGetMeConfig",
+      "type": "object"
+    },
+    "BigOvenGetNoteConfig": {
+      "additionalProperties": false,
+      "description": "Read one of your recipe notes.",
+      "properties": {
+        "recipe_id": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        },
+        "note_id": {
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "recipe_id",
+        "note_id"
+      ],
+      "title": "BigOvenGetNoteConfig",
+      "type": "object"
+    },
+    "BigOvenGetRecipeConfig": {
+      "additionalProperties": false,
+      "description": "Read the ingredients, instructions and details of a recipe.",
+      "properties": {
+        "recipe_id": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_recipe",
+          "default": "get_recipe",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "recipe_id"
+      ],
+      "title": "BigOvenGetRecipeConfig",
+      "type": "object"
+    },
+    "BigOvenListCategoriesConfig": {
+      "additionalProperties": false,
+      "description": "List the recipe categories available for search.",
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BigOvenListCategoriesConfig",
+      "type": "object"
+    },
+    "BigOvenListCollectionsConfig": {
+      "additionalProperties": false,
+      "description": "List current seasonal recipe collections.",
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BigOvenListCollectionsConfig",
+      "type": "object"
+    },
+    "BigOvenListNotesConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of your notes for a recipe.",
+      "properties": {
+        "pg": {
+          "default": 1,
+          "description": "One provider page, numbered from 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "rpp": {
+          "default": 25,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "recipe_id": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "recipe_id"
+      ],
+      "title": "BigOvenListNotesConfig",
+      "type": "object"
+    },
+    "BigOvenListPhotosConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of photos for a recipe.",
+      "properties": {
+        "pg": {
+          "default": 1,
+          "description": "One provider page, numbered from 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "rpp": {
+          "default": 25,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "recipe_id": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_photos",
+          "default": "list_photos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "recipe_id"
+      ],
+      "title": "BigOvenListPhotosConfig",
+      "type": "object"
+    },
+    "BigOvenListReviewsConfig": {
+      "additionalProperties": false,
+      "description": "Read one page of reviews for a recipe.",
+      "properties": {
+        "pg": {
+          "default": 1,
+          "description": "One provider page, numbered from 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "rpp": {
+          "default": 25,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "recipe_id": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_reviews",
+          "default": "list_reviews",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "recipe_id"
+      ],
+      "title": "BigOvenListReviewsConfig",
+      "type": "object"
+    },
+    "BigOvenSearchRecipesConfig": {
+      "additionalProperties": false,
+      "description": "Search recipes by title, ingredients, cuisine, user or saved recipe filter.",
+      "properties": {
+        "pg": {
+          "default": 1,
+          "description": "One provider page, numbered from 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "rpp": {
+          "default": 25,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_recipes",
+          "default": "search_recipes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title_kw": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title Kw"
+        },
+        "any_kw": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Any Kw"
+        },
+        "include_ing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Up to three comma-separated ingredients",
+          "title": "Include Ing"
+        },
+        "exclude_ing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclude Ing"
+        },
+        "include_cat": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Cat"
+        },
+        "cuisine": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cuisine"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Username"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "added",
+                "try",
+                "favorites",
+                "myrecipes"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter",
+          "enum": [
+            "added",
+            "try",
+            "favorites",
+            "myrecipes"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "BigOvenSearchRecipesConfig",
+      "type": "object"
+    },
+    "BigOvenUpdateGroceryItemConfig": {
+      "additionalProperties": false,
+      "description": "Update a grocery item or mark it checked or unchecked.",
+      "properties": {
+        "guid": {
+          "minLength": 1,
+          "title": "Grocery item GUID",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Item name",
+          "type": "string"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quantity"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "department": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department"
+        },
+        "operation": {
+          "const": "update_grocery_item",
+          "default": "update_grocery_item",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ischecked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ischecked"
+        }
+      },
+      "required": [
+        "guid",
+        "name"
+      ],
+      "title": "BigOvenUpdateGroceryItemConfig",
+      "type": "object"
+    },
+    "BigOvenUpdateNoteConfig": {
+      "additionalProperties": false,
+      "description": "Update one of your recipe notes.",
+      "properties": {
+        "Notes": {
+          "minLength": 1,
+          "title": "Notes",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "Date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date/time of the meal.",
+          "title": "Date"
+        },
+        "People": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "People"
+        },
+        "Variations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variations"
+        },
+        "recipe_id": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        },
+        "note_id": {
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "Notes",
+        "recipe_id",
+        "note_id"
+      ],
+      "title": "BigOvenUpdateNoteConfig",
+      "type": "object"
+    },
+    "BigOvenUpdateRecipeConfig": {
+      "additionalProperties": false,
+      "description": "Update a recipe you own with the supplied ingredients and instructions.",
+      "properties": {
+        "Title": {
+          "minLength": 1,
+          "title": "Recipe title",
+          "type": "string"
+        },
+        "Instructions": {
+          "minLength": 1,
+          "title": "Instructions",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "Ingredients": {
+          "items": {
+            "$ref": "#/$defs/Ingredient"
+          },
+          "minItems": 1,
+          "title": "Ingredients",
+          "type": "array"
+        },
+        "Description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "Cuisine": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cuisine"
+        },
+        "Category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "YieldNumber": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Yieldnumber"
+        },
+        "YieldUnit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Yieldunit"
+        },
+        "TotalMinutes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Totalminutes"
+        },
+        "ActiveMinutes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Activeminutes"
+        },
+        "IsPrivate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isprivate"
+        },
+        "operation": {
+          "const": "update_recipe",
+          "default": "update_recipe",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "RecipeID": {
+          "minimum": 1,
+          "title": "Recipe ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "Title",
+        "Instructions",
+        "Ingredients",
+        "RecipeID"
+      ],
+      "title": "BigOvenUpdateRecipeConfig",
+      "type": "object"
+    },
+    "Ingredient": {
+      "additionalProperties": false,
+      "properties": {
+        "Name": {
+          "minLength": 1,
+          "title": "Ingredient name",
+          "type": "string"
+        },
+        "Quantity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quantity"
+        },
+        "Unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "PreparationNotes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preparationnotes"
+        },
+        "IsHeading": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Isheading"
+        },
+        "DisplayIndex": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Displayindex"
+        }
+      },
+      "required": [
+        "Name"
+      ],
+      "title": "Ingredient",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_grocery_item": "#/$defs/BigOvenAddGroceryItemConfig",
+          "add_recipe_to_grocery_list": "#/$defs/BigOvenAddRecipeToGroceryListConfig",
+          "clear_checked_items": "#/$defs/BigOvenClearCheckedItemsConfig",
+          "clear_grocery_list": "#/$defs/BigOvenClearGroceryListConfig",
+          "create_note": "#/$defs/BigOvenCreateNoteConfig",
+          "create_recipe": "#/$defs/BigOvenCreateRecipeConfig",
+          "create_review": "#/$defs/BigOvenCreateReviewConfig",
+          "delete_grocery_item": "#/$defs/BigOvenDeleteGroceryItemConfig",
+          "delete_note": "#/$defs/BigOvenDeleteNoteConfig",
+          "delete_recipe": "#/$defs/BigOvenDeleteRecipeConfig",
+          "get_collection": "#/$defs/BigOvenGetCollectionConfig",
+          "get_grocery_list": "#/$defs/BigOvenGetGroceryListConfig",
+          "get_me": "#/$defs/BigOvenGetMeConfig",
+          "get_note": "#/$defs/BigOvenGetNoteConfig",
+          "get_recipe": "#/$defs/BigOvenGetRecipeConfig",
+          "list_categories": "#/$defs/BigOvenListCategoriesConfig",
+          "list_collections": "#/$defs/BigOvenListCollectionsConfig",
+          "list_notes": "#/$defs/BigOvenListNotesConfig",
+          "list_photos": "#/$defs/BigOvenListPhotosConfig",
+          "list_reviews": "#/$defs/BigOvenListReviewsConfig",
+          "search_recipes": "#/$defs/BigOvenSearchRecipesConfig",
+          "update_grocery_item": "#/$defs/BigOvenUpdateGroceryItemConfig",
+          "update_note": "#/$defs/BigOvenUpdateNoteConfig",
+          "update_recipe": "#/$defs/BigOvenUpdateRecipeConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BigOvenGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenSearchRecipesConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenGetRecipeConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenCreateRecipeConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenUpdateRecipeConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenDeleteRecipeConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenListCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenGetGroceryListConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenClearGroceryListConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenAddRecipeToGroceryListConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenAddGroceryItemConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenUpdateGroceryItemConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenDeleteGroceryItemConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenClearCheckedItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenGetNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenUpdateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenDeleteNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenListReviewsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenCreateReviewConfig"
+        },
+        {
+          "$ref": "#/$defs/BigOvenListPhotosConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BigOvenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bigoven Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

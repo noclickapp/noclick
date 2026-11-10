@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/bigoven.png",
+  "source": "https://api2.bigoven.com/favicon.ico",
+  "license": "BigOven trademark; used nominatively to identify the service.",
+  "sha256": "40294b2f3b74979b4b257a99b74ff63d1c2f38f58e57b8ac3e913ee4e400d3e4",
+  "found_at": "https://api2.bigoven.com/",
+  "edits": [
+    "Converted the official favicon to PNG with macOS sips."
+  ]
+}
