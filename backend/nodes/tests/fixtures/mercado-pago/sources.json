@@ -1,0 +1,96 @@
+{
+  "license": "MIT; Mercado Pago official Python SDK test fixtures",
+  "fixtures": [
+    {
+      "file": "payment_search.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/payment_search.json",
+      "sha256": "a4a9109fdd32d193dfb74033c0e816f3e3ab6cee4dff5ffd35f4d0650a789132"
+    },
+    {
+      "file": "payment_create.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/payment_create.json",
+      "sha256": "5e9acef427d0a4044d876313c41ecce45d8317ce6b9a0f177c6b0bc5a1cec3cd"
+    },
+    {
+      "file": "payment_update.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/payment_update.json",
+      "sha256": "5249c12e903497770eb3e7644ea71335f33231cd517769227a5f87db5479ef17"
+    },
+    {
+      "file": "refund_create.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/refund_create.json",
+      "sha256": "57bb08ddb8ad4d221fe0d0e5be72c7827a09fcf703a1eb047a0ffa0dfede1d6c"
+    },
+    {
+      "file": "refund_list_all.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/refund_list_all.json",
+      "sha256": "b5ff8afa69be62839848451770c0f98f95344a1d570dd3b4fb676dbbc852e935"
+    },
+    {
+      "file": "refund_get.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/refund_get.json",
+      "sha256": "57bb08ddb8ad4d221fe0d0e5be72c7827a09fcf703a1eb047a0ffa0dfede1d6c"
+    },
+    {
+      "file": "customer_create.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/customer_create.json",
+      "sha256": "d82b58f884d2ffbf7a03206964a0b61eb325b10757bd6b234cb960e8c1564fbb"
+    },
+    {
+      "file": "customer_get.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/customer_get.json",
+      "sha256": "d82b58f884d2ffbf7a03206964a0b61eb325b10757bd6b234cb960e8c1564fbb"
+    },
+    {
+      "file": "customer_search.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/customer_search.json",
+      "sha256": "a81cddd9fe222f674ad5b7359c3eb63088637e24d35af4258b4b629fc95e96a6"
+    },
+    {
+      "file": "customer_update.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/customer_update.json",
+      "sha256": "6ead29f8015a977a285aa9ee92132ffb303c6d207457a819dd3022ecb551b03e"
+    },
+    {
+      "file": "preapproval_create.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/preapproval_create.json",
+      "sha256": "b498242474d41bab18a33512fb4ffc8e3a340e51e85be69ca9be4a4f2ad3cf18"
+    },
+    {
+      "file": "preapproval_get.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/preapproval_get.json",
+      "sha256": "aec35ec7c90c888d12fc1661e91e86694c1f9e20f8eadbfb20e369dbb0b387be"
+    },
+    {
+      "file": "preapproval_update.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/preapproval_update.json",
+      "sha256": "8cfa0581a21ba610ccd9b679593bdf8805d85e3e6f0e3f5ea0990a9b8e444728"
+    },
+    {
+      "file": "preapproval_search.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/preapproval_search.json",
+      "sha256": "ed756fe08e5b64962856fd8f44f529f9edb761c9e53ff37094837c79fa013caa"
+    },
+    {
+      "file": "preference_create.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/preference_create.json",
+      "sha256": "fc26d39f9e9d243e661b164d081d780f3242d5c9ea8e2ce7a83fe09ac229f408"
+    },
+    {
+      "file": "preference_get.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/preference_get.json",
+      "sha256": "684cf466791c9cd544d06c8a937c7b3d36cb473ae3d5501a4125bb868cffe74f"
+    },
+    {
+      "file": "preference_update.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/preference_update.json",
+      "sha256": "50d8811975f7f6a554252c458f7b05483a6a8b6ba095a986045b874ba5e92e50"
+    },
+    {
+      "file": "preference_search.json",
+      "source": "https://raw.githubusercontent.com/mercadopago/sdk-python/5da68f4294b71e83eb6044394eb8401fa084d6dc/tests/resources/mocks/preference_search.json",
+      "sha256": "a12e1f74cf7b578d855ad606a750a493b58ef4bb1fde03448531a5e330d3d5b7"
+    }
+  ],
+  "upstream_commit": "5da68f4294b71e83eb6044394eb8401fa084d6dc"
+}
