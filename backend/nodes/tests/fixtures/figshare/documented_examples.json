@@ -1,0 +1,61 @@
+{
+  "source": "https://docs.figshare.com/swagger.json",
+  "note": "Values copied from the published schema property examples; not live responses.",
+  "Article": {
+    "id": 1434614,
+    "title": "Test article title",
+    "doi": "10.6084/m9.figshare.1434614",
+    "handle": "111184/figshare.1234",
+    "url": "http://api.figshare.com/articles/1434614",
+    "url_public_html": "https://figshare.com/articles/media/Test_article_title/1434614",
+    "url_public_api": "https://api.figshare.com/articles/1434614",
+    "url_private_html": "https://figshare.com/account/articles/1434614",
+    "url_private_api": "https://api.figshare.com/account/articles/1434614",
+    "timeline": {
+      "firstOnline": "2015-12-31",
+      "publisherPublication": "2015-12-31",
+      "publisherAcceptance": "2015-12-31"
+    },
+    "thumb": "https://ndownloader.figshare.com/files/123456789/preview/12345678/thumb.png",
+    "defined_type": 3,
+    "defined_type_name": "media",
+    "created_date": "2017-05-18T11:49:03Z",
+    "modified_date": "2017-05-18T11:49:03Z",
+    "published_date": "2017-05-18T11:49:03Z",
+    "group_id": 1
+  },
+  "Collection": {
+    "id": 123,
+    "title": "Sample collection",
+    "doi": "10.6084/m9.figshare.123",
+    "handle": "111184/figshare.1234",
+    "url": "https://api.figshare.com/v2/collections/123",
+    "timeline": {
+      "firstOnline": "2015-12-31",
+      "publisherPublication": "2015-12-31",
+      "publisherAcceptance": "2015-12-31"
+    },
+    "published_date": "2017-05-15T15:12:26Z"
+  },
+  "Account": {
+    "id": 1495682,
+    "first_name": "Doe",
+    "last_name": "John",
+    "used_quota_private": 0,
+    "modified_date": "2018-05-22T04:04:04",
+    "used_quota": 0,
+    "created_date": "2018-05-22T04:04:04",
+    "quota": 0,
+    "group_id": 0,
+    "institution_user_id": "djohn42",
+    "institution_id": 1,
+    "email": "user@domain.com",
+    "used_quota_public": 0,
+    "pending_quota_request": true,
+    "active": 0,
+    "maximum_file_size": 0,
+    "user_id": 1000001,
+    "orcid_id": "0000-0001-2345-6789",
+    "symplectic_user_id": "djohn42"
+  }
+}
