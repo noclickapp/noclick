@@ -1,0 +1,46 @@
+{
+  "success": true,
+  "code": 0,
+  "locale": "en",
+  "message": "OK",
+  "data": {
+    "categories": [
+      {
+        "title": "Announcements",
+        "slug": "announcements",
+        "background_image": "",
+        "heading_description": null,
+        "seo_title": "Announcements",
+        "seo_description": "",
+        "id": 898924871
+      },
+      {
+        "title": "Features",
+        "slug": "features",
+        "background_image": "",
+        "heading_description": null,
+        "seo_title": "Features",
+        "seo_description": "",
+        "id": 898924872
+      },
+      {
+        "title": "test",
+        "slug": "test",
+        "background_image": "",
+        "heading_description": null,
+        "seo_title": "test",
+        "seo_description": "",
+        "id": 898995903
+      },
+      {
+        "title": "Tips",
+        "slug": "tips",
+        "background_image": "",
+        "heading_description": null,
+        "seo_title": "Tips",
+        "seo_description": "Tips",
+        "id": 898924873
+      }
+    ]
+  }
+}

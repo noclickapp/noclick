@@ -1,0 +1,35 @@
+{
+  "success": true,
+  "code": 0,
+  "locale": "en",
+  "message": "OK",
+  "data": {
+    "post": {
+      "id": 42670425,
+      "title": "How to Add a Blog to Your Custom-Coded Website 1",
+      "slug": "how-to-add-a-blog-to-your-custom-coded-website-1-2",
+      "url": "https://dropindemo.com/blog/how-to-add-a-blog-to-your-custom-coded-website-1-2",
+      "summary": "Blogging is an important element of online marketing \u2013 if you\u2019re not blogging, you\u2019re missing out. Why is blogging so valuable? It allows you to establish expertise in your niche, strengthen customer relationships, and gain high-quality",
+      "featuredImage": "https://dropinblog.net/34236460/files/featured/Custom-coded.png",
+      "featuredImageWebm": null,
+      "featuredImageMp4": null,
+      "publishedAt": "03/01/2024",
+      "publishedAtIso8601": "2024-03-01T19:55:19-06:00",
+      "updatedAt": "04/01/2024",
+      "updatedAtIso8601": "2024-04-01T10:52:25-05:00",
+      "keyword": "add a blog to your custom coded website",
+      "secondaryKeywords": [],
+      "seoTitle": "How to Add a Blog to Your Custom-Coded Website 1",
+      "seoDescription": "Learn how to easily add a blog to your custom coded website with our step-by-step guide. Enhance your site with engaging content and connect with your audience!",
+      "canonicalUrl": "",
+      "pinned": null,
+      "readtime": "6 minute read",
+      "seo_score": null,
+      "status": "published",
+      "visibility": "public",
+      "noindex": 0,
+      "author": null,
+      "categories": []
+    }
+  }
+}

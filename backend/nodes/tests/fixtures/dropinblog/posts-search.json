@@ -1,0 +1,49 @@
+{
+  "success": true,
+  "code": 0,
+  "locale": "en",
+  "message": "OK",
+  "data": {
+    "posts": [
+      {
+        "id": 42349488,
+        "title": "How to Add Categories to Your Blog",
+        "slug": "how-to-add-categories-to-your-blog",
+        "url": "https://dropindemo.com/blog/how-to-add-categories-to-your-blog",
+        "summary": "Categories are important for search engine optimization and for organizing your content around themes. Website visitors will have a much easier time navigating your site if it is well organized \u2013 and when visitors have an easier time, visitors are happy!",
+        "featuredImage": "https://dropinblog.net/34236460/files/featured/how-to-add-categories.png",
+        "featuredImageWebm": null,
+        "featuredImageMp4": null,
+        "publishedAt": "12/06/2021",
+        "publishedAtIso8601": "2021-12-06T15:57:00-06:00",
+        "updatedAt": "02/22/2024",
+        "updatedAtIso8601": "2024-02-22T18:52:10-06:00",
+        "keyword": "add categories to your blog",
+        "secondaryKeywords": [],
+        "seoTitle": "How to Add Categories to Your Blog",
+        "seoDescription": "Help your website visitors find the info they're looking for and encourage them to keep browsing your site by learning how to add categories to your blog.",
+        "canonicalUrl": "",
+        "pinned": 0,
+        "readtime": "2 minute read",
+        "seo_score": 85,
+        "status": "published",
+        "visibility": "public",
+        "noindex": 0,
+        "author": {
+          "id": 219,
+          "name": "Jesse",
+          "slug": "jesse",
+          "photo": "https://dropinblog.net/34236460/authors/c321458d1a8f3afdff1944ceaa79be140f685ea8.jpg",
+          "bio": "<p><span style=\"font-size: 11pt; font-family: Arial; color: #000000; background-color: transparent; font-weight: 400; font-style: normal; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre-wrap;\">DropInBlog co-founder Jesse is dedicated to making DropInBlog the world&rsquo;s go-to blogging platform. He helped create DiB because he was tired of dealing with complicated and incomplete blogging solutions. Jesse loves experimenting with new features and finding new ways to make <a href=\"https://dropinblog.com\">DropInBlog</a> even more awesome. </span></p>"
+        },
+        "categories": [
+          {
+            "id": 898924873,
+            "title": "Tips",
+            "slug": "tips"
+          }
+        ]
+      }
+    ]
+  }
+}

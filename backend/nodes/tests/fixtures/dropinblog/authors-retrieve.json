@@ -1,0 +1,21 @@
+{
+  "success": true,
+  "code": 0,
+  "locale": "en",
+  "message": "OK",
+  "data": {
+    "author": {
+      "id": 73672,
+      "name": "Alexander",
+      "slug": "alexander",
+      "photo": "https://dropinblog.net/cdn-cgi/image/fit=scale-down,width=600/34263593/authors/alexander.jpg",
+      "role": null,
+      "seo_title": null,
+      "seo_description": null,
+      "expertise": null,
+      "featured_links": null,
+      "social_profile_links": null,
+      "bio": "<p>Your favorite instructor, Alexander, has written a few demo posts to get you started with <a href=\"https://dropinblog.com\" rel=\"nofollow\">DropInBlog</a>. He teaches you the ins and outs of creating engaging, insightful, and impactful content, helping you kickstart your blogging journey with ease.</p>\r\n<p>If Alexander didn&rsquo;t answer your questions, please check out our <a href=\"https://docs.dropinblog.com/\" rel=\"nofollow\">support docs</a> for more detailed guidance. Welcome to the DropInBlog community&mdash;let&rsquo;s create something amazing together!</p>"
+    }
+  }
+}

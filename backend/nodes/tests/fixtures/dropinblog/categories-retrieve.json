@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "code": 0,
+  "locale": "en",
+  "message": "OK",
+  "data": {
+    "category": {
+      "id": 899048726,
+      "title": "Announcements",
+      "slug": "announcements",
+      "is_private": false,
+      "background_image": null,
+      "heading_description": null,
+      "seo_title": "Announcements",
+      "seo_description": ""
+    }
+  }
+}

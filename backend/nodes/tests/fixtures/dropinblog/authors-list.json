@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "code": 0,
+  "locale": "en",
+  "message": "OK",
+  "data": {
+    "authors": [
+      {
+        "id": 1,
+        "name": "Jason",
+        "slug": "jason",
+        "photo": null,
+        "bio": null,
+        "seo_title": null,
+        "seo_description": null
+      }
+    ]
+  }
+}
