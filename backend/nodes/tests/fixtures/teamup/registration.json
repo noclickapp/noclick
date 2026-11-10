@@ -1,0 +1,16 @@
+{
+  "feed_items": [
+    {
+      "object": "feed_item",
+      "id": 13553027,
+      "timestamp": "2019-04-27T21:52.45",
+      "type": "event_registration.created",
+      "source": "standalone",
+      "resources": {
+        "customer": 818974,
+        "event": 14947247,
+        "business": 285151
+      }
+    }
+  ]
+}

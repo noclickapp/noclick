@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 import httpx
+from httpx import AsyncClient as RealAsyncClient
 import pytest
 from pydantic import ValidationError
 
@@ -20,7 +21,7 @@ def node(config):
 
 def transport(monkeypatch, body, status=200):
     requests = []
-    real = httpx.AsyncClient
+    real = RealAsyncClient
 
     def reply(request):
         requests.append(request)
@@ -125,3 +126,76 @@ async def test_unexpanded_event_keeps_empty_attendance_collection(monkeypatch):
     result = await node({"operation": "get_event", "event_id": 1}).run({})
     assert result == {"status": "success", "item": body}
     assert not requests[0].url.query
+
+
+# Exact delivery example: https://docs.goteamup.com/guides/webhooks#payload
+REGISTRATION = json.loads((Path(__file__).parent / "fixtures/teamup/registration.json").read_text())
+
+
+@pytest.mark.asyncio
+async def test_trigger_registration_uses_application_and_cleanup(monkeypatch):
+    requests = transport(monkeypatch, {"object": "webhook_destination", "id": 53583,
+        "url": "https://example.com/receiver", "feed_item_types": ["*"], "application": 533}, 201)
+    config = {"operation": "on_class_registration", "application_id": 533}
+    state = await native.TeamUpNode._register_external_webhook(webhook_url="https://example.com/receiver",
+        credential=CREDENTIAL, config=config, node_id="teamup-test")
+    assert state == {"external_webhook_id": "53583"}
+    assert json.loads(requests[0].content) == {"url": "https://example.com/receiver",
+        "feed_item_types": ["event_registration.created"], "application": 533}
+    assert requests[0].method == "POST" and requests[0].url.path == "/api/v2/webhook_destinations"
+    assert requests[0].headers["Authorization"] == "Bearer " + TOKEN
+    assert requests[0].headers["TeamUp-Provider-ID"] == "123"
+    assert requests[0].headers["TeamUp-Request-Mode"] == "provider"
+    requests = transport(monkeypatch, {}, 204)
+    await native.TeamUpNode._unregister_external_webhook(credential=CREDENTIAL,
+        config={**config, **state}, node_id="teamup-test")
+    assert requests[0].method == "DELETE" and requests[0].url.path == "/api/v2/webhook_destinations/53583"
+    assert not requests[0].content
+    assert native.TeamUpNode.registration_fingerprint_fields(config) == {"application_id": 533}
+
+
+def test_documented_registration_delivery_and_agent_turn():
+    cls = native.TeamUpNode
+    assert cls.webhook_signing_secret_not_issued
+    assert cls.verify_webhook_signature(json.dumps(REGISTRATION).encode(), {}, {})
+    assert cls.filter_trigger_payload(REGISTRATION, {})
+    output = cls.resolve_trigger_payload(REGISTRATION, {})
+    assert output == REGISTRATION
+    event = cls.resolve_agent_event(output)
+    assert event["conversation_key"] == "teamup:285151:customer:818974"
+    for fact in ("818974", "14947247", "285151", "13553027", "standalone", "2019-04-27T21:52.45",
+                 "get_customer customer_id=818974", "get_event event_id=14947247", "unsigned"):
+        assert fact in event["text"]
+    assert cls.resolve_trigger_payload({"feed_items": REGISTRATION["feed_items"] * 2}, {})["feed_items"] == REGISTRATION["feed_items"] * 2
+
+
+@pytest.mark.parametrize("payload", [None, {}, {"feed_items": None}, {"feed_items": [None]},
+    {"feed_items": [{"object": "feed_item", "type": "customer.created", "id": 1}]},
+    {"feed_items": [{"object": "feed_item", "type": "event_registration.created", "id": 1, "resources": {}}]}])
+def test_trigger_filters_unrelated_or_malformed_deliveries(payload):
+    assert not native.TeamUpNode.filter_trigger_payload(payload, {})
+    assert native.TeamUpNode.resolve_agent_event(native.TeamUpNode.resolve_trigger_payload(payload, {})) is None
+
+
+@pytest.mark.asyncio
+async def test_manual_trigger_run_does_not_fire_or_call_teamup(monkeypatch):
+    requests = transport(monkeypatch, {})
+    result = await node({"operation": "on_class_registration", "application_id": 533}).run({})
+    assert result["status"] == "no_event" and not requests
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", [302, 401, 403, 429, 500])
+async def test_webhook_errors_do_not_leak_token(monkeypatch, status):
+    transport(monkeypatch, {"detail": TOKEN}, status)
+    with pytest.raises(ValueError) as error:
+        await native.TeamUpNode._register_external_webhook(webhook_url="https://example.com/receiver",
+            credential=CREDENTIAL, config={"application_id": 533}, node_id="teamup-test")
+    assert TOKEN not in str(error.value)
+
+
+@pytest.mark.asyncio
+async def test_cleanup_already_deleted_destination(monkeypatch):
+    transport(monkeypatch, {}, 404)
+    await native.TeamUpNode._unregister_external_webhook(credential=CREDENTIAL,
+        config={"external_webhook_id": "53583"}, node_id="teamup-test")

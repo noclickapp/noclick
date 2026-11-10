@@ -11,7 +11,7 @@ const TeamUpIcon = ({ className, style }: { className?: string; style?: CSSPrope
 
 export const TeamUpNode: NodeDefinition = {
     type: 'automation-teamup', category: 'bookings', label: 'TeamUp',
-    description: 'Manage fitness customers, class registrations, attendance and memberships',
+    description: 'Manage fitness customers, registrations, attendance and memberships; trigger on class registrations',
     Icon: TeamUpIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={TeamUpIcon} iconColor="" />),

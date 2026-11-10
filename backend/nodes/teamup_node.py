@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 BASE_URL = "https://goteamup.com/api/v2"
 
@@ -191,7 +192,24 @@ class TeamUpCancelCustomerMembershipConfig(_Input):
     forced_expiration_date: date | None = Field(None, description="Optional final expiration date. Omit to use TeamUp cancellation rules.")
 
 
+class TeamUpOnClassRegistrationConfig(WebhookTriggerConfigBase):
+    """Start when a customer registers for a class, including waitlist promotions.
+
+    Deliveries are unsigned notifications. Fetch the customer and event through
+    TeamUp before acting: https://docs.goteamup.com/guides/webhooks
+    """
+    operation: Literal["on_class_registration"] = Field("on_class_registration", json_schema_extra={
+        "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+        "x-display-name": "On Class Registration"})
+    application_id: int = Field(..., gt=0, strict=True, title="Application ID",
+        description="The API Application ID from Settings → Integrations → API Integration. Requires full admin access.")
+    webhook_url: str | None = Field(None, title="Webhook URL",
+        description="Registered automatically. TeamUp sends unsigned notifications; fetch the referenced customer and class before acting.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
 TeamUpOperation = Annotated[Union[
+    TeamUpOnClassRegistrationConfig,
     TeamUpListProvidersConfig,
     TeamUpGetProviderConfig,
     TeamUpListCustomersConfig,
@@ -265,7 +283,12 @@ def _redact(value, token):
     return value
 
 
-class TeamUpNode(WorkflowNode):
+class TeamUpNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    # TeamUp explicitly does not sign deliveries or issue a shared secret.
+    # The platform's unguessable webhook URL is the receiver capability.
+    # https://docs.goteamup.com/guides/webhooks#verifying-deliveries
+    webhook_signing_secret_not_issued = True
+    webhook_replace_stale_endpoint = True
     integration_type = "automation-teamup"
     connection_evidence = ConnectionEvidence(operation="list_customers", noun="TeamUp customers")
 
@@ -273,7 +296,97 @@ class TeamUpNode(WorkflowNode):
     def get_config_model(cls):
         return TeamUpFullConfig
 
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, *, body=None):
+        credential = TeamUpM2MTokenCredential.model_validate(credential)
+        headers = {"Authorization": "Bearer " + credential.api_token,
+            "Accept": "application/json", "TeamUp-Request-Mode": "provider"}
+        if credential.provider_id is not None:
+            headers["TeamUp-Provider-ID"] = str(credential.provider_id)
+        try:
+            async with httpx.AsyncClient(timeout=30, follow_redirects=False, trust_env=False) as client:
+                response = await client.request(method, BASE_URL + path, headers=headers,
+                    **({"json": body} if body is not None else {}))
+        except httpx.RequestError:
+            raise ValueError("TeamUp webhook request failed; check the API Application before retrying.") from None
+        if method == "DELETE" and response.status_code in (204, 404):
+            return {}
+        if response.status_code != 201:
+            raise ValueError(f"TeamUp webhook registration failed (HTTP {response.status_code}); full admin access is required.")
+        return response.json()
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        trigger = TeamUpOnClassRegistrationConfig.model_validate(config)
+        destination = await cls._webhook_request(credential, "POST", "/webhook_destinations", body={
+            "url": webhook_url, "application": trigger.application_id,
+            "feed_item_types": ["event_registration.created"]})
+        destination_id = destination.get("id") if isinstance(destination, dict) else None
+        if type(destination_id) is not int or destination_id <= 0:
+            raise ValueError("TeamUp did not return a webhook destination ID")
+        return {"external_webhook_id": str(destination_id)}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        destination_id = (config or {}).get("external_webhook_id")
+        if destination_id is None or credential is None:
+            return
+        if not str(destination_id).isdigit() or int(destination_id) <= 0:
+            raise ValueError("Invalid TeamUp webhook destination ID")
+        await cls._webhook_request(credential, "DELETE", f"/webhook_destinations/{int(destination_id)}")
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"application_id": (config or {}).get("application_id")}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # No signature header, HMAC, or shared secret exists in TeamUp.
+        # https://docs.goteamup.com/guides/webhooks#verifying-deliveries
+        return True
+
+    @staticmethod
+    def _registrations(payload):
+        items = payload.get("feed_items") if isinstance(payload, dict) else None
+        if not isinstance(items, list):
+            return []
+        return [item for item in items if isinstance(item, dict)
+            and item.get("object") == "feed_item" and item.get("type") == "event_registration.created"
+            and type(item.get("id")) is int and item["id"] > 0
+            and isinstance(item.get("resources"), dict)
+            and all(type(item["resources"].get(key)) is int and item["resources"][key] > 0
+                for key in ("customer", "event", "business"))]
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return bool(cls._registrations(payload))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        return {"feed_items": cls._registrations(payload)}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        items = cls._registrations(output)
+        if not items:
+            return None
+        lines = ["TeamUp: new class registration notification."]
+        for item in items:
+            resources = item["resources"]
+            lines.append(f"Customer {resources['customer']} registered for class {resources['event']} "
+                f"at business {resources['business']}; source: {item.get('source')}; "
+                f"at {item.get('timestamp')}; feed item {item['id']}.")
+            lines.append(f"Fetch current details with get_customer customer_id={resources['customer']} "
+                f"and get_event event_id={resources['event']} before acting. "
+                "TeamUp notifications are unsigned and may arrive more than once or out of order.")
+        first = items[0]["resources"]
+        return {"text": "\n".join(lines),
+            "conversation_key": f"teamup:{first['business']}:customer:{first['customer']}",
+            "title": f"TeamUp class registration: customer {first['customer']}"}
+
     async def execute(self, inputs):
+        if self.config and isinstance(self.config.config, TeamUpOnClassRegistrationConfig):
+            return self.no_event_output("on_class_registration")
         if not self.config or not self.config.credentials:
             raise ValueError("Connect a TeamUp M2M token")
         credential = self.config.credentials
