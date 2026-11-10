@@ -1,0 +1,230 @@
+{
+  "source": "https://developers-portal.funnelchat.app/specs/funnelchat.json",
+  "events": {
+    "message.received": {
+      "id": "evt_000000000000000000000001",
+      "type": "message.received",
+      "version": 1,
+      "occurred_at": "2026-10-01T12:00:00Z",
+      "data": {
+        "message": {
+          "id": 1001,
+          "type": "text",
+          "text": "Hola, quiero más información",
+          "media": null
+        },
+        "contact": {
+          "id": 2001,
+          "name": "Contacto de ejemplo",
+          "phone": "+5491100000000"
+        },
+        "receiver": {
+          "phone": "+5491100000001"
+        },
+        "device_id": 4521
+      }
+    },
+    "message.status_changed": {
+      "id": "evt_000000000000000000000014",
+      "type": "message.status_changed",
+      "version": 1,
+      "occurred_at": "2026-10-01T12:00:00Z",
+      "data": {
+        "message_id": 1001,
+        "contact_id": 2001,
+        "device_id": 4521,
+        "status": "failed",
+        "previous_status": "sent",
+        "error": {
+          "code": 131047,
+          "title": "Re-engagement message",
+          "reason": null
+        },
+        "occurred_at": "2026-10-01T12:00:00Z",
+        "client_reference": "pedido-1001"
+      }
+    },
+    "contact.created": {
+      "id": "evt_000000000000000000000010",
+      "type": "contact.created",
+      "version": 1,
+      "occurred_at": "2026-10-01T12:00:00Z",
+      "data": {
+        "contact": {
+          "id": 2001,
+          "name": "Contacto de ejemplo",
+          "phone": "+5491100000000",
+          "email": "contacto@example.com"
+        }
+      }
+    },
+    "contact.updated": {
+      "id": "evt_000000000000000000000017",
+      "type": "contact.updated",
+      "version": 1,
+      "occurred_at": "2026-10-01T12:00:00Z",
+      "data": {
+        "contact": {
+          "id": 2001,
+          "name": "Ana Pérez",
+          "phone": "+5491100000000",
+          "email": "ana@example.com"
+        },
+        "changed": [
+          "email",
+          "custom_fields"
+        ],
+        "custom_fields": [
+          {
+            "id": 12,
+            "name": "Plan",
+            "value": "Pro"
+          },
+          {
+            "id": 15,
+            "name": "Ciudad",
+            "value": null
+          }
+        ]
+      }
+    },
+    "contact.tag_added": {
+      "id": "evt_000000000000000000000006",
+      "type": "contact.tag_added",
+      "version": 1,
+      "occurred_at": "2026-10-01T12:00:00Z",
+      "data": {
+        "contact": {
+          "id": 2001,
+          "name": "Contacto de ejemplo",
+          "phone": "+5491100000000"
+        },
+        "tag": {
+          "id": 4001,
+          "name": "Etiqueta de ejemplo"
+        },
+        "source": "manual"
+      }
+    },
+    "contact.tag_removed": {
+      "id": "evt_000000000000000000000009",
+      "type": "contact.tag_removed",
+      "version": 1,
+      "occurred_at": "2026-10-01T12:00:00Z",
+      "data": {
+        "contact": {
+          "id": 2001,
+          "name": "Contacto de ejemplo",
+          "phone": "+5491100000000"
+        },
+        "tag": {
+          "id": 4001,
+          "name": "Etiqueta de ejemplo"
+        },
+        "source": "manual"
+      }
+    },
+    "conversation.closed": {
+      "id": "evt_000000000000000000000004",
+      "type": "conversation.closed",
+      "version": 1,
+      "occurred_at": "2026-10-01T12:00:00Z",
+      "data": {
+        "contact": {
+          "id": 2001,
+          "name": "Contacto de ejemplo",
+          "phone": "+5491100000000"
+        }
+      }
+    },
+    "conversation.assigned": {
+      "id": "evt_000000000000000000000005",
+      "type": "conversation.assigned",
+      "version": 1,
+      "occurred_at": "2026-10-01T12:00:00Z",
+      "data": {
+        "contact": {
+          "id": 2001,
+          "name": "Contacto de ejemplo",
+          "phone": "+5491100000000"
+        },
+        "assignee": {
+          "type": "human",
+          "name": "Agente de ejemplo"
+        }
+      }
+    },
+    "flow.completed": {
+      "id": "evt_000000000000000000000003",
+      "type": "flow.completed",
+      "version": 1,
+      "occurred_at": "2026-10-01T12:00:00Z",
+      "data": {
+        "flow": {
+          "id": 3001,
+          "name": "Flujo de ejemplo"
+        },
+        "contact": {
+          "id": 2001,
+          "name": "Contacto de ejemplo",
+          "phone": "+5491100000000"
+        }
+      }
+    },
+    "flow.failed": {
+      "id": "evt_000000000000000000000013",
+      "type": "flow.failed",
+      "version": 1,
+      "occurred_at": "2026-10-01T12:00:00Z",
+      "data": {
+        "flow": {
+          "id": 3001,
+          "name": "Flujo de ejemplo"
+        },
+        "contact": {
+          "id": 2001,
+          "name": "Contacto de ejemplo",
+          "phone": "+5491100000000"
+        },
+        "reason": "execution_error"
+      }
+    },
+    "whatsapp_form.completed": {
+      "id": "evt_000000000000000000000015",
+      "type": "whatsapp_form.completed",
+      "version": 1,
+      "occurred_at": "2026-10-01T12:00:00Z",
+      "data": {
+        "form": {
+          "id": 4001,
+          "name": "Captar un lead",
+          "version_id": 4002
+        },
+        "message_id": 1001,
+        "contact_id": 2001,
+        "device_id": 5001,
+        "answers": [
+          {
+            "key": "nombre",
+            "label": "Nombre",
+            "value": "Contacto de ejemplo"
+          },
+          {
+            "key": "intereses",
+            "label": "Intereses",
+            "value": [
+              "op_a",
+              "op_b"
+            ]
+          },
+          {
+            "key": "comentarios",
+            "label": "Comentarios",
+            "value": null
+          }
+        ],
+        "occurred_at": "2026-10-01T12:00:00Z"
+      }
+    }
+  }
+}
