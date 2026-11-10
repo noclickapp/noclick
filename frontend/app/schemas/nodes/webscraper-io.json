@@ -1,0 +1,1259 @@
+{
+  "$defs": {
+    "AddTagConfig": {
+      "additionalProperties": false,
+      "description": "Adds a tag to a sitemap.",
+      "properties": {
+        "operation": {
+          "const": "add_tag",
+          "default": "add_tag",
+          "title": "Add sitemap tag",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemapId": {
+          "minimum": 1,
+          "title": "Sitemap Id",
+          "type": "integer"
+        },
+        "tag_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sitemapId",
+        "tag_name"
+      ],
+      "title": "AddTagConfig",
+      "type": "object"
+    },
+    "ContinueScrapingJobConfig": {
+      "additionalProperties": false,
+      "description": "Continues a stopped or pausable scraping job. All parameters are optional. Any parameter that is not provided keeps the scraping job's current value.",
+      "properties": {
+        "operation": {
+          "const": "continue_scraping_job",
+          "default": "continue_scraping_job",
+          "title": "Continue scraping job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scrapingJobId": {
+          "minimum": 1,
+          "title": "Scrapingjob Id",
+          "type": "integer"
+        },
+        "request_interval": {
+          "anyOf": [
+            {
+              "minimum": 500,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Interval"
+        },
+        "page_load_delay": {
+          "anyOf": [
+            {
+              "minimum": 500,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Load Delay"
+        },
+        "render_js": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Render Js"
+        },
+        "proxy": {
+          "anyOf": [
+            {
+              "enum": [
+                "datacenter-de",
+                "datacenter-gb",
+                "datacenter-us",
+                "residential-ae",
+                "residential-ar",
+                "residential-at",
+                "residential-au",
+                "residential-be",
+                "residential-br",
+                "residential-ca",
+                "residential-ch",
+                "residential-cn",
+                "residential-cy",
+                "residential-cz",
+                "residential-de",
+                "residential-dk",
+                "residential-es",
+                "residential-fi",
+                "residential-fr",
+                "residential-gb",
+                "residential-gr",
+                "residential-hk",
+                "residential-hu",
+                "residential-id",
+                "residential-ie",
+                "residential-il",
+                "residential-in",
+                "residential-it",
+                "residential-jp",
+                "residential-kr",
+                "residential-mx",
+                "residential-nl",
+                "residential-no",
+                "residential-nz",
+                "residential-ph",
+                "residential-pl",
+                "residential-pt",
+                "residential-py",
+                "residential-ru",
+                "residential-sa",
+                "residential-se",
+                "residential-sg",
+                "residential-sk",
+                "residential-th",
+                "residential-tr",
+                "residential-tw",
+                "residential-ua",
+                "residential-us",
+                "residential-vn",
+                "residential-za"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proxy",
+          "enum": [
+            "datacenter-de",
+            "datacenter-gb",
+            "datacenter-us",
+            "residential-ae",
+            "residential-ar",
+            "residential-at",
+            "residential-au",
+            "residential-be",
+            "residential-br",
+            "residential-ca",
+            "residential-ch",
+            "residential-cn",
+            "residential-cy",
+            "residential-cz",
+            "residential-de",
+            "residential-dk",
+            "residential-es",
+            "residential-fi",
+            "residential-fr",
+            "residential-gb",
+            "residential-gr",
+            "residential-hk",
+            "residential-hu",
+            "residential-id",
+            "residential-ie",
+            "residential-il",
+            "residential-in",
+            "residential-it",
+            "residential-jp",
+            "residential-kr",
+            "residential-mx",
+            "residential-nl",
+            "residential-no",
+            "residential-nz",
+            "residential-ph",
+            "residential-pl",
+            "residential-pt",
+            "residential-py",
+            "residential-ru",
+            "residential-sa",
+            "residential-se",
+            "residential-sg",
+            "residential-sk",
+            "residential-th",
+            "residential-tr",
+            "residential-tw",
+            "residential-ua",
+            "residential-us",
+            "residential-vn",
+            "residential-za"
+          ],
+          "x-enum-searchable": true
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        }
+      },
+      "required": [
+        "scrapingJobId"
+      ],
+      "title": "ContinueScrapingJobConfig",
+      "type": "object"
+    },
+    "CreateScrapingJobConfig": {
+      "additionalProperties": false,
+      "description": "Creates a new scraping job for a sitemap.",
+      "properties": {
+        "operation": {
+          "const": "create_scraping_job",
+          "default": "create_scraping_job",
+          "title": "Create scraping job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemap_id": {
+          "minimum": 1,
+          "title": "Sitemap Id",
+          "type": "integer"
+        },
+        "request_interval": {
+          "minimum": 500,
+          "title": "Request Interval",
+          "type": "integer"
+        },
+        "page_load_delay": {
+          "minimum": 500,
+          "title": "Page Load Delay",
+          "type": "integer"
+        },
+        "proxy": {
+          "enum": [
+            "datacenter-de",
+            "datacenter-gb",
+            "datacenter-us",
+            "residential-ae",
+            "residential-ar",
+            "residential-at",
+            "residential-au",
+            "residential-be",
+            "residential-br",
+            "residential-ca",
+            "residential-ch",
+            "residential-cn",
+            "residential-cy",
+            "residential-cz",
+            "residential-de",
+            "residential-dk",
+            "residential-es",
+            "residential-fi",
+            "residential-fr",
+            "residential-gb",
+            "residential-gr",
+            "residential-hk",
+            "residential-hu",
+            "residential-id",
+            "residential-ie",
+            "residential-il",
+            "residential-in",
+            "residential-it",
+            "residential-jp",
+            "residential-kr",
+            "residential-mx",
+            "residential-nl",
+            "residential-no",
+            "residential-nz",
+            "residential-ph",
+            "residential-pl",
+            "residential-pt",
+            "residential-py",
+            "residential-ru",
+            "residential-sa",
+            "residential-se",
+            "residential-sg",
+            "residential-sk",
+            "residential-th",
+            "residential-tr",
+            "residential-tw",
+            "residential-ua",
+            "residential-us",
+            "residential-vn",
+            "residential-za"
+          ],
+          "title": "Proxy",
+          "type": "string"
+        },
+        "render_js": {
+          "default": true,
+          "title": "Render Js",
+          "type": "boolean"
+        },
+        "priority": {
+          "default": 3,
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "title": "Priority",
+          "type": "integer"
+        },
+        "start_urls": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Urls"
+        },
+        "custom_id": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Id"
+        }
+      },
+      "required": [
+        "sitemap_id",
+        "request_interval",
+        "page_load_delay",
+        "proxy"
+      ],
+      "title": "CreateScrapingJobConfig",
+      "type": "object"
+    },
+    "DeleteScrapingJobConfig": {
+      "additionalProperties": false,
+      "description": "Deletes a scraping job.",
+      "properties": {
+        "operation": {
+          "const": "delete_scraping_job",
+          "default": "delete_scraping_job",
+          "title": "Delete scraping job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scrapingJobId": {
+          "minimum": 1,
+          "title": "Scrapingjob Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "scrapingJobId"
+      ],
+      "title": "DeleteScrapingJobConfig",
+      "type": "object"
+    },
+    "DeleteSitemapConfig": {
+      "additionalProperties": false,
+      "description": "Deletes a sitemap.",
+      "properties": {
+        "operation": {
+          "const": "delete_sitemap",
+          "default": "delete_sitemap",
+          "title": "Delete sitemap",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemapId": {
+          "minimum": 1,
+          "title": "Sitemap Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sitemapId"
+      ],
+      "title": "DeleteSitemapConfig",
+      "type": "object"
+    },
+    "DisableSchedulerConfig": {
+      "additionalProperties": false,
+      "description": "Disables sitemap scheduler.",
+      "properties": {
+        "operation": {
+          "const": "disable_scheduler",
+          "default": "disable_scheduler",
+          "title": "Disable sitemap scheduler",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemapId": {
+          "minimum": 1,
+          "title": "Sitemap Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sitemapId"
+      ],
+      "title": "DisableSchedulerConfig",
+      "type": "object"
+    },
+    "DownloadDataConfig": {
+      "additionalProperties": false,
+      "description": "Streams scraping job data as a downloadable file.",
+      "properties": {
+        "operation": {
+          "const": "download_data",
+          "default": "download_data",
+          "title": "Download scraping job data",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scrapingJobId": {
+          "minimum": 1,
+          "title": "Scrapingjob Id",
+          "type": "integer"
+        },
+        "extension": {
+          "enum": [
+            "json",
+            "csv",
+            "xlsx"
+          ],
+          "title": "Extension",
+          "type": "string"
+        },
+        "raw": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return raw exported data format when set to `true`.",
+          "title": "Raw",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "scrapingJobId",
+        "extension"
+      ],
+      "title": "DownloadDataConfig",
+      "type": "object"
+    },
+    "EnableSchedulerConfig": {
+      "additionalProperties": false,
+      "description": "Enables sitemap scheduler with the provided cron and execution settings.",
+      "properties": {
+        "operation": {
+          "const": "enable_scheduler",
+          "default": "enable_scheduler",
+          "title": "Enable sitemap scheduler",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemapId": {
+          "minimum": 1,
+          "title": "Sitemap Id",
+          "type": "integer"
+        },
+        "proxy": {
+          "enum": [
+            "datacenter-de",
+            "datacenter-gb",
+            "datacenter-us",
+            "residential-ae",
+            "residential-ar",
+            "residential-at",
+            "residential-au",
+            "residential-be",
+            "residential-br",
+            "residential-ca",
+            "residential-ch",
+            "residential-cn",
+            "residential-cy",
+            "residential-cz",
+            "residential-de",
+            "residential-dk",
+            "residential-es",
+            "residential-fi",
+            "residential-fr",
+            "residential-gb",
+            "residential-gr",
+            "residential-hk",
+            "residential-hu",
+            "residential-id",
+            "residential-ie",
+            "residential-il",
+            "residential-in",
+            "residential-it",
+            "residential-jp",
+            "residential-kr",
+            "residential-mx",
+            "residential-nl",
+            "residential-no",
+            "residential-nz",
+            "residential-ph",
+            "residential-pl",
+            "residential-pt",
+            "residential-py",
+            "residential-ru",
+            "residential-sa",
+            "residential-se",
+            "residential-sg",
+            "residential-sk",
+            "residential-th",
+            "residential-tr",
+            "residential-tw",
+            "residential-ua",
+            "residential-us",
+            "residential-vn",
+            "residential-za"
+          ],
+          "title": "Proxy",
+          "type": "string"
+        },
+        "cron_minute": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Cron Minute",
+          "type": "string"
+        },
+        "cron_hour": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Cron Hour",
+          "type": "string"
+        },
+        "cron_day": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Cron Day",
+          "type": "string"
+        },
+        "cron_month": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Cron Month",
+          "type": "string"
+        },
+        "cron_weekday": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Cron Weekday",
+          "type": "string"
+        },
+        "request_interval": {
+          "minimum": 500,
+          "title": "Request Interval",
+          "type": "integer"
+        },
+        "page_load_delay": {
+          "minimum": 500,
+          "title": "Page Load Delay",
+          "type": "integer"
+        },
+        "cron_timezone": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Cron Timezone",
+          "type": "string"
+        },
+        "render_js": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Render Js"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        }
+      },
+      "required": [
+        "sitemapId",
+        "proxy",
+        "cron_minute",
+        "cron_hour",
+        "cron_day",
+        "cron_month",
+        "cron_weekday",
+        "request_interval",
+        "page_load_delay",
+        "cron_timezone"
+      ],
+      "title": "EnableSchedulerConfig",
+      "type": "object"
+    },
+    "GetAccountConfig": {
+      "additionalProperties": false,
+      "description": "Returns account details for the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get account info",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccountConfig",
+      "type": "object"
+    },
+    "GetDataQualityConfig": {
+      "additionalProperties": false,
+      "description": "Returns data quality statistics for a scraping job.",
+      "properties": {
+        "operation": {
+          "const": "get_data_quality",
+          "default": "get_data_quality",
+          "title": "Get scraping job data quality",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scrapingJobId": {
+          "minimum": 1,
+          "title": "Scrapingjob Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "scrapingJobId"
+      ],
+      "title": "GetDataQualityConfig",
+      "type": "object"
+    },
+    "GetSchedulerConfig": {
+      "additionalProperties": false,
+      "description": "Returns scheduler configuration for a sitemap.",
+      "properties": {
+        "operation": {
+          "const": "get_scheduler",
+          "default": "get_scheduler",
+          "title": "Get sitemap scheduler",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemapId": {
+          "minimum": 1,
+          "title": "Sitemap Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sitemapId"
+      ],
+      "title": "GetSchedulerConfig",
+      "type": "object"
+    },
+    "GetScrapingJobConfig": {
+      "additionalProperties": false,
+      "description": "Returns details for a single scraping job by ID",
+      "properties": {
+        "operation": {
+          "const": "get_scraping_job",
+          "default": "get_scraping_job",
+          "title": "Get scraping job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scrapingJobId": {
+          "minimum": 1,
+          "title": "Scrapingjob Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "scrapingJobId"
+      ],
+      "title": "GetScrapingJobConfig",
+      "type": "object"
+    },
+    "GetSitemapConfig": {
+      "additionalProperties": false,
+      "description": "Returns details for a single sitemap by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_sitemap",
+          "default": "get_sitemap",
+          "title": "Get sitemap",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemapId": {
+          "minimum": 1,
+          "title": "Sitemap Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sitemapId"
+      ],
+      "title": "GetSitemapConfig",
+      "type": "object"
+    },
+    "ImportSitemapConfig": {
+      "additionalProperties": false,
+      "description": "Imports a sitemap from raw JSON content and creates a new sitemap.",
+      "properties": {
+        "operation": {
+          "const": "import_sitemap",
+          "default": "import_sitemap",
+          "title": "Import sitemap",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        },
+        "sitemap": {
+          "additionalProperties": true,
+          "description": "Sitemap JSON exported from the Web Scraper extension.",
+          "title": "Sitemap",
+          "type": "object"
+        }
+      },
+      "required": [
+        "sitemap"
+      ],
+      "title": "ImportSitemapConfig",
+      "type": "object"
+    },
+    "ListProblematicUrlsConfig": {
+      "additionalProperties": false,
+      "description": "Returns a paginated list of problematic URLs for the scraping job.",
+      "properties": {
+        "operation": {
+          "const": "list_problematic_urls",
+          "default": "list_problematic_urls",
+          "title": "Get scraping job problematic URLs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scrapingJobId": {
+          "minimum": 1,
+          "title": "Scrapingjob Id",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        }
+      },
+      "required": [
+        "scrapingJobId"
+      ],
+      "title": "ListProblematicUrlsConfig",
+      "type": "object"
+    },
+    "ListScrapingJobsConfig": {
+      "additionalProperties": false,
+      "description": "Returns a paginated list of scraping jobs for the authenticated user's organization.",
+      "properties": {
+        "operation": {
+          "const": "list_scraping_jobs",
+          "default": "list_scraping_jobs",
+          "title": "Get scraping jobs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemap_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sitemap Id"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "started",
+                "finished",
+                "failed",
+                "stopped",
+                "waiting-to-be-scheduled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter jobs by status. Omit to return jobs of all statuses.",
+          "title": "Status",
+          "enum": [
+            "started",
+            "finished",
+            "failed",
+            "stopped",
+            "waiting-to-be-scheduled"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        }
+      },
+      "title": "ListScrapingJobsConfig",
+      "type": "object"
+    },
+    "ListSitemapsConfig": {
+      "additionalProperties": false,
+      "description": "Returns a paginated list of sitemaps for the authenticated user's organization.",
+      "properties": {
+        "operation": {
+          "const": "list_sitemaps",
+          "default": "list_sitemaps",
+          "title": "Get sitemaps",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        }
+      },
+      "title": "ListSitemapsConfig",
+      "type": "object"
+    },
+    "ListTagsConfig": {
+      "additionalProperties": false,
+      "description": "Returns tags assigned to a sitemap.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Get sitemap tags",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemapId": {
+          "minimum": 1,
+          "title": "Sitemap Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sitemapId"
+      ],
+      "title": "ListTagsConfig",
+      "type": "object"
+    },
+    "RemoveTagConfig": {
+      "additionalProperties": false,
+      "description": "Removes a tag from a sitemap.",
+      "properties": {
+        "operation": {
+          "const": "remove_tag",
+          "default": "remove_tag",
+          "title": "Remove sitemap tag",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemapId": {
+          "minimum": 1,
+          "title": "Sitemap Id",
+          "type": "integer"
+        },
+        "tag_name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sitemapId",
+        "tag_name"
+      ],
+      "title": "RemoveTagConfig",
+      "type": "object"
+    },
+    "RenameSitemapConfig": {
+      "additionalProperties": false,
+      "description": "Renames a sitemap and updates related scraping job sitemap names.",
+      "properties": {
+        "operation": {
+          "const": "rename_sitemap",
+          "default": "rename_sitemap",
+          "title": "Rename sitemap",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemapId": {
+          "minimum": 1,
+          "title": "Sitemap Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sitemapId",
+        "name"
+      ],
+      "title": "RenameSitemapConfig",
+      "type": "object"
+    },
+    "StopScrapingJobConfig": {
+      "additionalProperties": false,
+      "description": "Stops a running or pausable scraping job.",
+      "properties": {
+        "operation": {
+          "const": "stop_scraping_job",
+          "default": "stop_scraping_job",
+          "title": "Stop scraping job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scrapingJobId": {
+          "minimum": 1,
+          "title": "Scrapingjob Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "scrapingJobId"
+      ],
+      "title": "StopScrapingJobConfig",
+      "type": "object"
+    },
+    "UpdateSitemapConfig": {
+      "additionalProperties": false,
+      "description": "Updates sitemap JSON for an existing sitemap.",
+      "properties": {
+        "operation": {
+          "const": "update_sitemap",
+          "default": "update_sitemap",
+          "title": "Update sitemap",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sitemapId": {
+          "minimum": 1,
+          "title": "Sitemap Id",
+          "type": "integer"
+        },
+        "sitemap": {
+          "additionalProperties": true,
+          "description": "Sitemap JSON exported from the Web Scraper extension.",
+          "title": "Sitemap",
+          "type": "object"
+        }
+      },
+      "required": [
+        "sitemapId",
+        "sitemap"
+      ],
+      "title": "UpdateSitemapConfig",
+      "type": "object"
+    },
+    "WebscraperIoCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "webscraper_io_api_token",
+          "default": "webscraper_io_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Webscraper Io API Token",
+      "type": "object",
+      "x-credential-instructions": "Copy your API token from the API page in Web Scraper Cloud. Paste the token without the Bearer prefix. NoClick uses it only with api.webscraper.io.",
+      "x-credential-type": "api_key",
+      "x-credential-url": "https://cloud.webscraper.io/api"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_tag": "#/$defs/AddTagConfig",
+          "continue_scraping_job": "#/$defs/ContinueScrapingJobConfig",
+          "create_scraping_job": "#/$defs/CreateScrapingJobConfig",
+          "delete_scraping_job": "#/$defs/DeleteScrapingJobConfig",
+          "delete_sitemap": "#/$defs/DeleteSitemapConfig",
+          "disable_scheduler": "#/$defs/DisableSchedulerConfig",
+          "download_data": "#/$defs/DownloadDataConfig",
+          "enable_scheduler": "#/$defs/EnableSchedulerConfig",
+          "get_account": "#/$defs/GetAccountConfig",
+          "get_data_quality": "#/$defs/GetDataQualityConfig",
+          "get_scheduler": "#/$defs/GetSchedulerConfig",
+          "get_scraping_job": "#/$defs/GetScrapingJobConfig",
+          "get_sitemap": "#/$defs/GetSitemapConfig",
+          "import_sitemap": "#/$defs/ImportSitemapConfig",
+          "list_problematic_urls": "#/$defs/ListProblematicUrlsConfig",
+          "list_scraping_jobs": "#/$defs/ListScrapingJobsConfig",
+          "list_sitemaps": "#/$defs/ListSitemapsConfig",
+          "list_tags": "#/$defs/ListTagsConfig",
+          "remove_tag": "#/$defs/RemoveTagConfig",
+          "rename_sitemap": "#/$defs/RenameSitemapConfig",
+          "stop_scraping_job": "#/$defs/StopScrapingJobConfig",
+          "update_sitemap": "#/$defs/UpdateSitemapConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListSitemapsConfig"
+        },
+        {
+          "$ref": "#/$defs/ImportSitemapConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSitemapConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateSitemapConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteSitemapConfig"
+        },
+        {
+          "$ref": "#/$defs/RenameSitemapConfig"
+        },
+        {
+          "$ref": "#/$defs/GetSchedulerConfig"
+        },
+        {
+          "$ref": "#/$defs/EnableSchedulerConfig"
+        },
+        {
+          "$ref": "#/$defs/DisableSchedulerConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/AddTagConfig"
+        },
+        {
+          "$ref": "#/$defs/RemoveTagConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateScrapingJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ListScrapingJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetScrapingJobConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteScrapingJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ListProblematicUrlsConfig"
+        },
+        {
+          "$ref": "#/$defs/DownloadDataConfig"
+        },
+        {
+          "$ref": "#/$defs/GetDataQualityConfig"
+        },
+        {
+          "$ref": "#/$defs/ContinueScrapingJobConfig"
+        },
+        {
+          "$ref": "#/$defs/StopScrapingJobConfig"
+        },
+        {
+          "$ref": "#/$defs/GetAccountConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WebscraperIoCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Webscraper-io Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

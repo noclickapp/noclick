@@ -1,0 +1,449 @@
+{
+  "list_sitemaps": {
+    "config": {
+      "operation": "list_sitemaps",
+      "tag": "ecommerce",
+      "page": 1
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "GET",
+      "path": "/api/v1/sitemaps",
+      "query": {
+        "tag": "ecommerce",
+        "page": "1"
+      },
+      "body": null
+    }
+  },
+  "import_sitemap": {
+    "config": {
+      "operation": "import_sitemap",
+      "name": "webscraper-io-landing",
+      "folder_id": 0,
+      "sitemap": {
+        "_id": "webscraper-io-landing",
+        "startUrl": [
+          "http://webscraper.io/"
+        ],
+        "selectors": [
+          {
+            "parentSelectors": [
+              "_root"
+            ],
+            "type": "SelectorText",
+            "multiple": false,
+            "id": "title",
+            "selector": "h1",
+            "regex": "",
+            "delay": ""
+          }
+        ]
+      }
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "POST",
+      "path": "/api/v1/sitemap",
+      "query": {
+        "name": "webscraper-io-landing",
+        "folder_id": "0"
+      },
+      "body": {
+        "_id": "webscraper-io-landing",
+        "startUrl": [
+          "http://webscraper.io/"
+        ],
+        "selectors": [
+          {
+            "parentSelectors": [
+              "_root"
+            ],
+            "type": "SelectorText",
+            "multiple": false,
+            "id": "title",
+            "selector": "h1",
+            "regex": "",
+            "delay": ""
+          }
+        ]
+      }
+    }
+  },
+  "get_sitemap": {
+    "config": {
+      "operation": "get_sitemap",
+      "sitemapId": 123
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "GET",
+      "path": "/api/v1/sitemap/123",
+      "query": {},
+      "body": null
+    }
+  },
+  "update_sitemap": {
+    "config": {
+      "operation": "update_sitemap",
+      "sitemapId": 123,
+      "sitemap": {
+        "_id": "webscraper-io-landing",
+        "startUrl": [
+          "http://webscraper.io/"
+        ],
+        "selectors": [
+          {
+            "parentSelectors": [
+              "_root"
+            ],
+            "type": "SelectorText",
+            "multiple": false,
+            "id": "title",
+            "selector": "h1",
+            "regex": "",
+            "delay": ""
+          }
+        ]
+      }
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "PUT",
+      "path": "/api/v1/sitemap/123",
+      "query": {},
+      "body": {
+        "_id": "webscraper-io-landing",
+        "startUrl": [
+          "http://webscraper.io/"
+        ],
+        "selectors": [
+          {
+            "parentSelectors": [
+              "_root"
+            ],
+            "type": "SelectorText",
+            "multiple": false,
+            "id": "title",
+            "selector": "h1",
+            "regex": "",
+            "delay": ""
+          }
+        ]
+      }
+    }
+  },
+  "delete_sitemap": {
+    "config": {
+      "operation": "delete_sitemap",
+      "sitemapId": 123
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "DELETE",
+      "path": "/api/v1/sitemap/123",
+      "query": {},
+      "body": null
+    }
+  },
+  "rename_sitemap": {
+    "config": {
+      "operation": "rename_sitemap",
+      "sitemapId": 123,
+      "name": "webscraper-io-landing-renamed"
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "PUT",
+      "path": "/api/v1/sitemap/123/rename",
+      "query": {},
+      "body": {
+        "name": "webscraper-io-landing-renamed"
+      }
+    }
+  },
+  "get_scheduler": {
+    "config": {
+      "operation": "get_scheduler",
+      "sitemapId": 123
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "GET",
+      "path": "/api/v1/sitemap/123/scheduler",
+      "query": {},
+      "body": null
+    }
+  },
+  "enable_scheduler": {
+    "config": {
+      "operation": "enable_scheduler",
+      "sitemapId": 123,
+      "proxy": "datacenter-us",
+      "cron_minute": "0",
+      "cron_hour": "*",
+      "cron_day": "*",
+      "cron_month": "*",
+      "cron_weekday": "*",
+      "request_interval": 2000,
+      "page_load_delay": 1000,
+      "cron_timezone": "UTC",
+      "render_js": true,
+      "priority": 3
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "POST",
+      "path": "/api/v1/sitemap/123/enable-scheduler",
+      "query": {},
+      "body": {
+        "proxy": "datacenter-us",
+        "cron_minute": "0",
+        "cron_hour": "*",
+        "cron_day": "*",
+        "cron_month": "*",
+        "cron_weekday": "*",
+        "request_interval": 2000,
+        "page_load_delay": 1000,
+        "cron_timezone": "UTC",
+        "render_js": true,
+        "priority": 3
+      }
+    }
+  },
+  "disable_scheduler": {
+    "config": {
+      "operation": "disable_scheduler",
+      "sitemapId": 123
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "POST",
+      "path": "/api/v1/sitemap/123/disable-scheduler",
+      "query": {},
+      "body": null
+    }
+  },
+  "list_tags": {
+    "config": {
+      "operation": "list_tags",
+      "sitemapId": 123
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "GET",
+      "path": "/api/v1/sitemap/123/tags",
+      "query": {},
+      "body": null
+    }
+  },
+  "add_tag": {
+    "config": {
+      "operation": "add_tag",
+      "sitemapId": 123,
+      "tag_name": "ecommerce"
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "POST",
+      "path": "/api/v1/sitemap/123/add-tag",
+      "query": {},
+      "body": {
+        "tag_name": "ecommerce"
+      }
+    }
+  },
+  "remove_tag": {
+    "config": {
+      "operation": "remove_tag",
+      "sitemapId": 123,
+      "tag_name": "ecommerce"
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "DELETE",
+      "path": "/api/v1/sitemap/123/remove-tag",
+      "query": {},
+      "body": {
+        "tag_name": "ecommerce"
+      }
+    }
+  },
+  "create_scraping_job": {
+    "config": {
+      "operation": "create_scraping_job",
+      "sitemap_id": 123,
+      "request_interval": 2000,
+      "page_load_delay": 1000,
+      "proxy": "datacenter-us",
+      "render_js": true,
+      "priority": 3,
+      "start_urls": [
+        "https://www.webscraper.io/test-sites/e-commerce/allinone/computers",
+        "https://www.webscraper.io/test-sites/e-commerce/allinone/phones"
+      ],
+      "custom_id": "custom-123"
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "POST",
+      "path": "/api/v1/scraping-job",
+      "query": {},
+      "body": {
+        "sitemap_id": 123,
+        "request_interval": 2000,
+        "page_load_delay": 1000,
+        "proxy": "datacenter-us",
+        "render_js": true,
+        "priority": 3,
+        "start_urls": [
+          "https://www.webscraper.io/test-sites/e-commerce/allinone/computers",
+          "https://www.webscraper.io/test-sites/e-commerce/allinone/phones"
+        ],
+        "custom_id": "custom-123"
+      }
+    }
+  },
+  "list_scraping_jobs": {
+    "config": {
+      "operation": "list_scraping_jobs",
+      "sitemap_id": 123,
+      "tag": "ecommerce",
+      "status": "stopped",
+      "page": 1
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "GET",
+      "path": "/api/v1/scraping-jobs",
+      "query": {
+        "sitemap_id": "123",
+        "tag": "ecommerce",
+        "status": "stopped",
+        "page": "1"
+      },
+      "body": null
+    }
+  },
+  "get_scraping_job": {
+    "config": {
+      "operation": "get_scraping_job",
+      "scrapingJobId": 123
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "GET",
+      "path": "/api/v1/scraping-job/123",
+      "query": {},
+      "body": null
+    }
+  },
+  "delete_scraping_job": {
+    "config": {
+      "operation": "delete_scraping_job",
+      "scrapingJobId": 123
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "DELETE",
+      "path": "/api/v1/scraping-job/123",
+      "query": {},
+      "body": null
+    }
+  },
+  "list_problematic_urls": {
+    "config": {
+      "operation": "list_problematic_urls",
+      "scrapingJobId": 123,
+      "page": 1
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "GET",
+      "path": "/api/v1/scraping-job/123/problematic-urls",
+      "query": {
+        "page": "1"
+      },
+      "body": null
+    }
+  },
+  "download_data": {
+    "config": {
+      "operation": "download_data",
+      "scrapingJobId": 123,
+      "extension": "json",
+      "raw": "false"
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "GET",
+      "path": "/api/v1/scraping-job/123/json",
+      "query": {
+        "raw": "false"
+      },
+      "body": null
+    }
+  },
+  "get_data_quality": {
+    "config": {
+      "operation": "get_data_quality",
+      "scrapingJobId": 123
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "GET",
+      "path": "/api/v1/scraping-job/123/data-quality",
+      "query": {},
+      "body": null
+    }
+  },
+  "continue_scraping_job": {
+    "config": {
+      "operation": "continue_scraping_job",
+      "scrapingJobId": 123,
+      "request_interval": 2000,
+      "page_load_delay": 1000,
+      "render_js": true,
+      "proxy": "datacenter-us",
+      "priority": 3
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "POST",
+      "path": "/api/v1/scraping-job/123/continue",
+      "query": {},
+      "body": {
+        "request_interval": 2000,
+        "page_load_delay": 1000,
+        "render_js": true,
+        "proxy": "datacenter-us",
+        "priority": 3
+      }
+    }
+  },
+  "stop_scraping_job": {
+    "config": {
+      "operation": "stop_scraping_job",
+      "scrapingJobId": 123
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "POST",
+      "path": "/api/v1/scraping-job/123/stop",
+      "query": {},
+      "body": null
+    }
+  },
+  "get_account": {
+    "config": {
+      "operation": "get_account"
+    },
+    "source": "https://webscraper.io/openapi.yaml",
+    "expected_request": {
+      "method": "GET",
+      "path": "/api/v1/account",
+      "query": {},
+      "body": null
+    }
+  }
+}
