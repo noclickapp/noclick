@@ -47,9 +47,10 @@ export function ShortcutTooltip({
                 <TooltipContent
                     side={side}
                     sideOffset={sideOffset}
-                    className={`flex items-center gap-2 ${TOOLTIP_SURFACE}`}
+                    className={`flex max-w-[min(32rem,var(--radix-tooltip-content-available-width))] items-center gap-2 ${TOOLTIP_SURFACE}`}
                 >
-                    {label && <span>{label}</span>}
+                    {/* A long label (a whole command or path) wraps inside the width it has. */}
+                    {label && <span className="min-w-0 [overflow-wrap:anywhere]">{label}</span>}
                     {keys &&
                         keys.length > 0 &&
                         (sequence ? (
