@@ -1,5 +1,6 @@
 import { memo, type CSSProperties } from 'react';
 import { NodeProps } from '@xyflow/react';
+import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
 
@@ -11,7 +12,7 @@ const BillIcon = ({ className, style }: { className?: string; style?: CSSPropert
 export const BillNode: NodeDefinition = {
     type: 'automation-bill',
     label: 'BILL',
-    description: 'Manage vendors, bills, approvals, payments, and customers',
+    description: 'Manage vendors, bills, approvals, payments, and customers; trigger workflows from BILL events',
     category: 'finance-accounting',
     keywords: ['bill.com', 'accounts payable', 'accounts receivable', 'vendor payments'],
     Icon: BillIcon,

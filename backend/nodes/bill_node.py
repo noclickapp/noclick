@@ -6,7 +6,11 @@ expire after 35 minutes idle; users supply a new session, never their password.
 Payment scheduling requires an MFA-trusted session. No login or MFA side effects.
 """
 
+import base64
+import hashlib
+import hmac
 import json
+from uuid import uuid4
 from datetime import date
 from typing import Annotated, Any, ClassVar, Literal, Union
 from urllib.parse import quote
@@ -16,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 
 BillCurrency = Literal[
@@ -564,7 +569,9 @@ class BillUpdateBillConfig(BillRequestConfig):
         title="Due Date",
         description="Bill due date. The value is in the `yyyy-MM-dd` format.",
     )
-    payment_term_id: str = Field(..., title="Payment Term ID", description="")
+    # BILL's updateBill example changes line items without paymentTermId:
+    # https://developer.bill.com/reference/updatebill
+    payment_term_id: str | None = Field(None, title="Payment Term ID")
     bill_line_items: str | None = Field(
         None,
         title="Bill Line Items",
@@ -1093,8 +1100,61 @@ class BillRecordPaymentConfig(BillRequestConfig):
     }
 
 
+# Registration: https://developer.bill.com/docs/working-with-bill-webhooks
+# Payloads: https://developer.bill.com/docs/bill-webhook-notification-payloads
+# https://developer.bill.com/docs/payment-webhook-notification-payloads
+# https://developer.bill.com/docs/vendor-webhook-notification-payloads
+class BillWebhookConfig(WebhookTriggerConfigBase):
+    webhook_url: str | None = Field(
+        None, title="Webhook URL", description="Registered with BILL automatically",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True},
+    )
+
+
+class BillOnBillEventConfig(BillWebhookConfig):
+    operation: Literal["on_bill_event"] = Field(
+        "on_bill_event", title="On Bill Event", json_schema_extra={
+            "const": "on_bill_event", "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": "On Bill Event",
+        },
+    )
+    event_type: Literal['bill.created', 'bill.updated', 'bill.archived', 'bill.restored'] = Field(
+        "bill.created", title="Event Type", description="BILL event that starts this workflow",
+    )
+
+
+class BillOnPaymentEventConfig(BillWebhookConfig):
+    operation: Literal["on_payment_event"] = Field(
+        "on_payment_event", title="On Payment Event", json_schema_extra={
+            "const": "on_payment_event", "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": "On Payment Event",
+        },
+    )
+    event_type: Literal['payment.updated', 'payment.failed'] = Field(
+        "payment.updated", title="Event Type", description="BILL event that starts this workflow",
+    )
+
+
+class BillOnVendorEventConfig(BillWebhookConfig):
+    operation: Literal["on_vendor_event"] = Field(
+        "on_vendor_event", title="On Vendor Event", json_schema_extra={
+            "const": "on_vendor_event", "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": "On Vendor Event",
+        },
+    )
+    event_type: Literal['vendor.created', 'vendor.updated'] = Field(
+        "vendor.created", title="Event Type", description="BILL event that starts this workflow",
+    )
+
+
+BILL_TRIGGER_EVENTS = {'on_bill_event': ('bill.created', 'bill.updated', 'bill.archived', 'bill.restored'), 'on_payment_event': ('payment.updated', 'payment.failed'), 'on_vendor_event': ('vendor.created', 'vendor.updated')}
+
+
 BillConfig = Annotated[
     Union[
+        BillOnBillEventConfig,
+        BillOnPaymentEventConfig,
+        BillOnVendorEventConfig,
         BillListVendorsConfig,
         BillCreateVendorConfig,
         BillGetVendorConfig,
@@ -1412,7 +1472,7 @@ BILL_ROUTES = {
 }
 
 
-class BillNode(WorkflowNode):
+class BillNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-bill"
 
     connection_evidence = ConnectionEvidence(operation="list_vendors", noun="vendors")
@@ -1428,6 +1488,117 @@ class BillNode(WorkflowNode):
     def get_config_model(cls):
         return BillNodeConfig
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": (config or {}).get("event_type")}
+
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, *, body=None):
+        if not credential or not credential.get("dev_key") or not credential.get("session_id"):
+            raise ValueError("Connect a BILL AP/AR session before activating this trigger")
+        host = "gateway.stage.bill.com" if credential.get("environment") == "sandbox" else "gateway.prod.bill.com"
+        headers = {"devKey": credential["dev_key"], "sessionId": credential["session_id"], "Accept": "application/json"}
+        if method == "POST":
+            headers["X-Idempotent-Key"] = str(uuid4())
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=False) as client:
+            response = await client.request(
+                method, f"https://{host}/connect-events{path}", headers=headers,
+                **({"json": body} if body is not None else {}),
+            )
+        # A subscription already removed at BILL is also a successful teardown.
+        if method == "DELETE" and response.status_code == 404:
+            return {}
+        if not response.is_success:
+            raise ValueError(f"BILL webhook API returned HTTP {response.status_code}; check your session and developer key")
+        return response.json() if response.content else {}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        config = config or {}
+        operation = config.get("operation")
+        event_type = config.get("event_type")
+        if event_type not in BILL_TRIGGER_EVENTS.get(operation, ()):
+            raise ValueError("Choose a supported BILL event for this trigger")
+        result = await cls._webhook_request(credential, "POST", "/v3/subscriptions", body={
+            "name": f"NoClick {node_id}", "status": {"enabled": True},
+            "events": [{"type": event_type, "version": "1"}], "notificationUrl": webhook_url,
+        })
+        if not result.get("id") or not result.get("securityKey"):
+            raise ValueError("BILL did not return a subscription ID and security key")
+        return {"external_webhook_id": result["id"], "signing_secret": result["securityKey"]}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        subscription_id = (config or {}).get("external_webhook_id")
+        if subscription_id:
+            await cls._webhook_request(credential, "DELETE", f"/v3/subscriptions/{quote(str(subscription_id), safe='')}")
+
+    @classmethod
+    def verify_webhook_signature(cls, body: bytes, headers: dict[str, str], config: dict[str, Any]) -> bool:
+        # https://developer.bill.com/docs/test-with-webhook-security
+        # The HTTP request is the event payload, not the escaped payload field
+        # in the event-history API response. Verify its exact bytes.
+        secret = (config or {}).get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "x-bill-sha-signature"), "")
+        if not secret or not signature:
+            return False
+        expected = base64.b64encode(hmac.new(str(secret).encode(), body, hashlib.sha256).digest()).decode()
+        return hmac.compare_digest(expected.encode(), signature.encode())
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        metadata = payload.get("metadata")
+        if not isinstance(metadata, dict):
+            return False
+        operation = (config or {}).get("operation")
+        event_type = (config or {}).get("event_type")
+        return (event_type in BILL_TRIGGER_EVENTS.get(operation, ())
+                and metadata.get("eventType") == event_type and metadata.get("version") == "1")
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        return {"status": "success", "action": config.get("operation"), "data": payload}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return None
+        payload = output["data"] if "data" in output and isinstance(output["data"], dict) else output
+        if "metadata" not in payload or not isinstance(payload["metadata"], dict):
+            return None
+        metadata = payload["metadata"]
+        kind = metadata.get("eventType", "")
+        entity = kind.split(".", 1)[0]
+        if entity not in ("bill", "payment", "vendor") or entity not in payload:
+            return None
+        record = payload[entity]
+        if not isinstance(record, dict):
+            return None
+        # payment.failed carries bills and errors, but no payment ID. Never
+        # manufacture one or offer get_payment with the event ID instead.
+        resource_id = record["id"] if "id" in record else None
+        label = record["name"] if "name" in record else record["transactionNumber"] if "transactionNumber" in record else resource_id
+        lines = [f"BILL {kind}: {label}",
+                 f"Organization: {metadata.get('organizationId')}",
+                 f"Event ID: {metadata.get('eventId')}"]
+        # Keep the provider's names and identifiers visible so agents can verify
+        # the current entity through get_bill/get_payment/get_vendor before acting.
+        for key in ("createdBy", "vendorId", "description", "amount", "paymentStatus", "status", "email", "createdTime", "updatedTime"):
+            if key in record:
+                lines.append(f"{key}: {record[key]}")
+        for key in ("invoice", "vendor", "funding", "billIds", "bills", "fundingAccount"):
+            if key in record:
+                lines.append(f"{key}: {json.dumps(record[key], ensure_ascii=False)}")
+        if "errors" in payload:
+            lines.append(f"Errors: {json.dumps(payload['errors'], ensure_ascii=False)}")
+        if resource_id:
+            lines.append(f"To verify current details: get_{entity} {entity}_id={resource_id}.")
+        else:
+            lines.append("Verify the listed bills with get_bill bill_id=<bills.id>; BILL did not include a payment ID.")
+        return {"text": "\n".join(lines),
+                "conversation_key": f"{metadata.get('organizationId')}:{entity}:{resource_id or metadata.get('eventId')}",
+                "title": f"BILL {kind}: {label}"}
+
     async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(self.config, BillNodeConfig) or not self.config.credentials:
             raise ValueError(
@@ -1435,6 +1606,8 @@ class BillNode(WorkflowNode):
             )
         config = self.config.config
         credential = self.config.credentials
+        if config.operation in BILL_TRIGGER_EVENTS:
+            return self.no_event_output(config.operation)
         route = BILL_ROUTES[config.operation]
         values = config.model_dump(mode="json", exclude_none=True)
         for field, kind in config.json_fields.items():

@@ -1716,6 +1716,419 @@
       "title": "BillListVendorsConfig",
       "type": "object"
     },
+    "BillOnBillEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with BILL automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_bill_event",
+          "default": "on_bill_event",
+          "title": "On Bill Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Bill Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "bill.created",
+          "description": "BILL event that starts this workflow",
+          "enum": [
+            "bill.created",
+            "bill.updated",
+            "bill.archived",
+            "bill.restored"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        }
+      },
+      "title": "BillOnBillEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BillOnPaymentEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with BILL automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_payment_event",
+          "default": "on_payment_event",
+          "title": "On Payment Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Payment Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "payment.updated",
+          "description": "BILL event that starts this workflow",
+          "enum": [
+            "payment.updated",
+            "payment.failed"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        }
+      },
+      "title": "BillOnPaymentEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BillOnVendorEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with BILL automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_vendor_event",
+          "default": "on_vendor_event",
+          "title": "On Vendor Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Vendor Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "vendor.created",
+          "description": "BILL event that starts this workflow",
+          "enum": [
+            "vendor.created",
+            "vendor.updated"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        }
+      },
+      "title": "BillOnVendorEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "BillRecordPaymentConfig": {
       "additionalProperties": false,
       "description": "Record AP payment.",
@@ -2043,9 +2456,16 @@
           "title": "Due Date"
         },
         "payment_term_id": {
-          "description": "",
-          "title": "Payment Term ID",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Term ID"
         },
         "bill_line_items": {
           "anyOf": [
@@ -2161,8 +2581,7 @@
         }
       },
       "required": [
-        "bill_id",
-        "payment_term_id"
+        "bill_id"
       ],
       "title": "BillUpdateBillConfig",
       "type": "object"
@@ -3256,6 +3675,9 @@
           "list_payments": "#/$defs/BillListPaymentsConfig",
           "list_pending_approvals": "#/$defs/BillListPendingApprovalsConfig",
           "list_vendors": "#/$defs/BillListVendorsConfig",
+          "on_bill_event": "#/$defs/BillOnBillEventConfig",
+          "on_payment_event": "#/$defs/BillOnPaymentEventConfig",
+          "on_vendor_event": "#/$defs/BillOnVendorEventConfig",
           "record_payment": "#/$defs/BillRecordPaymentConfig",
           "schedule_payment": "#/$defs/BillSchedulePaymentConfig",
           "update_bill": "#/$defs/BillUpdateBillConfig",
@@ -3265,6 +3687,15 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/BillOnBillEventConfig"
+        },
+        {
+          "$ref": "#/$defs/BillOnPaymentEventConfig"
+        },
+        {
+          "$ref": "#/$defs/BillOnVendorEventConfig"
+        },
         {
           "$ref": "#/$defs/BillListVendorsConfig"
         },
