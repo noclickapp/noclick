@@ -15,8 +15,17 @@ class Peer(HermesClient):
         self.state = {'status': 'running'}
         self.rejection = None
         self.run_number = 0
+        # The session as the gateway keeps it (v2026.9.24): ``latest`` pages back from the newest, each page oldest
+        # first.
+        self.messages = []
     def request(self, method, path, body=None, **kw):
         self.calls.append((method, path, body))
+        if path.startswith('/api/sessions/session/messages?'):
+            query = dict(part.split('=') for part in path.split('?', 1)[1].split('&'))
+            assert query['order'] == 'latest'
+            limit, offset = int(query['limit']), int(query['offset'])
+            newest_first = list(reversed(self.messages))[offset:offset + limit]
+            return {'object': 'list', 'data': list(reversed(newest_first))}
         if path == '/v1/runs':
             self.run_number += 1
             self.state = {'status': 'running'}
@@ -122,3 +131,59 @@ def test_interrupted_run_finishes_receipts_and_preserves_partial_output():
     assert response['response'] == 'partial'
     assert response['error'] == 'Hermes run interrupted'
     assert not client.is_busy()
+
+
+def _call(cid):
+    return {'id': cid, 'type': 'function', 'function': {'name': 'terminal', 'arguments': '{"command": "hostname"}'}}
+
+
+def test_a_runs_reply_is_every_message_it_wrote_a_paragraph_apart():
+    # Hermes's ``output`` is the run's last message alone: the answer it wrote beside its tool calls reached no one.
+    client = Peer()
+    client.messages = [{'id': 1, 'role': 'user', 'content': '[noclick-input:old]\nRemember TANGERINE.'},
+                       {'id': 2, 'role': 'assistant', 'content': 'Noted.'}]
+    a = client.send('What code word did I ask you to remember? Then run hostname.')
+    asked = client.calls[-1][2]['input']
+    client.messages += [
+        {'id': 3, 'role': 'user', 'content': asked},
+        {'id': 4, 'role': 'assistant', 'content': 'The code word is **TANGERINE**.\n\nNow let me run it:',
+         'tool_calls': [_call('c1')]},
+        {'id': 5, 'role': 'tool', 'tool_call_id': 'c1', 'content': '{"output": "box", "exit_code": 0}'},
+        {'id': 6, 'role': 'assistant', 'content': '', 'tool_calls': [_call('c2')]},
+        {'id': 7, 'role': 'tool', 'tool_call_id': 'c2', 'content': '{"output": "box", "exit_code": 0}'},
+        {'id': 8, 'role': 'assistant', 'content': 'hostname printed `box`.'}]
+    client.state = {'status': 'completed', 'output': 'hostname printed `box`.'}
+    response = client.poll_response()
+    assert response['response'] == ('The code word is **TANGERINE**.\n\nNow let me run it:\n\n'
+                                     'hostname printed `box`.')
+    assert response['input_ids'] == [a]
+
+
+def test_a_long_run_is_read_back_to_its_first_input_across_pages():
+    client = Peer()
+    a = client.send('Work through the list.')
+    asked = client.calls[-1][2]['input']
+    b = client.send('Also the second one.')  # steered into the run: still this run's
+    client.messages = [{'id': 1, 'role': 'user', 'content': asked},
+                       {'id': 2, 'role': 'assistant', 'content': 'Starting.'}]
+    for n in range(3, 3 + 2 * 300, 2):
+        client.messages += [{'id': n, 'role': 'assistant', 'content': '', 'tool_calls': [_call(f'c{n}')]},
+                            {'id': n + 1, 'role': 'tool', 'tool_call_id': f'c{n}', 'content': '{}'}]
+    client.messages += [{'id': 900, 'role': 'user', 'content': client.marked(b, 'Also the second one.')},
+                        {'id': 901, 'role': 'assistant', 'content': 'Both done.'}]
+    client.state = {'status': 'completed', 'output': 'Both done.'}
+    response = client.poll_response()
+    assert response['response'] == 'Starting.\n\nBoth done.' and response['input_ids'] == [a, b]
+
+
+def test_a_session_that_cant_be_read_keeps_the_runs_own_output():
+    client = Peer()
+    a = client.send('A')
+    request = client.request
+    def unreadable(method, path, body=None, **kw):
+        if path.startswith('/api/sessions/'):
+            raise urllib.error.URLError('gateway busy')
+        return request(method, path, body, **kw)
+    client.request = unreadable
+    client.state = {'status': 'completed', 'output': 'the last message'}
+    assert client.poll_response() == {'response': 'the last message', 'error': None, 'input_ids': [a], 'usage': {}}

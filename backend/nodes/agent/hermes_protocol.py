@@ -6,12 +6,38 @@ It can drive any operator-owned Hermes API server with run_steer capability.
 from __future__ import annotations
 
 import json
+import logging
 import queue
 import threading
 import time
 import urllib.error
 import urllib.request
 import uuid
+
+log = logging.getLogger(__name__)
+
+# A run's messages in its reply, a paragraph apart (as the daemon's ``events.REPLY_SEPARATOR``).
+REPLY_SEPARATOR = '\n\n'
+# How the session is read back to a run's first input: a page at a time, up to this many.
+SESSION_PAGE, SESSION_PAGES = 200, 25
+
+
+def message_text(content):
+    """A message's words: its text, or the text parts of a list Hermes stored as JSON (a pasted image beside them)."""
+    if isinstance(content, list):
+        parts = content
+    else:
+        text = (content or '').strip()
+        if not text.startswith('['):
+            return text
+        try:
+            parts = json.loads(text)
+        except ValueError:
+            return text
+        if not (isinstance(parts, list) and all(isinstance(p, dict) and 'type' in p for p in parts)):
+            return text
+    return REPLY_SEPARATOR.join(str(p.get('text') or '').strip() for p in parts
+                                if isinstance(p, dict) and p.get('type') == 'text' and str(p.get('text') or '').strip())
 
 
 class HermesClient:
@@ -122,7 +148,7 @@ class HermesClient:
             consumed = list(self.inputs)
             deferred = {}
         if consumed:
-            self.outbox.put({'response': status.get('output') or '', 'error': error,
+            self.outbox.put({'response': self.reply(status, next(iter(self.inputs))), 'error': error,
                              'input_ids': consumed, 'usage': status.get('usage') or {}})
         self.active, self.inputs = None, {}
         self.last_activity = time.time()
@@ -138,6 +164,34 @@ class HermesClient:
                 self.outbox.put({'response': '', 'error': self.failure,
                                  'input_ids': list(deferred), 'usage': {}})
             self.backlog = {}
+
+    def reply(self, status, first):
+        """What a finished run said: every message it wrote, a paragraph apart. Hermes's ``output`` is its last
+        alone, so words it wrote beside its tool calls (an answer among them) would reach no one. Read from the
+        session back to the user message carrying ``first``, the run's first input; the run's ``output`` when that
+        can't be read (logged)."""
+        output = status.get('output') or ''
+        marker = f'[noclick-input:{first}]'
+        said = []
+        try:
+            for page in range(SESSION_PAGES):
+                rows = self.request('GET', f'/api/sessions/{self.session_id}/messages?limit={SESSION_PAGE}'
+                                           f'&offset={page * SESSION_PAGE}&order=latest').get('data') or []
+                for row in reversed(rows):  # each page is oldest first
+                    text = message_text(row.get('content'))
+                    if row.get('role') == 'user' and marker in text:
+                        return REPLY_SEPARATOR.join(reversed(said)) or output
+                    if row.get('role') == 'assistant' and text:
+                        said.append(text)
+                if len(rows) < SESSION_PAGE:
+                    break
+        except Exception as exc:
+            log.warning('hermes: run %s: its messages could not be read, its reply is its last: %s',
+                        status.get('run_id'), exc)
+            return output
+        log.warning('hermes: run %s: its first input is not in the session, its reply is its last',
+                    status.get('run_id'))
+        return output
 
     def poll_response(self):
         with self.lock:
