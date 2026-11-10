@@ -11,19 +11,22 @@ const ExLibrisIcon = ({
     className?: string;
     style?: CSSProperties;
 }) => (
-    <img
-        src="/icons/exlibrisgroup.png"
-        alt=""
-        aria-hidden="true"
-        className={className}
-        style={
-            {
-                ...style,
-                '--brand-invert': 0,
-                objectFit: 'contain',
-            } as CSSProperties
-        }
-    />
+    <>
+        <img
+            src="/icons/exlibrisgroup.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} dark:hidden`}
+            style={style}
+        />
+        <img
+            src="/icons/exlibrisgroup-dark.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} hidden dark:block`}
+            style={style}
+        />
+    </>
 );
 
 export const ExLibrisNode: NodeDefinition = {
