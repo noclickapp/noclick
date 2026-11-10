@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/iterable-preferred-brand.svg",
   "source": "https://d32xow8vqwhzlc.cloudfront.net/bimi-logo.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the light background shape (element 0) that sat behind the mark",
+    "cropped the viewBox to the mark"
+  ],
+  "variant": "light mode",
   "license": "Brand mark of its owner, shown nominatively to identify the connected service; no trademark rights are claimed or granted.",
-  "sha256": "8c8d013ba6ece7f03e63e87ae1fcf95f6841067b4f1319587a7b6f696a439902"
+  "sha256": "d52c4150bcffdf736d73585e9de261d14e9f1da5576370b6ede226810b355d16"
 }

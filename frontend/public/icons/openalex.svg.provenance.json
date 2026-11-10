@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/openalex.svg",
   "source": "https://help.openalex.org/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Official OpenAlex brand mark, used nominatively to identify the service. Trademark rights remain with the provider.",
   "sha256": "61fe4247966e1e710da55f7ba7b19d9ddb985caf30948c405bd1d92b7b96fcf6"
 }

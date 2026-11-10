@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/ngrok.svg",
   "source": "https://ngrok.com/assets/brand/ngrok-logos.zip",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "added viewBox=\"0 0 256 256\" from the width/height it already had"
+  ],
+  "variant": "light mode",
   "license": "ngrok vendor trademark; official brand asset",
-  "sha256": "ee1e3922a70ba4fc901dddc96e382982c2bb42bb2bf0e3fd9550a03d028718d4"
+  "sha256": "163413793fee0b2a946b6377f98e80aabf07f1122f7973c50e362e8bd563e79d"
 }

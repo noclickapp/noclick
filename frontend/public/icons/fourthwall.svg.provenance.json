@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/fourthwall.svg",
   "source": "https://mintcdn.com/fourthwall/ll6NfYA7kbBxufP4/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Fourthwall brand mark from its official developer documentation, used nominatively to identify the connected service. Trademark rights remain with Fourthwall.",
   "sha256": "f3895ba0079d1471d129a802b078b23947aa502cdef2f751d21edcaebdf9379d"
 }

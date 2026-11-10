@@ -7,13 +7,17 @@ import { type NodeDefinition } from '~/components/workflow/nodes/types';
 
 // Sourced brand artwork: https://krisp.ai
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/krisp-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+    <>
+        <img src="/icons/krisp-preferred-brand.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        <img src="/icons/krisp-preferred-brand-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+    </>
 );
 
 export const KrispIcon = ({ style, ...props }: ImgHTMLAttributes<HTMLImageElement>) => (
     <img {...props} src="/icons/krisp.svg" alt="Krisp"
-        style={{ objectFit: 'contain', background: '#fff', borderRadius: 6, padding: 5, ...style }} />
+        style={{ objectFit: 'contain', ...style }} />
 );
 
 const KrispNodeComponent = (props: NodeProps) =>

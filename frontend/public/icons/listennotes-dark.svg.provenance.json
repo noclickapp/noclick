@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/listennotes-dark.svg",
+  "source": "https://www.listennotes.com/static/v4/img/logo/safari-pinned-tab.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #000000 -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "Listen Notes trademark; used to identify the Listen Notes integration",
+  "sha256": "a9cde7f019c194f1742e34461e545ab63dfc01a08ad6e6272618011d1380b829"
+}

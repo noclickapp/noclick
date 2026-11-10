@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/nutrient-document-web-services-api.svg",
   "source": "https://www.nutrient.io/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the light background shape (element 0) that sat behind the mark",
+    "cropped the viewBox to the mark"
+  ],
+  "variant": "light mode",
   "license": "Nutrient trademark; used to identify the Nutrient integration",
-  "sha256": "971af90f616dbdd04aa55df74a3ebaa5bcee2ea77be5237bcf9626136106cb1f"
+  "sha256": "654c0d083c2b99e1b087a4c202fd8dd256ea589c431c30f133ce493798c0c739"
 }

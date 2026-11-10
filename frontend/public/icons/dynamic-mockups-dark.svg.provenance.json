@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/dynamic-mockups-dark.svg",
+  "source": "https://dynamicmockups.com/wp-content/themes/hello-elementor/assets/images/dm/brand/LogoMark_XL.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #21221D -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Dynamic Mockups brand mark, used nominatively to identify the connected service; trademark rights remain with Dynamic Mockups.",
+  "sha256": "2a88236e680de4b6f852200d6e99750edeb785b313dfe5d932f6c0d72a12c48a"
+}

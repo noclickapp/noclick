@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/thinkific-dark.svg",
+  "source": "https://www.thinkific.com/partner-marketing-kit/ \u2192 Logo pack https://drive.google.com/file/d/15YtGz4sGUcEgeQZUM5BgMuLBh8CWdl8a/view; unmodified 01 Logos/Thinkific/01 Icon/01 Digital (RGB)/SVG/thinkific-mark-rooted-rgb.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #271526 -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+  "sha256": "89d708c6294ed98ef16fb364415144eb21c4086546617e4de1b8f09f02168ba5"
+}

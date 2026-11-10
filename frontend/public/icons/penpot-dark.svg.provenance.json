@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/penpot-dark.svg",
+  "source": "https://raw.githubusercontent.com/penpot/penpot/develop/frontend/resources/images/assets/penpot-logo-icon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: the unpainted (default black) shapes -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "Penpot brand mark, used nominatively to identify the service; trademark rights remain with Penpot. Official source repository is MPL-2.0.",
+  "sha256": "f45bc9b2f97cdaee28bc4b0f568fda84918427a708fd505b6cf5000fe91c9cd3"
+}

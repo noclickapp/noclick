@@ -5,8 +5,12 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const ApilioIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/apilio.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' } as CSSProperties} />
+    <>
+        <img src="/icons/apilio.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' } as CSSProperties} />
+        <img src="/icons/apilio-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' } as CSSProperties} />
+    </>
 );
 
 export const ApilioNode: NodeDefinition = {

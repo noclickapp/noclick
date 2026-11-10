@@ -54,7 +54,10 @@ describe('Fundraise Up native configuration', () => {
     expect(saved).not.toHaveProperty('livemode');
     expect(updated.data).not.toHaveProperty('designation_id');
   });
-  it('keeps exact official API-documentation wordmark bytes', () => {
-    expect(createHash('sha256').update(readFileSync(resolve(process.cwd(), 'public/icons/fundraise-up-brand-vector.svg'))).digest('hex')).toBe('493f2cd91cc88bb0d54b6240149b4033e56f84dbeccaa1b2cca279b505ff9d4a');
+  it('keeps the official mark bytes its provenance records', () => {
+    const sha = createHash('sha256').update(readFileSync(resolve(process.cwd(), 'public/icons/fundraise-up-brand-vector.svg'))).digest('hex');
+    const provenance = JSON.parse(readFileSync(resolve(process.cwd(), 'public/icons/fundraise-up-brand-vector.svg.provenance.json'), 'utf8'));
+    expect(sha).toBe('4879348a1208d083e2778489fddf24edb2eb7684d023ea56524f44f01c49228b');
+    expect(provenance.sha256).toBe(sha);
   });
 });

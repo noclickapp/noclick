@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/apphud-brand.svg",
   "source": "https://apphud.com",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the light background shape (element 0) that sat behind the mark",
+    "cropped the viewBox to the mark"
+  ],
   "license": "Apphud vendor trademark; used to identify the integration.",
-  "sha256": "9b2551665b6a9ba152be106e17dd24a935a485b3e6a5a953b6bd610ca4f9fa94"
+  "sha256": "1f9b8374dc93bcc6d5d913c305489760c53f91d083fcbf175ae061d33fcb12f0"
 }

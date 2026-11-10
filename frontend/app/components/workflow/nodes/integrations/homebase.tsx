@@ -5,7 +5,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://www.joinhomebase.com/
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/homebase-brand-vector.svg" alt="" aria-hidden="true" className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
+    <img src="/icons/homebase-brand-vector.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
 );
 

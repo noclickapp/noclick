@@ -7,7 +7,10 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const NationBuilderIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/nationbuilder.svg" alt="" className={className} style={style} {...props} />
+        <>
+            <img ref={ref} src="/icons/nationbuilder.svg" alt="" className={`${className ?? ''} dark:hidden`} style={style} {...props} />
+            <img src="/icons/nationbuilder-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={style} {...props} />
+        </>
     )
 );
 NationBuilderIcon.displayName = 'NationBuilderIcon';

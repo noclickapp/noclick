@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/supermemory-dark.svg",
+  "source": "https://supermemory.ai/favicon.svg?v=2",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #0B1015 -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Supermemory brand mark, used nominatively to identify the connected service; trademark rights remain with Supermemory.",
+  "sha256": "bd34867bc5cab709f5db4a36a0b4a19b71194b7daaaf3dc42216873ebfc35821"
+}

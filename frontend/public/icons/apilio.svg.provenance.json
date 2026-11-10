@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/apilio.svg",
   "source": "https://www.apilio.com/logo.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Apilio brand mark used nominatively to identify the connected service; trademark rights remain with Apilio.",
   "sha256": "c6e2d211f5530bee8808f37eb84b657a96e755f83bcdf0bd03d8b9da1e263d08"
 }

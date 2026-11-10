@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/companycam.svg",
   "source": "https://assets.c.companycam.com/safari-pinned-tab.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "CompanyCam trademark; official provider asset used to identify the integration.",
   "sha256": "5aa4b8e8bcbadf8172271d356b2ec51b199ec5465b52926cb3aac188eef9b0f4"
 }

@@ -10,14 +10,23 @@ const NgrokIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/ngrok.svg"
-        alt=""
-        className={`${className || ''} rounded-xl bg-white p-1.5`}
-        style={style}
-        {...props}
-    />
+    <>
+        <img
+            ref={ref}
+            src="/icons/ngrok.svg"
+            alt=""
+            className={`${className || ''} dark:hidden`}
+            style={style}
+            {...props}
+        />
+        <img
+            src="/icons/ngrok-dark.svg"
+            alt=""
+            className={`${className || ''} hidden dark:block`}
+            style={style}
+            {...props}
+        />
+    </>
 ));
 NgrokIcon.displayName = 'NgrokIcon';
 

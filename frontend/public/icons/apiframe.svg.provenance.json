@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/apiframe.svg",
   "source": "https://apiframe.ai/apiframe-icon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Apiframe brand mark used nominatively to identify the service; trademark rights remain with Apiframe.",
   "sha256": "a0de42d6879181721e71e1c38a21fa70365d1d54cd1ba7a3203d8fcb4a04766b"
 }

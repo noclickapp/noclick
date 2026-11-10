@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/here.svg",
   "source": "https://images.here.com/x7rx8ayph7ee/45Ulm6tVkVRD5dpdtWx9Ea/99128403e01460a9e824f4b871869c5d/HERE_logo_32px.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "HERE brand mark, used nominatively to identify the connected service. Trademark rights remain with HERE Technologies.",
   "sha256": "be01fe6b4f91f52854220043fb7a905208f60132d7c10af070d6d847fba9d7dc"
 }

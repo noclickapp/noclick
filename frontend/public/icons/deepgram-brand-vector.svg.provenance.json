@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/deepgram-brand-vector.svg",
   "source": "https://deepgram.com/ (official brand artwork carried from noclickapp/noclick4#2509)",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
   "sha256": "59cf652db06d6ec055b8f6eb3db239a26d35735855b61d2bdf0284f5f83e66ad"
 }

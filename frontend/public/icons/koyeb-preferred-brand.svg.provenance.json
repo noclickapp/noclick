@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/koyeb-preferred-brand.svg",
   "source": "https://www.koyeb.com",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the light background shape (element 0) that sat behind the mark",
+    "cropped the viewBox to the mark"
+  ],
+  "variant": "light mode",
   "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "cecca81dd55b1a762673343b78f1483fb44581093a259a85169ea4ed69b29919"
+  "sha256": "07eed9b68b2eb358fe5d1874fd396b41c3e49ac59534b6138b058806a27a2af2"
 }

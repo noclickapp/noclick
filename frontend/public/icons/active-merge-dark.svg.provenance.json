@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/active-merge-dark.svg",
+  "source": "https://app.activemerge.com/images/ActiveMerge-logo.svg",
+  "found_at": "https://app.activemerge.com/login (the app's login page logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the two-peak mark (elements 2 blue, 3 black); removed the 'ActiveMerge' wordmark (elements 4-14)",
+    "removed the two white background rects (elements 0, 1)",
+    "cropped the viewBox to the mark with a 2% pad",
+    "cleaned",
+    "#000000 -> #ffffff on the right black peak (element 3), which touches the tile"
+  ],
+  "variant": "dark mode",
+  "notes": "The mark is wide (about 1.9:1), as the brand draws it. The source keeps its two clipPaths around the paths; they trim nothing visible. The blue part stays #004DE8 in both themes.",
+  "license": "ActiveMerge brand mark, used nominatively to identify the connected service; trademark rights remain with ActiveMerge.",
+  "sha256": "ee086d782af65eebbef02d90d9175c1b0b992aafc7f163e022776692f03c3ad5"
+}

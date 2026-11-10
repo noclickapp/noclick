@@ -4,7 +4,10 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
 const NutrientIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
-    ({ className, style, ...props }, ref) => <img ref={ref} src="/icons/nutrient-document-web-services-api.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />,
+    ({ className, style, ...props }, ref) => <>
+        <img ref={ref} src="/icons/nutrient-document-web-services-api.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <img src="/icons/nutrient-document-web-services-api-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
+    </>,
 );
 NutrientIcon.displayName = 'NutrientIcon';
 export const NutrientDocumentWebServicesApiNode: NodeDefinition = {

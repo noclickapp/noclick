@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/apiframe-dark.svg",
+  "source": "https://apiframe.ai/apiframe-icon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #16150F -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Apiframe brand mark used nominatively to identify the service; trademark rights remain with Apiframe.",
+  "sha256": "82e21a6d4785c2763fc79ca6cf78871dd6e2e2832f7a4493d7330fdb136497d7"
+}

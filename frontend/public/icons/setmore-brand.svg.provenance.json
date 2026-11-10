@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/setmore-brand.svg",
   "source": "https://www.setmore.com/ \u2014 official Setmore brand asset, unmodified",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "added viewBox=\"0 0 48 48\" from the width/height it already had",
+    "removed the light background shape (element 0) that sat behind the mark",
+    "cropped the viewBox to the mark"
+  ],
+  "variant": "light mode",
   "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "a46964e618faa9eaab17ae832fb8867f554fbbdde853accd9b6d81f9fd66ccfa"
+  "sha256": "12dc674a865e50d6bf45b3c90c14698fb6f0e35c84eabe3f8941e52e28724e56"
 }

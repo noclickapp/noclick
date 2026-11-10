@@ -1,7 +1,12 @@
 {
   "path": "frontend/public/icons/wachete.svg",
   "source": "https://www.wachete.com/img/favicon/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "added viewBox=\"0 0 39 53\" from the width/height it already had"
+  ],
+  "variant": "light mode",
   "license": "Wachete brand mark, used nominatively to identify the connected service. Trademark rights remain with Wachete.",
-  "sha256": "8753886b940c8ff9e9183b8522036067502ab0f801c7d6e84d4fa6fc8abfe6ce",
-  "modifications": "Normalized CRLF line endings to LF; artwork unchanged."
+  "sha256": "8a442806ca841fd9b731a6bf3456f09903e881067e80e87e89cf6b5744948de3"
 }

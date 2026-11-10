@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/typecast-dark.svg",
+  "source": "https://typecast.ai/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #08162D -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Typecast brand mark used nominatively to identify the connected service; trademark rights remain with Typecast.",
+  "sha256": "3e839e29c94fade74b2b47a5c666366cbc711721904f956f56dc6f2d4caf2795"
+}

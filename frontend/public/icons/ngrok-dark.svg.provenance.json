@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/ngrok-dark.svg",
+  "source": "https://ngrok.com/assets/brand/ngrok-logos.zip",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "added viewBox=\"0 0 256 256\" from the width/height it already had",
+    "dark mode: #121212 -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "ngrok vendor trademark; official brand asset",
+  "sha256": "3356b89464183928826184bd4102aa74e563f0a471752d0cdb931f928b24fb24"
+}

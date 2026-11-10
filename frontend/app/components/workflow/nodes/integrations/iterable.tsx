@@ -4,9 +4,13 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const IterableIcon = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTMLImageElement>>(
-    ({ style, ...props }, ref) => (
-        <img {...props} ref={ref} src="/icons/iterable-preferred-brand.svg" alt="" aria-hidden="true"
-            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+    ({ className, style, ...props }, ref) => (
+        <>
+            <img {...props} className={`${className ?? ''} dark:hidden`} ref={ref} src="/icons/iterable-preferred-brand.svg" alt="" aria-hidden="true"
+                style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+            <img {...props} className={`${className ?? ''} hidden dark:block`} src="/icons/iterable-preferred-brand-dark.svg" alt="" aria-hidden="true"
+                style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+        </>
     ),
 );
 IterableIcon.displayName = 'IterableIcon';

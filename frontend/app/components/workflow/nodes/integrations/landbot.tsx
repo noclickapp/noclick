@@ -9,8 +9,12 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://landbot.io
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/landbot-brand-vector.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+    <>
+        <img src="/icons/landbot-brand-vector.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        <img src="/icons/landbot-brand-vector-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+    </>
 );
 
 const LandbotIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(

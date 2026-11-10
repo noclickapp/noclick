@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/creem-dark.svg",
+  "source": "https://creem.io/ (Creem brand mark imported from noclickapp/noclick4#2724)",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #151617 -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, used nominatively to identify the connected service; no trademark rights claimed or granted",
+  "sha256": "0a6e30a5db81fc27abd4b3cc6834aa43a63e1f078f621429fab268c3be60036c"
+}

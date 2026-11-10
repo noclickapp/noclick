@@ -11,14 +11,23 @@ const TallyIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/tally.svg"
-        alt=""
-        className={`${className || ''} rounded-xl bg-white p-1.5`}
-        style={style}
-        {...props}
-    />
+    <>
+        <img
+            ref={ref}
+            src="/icons/tally.svg"
+            alt=""
+            className={`${className || ''} dark:hidden`}
+            style={style}
+            {...props}
+        />
+        <img
+            src="/icons/tally-dark.svg"
+            alt=""
+            className={`${className || ''} hidden dark:block`}
+            style={style}
+            {...props}
+        />
+    </>
 ));
 TallyIcon.displayName = 'TallyIcon';
 

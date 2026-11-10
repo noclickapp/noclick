@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/klicktipp-dark.svg",
+  "source": "https://developers.klicktipp.com/assets/klicktipp.c3f8114c33a76db3eaaef29c5d3baea243313b864d8f3e856a0f7af2cb88866e.9c1bb791.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #202741 -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "KlickTipp brand mark, used nominatively to identify the connected service; trademark rights remain with KlickTipp.",
+  "sha256": "bf95ab2d438e89e7018e865c8ef1e1f33538926ee6230df33b0e703efe3d1a93"
+}

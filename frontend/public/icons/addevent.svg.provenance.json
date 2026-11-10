@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/addevent.svg",
   "source": "https://cdn.addevent.com/web/images/logo2.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the light background shape (element 0) that sat behind the mark",
+    "cropped the viewBox to the mark"
+  ],
   "license": "AddEvent trademark; used to identify the AddEvent integration",
-  "sha256": "4fd43bb104023f1f2f3dcf56a31543b1d1edf368527788ebb42f93ae9e6643cc"
+  "sha256": "a90d6a6d1d15caa785d0e897dea87e8b7234d274eabcb79f618549647b277334"
 }

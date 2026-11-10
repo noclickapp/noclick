@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/inblog.svg",
   "source": "https://inblog.ai/favicon/favicon.svg (official favicon linked from https://inblog.ai/)",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Inblog brand mark, used nominatively to identify the connected service; trademark rights remain with Inblog.",
   "sha256": "65fa882da59c041b1b21403952bd1bb255432f84c71a7e1e6abd553434fbb487"
 }

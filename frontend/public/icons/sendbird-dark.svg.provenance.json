@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/sendbird-dark.svg",
+  "source": "https://raw.githubusercontent.com/sendbird/quickstart-calls-reactjs/8982466e9a85c7c29875b4ed04c3671ff7363298/sample-01/public/icons/ic-logo-black-01.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #353761 -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Sendbird trademark; official publisher asset used to identify the Sendbird integration",
+  "sha256": "b5be1b39160cb58d3f47a8664fa8d03713b4e6ac20a10568778a5ed59805e261"
+}

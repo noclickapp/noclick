@@ -1,6 +1,11 @@
 {
   "path": "frontend/public/icons/poma-grill.svg",
   "source": "https://www.poma-ai.com/assets/icons/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "added viewBox=\"0 0 180 180\" from the width/height it already had"
+  ],
   "license": "POMA AI brand mark used nominatively to identify the connected service; trademark rights remain with POMA AI.",
-  "sha256": "7b5c572318b60661774bc2864ce6d073731a89f29b32fbc2be5d242ca6cd5426"
+  "sha256": "44589d975adcc70a0c467b25d01dd86a88531c46b9f1cc45f9791fc7bbf74c90"
 }

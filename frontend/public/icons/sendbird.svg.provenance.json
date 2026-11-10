@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/sendbird.svg",
   "source": "https://raw.githubusercontent.com/sendbird/quickstart-calls-reactjs/8982466e9a85c7c29875b4ed04c3671ff7363298/sample-01/public/icons/ic-logo-black-01.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Sendbird trademark; official publisher asset used to identify the Sendbird integration",
   "sha256": "f0ef3ad11545a07bbb22e78d7e702bea492a4438e7aa819bdfac05df6f4b2365"
 }

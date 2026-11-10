@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/openalex-dark.svg",
+  "source": "https://help.openalex.org/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #000000 -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "Official OpenAlex brand mark, used nominatively to identify the service. Trademark rights remain with the provider.",
+  "sha256": "661df325713e35779abacf55c5c16cb8537ab491e79d642cecb519bfc54aa886"
+}

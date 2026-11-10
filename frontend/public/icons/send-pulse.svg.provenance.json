@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/send-pulse.svg",
   "source": "https://sendpulse.com/templates/sendpulsev1/img/favicons/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the light background shape (element 0) that sat behind the mark",
+    "cropped the viewBox to the mark"
+  ],
   "license": "SendPulse brand mark used nominatively to identify the service; trademark rights remain with SendPulse.",
-  "sha256": "631c8dab63795dd0304895de38a25edfa578febbe77a6568691c311712fcb12a"
+  "sha256": "a69920c1746820a6aa69b9e8b2ee00858a9d8e58cc44c31552d37a200acfad6e"
 }

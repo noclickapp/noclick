@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/solcast-dark.svg",
+  "source": "https://docs.solcast.com.au/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #000000, #111827 -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "Solcast brand mark used nominatively to identify the service. Trademark rights remain with Solcast/DNV.",
+  "sha256": "6fceafb43a73c64cb1001ed6442084198e7e0bf22d34321a07c0d517222b9556"
+}

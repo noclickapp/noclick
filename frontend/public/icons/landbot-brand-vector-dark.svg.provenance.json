@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/landbot-brand-vector-dark.svg",
+  "source": "https://landbot.io",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed element(s) 5, 6, 7, 8, 9, 10, 11",
+    "dark mode: #33405E, #34405F -> #FFFFFF on element(s) 4"
+  ],
+  "variant": "dark mode",
+  "license": "Vendor trademark; Landbot brand artwork used to identify the integration.",
+  "sha256": "1109e66bfe8e830c6673fb208b8ca3532c88adb83d3e6eece54c745677de4ab6"
+}

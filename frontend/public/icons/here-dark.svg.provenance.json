@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/here-dark.svg",
+  "source": "https://images.here.com/x7rx8ayph7ee/45Ulm6tVkVRD5dpdtWx9Ea/99128403e01460a9e824f4b871869c5d/HERE_logo_32px.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #153947 -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "HERE brand mark, used nominatively to identify the connected service. Trademark rights remain with HERE Technologies.",
+  "sha256": "988dce6f5bdf1470c38a1fc15117ec32d786d40725dfdfcc82b67f6ee5cbac8a"
+}

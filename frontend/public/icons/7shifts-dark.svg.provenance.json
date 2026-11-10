@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/7shifts-dark.svg",
+  "source": "https://www.7shifts.com/next-images/7shifts-icon-logo.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: black -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "7shifts brand mark, used nominatively to identify the connected service; trademark rights remain with 7shifts.",
+  "sha256": "79e0733d8f12c4f6136c08263ac0e1915370948b798a3cbccb7a110bf6685d10"
+}

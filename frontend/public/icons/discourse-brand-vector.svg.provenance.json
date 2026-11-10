@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/discourse-brand-vector.svg",
   "source": "https://www.discourse.org/",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Vendor mark (Discourse trademark; provider identification)",
   "sha256": "b8c4f808746191117ef7b3dfae25f0ed97874d029c23c5943955bc1024be7285"
 }

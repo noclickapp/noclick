@@ -12,7 +12,7 @@ const ABCGymSalesIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/abcgymsales.png"
+        src="/icons/abcgymsales.svg"
         alt=""
         aria-hidden="true"
         className={className}

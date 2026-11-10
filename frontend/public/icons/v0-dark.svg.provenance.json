@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/v0-dark.svg",
+  "source": "https://v0.app/chat-static/_next/static/immutable/media/logo-v0-dark.2_0gdj5w98_kp.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "light mode: white -> #000000 (the source is the white, dark-background version)",
+    "dark mode: the source file as published (white)"
+  ],
+  "variant": "dark mode",
+  "license": "V0 brand mark, used nominatively to identify the connected service; trademark rights remain with Vercel.",
+  "sha256": "8e223d03ecfdca4f75baede235f5022279416b093dd7b6dc18db66ed90bf8c3a"
+}

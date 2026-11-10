@@ -5,8 +5,12 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const PenpotIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/penpot.svg" alt="" aria-hidden="true" className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
-        style={{ ...style, objectFit: 'contain' } as CSSProperties} />
+    <>
+        <img src="/icons/penpot.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' } as CSSProperties} />
+        <img src="/icons/penpot-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' } as CSSProperties} />
+    </>
 );
 
 export const PenpotNode: NodeDefinition = {

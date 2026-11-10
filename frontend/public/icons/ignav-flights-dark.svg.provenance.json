@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/ignav-flights-dark.svg",
+  "source": "https://ignav.com/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #1a1a1a -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Ignav brand mark used nominatively to identify the service; all trademark rights remain with Ignav.",
+  "sha256": "d484c3c6f01a1704c80867713f0f1901cd4b7cad85063a4b713a9444c84bddcc"
+}

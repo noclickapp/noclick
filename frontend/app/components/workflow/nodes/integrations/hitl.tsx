@@ -5,8 +5,12 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const HitlIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/hitl.png" alt="" aria-hidden="true" className={`brand-mono ${className || ''}`}
-        style={{ ...style, objectFit: 'contain', filter: `invert(1) ${style?.filter || 'invert(var(--brand-invert, 0))'}` }} />
+    <>
+        <img src="/icons/hitl.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' }} />
+        <img src="/icons/hitl-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' }} />
+    </>
 );
 
 export const HitlNode: NodeDefinition = {

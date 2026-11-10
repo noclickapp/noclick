@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/tally-dark.svg",
+  "source": "https://tally.so/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: black -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "Tally vendor trademark; official website favicon",
+  "sha256": "4b64a150fe2fc7ee1a9945322ca34fe1c00e6721d77558442887d58bf4bc29f8"
+}

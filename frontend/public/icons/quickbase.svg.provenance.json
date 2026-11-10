@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/quickbase.svg",
   "source": "https://www.quickbase.com/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Quickbase brand mark used nominatively to identify the integrated service. Trademark rights remain with Quickbase.",
   "sha256": "ba0f0a2a8ebbbafc5b99020b279a91964dcc71c6a6fa1de7e49e8505abc2ff75"
 }

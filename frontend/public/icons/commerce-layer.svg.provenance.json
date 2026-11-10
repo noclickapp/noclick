@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/commerce-layer.svg",
   "source": "https://commercelayer.io/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Commerce Layer trademark; used to identify the Commerce Layer integration",
   "sha256": "e32998e7fd8f004d94326c7db1adfec49c9c472f109f948f02cbc50152215a2b"
 }

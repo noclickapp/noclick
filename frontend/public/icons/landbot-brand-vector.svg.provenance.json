@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/landbot-brand-vector.svg",
   "source": "https://landbot.io",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed element(s) 5, 6, 7, 8, 9, 10, 11"
+  ],
+  "variant": "light mode",
   "license": "Vendor trademark; Landbot brand artwork used to identify the integration.",
-  "sha256": "f784e01f7765237ab669cff4025ede8523c84f2b18b336463cdfcf28a4660298"
+  "sha256": "ee06ee25a684f95427ff2d8ebccefb3b43dbbedd33b9eab60ac4f20cc516f58c"
 }

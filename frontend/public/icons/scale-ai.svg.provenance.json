@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/scale-ai.svg",
   "source": "https://scale.com/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Scale AI trademark; official publisher asset used to identify the Scale AI integration",
   "sha256": "b310c0fe1a24b65391786fa7d819b62522fc6ebf68fe628852e71d7787b7c220"
 }

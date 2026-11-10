@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/thinkific.svg",
   "source": "https://www.thinkific.com/partner-marketing-kit/ \u2192 Logo pack https://drive.google.com/file/d/15YtGz4sGUcEgeQZUM5BgMuLBh8CWdl8a/view; unmodified 01 Logos/Thinkific/01 Icon/01 Digital (RGB)/SVG/thinkific-mark-rooted-rgb.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
   "sha256": "71b12e9171978d21ebe9a8b7483b7a44fc36f19db834684b9a058c59e72d79b2"
 }

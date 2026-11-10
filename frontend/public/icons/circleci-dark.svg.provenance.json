@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/circleci-dark.svg",
+  "source": "https://simpleicons.org/?q=circleci (CircleCI icon)",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "light mode: #f5f5f5 -> #000000 (the source is the white, dark-background version)",
+    "dark mode: the source file as published (white)"
+  ],
+  "variant": "dark mode",
+  "license": "Simple Icons CC0; CircleCI trademark used to identify the connected service.",
+  "sha256": "2bc31a60bb520204013de2e63dc8765bda6f4f9fbda23aedd81cd771dbf1c910"
+}

@@ -6,7 +6,10 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 export const CreemIcon = forwardRef<HTMLImageElement, Pick<ImgHTMLAttributes<HTMLImageElement>, 'className' | 'style'>>(({ className, style }, ref) => (
-    <img ref={ref} src="/icons/creem.svg" alt="Creem" className={className} style={{ ...style, objectFit: 'contain' }} />
+    <>
+        <img ref={ref} src="/icons/creem.svg" alt="Creem" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} />
+        <img src="/icons/creem-dark.svg" alt="Creem" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} />
+    </>
 ));
 CreemIcon.displayName = 'CreemIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={CreemIcon} iconColor="" />;

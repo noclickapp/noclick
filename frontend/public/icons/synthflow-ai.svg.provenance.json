@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/synthflow-ai.svg",
   "source": "https://cdn.prod.website-files.com/67558e246490829b0a44ad8e/6ae9bd02dbac69872aa394e0_img-systems-hub-mark.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Synthflow trademark; official website asset used to identify the Synthflow AI integration",
   "sha256": "c9ad14607f1e05289bb554b560ff71994ab04047d6fa034b423d266f33b5df0d"
 }

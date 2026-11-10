@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/fourthwall-dark.svg",
+  "source": "https://mintcdn.com/fourthwall/ll6NfYA7kbBxufP4/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #161712 -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Fourthwall brand mark from its official developer documentation, used nominatively to identify the connected service. Trademark rights remain with Fourthwall.",
+  "sha256": "a61cfd4c161900be3ee9216c2dc146e4ef15f0b9452c7a5e58f07327fc61c264"
+}

@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/fundraise-up-brand-vector.svg",
   "source": "https://fundraiseup.com/identity-guidelines/",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the light background shape (element 0) that sat behind the mark",
+    "cropped the viewBox to the mark"
+  ],
   "license": "Fundraise Up brand artwork used nominatively to identify the service; trademark rights remain with its owner.",
-  "sha256": "493f2cd91cc88bb0d54b6240149b4033e56f84dbeccaa1b2cca279b505ff9d4a"
+  "sha256": "4879348a1208d083e2778489fddf24edb2eb7684d023ea56524f44f01c49228b"
 }

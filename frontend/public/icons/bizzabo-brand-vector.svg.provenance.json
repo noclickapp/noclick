@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/bizzabo-brand-vector.svg",
   "source": "https://bizzabo.com",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Bizzabo brand mark, used nominatively to identify the service; trademark rights remain with its owner.",
   "sha256": "f9d7c5edc4648bf1eb9c334adf33a32e592bcb6cc7ba5ce8709a99ef9d4182aa"
 }

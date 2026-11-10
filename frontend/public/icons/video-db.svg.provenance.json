@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/video-db.svg",
   "source": "https://videodb.io/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "VideoDB brand mark, used nominatively to identify the connected service; trademark rights remain with VideoDB.",
   "sha256": "e1ae958def55e692991bb90494e2749fb8f5bdc37417cf472d6d8a9e1c7ee364"
 }

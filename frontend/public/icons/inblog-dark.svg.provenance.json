@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/inblog-dark.svg",
+  "source": "https://inblog.ai/favicon/favicon.svg (official favicon linked from https://inblog.ai/)",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #15171A -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Inblog brand mark, used nominatively to identify the connected service; trademark rights remain with Inblog.",
+  "sha256": "9f9b5d39cbe9fff8c5558c3046c2e3fc42ac934095169c16e5a93cda4dec8ede"
+}

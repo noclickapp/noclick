@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/voiceflow-brand-vector-dark.svg",
+  "source": "https://www.voiceflow.com/",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: currentcolor -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "Voiceflow vendor trademark; used to identify the integration.",
+  "sha256": "e7842d22ae4247edeff3258ab3a1ee06960e6965f880e35717b003a44125836c"
+}

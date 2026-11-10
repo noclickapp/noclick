@@ -6,13 +6,22 @@ import { NodeDefinition } from '~/components/workflow/nodes/types';
 
 // Vector brand artwork from https://www.baseten.co.
 const BasetenIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img
-        src="/icons/baseten-brand-vector.svg"
-        alt=""
-        aria-hidden="true"
-        className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
-        style={{ ...style, objectFit: 'contain' }}
-    />
+    <>
+        <img
+            src="/icons/baseten-brand-vector.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' }}
+        />
+        <img
+            src="/icons/baseten-brand-vector-dark.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' }}
+        />
+    </>
 );
 
 const BasetenNodeComponent = (props: NodeProps) => (

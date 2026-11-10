@@ -11,21 +11,37 @@ const ThinkificIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/thinkific.svg"
-        alt=""
-        aria-hidden="true"
-        className={className}
-        style={
-            {
-                ...style,
-                '--brand-invert': 0,
-                objectFit: 'contain',
-            } as CSSProperties
-        }
-        {...props}
-    />
+    <>
+        <img
+            ref={ref}
+            src="/icons/thinkific.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} dark:hidden`}
+            style={
+                {
+                    ...style,
+                    '--brand-invert': 0,
+                    objectFit: 'contain',
+                } as CSSProperties
+            }
+            {...props}
+        />
+        <img
+            src="/icons/thinkific-dark.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} hidden dark:block`}
+            style={
+                {
+                    ...style,
+                    '--brand-invert': 0,
+                    objectFit: 'contain',
+                } as CSSProperties
+            }
+            {...props}
+        />
+    </>
 ));
 ThinkificIcon.displayName = 'ThinkificIcon';
 

@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/wachete-dark.svg",
+  "source": "https://www.wachete.com/img/favicon/favicon.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "added viewBox=\"0 0 39 53\" from the width/height it already had",
+    "dark mode: #111111 -> #FFFFFF on element(s) 4"
+  ],
+  "variant": "dark mode",
+  "license": "Wachete brand mark, used nominatively to identify the connected service. Trademark rights remain with Wachete.",
+  "sha256": "10dcdefab735f9482a556888a8f25ccec7d38755e74df048f60ecc127b2cf6c1"
+}

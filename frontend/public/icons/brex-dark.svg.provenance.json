@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/brex-dark.svg",
+  "source": "https://www.brex.com/press (Logos press kit), https://brand.brex.com/m/3e665c5df2cf7c0b/original/Brex-logos.zip \u2014 Brex logos/Brex symbol/Brex-symbol-ink.svg, unmodified",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #212121 -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+  "sha256": "0999f67b9694c3f2d1d4a401b5964acbc8cb9d732fe51853c197159cfd7177c6"
+}

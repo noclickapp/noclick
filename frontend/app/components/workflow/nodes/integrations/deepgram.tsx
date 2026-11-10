@@ -5,8 +5,12 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 // Official brand artwork from https://deepgram.com/.
 const DeepgramIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/deepgram-brand-vector.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain' }} />
+    <>
+        <img src="/icons/deepgram-brand-vector.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' }} />
+        <img src="/icons/deepgram-brand-vector-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' }} />
+    </>
 );
 
 const DeepgramNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={DeepgramIcon} iconColor="" />;

@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/iterable-preferred-brand-dark.svg",
+  "source": "https://d32xow8vqwhzlc.cloudfront.net/bimi-logo.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the light background shape (element 0) that sat behind the mark",
+    "cropped the viewBox to the mark",
+    "dark mode: #160f29 -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, shown nominatively to identify the connected service; no trademark rights are claimed or granted.",
+  "sha256": "ae4e119ea535b517895ab22ad5ab9c90073de0188ce6d0b9b99f9dd39b43b8bc"
+}

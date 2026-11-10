@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/docraptor-dark.svg",
+  "source": "https://docraptor.com/",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: the unpainted (default black) shapes -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "DocRaptor trademark; official inline logo used to identify the integration",
+  "sha256": "31d589cb557b8678c821885c61ca1f7c3792e4456ae4a54559094f17830c7232"
+}

@@ -1,6 +1,12 @@
 {
   "path": "frontend/public/icons/centralstationcrm-brand.svg",
   "source": "https://centralstationcrm.com (unmodified compact brand asset from the original integration)",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none: the source file as published"
+  ],
+  "variant": "light mode",
   "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
   "sha256": "7bb800f317e29bde0d76f8dd1e7b9cd5818b63aed31f358acd2b2d0db75e0112"
 }

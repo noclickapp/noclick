@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/arcads-brand-vector-dark.svg",
+  "source": "https://www.arcads.ai (brand artwork carried over from original integration noclickapp/noclick4#1432)",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: currentColor -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+  "sha256": "d525141f76a58b89858deeebeebfae6f3ab432abd3ed7b05a1077ef10cc36706"
+}

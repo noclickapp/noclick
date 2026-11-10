@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/onesignal-brand-vector-dark.svg",
+  "source": "https://onesignal.com (OneSignal brand artwork, carried from noclickapp/noclick4#2432)",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #051B2C -> #FFFFFF (and unpainted default-black shapes)"
+  ],
+  "variant": "dark mode",
+  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+  "sha256": "7ae9135306a624ce7c46c5e1fdbc79b51e646df85e612d7f31b4449b046a769e"
+}

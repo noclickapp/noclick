@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/voucherify-brand-vector-dark.svg",
+  "source": "https://voucherify.io",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: the unpainted (default black) shapes -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "Official Voucherify brand artwork, used to identify the integration.",
+  "sha256": "ac59eb1045e38144323a2d1c4faab73f052b75a0cb63f8651355638bfdc1a538"
+}

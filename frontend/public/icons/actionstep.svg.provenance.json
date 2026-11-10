@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/actionstep.svg",
+  "source": "https://go.actionstep.com/dist/frontend/application/layout/v2/svg/as-logo.svg?v=2",
+  "found_at": "https://go.actionstep.com/frontend/application/auth/login (the app's login page; the logo is set in Layout-Login.css / as-main.css)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the arch 'A' and its small square (elements 2,3); removed the rest of the 'Actionstep' wordmark",
+    "cropped the viewBox to the mark with a 2% pad",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "No standalone logomark SVG was published anywhere I found (no brand/press page; docs, status page and favicons are PNG), so the mark comes out of the wordmark SVGs, where it is a separate pair of paths. Actionstep's app icon (docs PWA icon, the current staging file) puts the white A on a #024638 tile; no vector of that tile exists, so the tile is not reproduced. actionstep.com's own favicon uses a lighter green (about #6BA54A) for the A; the dark green #024638 here matches the logomark file and the app. The dark file carries the source's own 1.27 white stroke on its paths, so its A is a hair bolder than the light one.",
+  "license": "Actionstep brand mark, used nominatively to identify the connected service; trademark rights remain with Actionstep.",
+  "sha256": "b2984574ad010e3a840c401a2211eb3a532dbe53515c13a9a96335db9efa1485"
+}
