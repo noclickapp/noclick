@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/lambdatest.svg",
+  "source": "https://assets.testmuai.com/resources/images/logos/logo.svg",
+  "source_page": "https://www.lambdatest.com/",
+  "date": "2026-11-11",
+  "license": "Proprietary trademark, used to identify the provider",
+  "sha256": "29e58aef8917b8f3c2866714f908c8271e68ca948226cf26efdf2dbedab54c3f",
+  "edits": [
+    "Removed wordmark paths; retained the first four symbol paths unchanged.",
+    "Cropped viewBox to the symbol bounds."
+  ],
+  "notes": "LambdaTest is now TestMu AI; this is the current symbol served by the company website, not the former LambdaTest wordmark."
+}
