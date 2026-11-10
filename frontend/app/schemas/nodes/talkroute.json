@@ -1,0 +1,1536 @@
+{
+  "$defs": {
+    "TalkrouteAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "talkroute_api_key",
+          "default": "talkroute_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Talkroute API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Talkroute API key (tr_live_ followed by 64 hexadecimal characters). NoClick sends it as a Bearer token to api.talkroute.com. Your key must permit the operations you choose.",
+      "x-credential-url": "https://apidocs.talkroute.com/"
+    },
+    "TalkrouteAddContactPhoneConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_contact_phone",
+          "default": "add_contact_phone",
+          "title": "Add Contact Phone",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Add Contact Phone",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "phoneNumber": {
+          "minLength": 1,
+          "title": "Phone number",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "Mobile",
+            "Office",
+            "Home",
+            "Other"
+          ],
+          "title": "Phone type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "phoneNumber",
+        "type"
+      ],
+      "title": "TalkrouteAddContactPhoneConfig",
+      "type": "object"
+    },
+    "TalkrouteCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email addresses"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 600,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "isFavorite": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Favorite"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TalkrouteCreateContactConfig",
+      "type": "object"
+    },
+    "TalkrouteDeleteContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Delete Contact",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TalkrouteDeleteContactConfig",
+      "type": "object"
+    },
+    "TalkrouteDeleteMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Delete Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Delete Message",
+          "x-is-trigger": false
+        },
+        "conversationId": {
+          "description": "Talkroute number-contact number, without plus signs",
+          "minLength": 1,
+          "pattern": "^1[2-9]\\d{2}[2-9]\\d{6}-(1[2-9]\\d{2}[2-9]\\d{6}|[2-9]\\d{4,5})$",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversationId",
+        "id"
+      ],
+      "title": "TalkrouteDeleteMessageConfig",
+      "type": "object"
+    },
+    "TalkrouteGetAccountConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TalkrouteGetAccountConfig",
+      "type": "object"
+    },
+    "TalkrouteGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TalkrouteGetContactConfig",
+      "type": "object"
+    },
+    "TalkrouteGetMessageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Get Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Get Message",
+          "x-is-trigger": false
+        },
+        "conversationId": {
+          "description": "Talkroute number-contact number, without plus signs",
+          "minLength": 1,
+          "pattern": "^1[2-9]\\d{2}[2-9]\\d{6}-(1[2-9]\\d{2}[2-9]\\d{6}|[2-9]\\d{4,5})$",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversationId",
+        "id"
+      ],
+      "title": "TalkrouteGetMessageConfig",
+      "type": "object"
+    },
+    "TalkrouteGetVirtualNumberConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_virtual_number",
+          "default": "get_virtual_number",
+          "title": "Get Virtual Number",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Numbers",
+          "x-display-name": "Get Virtual Number",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TalkrouteGetVirtualNumberConfig",
+      "type": "object"
+    },
+    "TalkrouteGetVoicemailAudioConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_voicemail_audio",
+          "default": "get_voicemail_audio",
+          "title": "Get Voicemail Audio",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voicemail",
+          "x-display-name": "Get Voicemail Audio",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TalkrouteGetVoicemailAudioConfig",
+      "type": "object"
+    },
+    "TalkrouteGetVoicemailConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_voicemail",
+          "default": "get_voicemail",
+          "title": "Get Voicemail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voicemail",
+          "x-display-name": "Get Voicemail",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TalkrouteGetVoicemailConfig",
+      "type": "object"
+    },
+    "TalkrouteListCallHistoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_call_history",
+          "default": "list_call_history",
+          "title": "List Call History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calls",
+          "x-display-name": "List Call History",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Calls after"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Calls before"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "inbound",
+                "outbound"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Direction",
+          "enum": [
+            "inbound",
+            "outbound"
+          ],
+          "x-enum-searchable": true
+        },
+        "result": {
+          "anyOf": [
+            {
+              "enum": [
+                "answered",
+                "missed",
+                "hangup"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Result",
+          "enum": [
+            "answered",
+            "missed",
+            "hangup"
+          ],
+          "x-enum-searchable": true
+        },
+        "callerNumber": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Caller number"
+        }
+      },
+      "title": "TalkrouteListCallHistoryConfig",
+      "type": "object"
+    },
+    "TalkrouteListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        },
+        "contactName": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name contains"
+        },
+        "favorite": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Favorites only"
+        }
+      },
+      "title": "TalkrouteListContactsConfig",
+      "type": "object"
+    },
+    "TalkrouteListConversationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "List Conversations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "List Conversations",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date-time or Unix timestamp",
+          "title": "Last message after"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last message before"
+        },
+        "unread": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unread only"
+        }
+      },
+      "title": "TalkrouteListConversationsConfig",
+      "type": "object"
+    },
+    "TalkrouteListForwardingNumbersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_forwarding_numbers",
+          "default": "list_forwarding_numbers",
+          "title": "List Forwarding Numbers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Numbers",
+          "x-display-name": "List Forwarding Numbers",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        }
+      },
+      "title": "TalkrouteListForwardingNumbersConfig",
+      "type": "object"
+    },
+    "TalkrouteListMessagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "List Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "List Messages",
+          "x-is-trigger": false
+        },
+        "conversationId": {
+          "description": "Talkroute number-contact number, without plus signs",
+          "minLength": 1,
+          "pattern": "^1[2-9]\\d{2}[2-9]\\d{6}-(1[2-9]\\d{2}[2-9]\\d{6}|[2-9]\\d{4,5})$",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversationId"
+      ],
+      "title": "TalkrouteListMessagesConfig",
+      "type": "object"
+    },
+    "TalkrouteListVirtualNumbersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_virtual_numbers",
+          "default": "list_virtual_numbers",
+          "title": "List Virtual Numbers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Numbers",
+          "x-display-name": "List Virtual Numbers",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        }
+      },
+      "title": "TalkrouteListVirtualNumbersConfig",
+      "type": "object"
+    },
+    "TalkrouteListVoiceMailboxesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_voice_mailboxes",
+          "default": "list_voice_mailboxes",
+          "title": "List Voice Mailboxes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voicemail",
+          "x-display-name": "List Voice Mailboxes",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        }
+      },
+      "title": "TalkrouteListVoiceMailboxesConfig",
+      "type": "object"
+    },
+    "TalkrouteListVoicemailsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_voicemails",
+          "default": "list_voicemails",
+          "title": "List Voicemails",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voicemail",
+          "x-display-name": "List Voicemails",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pageSize": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        }
+      },
+      "title": "TalkrouteListVoicemailsConfig",
+      "type": "object"
+    },
+    "TalkrouteMarkConversationMessagesReadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "mark_conversation_messages_read",
+          "default": "mark_conversation_messages_read",
+          "title": "Mark Conversation Messages Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Mark Conversation Messages Read",
+          "x-is-trigger": false
+        },
+        "conversationId": {
+          "description": "Talkroute number-contact number, without plus signs",
+          "minLength": 1,
+          "pattern": "^1[2-9]\\d{2}[2-9]\\d{6}-(1[2-9]\\d{2}[2-9]\\d{6}|[2-9]\\d{4,5})$",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "read": {
+          "default": "read",
+          "enum": [
+            "read",
+            "unread"
+          ],
+          "title": "Mark as",
+          "type": "string"
+        },
+        "id": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Message IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "conversationId",
+        "id"
+      ],
+      "title": "TalkrouteMarkConversationMessagesReadConfig",
+      "type": "object"
+    },
+    "TalkrouteMarkVoicemailsReadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "mark_voicemails_read",
+          "default": "mark_voicemails_read",
+          "title": "Mark Voicemails Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voicemail",
+          "x-display-name": "Mark Voicemails Read",
+          "x-is-trigger": false
+        },
+        "read": {
+          "default": "read",
+          "enum": [
+            "read",
+            "unread"
+          ],
+          "title": "Mark as",
+          "type": "string"
+        },
+        "ids": {
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Voicemail IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "TalkrouteMarkVoicemailsReadConfig",
+      "type": "object"
+    },
+    "TalkrouteOnNewCallRecordConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_call_record",
+          "default": "on_new_call_record",
+          "title": "On New Call Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Call Record",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Talkroute automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "TalkrouteOnNewCallRecordConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TalkrouteOnNewTextMessageConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_text_message",
+          "default": "on_new_text_message",
+          "title": "On New Text Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Text Message",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Talkroute automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "TalkrouteOnNewTextMessageConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TalkrouteOnNewVoicemailConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_voicemail",
+          "default": "on_new_voicemail",
+          "title": "On New Voicemail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Voicemail",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Talkroute automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "TalkrouteOnNewVoicemailConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TalkrouteSendTextConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_text",
+          "default": "send_text",
+          "title": "Send Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Send Text",
+          "x-is-trigger": false
+        },
+        "conversationId": {
+          "description": "Talkroute number-contact number, without plus signs",
+          "minLength": 1,
+          "pattern": "^1[2-9]\\d{2}[2-9]\\d{6}-(1[2-9]\\d{2}[2-9]\\d{6}|[2-9]\\d{4,5})$",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "body": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversationId",
+        "body"
+      ],
+      "title": "TalkrouteSendTextConfig",
+      "type": "object"
+    },
+    "TalkrouteUpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update Contact",
+          "x-is-trigger": false
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email addresses"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 600,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "isFavorite": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Favorite"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "TalkrouteUpdateContactConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_phone": "#/$defs/TalkrouteAddContactPhoneConfig",
+          "create_contact": "#/$defs/TalkrouteCreateContactConfig",
+          "delete_contact": "#/$defs/TalkrouteDeleteContactConfig",
+          "delete_message": "#/$defs/TalkrouteDeleteMessageConfig",
+          "get_account": "#/$defs/TalkrouteGetAccountConfig",
+          "get_contact": "#/$defs/TalkrouteGetContactConfig",
+          "get_message": "#/$defs/TalkrouteGetMessageConfig",
+          "get_virtual_number": "#/$defs/TalkrouteGetVirtualNumberConfig",
+          "get_voicemail": "#/$defs/TalkrouteGetVoicemailConfig",
+          "get_voicemail_audio": "#/$defs/TalkrouteGetVoicemailAudioConfig",
+          "list_call_history": "#/$defs/TalkrouteListCallHistoryConfig",
+          "list_contacts": "#/$defs/TalkrouteListContactsConfig",
+          "list_conversations": "#/$defs/TalkrouteListConversationsConfig",
+          "list_forwarding_numbers": "#/$defs/TalkrouteListForwardingNumbersConfig",
+          "list_messages": "#/$defs/TalkrouteListMessagesConfig",
+          "list_virtual_numbers": "#/$defs/TalkrouteListVirtualNumbersConfig",
+          "list_voice_mailboxes": "#/$defs/TalkrouteListVoiceMailboxesConfig",
+          "list_voicemails": "#/$defs/TalkrouteListVoicemailsConfig",
+          "mark_conversation_messages_read": "#/$defs/TalkrouteMarkConversationMessagesReadConfig",
+          "mark_voicemails_read": "#/$defs/TalkrouteMarkVoicemailsReadConfig",
+          "on_new_call_record": "#/$defs/TalkrouteOnNewCallRecordConfig",
+          "on_new_text_message": "#/$defs/TalkrouteOnNewTextMessageConfig",
+          "on_new_voicemail": "#/$defs/TalkrouteOnNewVoicemailConfig",
+          "send_text": "#/$defs/TalkrouteSendTextConfig",
+          "update_contact": "#/$defs/TalkrouteUpdateContactConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TalkrouteGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteListVirtualNumbersConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteGetVirtualNumberConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteListVoiceMailboxesConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteListVoicemailsConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteGetVoicemailConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteGetVoicemailAudioConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteMarkVoicemailsReadConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteSendTextConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteMarkConversationMessagesReadConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteGetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteDeleteMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteAddContactPhoneConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteListCallHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteListForwardingNumbersConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteOnNewTextMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteOnNewCallRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/TalkrouteOnNewVoicemailConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TalkrouteAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Talkroute Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

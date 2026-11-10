@@ -1,0 +1,5 @@
+{
+  "source": "https://apidocs.talkroute.com/talkroute-api-ref.json",
+  "version": "2.0.2",
+  "note": "Event fields copied verbatim from each Webhook schema property example."
+}

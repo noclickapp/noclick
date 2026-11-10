@@ -1,0 +1,9 @@
+{
+  "datetime": "2026-06-12T20:14:42+00:00",
+  "call_result": "answered",
+  "direction": "inbound",
+  "duration": 15,
+  "caller_number": "+17023234800",
+  "called_number": "+17086010517",
+  "caller_cname": "Kim Perkins"
+}
