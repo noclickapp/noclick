@@ -7,13 +7,16 @@ Lists return a single page and the provider's pagination metadata.
 from __future__ import annotations
 
 from datetime import datetime
+from functools import lru_cache
+import jwt
 from typing import Annotated, Literal, Optional, Union
 from urllib.parse import quote
 
-from pydantic import BaseModel, AfterValidator, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, AfterValidator, ConfigDict, Field, create_model, field_validator, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -34,7 +37,7 @@ class FilevineAccessTokenCredential(BaseModel):
     model_config = ConfigDict(title="Filevine Access Token", hide_input_in_errors=True,
         json_schema_extra={
             "x-credential-url": "https://developer.filevine.io/",
-            "x-credential-instructions": "Paste a Filevine Identity bearer access token and your Filevine organisation ID. Use the access_token returned by the Identity token exchange, not the personal access token used to obtain it. The token needs fv.api.gateway.access, tenant and filevine.v2.api.* access. Paste only the token without Bearer. Access tokens expire; replace it here when it expires. NoClick does not renew this token.",
+            "x-credential-instructions": "Paste a Filevine Identity bearer access token and your Filevine organisation ID. Use the access_token returned by the Identity token exchange, not the personal access token used to obtain it. The token needs fv.api.gateway.access, tenant and filevine.v2.api.* access. Triggers also need filevine.v2.webhooks. Paste only the token without Bearer. Access tokens expire; replace it here when it expires. NoClick does not renew this token.",
         })
     credential_type: Literal["filevine_access_token"] = Field(CREDENTIAL_TYPE, json_schema_extra={"ui:hidden": True})
     access_token: str = Field(..., min_length=1, max_length=16384, title="Access token", json_schema_extra={"ui:widget": "password"})
@@ -200,6 +203,43 @@ class FilevineListProjectPhasesConfig(_LimitedPage):
     project_type_id: ResourceId
 
 
+# Event names and payload schemas: https://developer.filevine.io/docs/v2-us/b16689da4bcd4-webhook-payloads
+TRIGGER_EVENTS = {
+    "on_project_created": ("Project", "Created", "On New Project"),
+    "on_project_updated": ("Project", "Updated", "On Project Updated"),
+    "on_project_phase_changed": ("Project", "PhaseChanged", "On Project Phase Changed"),
+    "on_contact_created": ("Contact", "Created", "On New Contact"),
+    "on_contact_updated": ("Contact", "Updated", "On Contact Updated"),
+    "on_note_created": ("Note", "Created", "On New Note or Task"),
+    "on_note_assigned": ("Note", "Assigned", "On Task Assigned"),
+    "on_note_completed": ("Note", "Completed", "On Task Completed"),
+}
+
+
+class FilevineWebhookConfig(WebhookTriggerConfigBase):
+    webhook_url: Optional[str] = Field(None, title="Webhook URL", description="Registered with Filevine automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+TRIGGER_CONFIGS = {
+    name: create_model("Filevine" + "".join(part.title() for part in name.split("_")) + "Config",
+        __base__=FilevineWebhookConfig, __module__=__name__,
+        operation=(Literal[name], Field(name, title=label, json_schema_extra={
+            "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True, "x-display-name": label})),
+        event_id=(str, Field(..., min_length=1, max_length=500, title="Filevine Event",
+            description="The matching event from your Filevine organisation, selected automatically when unique.",
+            json_schema_extra={"x-dynamic-options": {"field_name": name}})))
+    for name, (_, _, label) in TRIGGER_EVENTS.items()
+}
+globals().update({model.__name__: model for model in TRIGGER_CONFIGS.values()})
+
+
+@lru_cache(maxsize=1)
+def _webhook_keys():
+    # Published by https://identity.filevine.com/.well-known/openid-configuration.
+    return jwt.PyJWKClient("https://identity.filevine.com/.well-known/openid-configuration/jwks", lifespan=3600, timeout=10)
+
+
 FilevineConfig = Annotated[Union[
     FilevineListProjectsConfig,
     FilevineGetProjectConfig,
@@ -222,7 +262,8 @@ FilevineConfig = Annotated[Union[
     FilevineCreateCommentConfig,
     FilevineGetCurrentUserConfig,
     FilevineListProjectTypesConfig,
-    FilevineListProjectPhasesConfig
+    FilevineListProjectPhasesConfig,
+    *TRIGGER_CONFIGS.values()
 ], Field(discriminator="operation")]
 
 
@@ -294,7 +335,8 @@ def _safe_response(value, token):
     return value
 
 
-class FilevineNode(WorkflowNode):
+class FilevineNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    webhook_signing_secret_not_issued = True
     integration_type = "automation-filevine"
     connection_evidence = ConnectionEvidence(
         noun="Filevine projects", operation="list_projects", identity_operation="get_current_user",
@@ -306,11 +348,128 @@ class FilevineNode(WorkflowNode):
     def get_config_model(cls):
         return FilevineFullConfig
 
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, *, body=None):
+        credential = FilevineAccessTokenCredential.model_validate(credential)
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, BASE_URL + path,
+                headers={"Authorization": "Bearer " + credential.access_token,
+                         "x-fv-orgid": str(credential.org_id), "Accept": "application/json"},
+                **({"json": body} if body is not None else {}))
+        if method == "DELETE" and response.status_code == 404:
+            return None
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"Filevine webhook HTTP {response.status_code}")
+        return response.json()
+
+    @classmethod
+    async def load_field_options(cls, field_name, credential_data, context=None, page_token=None, search=None):
+        if field_name not in TRIGGER_EVENTS:
+            return {"options": []}
+        kind, action, label = TRIGGER_EVENTS[field_name]
+        events = await cls._webhook_request(credential_data, "GET", "/fv-app/v2/webhooks/Events")
+        if not isinstance(events, list):
+            raise ValueError("Filevine did not return the available webhook events")
+        return {"options": [{"value": str(event["Id"]), "label": event.get("Name") or label}
+                            for event in events if isinstance(event, dict) and event.get("Id")
+                            and event.get("ObjectType") == kind and event.get("EventType") == action]}
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_id": (config or {}).get("event_id")}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        _, _, label = TRIGGER_EVENTS[config["operation"]]
+        event_id = TRIGGER_CONFIGS[config["operation"]].model_validate(config).event_id
+        subscription = await cls._webhook_request(credential, "POST", "/fv-app/v2/webhooks/subscription",
+            body={"Name": f"NoClick {node_id}", "Description": label, "EventIds": [event_id], "Endpoint": webhook_url})
+        if not isinstance(subscription, dict) or not subscription.get("Id"):
+            raise ValueError("Filevine did not return a webhook subscription ID")
+        return {"external_webhook_id": str(subscription["Id"])}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        subscription_id = (config or {}).get("external_webhook_id")
+        if subscription_id and credential:
+            await cls._webhook_request(credential, "DELETE",
+                "/fv-app/v2/webhooks/subscription/" + quote(str(subscription_id), safe=""))
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # https://developer.filevine.io/docs/v2-us/15de82e461c3e-webhook-security
+        authorization = next((v for k, v in headers.items() if k.lower() == "authorization"), "")
+        if not authorization.startswith("Bearer "):
+            return False
+        token = authorization[7:]
+        try:
+            if jwt.get_unverified_header(token).get("alg") != "RS512":
+                return False
+            key = _webhook_keys().get_signing_key_from_jwt(token)
+            claims = jwt.decode(token, key.key, algorithms=["RS512"], issuer="https://identity.filevine.com",
+                audience="filevine-v2-webhooks", options={"require": ["exp", "iss", "aud"]})
+            scopes = claims.get("scope", [])
+            if isinstance(scopes, str):
+                scopes = scopes.split()
+            return isinstance(scopes, list) and "filevine-v2-webhooks-access" in scopes
+        except (jwt.PyJWTError, ValueError, TypeError, OSError):
+            return False
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = TRIGGER_EVENTS.get((config or {}).get("operation"))
+        return bool(event and isinstance(payload, dict) and payload.get("Object") == event[0]
+                    and payload.get("Event") == event[1])
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if cls.filter_trigger_payload(payload, config):
+            return {"status": "success", "data": {k: v for k, v in payload.items() if k != "_webhook"}}
+        return None
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return None
+        payload = output.get("data", output)
+        if not isinstance(payload, dict):
+            return None
+        kind, action = payload.get("Object"), payload.get("Event")
+        if (kind, action) not in {(v[0], v[1]) for v in TRIGGER_EVENTS.values()}:
+            return None
+        project_id = payload.get("ProjectId")
+        object_id = payload.get("ObjectId") or {}
+        lines = [f"Filevine {kind} {action}", f"Organisation ID: {payload.get('OrgId')}"]
+        if payload.get("UserId") is not None:
+            lines.append(f"By user ID: {payload['UserId']}")
+        if project_id is not None:
+            lines.append(f"Project ID: {project_id}; use get_project project_id={project_id} to read the case.")
+        if kind == "Contact" and object_id.get("PersonId") is not None:
+            contact_id = object_id["PersonId"]
+            lines.append(f"Contact ID: {contact_id}; use get_contact contact_id={contact_id} to read the contact.")
+        if kind == "Note" and object_id.get("NoteId") is not None:
+            note_id = object_id["NoteId"]
+            lines.append(f"Note/task ID: {note_id}; use get_note note_id={note_id} for the content.")
+            if action == "Assigned" and object_id.get("AssigneeId") is not None:
+                lines.append(f"Assigned to user ID: {object_id['AssigneeId']}")
+        if kind == "Project" and action == "PhaseChanged":
+            lines.append(f"Phase ID: {object_id.get('PhaseId')}; project type ID: {object_id.get('ProjectTypeId')}")
+            other = payload.get("Other") or {}
+            if other.get("PhaseName"):
+                lines.append(f"Phase: {other['PhaseName']}")
+        lines.append(f"Event timestamp: {payload.get('Timestamp')}")
+        conversation = (f"contact:{object_id.get('PersonId')}" if kind == "Contact" else
+                        f"project:{project_id}" if project_id is not None else f"note:{object_id.get('NoteId')}")
+        return {"text": "\n".join(lines), "conversation_key": f"filevine:{payload.get('OrgId')}:{conversation}",
+                "title": f"Filevine {kind} {action}"}
+
     async def execute(self, inputs):
         op = self.config.config
         credential = self.config.credentials
         if credential is None:
             raise ValueError("Connect a Filevine access token first")
+        if isinstance(op, FilevineWebhookConfig):
+            return {"status": "success", "data": {}, "no_event": True}
         method, path = ROUTES[op.operation]
         values = op.model_dump(exclude_none=True, mode="json")
         for key, value in values.items():

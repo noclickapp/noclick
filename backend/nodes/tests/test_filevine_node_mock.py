@@ -161,3 +161,101 @@ async def test_filevine_identity_refuses_an_empty_success(wire):
     wire[1].append((200, {}))
     with pytest.raises(ValueError, match="no account identity"):
         await node({"operation": "get_current_user"}).execute({})
+
+
+EVENTS = json.loads((Path(__file__).parent / "fixtures/filevine/events.json").read_text())
+TRIGGERS = list(fv.TRIGGER_EVENTS)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", TRIGGERS)
+async def test_filevine_trigger_register_deliver_and_delete(wire, operation):
+    requests, replies = wire
+    kind, action, _ = fv.TRIGGER_EVENTS[operation]
+    config = {"operation": operation, "event_id": "selected-provider-event"}
+    # IDs are returned by the event catalogue, not derived from labels.
+    replies.append((200, [{"Id": "selected-provider-event", "ObjectType": kind, "EventType": action, "Name": "Available event"},
+                          {"Id": "unrelated", "ObjectType": "Document", "EventType": "Deleted"}]))
+    options = await fv.FilevineNode.load_field_options(operation, AUTH)
+    assert options == {"options": [{"value": "selected-provider-event", "label": "Available event"}]}
+    replies.append((200, {"Id": "c75417d8-82ee-4d25-b4c4-ff412f153376"}))
+    extra = await fv.FilevineNode._register_external_webhook(
+        webhook_url="https://workflow.hooks.example.test/webhook", credential=AUTH, config=config, node_id="filevine-test")
+    assert requests[0].url.path == "/fv-app/v2/webhooks/Events"
+    assert requests[1].method == "POST" and requests[1].url.path == "/fv-app/v2/webhooks/subscription"
+    body = json.loads(requests[1].content)
+    assert body["EventIds"] == ["selected-provider-event"] and body["Endpoint"] == "https://workflow.hooks.example.test/webhook"
+    assert requests[1].headers["x-fv-orgid"] == "100"
+    for event_name, example in EVENTS.items():
+        payload = example["body"]
+        matched = event_name == f"{kind}.{action}"
+        assert fv.FilevineNode.filter_trigger_payload(payload, config) is matched
+        if matched:
+            output = fv.FilevineNode.resolve_trigger_payload({**payload, "_webhook": {"headers": {"authorization": "secret"}}}, config)
+            assert "_webhook" not in output["data"]
+            event = fv.FilevineNode.resolve_agent_event(output)
+            assert f"Filevine {kind} {action}" in event["text"]
+            assert str(payload["OrgId"]) in event["conversation_key"]
+            assert str(payload["UserId"]) in event["text"]
+            if kind == "Contact":
+                assert f"get_contact contact_id={payload['ObjectId']['PersonId']}" in event["text"]
+            if kind == "Note":
+                assert f"get_note note_id={payload['ObjectId']['NoteId']}" in event["text"]
+            if action == "Assigned":
+                assert str(payload["ObjectId"]["AssigneeId"]) in event["text"]
+            if action == "PhaseChanged":
+                assert str(payload["ObjectId"]["PhaseId"]) in event["text"]
+    replies.append((200, True))
+    await fv.FilevineNode._unregister_external_webhook(credential=AUTH, config={**config, **extra}, node_id="filevine-test")
+    assert requests[-1].method == "DELETE"
+    assert requests[-1].url.path == "/fv-app/v2/webhooks/subscription/" + extra["external_webhook_id"]
+    assert not replies
+
+
+@pytest.mark.asyncio
+async def test_filevine_registration_failure_and_no_delivery(wire):
+    wire[1].append((403, {"error": TOKEN}))
+    with pytest.raises(ValueError, match="Filevine webhook HTTP 403") as exc:
+        await fv.FilevineNode._register_external_webhook(webhook_url="https://workflow.hooks.example.test", credential=AUTH,
+            config={"operation": "on_note_created", "event_id": "selected"}, node_id="test")
+    assert TOKEN not in str(exc.value)
+    wire[1].append((200, {}))
+    with pytest.raises(ValueError, match="subscription ID"):
+        await fv.FilevineNode._register_external_webhook(webhook_url="https://workflow.hooks.example.test", credential=AUTH,
+            config={"operation": "on_note_created", "event_id": "selected"}, node_id="test")
+    assert (await node({"operation": "on_note_created", "event_id": "selected"}).execute({"other-node": "private"}))["data"] == {}
+    assert fv.FilevineNode.resolve_agent_event({"status": "success", "data": {}}) is None
+
+
+@pytest.fixture
+def signing_key(monkeypatch):
+    import jwt
+    from cryptography.hazmat.primitives.asymmetric import rsa
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    jwk = json.loads(jwt.algorithms.RSAAlgorithm.to_jwk(key.public_key()))
+    jwk.update({"kid": "documented-identity-key", "alg": "RS512", "use": "sig"})
+    client = fv._webhook_keys()
+    monkeypatch.setattr(client, "fetch_data", lambda: {"keys": [jwk]})
+    return key
+
+
+def test_filevine_identity_signature_real_rsa(signing_key):
+    import jwt
+    import time
+    claims = {"iss": "https://identity.filevine.com", "aud": "filevine-v2-webhooks", "exp": int(time.time()) + 300,
+              "scope": ["filevine-v2-webhooks-access"]}
+    def header(overrides=None, *, algorithm="RS512", key=signing_key):
+        token = jwt.encode({**claims, **(overrides or {})}, key, algorithm=algorithm,
+                           headers={"kid": "documented-identity-key"})
+        return {"Authorization": "Bearer " + token}
+    body = json.dumps(EVENTS["Note.Created"]["body"]).encode()
+    assert fv.FilevineNode.verify_webhook_signature(body, header(), {})
+    assert fv.FilevineNode.verify_webhook_signature(body, header({"scope": "filevine-v2-webhooks-access"}), {})
+    for invalid in [{"iss": "https://attacker.example"}, {"aud": "other"}, {"scope": []}, {"scope": "prefix-filevine-v2-webhooks-access"},
+                    {"exp": int(time.time()) - 1}, {"exp": None}]:
+        assert not fv.FilevineNode.verify_webhook_signature(body, header(invalid), {})
+    assert not fv.FilevineNode.verify_webhook_signature(body, header(algorithm="HS256", key="attacker-secret-at-least-32-bytes"), {})
+    from cryptography.hazmat.primitives.asymmetric import rsa
+    assert not fv.FilevineNode.verify_webhook_signature(body, header(key=rsa.generate_private_key(public_exponent=65537, key_size=2048)), {})
+    for headers in [{}, {"authorization": "Bearer broken"}, {"Authorization": "Basic token"}]:
+        assert not fv.FilevineNode.verify_webhook_signature(body, headers, {})

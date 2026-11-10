@@ -15,7 +15,7 @@ const FilevineIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const FilevineNode: NodeDefinition = {
     type: 'automation-filevine', category: 'industry', label: 'Filevine',
-    description: 'Manage legal case projects, contacts, notes, tasks and comments',
+    description: 'Start workflows from case, contact and task events; manage Filevine records',
     Icon: FilevineIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={FilevineIcon} iconColor="" />),

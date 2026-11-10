@@ -30,7 +30,7 @@
       ],
       "title": "Filevine Access Token",
       "type": "object",
-      "x-credential-instructions": "Paste a Filevine Identity bearer access token and your Filevine organisation ID. Use the access_token returned by the Identity token exchange, not the personal access token used to obtain it. The token needs fv.api.gateway.access, tenant and filevine.v2.api.* access. Paste only the token without Bearer. Access tokens expire; replace it here when it expires. NoClick does not renew this token.",
+      "x-credential-instructions": "Paste a Filevine Identity bearer access token and your Filevine organisation ID. Use the access_token returned by the Identity token exchange, not the personal access token used to obtain it. The token needs fv.api.gateway.access, tenant and filevine.v2.api.* access. Triggers also need filevine.v2.webhooks. Paste only the token without Bearer. Access tokens expire; replace it here when it expires. NoClick does not renew this token.",
       "x-credential-url": "https://developer.filevine.io/"
     },
     "FilevineAssignTaskConfig": {
@@ -749,6 +749,1134 @@
       "title": "FilevineListTasksConfig",
       "type": "object"
     },
+    "FilevineOnContactCreatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Filevine automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_contact_created",
+          "default": "on_contact_created",
+          "title": "On New Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Contact",
+          "x-is-trigger": true
+        },
+        "event_id": {
+          "description": "The matching event from your Filevine organisation, selected automatically when unique.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Filevine Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "on_contact_created",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "FilevineOnContactCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FilevineOnContactUpdatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Filevine automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_contact_updated",
+          "default": "on_contact_updated",
+          "title": "On Contact Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Contact Updated",
+          "x-is-trigger": true
+        },
+        "event_id": {
+          "description": "The matching event from your Filevine organisation, selected automatically when unique.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Filevine Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "on_contact_updated",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "FilevineOnContactUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FilevineOnNoteAssignedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Filevine automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_note_assigned",
+          "default": "on_note_assigned",
+          "title": "On Task Assigned",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Task Assigned",
+          "x-is-trigger": true
+        },
+        "event_id": {
+          "description": "The matching event from your Filevine organisation, selected automatically when unique.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Filevine Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "on_note_assigned",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "FilevineOnNoteAssignedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FilevineOnNoteCompletedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Filevine automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_note_completed",
+          "default": "on_note_completed",
+          "title": "On Task Completed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Task Completed",
+          "x-is-trigger": true
+        },
+        "event_id": {
+          "description": "The matching event from your Filevine organisation, selected automatically when unique.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Filevine Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "on_note_completed",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "FilevineOnNoteCompletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FilevineOnNoteCreatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Filevine automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_note_created",
+          "default": "on_note_created",
+          "title": "On New Note or Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Note or Task",
+          "x-is-trigger": true
+        },
+        "event_id": {
+          "description": "The matching event from your Filevine organisation, selected automatically when unique.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Filevine Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "on_note_created",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "FilevineOnNoteCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FilevineOnProjectCreatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Filevine automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_project_created",
+          "default": "on_project_created",
+          "title": "On New Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Project",
+          "x-is-trigger": true
+        },
+        "event_id": {
+          "description": "The matching event from your Filevine organisation, selected automatically when unique.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Filevine Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "on_project_created",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "FilevineOnProjectCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FilevineOnProjectPhaseChangedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Filevine automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_project_phase_changed",
+          "default": "on_project_phase_changed",
+          "title": "On Project Phase Changed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Project Phase Changed",
+          "x-is-trigger": true
+        },
+        "event_id": {
+          "description": "The matching event from your Filevine organisation, selected automatically when unique.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Filevine Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "on_project_phase_changed",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "FilevineOnProjectPhaseChangedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FilevineOnProjectUpdatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Filevine automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_project_updated",
+          "default": "on_project_updated",
+          "title": "On Project Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Project Updated",
+          "x-is-trigger": true
+        },
+        "event_id": {
+          "description": "The matching event from your Filevine organisation, selected automatically when unique.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Filevine Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "on_project_updated",
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "FilevineOnProjectUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "FilevineUpdateContactConfig": {
       "additionalProperties": false,
       "properties": {
@@ -925,6 +2053,14 @@
           "list_project_types": "#/$defs/FilevineListProjectTypesConfig",
           "list_projects": "#/$defs/FilevineListProjectsConfig",
           "list_tasks": "#/$defs/FilevineListTasksConfig",
+          "on_contact_created": "#/$defs/FilevineOnContactCreatedConfig",
+          "on_contact_updated": "#/$defs/FilevineOnContactUpdatedConfig",
+          "on_note_assigned": "#/$defs/FilevineOnNoteAssignedConfig",
+          "on_note_completed": "#/$defs/FilevineOnNoteCompletedConfig",
+          "on_note_created": "#/$defs/FilevineOnNoteCreatedConfig",
+          "on_project_created": "#/$defs/FilevineOnProjectCreatedConfig",
+          "on_project_phase_changed": "#/$defs/FilevineOnProjectPhaseChangedConfig",
+          "on_project_updated": "#/$defs/FilevineOnProjectUpdatedConfig",
           "update_contact": "#/$defs/FilevineUpdateContactConfig",
           "update_project": "#/$defs/FilevineUpdateProjectConfig"
         },
@@ -996,6 +2132,30 @@
         },
         {
           "$ref": "#/$defs/FilevineListProjectPhasesConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineOnProjectCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineOnProjectUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineOnProjectPhaseChangedConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineOnContactCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineOnContactUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineOnNoteCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineOnNoteAssignedConfig"
+        },
+        {
+          "$ref": "#/$defs/FilevineOnNoteCompletedConfig"
         }
       ],
       "title": "Config"
