@@ -1,0 +1,1296 @@
+{
+  "list_collections": {
+    "count": 1,
+    "previous": null,
+    "next": null,
+    "collections": [
+      {
+        "name": "Winter Sweatshirts",
+        "slug": "winter-sweatshirts",
+        "product_positions": [
+          4235846,
+          4235845
+        ],
+        "nb_products": 2,
+        "demo_products_count": 0,
+        "id": 709707,
+        "created_at": "2021-05-07T14:30:44.790348Z",
+        "updated_at": "2021-05-11T08:41:34.109323Z"
+      }
+    ]
+  },
+  "get_collection": {
+    "name": "Winter Sweatshirts",
+    "slug": "winter-sweatshirts",
+    "product_positions": [
+      4235846,
+      4235845
+    ],
+    "nb_products": 2,
+    "demo_products_count": 0,
+    "id": 709707,
+    "created_at": "2021-05-07T14:30:44.790348Z",
+    "updated_at": "2021-05-11T08:41:34.109323Z"
+  },
+  "list_options": {
+    "count": 20,
+    "previous": "null",
+    "next": "/publicapi/v2/general/catalog/1800672/option/?per_page=10&page=2",
+    "options": [
+      {
+        "name": "SIZE",
+        "values": [
+          "10",
+          "02",
+          "03",
+          "08",
+          "12",
+          "R",
+          "XS",
+          "XL",
+          "L",
+          "X",
+          "06",
+          "07",
+          "S",
+          "05",
+          "04",
+          "M"
+        ],
+        "id": 133950,
+        "created_at": "2020-07-07T14:04:39.935348Z",
+        "updated_at": "2021-05-31T09:47:02.484523Z"
+      },
+      {
+        "name": "size",
+        "values": [
+          "02",
+          "3XS",
+          "XXL",
+          "12",
+          "R",
+          "05",
+          "13",
+          "XS",
+          "3XL",
+          "XL",
+          "L",
+          "06",
+          "07",
+          "S",
+          "03",
+          "04",
+          "M"
+        ],
+        "id": 55765,
+        "created_at": "2020-03-11T09:17:55.067588Z",
+        "updated_at": "2021-05-19T14:07:22.224117Z"
+      },
+      {
+        "name": "producto",
+        "values": [
+          "10kg",
+          "24 kg",
+          "100 kg",
+          "Produit",
+          "10 kg",
+          "4kg",
+          "4 kg",
+          "9 kg"
+        ],
+        "id": 187744,
+        "created_at": "2020-11-27T10:09:26.812233Z",
+        "updated_at": "2021-05-31T09:47:02.515340Z"
+      },
+      {
+        "name": "couleur 2",
+        "values": [
+          "vert",
+          "Blue",
+          "Vert",
+          "Rouge",
+          "Bleu",
+          "Violet",
+          "Orange",
+          "Rose",
+          "Red",
+          "Green",
+          "Bite"
+        ],
+        "id": 88,
+        "created_at": "2019-06-17T13:38:45.704930Z",
+        "updated_at": "2021-05-31T09:47:02.501993Z"
+      },
+      {
+        "name": "couleur 3",
+        "values": [
+          "Rubis",
+          "Vert",
+          "Ocre",
+          "cdscdscds",
+          "cdscds",
+          "Violet",
+          "Azur"
+        ],
+        "id": 87,
+        "created_at": "2019-06-17T13:38:45.585265Z",
+        "updated_at": "2021-05-07T14:42:23.077351Z"
+      },
+      {
+        "name": "couleur",
+        "values": [
+          "Violet",
+          "Vert",
+          "Jaune"
+        ],
+        "id": 91,
+        "created_at": "2019-06-17T13:39:11.556260Z",
+        "updated_at": "2019-11-05T15:21:43.562193Z"
+      },
+      {
+        "name": "androu\u00efd",
+        "values": [
+          "M & M",
+          "ETIB",
+          "W\u00efBE",
+          "BITE",
+          "PILOW",
+          "W\u00efBE + W\u00eebe"
+        ],
+        "id": 44853,
+        "created_at": "2020-02-07T13:05:04.089160Z",
+        "updated_at": "2021-05-17T13:28:48.677072Z"
+      },
+      {
+        "name": " couleur 2",
+        "values": [
+          "Violet",
+          "Vert",
+          "Bite",
+          "Rose"
+        ],
+        "id": 17019,
+        "created_at": "2019-11-19T10:05:02.730586Z",
+        "updated_at": "2019-12-13T11:02:10.265543Z"
+      },
+      {
+        "name": "lancement",
+        "values": [
+          "G",
+          "R",
+          "B"
+        ],
+        "id": 218178,
+        "created_at": "2021-01-26T10:22:23.955868Z",
+        "updated_at": "2021-01-26T10:22:24.285222Z"
+      },
+      {
+        "name": "  couleur",
+        "values": [
+          "Vert"
+        ],
+        "id": 26382,
+        "created_at": "2019-12-10T08:24:10.984265Z",
+        "updated_at": "2019-12-10T08:24:10.984285Z"
+      }
+    ]
+  },
+  "create_option": {
+    "name": "size",
+    "values": [],
+    "id": 2609,
+    "created_at": "2021-06-03T14:42:38.025484Z",
+    "updated_at": "2021-06-03T14:42:38.025513Z"
+  },
+  "update_option": {
+    "name": "size",
+    "values": [],
+    "id": 2609,
+    "created_at": "2021-06-03T14:42:38.025484Z",
+    "updated_at": "2021-06-03T14:42:38.025513Z"
+  },
+  "list_products": {
+    "count": 53,
+    "previous": null,
+    "next": "/publicapi/v2/general/catalog/1800672/product/?per_page=1&page=2",
+    "products": [
+      {
+        "id": 4246021,
+        "created_at": "2021-05-12T13:31:26.839116Z",
+        "updated_at": "2021-06-03T12:39:14.414042Z",
+        "title": "Mountain Sweatshirt",
+        "meta_title": "mountain sweatshirt",
+        "summary": "A light and warm mountain sweatshirt.",
+        "meta_description": "light and warm sweathshirt",
+        "description": {
+          "paragraphes": [
+            {
+              "id": "g4bgd",
+              "html": true,
+              "content": "<p><strong>Hello</strong></p>",
+              "paragraph_type": "TEXT"
+            },
+            {
+              "id": "rqnin",
+              "html": false,
+              "content": "<blockquote>Dreams come true.</blockquote>",
+              "paragraph_type": "QUOTE"
+            },
+            {
+              "id": "5k4bn",
+              "html": false,
+              "media_id": 5637214,
+              "paragraph_type": "PHOTO"
+            },
+            {
+              "id": "kozzo",
+              "html": false,
+              "media_id": 5637215,
+              "paragraph_type": "EMBED"
+            }
+          ]
+        },
+        "status": "PUBLISHED",
+        "visibility_start": null,
+        "visibility_end": null,
+        "highlight": false,
+        "variants": [
+          {
+            "price": "40.00000",
+            "compare_at": "50.00000",
+            "stock": 13,
+            "weight": 869.0,
+            "position": 0,
+            "option_values": [
+              {
+                "187744": "9 kg"
+              },
+              {
+                "88": "Red"
+              },
+              {
+                "133950": "XS"
+              }
+            ],
+            "sku": "xsmall-sweat-red",
+            "media": null,
+            "id": 16379000,
+            "created_at": "2021-05-17T13:28:48.623055Z",
+            "updated_at": "2021-06-03T07:11:06.213358Z"
+          },
+          {
+            "price": "100.00000",
+            "compare_at": "150.00000",
+            "stock": 30,
+            "weight": 5.0,
+            "position": 1,
+            "option_values": [
+              {
+                "187744": "9 kg"
+              },
+              {
+                "88": "Red"
+              },
+              {
+                "133950": "S"
+              }
+            ],
+            "sku": "small-sweat-red",
+            "media": null,
+            "id": 16274741,
+            "created_at": "2021-05-12T15:21:22.815455Z",
+            "updated_at": "2021-05-31T09:47:02.367634Z"
+          }
+        ],
+        "slug": "mountain-sweatshirt",
+        "media": null,
+        "tags": [
+          "sweatshirt",
+          "men"
+        ],
+        "slides": [
+          {
+            "focal_point": "",
+            "image_file": "https://storage.ww-api.com/storage_api/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "product_id": 4246021,
+            "position": 0,
+            "thumbnails": {
+              "square": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x400/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x800/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1200/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1800/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x2400/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg"
+              },
+              "portrait": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x600/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x1200/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1800/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x2700/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x3600/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg"
+              },
+              "landscape": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x225/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x450/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x675/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1012/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x1350/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg"
+              },
+              "originals": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg"
+              }
+            },
+            "id": 5377672,
+            "created_at": "2021-05-17T13:16:34.430186Z",
+            "updated_at": "2021-05-17T13:16:34.430217Z"
+          },
+          {
+            "focal_point": "",
+            "image_file": "https://storage.ww-api.com/storage_api/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "product_id": 4246021,
+            "position": 2,
+            "thumbnails": {
+              "square": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x400/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x800/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1200/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1800/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x2400/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg"
+              },
+              "portrait": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x600/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x1200/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1800/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x2700/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x3600/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg"
+              },
+              "landscape": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x225/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x450/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x675/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1012/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x1350/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg"
+              },
+              "originals": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg"
+              }
+            },
+            "id": 5377669,
+            "created_at": "2021-05-17T13:16:06.140316Z",
+            "updated_at": "2021-05-17T13:16:06.140348Z"
+          },
+          {
+            "focal_point": "",
+            "image_file": "https://storage.ww-api.com/storage_api/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "product_id": 4246021,
+            "position": 1,
+            "thumbnails": {
+              "square": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x400/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x800/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1200/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1800/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x2400/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg"
+              },
+              "portrait": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x600/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x1200/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1800/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x2700/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x3600/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg"
+              },
+              "landscape": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x225/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x450/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x675/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1012/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x1350/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg"
+              },
+              "originals": {
+                "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+                "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg"
+              }
+            },
+            "id": 5377670,
+            "created_at": "2021-05-17T13:16:18.693387Z",
+            "updated_at": "2021-05-17T13:16:18.693438Z"
+          }
+        ],
+        "collections": [
+          4516,
+          160013
+        ],
+        "auto_similar_products": [],
+        "custom_similar_products": [
+          {
+            "id": 4013499,
+            "title": "Hiking Sweatshirt",
+            "variant_id": 15541376,
+            "price": 0.0,
+            "compare_at": 0.0,
+            "thumbnails": null,
+            "slug": "hiking-sweatshirt"
+          }
+        ],
+        "show_similar_products": true,
+        "pdf_name": "Mountain Sweatshirt",
+        "pdf": "https://storage.ww-api.com/storage_api/v1/commerce_docs/1800672/1622723954431_31/mountain-sweat-description.pdf",
+        "product_ref": "APIRef",
+        "brand": "Goodbarber"
+      }
+    ]
+  },
+  "create_product": {
+    "id": 6243,
+    "created_at": "2021-06-04T10:14:39.760227Z",
+    "updated_at": "2021-06-04T10:14:39.760266Z",
+    "title": "Created by API",
+    "meta_title": "byAPI",
+    "summary": "Product created by API.",
+    "meta_description": "dbyAPI",
+    "description": {
+      "paragraphes": []
+    },
+    "status": "INVISIBLE",
+    "visibility_start": "2019-08-24T14:15:22Z",
+    "visibility_end": "2029-08-24T14:15:22Z",
+    "highlight": false,
+    "variants": [],
+    "slug": "testapi",
+    "media": null,
+    "tags": [
+      "test"
+    ],
+    "slides": [],
+    "collections": [
+      4516
+    ],
+    "auto_similar_products": [],
+    "custom_similar_products": [
+      {
+        "id": 4246021,
+        "title": "Another product",
+        "variant_id": 16818231,
+        "price": 137.0,
+        "compare_at": 12.0,
+        "thumbnails": null,
+        "slug": "another-product"
+      }
+    ],
+    "show_similar_products": true,
+    "pdf_name": "",
+    "pdf": null,
+    "product_ref": "myREF",
+    "brand": "Goodbarber"
+  },
+  "get_product": {
+    "id": 4246021,
+    "created_at": "2021-05-12T13:31:26.839116Z",
+    "updated_at": "2021-06-03T12:39:14.414042Z",
+    "title": "Mountain Sweatshirt",
+    "meta_title": "mountain sweatshirt",
+    "summary": "A light and warm mountain sweatshirt.",
+    "meta_description": "light and warm sweathshirt",
+    "description": {
+      "paragraphes": [
+        {
+          "id": "g4bgd",
+          "html": true,
+          "content": "<p><strong>Hello</strong></p>",
+          "paragraph_type": "TEXT"
+        },
+        {
+          "id": "rqnin",
+          "html": false,
+          "content": "<blockquote>Dreams come true.</blockquote>",
+          "paragraph_type": "QUOTE"
+        },
+        {
+          "id": "5k4bn",
+          "html": false,
+          "media_id": 5637214,
+          "paragraph_type": "PHOTO"
+        },
+        {
+          "id": "kozzo",
+          "html": false,
+          "media_id": 5637215,
+          "paragraph_type": "EMBED"
+        }
+      ]
+    },
+    "status": "PUBLISHED",
+    "visibility_start": null,
+    "visibility_end": null,
+    "highlight": false,
+    "variants": [
+      {
+        "price": "40.00000",
+        "compare_at": "50.00000",
+        "stock": 13,
+        "weight": 869.0,
+        "position": 0,
+        "option_values": [
+          {
+            "187744": "9 kg"
+          },
+          {
+            "88": "Red"
+          },
+          {
+            "133950": "XS"
+          }
+        ],
+        "sku": "xsmall-sweat-red",
+        "media": null,
+        "id": 16379000,
+        "created_at": "2021-05-17T13:28:48.623055Z",
+        "updated_at": "2021-06-03T07:11:06.213358Z"
+      },
+      {
+        "price": "100.00000",
+        "compare_at": "150.00000",
+        "stock": 30,
+        "weight": 5.0,
+        "position": 1,
+        "option_values": [
+          {
+            "187744": "9 kg"
+          },
+          {
+            "88": "Red"
+          },
+          {
+            "133950": "S"
+          }
+        ],
+        "sku": "small-sweat-red",
+        "media": null,
+        "id": 16274741,
+        "created_at": "2021-05-12T15:21:22.815455Z",
+        "updated_at": "2021-05-31T09:47:02.367634Z"
+      }
+    ],
+    "slug": "mountain-sweatshirt",
+    "media": null,
+    "tags": [
+      "sweatshirt",
+      "men"
+    ],
+    "slides": [
+      {
+        "focal_point": "",
+        "image_file": "https://storage.ww-api.com/storage_api/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+        "product_id": 4246021,
+        "position": 0,
+        "thumbnails": {
+          "square": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x400/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x800/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1200/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1800/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x2400/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg"
+          },
+          "portrait": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x600/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x1200/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1800/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x2700/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x3600/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg"
+          },
+          "landscape": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x225/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x450/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x675/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1012/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x1350/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg"
+          },
+          "originals": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x/50x50/v1/commerce_pict/1800672/1621257394613_31/red-sweat.jpg"
+          }
+        },
+        "id": 5377672,
+        "created_at": "2021-05-17T13:16:34.430186Z",
+        "updated_at": "2021-05-17T13:16:34.430217Z"
+      },
+      {
+        "focal_point": "",
+        "image_file": "https://storage.ww-api.com/storage_api/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+        "product_id": 4246021,
+        "position": 2,
+        "thumbnails": {
+          "square": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x400/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x800/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1200/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1800/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x2400/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg"
+          },
+          "portrait": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x600/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x1200/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1800/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x2700/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x3600/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg"
+          },
+          "landscape": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x225/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x450/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x675/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1012/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x1350/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg"
+          },
+          "originals": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x/50x50/v1/commerce_pict/1800672/1621257366304_30/red-sweat-back.jpg"
+          }
+        },
+        "id": 5377669,
+        "created_at": "2021-05-17T13:16:06.140316Z",
+        "updated_at": "2021-05-17T13:16:06.140348Z"
+      },
+      {
+        "focal_point": "",
+        "image_file": "https://storage.ww-api.com/storage_api/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+        "product_id": 4246021,
+        "position": 1,
+        "thumbnails": {
+          "square": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x400/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x800/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1200/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1800/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x2400/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg"
+          },
+          "portrait": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x600/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x1200/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x1800/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x2700/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x3600/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg"
+          },
+          "landscape": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x225/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x450/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x675/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x1012/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x1350/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg"
+          },
+          "originals": {
+            "small": "https://shoppicture.ww-api.com/pretty_pict/v1/400x/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "medium": "https://shoppicture.ww-api.com/pretty_pict/v1/800x/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "large": "https://shoppicture.ww-api.com/pretty_pict/v1/1200x/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "xlarge": "https://shoppicture.ww-api.com/pretty_pict/v1/1800x/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg",
+            "original": "https://shoppicture.ww-api.com/pretty_pict/v1/2400x/50x50/v1/commerce_pict/1800672/1621257378756_31/red-sweat-side.jpg"
+          }
+        },
+        "id": 5377670,
+        "created_at": "2021-05-17T13:16:18.693387Z",
+        "updated_at": "2021-05-17T13:16:18.693438Z"
+      }
+    ],
+    "collections": [
+      4516,
+      160013
+    ],
+    "auto_similar_products": [],
+    "custom_similar_products": [
+      {
+        "id": 4013499,
+        "title": "Hiking Sweatshirt",
+        "variant_id": 15541376,
+        "price": 0.0,
+        "compare_at": 0.0,
+        "thumbnails": null,
+        "slug": "hiking-sweatshirt"
+      }
+    ],
+    "show_similar_products": true,
+    "pdf_name": "Mountain Sweatshirt",
+    "pdf": "https://storage.ww-api.com/storage_api/v1/commerce_docs/1800672/1622723954431_31/mountain-sweat-description.pdf",
+    "product_ref": "APIRef",
+    "brand": "Goodbarber"
+  },
+  "update_product": {
+    "id": 6243,
+    "created_at": "2021-06-04T10:14:39.760227Z",
+    "updated_at": "2021-06-04T10:14:39.760266Z",
+    "title": "Created by API",
+    "meta_title": "byAPI",
+    "summary": "Product created by API.",
+    "meta_description": "newMETA DESC",
+    "description": {
+      "paragraphes": []
+    },
+    "status": "PUBLISHED",
+    "visibility_start": "2019-08-24T14:15:22Z",
+    "visibility_end": "2029-08-24T14:15:22Z",
+    "highlight": false,
+    "variants": [],
+    "slug": "testapi",
+    "media": null,
+    "tags": [
+      "test"
+    ],
+    "slides": [],
+    "collections": [
+      4516
+    ],
+    "auto_similar_products": [],
+    "custom_similar_products": [
+      {
+        "id": 4246021,
+        "title": "Another product",
+        "variant_id": 16818231,
+        "price": 137.0,
+        "compare_at": 12.0,
+        "thumbnails": null,
+        "slug": "another-product"
+      }
+    ],
+    "show_similar_products": true,
+    "pdf_name": "",
+    "pdf": null,
+    "product_ref": "myREF",
+    "brand": "Goodbarber"
+  },
+  "list_tags": {
+    "count": 6,
+    "previous": null,
+    "next": null,
+    "tags": [
+      {
+        "label": "sweatshirt"
+      },
+      {
+        "label": "men"
+      },
+      {
+        "label": "clothing"
+      },
+      {
+        "label": "shirt"
+      },
+      {
+        "label": "women"
+      },
+      {
+        "label": "dress"
+      }
+    ]
+  },
+  "list_customers": {
+    "count": 160,
+    "previous": "/publicapi/v2/general/customer/1800672/customer/?page=1&per_page=2",
+    "next": "/publicapi/v2/general/customer/1800672/customer/?page=3&per_page=2",
+    "customers": [
+      {
+        "user_id": 98013,
+        "client_num": 324,
+        "email": "jane.doe@gmail.com",
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "phone": "0612874503",
+        "birthday": "1987-11-11",
+        "shipping_addresses": [
+          {
+            "id": 83490,
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "street": "Ajaccio",
+            "city": "Ajaccio",
+            "zipcode": "20000",
+            "state": "FR-COR",
+            "country": "FR",
+            "extra": "Lieu dit Vitullo",
+            "localized_address": "Cours Napol\u00e9on\nLieu dit Vitullo\n20000 AJACCIO\nFRANCE",
+            "company": "GoodBarber",
+            "vat_number": "FRXX999999999"
+          }
+        ],
+        "is_customer": true,
+        "internal_note": ""
+      },
+      {
+        "user_id": 97999,
+        "client_num": 323,
+        "email": "mickey.smith@gmail.com",
+        "first_name": "Mickey",
+        "last_name": "Smith",
+        "phone": "0808000800",
+        "birthday": null,
+        "shipping_addresses": [],
+        "is_customer": true,
+        "internal_note": ""
+      }
+    ]
+  },
+  "get_customer": {
+    "user_id": 94305,
+    "client_num": 320,
+    "email": "micka2@gmail.com",
+    "first_name": "Mickael",
+    "last_name": "Peretti",
+    "phone": "0495010203",
+    "birthday": "2022-03-10",
+    "shipping_addresses": [
+      {
+        "id": 87189,
+        "first_name": "Mickael",
+        "last_name": "Peretti",
+        "street": "Cours Napol\u00e9on",
+        "city": "Ajaccio",
+        "zipcode": "20000",
+        "state": "FR-COR",
+        "country": "FR",
+        "extra": "B\u00e2timent C2",
+        "localized_address": "Cours Napol\u00e9on\nB\u00e2timent C2\n20000 AJACCIO\nFRANCE",
+        "company": "GoodBarber",
+        "vat_number": "FRXX999999999"
+      }
+    ],
+    "is_customer": true,
+    "internal_note": "This is a good customer"
+  },
+  "list_prospects": {
+    "count": 172,
+    "previous": "/publicapi/v2/general/customer/1800672/prospect/?page=1&per_page=2",
+    "next": "/publicapi/v2/general/customer/1800672/prospect/?page=3&per_page=2",
+    "prospects": [
+      {
+        "user_id": 102684,
+        "client_num": 330,
+        "email": "jane.doe@gmail.com",
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "phone": "0612874503",
+        "birthday": "1987-11-11",
+        "shipping_addresses": [
+          {
+            "id": 84490,
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "street": "Ajaccio",
+            "city": "Ajaccio",
+            "zipcode": "20000",
+            "state": "FR-COR",
+            "country": "FR",
+            "extra": "Lieu dit Vitullo",
+            "localized_address": "Cours Napol\u00e9on\nLieu dit Vitullo\n20000 AJACCIO\nFRANCE",
+            "company": "GoodBarber",
+            "vat_number": "FRXX999999999"
+          }
+        ],
+        "is_customer": false,
+        "internal_note": ""
+      },
+      {
+        "user_id": 102297,
+        "client_num": 329,
+        "email": "mickey.smith@gmail.com",
+        "first_name": "Mickey",
+        "last_name": "Smith",
+        "phone": "0808000800",
+        "birthday": null,
+        "shipping_addresses": [],
+        "is_customer": false,
+        "internal_note": ""
+      }
+    ]
+  },
+  "get_prospect": {
+    "user_id": 102684,
+    "client_num": 330,
+    "email": "micka2@gmail.com",
+    "first_name": "Mickael",
+    "last_name": "Peretti",
+    "phone": "0495010203",
+    "birthday": "2022-03-10",
+    "shipping_addresses": [
+      {
+        "id": 88389,
+        "first_name": "Mickael",
+        "last_name": "Peretti",
+        "street": "Cours Napol\u00e9on",
+        "city": "Ajaccio",
+        "zipcode": "20000",
+        "state": "FR-COR",
+        "country": "FR",
+        "extra": "B\u00e2timent C2",
+        "localized_address": "Cours Napol\u00e9on\nB\u00e2timent C2\n20000 AJACCIO\nFRANCE",
+        "company": "GoodBarber",
+        "vat_number": "FRXX999999999"
+      }
+    ],
+    "is_customer": false,
+    "internal_note": "May subscribe soon"
+  },
+  "list_orders": {
+    "orders": [
+      {
+        "id": 14951901,
+        "created_at": "2021-01-25T13:10:15.038971Z",
+        "updated_at": "2021-01-25T13:20:25.835744Z",
+        "email": "bkramer@stewart.com",
+        "phone": "+33454432234",
+        "first_name": "Brian",
+        "last_name": "Kramer",
+        "user_id": 37,
+        "total": "240.00000",
+        "subtotal": "200.00000",
+        "tax_mode": "EXCL_TAXES",
+        "currency": "USD",
+        "tax_amount": "40.0",
+        "tax_rate": 0.2,
+        "shipping_amount": "0.0",
+        "shipping_tax_amount": "0.0",
+        "shipping_tax_rate": 0.2,
+        "vat_number": "FRXX999999998",
+        "order_num": 2345,
+        "weight": 2.3,
+        "customer_note": "My Note",
+        "items": [
+          {
+            "variant": 1660,
+            "price": "100.00000",
+            "quantity": 2,
+            "media": {
+              "image_path": "http://example/com",
+              "thumbnails": {
+                "square": {
+                  "small": "http://example/com",
+                  "medium": "http://example/com"
+                },
+                "portrait": {
+                  "small": "http://example/com",
+                  "medium": "http://example/com"
+                },
+                "landscape": {
+                  "small": "http://example/com",
+                  "medium": "http://example/com"
+                }
+              }
+            },
+            "option_values": {
+              "size": "XL",
+              "color": "red"
+            },
+            "product": {
+              "product_id": 98131,
+              "title": "GB Sweatshirt"
+            },
+            "compare_at": 200.0,
+            "sku": "FG77SKJ"
+          }
+        ],
+        "payment_mode": "test",
+        "payment_type": "sandbox",
+        "promo_code": null,
+        "discount": "0.0",
+        "has_invoice": true,
+        "invoice_num": 1957,
+        "receipt_num": null,
+        "shipping_type": "transport",
+        "selected_delivery_slot": {
+          "date": "2025-04-15",
+          "slot_end": "08:40",
+          "slot_start": "08:30"
+        },
+        "shipping_address": {
+          "city": "Ajaccio",
+          "extra": "",
+          "state": "FR-COR",
+          "prefix": "",
+          "street": "1, rue maillot",
+          "suffix": "",
+          "company": "NOTHING",
+          "country": "FR",
+          "zipcode": "20000",
+          "last_name": "Doe",
+          "first_name": "John",
+          "middle_name": "",
+          "localized_address": "1, rue maillot\n20000 AJACCIO\nFRANCE"
+        },
+        "shipping_method": "FedEx",
+        "status": "PENDING",
+        "pricing_details": {
+          "items": [
+            {
+              "tax_rate": 0.2,
+              "unit_price": 100.0,
+              "quantity": 2,
+              "total": 240.0,
+              "discount": 0.0,
+              "total_without_discount": null,
+              "taxable_amount_without_discount": 200.0,
+              "taxable_amount": 200.0,
+              "tax_amount": 40.0,
+              "variant_id": 1660
+            }
+          ],
+          "discount": 0.0,
+          "shipping": {
+            "total": 0.0,
+            "tax_rate": 0.2,
+            "tax_amount": 0.0,
+            "taxable_amount": 0.0
+          },
+          "order_and_shipping_tax_amount": 40.0
+        }
+      },
+      {
+        "id": 14951902,
+        "created_at": "2021-01-25T13:10:15.038971Z",
+        "updated_at": "2021-01-25T13:20:25.835744Z",
+        "email": "john.doe@stewart.com",
+        "phone": "+33454432235",
+        "first_name": "John",
+        "last_name": "Doe",
+        "user_id": 73,
+        "total": "120.00000",
+        "subtotal": "100.00000",
+        "tax_mode": "EXCL_TAXES",
+        "currency": "USD",
+        "tax_amount": "20.0",
+        "tax_rate": 0.2,
+        "shipping_amount": "0.0",
+        "shipping_tax_amount": "0.0",
+        "shipping_tax_rate": 0.2,
+        "vat_number": "FRXX999999999",
+        "order_num": 2346,
+        "weight": 3.2,
+        "customer_note": "My Note Bis",
+        "items": [
+          {
+            "variant": 1661,
+            "price": "50.00000",
+            "quantity": 2,
+            "media": {
+              "image_path": "http://example/com",
+              "thumbnails": {
+                "square": {
+                  "small": "http://example/com",
+                  "medium": "http://example/com"
+                },
+                "portrait": {
+                  "small": "http://example/com",
+                  "medium": "http://example/com"
+                },
+                "landscape": {
+                  "small": "http://example/com",
+                  "medium": "http://example/com"
+                }
+              }
+            },
+            "option_values": {
+              "size": "XL",
+              "color": "blue"
+            },
+            "product": {
+              "product_id": 98131,
+              "title": "GB Sweatshirt"
+            },
+            "compare_at": 100.0,
+            "sku": "FG77SKM"
+          }
+        ],
+        "payment_mode": "live",
+        "payment_type": "paypal",
+        "promo_code": null,
+        "discount": "0.0",
+        "has_invoice": true,
+        "invoice_num": 1958,
+        "receipt_num": null,
+        "shipping_type": "transport",
+        "selected_delivery_slot": {
+          "date": "2025-04-15",
+          "slot_end": "08:40",
+          "slot_start": "08:30"
+        },
+        "shipping_address": {
+          "city": "Ajaccio",
+          "extra": "",
+          "state": "FR-COR",
+          "prefix": "",
+          "street": "1, rue maillot",
+          "suffix": "",
+          "company": "NOTHING",
+          "country": "FR",
+          "zipcode": "20000",
+          "last_name": "Doe",
+          "first_name": "John",
+          "middle_name": "",
+          "localized_address": "1, rue maillot\n20000 AJACCIO\nFRANCE"
+        },
+        "shipping_method": "Colissimo",
+        "status": "FULFILLED",
+        "pricing_details": {
+          "items": [
+            {
+              "tax_rate": 0.2,
+              "unit_price": 50.0,
+              "quantity": 2,
+              "total": 120.0,
+              "discount": 0.0,
+              "total_without_discount": null,
+              "taxable_amount_without_discount": 100.0,
+              "taxable_amount": 100.0,
+              "tax_amount": 20.0,
+              "variant_id": 1661
+            }
+          ],
+          "discount": 0.0,
+          "shipping": {
+            "total": 0.0,
+            "tax_rate": 0.2,
+            "tax_amount": 0.0,
+            "taxable_amount": 0.0
+          },
+          "order_and_shipping_tax_amount": 20.0
+        }
+      }
+    ],
+    "count": 123,
+    "previous": "/publicapi/v1/general/catalog/145245/products/?page=1&per_page=20",
+    "next": "/publicapi/v1/general/catalog/145245/products/?page=3&per_page=20"
+  },
+  "get_order": {
+    "id": 14951901,
+    "created_at": "2021-01-25T13:10:15.038971Z",
+    "updated_at": "2021-01-25T13:20:25.835744Z",
+    "email": "matthewbrady@yahoo.com",
+    "phone": "+33333333333",
+    "first_name": "Matthew",
+    "last_name": "Brady",
+    "total": "220.00000",
+    "subtotal": "220.00000",
+    "tax_mode": "INCL_TAXES",
+    "currency": "USD",
+    "tax_amount": "20.00000",
+    "tax_rate": 0.1,
+    "shipping_amount": "0.0",
+    "shipping_tax_amount": "0.0",
+    "shipping_tax_rate": 0.2,
+    "vat_number": "FRXX999999999",
+    "order_num": 2345,
+    "weight": 2.3,
+    "customer_note": "My note",
+    "items": [
+      {
+        "variant": 1660,
+        "price": "110.00000",
+        "quantity": 2,
+        "media": {
+          "image_path": "http://example/com",
+          "thumbnails": {
+            "square": {
+              "small": "http://example/com",
+              "medium": "http://example/com"
+            },
+            "portrait": {
+              "small": "http://example/com",
+              "medium": "http://example/com"
+            },
+            "landscape": {
+              "small": "http://example/com",
+              "medium": "http://example/com"
+            }
+          }
+        },
+        "option_values": {
+          "size": "XL",
+          "color": "red"
+        },
+        "product": {
+          "product_id": 98131,
+          "title": "GB Sweatshirt"
+        },
+        "compare_at": 220.0,
+        "sku": "FG77SKJ"
+      }
+    ],
+    "payment_mode": "live",
+    "payment_type": "paypal",
+    "promo_code": null,
+    "discount": "0.0",
+    "has_invoice": true,
+    "invoice_num": 1935,
+    "receipt_num": null,
+    "shipping_type": "transport",
+    "selected_delivery_slot": {
+      "date": "2025-04-15",
+      "slot_end": "08:40",
+      "slot_start": "08:30"
+    },
+    "shipping_address": {
+      "city": "Ajaccio",
+      "extra": "",
+      "state": "FR-COR",
+      "prefix": "",
+      "street": "1, rue maillot",
+      "suffix": "",
+      "company": "NOTHING",
+      "country": "FR",
+      "zipcode": "20000",
+      "last_name": "Doe",
+      "first_name": "John",
+      "middle_name": "",
+      "vat_number": "FRXX999999999",
+      "localized_address": "1, rue maillot\n20000 AJACCIO\nFRANCE"
+    },
+    "shipping_method": "FedEx",
+    "status": "PENDING",
+    "pricing_details": {
+      "items": [
+        {
+          "tax_rate": 0.1,
+          "unit_price": 110,
+          "quantity": 2,
+          "total": 220.0,
+          "discount": 0.0,
+          "total_without_discount": 220.0,
+          "taxable_amount_without_discount": null,
+          "taxable_amount": 200,
+          "tax_amount": 20,
+          "variant_id": 1660
+        }
+      ],
+      "discount": 0.0,
+      "shipping": {
+        "total": 0.0,
+        "tax_rate": 0.2,
+        "tax_amount": 0.0,
+        "taxable_amount": 0.0
+      },
+      "order_and_shipping_tax_amount": 20
+    }
+  },
+  "get_shipping": {
+    "status": "PENDING",
+    "shipping_tracking_num": "1109XV03NX5XLW29",
+    "shipping_tracking_url": "http://example.com"
+  },
+  "update_shipping": {
+    "status": "FULFILLED",
+    "shipping_tracking_num": "1109XV03NX5XLW29",
+    "shipping_tracking_url": "http://example.com"
+  }
+}
