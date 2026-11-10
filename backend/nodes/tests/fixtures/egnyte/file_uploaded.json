@@ -1,0 +1,22 @@
+{
+  "body": {
+    "data": [
+      {
+        "eventId": "...",
+        "domain": "...",
+        "timestamp": 1710000000000,
+        "user": {
+          "id": 1,
+          "displayName": "...",
+          "username": "...",
+          "email": "..."
+        },
+        "actionSource": "...",
+        "eventType": "fs:add_file",
+        "webhookId": "...",
+        "data": {}
+      }
+    ]
+  },
+  "source": "https://developers.egnyte.com/integration/cfs/api-docs/webhooks"
+}

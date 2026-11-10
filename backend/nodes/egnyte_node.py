@@ -7,7 +7,9 @@ https://developers.egnyte.com/docs/read/File_System_Management_API_Documentation
 """
 from __future__ import annotations
 
+import hmac
 import re
+import secrets
 from typing import Annotated, Literal, Optional, Union
 from urllib.parse import quote
 
@@ -18,10 +20,13 @@ from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.egnyte_operations import EGNYTE_OPERATIONS
 from nodes.oauth.egnyte_oauth import OAUTH_PROVIDER
 from nodes.scopes.egnyte import EGNYTE_SCOPES
 from utils.ssrf import guarded_async_client
+
+WEBHOOK_DOCS = "https://developers.egnyte.com/integration/cfs/api-docs/webhooks"
 
 AUTH_DOCS = "https://us-partner-integrations.egnyte.com/integration/cfs/api-docs/authentication"
 
@@ -214,10 +219,37 @@ class ListEvents(_Input):
     reverse: Literal["0", "1"] = "0"
 
 
+class OnFileUploaded(WebhookTriggerConfigBase):
+    """Egnyte documents fs:add_file for uploaded files and file versions."""
+
+    operation: Literal["on_file_uploaded"] = Field("on_file_uploaded", title="On File Uploaded", json_schema_extra={
+        "const": "on_file_uploaded", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On File Uploaded",
+    })
+    path: Optional[str] = Field(None, title="Folder paths", description="Optional comma-separated folder paths, including subfolders. Leave empty to watch all paths; maximum 100 paths.")
+    webhook_url: Optional[str] = Field(None, title="Webhook URL", description="Registered with Egnyte automatically", json_schema_extra={
+        "ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True,
+    })
+
+    @field_validator("path")
+    @classmethod
+    def valid_paths(cls, value):
+        if value is None or not value.strip():
+            return None
+        paths = [part.strip() for part in value.split(",")]
+        if len(paths) > 100:
+            raise ValueError("Choose at most 100 folder paths")
+        for path in paths:
+            _Path.valid_path(path)
+            if not path.startswith("/"):
+                raise ValueError("Use full Egnyte paths beginning with /")
+        return ",".join(paths)
+
+
 EgnyteOperation = Annotated[Union[GetUserInfo, GetFileOrFolder, CreateFolder, MoveItem,
     CopyItem, LockFile, UnlockFile, DeleteItem, DownloadFile, SearchFiles, ListLinks,
     CreateLink, GetLink, DeleteLink, AddComment, ListComments, GetComment, DeleteComment,
-    GetEventsCursor, ListEvents], Field(discriminator="operation")]
+    GetEventsCursor, ListEvents, OnFileUploaded], Field(discriminator="operation")]
 
 
 class EgnyteConfig(NodeConfig[EgnyteOperation, EgnyteOAuthCredential]):
@@ -232,7 +264,8 @@ def _route(template, values):
     return template
 
 
-class EgnyteNode(WorkflowNode):
+class EgnyteNode(ExternalWebhookTriggerMixin, WorkflowNode):
+    webhook_replace_stale_endpoint = True
     integration_type = "automation-egnyte"
     scope_registry = EGNYTE_SCOPES
     connection_evidence = ConnectionEvidence(noun="Egnyte account", identity_operation="get_user_info", identity_keys=("username",))
@@ -250,11 +283,101 @@ class EgnyteNode(WorkflowNode):
             additional_token_fields=OAUTH_PROVIDER.credential_fields, provider="egnyte",
         )
 
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, *, body=None):
+        credential = EgnyteOAuthCredential.model_validate(credential)
+        async with guarded_async_client(timeout=60, follow_redirects=False) as client:
+            response = await client.request(
+                method, f"https://{credential.account_host}/pubapi{path}",
+                headers={"Authorization": f"Bearer {credential.access_token}", "Accept": "application/json"},
+                **({"json": body} if body is not None else {}),
+            )
+        # A previously removed subscription is already cleaned up.
+        if method == "DELETE" and response.status_code == 404:
+            return None
+        if not 200 <= response.status_code < 300:
+            raise httpx.HTTPStatusError(f"Egnyte returned HTTP {response.status_code}", request=response.request, response=response)
+        return response.json() if response.content else None
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        trigger = OnFileUploaded.model_validate(config)
+        secret = secrets.token_urlsafe(32)
+        # The docs define authHeader as the VALUE of the delivery's Authorization
+        # header (not an HMAC, nor the header's name). See WEBHOOK_DOCS.
+        body = {"url": webhook_url, "eventType": ["fs:add_file"], "authHeader": f"Bearer {secret}"}
+        if trigger.path:
+            body["path"] = trigger.path
+        data = await cls._webhook_request(credential, "POST", "/v1/webhooks", body=body)
+        if not isinstance(data, dict) or not data.get("webhookId"):
+            raise ValueError("Egnyte did not return a webhook ID")
+        return {"external_webhook_id": data["webhookId"], "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint = (config or {}).get("external_webhook_id")
+        if not endpoint:
+            return
+        if not credential:
+            raise ValueError("Connect Egnyte to remove this webhook")
+        await cls._webhook_request(credential, "DELETE", f"/v1/webhooks/{quote(str(endpoint), safe='')}")
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        trigger = OnFileUploaded.model_validate(config)
+        return {"path": trigger.path}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        secret = (config or {}).get("signing_secret")
+        header = next((v for k, v in headers.items() if k.lower() == "authorization"), "")
+        return bool(secret and isinstance(header, str) and hmac.compare_digest(
+            header.encode(), f"Bearer {secret}".encode()))
+
+    @staticmethod
+    def _uploaded_events(payload):
+        if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
+            return []
+        return [event for event in payload["data"] if isinstance(event, dict) and event.get("eventType") == "fs:add_file"]
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return bool(cls._uploaded_events(payload))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        return {"events": cls._uploaded_events(payload)}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        events = output.get("events") if isinstance(output, dict) else None
+        if not isinstance(events, list) or not events:
+            return super().resolve_agent_event(output)
+        lines = []
+        for event in events:
+            user = event.get("user") or {}
+            data = event.get("data") or {}
+            actor = user.get("displayName") or user.get("username") or user.get("email") or str(user.get("id", "Unknown user"))
+            path = data.get("targetPath")
+            lines.append(f"Egnyte file uploaded by {actor}" + (f": {path}" if path else ""))
+            lines.append(f"Domain: {event.get('domain')}; time (Unix ms): {event.get('timestamp')}; event ID: {event.get('eventId')}")
+            if data.get("targetEntryId"):
+                lines.append(f"File version ID: {data['targetEntryId']}")
+            if data.get("targetGroupId"):
+                lines.append(f"File group ID: {data['targetGroupId']}")
+            if path:
+                lines.append(f"To act: get_file_or_folder or download_file with path={path}")
+        first = events[0]
+        return {"text": "\n".join(lines), "title": "Egnyte file uploaded",
+                "conversation_key": f"{first.get('domain')}:{(first.get('data') or {}).get('targetGroupId') or first.get('eventId')}"}
+
     async def execute(self, inputs):
         from nodes.core.oauth_refresh import ensure_fresh_oauth_token
         if not isinstance(self.config, EgnyteConfig) or not self.config.credentials:
             raise ValueError("Connect an Egnyte account")
         config = self.config.config
+        if isinstance(config, OnFileUploaded):
+            return self.resolve_trigger_payload(inputs, config.model_dump())
         credential = self.config.credentials.model_dump()
         host = OAUTH_PROVIDER.validate_context({"account_host": credential["account_host"]})["account_host"]
         token = await ensure_fresh_oauth_token(

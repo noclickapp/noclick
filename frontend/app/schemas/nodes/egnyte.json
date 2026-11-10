@@ -393,7 +393,8 @@
       "x-oauth-provider": "egnyte",
       "x-oauth-scopes": [
         "Egnyte.filesystem",
-        "Egnyte.link"
+        "Egnyte.link",
+        "Egnyte.webhooks"
       ]
     },
     "GetComment": {
@@ -908,6 +909,147 @@
       "title": "MoveItem",
       "type": "object"
     },
+    "OnFileUploaded": {
+      "description": "Egnyte documents fs:add_file for uploaded files and file versions.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_file_uploaded",
+          "default": "on_file_uploaded",
+          "title": "On File Uploaded",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On File Uploaded",
+          "x-is-trigger": true
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated folder paths, including subfolders. Leave empty to watch all paths; maximum 100 paths.",
+          "title": "Folder paths"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Egnyte automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "OnFileUploaded",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "SearchFiles": {
       "additionalProperties": false,
       "properties": {
@@ -1075,6 +1217,7 @@
           "list_links": "#/$defs/ListLinks",
           "lock_file": "#/$defs/LockFile",
           "move_item": "#/$defs/MoveItem",
+          "on_file_uploaded": "#/$defs/OnFileUploaded",
           "search_files": "#/$defs/SearchFiles",
           "unlock_file": "#/$defs/UnlockFile"
         },
@@ -1140,6 +1283,9 @@
         },
         {
           "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/OnFileUploaded"
         }
       ],
       "title": "Config"

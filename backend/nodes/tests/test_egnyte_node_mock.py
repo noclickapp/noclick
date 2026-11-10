@@ -175,7 +175,7 @@ async def test_oauth_declared_flow_exchange_identity_and_rotation(monkeypatch):
     refreshed = await OAUTH_PROVIDER.bind_refresh(AUTH)("synthetic-refresh")
     assert refreshed.refresh_token == "new-refresh"
     assert parse_qs(requests[-1].content.decode())["grant_type"] == ["refresh_token"]
-    assert OAUTH_PROVIDER.scopes == ["Egnyte.filesystem", "Egnyte.link"]
+    assert OAUTH_PROVIDER.scopes == ["Egnyte.filesystem", "Egnyte.link", "Egnyte.webhooks"]
     with pytest.raises(RotatedRefreshTokenMissing):
         OAUTH_PROVIDER.parse_tokens(httpx.Response(200, json={"access_token": "new"}), context={"account_host": "apidemo.egnyte.com"})
 
