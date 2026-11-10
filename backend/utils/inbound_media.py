@@ -7,7 +7,8 @@ The one way such media becomes run-usable — fetchable by the agent, playable
 in the run popup, digestible by ``nodes.core.media_digest`` — is to stream it
 into workflow resources at delivery time and carry the public capability URL
 instead. Each provider's ``transform_trigger_payload`` decides WHICH url and
-WHICH auth, then calls :func:`rehost_inbound_media`.
+WHICH auth, then calls :func:`rehost_inbound_media`; media a node already
+read as bytes (an IMAP attachment) is kept by :func:`store_inbound_media`.
 
 The returned dict is the ``media`` slot every consumer reads (the frontend's
 ``deriveInboundMedia`` keys on ``rehosted`` + ``url``):
@@ -57,6 +58,13 @@ async def resolve_delivery_credential(
     return credential, owner_id
 
 
+async def _workflow_owner(pool, workflow_id: str):
+    return await pool.fetchrow(
+        "SELECT owner_id, organization_id FROM workflows WHERE id = $1::uuid",
+        workflow_id,
+    )
+
+
 async def rehost_inbound_media(
     pool,
     *,
@@ -79,10 +87,7 @@ async def rehost_inbound_media(
     delivery seam catches them and keeps the original payload. The URL is
     never logged: a provider URL may carry a credential in its path.
     """
-    owner = await pool.fetchrow(
-        "SELECT owner_id, organization_id FROM workflows WHERE id = $1::uuid",
-        workflow_id,
-    )
+    owner = await _workflow_owner(pool, workflow_id)
     if not owner:
         return None
 
@@ -102,12 +107,37 @@ async def rehost_inbound_media(
                     )
                     return None
                 chunks.append(chunk)
-    body = b"".join(chunks)
-
-    from utils.resource_store import create_resource_from_bytes
 
     mime = mimetype or content_type_header or "application/octet-stream"
     name = filename or url.rsplit("/", 1)[-1].split("?", 1)[0] or "inbound-media"
+    return await _store(owner, workflow_id=workflow_id, node_id=node_id, body=b"".join(chunks),
+                        source=source, mime=mime, name=name)
+
+
+async def store_inbound_media(
+    pool,
+    *,
+    workflow_id: str,
+    node_id: Optional[str],
+    body: bytes,
+    source: str,
+    mimetype: str,
+    filename: str,
+) -> Optional[Dict[str, Any]]:
+    """Keep media a delivery already holds as bytes (a mail attachment read over
+    IMAP) the way ``rehost_inbound_media`` keeps fetched media: the same
+    resource, owner and ``media`` slot. ``None`` when the workflow is unknown."""
+    owner = await _workflow_owner(pool, workflow_id)
+    if not owner:
+        return None
+    return await _store(owner, workflow_id=workflow_id, node_id=node_id, body=body,
+                        source=source, mime=mimetype or "application/octet-stream", name=filename)
+
+
+async def _store(owner, *, workflow_id: str, node_id: Optional[str], body: bytes, source: str,
+                 mime: str, name: str) -> Dict[str, Any]:
+    from utils.resource_store import create_resource_from_bytes
+
     resource = await create_resource_from_bytes(
         user_id=str(owner["owner_id"]),
         workflow_id=str(workflow_id),

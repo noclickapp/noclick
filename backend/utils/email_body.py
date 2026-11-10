@@ -140,6 +140,11 @@ def _html_to_text(fragment: str) -> str:
     return re.sub(r"\n{3,}", "\n\n", text).strip()
 
 
+def html_text(document: str) -> str:
+    """What a person reads of an HTML email: no head, scripts, styles or tags."""
+    return _html_to_text(_extract_fragment(document))
+
+
 def prepare_email_body(body: str) -> Tuple[str, str]:
     """(html_fragment, text_alternative) for an LLM/user-authored body."""
     if looks_like_html(body):

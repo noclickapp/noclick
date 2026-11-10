@@ -18,7 +18,7 @@ A poll node implements only its ``execute()`` poll logic and calls
 import hashlib
 import json
 import logging
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -152,6 +152,34 @@ def registration_config_error(node_cls, context: Optional[Dict[str, Any]]) -> Op
     return "; ".join(verdict["errors"]) or "config failed validation"
 
 
+def _poll_verdict(
+    state: Dict[str, Any],
+    items: List[Any],
+    id_fn: Callable[[Any], Optional[str]],
+    scope: Optional[str],
+    epoch: Optional[str],
+) -> Tuple[Optional[str], List[Any], List[str]]:
+    """``(baseline event or None, fresh items, every id)`` of one poll against
+    the stored state. An unjudgeable scope or epoch (None) is never a mismatch:
+    rebaselining on a non-signal would swallow real events."""
+    stored_scope, stored_epoch = state.get("scope"), state.get("epoch")
+    rebaseline = (scope is not None and stored_scope is not None and stored_scope != scope) or (
+        epoch is not None and stored_epoch is not None and stored_epoch != epoch
+    )
+    event = "baseline" if "seen_ids" not in state else ("rebaseline" if rebaseline else None)
+    seen = set(state.get("seen_ids", []))
+    current_ids: List[str] = []
+    fresh: List[Any] = []
+    for item in items:
+        item_id = id_fn(item)
+        if item_id is None:
+            continue
+        current_ids.append(item_id)
+        if event is None and item_id not in seen:
+            fresh.append(item)
+    return event, fresh, current_ids
+
+
 class ScheduledPollTriggerMixin(CronScheduleTriggerMixin):
     """Trigger-node mixin for schedule-driven polling.
 
@@ -281,7 +309,13 @@ class ScheduledPollTriggerMixin(CronScheduleTriggerMixin):
         return None
 
     async def _filter_unseen(
-        self, items: List[Any], id_fn: Callable[[Any], Optional[str]]
+        self,
+        items: List[Any],
+        id_fn: Callable[[Any], Optional[str]],
+        *,
+        epoch: Optional[Any] = None,
+        max_fresh: Optional[int] = None,
+        prepare: Optional[Callable[[List[Any]], Awaitable[Dict[str, Any]]]] = None,
     ) -> List[Any]:
         """Return only items whose id has not been seen on a previous poll.
 
@@ -291,6 +325,19 @@ class ScheduledPollTriggerMixin(CronScheduleTriggerMixin):
         whose scope no longer matches (the watched resource changed) is
         re-baselined the same way. Legacy state without a scope is adopted:
         dedup runs as before and the scope is stamped on the next write.
+
+        ``epoch`` is what the source says its ids are relative to (IMAP's
+        UIDVALIDITY): when it differs from the one the seen-set was recorded
+        under, every stored id may name something else, so the poll
+        re-baselines as for a new scope. A seen-set recorded without one adopts it.
+
+        ``max_fresh`` emits at most that many fresh items per poll, the first in
+        ``items`` order (pass them oldest first); the rest stay unseen for the
+        next poll. ``prepare`` is given the fresh items about to emit before any
+        is marked seen and returns ``{id: what to emit}``: an item it leaves out
+        stays unseen, so a fetch that failed is tried again next poll instead of
+        being lost. Either one reads the state once first (no write), and a
+        baseline never calls ``prepare``.
 
         With ``_poll_baseline_only`` set (the arm-time baseline runner), the
         poll only ever WRITES a baseline — when a valid one for this scope
@@ -310,42 +357,41 @@ class ScheduledPollTriggerMixin(CronScheduleTriggerMixin):
             _scope_of_op_config(op_config) if isinstance(op_config, BaseModel)
             else poll_scope(type(self), (getattr(self, "node_data", None) or {}).get("config"))
         )
+        epoch = None if epoch is None else str(epoch)
         baseline_only = getattr(self, "_poll_baseline_only", False)
 
+        prepared: Optional[Dict[str, Any]] = None
+        if max_fresh is not None or prepare is not None:
+            state = await self._update_node_state(lambda s: (None, s), skip_result=None)
+            if state is None:  # state unreadable: skip the tick, state intact
+                self._poll_emitted_count = 0
+                return []
+            event, fresh, _ = _poll_verdict(state, items, id_fn, scope, epoch)
+            if event is None:
+                if baseline_only:
+                    self._poll_emitted_count = 0
+                    return []
+                chosen = fresh if max_fresh is None else fresh[:max_fresh]
+                if prepare is not None:
+                    prepared = await prepare(chosen) if chosen else {}
+                    kept = set(prepared)
+                else:
+                    kept = {id_fn(item) for item in chosen}
+                held = {id_fn(item) for item in fresh} - kept
+                items = [item for item in items if id_fn(item) not in held]
+
         def mutator(state):
-            seen_list = state.get("seen_ids", [])  # ordered, least-recent first
-            stored_scope = state.get("scope")
-            is_first_poll = "seen_ids" not in state
-            # An unjudgeable scope (None) is never a mismatch — rebaselining on
-            # a non-signal would swallow real events.
-            rebaseline = (
-                scope is not None and stored_scope is not None and stored_scope != scope
-            )
-            seen = set(seen_list)
-
-            current_ids = []
-            fresh: List[Any] = []
-            for item in items:
-                item_id = id_fn(item)
-                if item_id is None:
-                    continue
-                current_ids.append(item_id)
-                if not is_first_poll and not rebaseline and item_id not in seen:
-                    fresh.append(item)
-
-            scope_to_store = scope if scope is not None else stored_scope
-            if is_first_poll or rebaseline:
-                new_state = {"seen_ids": bounded_seen_ids([], current_ids)}
-                if scope_to_store is not None:
-                    new_state["scope"] = scope_to_store
-                return new_state, ([], "rebaseline" if rebaseline else "baseline")
+            event, fresh, current_ids = _poll_verdict(state, items, id_fn, scope, epoch)
+            stored = {"scope": scope if scope is not None else state.get("scope"),
+                      "epoch": epoch if epoch is not None else state.get("epoch")}
+            stamps = {k: v for k, v in stored.items() if v is not None}
+            if event is not None:
+                return {"seen_ids": bounded_seen_ids([], current_ids), **stamps}, ([], event)
             if baseline_only:
                 return None, ([], None)  # valid baseline exists → hands off
             if fresh:
-                new_state = {"seen_ids": bounded_seen_ids(seen_list, current_ids)}
-                if scope_to_store is not None:
-                    new_state["scope"] = scope_to_store
-                return new_state, (fresh, None)
+                seen_list = state.get("seen_ids", [])  # ordered, least-recent first
+                return {"seen_ids": bounded_seen_ids(seen_list, current_ids), **stamps}, (fresh, None)
             return None, ([], None)  # nothing new → no write
 
         # skip_result: on a transient state blip / lost contention, emit nothing
@@ -361,6 +407,8 @@ class ScheduledPollTriggerMixin(CronScheduleTriggerMixin):
                 f"[{type(self).__name__}] node {self.node_id}: poll {baseline_event} "
                 f"(scope={scope}) — existing items recorded as seen, nothing emitted"
             )
+        if prepared is not None:
+            fresh = [prepared[id_fn(item)] for item in fresh if id_fn(item) in prepared]
         self._poll_emitted_count = 0 if baseline_event else len(fresh)
         return fresh
 

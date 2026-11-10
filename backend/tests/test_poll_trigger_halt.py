@@ -67,6 +67,93 @@ async def test_mixin_filter_unseen_signals_emptiness():
     assert p.trigger_produced_no_event({}) is False
 
 
+async def test_an_epoch_change_rebaselines_instead_of_firing_every_old_id():
+    """IMAP's UIDVALIDITY: a rebuilt folder renumbers its messages, so ids recorded under another epoch name
+    something else and the whole window would look new."""
+    p = _FakePoll()
+    ids = lambda x: x
+    assert await p._filter_unseen(["1", "2"], ids, epoch="v1") == []
+    assert await p._filter_unseen(["1", "2", "3"], ids, epoch="v1") == ["3"]
+    assert await p._filter_unseen(["1", "2", "3", "4"], ids, epoch="v2") == [], "a new epoch baselines"
+    assert p._state["epoch"] == "v2"
+    assert await p._filter_unseen(["1", "2", "3", "4", "5"], ids, epoch="v2") == ["5"]
+
+
+async def test_a_seen_set_without_an_epoch_adopts_one():
+    p = _FakePoll()
+    await p._filter_unseen(["1"], lambda x: x)
+    assert await p._filter_unseen(["1", "2"], lambda x: x, epoch="v1") == ["2"]
+    assert p._state["epoch"] == "v1"
+
+
+async def test_max_fresh_emits_the_oldest_and_holds_the_rest_for_the_next_poll():
+    p = _FakePoll()
+    await p._filter_unseen(["a"], lambda x: x)
+    items = ["a", "b", "c", "d", "e"]
+    assert await p._filter_unseen(items, lambda x: x, max_fresh=2) == ["b", "c"]
+    assert await p._filter_unseen(items, lambda x: x, max_fresh=2) == ["d", "e"]
+    assert await p._filter_unseen(items, lambda x: x, max_fresh=2) == []
+
+
+async def test_prepare_reads_only_what_emits_and_an_item_it_leaves_out_stays_new():
+    p = _FakePoll()
+    asked = []
+
+    async def prepare(chosen):
+        asked.append(list(chosen))
+        return {item: {"read": item} for item in chosen if item != "c"}
+
+    assert await p._filter_unseen(["a"], lambda x: x, prepare=prepare) == []
+    assert asked == [], "a baseline reads nothing"
+    assert await p._filter_unseen(["a", "b", "c"], lambda x: x, prepare=prepare) == [{"read": "b"}]
+    assert asked == [["b", "c"]]
+    assert "c" not in p._state["seen_ids"], "what couldn't be read isn't marked seen"
+
+    async def recovered(chosen):
+        return {item: {"read": item} for item in chosen}
+
+    assert await p._filter_unseen(["a", "b", "c"], lambda x: x, prepare=recovered) == [{"read": "c"}]
+
+
+async def test_a_failed_prepare_marks_nothing_seen():
+    p = _FakePoll()
+    await p._filter_unseen(["a"], lambda x: x)
+
+    async def broken(chosen):
+        raise RuntimeError("the server dropped the connection")
+
+    with pytest.raises(RuntimeError):
+        await p._filter_unseen(["a", "b"], lambda x: x, prepare=broken)
+    assert p._state["seen_ids"] == ["a"]
+
+
+async def test_the_arm_time_baseline_never_prepares_over_an_existing_baseline():
+    p = _FakePoll()
+    await p._filter_unseen(["a"], lambda x: x)
+    p._poll_baseline_only = True
+
+    async def prepare(chosen):
+        raise AssertionError("a headless baseline run must not read new items")
+
+    assert await p._filter_unseen(["a", "b"], lambda x: x, prepare=prepare, max_fresh=5) == []
+    assert p._state["seen_ids"] == ["a"], "and it consumes nothing"
+
+
+async def test_an_unreadable_state_skips_the_tick_before_preparing():
+    p = _FakePoll()
+
+    async def unreadable(mutator, *, max_retries=4, skip_result=None):
+        return skip_result
+
+    p._update_node_state = unreadable
+
+    async def prepare(chosen):
+        raise AssertionError("nothing is read when the seen-set can't be")
+
+    assert await p._filter_unseen(["a"], lambda x: x, prepare=prepare) == []
+    assert p.trigger_produced_no_event({}) is True
+
+
 async def test_mixin_defaults_false_when_never_polled():
     # A node that never polled must never wrongly halt downstream.
     assert _FakePoll().trigger_produced_no_event({}) is False
