@@ -403,6 +403,9 @@ def _split_csv(value: Optional[str]) -> List[str]:
 
 class UpstashVectorNode(WorkflowNode):
     """Upstash Vector database automation node."""
+    integration_type = "automation-upstash-vector"
+    credential_provider_labels = {"upstash_vector": "Upstash Vector Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Search an Upstash Vector database by text (server-side embedding) for the most relevant documents",

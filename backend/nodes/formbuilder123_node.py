@@ -384,6 +384,9 @@ async def records(data, config):
 
 
 class FormBuilder123Node(WorkflowNode):
+    integration_type = "automation-123formbuilder"
+    credential_provider_labels = {"123formbuilder": "123FormBuilder Account"}
+    auto_select_credential = False
     workflow_credential_refresh = True
     scope_registry = ScopeRegistry(provider="123formbuilder", enforcement=Enforcement.STRICT, requirements={op: ScopeRequirement(scopes=(), credential_types=(FAMILY,)) for op in OPS})
     connection_evidence = ConnectionEvidence(field="form_id", noun="forms", operation="check_connection")

@@ -139,6 +139,9 @@ def _json_object(raw: Optional[str], *, field: str) -> Dict[str, Any]:
 
 class RecurlyNode(WorkflowNode):
     """Run explicit Recurly v3 billing API operations."""
+    integration_type = "automation-recurly"
+    credential_provider_labels = {"recurly": "Recurly Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Find a customer by email and list their subscriptions",

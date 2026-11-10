@@ -382,6 +382,8 @@ class GoogleDocsNode(WorkflowNode):
     """
     Google Docs workflow node for managing Google Documents.
     """
+    integration_type = "automation-google-docs"
+    credential_provider_labels = {"google_docs": "Google Account"}
 
     edit_examples = [
         "Create a new meeting notes document and append today's discussion",

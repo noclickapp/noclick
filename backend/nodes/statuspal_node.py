@@ -403,6 +403,8 @@ async def _catalog(data, context, cfg):
     return items, observation
 
 class StatusPalNode(WorkflowNode):
+    integration_type = "automation-statuspal"
+    credential_provider_labels = {"statuspal": "Statuspal Account"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="test_connection", noun="StatusPal selected organization catalog read access", proves="reachability", label_keys=("subdomain",))
     edit_examples = ["Read organization status-page identifiers/time zones without DNS settings", "Read service state/hierarchy under a protected selected page", "Observe one bounded page without following returned links"]

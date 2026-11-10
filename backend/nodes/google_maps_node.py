@@ -1527,6 +1527,9 @@ def _latlng_query(lat: str, lng: str) -> Dict[str, Any]:
 
 class GoogleMapsNode(WorkflowNode):
     """Google Maps Platform automation node."""
+    integration_type = "automation-google-maps"
+    credential_provider_labels = {"google_maps": "Google Maps Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Geocode a street address into latitude and longitude",

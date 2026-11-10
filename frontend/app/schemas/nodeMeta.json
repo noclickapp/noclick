@@ -4,30 +4,6 @@
     "agent": {},
     "alarm": {},
     "approval": {},
-    "automation-123formbuilder": {
-      "agentToolProvider": true
-    },
-    "automation-acculynx": {
-      "agentToolProvider": true
-    },
-    "automation-adapty": {
-      "agentToolProvider": true
-    },
-    "automation-affinity": {
-      "agentToolProvider": true
-    },
-    "automation-ahrefs": {
-      "agentToolProvider": true
-    },
-    "automation-airtable": {
-      "agentToolProvider": true
-    },
-    "automation-apify": {
-      "agentToolProvider": true
-    },
-    "automation-apollo": {
-      "agentToolProvider": true
-    },
     "automation-appsheet": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -38,17 +14,11 @@
         "on_schedule"
       ]
     },
-    "automation-aprimo": {
-      "agentToolProvider": true
-    },
     "automation-asana": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_resource_change"
       ]
-    },
-    "automation-ashby": {
-      "agentToolProvider": true
     },
     "automation-atlas-admin": {
       "agentToolProvider": true,
@@ -72,9 +42,6 @@
         "on_attio_event"
       ]
     },
-    "automation-auth0": {
-      "agentToolProvider": true
-    },
     "automation-bamboohr": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -84,9 +51,6 @@
         "on_personal_info_change",
         "on_field_change"
       ]
-    },
-    "automation-basedash": {
-      "agentToolProvider": true
     },
     "automation-beehiiv": {
       "agentToolProvider": true,
@@ -107,26 +71,11 @@
         "on_beehiiv_event"
       ]
     },
-    "automation-bigcommerce": {
-      "agentToolProvider": true
-    },
     "automation-bigquery": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_query_results"
       ]
-    },
-    "automation-bitrise": {
-      "agentToolProvider": true
-    },
-    "automation-bloomerang": {
-      "agentToolProvider": true
-    },
-    "automation-bluesky": {
-      "agentToolProvider": true
-    },
-    "automation-botpress": {
-      "agentToolProvider": true
     },
     "automation-box": {
       "agentToolProvider": true,
@@ -139,9 +88,6 @@
       "triggerOperations": [
         "receive_webhook"
       ]
-    },
-    "automation-bytescale": {
-      "agentToolProvider": true
     },
     "automation-cal-com": {
       "agentToolProvider": true,
@@ -162,15 +108,6 @@
         "on_contact_deleted"
       ]
     },
-    "automation-canva": {
-      "agentToolProvider": true
-    },
-    "automation-chroma": {
-      "agentToolProvider": true
-    },
-    "automation-clay": {
-      "agentToolProvider": true
-    },
     "automation-clickhouse": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -182,9 +119,6 @@
       "triggerOperations": [
         "on_task_event"
       ]
-    },
-    "automation-cliniko": {
-      "agentToolProvider": true
     },
     "automation-cloudflare": {
       "agentToolProvider": true,
@@ -214,20 +148,11 @@
         "cloudflare_kv_key_updated"
       ]
     },
-    "automation-cloudzero": {
-      "agentToolProvider": true
-    },
     "automation-confluence": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_new_content"
       ]
-    },
-    "automation-connecteam": {
-      "agentToolProvider": true
-    },
-    "automation-cyclr": {
-      "agentToolProvider": true
     },
     "automation-databricks": {
       "agentToolProvider": true,
@@ -244,9 +169,6 @@
       "triggerOperations": [
         "on_new_event"
       ]
-    },
-    "automation-deel": {
-      "agentToolProvider": true
     },
     "automation-devin": {
       "agentToolProvider": true,
@@ -267,35 +189,11 @@
         "on_mention"
       ]
     },
-    "automation-dnsimple": {
-      "agentToolProvider": true
-    },
-    "automation-docspell": {
-      "agentToolProvider": true
-    },
-    "automation-doppler": {
-      "agentToolProvider": true
-    },
-    "automation-dropbox": {
-      "agentToolProvider": true
-    },
-    "automation-dropcontact": {
-      "agentToolProvider": true
-    },
     "automation-dv360": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_job_completed"
       ]
-    },
-    "automation-elasticsearch": {
-      "agentToolProvider": true
-    },
-    "automation-elevenlabs": {
-      "agentToolProvider": true
-    },
-    "automation-etsy": {
-      "agentToolProvider": true
     },
     "automation-exa": {
       "agentToolProvider": true,
@@ -308,12 +206,6 @@
         "answer",
         "find_similar"
       ]
-    },
-    "automation-excel": {
-      "agentToolProvider": true
-    },
-    "automation-exoscale": {
-      "agentToolProvider": true
     },
     "automation-expensify": {
       "agentToolProvider": true,
@@ -386,12 +278,6 @@
       "triggerOperations": [
         "on_document_changed"
       ]
-    },
-    "automation-forgejo": {
-      "agentToolProvider": true
-    },
-    "automation-fountain": {
-      "agentToolProvider": true
     },
     "automation-freshsales": {
       "agentToolProvider": true,
@@ -545,15 +431,6 @@
         "on_knowledge_base_trained_url_change"
       ]
     },
-    "automation-google-ads": {
-      "agentToolProvider": true
-    },
-    "automation-google-analytics": {
-      "agentToolProvider": true
-    },
-    "automation-google-business-profile": {
-      "agentToolProvider": true
-    },
     "automation-google-calendar": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -564,20 +441,11 @@
         "on_event_tentative"
       ]
     },
-    "automation-google-classroom": {
-      "agentToolProvider": true
-    },
     "automation-google-cloud-storage": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_new_object"
       ]
-    },
-    "automation-google-contacts": {
-      "agentToolProvider": true
-    },
-    "automation-google-docs": {
-      "agentToolProvider": true
     },
     "automation-google-drive": {
       "agentToolProvider": true,
@@ -595,17 +463,11 @@
         "on_form_response"
       ]
     },
-    "automation-google-maps": {
-      "agentToolProvider": true
-    },
     "automation-google-meet": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_new_conference_record"
       ]
-    },
-    "automation-google-search-console": {
-      "agentToolProvider": true
     },
     "automation-google-sheets": {
       "agentToolProvider": true,
@@ -613,26 +475,11 @@
         "on_new_row"
       ]
     },
-    "automation-google-slides": {
-      "agentToolProvider": true
-    },
-    "automation-google-tasks": {
-      "agentToolProvider": true
-    },
     "automation-google-translate": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_batch_completed"
       ]
-    },
-    "automation-gusto": {
-      "agentToolProvider": true
-    },
-    "automation-hackernews": {
-      "agentToolProvider": true
-    },
-    "automation-hetrixtools": {
-      "agentToolProvider": true
     },
     "automation-hex": {
       "agentToolProvider": true,
@@ -662,12 +509,6 @@
         "on_ticket_created"
       ]
     },
-    "automation-ilert": {
-      "agentToolProvider": true
-    },
-    "automation-immich": {
-      "agentToolProvider": true
-    },
     "automation-instagram": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -691,9 +532,6 @@
         "on_company_event"
       ]
     },
-    "automation-invoiceninja": {
-      "agentToolProvider": true
-    },
     "automation-jira": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -702,15 +540,6 @@
         "on_issue_deleted",
         "on_comment_added"
       ]
-    },
-    "automation-jwplayer": {
-      "agentToolProvider": true
-    },
-    "automation-kajabi": {
-      "agentToolProvider": true
-    },
-    "automation-keila": {
-      "agentToolProvider": true
     },
     "automation-klaviyo": {
       "agentToolProvider": true,
@@ -770,20 +599,11 @@
         "on_project_deleted"
       ]
     },
-    "automation-linkedin": {
-      "agentToolProvider": true
-    },
-    "automation-linkwarden": {
-      "agentToolProvider": true
-    },
     "automation-loops": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_loops_event"
       ]
-    },
-    "automation-mailchimp": {
-      "agentToolProvider": true
     },
     "automation-mailgun": {
       "agentToolProvider": true,
@@ -798,9 +618,6 @@
         "on_soft_bounce",
         "on_inbound_email"
       ]
-    },
-    "automation-mediasilo": {
-      "agentToolProvider": true
     },
     "automation-meta": {
       "agentToolProvider": true,
@@ -823,26 +640,11 @@
         "on_change_notification"
       ]
     },
-    "automation-microsoft-todo": {
-      "agentToolProvider": true
-    },
-    "automation-milvus": {
-      "agentToolProvider": true
-    },
-    "automation-mindbody": {
-      "agentToolProvider": true
-    },
     "automation-monday": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_board_event"
       ]
-    },
-    "automation-mongodb": {
-      "agentToolProvider": true
-    },
-    "automation-nocodb": {
-      "agentToolProvider": true
     },
     "automation-notion": {
       "agentToolProvider": true,
@@ -854,23 +656,11 @@
         "on_database_created"
       ]
     },
-    "automation-nylas": {
-      "agentToolProvider": true
-    },
-    "automation-okta": {
-      "agentToolProvider": true
-    },
-    "automation-onedrive": {
-      "agentToolProvider": true
-    },
     "automation-onelake": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_new_file"
       ]
-    },
-    "automation-openstatus": {
-      "agentToolProvider": true
     },
     "automation-outlook": {
       "agentToolProvider": true,
@@ -891,17 +681,11 @@
         "on_incident_event"
       ]
     },
-    "automation-pagespeed": {
-      "agentToolProvider": true
-    },
     "automation-parallel": {
       "agentToolProvider": true,
       "triggerOperations": [
         "receive_webhook"
       ]
-    },
-    "automation-pdfco": {
-      "agentToolProvider": true
     },
     "automation-perplexity": {
       "agentToolProvider": true,
@@ -912,9 +696,6 @@
         "sec_search",
         "structured_output"
       ]
-    },
-    "automation-personio": {
-      "agentToolProvider": true
     },
     "automation-phantombuster": {
       "agentToolProvider": true,
@@ -927,9 +708,6 @@
       "triggerOperations": [
         "on_call"
       ]
-    },
-    "automation-pinecone": {
-      "agentToolProvider": true
     },
     "automation-pipedrive": {
       "agentToolProvider": true,
@@ -967,12 +745,6 @@
         "on_pipedrive_any_event"
       ]
     },
-    "automation-porkbun": {
-      "agentToolProvider": true
-    },
-    "automation-postgres": {
-      "agentToolProvider": true
-    },
     "automation-posthog": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -992,27 +764,6 @@
         "on_screen",
         "on_custom_event"
       ]
-    },
-    "automation-powerdns": {
-      "agentToolProvider": true
-    },
-    "automation-predictleads": {
-      "agentToolProvider": true
-    },
-    "automation-printify": {
-      "agentToolProvider": true
-    },
-    "automation-productplan": {
-      "agentToolProvider": true
-    },
-    "automation-pulsetic": {
-      "agentToolProvider": true
-    },
-    "automation-qdrant": {
-      "agentToolProvider": true
-    },
-    "automation-qonversion": {
-      "agentToolProvider": true
     },
     "automation-quickbooks": {
       "agentToolProvider": true,
@@ -1138,21 +889,6 @@
         "on_vendorcredit_void"
       ]
     },
-    "automation-quo": {
-      "agentToolProvider": true
-    },
-    "automation-ramp": {
-      "agentToolProvider": true
-    },
-    "automation-rebrandly": {
-      "agentToolProvider": true
-    },
-    "automation-recurly": {
-      "agentToolProvider": true
-    },
-    "automation-reddit": {
-      "agentToolProvider": true
-    },
     "automation-redis": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -1171,15 +907,6 @@
       "triggerOperations": [
         "receive_webhook"
       ]
-    },
-    "automation-ringcentral": {
-      "agentToolProvider": true
-    },
-    "automation-rippling": {
-      "agentToolProvider": true
-    },
-    "automation-rss": {
-      "agentToolProvider": true
     },
     "automation-salesforce": {
       "agentToolProvider": true,
@@ -1202,12 +929,6 @@
         "on_new_user",
         "on_report_threshold_crossed"
       ]
-    },
-    "automation-sematext": {
-      "agentToolProvider": true
-    },
-    "automation-semrush": {
-      "agentToolProvider": true
     },
     "automation-send-email": {
       "agentToolProvider": true
@@ -1240,12 +961,6 @@
         "on_export_completed"
       ]
     },
-    "automation-singlestore": {
-      "agentToolProvider": true
-    },
-    "automation-skyvia": {
-      "agentToolProvider": true
-    },
     "automation-slack": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -1257,26 +972,11 @@
         "on_file_shared"
       ]
     },
-    "automation-sling": {
-      "agentToolProvider": true
-    },
     "automation-snowflake": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_query_results"
       ]
-    },
-    "automation-stackitdns": {
-      "agentToolProvider": true
-    },
-    "automation-statuspage": {
-      "agentToolProvider": true
-    },
-    "automation-statuspal": {
-      "agentToolProvider": true
-    },
-    "automation-stream-chat": {
-      "agentToolProvider": true
     },
     "automation-stripe": {
       "agentToolProvider": true,
@@ -1340,15 +1040,6 @@
       ]
     },
     "automation-submit-external-form": {},
-    "automation-sumup": {
-      "agentToolProvider": true
-    },
-    "automation-supabase": {
-      "agentToolProvider": true
-    },
-    "automation-supernormal": {
-      "agentToolProvider": true
-    },
     "automation-table": {
       "agentToolProvider": true
     },
@@ -1377,12 +1068,6 @@
         "on_user_deleted"
       ]
     },
-    "automation-talkjs": {
-      "agentToolProvider": true
-    },
-    "automation-tavily": {
-      "agentToolProvider": true
-    },
     "automation-telegram": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -1399,9 +1084,6 @@
         "on_any_threads_event"
       ]
     },
-    "automation-tiktok": {
-      "agentToolProvider": true
-    },
     "automation-trello": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -1416,26 +1098,11 @@
         "on_call"
       ]
     },
-    "automation-twitter": {
-      "agentToolProvider": true
-    },
     "automation-typeform": {
       "agentToolProvider": true,
       "triggerOperations": [
         "on_new_form_response"
       ]
-    },
-    "automation-upstash-vector": {
-      "agentToolProvider": true
-    },
-    "automation-uptimecom": {
-      "agentToolProvider": true
-    },
-    "automation-voyage": {
-      "agentToolProvider": true
-    },
-    "automation-weaviate": {
-      "agentToolProvider": true
     },
     "automation-webflow": {
       "agentToolProvider": true,
@@ -1456,27 +1123,12 @@
         "comment_created"
       ]
     },
-    "automation-websupport": {
-      "agentToolProvider": true
-    },
     "automation-whatsapp": {
       "agentToolProvider": true,
       "triggerOperations": [
         "receive_message",
         "receive_status_update"
       ]
-    },
-    "automation-word": {
-      "agentToolProvider": true
-    },
-    "automation-wordpress": {
-      "agentToolProvider": true
-    },
-    "automation-xata": {
-      "agentToolProvider": true
-    },
-    "automation-youtube": {
-      "agentToolProvider": true
     },
     "automation-zendesk": {
       "agentToolProvider": true,

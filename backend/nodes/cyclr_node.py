@@ -422,6 +422,9 @@ async def request_operation(raw_credential, config):
 
 
 class CyclrNode(WorkflowNode):
+    integration_type = "automation-cyclr"
+    credential_provider_labels = {"cyclr": "Cyclr Account"}
+    auto_select_credential = False
     workflow_credential_refresh = True
     scope_registry = CYCLR_SCOPES
     connection_evidence = ConnectionEvidence(operation="get_account", noun="Cyclr selected account metadata", proves="reachability", label_keys=("id",))

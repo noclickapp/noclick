@@ -785,6 +785,9 @@ def _split_csv(value: Optional[str]) -> List[str]:
 
 class PineconeNode(WorkflowNode):
     """Pinecone vector database automation node."""
+    integration_type = "automation-pinecone"
+    credential_provider_labels = {"pinecone": "Pinecone Account"}
+    auto_select_credential = False
 
     # The index loader returns a bare list the evidence field path can't read.
     connection_evidence = ConnectionEvidence(

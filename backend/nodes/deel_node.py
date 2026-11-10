@@ -325,6 +325,9 @@ def _parse_json(value, expected, title):
 
 class DeelNode(WorkflowNode):
     """Sync people and maintain organization and reporting structures in Deel."""
+    integration_type = "automation-deel"
+    credential_provider_labels = {"deel": "Deel Account"}
+    auto_select_credential = False
 
     connection_evidence = ConnectionEvidence(
         operation="list_people", noun="people",

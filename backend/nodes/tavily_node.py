@@ -276,6 +276,8 @@ def _body(config: BaseModel) -> dict[str, Any]:
 
 class TavilyNode(WorkflowNode):
     """Tavily REST API operations for web-grounded workflows."""
+    integration_type = "automation-tavily"
+    credential_provider_labels = {"tavily": "Tavily Account"}
 
     edit_examples = [
         "Search the web for current information about a topic",

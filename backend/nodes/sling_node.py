@@ -358,6 +358,9 @@ async def request_operation(credential_data, config):
 
 
 class SlingNode(WorkflowNode):
+    integration_type = "automation-sling"
+    credential_provider_labels = {"sling": "Sling Account"}
+    auto_select_credential = False
     workflow_credential_refresh = True
     scope_registry = SLING_SCOPES
     connection_evidence = ConnectionEvidence(operation="get_organization", noun="Sling organization metadata", proves="reachability", label_keys=("name",))

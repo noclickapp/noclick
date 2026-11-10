@@ -679,6 +679,9 @@ def _opportunities(report: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 class PageSpeedNode(WorkflowNode):
     """Google PageSpeed Insights automation node."""
+    integration_type = "automation-pagespeed"
+    credential_provider_labels = {"pagespeed": "Pagespeed Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Run a full PageSpeed analysis for my landing page",

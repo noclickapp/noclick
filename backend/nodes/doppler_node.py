@@ -169,6 +169,7 @@ class DopplerNodeConfig(NodeConfig[DopplerOperation, DopplerTokenCredential]):
 
 class DopplerNode(WorkflowNode):
     """Operate on Doppler projects, configs, environments and secrets."""
+    integration_type = "automation-doppler"
 
     connection_evidence = ConnectionEvidence(
         identity_operation="get_token_info", noun="Doppler token", proves="reachability",

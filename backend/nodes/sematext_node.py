@@ -317,6 +317,8 @@ async def list_apps(data, limit):
 
 
 class SematextNode(WorkflowNode):
+    integration_type = "automation-sematext"
+    auto_select_credential = False
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(identity_operation="check_connection", noun="Sematext app catalog access",
         label_keys=(), identity_keys=(), proves="reachability")

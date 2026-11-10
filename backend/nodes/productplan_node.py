@@ -617,6 +617,9 @@ def _updates(cfg):
 
 
 class ProductPlanNode(WorkflowNode):
+    integration_type = "automation-productplan"
+    credential_provider_labels = {"productplan": "Productplan Account"}
+    auto_select_credential = False
     node_type = NODE_TYPE
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="test_connection", noun="ProductPlan API access", proves="reachability")

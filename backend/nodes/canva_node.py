@@ -1351,6 +1351,8 @@ class CanvaNode(WorkflowNode):
     - OIDC Operations (2): get JWKS, get userinfo
     - App JWT Operations (1): get app JWKS
     """
+    integration_type = "automation-canva"
+    credential_provider_labels = {"canva": "Canva Account"}
 
     edit_examples = [
         'Create a new design in the "Marketing" folder with custom dimensions',

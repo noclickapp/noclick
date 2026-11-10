@@ -1508,6 +1508,9 @@ class OneDriveNode(WorkflowNode):
     Total Operations: 37
     Authentication: Microsoft OAuth 2.0
     """
+    integration_type = "automation-onedrive"
+    credential_provider_labels = {"microsoft": "Microsoft Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Upload the monthly report PDF to the Finance folder",

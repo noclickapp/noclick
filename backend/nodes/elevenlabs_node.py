@@ -1402,6 +1402,8 @@ class ElevenLabsNode(WorkflowNode):
     Authentication: API Key (xi-api-key header)
     Get your API key at: https://elevenlabs.io/app/settings
     """
+    integration_type = "automation-elevenlabs"
+    credential_provider_labels = {"elevenlabs": "Elevenlabs Account"}
 
     edit_examples = [
         "Convert customer support FAQs to speech in 5 languages",

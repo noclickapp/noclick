@@ -421,6 +421,7 @@ class HackerNewsNode(WorkflowNode):
 
     No authentication required - both APIs are public with no rate limits.
     """
+    integration_type = "automation-hackernews"
 
     edit_examples = [
         "Get top 25 stories and fetch full details for each",

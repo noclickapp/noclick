@@ -288,6 +288,9 @@ async def _page(data, kind, scope, *, app=None, limit=50, token=None, names=Fals
 
 
 class BitriseNode(WorkflowNode):
+    integration_type = "automation-bitrise"
+    credential_provider_labels = {"bitrise": "Bitrise Account"}
+    auto_select_credential = False
     scope_registry = BITRISE_SCOPES
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="accessible app slugs", label_keys=("slug",), proves="reachability")
 

@@ -466,6 +466,8 @@ async def operate(auth, cfg):
 
 
 class PowerDNSNode(WorkflowNode):
+    integration_type = "automation-powerdns"
+    credential_provider_labels = {"powerdns": "Powerdns Account"}
     connection_evidence = ConnectionEvidence(operation="list_servers", noun="accessible authoritative server metadata", label_keys=("id",), proves="reachability")
 
     @classmethod

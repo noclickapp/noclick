@@ -458,6 +458,8 @@ class GoogleContactsNode(WorkflowNode):
     """
     Google Contacts workflow node for managing contacts via Google People API.
     """
+    integration_type = "automation-google-contacts"
+    credential_provider_labels = {"google_contacts": "Google Account"}
 
     # Standard person fields to request from the API
     PERSON_FIELDS = (

@@ -16,51 +16,44 @@ import { INTEGRATION_METADATA, mergeDeclarations } from './integrationMetadata';
  * Example: 'GoogleSheetsOAuthCredential' -> 'google_sheets_oauth'
  */
 export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
+    // Named ahead of the generated aliases, whose sorted keys would put a schema title first:
+    // getSchemaTitleFromCredentialType returns the first name a credential type has.
     'BytescaleSecretAPIKeyCredential': 'bytescale_secret_api_key',
     'LinkwardenAccessTokenCredential': 'linkwarden_access_token',
     'DocspellAuthTokenCredential': 'docspell_auth_token',
-    'AdaptyAPIKeyCredential': 'adapty_api_key',
-    'BotpressPATCredential': 'botpress_pat',
     'RipplingAPITokenCredential': 'rippling_api_token',
-    'Rippling API Token': 'rippling_api_token',
-    'AccuLynxAPIKeyCredential': 'acculynx_api_key',
     'MindbodyAPIKeyCredential': 'mindbody_api_key',
-    'Mindbody Public API': 'mindbody_api_key',
     'PredictLeadsAPIKeyTokenCredential': 'predictleads_api_key_token',
-    'PredictLeads API Key and Token': 'predictleads_api_key_token',
     'SematextAccountAPIKeyCredential': 'sematext_account_api_key',
-    'Sematext Account API Key': 'sematext_account_api_key',
     'ImmichAPIKeyCredential': 'immich_api_key',
     'RebrandlyAPIKeyCredential': 'rebrandly_api_key',
-    'Rebrandly API Key': 'rebrandly_api_key',
     'SingleStoreManagementCredential': 'singlestore_management_api_key',
-    'SingleStore Management API': 'singlestore_management_api_key',
-    'SkyviaAPITokenCredential': 'skyvia_api_token',
     'StatusPalAPIKeyCredential': 'statuspal_api_key',
-    'Status Pal API Key': 'statuspal_api_key',
     'StreamChatServerCredential': 'stream_chat_api_key',
-    'Stream Chat Server Key': 'stream_chat_api_key',
-    'Supernormal API Token': 'supernormal_api_key',
-    'SupernormalAPITokenCredential': 'supernormal_api_key',
     'UptimeComAPITokenCredential': 'uptimecom_api_token',
-    'Uptime.com API Token': 'uptimecom_api_token',
-    'DropcontactAccessTokenCredential': 'dropcontact_access_token',
-    'FountainPrivateHireCredential': 'fountain_private_hire',
-    'IlertAPIKeyCredential': 'ilert_api_key',
-    'FormBuilder123TokenCredential': '123formbuilder_v2_token',
-    'PorkbunCredential': 'porkbun_api_key',
-    'HetrixToolsAPIKeyCredential': 'hetrixtools_api_key',
     'NylasAPIKeyCredential': 'nylas_api_key',
-    'Nylas API Key': 'nylas_api_key',
     'NylasAccessTokenCredential': 'nylas_access_token',
-    'Nylas Access Token': 'nylas_access_token',
+    'GoogleClassroomOAuthCredential': 'google_oauth',
+    'ForgejoPATCredential': 'forgejo_pat',
+    'InvoiceNinjaAPITokenCredential': 'invoiceninja_api_token',
+    'DeelAPITokenCredential': 'deel_api_token',
+    'KajabiAccessTokenCredential': 'kajabi_access_token',
+    'PDFCoAPIKeyCredential': 'pdfco_api_key',
+    'SumUpAPIKeyCredential': 'sumup_api_key',
+    'BigCommerceAPITokenCredential': 'bigcommerce_api_token',
+    'Auth0TokenCredential': 'auth0_token',
+    'GustoAccessTokenCredential': 'gusto_access_token',
+    'OktaAPITokenCredential': 'okta_api_token',
+    'StatuspageAPIKeyCredential': 'statuspage_api_key',
+    'RedditOAuthCredential': 'reddit_oauth',
+    'PulseticAPIKeyCredential': 'pulsetic_api_key',
+    'AprimoBearerCredential': 'aprimo_bearer',
+    'BloomerangPrivateApiKeyCredential': 'bloomerang_private_api_key',
+    'QonversionSecretKeyCredential': 'qonversion_secret_key',
+
+    'Status Pal API Key': 'statuspal_api_key',
     // Agent credentials
     'AgentCredentials': 'agent_api_key',
-    'CloudZeroAPIKeyCredential': 'cloudzero_api_key',
-
-    // Keila supplied existing API token
-    'KeilaAPIKeyCredential': 'keila_api_key',
-    'MediaSiloAPIKeyCredential': 'mediasilo_api_key',
 
     // Telegram
     'TelegramBotTokenCredential': 'telegram_bot_token',
@@ -73,102 +66,27 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
     'GoogleDriveOAuthCredential': 'google_drive_oauth',
     'GmailOAuthCredential': 'google_gmail_oauth',
     'GoogleCalendarOAuthCredential': 'google_calendar_oauth',
-    'PowerDNSCredential': 'powerdns_api_key',
-    'YouTubeOAuthCredential': 'google_youtube_oauth',
-    'GoogleDocsOAuthCredential': 'google_docs_oauth',
-    'GoogleSlidesOAuthCredential': 'google_slides_oauth',
     'GoogleFormsOAuthCredential': 'google_forms_oauth',
-    'GoogleClassroomOAuthCredential': 'google_oauth',
-    'GoogleTasksOAuthCredential': 'google_tasks_oauth',
-    'GoogleContactsOAuthCredential': 'google_contacts_oauth',
-    'GoogleAnalyticsOAuthCredential': 'google_analytics_oauth',
-    'GoogleAdsOAuthCredential': 'google_ads_oauth',
-    'GoogleBusinessProfileOAuthCredential': 'google_business_profile_oauth',
-    'GoogleSearchConsoleOAuthCredential': 'google_search_console_oauth',
 
     // Microsoft
     'OutlookOAuthCredential': 'microsoft_outlook_oauth',
-    'ExcelOAuthCredential': 'microsoft_excel_oauth',
-    'OneDriveOAuthCredential': 'microsoft_onedrive_oauth',
-    'MicrosoftTodoOAuthCredential': 'microsoft_todo_oauth',
-    'WordOAuthCredential': 'microsoft_word_oauth',
     'MicrosoftTeamsOAuthCredential': 'microsoft_teams_oauth',
 
     // Linear
     'LinearOAuthCredential': 'linear_oauth',
     'LinearPATCredential': 'linear_pat',
 
-    // Airtable
-    'AirtablePATCredential': 'airtable_pat',
-    'AirtableOAuthCredential': 'airtable_oauth',
-
     // Stripe
     'StripeOAuthCredential': 'stripe_oauth',
     'StripeApiKeyCredential': 'stripe_api_key',
-    'CyclrOAuthTokenCredential': 'cyclr_oauth_token',
-    'SlingUserTokenCredential': 'sling_user_token',
-    'ClinikoApiKeyCredential': 'cliniko_api_key',
 
     // GitHub
     'GithubPATCredential': 'github_pat',
-    'ForgejoPATCredential': 'forgejo_pat',
-    'Forgejo Personal Access Token': 'forgejo_pat',
     'GithubOAuthCredential': 'github_oauth',
-
-    // Apify
-    'ApifyApiTokenCredential': 'apify_api_token',
-
-    // Ahrefs
-    'AhrefsAPIKeyCredential': 'ahrefs_api_key',
-    'InvoiceNinjaAPITokenCredential': 'invoiceninja_api_token',
-
-    // Deel
-    'DeelAPITokenCredential': 'deel_api_token',
-
-    // Kajabi
-    'KajabiAccessTokenCredential': 'kajabi_access_token',
-    'PDFCoAPIKeyCredential': 'pdfco_api_key',
-
-    // Personio
-    'PersonioAccessTokenCredential': 'personio_access_token',
-    'QuoAPIKeyCredential': 'quo_api_key',
-
-    // SumUp
-    'SumUpAPIKeyCredential': 'sumup_api_key',
-    'BigCommerceAPITokenCredential': 'bigcommerce_api_token',
-
-    // Auth0
-    'Auth0TokenCredential': 'auth0_token',
-    'Auth0 Token': 'auth0_token',
-    'EtsyTokenCredential': 'etsy_token',
-
-    // Gusto
-    'GustoAccessTokenCredential': 'gusto_access_token',
-    'Gusto Access Token': 'gusto_access_token',
-    'OktaAPITokenCredential': 'okta_api_token',
-    'RampAccessTokenCredential': 'ramp_access_token',
-
-    // RingCentral
-    'RingCentralAccessTokenCredential': 'ringcentral_access_token',
-    'StatuspageAPIKeyCredential': 'statuspage_api_key',
-    'Statuspage API Key': 'statuspage_api_key',
-
-    // Apollo
-    'ApolloAPIKeyCredential': 'apollo_api_key',
-
-    // BlueSky
-    'ExoscaleAPIKeyCredential': 'exoscale_api_key',
-    'BlueSkyAppPasswordCredential': 'bluesky_handle_password',
-
-    // Canva
-    'CanvaOAuthCredential': 'canva_oauth',
 
     // Discord
     'DiscordBotInstallCredential': 'discord_bot_install',
     'DiscordBotTokenCredential': 'discord_bot_token',
-
-    // Dropbox
-    'DropboxOAuthCredential': 'dropbox_oauth',
 
     // Instagram (uses Facebook OAuth)
     'InstagramOAuthCredential': 'instagram_oauth',
@@ -190,27 +108,12 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
     'ConfluenceOAuthCredential': 'confluence_oauth',
     'ConfluenceApiTokenCredential': 'confluence_api_token',
 
-    // LinkedIn
-    'LinkedInOAuthCredential': 'linkedin_oauth',
-
     // Notion
     'NotionIntegrationTokenCredential': 'notion_integration_token',
     'NotionOAuthCredential': 'notion_oauth',
 
-    // PostgreSQL
-    'PostgresConnectionStringCredential': 'postgres_connection_string',
-    'PostgresCredentialsCredential': 'postgres_credentials',
-
-    // Reddit
-    'RedditOAuthCredential': 'reddit_oauth',
-
     // RSS
     'RSSFeedURLCredential': 'rss_feed_url',
-    'RSSDirectCredential': 'direct',
-    'RSSAppCredential': 'rss_app',
-    'RSSFeedlyCredential': 'feedly',
-    'RSSFreshRSSCredential': 'freshrss',
-    'RSSMinifluxCredential': 'miniflux',
 
     // Redis
     'RedisCredential': 'redis_rest',
@@ -221,9 +124,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
     // Salesforce
     'SalesforceOAuthCredential': 'salesforce_oauth',
 
-    // Semrush
-    'SemrushAPIKeyCredential': 'semrush_api_key',
-
     // Shopify
     'ShopifyOAuthCredential': 'shopify_oauth',
     'ShopifyAccessTokenCredential': 'shopify_access_token',
@@ -231,60 +131,17 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
     // Slack
     'SlackOAuthCredential': 'slack_oauth',
     'SlackBotTokenCredential': 'slack_bot_token',
-    'TalkJSServerSecretCredential': 'talkjs_server_secret',
-
-    // Supabase
-    'SupabaseOAuthCredential': 'supabase_oauth',
-    'SupabaseApiKeyCredential': 'supabase_api_key',
-
-    // TikTok
-    'TikTokOAuthCredential': 'tiktok_oauth',
-
-    // Twitter/X
-    'TwitterOAuthCredential': 'twitter_oauth',
-    'TwitterBearerTokenCredential': 'twitter_bearer_token',
-
-    // DNSimple
-    'DNSimple Account Token': 'dnsimple_account_token',
-    'DNSimpleAccountTokenCredential': 'dnsimple_account_token',
 
     // Cloudflare
-    'STACKIT DNS Access Token': 'stackitdns_access_token',
-    'STACKITDNSAccessTokenCredential': 'stackitdns_access_token',
     'CloudflareAPITokenCredential': 'cloudflare_api_token',
     'CloudflareAPIKeyCredential': 'cloudflare_api_key',
-    'BitriseAPITokenCredential': 'bitrise_api_token',
-    // Pulsetic raw Authorization API key
-    'PulseticAPIKeyCredential': 'pulsetic_api_key',
-    'Pulsetic API Key': 'pulsetic_api_key',
-    'WebsupportApiKeyCredential': 'websupport_api_key',
-    'XataIssuedOAuthCredential': 'xata_issued_oauth',
-    // JWX Management API v2 (different from player license keys)
-    'JWPlayerAPISecretCredential': 'jwplayer_api_secret',
-    'JWX Management API Secret': 'jwplayer_api_secret',
 
     // HubSpot
     'HubSpotOAuthCredential': 'hubspot_oauth',
     'HubSpotPATCredential': 'hubspot_pat',
 
-    // Affinity
-    'AffinityAPIKeyCredential': 'affinity_api_key',
-    'AprimoBearerCredential': 'aprimo_bearer',
-    'Aprimo DAM Bearer Token': 'aprimo_bearer',
-    'BloomerangPrivateApiKeyCredential': 'bloomerang_private_api_key',
-    'Bloomerang Private CRM API Key': 'bloomerang_private_api_key',
-    'PrintifyPATCredential': 'printify_pat',
-    'PrintifyOAuthAccessTokenCredential': 'printify_oauth_access_token',
-
-    // NocoDB
-    'NocoDBTokenCredential': 'nocodb_api_token',
-
     // Basedash
     'BasedashApiKeyCredential': 'basedash_api_key',
-
-    // Mailchimp
-    'MailchimpOAuthCredential': 'mailchimp_oauth',
-    'MailchimpAPIKeyCredential': 'mailchimp_api_key',
 
     // Pipedrive
     'PipedriveOAuthCredential': 'pipedrive_oauth',
@@ -314,20 +171,11 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
     'SentryAuthTokenCredential': 'sentry_auth_token',
 
     // Google Maps
-    'GoogleMapsApiKeyCredential': 'google_maps_api_key',
     // Perplexity
-    'QonversionSecretKeyCredential': 'qonversion_secret_key',
-    'Qonversion Secret Key': 'qonversion_secret_key',
     'PerplexityApiKeyCredential': 'perplexity_api_key',
     'PostHogPersonalApiKeyCredential': 'posthog_personal_api_key',
     'PostHogProjectApiKeyCredential': 'posthog_project_api_key',
     'PostHogOAuthCredential': 'posthog_oauth',
-
-    // Upstash Vector
-    'UpstashVectorCredential': 'upstash_vector',
-
-    // Weaviate
-    'WeaviateCredential': 'weaviate_api_key',
 
     // Mailgun
     'MailgunApiKeyCredential': 'mailgun_api_key',
@@ -338,7 +186,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
     // Box
     'BoxOAuthCredential': 'box_oauth',
     'BoxDeveloperTokenCredential': 'box_developer_token',
-    'AshbyApiKeyCredential': 'ashby_api_key',
     // ClickUp
     'ClickUpOAuthCredential': 'clickup_oauth',
     'ClickUpPersonalTokenCredential': 'clickup_pat',
@@ -375,7 +222,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
 
     // Exa
     'ExaApiKeyCredential': 'exa_api_key',
-    'TavilyApiKeyCredential': 'tavily_api_key',
 
     // Reducto
     'ReductoApiKeyCredential': 'reducto_api_key',
@@ -386,12 +232,8 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
     // Brandfetch
     'BrandfetchApiKeyCredential': 'brandfetch_api_key',
 
-    // Recurly
-    'RecurlyApiKeyCredential': 'recurly_api_key',
-
     // Findymail
     'FindymailApiKeyCredential': 'findymail_api_key',
-    'ClayApiKeyCredential': 'clay_api_key',
 
     // beehiiv
     'BeehiivApiKeyCredential': 'beehiiv_api_key',
@@ -414,7 +256,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
 
     // Sigma Computing
     'SigmaApiKeyCredential': 'sigma_api_key',
-    'OpenStatusApiKeyCredential': 'openstatus_api_key',
 
     // Trello
     'TrelloApiKeyCredential': 'trello_api_key',
@@ -452,13 +293,10 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
     // Webflow
     'WebflowOAuthCredential': 'webflow_oauth',
     'WebflowApiTokenCredential': 'webflow_api_token',
-    'ConnecteamApiKeyCredential': 'connecteam_api_key',
-    'ConnecteamOAuthClientCredential': 'connecteam_oauth_client',
 
     // Tableau
     'TableauPATCredential': 'tableau_pat',
     // Google PageSpeed
-    'PageSpeedApiKeyCredential': 'pagespeed_api_key',
     // Google Translate
     'GoogleTranslateOAuthCredential': 'google_translate_oauth',
     'GoogleTranslateServiceAccountCredential': 'google_translate_service_account',
@@ -469,9 +307,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
     // Google BigQuery
     'BigQueryOAuthCredential': 'bigquery_oauth',
     'BigQueryServiceAccountCredential': 'bigquery_service_account',
-
-    // ProductPlan
-    'ProductPlanPATCredential': 'productplan_pat',
 
     // Snowflake
     'SnowflakePatCredential': 'snowflake_pat',
@@ -495,20 +330,13 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
     'TypeformOAuthCredential': 'typeform_oauth',
     'TypeformPATCredential': 'typeform_pat',
 
-    // WordPress
-    'WordPressOAuthCredential': 'wordpress_oauth',
-    'WordPressApplicationPasswordCredential': 'wordpress_application_password',
-    'WordPressBasicAuthCredential': 'wordpress_basic_auth',
-
     // WhatsApp
     'WhatsAppQRCredential': 'whatsapp_qr',
-
-    // ElevenLabs
-    'ElevenLabsAPIKeyCredential': 'elevenlabs_api_key',
 
     // Google DV360
     'DV360OAuthCredential': 'dv360_oauth',
     'DV360ServiceAccountCredential': 'dv360_service_account',
+
 }, INTEGRATION_METADATA.credentialTypes);
 
 /**

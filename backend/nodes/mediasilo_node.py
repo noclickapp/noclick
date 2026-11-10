@@ -240,6 +240,9 @@ async def _folders(data, context, project_id, *, include_names=False):
     return rows
 
 class MediaSiloNode(WorkflowNode):
+    integration_type = "automation-mediasilo"
+    credential_provider_labels = {"mediasilo": "Mediasilo Account"}
+    auto_select_credential = False
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="test_connection", noun="MediaSilo protected project catalog read access", proves="reachability", label_keys=("id",))
     edit_examples = ["Read project identifiers, times and folder counts", "Read folder counts within an accessible selected project", "Opt in to names while omitting media, owners, links and settings"]

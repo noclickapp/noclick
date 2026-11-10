@@ -485,6 +485,9 @@ async def request_operation(credential_data, config):
 
 
 class PrintifyNode(WorkflowNode):
+    integration_type = "automation-printify"
+    credential_provider_labels = {"printify": "Printify / Printful Enterprise Account"}
+    auto_select_credential = False
     scope_registry = PRINTIFY_SCOPES
     # Native operation admission applies to saved credentials. No FIELD probe
     # or synthetic merchant identity; generic catalog rows never prove an account.

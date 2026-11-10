@@ -26,6 +26,15 @@ def test_no_credentials_means_no_auto_select():
     assert meta['autoSelectCredential'] is False
 
 
+def test_a_node_can_decline_auto_select():
+    schema = {'properties': {'credentials': {'$ref': '#/$defs/ExampleCredential'}}, '$defs': {
+        'ExampleCredential': {'properties': {'credential_type': {'const': 'example_api_key'}}},
+    }}
+    meta = integration_metadata('automation-example', schema, {}, auto_select=False)
+    assert meta['credentialTypes'] == {'ExampleCredential': 'example_api_key'}
+    assert meta['autoSelectCredential'] is False
+
+
 def test_ambiguous_credential_type_is_an_error():
     with pytest.raises(ValueError, match='single credential_type'):
         integration_metadata('automation-example', {'$defs': {'Bad': {'properties': {'credential_type': {}}}}}, {})

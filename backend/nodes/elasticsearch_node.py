@@ -879,6 +879,9 @@ def _request_params(**params: Any) -> Optional[Dict[str, Any]]:
 
 class ElasticsearchNode(WorkflowNode):
     """Elasticsearch automation node."""
+    integration_type = "automation-elasticsearch"
+    credential_provider_labels = {"elasticsearch": "Elasticsearch Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "kNN-search an Elasticsearch index for the documents most similar to a query embedding",

@@ -1570,6 +1570,8 @@ class ApolloNode(WorkflowNode):
 
     Authentication: Supports both API Key and OAuth 2.0 credentials.
     """
+    integration_type = "automation-apollo"
+    credential_provider_labels = {"apollo": "Apollo Account"}
 
     edit_examples = [
         "Enrich a list of emails with company info and job titles",

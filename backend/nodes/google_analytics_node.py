@@ -271,6 +271,8 @@ class GoogleAnalyticsNodeConfig(
 
 
 class GoogleAnalyticsNode(WorkflowNode):
+    integration_type = "automation-google-analytics"
+    credential_provider_labels = {"google_analytics": "Google Account"}
     edit_examples = [
         "Get traffic by source for last 30 days and identify top channels",
         "Run realtime report to see current active users on website now",

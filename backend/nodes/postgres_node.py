@@ -1706,6 +1706,8 @@ class PostgresNode(WorkflowNode):
     Executes PostgreSQL database operations for workflow automation.
     Uses asyncpg for high-performance async database access.
     """
+    integration_type = "automation-postgres"
+    credential_provider_labels = {"postgres": "Postgres Account"}
 
     connection_evidence = ConnectionEvidence(
         operation="list_schema_tables",

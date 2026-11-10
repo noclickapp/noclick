@@ -304,6 +304,8 @@ class GoogleAdsNodeConfig(NodeConfig[GoogleAdsConfig, GoogleAdsOAuthCredential])
 
 
 class GoogleAdsNode(WorkflowNode):
+    integration_type = "automation-google-ads"
+    credential_provider_labels = {"google_ads": "Google Account"}
     edit_examples = [
         "Get campaign performance for Q2 and identify highest ROI campaigns",
         "Get ad group stats and find which groups have lowest click-through rates",

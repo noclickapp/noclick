@@ -1793,6 +1793,9 @@ class WordPressNode(WorkflowNode):
     Executes WordPress REST API operations for workflow automation.
     Supports 43 operations across posts, pages, media, users, comments, categories, tags, search, and settings.
     """
+    integration_type = "automation-wordpress"
+    credential_provider_labels = {"wordpress": "WordPress Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Publish a blog post with featured image and categories",

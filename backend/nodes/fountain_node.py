@@ -205,6 +205,8 @@ async def _saved_lease(data, *, pool, user_id, credential_id, workflow_id=None, 
 
 
 class FountainNode(WorkflowNode):
+    integration_type = "automation-fountain"
+    credential_provider_labels = {"fountain": "Fountain Account"}
     supports_op_tools = True
     connection_evidence = ConnectionEvidence(operation="list_openings", noun="Hire openings", proves="reachability")
 

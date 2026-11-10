@@ -516,6 +516,8 @@ def _result(raw, *, submitting=False, request_id=None, expected_count=None, cont
 
 
 class DropcontactNode(WorkflowNode):
+    integration_type = "automation-dropcontact"
+    credential_provider_labels = {"dropcontact": "Dropcontact Account"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="test_connection", noun="Dropcontact credit probe", proves="reachability", label_keys=("credits_left",))
     edit_examples = ["Read remaining credits without enrichment", "Submit an explicitly confirmed owned B2B batch", "Read one existing enrichment request without polling"]

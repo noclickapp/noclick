@@ -1314,6 +1314,9 @@ class DropboxNodeConfig(NodeConfig[DropboxConfig, DropboxCredential]):
 
 class DropboxNode(WorkflowNode):
     """Dropbox workflow node - comprehensive file storage automation."""
+    integration_type = "automation-dropbox"
+    credential_provider_labels = {"dropbox": "Dropbox Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Upload daily sales report to /Reports/Q4 and share read-only link",

@@ -1508,6 +1508,9 @@ def _serialize(docs: Any) -> Any:
 
 class MongoDBNode(WorkflowNode):
     """MongoDB database automation node."""
+    integration_type = "automation-mongodb"
+    credential_provider_labels = {"mongodb": "Mongodb Account"}
+    auto_select_credential = False
 
     # The database loader returns a bare list the evidence field path can't read.
     connection_evidence = ConnectionEvidence(

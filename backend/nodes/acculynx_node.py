@@ -391,6 +391,8 @@ OPERATIONS = ("get_company_settings", "list_contacts", "get_contact", "list_cont
 
 
 class AccuLynxNode(WorkflowNode):
+    integration_type = "automation-acculynx"
+    credential_provider_labels = {"acculynx": "Acculynx Account"}
     scope_registry = ScopeRegistry("acculynx", {name: ScopeRequirement(credential_types=(FAMILY,), note="Issued key permissions and API access belong to the company location; no OAuth scopes are documented.") for name in OPERATIONS})
     connection_evidence = ConnectionEvidence(operation="get_company_settings", noun="companies", label_keys=("name", "companyId"))
 

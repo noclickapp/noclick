@@ -198,6 +198,8 @@ def _quiet_transport():
 
 
 class JWPlayerNode(WorkflowNode):
+    integration_type = "automation-jwplayer"
+    credential_provider_labels = {"jwplayer": "Jwplayer Account"}
     connection_evidence = ConnectionEvidence(operation="list_media", noun="property media", label_keys=("id",), proves="reachability")
     scope_registry = ScopeRegistry("jwplayer", {op: ScopeRequirement(scopes=(), credential_types=(FAMILY,)) for op in OPERATIONS})
 

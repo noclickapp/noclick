@@ -925,6 +925,9 @@ def _with_db(body: Dict[str, Any], db_name: Optional[str]) -> Dict[str, Any]:
 
 class MilvusNode(WorkflowNode):
     """Milvus / Zilliz Cloud vector database automation node."""
+    integration_type = "automation-milvus"
+    credential_provider_labels = {"milvus": "Milvus Account"}
+    auto_select_credential = False
 
     # The collection loader returns a bare list the evidence field path can't read.
     connection_evidence = ConnectionEvidence(

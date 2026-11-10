@@ -255,6 +255,8 @@ async def _okta_request(credentials, operation, path, params=None, body=None):
 
 
 class OktaNode(WorkflowNode):
+    integration_type = "automation-okta"
+    credential_provider_labels = {"okta": "Okta Account"}
     connection_evidence = ConnectionEvidence(field="user_id", noun="users")
     edit_examples = ["Create an Okta user and add them to an onboarding group", "Suspend an Okta user", "Assign a user to an Okta application"]
 

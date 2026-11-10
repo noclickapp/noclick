@@ -507,6 +507,9 @@ async def request_operation(credential_data, config):
 
 
 class ClinikoNode(WorkflowNode):
+    integration_type = "automation-cliniko"
+    credential_provider_labels = {"cliniko": "Cliniko User API Connection"}
+    auto_select_credential = False
     scope_registry = CLINIKO_SCOPES
     connection_evidence = ConnectionEvidence(operation="list_businesses", noun="business metadata", operation_arguments={}, proves="reachability")
     edit_examples = ["List Cliniko business metadata", "Find available start times for a selected business and practitioner", "Create an external contact without creating a patient"]

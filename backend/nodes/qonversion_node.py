@@ -365,6 +365,7 @@ async def page(data,config,route,kind):
 
 
 class QonversionNode(WorkflowNode):
+    integration_type = "automation-qonversion"
     workflow_credential_refresh=True  # Saved current authority; no token renewal.
     connection_evidence=ConnectionEvidence(operation='check_connection',noun='supplied product access',proves='reachability')
     edit_examples=['Inspect product metadata','List entitlement definitions','Read remote configuration status','Read an existing user with explicit environment binding']

@@ -1339,6 +1339,8 @@ class SupabaseNode(WorkflowNode):
     - Realtime (1): broadcast messages to channels
     - Edge Functions (1): invoke serverless functions
     """
+    integration_type = "automation-supabase"
+    credential_provider_labels = {"supabase": "Supabase Account"}
 
     edit_examples = [
         "Query the users table and filter by email",

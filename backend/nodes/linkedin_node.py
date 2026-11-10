@@ -552,6 +552,8 @@ class LinkedInNode(ApifyRunnerMixin, WorkflowNode):
     Executes LinkedIn operations via REST API for posting and profile access.
     Supports multiple actions - user selects one in the config.
     """
+    integration_type = "automation-linkedin"
+    credential_provider_labels = {"linkedin": "LinkedIn Account"}
 
     edit_examples = [
         "Post career tip article to feed with custom commentary",

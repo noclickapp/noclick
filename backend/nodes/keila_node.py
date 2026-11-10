@@ -234,6 +234,8 @@ async def _detail(data, context, kind, selected, *, include_names=False):
     return detail, linked
 
 class KeilaNode(WorkflowNode):
+    integration_type = "automation-keila"
+    credential_provider_labels = {"keila": "Keila Account"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="test_connection", noun="Keila accessible campaign metadata", proves="reachability", label_keys=("id",))
     edit_examples = ["List campaign IDs and resource times without newsletter content", "Read a current selected campaign's documented format", "List template IDs/types or explicitly opt into template names"]

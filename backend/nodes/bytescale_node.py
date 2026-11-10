@@ -304,6 +304,9 @@ def reader_from(data):
 
 
 class BytescaleNode(WorkflowNode):
+    integration_type = "automation-bytescale"
+    credential_provider_labels = {"bytescale": "Bytescale Account"}
+    auto_select_credential = False
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_folder", noun="accessible folder metadata", proves="reachability")
 

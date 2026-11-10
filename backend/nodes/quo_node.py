@@ -566,6 +566,8 @@ def _contact_body(config: QuoContactWriteFields) -> Dict[str, Any]:
 
 
 class QuoNode(WorkflowNode):
+    integration_type = "automation-quo"
+    credential_provider_labels = {"quo": "Quo Account"}
     connection_evidence = ConnectionEvidence(
         operation="list_phone_numbers",
         noun="Quo phone numbers",

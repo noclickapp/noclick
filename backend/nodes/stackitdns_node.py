@@ -204,6 +204,8 @@ class _Session:
 
 
 class STACKITDNSNode(WorkflowNode):
+    integration_type = "automation-stackitdns"
+    credential_provider_labels = {"stackitdns": "STACKIT DNS"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_zones", noun="STACKIT DNS protected supplied-project zone catalog", proves="reachability")
     edit_examples = ["Read zone status and RRset TTL metadata in my supplied STACKIT project without DNS names or RDATA", "Read a known zone and RRset's IDs and timestamps without changing DNS"]

@@ -235,6 +235,9 @@ def result_page(payload, kind, *, names=False):
 
 
 class DocspellNode(WorkflowNode):
+    integration_type = "automation-docspell"
+    credential_provider_labels = {"docspell": "Docspell Account"}
+    auto_select_credential = False
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_folders", noun="token-visible folders catalog metadata", proves="reachability")
 

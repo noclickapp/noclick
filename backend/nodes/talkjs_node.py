@@ -586,6 +586,8 @@ async def _get_message(data, context, conv, message, *, text=False):
 
 
 class TalkJSNode(WorkflowNode):
+    integration_type = "automation-talkjs"
+    credential_provider_labels = {"talkjs": "Talkjs Account"}
     node_type = NODE_TYPE
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="test_connection", noun="TalkJS user metadata", proves="reachability", label_keys=("id",))

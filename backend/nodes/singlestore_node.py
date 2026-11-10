@@ -481,6 +481,8 @@ def _ack(raw, expected, *, folder=False):
     return {"path": expected, **_strings(raw, ("name",))}
 
 class SingleStoreNode(WorkflowNode):
+    integration_type = "automation-singlestore"
+    credential_provider_labels = {"singlestore": "SingleStore Organization"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(noun="organization", identity_operation="get_organization", identity_keys=("name", "orgID"), proves="account")
 

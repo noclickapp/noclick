@@ -435,6 +435,8 @@ QUERY_FIELDS = {
 
 
 class GustoNode(WorkflowNode):
+    integration_type = "automation-gusto"
+    credential_provider_labels = {"gusto": "Gusto Account"}
     scope_registry = GUSTO_SCOPES
     connection_evidence = ConnectionEvidence(
         noun="authorized account", identity_operation="get_token_info", identity_keys=("uuid",),

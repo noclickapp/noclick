@@ -2350,6 +2350,9 @@ class SemrushNodeFullConfig(NodeConfig[SemrushConfig, SemrushCredential]):
 
 class SemrushNode(WorkflowNode):
     """Semrush SEO & Marketing Analytics node with comprehensive API coverage"""
+    integration_type = "automation-semrush"
+    credential_provider_labels = {"semrush": "Semrush Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Find organic keywords for competitor site techcrunch.com in US",

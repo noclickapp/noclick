@@ -254,6 +254,8 @@ def _recording(raw, *, content=False, detail=False):
 
 
 class SupernormalNode(WorkflowNode):
+    integration_type = "automation-supernormal"
+    credential_provider_labels = {"supernormal": "Supernormal Account"}
     workflow_credential_refresh = True
     edit_examples = ["Show my verified Supernormal user", "Read recording metadata without notes or signed links", "Read transcript segment timings for a selected recording"]
     connection_evidence = ConnectionEvidence(identity_operation="get_user", noun="user", label_keys=("name", "id"), proves="account")

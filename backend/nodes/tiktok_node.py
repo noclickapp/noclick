@@ -489,6 +489,9 @@ class TikTokNodeConfig(NodeConfig[TikTokConfig, TikTokOAuthCredential]):
 
 class TikTokNode(WorkflowNode):
     """TikTok Open Platform automation node."""
+    integration_type = "automation-tiktok"
+    credential_provider_labels = {"tiktok": "TikTok Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Get authenticated user profile with follower and video count stats",

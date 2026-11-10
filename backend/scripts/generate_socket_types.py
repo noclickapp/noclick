@@ -893,7 +893,8 @@ def _platform_vendor_operations(schema: dict) -> list:
             if (platform_key_of(definition) or {}).get('byok') is True]
 
 
-def integration_metadata(node_type: str, schema: dict, node_meta: dict, provider_labels: dict | None = None) -> dict:
+def integration_metadata(node_type: str, schema: dict, node_meta: dict, provider_labels: dict | None = None,
+                         auto_select: bool = True) -> dict:
     """Derive connection metadata from the same credential definitions the UI renders."""
     credentials = {}
     providers = {}
@@ -926,7 +927,7 @@ def integration_metadata(node_type: str, schema: dict, node_meta: dict, provider
         'nodeMeta': node_meta,
         'credentialTypes': dict(sorted(credentials.items())),
         'providerLabels': dict(sorted(providers.items())),
-        'autoSelectCredential': bool(schema.get('properties', {}).get('credentials') and credentials),
+        'autoSelectCredential': auto_select and bool(schema.get('properties', {}).get('credentials') and credentials),
     }
 
 
@@ -1018,7 +1019,10 @@ def generate_node_schemas():
                     meta_dir.mkdir(exist_ok=True)
                     write_if_changed(
                         meta_dir / f'{schema_name}.json',
-                        json.dumps(integration_metadata(node_type, schema, meta_entry, getattr(node_class, 'credential_provider_labels', None)), indent=2),
+                        json.dumps(integration_metadata(
+                            node_type, schema, meta_entry, getattr(node_class, 'credential_provider_labels', None),
+                            getattr(node_class, 'auto_select_credential', True),
+                        ), indent=2),
                     )
                 else:
                     node_meta[node_type] = meta_entry

@@ -459,6 +459,8 @@ def _check_row_values(table, rows):
 
 
 class BotpressNode(WorkflowNode):
+    integration_type = "automation-botpress"
+    credential_provider_labels = {"botpress": "Botpress Account"}
     connection_evidence = ConnectionEvidence(noun="bots", operation="get_bound_bot",
         label_keys=("name", "id"), proves="reachability")
 

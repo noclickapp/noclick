@@ -362,6 +362,8 @@ class GoogleSlidesNode(WorkflowNode):
     """
     Google Slides workflow node for managing presentations.
     """
+    integration_type = "automation-google-slides"
+    credential_provider_labels = {"google_slides": "Google Account"}
 
     edit_examples = [
         "Create a new Q2 earnings presentation and add title slide",

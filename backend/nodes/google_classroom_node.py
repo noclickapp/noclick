@@ -492,6 +492,9 @@ async def _request(token: str, method: str, path: str, *, params: Optional[dict]
 
 class GoogleClassroomNode(WorkflowNode):
     """Common Google Classroom teacher workflows and read-only roster access."""
+    integration_type = "automation-google-classroom"
+    credential_provider_labels = {"google_classroom": "Google Classroom Account"}
+    auto_select_credential = False
 
     scope_registry = GOOGLE_CLASSROOM_SCOPES
     connection_evidence = ConnectionEvidence(field="course_id", noun="courses")

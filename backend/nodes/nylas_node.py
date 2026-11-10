@@ -626,6 +626,9 @@ class _Client:
 
 
 class NylasNode(WorkflowNode):
+    integration_type = "automation-nylas"
+    credential_provider_labels = {"nylas": "Nylas Account"}
+    auto_select_credential = False
     connection_evidence = ConnectionEvidence(operation="get_grant", noun="connected grant", proves="reachability", label_keys=("id",))
 
     @classmethod

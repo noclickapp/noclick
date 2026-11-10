@@ -552,6 +552,7 @@ def response_date(value):
 
 
 class UptimeComNode(WorkflowNode):
+    integration_type = "automation-uptimecom"
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(identity_operation="check_connection", noun="Uptime.com authenticated user ID",
         label_keys=(), identity_keys=("user_pk",), proves="account")

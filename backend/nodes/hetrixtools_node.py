@@ -509,6 +509,8 @@ async def operate(auth, cfg):
 
 
 class HetrixToolsNode(WorkflowNode):
+    integration_type = "automation-hetrixtools"
+    credential_provider_labels = {"hetrixtools": "Hetrixtools Account"}
     connection_evidence = ConnectionEvidence(operation="get_api_scope", noun="HetrixTools API scope", label_keys=(), proves="reachability")
 
     @classmethod

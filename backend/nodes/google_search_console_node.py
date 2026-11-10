@@ -535,6 +535,8 @@ class GoogleSearchConsoleNodeConfig(
 
 
 class GoogleSearchConsoleNode(WorkflowNode):
+    integration_type = "automation-google-search-console"
+    credential_provider_labels = {"google_search_console": "Google Search Console Account"}
     edit_examples = [
         "Get top 100 queries for my site over the last 30 days ranked by impressions",
         "Pull search performance by page to find high-impression but low-CTR pages",

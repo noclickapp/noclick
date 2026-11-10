@@ -1568,6 +1568,8 @@ class RSSNodeConfig(NodeConfig[RSSConfig, RSSCredential]):
 
 class RSSNode(WorkflowNode):
     """RSS workflow node implementation"""
+    integration_type = "automation-rss"
+    credential_provider_labels = {"rss": "Rss Account"}
 
     edit_examples = [
         "Parse a feed from TechCrunch and only return new articles",

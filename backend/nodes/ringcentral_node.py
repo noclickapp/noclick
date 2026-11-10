@@ -264,6 +264,8 @@ QUERY_FIELDS = {
 
 
 class RingCentralNode(WorkflowNode):
+    integration_type = "automation-ringcentral"
+    credential_provider_labels = {"ringcentral": "Ringcentral Account"}
     scope_registry = RINGCENTRAL_SCOPES
     connection_evidence = ConnectionEvidence(
         identity_operation="get_extension", noun="RingCentral extension", identity_keys=("name",),

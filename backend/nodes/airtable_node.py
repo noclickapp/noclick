@@ -1009,6 +1009,8 @@ class AirtableNode(WorkflowNode):
     Executes Airtable API operations for workflow automation.
     Supports 24 operations across bases, records, comments, and webhooks.
     """
+    integration_type = "automation-airtable"
+    credential_provider_labels = {"airtable": "Airtable Account"}
 
     edit_examples = [
         'Create a new record in the "Customers" table with name and email',

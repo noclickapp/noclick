@@ -481,6 +481,9 @@ def _parse_json_field(value: str, field_name: str) -> Any:
 # ── Node ───────────────────────────────────────────────────────────────────────
 
 class VoyageNode(WorkflowNode):
+    integration_type = "automation-voyage"
+    credential_provider_labels = {"voyage": "Voyage Account"}
+    auto_select_credential = False
     connection_evidence = ConnectionEvidence(
         operation="list_files",
         noun="uploaded files",

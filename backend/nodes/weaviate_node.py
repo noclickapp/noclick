@@ -811,6 +811,9 @@ def _build_aggregate_query(
 
 class WeaviateNode(WorkflowNode):
     """Weaviate vector database automation node."""
+    integration_type = "automation-weaviate"
+    credential_provider_labels = {"weaviate": "Weaviate Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Semantically search a Weaviate class by text for the most relevant objects",

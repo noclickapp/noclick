@@ -363,6 +363,8 @@ def _fields(config: BaseModel, *names: str) -> dict:
 
 
 class BigCommerceNode(WorkflowNode):
+    integration_type = "automation-bigcommerce"
+    credential_provider_labels = {"bigcommerce": "Bigcommerce Account"}
     connection_evidence = ConnectionEvidence(
         operation="list_products",
         operation_arguments={"limit": 5},

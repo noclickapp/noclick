@@ -661,6 +661,8 @@ class GoogleTasksNode(WorkflowNode):
     """
     Google Tasks workflow node for managing task lists and tasks.
     """
+    integration_type = "automation-google-tasks"
+    credential_provider_labels = {"google_tasks": "Google Account"}
 
     edit_examples = [
         "Add new tasks to the Q2 Goals list with due dates and descriptions",

@@ -284,6 +284,8 @@ async def _sumup_request(api_key: str, method: str, path: str, action: str,
 
 
 class SumUpNode(WorkflowNode):
+    integration_type = "automation-sumup"
+    credential_provider_labels = {"sumup": "Sumup Account"}
     connection_evidence = ConnectionEvidence(field="merchant_code", noun="merchant accounts")
     edit_examples = [
         "Create a hosted payment checkout for an order",

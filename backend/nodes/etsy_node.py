@@ -1773,6 +1773,8 @@ def _wire(value: Any) -> str:
 
 
 class EtsyNode(WorkflowNode):
+    integration_type = "automation-etsy"
+    credential_provider_labels = {"etsy": "Etsy Account"}
     scope_registry = ETSY_SCOPES
     connection_evidence = ConnectionEvidence(
         identity_operation="get_me",

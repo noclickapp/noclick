@@ -228,6 +228,9 @@ async def witness_album(value, selected, *, reader=None):
 
 
 class ImmichNode(WorkflowNode):
+    integration_type = "automation-immich"
+    credential_provider_labels = {"immich": "Immich Account"}
+    auto_select_credential = False
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_albums", noun="key-visible album metadata", proves="reachability")
 

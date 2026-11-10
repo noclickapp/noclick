@@ -403,6 +403,9 @@ async def _request(token, method, path, **kwargs):
 
 
 class PersonioNode(WorkflowNode):
+    integration_type = "automation-personio"
+    credential_provider_labels = {"personio": "Personio Account"}
+    auto_select_credential = False
     connection_evidence = ConnectionEvidence(
         operation="list_employees",
         noun="employees",

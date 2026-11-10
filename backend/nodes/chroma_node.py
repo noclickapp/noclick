@@ -1082,6 +1082,9 @@ def _split_csv(value: Optional[str]) -> List[str]:
 
 class ChromaNode(WorkflowNode):
     """Chroma vector database automation node."""
+    integration_type = "automation-chroma"
+    credential_provider_labels = {"chroma": "Chroma Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Search a Chroma collection for the records most similar to a query embedding",

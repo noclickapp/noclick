@@ -167,6 +167,8 @@ def _response_payload(response: httpx.Response) -> Any:
 
 class ConnecteamNode(WorkflowNode):
     """Connecteam users, schedules, tasks, time clocks, forms, and more."""
+    integration_type = "automation-connecteam"
+    credential_provider_labels = {"connecteam": "Connecteam Account"}
 
     edit_examples = [
         "List all Connecteam users",

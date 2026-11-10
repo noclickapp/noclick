@@ -275,6 +275,8 @@ OPERATIONS = {
 
 
 class RipplingNode(WorkflowNode):
+    integration_type = "automation-rippling"
+    credential_provider_labels = {"rippling": "Rippling Account"}
     connection_evidence = ConnectionEvidence(operation="list_companies", noun="companies")
     edit_examples = ["List employees with their user profiles", "Create a department", "Request vacation leave", "Add workers to a supergroup"]
 

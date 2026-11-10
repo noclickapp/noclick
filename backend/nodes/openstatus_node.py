@@ -636,6 +636,8 @@ async def records(data, args):
 
 
 class OpenStatusNode(WorkflowNode):
+    integration_type = "automation-openstatus"
+    credential_provider_labels = {"openstatus": "Openstatus Account"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_status_pages", noun="status pages", proves="reachability")
     scope_registry = ScopeRegistry(provider="openstatus", requirements={

@@ -1584,6 +1584,9 @@ class AffinityNode(WorkflowNode):
     Authentication: API Key only (no OAuth available)
     Rate Limit: 900 requests/user/minute
     """
+    integration_type = "automation-affinity"
+    credential_provider_labels = {"affinity": "Affinity Account"}
+    auto_select_credential = False
 
     edit_examples = [
         "Create a person record for jane@acme.com with title VP Sales",

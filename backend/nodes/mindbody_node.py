@@ -401,6 +401,8 @@ class _LookupAuthority:
 
 
 class MindbodyNode(WorkflowNode):
+    integration_type = "automation-mindbody"
+    credential_provider_labels = {"mindbody": "Mindbody Account"}
     connection_evidence = ConnectionEvidence(noun="Mindbody access", operation="check_connection", proves="reachability")
 
     @classmethod

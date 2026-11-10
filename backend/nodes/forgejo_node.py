@@ -257,6 +257,8 @@ class _Session:
 
 
 class ForgejoNode(WorkflowNode):
+    integration_type = "automation-forgejo"
+    credential_provider_labels = {"forgejo": "Forgejo Account"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="get_user", identity_operation="get_user", noun="Forgejo authenticated actor ID", label_keys=("id",), identity_keys=("id",), proves="account")
     edit_examples = ["Read my Forgejo actor ID and accessible repository status without profile data", "Read a selected repository's ordinary issue IDs and state without bodies or pull requests"]

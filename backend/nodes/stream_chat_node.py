@@ -589,6 +589,9 @@ class _Client:
 
 
 class StreamChatNode(WorkflowNode):
+    integration_type = "automation-stream-chat"
+    credential_provider_labels = {"stream_chat": "Stream Chat Account"}
+    auto_select_credential = False
     agent_tool_provider = True
     connection_evidence = ConnectionEvidence(operation="list_channel_types", noun="channel types", proves="reachability")
 

@@ -338,6 +338,9 @@ async def _page(data, kind, scope, *, team=None, service=None, limit=50, offset=
 
 
 class IlertNode(WorkflowNode):
+    integration_type = "automation-ilert"
+    credential_provider_labels = {"ilert": "Ilert Account"}
+    auto_select_credential = False
     scope_registry = ILERT_SCOPES
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="current user IDs", label_keys=("id",), proves="account")
 

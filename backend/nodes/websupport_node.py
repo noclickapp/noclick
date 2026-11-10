@@ -172,6 +172,9 @@ class WebsupportVerificationDenied(RuntimeError):
     pass
 
 class WebsupportNode(WorkflowNode):
+    integration_type = "automation-websupport"
+    credential_provider_labels = {"websupport": "Websupport Account"}
+    auto_select_credential = False
     scope_registry = WEBSUPPORT_SCOPES
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="DNS zone metadata", label_keys=("lastCheck", "dnssecSigning"), proves="reachability")
     @classmethod

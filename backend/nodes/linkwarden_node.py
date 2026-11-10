@@ -258,6 +258,9 @@ async def freshen_linkwarden_credential(credential_data, *, pool=None, user_id=N
 
 
 class LinkwardenNode(WorkflowNode):
+    integration_type = "automation-linkwarden"
+    credential_provider_labels = {"linkwarden": "Linkwarden Account"}
+    auto_select_credential = False
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_collections", noun="token-visible collections catalog metadata", proves="reachability")
 

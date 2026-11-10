@@ -231,6 +231,8 @@ def _quiet_transport():
 
 
 class PulseticNode(WorkflowNode):
+    integration_type = "automation-pulsetic"
+    credential_provider_labels = {"pulsetic": "Pulsetic Account"}
     connection_evidence = ConnectionEvidence(operation="list_monitors", noun="monitors", label_keys=("id",), proves="reachability")
     scope_registry = ScopeRegistry("pulsetic", {op: ScopeRequirement(scopes=(), credential_types=(FAMILY,)) for op in OPERATIONS})
 

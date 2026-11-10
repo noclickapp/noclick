@@ -474,6 +474,8 @@ async def operate(auth, cfg):
 
 
 class PorkbunNode(WorkflowNode):
+    integration_type = "automation-porkbun"
+    credential_provider_labels = {"porkbun": "Porkbun Account"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_domains", noun="protected domain catalog reachability", label_keys=(), proves="reachability")
 

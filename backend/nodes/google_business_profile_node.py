@@ -1021,6 +1021,8 @@ class GoogleBusinessProfileNodeConfig(
 
 
 class GoogleBusinessProfileNode(WorkflowNode):
+    integration_type = "automation-google-business-profile"
+    credential_provider_labels = {"google_business_profile": "Google Account"}
     edit_examples = [
         "List all business locations and their performance metrics",
         "Reply to all unanswered 1-star reviews",

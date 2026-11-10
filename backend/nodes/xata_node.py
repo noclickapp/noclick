@@ -212,6 +212,9 @@ def _bounded(rows, maximum):
         "local_truncated": len(rows) > maximum, "completion": "unknown; unpaged provider array, no documented total or continuation"}
 
 class XataNode(WorkflowNode):
+    integration_type = "automation-xata"
+    credential_provider_labels = {"xata": "Xata Account"}
+    auto_select_credential = False
     scope_registry = XATA_SCOPES
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="accessible organization IDs", label_keys=("id",), proves="reachability")
     @classmethod

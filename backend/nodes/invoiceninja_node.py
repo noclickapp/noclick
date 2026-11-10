@@ -255,6 +255,8 @@ def _json_objects(value: str, field: str) -> list[dict[str, Any]]:
 
 
 class InvoiceNinjaNode(WorkflowNode):
+    integration_type = "automation-invoiceninja"
+    credential_provider_labels = {"invoiceninja": "Invoiceninja Account"}
     connection_evidence = ConnectionEvidence(operation="list_clients", noun="clients")
 
     @classmethod

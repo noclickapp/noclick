@@ -2419,6 +2419,8 @@ class ApifyNode(WorkflowNode):
     Executes Apify operations via direct REST API calls for optimal performance.
     Supports multiple actions - user selects one in the config.
     """
+    integration_type = "automation-apify"
+    credential_provider_labels = {"apify": "Apify Account"}
 
     edit_examples = [
         "Run a web scraper actor and wait for results with a timeout",

@@ -3201,6 +3201,8 @@ class BlueSkyNode(WorkflowNode):
 
     API Docs: https://docs.bsky.app/docs/api/at-protocol-xrpc-api
     """
+    integration_type = "automation-bluesky"
+    credential_provider_labels = {"bluesky": "Bluesky Account"}
 
     edit_examples = [
         "Create a post with an image and tag @user123 in the text",

@@ -125,6 +125,9 @@ def _request_body(config: BaseModel, spec: str) -> dict[str, Any]:
 
 
 class AshbyNode(WorkflowNode):
+    integration_type = "automation-ashby"
+    credential_provider_labels = {"ashby": "Ashby Account"}
+    auto_select_credential = False
     connection_evidence = ConnectionEvidence(
         operation="list_jobs", noun="jobs", identity_operation="get_api_key_info",
     )

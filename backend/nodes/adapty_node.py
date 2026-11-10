@@ -296,6 +296,8 @@ def _level(raw):
 
 
 class AdaptyNode(WorkflowNode):
+    integration_type = "automation-adapty"
+    credential_provider_labels = {"adapty": "Adapty Account"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="profiles", label_keys=("profile_id",), proves="reachability")
 

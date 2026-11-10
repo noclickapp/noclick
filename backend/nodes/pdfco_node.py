@@ -291,6 +291,8 @@ ENDPOINTS: dict[str, tuple[str, str]] = {
 
 
 class PDFCoNode(WorkflowNode):
+    integration_type = "automation-pdfco"
+    credential_provider_labels = {"pdfco": "Pdfco Account"}
     connection_evidence = ConnectionEvidence(
         identity_operation="get_account_balance", noun="remaining credits",
         identity_keys=("remainingCredits",),

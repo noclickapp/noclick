@@ -1116,6 +1116,8 @@ class WordNode(WorkflowNode):
     - Version Control: list versions, get version, restore version
     - Advanced: preview link, thumbnail, search
     """
+    integration_type = "automation-word"
+    credential_provider_labels = {"microsoft": "Microsoft Account"}
 
     edit_examples = [
         "Convert the annual report Word document to PDF for distribution",

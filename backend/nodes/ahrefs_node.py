@@ -1022,6 +1022,8 @@ async def _ahrefs_request(
 
 class AhrefsNode(WorkflowNode):
     """Ahrefs SEO automation node (API v3)."""
+    integration_type = "automation-ahrefs"
+    credential_provider_labels = {"ahrefs": "Ahrefs Account"}
 
     # This authenticated, zero-unit endpoint proves a key is accepted. The
     # subscription name is not a unique workspace identity.

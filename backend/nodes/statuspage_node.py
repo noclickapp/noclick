@@ -303,6 +303,8 @@ ROUTES = {
 
 
 class StatuspageNode(WorkflowNode):
+    integration_type = "automation-statuspage"
+    credential_provider_labels = {"statuspage": "Statuspage Account"}
     connection_evidence = ConnectionEvidence(operation="list_pages", noun="pages", label_keys=("name",))
     edit_examples = ["Publish an incident update", "Schedule maintenance for my API", "Mark a component operational", "Subscribe a customer to incident notifications"]
 

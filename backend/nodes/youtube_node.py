@@ -2771,6 +2771,8 @@ class YouTubeNode(WorkflowNode):
     """
     YouTube workflow node for interacting with YouTube Data API v3.
     """
+    integration_type = "automation-youtube"
+    credential_provider_labels = {"youtube": "Google Account"}
 
     edit_examples = [
         "Get stats for the last 10 videos and find which had highest engagement",

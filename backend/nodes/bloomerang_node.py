@@ -558,6 +558,8 @@ def _paging(payload, offset, size):
 
 
 class BloomerangNode(WorkflowNode):
+    integration_type = "automation-bloomerang"
+    credential_provider_labels = {"bloomerang": "Bloomerang"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(noun="users", operation="check_connection", identity_operation="get_current_user", proves="account", label_keys=("Name",))
     edit_examples = ["List individual constituents", "Create a plain constituent note", "Show household counts"]

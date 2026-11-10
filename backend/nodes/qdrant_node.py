@@ -656,6 +656,9 @@ def _coerce_point_ids(raw: Optional[str]) -> List[Any]:
 
 class QdrantNode(WorkflowNode):
     """Qdrant vector database automation node."""
+    integration_type = "automation-qdrant"
+    credential_provider_labels = {"qdrant": "Qdrant Account"}
+    auto_select_credential = False
 
     # The collection loader returns a bare list the evidence field path can't read.
     connection_evidence = ConnectionEvidence(

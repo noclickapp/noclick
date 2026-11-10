@@ -305,6 +305,8 @@ def _private_transport():
 
 
 class AprimoNode(WorkflowNode):
+    integration_type = "automation-aprimo"
+    credential_provider_labels = {"aprimo": "Aprimo Account"}
     connection_evidence = ConnectionEvidence(operation="get_classification", noun="classification", proves="reachability")
     scope_registry = ScopeRegistry("aprimo", {name: ScopeRequirement(("api",), credential_types=(FAMILY,), note="Supplied token must already hold the documented api scope and DAM resource permission; no authorization flow is performed") for name in OPERATIONS})
 

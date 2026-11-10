@@ -3881,6 +3881,8 @@ class TwitterNode(WorkflowNode):
     Executes Twitter/X operations via REST API.
     Supports OAuth 2.0 with PKCE for write operations and Bearer Token for read-only.
     """
+    integration_type = "automation-twitter"
+    credential_provider_labels = {"twitter": "Twitter Account"}
 
     edit_examples = [
         "Post a tweet announcing the latest product release",

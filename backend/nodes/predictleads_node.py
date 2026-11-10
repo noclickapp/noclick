@@ -540,6 +540,7 @@ async def list_signals(data, cfg):
 
 
 class PredictLeadsNode(WorkflowNode):
+    integration_type = "automation-predictleads"
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="PredictLeads subscription",
         label_keys=("id",), identity_keys=(), proves="reachability")

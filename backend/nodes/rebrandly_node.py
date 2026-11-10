@@ -295,6 +295,9 @@ def result_page(value, payload, kind, limit, names, token, *, domain=None, searc
 
 
 class RebrandlyNode(WorkflowNode):
+    integration_type = "automation-rebrandly"
+    credential_provider_labels = {"rebrandly": "Rebrandly Account"}
+    auto_select_credential = False
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_workspaces", noun="selected workspace catalog metadata", proves="reachability")
 

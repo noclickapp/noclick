@@ -534,6 +534,8 @@ async def _paged(data, context, route, query, token, projector):
 
 
 class CloudZeroNode(WorkflowNode):
+    integration_type = "automation-cloudzero"
+    credential_provider_labels = {"cloudzero": "Cloudzero Account"}
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="test_connection", noun="protected dimensions", proves="reachability", label_keys=("dimension_count",))
     edit_examples = ["Read monthly costs grouped by current dimensions", "List saved-view metadata without notification destinations", "Continue one cached cost page with the same query"]

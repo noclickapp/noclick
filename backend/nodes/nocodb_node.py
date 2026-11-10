@@ -407,6 +407,9 @@ class NocoDBNodeConfig(NodeConfig[NocoDBConfig, NocoDBTokenCredential]):
 
 class NocoDBNode(WorkflowNode):
     """Read/write NocoDB records and administer workspaces, bases, tables and views."""
+    integration_type = "automation-nocodb"
+    credential_provider_labels = {"nocodb": "NocoDB Account"}
+    auto_select_credential = False
 
     connection_evidence = ConnectionEvidence(
         field="workspace_id", noun="workspaces", operation="list_workspaces"

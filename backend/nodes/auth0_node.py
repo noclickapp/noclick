@@ -242,6 +242,8 @@ _ENDPOINTS = {
 
 
 class Auth0Node(WorkflowNode):
+    integration_type = "automation-auth0"
+    credential_provider_labels = {"auth0": "Auth0 Account"}
     connection_evidence = ConnectionEvidence(operation="list_users", operation_arguments={"per_page": 3}, noun="users")
 
     @classmethod

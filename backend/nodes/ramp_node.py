@@ -271,6 +271,9 @@ def _json_value(value: str, expected: type, field: str) -> Any:
 
 
 class RampNode(WorkflowNode):
+    integration_type = "automation-ramp"
+    credential_provider_labels = {"ramp": "Ramp Account"}
+    auto_select_credential = False
     scope_registry = RAMP_SCOPES
     connection_evidence = ConnectionEvidence(identity_operation="get_business", noun="business", identity_keys=("business_name_legal", "business_name_on_card"))
 

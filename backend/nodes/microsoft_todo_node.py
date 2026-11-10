@@ -490,6 +490,9 @@ class MicrosoftTodoNode(WorkflowNode):
     Microsoft To Do workflow node for managing tasks and task lists.
     Uses Microsoft Graph API for all operations.
     """
+    integration_type = "automation-microsoft-todo"
+    credential_provider_labels = {"microsoft": "Microsoft Account"}
+    auto_select_credential = False
 
     edit_examples = [
         'Create a task list named "Sprint Planning" for team coordination',

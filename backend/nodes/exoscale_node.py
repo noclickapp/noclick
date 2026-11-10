@@ -443,6 +443,8 @@ async def operate(auth, cfg):
 
 
 class ExoscaleNode(WorkflowNode):
+    integration_type = "automation-exoscale"
+    credential_provider_labels = {"exoscale": "Exoscale Account"}
     connection_evidence = ConnectionEvidence(operation="list_instances", noun="zone-local Exoscale instances", label_keys=("id",), proves="reachability")
 
     @classmethod

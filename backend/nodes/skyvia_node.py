@@ -306,6 +306,9 @@ def reader_from(data):
 
 
 class SkyviaNode(WorkflowNode):
+    integration_type = "automation-skyvia"
+    credential_provider_labels = {"skyvia": "Skyvia Account"}
+    auto_select_credential = False
     connection_evidence = ConnectionEvidence(operation="list_workspaces", noun="allowed accessible workspace IDs", proves="account", label_keys=("id",))
 
     @classmethod

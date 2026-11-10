@@ -707,6 +707,7 @@ def _page_params(c) -> Dict[str, Any]:
 
 class BasedashNode(WorkflowNode):
     """Basedash BI/admin automation node (API key auth)."""
+    integration_type = "automation-basedash"
 
     # Dashboards/data sources only list once an organization is picked.
     connection_evidence = ConnectionEvidence(field="organization_id", noun="organizations")

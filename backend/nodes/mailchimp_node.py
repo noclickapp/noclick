@@ -8431,6 +8431,8 @@ class MailchimpNode(WorkflowNode):
     - Marketing API v3.0: 289 operations across 40+ resource categories
     - Transactional API (Mandrill): 95 operations across 15 resource categories
     """
+    integration_type = "automation-mailchimp"
+    credential_provider_labels = {"mailchimp": "Mailchimp Account"}
 
     edit_examples = [
         "Add new subscribers to newsletter list with tags and segments",

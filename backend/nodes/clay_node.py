@@ -176,6 +176,9 @@ def _routine_items(raw: str) -> list[dict[str, Any]]:
 
 class ClayNode(WorkflowNode):
     """Search GTM data, run enrichments, and read Clay table data."""
+    integration_type = "automation-clay"
+    credential_provider_labels = {"clay": "Clay Account"}
+    auto_select_credential = False
 
     edit_examples: ClassVar[list[str]] = [
         "Search Clay for companies matching our ideal customer profile",

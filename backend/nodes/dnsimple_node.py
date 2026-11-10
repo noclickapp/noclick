@@ -214,6 +214,9 @@ class _Session:
 
 
 class DNSimpleNode(WorkflowNode):
+    integration_type = "automation-dnsimple"
+    credential_provider_labels = {"dnsimple": "DNSimple"}
+    auto_select_credential = False
     connection_evidence = ConnectionEvidence(operation="list_domains", noun="DNSimple protected account domain catalog", proves="reachability")
     edit_examples = ["Read accessible domain states and raw expiry dates without exposing domain names", "Read current zone flags and singleton record counts without any DNS record data"]
     @classmethod

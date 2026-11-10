@@ -2500,6 +2500,8 @@ class ExcelNode(WorkflowNode):
     Authentication: Uses centralized Microsoft OAuth (Files.ReadWrite.All scope)
     API Endpoint: https://graph.microsoft.com/v1.0
     """
+    integration_type = "automation-excel"
+    credential_provider_labels = {"microsoft": "Microsoft Account"}
 
     edit_examples = [
         "Calculate all formulas in the Budget sheet and return results",

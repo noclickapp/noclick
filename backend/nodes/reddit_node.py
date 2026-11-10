@@ -2487,6 +2487,8 @@ class RedditNode(ApifyRunnerMixin, WorkflowNode):
     Executes Reddit operations via the Reddit API for workflow automation.
     Supports multiple actions - user selects one in the config.
     """
+    integration_type = "automation-reddit"
+    credential_provider_labels = {"reddit": "Reddit Account"}
 
     edit_examples = [
         "Submit a text post about Python tutorials to r/learnprogramming",

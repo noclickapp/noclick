@@ -365,6 +365,8 @@ ROUTES = {
 
 
 class KajabiNode(WorkflowNode):
+    integration_type = "automation-kajabi"
+    credential_provider_labels = {"kajabi": "Kajabi Account"}
     connection_evidence = ConnectionEvidence(field="site_id", noun="sites")
     edit_examples = [
         "Create a Kajabi contact and add a tag",
