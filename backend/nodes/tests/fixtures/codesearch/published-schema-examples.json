@@ -1,0 +1,17 @@
+{
+  "source": "https://codesearch.debian.net/openapi.yaml",
+  "search_result": {
+    "package": "i3-wm_4.18-1",
+    "path": "i3bar/src/xcb.c",
+    "line": 1313,
+    "context_before": [
+      "    } else {",
+      "        cursor = xcb_generate_id(xcb_connection);"
+    ],
+    "context": "        i3Font cursor_font = load_font(\"cursor\", false);",
+    "context_after": [
+      "        xcb_create_glyph_cursor(",
+      "            xcb_connection,"
+    ]
+  }
+}
