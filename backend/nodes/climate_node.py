@@ -16,6 +16,7 @@ from urllib.parse import quote
 
 from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
@@ -286,8 +287,10 @@ class ClimateNode(ScheduledPollTriggerMixin, WorkflowNode):
         if config.operation == "download_export_chunk":
             if len(response.content) > 5242880:
                 raise ValueError("FieldView download exceeds the requested chunk limit")
-            return {"data_base64": base64.b64encode(response.content).decode(),
-                "content_type": response.headers.get("Content-Type"),
+            content_type = response.headers.get("Content-Type") or "application/octet-stream"
+            return {"file": BinaryOutput(data=response.content, content_type=content_type,
+                    filename=f"fieldview-export-{config.exportId}-{start}-{end}.bin"),
+                "content_type": content_type,
                 "content_range": response.headers.get("Content-Range")}, None, response.status_code
         if response.status_code in {204, 304}:
             data = {"results": []} if op.paged else {}

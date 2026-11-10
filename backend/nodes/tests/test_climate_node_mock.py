@@ -12,6 +12,7 @@ import httpx
 import pytest
 from pydantic import ValidationError
 from nodes import climate_node as native
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.registry import NodeFactory
 from nodes.oauth.climate_oauth import OAUTH_PROVIDER
 
@@ -182,8 +183,33 @@ async def test_climate_oauth_identity_requires_partner_key_and_handles_empty(mon
 async def test_climate_export_chunk_is_binary_and_range_bounded(monkeypatch):
     calls = transport(monkeypatch, lambda req: httpx.Response(206, content=b"data", headers={"Content-Type": "application/octet-stream", "Content-Range": "bytes 0-3/4"}))
     output = await node({"operation": "download_export_chunk", "exportId": ID, "byte_range": "bytes=0-3"}).execute({})
-    assert output["data_base64"] == "ZGF0YQ==" and output["content_range"] == "bytes 0-3/4"
+    assert "data_base64" not in output
+    assert isinstance(output["file"], BinaryOutput)
+    assert output["file"].data == b"data"
+    assert output["file"].content_type == "application/octet-stream"
+    assert output["file"].filename == f"fieldview-export-{ID}-0-3.bin"
+    assert output["content_range"] == "bytes 0-3/4"
     assert calls[0].headers["Range"] == "bytes=0-3" and calls[0].headers["Accept"] == "*/*"
+
+
+@pytest.mark.asyncio
+async def test_climate_export_chunk_run_returns_stored_file_reference(monkeypatch):
+    from nodes.core import binary_output
+    transport(monkeypatch, lambda req: httpx.Response(206, content=b"data",
+        headers={"Content-Type": "application/octet-stream", "Content-Range": "bytes 0-3/4"}))
+    filename = f"fieldview-export-{ID}-0-3.bin"
+    store = AsyncMock(return_value={"download_url": "https://files.example.test/export-chunk",
+        "mime_type": "application/octet-stream", "name": filename, "size_bytes": 4})
+    monkeypatch.setattr(binary_output, "create_resource_from_bytes", store)
+    downloader = node({"operation": "download_export_chunk", "exportId": ID, "byte_range": "bytes=0-3"})
+    downloader.user_id = ID
+    downloader.workflow_id = ID
+    output = await downloader.run({})
+    assert output["file"] == {"url": "https://files.example.test/export-chunk",
+        "mime_type": "application/octet-stream", "name": filename, "size_bytes": 4}
+    assert output["content_range"] == "bytes 0-3/4" and "data_base64" not in output
+    store.assert_awaited_once_with(user_id=ID, workflow_id=ID, node_id="climate-test",
+        organization_id=None, body=b"data", content_type="application/octet-stream", filename=filename)
 
 
 @pytest.mark.asyncio
