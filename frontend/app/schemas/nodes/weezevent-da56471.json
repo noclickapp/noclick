@@ -1,0 +1,1620 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "WeezeventCreateEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Create Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Create Event",
+          "x-is-trigger": false
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "default_language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Language"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "start_date": {
+          "description": "ISO 8601 date and time, for example 2013-09-01T12:00:00Z.",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "subtitle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtitle"
+        },
+        "surtitle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Surtitle"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        }
+      },
+      "required": [
+        "name",
+        "start_date"
+      ],
+      "title": "WeezeventCreateEventConfig",
+      "type": "object"
+    },
+    "WeezeventCreateRateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_rate",
+          "default": "create_rate",
+          "title": "Create Rate",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rate",
+          "x-display-name": "Create Rate",
+          "x-is-trigger": false
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "distributor": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distributor"
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "price": {
+          "title": "Price",
+          "type": "number"
+        }
+      },
+      "required": [
+        "event_id",
+        "name",
+        "price"
+      ],
+      "title": "WeezeventCreateRateConfig",
+      "type": "object"
+    },
+    "WeezeventCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "weezevent_da56471_bearer",
+          "default": "weezevent_da56471_bearer",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "organization_id": {
+          "minimum": 1,
+          "title": "Organization ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "access_token",
+        "organization_id"
+      ],
+      "title": "Weezevent Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing WeezTicket bearer access token and your organization ID. Obtain client credentials from Weezevent Support, then generate an access token using the documented client credentials grant. Replace expired tokens here. Permissions are assigned by Weezevent; event, attendee, order and resale operations require the corresponding account capacities. NoClick checks access by listing your organization's events.",
+      "x-credential-url": "https://docapi.weezevent.com/"
+    },
+    "WeezeventGetAttendeeByBarcodeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_attendee_by_barcode",
+          "default": "get_attendee_by_barcode",
+          "title": "Get Attendee By Barcode",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attendee",
+          "x-display-name": "Get Attendee By Barcode",
+          "x-is-trigger": false
+        },
+        "barcode": {
+          "title": "Barcode",
+          "type": "string"
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "barcode",
+        "event_id"
+      ],
+      "title": "WeezeventGetAttendeeByBarcodeConfig",
+      "type": "object"
+    },
+    "WeezeventGetAttendeeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_attendee",
+          "default": "get_attendee",
+          "title": "Get Attendee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attendee",
+          "x-display-name": "Get Attendee",
+          "x-is-trigger": false
+        },
+        "attendee_id": {
+          "minimum": 1,
+          "title": "Attendee Id",
+          "type": "integer"
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "attendee_id",
+        "event_id"
+      ],
+      "title": "WeezeventGetAttendeeConfig",
+      "type": "object"
+    },
+    "WeezeventGetEventConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Event",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expand"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "WeezeventGetEventConfig",
+      "type": "object"
+    },
+    "WeezeventGetInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice",
+          "x-display-name": "Get Invoice",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "order_id": {
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id",
+        "order_id"
+      ],
+      "title": "WeezeventGetInvoiceConfig",
+      "type": "object"
+    },
+    "WeezeventGetOrderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Get Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Order",
+          "x-display-name": "Get Order",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "order_id": {
+          "minimum": 1,
+          "title": "Order Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id",
+        "order_id"
+      ],
+      "title": "WeezeventGetOrderConfig",
+      "type": "object"
+    },
+    "WeezeventGetSwapHistoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_swap_history",
+          "default": "get_swap_history",
+          "title": "Get Swap History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ticket",
+          "x-display-name": "Get Swap History",
+          "x-is-trigger": false
+        },
+        "barcode": {
+          "title": "Barcode",
+          "type": "string"
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "barcode",
+        "event_id"
+      ],
+      "title": "WeezeventGetSwapHistoryConfig",
+      "type": "object"
+    },
+    "WeezeventListAttendeesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_attendees",
+          "default": "list_attendees",
+          "title": "List Attendees",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attendees",
+          "x-display-name": "List Attendees",
+          "x-is-trigger": false
+        },
+        "buyer_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Buyer Email"
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "include_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Deleted"
+        },
+        "modified__gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records modified after this date, for example 2021-04-26. Leave empty to watch the complete event.",
+          "title": "Modified Gt"
+        },
+        "order__sold_date_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Sold Date After"
+        },
+        "order__sold_date_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Sold Date Before"
+        },
+        "order__status__in": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Status In"
+        },
+        "rate__in": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rate In"
+        },
+        "scan_status": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scan Status"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "WeezeventListAttendeesConfig",
+      "type": "object"
+    },
+    "WeezeventListEventsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List Events",
+          "x-is-trigger": false
+        },
+        "chart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chart"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Date"
+        },
+        "expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expand"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ordering"
+        },
+        "publication_status__in": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publication Status In"
+        },
+        "tag__in": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag In"
+        },
+        "time_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Status"
+        }
+      },
+      "title": "WeezeventListEventsConfig",
+      "type": "object"
+    },
+    "WeezeventListOrdersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "List Orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "List Orders",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "id_transaction__in": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id Transaction In"
+        },
+        "modified__gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records modified after this date, for example 2021-04-26. Leave empty to watch the complete event.",
+          "title": "Modified Gt"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "WeezeventListOrdersConfig",
+      "type": "object"
+    },
+    "WeezeventListRatesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_rates",
+          "default": "list_rates",
+          "title": "List Rates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rates",
+          "x-display-name": "List Rates",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "expand": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expand"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "WeezeventListRatesConfig",
+      "type": "object"
+    },
+    "WeezeventOnNewOrUpdatedAttendeeConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_attendee",
+          "default": "on_new_or_updated_attendee",
+          "title": "On New Or Updated Attendee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Or Updated Attendee",
+          "x-is-trigger": true
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "include_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Deleted"
+        },
+        "modified__gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records modified after this date, for example 2021-04-26. Leave empty to watch the complete event.",
+          "title": "Modified Gt"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "WeezeventOnNewOrUpdatedAttendeeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WeezeventOnNewOrUpdatedOrderConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_order",
+          "default": "on_new_or_updated_order",
+          "title": "On New Or Updated Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Or Updated Order",
+          "x-is-trigger": true
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "modified__gt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records modified after this date, for example 2021-04-26. Leave empty to watch the complete event.",
+          "title": "Modified Gt"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "WeezeventOnNewOrUpdatedOrderConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WeezeventSwapResaleTicketConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "swap_resale_ticket",
+          "default": "swap_resale_ticket",
+          "title": "Swap Resale Ticket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ticket",
+          "x-display-name": "Swap Resale Ticket",
+          "x-is-trigger": false
+        },
+        "barcode": {
+          "title": "Barcode",
+          "type": "string"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "first_name": {
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "title": "Last Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "barcode",
+        "email",
+        "event_id",
+        "first_name",
+        "last_name"
+      ],
+      "title": "WeezeventSwapResaleTicketConfig",
+      "type": "object"
+    },
+    "WeezeventValidateResaleTicketConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "validate_resale_ticket",
+          "default": "validate_resale_ticket",
+          "title": "Validate Resale Ticket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ticket",
+          "x-display-name": "Validate Resale Ticket",
+          "x-is-trigger": false
+        },
+        "barcode": {
+          "title": "Barcode",
+          "type": "string"
+        },
+        "event_id": {
+          "minimum": 1,
+          "title": "Event Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "barcode",
+        "event_id"
+      ],
+      "title": "WeezeventValidateResaleTicketConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_event": "#/$defs/WeezeventCreateEventConfig",
+          "create_rate": "#/$defs/WeezeventCreateRateConfig",
+          "get_attendee": "#/$defs/WeezeventGetAttendeeConfig",
+          "get_attendee_by_barcode": "#/$defs/WeezeventGetAttendeeByBarcodeConfig",
+          "get_event": "#/$defs/WeezeventGetEventConfig",
+          "get_invoice": "#/$defs/WeezeventGetInvoiceConfig",
+          "get_order": "#/$defs/WeezeventGetOrderConfig",
+          "get_swap_history": "#/$defs/WeezeventGetSwapHistoryConfig",
+          "list_attendees": "#/$defs/WeezeventListAttendeesConfig",
+          "list_events": "#/$defs/WeezeventListEventsConfig",
+          "list_orders": "#/$defs/WeezeventListOrdersConfig",
+          "list_rates": "#/$defs/WeezeventListRatesConfig",
+          "on_new_or_updated_attendee": "#/$defs/WeezeventOnNewOrUpdatedAttendeeConfig",
+          "on_new_or_updated_order": "#/$defs/WeezeventOnNewOrUpdatedOrderConfig",
+          "swap_resale_ticket": "#/$defs/WeezeventSwapResaleTicketConfig",
+          "validate_resale_ticket": "#/$defs/WeezeventValidateResaleTicketConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WeezeventListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventCreateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventListRatesConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventCreateRateConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventListAttendeesConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventGetAttendeeConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventGetAttendeeByBarcodeConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventListOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventGetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventValidateResaleTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventSwapResaleTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventGetSwapHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventOnNewOrUpdatedAttendeeConfig"
+        },
+        {
+          "$ref": "#/$defs/WeezeventOnNewOrUpdatedOrderConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WeezeventCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Weezevent-da56471 Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

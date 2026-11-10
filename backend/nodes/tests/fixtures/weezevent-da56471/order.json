@@ -1,0 +1,8 @@
+{
+  "id_transaction": 1,
+  "buyer_first_name": "John",
+  "buyer_last_name": "WeezDoe",
+  "buyer_email": "name.last_name@weezevent.com",
+  "status": "valid",
+  "transaction_reference": "CXEXXXXXOXXXXX"
+}
