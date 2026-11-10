@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/smartproxy.svg",
+  "source": "https://mintcdn.com/decodo/7ZKpc3GV1DKO_XQr/images/Logo_Black.svg",
+  "found_at": "https://help.decodo.com/docs/introduction (Decodo docs header, light theme)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the D symbol (elements 0-2); removed the \"decodo\" wordmark",
+    "cropped the viewBox to the symbol"
+  ],
+  "variant": "light mode",
+  "notes": "The docs also serve Decodofavicon.svg (src3): the D in white on a #0A0A0A rounded tile, i.e. the app icon; not used because the triage asked to drop the black tile and it vanishes on the dark wells.",
+  "license": "Decodo (formerly Smartproxy) brand mark, used nominatively to identify the connected service; trademark rights remain with Decodo (formerly Smartproxy).",
+  "sha256": "9f15b54fea2ed5f2116098eb87aa002dd40726de8edc667b6e5a4546ec105931"
+}

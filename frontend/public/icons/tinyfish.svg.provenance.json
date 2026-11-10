@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/tinyfish.svg",
+  "source": "https://www.tinyfish.ai/TF-Logos/Icon/SVG/TF_ICON.svg",
+  "found_at": "https://www.tinyfish.ai/ (the site's own TF-Logos folder, referenced from the homepage alongside TF_Horizontal.svg and TF_Workdmark_KO.svg)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned",
+    "cropped the viewBox to the mark"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: the dark file gives the fish a white outline (rule 4: black touching the tile -> white). The fish's fills stay readable on dark without it, so keeping the black outline on dark is the other choice. TinyFish's homepage SVG favicon (icon0.svg) only wraps a PNG; its apple-touch icon puts the fish on a lime tile, which the SVG icon does not have. The company's only knock-out (KO) files are all-white horizontal logo/wordmark, not a coloured dark icon.",
+  "license": "TinyFish brand mark, used nominatively to identify the connected service; trademark rights remain with TinyFish.",
+  "sha256": "cf8234d7a8b3cf6bc336e28a7e0000ed4f5184b357a93ce6c161ace4a47a9883"
+}

@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/todoist-preferred-brand.svg",
-  "source": "https://logos.composio.dev/api/todoist",
-  "license": "Todoist trademark, used nominatively to identify the integration; no trademark rights are granted.",
-  "sha256": "4df1cb14dccb24b58d0532c09f574eae41aa361e745e48fcb217e6d046afb565"
+  "source": "https://www.todoist.com/brand-assets/todoist-logo.zip (todoist-logo/Icon/Color.svg)",
+  "found_at": "https://www.todoist.com/press",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (viewBox already the 32x32 tile; no crop needed)"
+  ],
+  "notes": "Keeps the red rounded tile: it is Todoist's own app icon (the brand kit's 'Icon'). icon_check's 'vanishes-light 15%' is the stripes running off the tile's left edge, as they do in Todoist's own icon; nothing to recolour. FYI: todoist.com's header draws the tile in #DE483A, while the brand kit icon and the site's mask-icon colour use #E44232/#e44332; shipped the brand kit's.",
+  "license": "Todoist brand mark, used nominatively to identify the connected service; trademark rights remain with Todoist.",
+  "sha256": "1d93403b3cc599dc34d4c88e4941d5641a3b3e6b77f75f52e626a1beb2b85e4c"
 }

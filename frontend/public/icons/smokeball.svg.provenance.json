@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/smokeball.svg",
+  "source": "https://cdn.prod.website-files.com/6a4b45c32fce4c25a72fc954/6a4b45f3e0c8a74776ce4005_cce2d83f16d3797e13d5ffaf6452cdf0_logo-smokeball.svg",
+  "found_at": "https://www.smokeball.com/ (site logo, class smokeball-design-system--image_component)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the gradient flag and the white S strokes (elements 0-2, with their gradient); removed the \"smokeball\" wordmark",
+    "cropped the viewBox to the flag"
+  ],
+  "license": "Smokeball brand mark, used nominatively to identify the connected service; trademark rights remain with Smokeball.",
+  "sha256": "262f0983646914bbf1c98abfe318fbe38427f9066d3d97599f181fcfe368d056"
+}

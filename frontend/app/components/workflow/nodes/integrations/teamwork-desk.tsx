@@ -11,19 +11,34 @@ const TeamworkDeskIcon = ({
     className?: string;
     style?: CSSProperties;
 }) => (
-    <img
-        src="/icons/teamwork-desk.svg"
-        alt=""
-        aria-hidden="true"
-        className={className}
-        style={
-            {
-                ...style,
-                '--brand-invert': 0,
-                objectFit: 'contain',
-            } as CSSProperties
-        }
-    />
+    <>
+        <img
+            src="/icons/teamwork-desk.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} dark:hidden`}
+            style={
+                {
+                    ...style,
+                    '--brand-invert': 0,
+                    objectFit: 'contain',
+                } as CSSProperties
+            }
+        />
+        <img
+            src="/icons/teamwork-desk-dark.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} hidden dark:block`}
+            style={
+                {
+                    ...style,
+                    '--brand-invert': 0,
+                    objectFit: 'contain',
+                } as CSSProperties
+            }
+        />
+    </>
 );
 
 export const TeamworkDeskNode: NodeDefinition = {

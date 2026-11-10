@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/tripadvisor.svg",
   "source": "https://static.tacdn.com/img2/brand_refresh/Tripadvisor_lockup_horizontal_secondary_registered.svg",
-  "license": "Tripadvisor official brand mark, used nominatively to identify the service; trademark rights remain with Tripadvisor.",
-  "sha256": "0f7ea4574612c5e8e28aa0f9c02c659768fd6e9401956aed6777a1bd38edfbe6"
+  "found_at": "Tripadvisor's own asset CDN (static.tacdn.com brand_refresh), the file the current icon was taken from",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the green circle and owl (elements 1,2); removed the 'Tripadvisor' wordmark and \u00ae (element 0)",
+    "cleaned",
+    "cropped the viewBox to the circle"
+  ],
+  "notes": "The black owl sits inside the green circle, so one file works on both themes. The same CDN also has a bare black owl (brand_refresh/Tripadvisor_logomark.svg, saved in src1), which would vanish on the dark theme; the circled version is the app-icon form.",
+  "license": "Tripadvisor brand mark, used nominatively to identify the connected service; trademark rights remain with Tripadvisor.",
+  "sha256": "03c90e89a719de129d6e8015fcb2903b06a4dee720753d1717da08385f000131"
 }

@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/simla-com.svg",
+  "source": "https://cdn.prod.website-files.com/608aa9c186d01e674d859427/6204f71ad8b8bd5be39da0bb_logo_icon.svg",
+  "found_at": "https://www.simla.com/brand-assets (footer link \"Sistema de marca Simla.com\"; the icon download)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "removed the Illustrator comment and metadata"
+  ],
+  "notes": "The brand kit icon has no background of its own; the two purples and the white S are all the brand's.",
+  "license": "Simla.com brand mark, used nominatively to identify the connected service; trademark rights remain with Simla.com.",
+  "sha256": "6ef5aca7d561f9e06e8ee450c912ed55741499456aa89fd62134ca49d9cf3deb"
+}

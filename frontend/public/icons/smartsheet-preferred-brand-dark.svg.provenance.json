@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/smartsheet-preferred-brand-dark.svg",
+  "source": "https://www.smartsheet.com/sites/default/files/smartsheet-logo-blue-new.svg",
+  "found_at": "https://www.smartsheet.com/ (global nav header logo <img alt=\"Smartsheet Logo\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the navy check mark (element 10); removed the \"smartsheet\" wordmark",
+    "cropped the viewBox to the mark",
+    "removed the Illustrator comment",
+    "no white rect (the current file's white square is not in the source)",
+    "#0E2947 -> #FFFFFF on the mark (element 0); the check counter stays open"
+  ],
+  "variant": "dark mode",
+  "notes": "No white Smartsheet logo is published on the site, hence the recoloured dark file. The 2022 horizontal logo (src2) has the same mark in #041C4E; brandfolder.com/portals/smartsheet-brand (Smartsheet's brand portal) is a JS app I could not read.",
+  "license": "Smartsheet brand mark, used nominatively to identify the connected service; trademark rights remain with Smartsheet.",
+  "sha256": "35840fb14e9ec27eb9513e7fc165fb0eaea7826eb4863644719b35eb86a95543"
+}

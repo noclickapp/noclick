@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/sirv.svg",
-  "source": "Unaltered official vendor SVG linked by https://sirv.com/ at https://sirv.sirv.com/website/img/sirv-logo.svg; original CRLF bytes preserved",
-  "license": "Vendor trademark shown nominatively to identify Sirv; no trademark rights are claimed or granted",
-  "sha256": "86900cc96e89c1dd70fe6059f3a6b0083e35f4503b9d76355ed67d8de7403024"
+  "source": "https://sirv.sirv.com/safari-pinned-tab.svg",
+  "found_at": "https://sirv.com/ (<link rel=\"mask-icon\" href=\"https://sirv.sirv.com/safari-pinned-tab.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned; no geometry change (viewBox already the tile)"
+  ],
+  "notes": "Keeps the blue rounded tile because it is Sirv's own app icon (apple-touch-icon).",
+  "license": "Sirv brand mark, used nominatively to identify the connected service; trademark rights remain with Sirv.",
+  "sha256": "cdf4d6c52b53cdd29f8fd84d4b1453e84c9fae2b5fd9addaeb4af5802773606f"
 }

@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/trigger-dev.svg",
+  "source": "https://trigger.dev/assets/triggerdev-logo--light.svg",
+  "found_at": "https://trigger.dev/brand (logo downloads)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned",
+    "cropped the viewBox to the mark"
+  ],
+  "notes": "DECISION: the brand page offers the mark in its gradient (#41FF54 -> #E7FF52, 'logo--light', meant for dark backgrounds) and in solid #121317 ('logo--dark', downloads/trigger-dev/src2/triggerdev-logo--dark.svg, for light backgrounds). icon_check passes the gradient on both themes, so I shipped it alone; its yellow tip is pale on white, and the solid-dark file is the company's own alternative for the light theme if wanted. Removed the black tile of the old PNG (not part of the brand mark).",
+  "license": "Trigger.dev brand mark, used nominatively to identify the connected service; trademark rights remain with Trigger.dev.",
+  "sha256": "f75d1b25089b3ed578a348e2df655dbf753c70603668b1bcdd9cfb18e4d836a2"
+}

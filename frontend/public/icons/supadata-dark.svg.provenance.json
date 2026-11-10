@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/supadata-dark.svg",
+  "source": "https://supadata.ai/icon.svg",
+  "found_at": "https://supadata.ai/ (Next.js app icon route /icon.svg, beside its /apple-icon.png and favicon.ico)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "light file: removed the white outline ring drawn around the tile (element 3, a 30px white stroke)",
+    "cropped the viewBox to the tile",
+    "stripped editor metadata",
+    "dark file is icon.svg as published (black tile, white '#', white outline ring), metadata stripped"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: the black tile is Supadata's own app icon, so it stays (icon_check's 'background' note). icon.svg also draws a white ring around the tile, which separates it from dark backgrounds: kept for the dark file, removed for the light file where it only showed as a white margin. icon_check's vanishes-light flag on the light file is the white '#' bars running off the tile's edges, which is how Supadata's icon is drawn.",
+  "license": "Supadata brand mark, used nominatively to identify the connected service; trademark rights remain with Supadata.",
+  "sha256": "09b370e6179e7ea8a926ab72e294b4d3d82d24136ddd07e410a2828584c9008d"
+}

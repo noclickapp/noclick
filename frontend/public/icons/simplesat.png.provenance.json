@@ -1,7 +1,0 @@
-{
-  "path": "frontend/public/icons/simplesat.png",
-  "source": "https://developer.simplesat.io/api/favicon.ico",
-  "license": "Simplesat brand asset; used to identify the Simplesat integration. All rights remain with Simplesat.",
-  "sha256": "9e53957c92800c6e607916f1d3afbfc4b4a89660afa471ef4e15d808961d3993",
-  "conversion": "Lossless PNG export of the largest image in the official favicon ICO."
-}

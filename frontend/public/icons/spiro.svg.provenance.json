@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/spiro.svg",
+  "source": "https://app.spiro.ai/static/main-layout.c271bda4371b61399365.js",
+  "found_at": "https://app.spiro.ai/ (Spiro's web app; chunk named by its webpack runtime /static/runtime.e0cda512505436eff41a.js) \u2014 source: the app's navbar logo component, spiro-logo-white, data-cy navbar-spiro-logo",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "rebuilt the app bundle's compiled SVG component as an .svg file mechanically (work/agents/b30/tools/jsx2svg_spiro.py copies its attributes and path strings verbatim; bundle kept beside it in src9)",
+    "removed the white 'SPIRO' wordmark (element 0)",
+    "cropped the viewBox to the comet",
+    "stripped editor metadata"
+  ],
+  "notes": "DECISION: (1) the current icon is wrong: it is a 'no CRM' marketing icon (crossed-out 'CRM' on purple) that spiro.ai serves as favicon-32x32.png, not Spiro's logo; Spiro's mark is the orange comet (its webclip). (2) No .svg file of the comet is published (site header, help center and favicons are PNG); the vector comes from Spiro's own web app, where the navbar logo is an SVG compiled into the JS bundle, so the source .svg is a mechanical copy of that component rather than a downloaded file. svgtool derive passes against that copy. (3) The comet is 2.46:1 wide (icon_check's wordmark-shape flag); there is no text in it.",
+  "license": "Spiro brand mark, used nominatively to identify the connected service; trademark rights remain with Spiro.",
+  "sha256": "528283af2197f8479a4ea11e8212a54d33fc58fbaf07dbcbf78744dd578f6ac3"
+}

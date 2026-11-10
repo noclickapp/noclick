@@ -10,14 +10,23 @@ const StudioByAI21LabsIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/studio-by-ai21-labs.png"
-        alt=""
-        className={className}
-        style={{ ...style, objectFit: 'contain' }}
-        {...props}
-    />
+    <>
+        <img
+            ref={ref}
+            src="/icons/studio-by-ai21-labs.svg"
+            alt=""
+            className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' }}
+            {...props}
+        />
+        <img
+            src="/icons/studio-by-ai21-labs-dark.svg"
+            alt=""
+            className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' }}
+            {...props}
+        />
+    </>
 ));
 StudioByAI21LabsIcon.displayName = 'StudioByAI21LabsIcon';
 

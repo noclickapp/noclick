@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/simpro.svg",
+  "source": "https://2591358.fs1.hubspotusercontent-na1.net/hubfs/2591358/Simpro-Media-Kit.zip",
+  "found_at": "https://www.simprogroup.com/company/press (Simpro Media Kit link) -> Simpro Brand Guidelines/Simpro Brand Manual_External.pdf, page 8 \"Logo variations\", Favicon row",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "converted page 8 of the media kit's brand-manual PDF to SVG with pdftocairo -svg (vector paths carried over as-is, no tracing)",
+    "kept only the two favicon paths (elements 459 navy disc, 460 yellow star) and deleted everything else, including the now-unreferenced page defs and its background JPEG",
+    "cropped the viewBox to the disc"
+  ],
+  "notes": "DECISION: the kit ships no SVG (EPS lockup, PNG wordmarks/lockups, and a PDF manual); this file is the manual's vector favicon via a lossless PDF->SVG conversion, which is a format change of an official vector, not a trace. Accept it or treat Simpro as no-official-svg. The navy is the manual's #253B80, a little lighter than the favicon PNG's navy; it passes the dark check.",
+  "license": "Simpro brand mark, used nominatively to identify the connected service; trademark rights remain with Simpro.",
+  "sha256": "971cead12ada96e07b08abbc542c4f1486ab552ce4adac214e9d32db8fdf0497"
+}

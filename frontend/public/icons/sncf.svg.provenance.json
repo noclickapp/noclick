@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/sncf.svg",
+  "source": "https://www.groupe-sncf.com/images/logo-light.svg",
+  "found_at": "https://www.groupe-sncf.com/fr (header logo; www.sncf.com redirects there)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'GROUPE' wordmark under the mark (element 4)",
+    "removed the empty invisible frame path (element 0)",
+    "cropped the viewBox to the mark"
+  ],
+  "notes": "SNCF's mark is its 'SNCF' letters in the carmillon shape; there is no separate symbol, so this is the mark itself (1.9:1). The white letters sit inside the coloured shape, so one file works in both themes.",
+  "license": "SNCF brand mark, used nominatively to identify the connected service; trademark rights remain with SNCF.",
+  "sha256": "a5b683c0c29c169ed1a04f3c5edcb042fabaeb02f1a175f8d32f72806e17d953"
+}

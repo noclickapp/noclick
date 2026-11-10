@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/urable.svg",
+  "source": "https://urable.com/wp-content/uploads/2026/07/urpartners_logo.svg",
+  "found_at": "https://urable.com/ (the 'UrPartners Logo' section image; the Urable web app also ships it as assets/images/urpartners_logo.svg)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the green 'ur' mark (element 0); removed 'PARTNERS' (elements 1-8)",
+    "cleaned",
+    "cropped the viewBox to the mark"
+  ],
+  "notes": "DECISION: Urable's own header logo and favicons are PNG; the only Urable SVG carrying its 'ur' mark is the logo of its UrPartners programme, whose 'ur' is the Urable mark itself (identical to the favicon). Shipped that 'ur' alone; it is 1.6:1 wide, as Urable draws it.",
+  "license": "Urable brand mark, used nominatively to identify the connected service; trademark rights remain with Urable.",
+  "sha256": "7c95e9c938d737f34a4f556cc0341326981c30a72cb2c99dbc36191ec6788a0a"
+}

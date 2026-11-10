@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/simple-localize-dark.svg",
+  "source": "https://simplelocalize.io/brand/public/simplelocalize-icon--white.svg",
+  "found_at": "https://simplelocalize.io/brand/ (header \"Brand\" link; also offers media-kit.zip)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the cloud mark",
+    "the company's own white icon file, cropped the same way"
+  ],
+  "variant": "dark mode",
+  "license": "SimpleLocalize brand mark, used nominatively to identify the connected service; trademark rights remain with SimpleLocalize.",
+  "sha256": "911a36eacd5367b603d8b44df49ba48acaf8c4dc4cc7cc0954907204dc157400"
+}

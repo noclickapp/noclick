@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/tinyurl.svg",
+  "source": "https://tinyurl.com/build/assets/Favicon-DjYpNOz6.js (Vue component \"IconLink\": inline <svg viewBox=\"0 0 32 32\"> with paths .a/.b) + https://tinyurl.com/build/assets/Favicon-B5g2MXkW.css (.a[data-v-cf1fada3]{fill:#1c3068} .b[data-v-cf1fada3]{fill:#91b33e;fill-rule:evenodd})",
+  "found_at": "https://tinyurl.com/app/login (the TinyURL web app loads both assets)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned",
+    "cropped the viewBox to the mark"
+  ],
+  "notes": "DECISION: the mark exists as vector only inside TinyURL's web-app bundle, as an inline <svg> in its compiled Vue template, with its colours in the component's scoped CSS. downloads/tinyurl/src3/IconLink.svg was assembled by a script that copied the viewBox, both path d strings and the fill/fill-rule values verbatim from Favicon.js and Favicon.css (both saved next to it); no path data was written by hand. The navy chain is dim on the dark tile but icon_check passes it on both themes, so no dark file. TinyURL's header logo SVG (/images/header/logo.svg) and the Commons file are the wordmark only.",
+  "license": "TinyURL brand mark, used nominatively to identify the connected service; trademark rights remain with TinyURL.",
+  "sha256": "737d6d2cefb51983a5240dfd03650c894808968ac49a0c432f387496e1f05b23"
+}

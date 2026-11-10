@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/tomtom.svg",
+  "source": "https://www.tomtom.com/ (inline <svg viewBox=\"0 0 125 24\"> header logo)",
+  "found_at": "https://www.tomtom.com/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the root's HTML class/aria/color attributes",
+    "kept only the red pin (element 1, #DF1B12); removed the 'tomtom' wordmark (element 0)",
+    "cleaned",
+    "cropped the viewBox to the mark"
+  ],
+  "notes": "The pin is taller than wide (0.69:1), as TomTom draws it. tomtom.com's <link rel=icon type=image/svg+xml> (/icon.svg) redirects to a 404 page for non-browser clients, so the header logo was used.",
+  "license": "TomTom brand mark, used nominatively to identify the connected service; trademark rights remain with TomTom.",
+  "sha256": "5fe48cecf97b8cac554105080e8aa1b16397abebc7914d559682a42c43176eba"
+}

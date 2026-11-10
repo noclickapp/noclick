@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/textcortex.svg",
+  "source": "https://cdn.prod.website-files.com/622611a2b23d0e1ab20fba78/63ca62820b4fe017cb951544_textcortex-logo.svg",
+  "found_at": "https://textcortex.com/about (its logo <img>, served from TextCortex's Webflow asset store; the page was read through https://r.jina.ai/https://textcortex.com/about because textcortex.com answers scripted requests with a Cloudflare challenge; saved at downloads/textcortex/src1/jina-about.html)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the brain mark (element 0, outline filled with TextCortex's #FF805F -> #B74BDD -> #0379FF gradient); removed the black 'text.cortex' wordmark (element 1)",
+    "cropped the viewBox to the brain",
+    "cleaned"
+  ],
+  "notes": "DECISION: TextCortex's app icon is the white brain on a gradient square, which exists only as PNG; the vector mark puts the gradient on the brain instead (as in its logo lockup), which reads on both themes. The homepage header now shows only the 'text.cortex' wordmark (63ca6370ee9367a40efea242_textcortex-white-logo.svg). The only SVG in TextCortex's GitHub (hemingwai-examples/textcortexIcon.svg, src2) is a 2022 potrace of an older solid-blue brain and was not used.",
+  "license": "TextCortex brand mark, used nominatively to identify the connected service; trademark rights remain with TextCortex.",
+  "sha256": "dc14c0f8e20da406a078e1846d5d115a0c17bead27a4ebc44b39138068f82259"
+}

@@ -1,6 +1,0 @@
-{
-  "path": "frontend/public/icons/sncf.png",
-  "source": "https://s3-eu-west-1.amazonaws.com/aws-ec2-eu-1-opendatasoft-staticfileset/datasncf/logo",
-  "license": "SNCF trademark; official SNCF Open Data portal logo, used solely to identify the integration.",
-  "sha256": "d17ea5a93b149e4bc4968c97653265695beb460e381b86cd996ab913edc4c624"
-}

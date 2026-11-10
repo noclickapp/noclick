@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/tave-dark.svg",
+  "source": "https://workspace.vsco.co/static/Images/Public/Logo.White.vsco.svg",
+  "found_at": "https://workspace.vsco.co/api/v2/openapi.json (info.x-logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "the logo is one compound path: kept only the wheel's subpaths (0.5-0.30)",
+    "removed the 'VSCO WORKSPACE' letters (subpaths 0.0-0.4, 0.31-0.43)",
+    "cropped the viewBox to the wheel",
+    "cleaned",
+    "dark file is VSCO's own white logo (Logo.White.vsco.svg, same geometry): kept the same wheel subpaths 0.5-0.30, cropped, cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: the favicon uses a simplified wheel (one ring of spokes, solid hub ring); the only vector is the logo's detailed two-ring wheel shipped here. It is busier at 22px than the favicon.",
+  "license": "VSCO Workspace (formerly Tav\u00e9) brand mark, used nominatively to identify the connected service; trademark rights remain with VSCO Workspace (formerly Tav\u00e9).",
+  "sha256": "6e5a30066601497bb59120b3010a962058ab3d1a1d353bf35de02ce88c461420"
+}

@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/snyk.svg",
+  "source": "https://res.cloudinary.com/snyk/image/upload/snyk-mktg-brandui/brand-logos/icon-light.svg",
+  "found_at": "https://snyk.io/ (the site's brand-logo CSS, .snyk-logo.logo-icon, served from Snyk's own snyk-mktg-brandui/brand-logos set)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark (the source has wide empty margins)",
+    "stripped editor metadata"
+  ],
+  "notes": "DECISION: icon_check flags 28% lost on the light tile: the dog's white shield border and ear tips are white. Snyk's own light lockup (brand-logos/default-light.svg) keeps that shield white too, and the dog still reads on white through its grey shield sides, so I did not recolour it; a light variant would need a colour Snyk doesn't use. The current icon (white 'snyk' on a black tile, snyk.io's favicon) is a wordmark; Snyk's logomark is the dog.",
+  "license": "Snyk brand mark, used nominatively to identify the connected service; trademark rights remain with Snyk.",
+  "sha256": "845839c7deeea1c3accdb13bbd70234da34c0539913a4c8fec9ad1a4d45cef15"
+}

@@ -12,7 +12,7 @@ const UrlscanioIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/urlscanio.png"
+        src="/icons/urlscanio.svg"
         alt=""
         aria-hidden="true"
         className={className}

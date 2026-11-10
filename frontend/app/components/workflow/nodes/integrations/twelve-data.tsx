@@ -7,7 +7,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const TwelveDataIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/twelve-data.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <img ref={ref} src="/icons/twelve-data.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );
 TwelveDataIcon.displayName = 'TwelveDataIcon';

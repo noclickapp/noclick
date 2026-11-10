@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/thrivecart.svg",
+  "source": "https://thrivecart.com/_sis/thrivecart-logo-D9j7YEtC.svg",
+  "found_at": "https://thrivecart.com/ (header <img src=/_sis/thrivecart-logo-D9j7YEtC.svg>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the round teal cart mark (elements 10-16: the #02CBC9 circle and the white cart strokes and wheels); removed the 'ThriveCart' wordmark (elements 0-9)",
+    "cropped the viewBox to the circle",
+    "cleaned"
+  ],
+  "notes": "The teal circle is the brand's own mark (the white cart needs it), so it is kept; one file works on both themes. The current PNG is a square teal tile; the header logo's mark is round.",
+  "license": "ThriveCart brand mark, used nominatively to identify the connected service; trademark rights remain with ThriveCart.",
+  "sha256": "7d7d6717c48f4753f397c3cc9b2f06bfe5f22cf1560b1946967b3ba1c0936dd5"
+}

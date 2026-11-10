@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/transloadit-dark.svg",
+  "source": "https://transloadit.com/assets/images/artwork/logos-transloadit-white-glyph.svg",
+  "found_at": "https://transloadit.com/press/ ('The Transloadit robot glyph'; all variants at https://transloadit.com/artwork/)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned",
+    "cropped the viewBox to the robot",
+    "used Transloadit's own white glyph (logos-transloadit-white-glyph.svg) instead of recolouring"
+  ],
+  "variant": "dark mode",
+  "notes": "The current file was the navbar robot+wordmark. The light glyph is a white robot with a #0D1419 outline; the dark file is the company's own solid white glyph (its silhouette is slightly fuller, as Transloadit draws it). The apple-touch icon puts the robot on a navy tile, which the artwork SVGs don't have.",
+  "license": "Transloadit brand mark, used nominatively to identify the connected service; trademark rights remain with Transloadit.",
+  "sha256": "0b2f510f9bf094f9cbcc5c2047f67cf4061806181413b20bac7ccae7f6be0388"
+}

@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/slicktext.svg",
+  "source": "https://www.slicktext.com/images/favicon.svg",
+  "found_at": "https://www.slicktext.com/ (<link rel=\"icon\" type=\"image/svg+xml\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark"
+  ],
+  "notes": "The navy overlap (#112867) sits inside the coloured shapes, never against the tile.",
+  "license": "SlickText brand mark, used nominatively to identify the connected service; trademark rights remain with SlickText.",
+  "sha256": "fc27ed350ade8f56c60264707562d846e9ad1014dd0a469925f42d0248b776b0"
+}

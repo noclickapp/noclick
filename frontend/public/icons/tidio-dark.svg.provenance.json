@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/tidio-dark.svg",
+  "source": "https://www.tidio.com/images/brand-logos/tidio-logo.svg",
+  "found_at": "https://www.tidio.com/ (header product switcher <img src=/images/brand-logos/tidio-logo.svg>, beside its Ayro and Hubi logos)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "#000000 -> #FFFFFF on the mark (the black outline vanishes on the dark tile; Tidio's own favicon swaps to a light mark in dark mode too)"
+  ],
+  "variant": "dark mode",
+  "notes": "Replaces the current icon.svg, which only wraps PNG bitmaps (with no viewBox), with the real vector.",
+  "license": "Tidio brand mark, used nominatively to identify the connected service; trademark rights remain with Tidio.",
+  "sha256": "fa6f1fe2e443cfba51203ee27353af4ffc924ae2cc96b2fcd5b17543e582099f"
+}

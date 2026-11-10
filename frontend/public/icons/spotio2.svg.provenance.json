@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/spotio2.svg",
+  "source": "https://spotio.com/",
+  "found_at": "https://spotio.com/ \u2014 source: inline <svg> in <a class=\"site-header__logo\">, viewBox 0 0 207 44",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'SPOTIO' wordmark (elements 0-5, #28272D)",
+    "cropped the viewBox to the pin",
+    "stripped editor metadata"
+  ],
+  "notes": "SPOTIO's favicon puts the pin on a dark rounded tile; the header logo's pin alone is yellow and reads on both themes, so the tile was not reproduced (no SVG of it exists on the site).",
+  "license": "SPOTIO brand mark, used nominatively to identify the connected service; trademark rights remain with SPOTIO.",
+  "sha256": "bf1cec3d91161e66c1321fb50c4ad1517bad4b5204d69c12dd834928d8ecaf4f"
+}

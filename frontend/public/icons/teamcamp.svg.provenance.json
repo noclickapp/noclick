@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/teamcamp.svg",
+  "source": "https://www.teamcamp.app/ (inline <svg id=\"svg-1211541227_2157\"> mark in the page)",
+  "found_at": "https://www.teamcamp.app/ (inline SVG)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "no elements removed (the inline SVG is the mark alone: a #14151A disc shown through the mark-shaped mask)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: the web app's favicon (https://dash.teamcamp.app/favicon.svg, downloads/teamcamp/src2/favicon.svg) is the same mark in green #00A16F as plain paths; the marketing site and docs use it in near-black. Shipped the near-black homepage mark; the green app favicon would also work on both themes as a single file.",
+  "license": "Teamcamp brand mark, used nominatively to identify the connected service; trademark rights remain with Teamcamp.",
+  "sha256": "aea224278d6b3e4b259d327c43a2d5e867747ff3c4af9a0beba916307cd39c6b"
+}

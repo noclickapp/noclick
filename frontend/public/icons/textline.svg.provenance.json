@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/textline.svg",
+  "source": "https://application.textline.com/assets_1793868963/moon/app-sprite.svg",
+  "found_at": "https://application.textline.com/auth/sign_in (the web app's stylesheet assets_1793868963/application-6c32860769457b0175a2a8c071561c717de7c693578291174c0a827a3fc3609b.css loads url(moon/app-sprite.svg))",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the T mark (element 513) from the app's icon sprite; dropped every other sprite icon and the app-UI tile behind it (element 512, #2D54FF)",
+    "recoloured the T from the sprite's off-white #EEF1F6 to Textline's brand blue #001EFF (the blue of the header logo and favicon)",
+    "cropped the viewBox to the T",
+    "cleaned editor metadata (the sprite's unused clipPath/mask defs remain; they draw nothing)"
+  ],
+  "notes": "DECISION: Textline's app icon is a white T on a #001EFF square; this ships the bare blue T as it appears in the website header lockup (no vector of the tile exists; the sprite's tile is an app-UI #2D54FF square, not the brand tile). The only other Textline SVG, https://assets.website-files.com/5ecfd39ed9e2cb73fda7ff78/5ecfd39ed9e2cb8ad7a8028f_textline-blue.svg (still preloaded by the homepage), is the RETIRED sharp-cornered T logo, so it was not used (kept at downloads/textline/src2/). The homepage's inline header <svg> just wraps a PNG.",
+  "license": "Textline brand mark, used nominatively to identify the connected service; trademark rights remain with Textline.",
+  "sha256": "f55365add891947e92d08b7d9f6f16c30e2f5d93cd3b5e7e1bde44bfce049e0d"
+}

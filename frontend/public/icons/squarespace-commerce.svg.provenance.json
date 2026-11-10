@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/squarespace-commerce.svg",
+  "source": "https://www.squarespace.com/brand-guidelines",
+  "found_at": "https://www.squarespace.com/brand-guidelines \u2014 source: inline <svg class=\"global-navigation__logo global-navigation__logo--mobile\">, the header's mark-only logo",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML class from the root <svg>",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata",
+    "light file: #FFFFFF -> #000000 (Squarespace's black mark; the header draws it white)"
+  ],
+  "variant": "light mode",
+  "notes": "The source is the white mark from the site's dark header; the light-theme file is that mark recoloured to Squarespace black, the dark-theme file is the original white.",
+  "license": "Squarespace brand mark, used nominatively to identify the connected service; trademark rights remain with Squarespace.",
+  "sha256": "e5386c69023349433ffb347a3e587e836aeb88ef82dc227530d204e6243047af"
+}

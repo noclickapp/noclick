@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/tapfiliate.svg",
-  "source": "https://tapfiliate.com/theme/themes/site/assets-main/img/favicon/favicon.svg",
-  "license": "Tapfiliate trademark; used to identify the Tapfiliate integration",
-  "sha256": "c59abc6c11e017249e61d3f621d687f1bf297e72db94a24afc9022921b469142"
+  "source": "https://tapfiliate.com/_astro/2bhwf5gh-logotype-2.BtZ1CdCK_Z2v3qvD.svg",
+  "found_at": "https://tapfiliate.com/ (header logo, class block__header--logo-black)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the blue #0070F0 mark (element 0)",
+    "removed the 'Tapfiliate' wordmark (elements 1-9)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: the app icon is this mark in white on a #0070F0 square; no vector of that tile exists, so the blue outline mark ships alone (its counters stay open, readable on both themes).",
+  "license": "Tapfiliate brand mark, used nominatively to identify the connected service; trademark rights remain with Tapfiliate.",
+  "sha256": "a884bbab7aa11738c8acb6e13d8f688f85f61af3cf969790bcaf846442387ac8"
 }

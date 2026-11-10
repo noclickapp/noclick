@@ -12,7 +12,7 @@ const SmartleadIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/smartlead.png"
+        src="/icons/smartlead.svg"
         alt=""
         aria-hidden="true"
         className={className}

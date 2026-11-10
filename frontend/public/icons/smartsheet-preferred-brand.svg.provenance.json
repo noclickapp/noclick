@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/smartsheet-preferred-brand.svg",
   "source": "https://www.smartsheet.com/sites/default/files/smartsheet-logo-blue-new.svg",
-  "license": "Smartsheet trademark; brand artwork used to identify the Smartsheet integration.",
-  "sha256": "fafc18f275b49ba6ca16e41f6ca255d211af7e19623b4223dad959ce0d42bd2e"
+  "found_at": "https://www.smartsheet.com/ (global nav header logo <img alt=\"Smartsheet Logo\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the navy check mark (element 10); removed the \"smartsheet\" wordmark",
+    "cropped the viewBox to the mark",
+    "removed the Illustrator comment",
+    "no white rect (the current file's white square is not in the source)"
+  ],
+  "variant": "light mode",
+  "notes": "No white Smartsheet logo is published on the site, hence the recoloured dark file. The 2022 horizontal logo (src2) has the same mark in #041C4E; brandfolder.com/portals/smartsheet-brand (Smartsheet's brand portal) is a JS app I could not read.",
+  "license": "Smartsheet brand mark, used nominatively to identify the connected service; trademark rights remain with Smartsheet.",
+  "sha256": "1769fbb98eb699a037c5a3f8d0f88861b6ffcec58cdefaee00ec5c4be9c78ace"
 }

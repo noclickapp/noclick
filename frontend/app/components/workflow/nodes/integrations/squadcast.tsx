@@ -7,7 +7,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const SquadCastIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/squadcast.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <img ref={ref} src="/icons/squadcast.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );
 SquadCastIcon.displayName = 'SquadCastIcon';

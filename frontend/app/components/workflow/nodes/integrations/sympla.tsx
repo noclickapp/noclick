@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const SymplaIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/sympla.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain', backgroundColor: '#0097ff', borderRadius: 6, padding: 4 } as CSSProperties} />
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
 );
 
 export const SymplaNode: NodeDefinition = {

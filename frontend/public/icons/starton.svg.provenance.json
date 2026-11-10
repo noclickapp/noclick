@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/starton.svg",
+  "source": "https://raw.githubusercontent.com/starton-io/docs/master/static/img/logo.svg",
+  "found_at": "https://github.com/starton-io/docs (Starton's own docs site source; its static/img/logo.svg is the docs' navbar logo)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "stripped editor metadata"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: Starton looks shut down: starton.com fails TLS, starton.io and docs.starton.com answer 402, and app/api.starton.com answer 530, so the integration's API (api.starton.com) is unreachable today; worth checking whether the integration should stay. The marks themselves are Starton's own files from its GitHub docs repo.",
+  "license": "Starton brand mark, used nominatively to identify the connected service; trademark rights remain with Starton.",
+  "sha256": "7c671d2f72f8bc592f067c939477daae82782d419b0c66ae2cb7fefe395a77aa"
+}

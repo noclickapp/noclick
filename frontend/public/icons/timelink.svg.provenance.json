@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/timelink.svg",
+  "source": "https://timelink.io/themes/timelink/assets/images/timelink_logo.svg",
+  "found_at": "https://timelink.io/ (header <img alt=\"Timelink Logo\" src=.../timelink_logo.svg>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the four coloured bars (elements 9-12: #CFD470, #AFD7E7, #F29657, #EC78A7); removed the 'timelink' wordmark (elements 0-8)",
+    "cropped the viewBox to the bars",
+    "cleaned"
+  ],
+  "notes": "DECISION: Timelink's app icon is the bars on an ivory #FAF9F5 squircle; an SVG of that exists (timelink_bookmark_signet_ivory.svg, saved at downloads/timelink/src2/), but its ivory tile vanishes on the light theme (icon_check: 81% lost on light). The bars alone, as the header logo shows them, pass on both themes, so they ship as one file; the signet could be used for dark mode only if the reviewer prefers the tile.",
+  "license": "Timelink brand mark, used nominatively to identify the connected service; trademark rights remain with Timelink.",
+  "sha256": "383040af073d27e6d784404725d8cbb658a0ecd6f7421ab6cb666089e9476b4f"
+}

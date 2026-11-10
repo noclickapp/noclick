@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/sumoquote.svg",
+  "source": "https://cdn.prod.website-files.com/67b8bc80a1e381fe2695e2a3/67b8bc80a1e381fe2695e302_Vertical%20Logo%20Colour%201.svg",
+  "found_at": "https://sumoquote.com/ (the site's colour logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'SUMOQUOTE' letters (elements 0-8, white)",
+    "cropped the viewBox to the sumo mark",
+    "stripped editor metadata"
+  ],
+  "notes": "SumoQuote's webclip puts the mark in white on a green tile; no SVG of that tile exists on the site, so this ships the site's own green-gradient mark, which reads on both themes. The site's header now reads 'SumoQuote by JobNimbus' (SumoQuote belongs to JobNimbus).",
+  "license": "SumoQuote brand mark, used nominatively to identify the connected service; trademark rights remain with SumoQuote.",
+  "sha256": "3395d1340f24d1789f248df82be8e1e2877be68e476f2d22394a3a430ac56e3b"
+}

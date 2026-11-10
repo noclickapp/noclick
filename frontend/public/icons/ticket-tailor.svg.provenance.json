@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/ticket-tailor.svg",
-  "source": "https://www.tickettailor.com/ \u2014 official homepage SVG brand artwork, preserved from noclickapp/noclick4#2839",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "b7f0382792dd2644216bb754b1c1aaa5532b6605fcb9f8a205db3d61d6d62b69"
+  "source": "https://www.tickettailor.com/",
+  "found_at": "https://www.tickettailor.com/ (inline <svg class=\"logo-small\"> in the footer logo column; extracted as downloads/ticket-tailor/src1/svgs/inline-47.svg from the saved page src1/home.html)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML class attribute from the copied <svg> root",
+    "cropped the viewBox to the ticket",
+    "cleaned",
+    "light: recoloured the ticket #FFFFFF -> #222432 (element 0) and the two Ts #222432 -> #FFFFFF (elements 1, 2), which are exactly the colours of Ticket Tailor's own app icon (apple-icon.png: navy ticket, white TT); the white ticket vanished on the light tile"
+  ],
+  "variant": "light mode",
+  "notes": "Replaces the CSS-inverted wordmark with the square ticket mark. Source kind is the site's footer logo (inline SVG), not the header.",
+  "license": "Ticket Tailor brand mark, used nominatively to identify the connected service; trademark rights remain with Ticket Tailor.",
+  "sha256": "4e4f1c4aeba4b724d754de51f0e06d3ef573aefd0511e80864929928a9ed414b"
 }

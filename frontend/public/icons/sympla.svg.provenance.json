@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/sympla.svg",
-  "source": "https://developers.sympla.com.br/docs/sympla-logo.svg",
-  "license": "Sympla trademark; used to identify the Sympla integration",
-  "sha256": "7cba2d6c4332610b9323fb4a00e72e82d9c584e1eec9c4dd327a79f2b0ee4608"
+  "source": "https://www.sympla.com.br/ (inline header <svg class=\"jbttol9\"> S mark)",
+  "found_at": "https://www.sympla.com.br/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML class/alt attributes from the root",
+    "recoloured fill currentColor -> #0097FF (the site's own CSS paints this class with var(--_6vhttq3y) = #0097FF)",
+    "cropped the viewBox to the mark (square)",
+    "cleaned"
+  ],
+  "license": "Sympla brand mark, used nominatively to identify the connected service; trademark rights remain with Sympla.",
+  "sha256": "a18493e75414803d625b492af2be109cc7e7ec95b33db602c4750ab518e3b932"
 }

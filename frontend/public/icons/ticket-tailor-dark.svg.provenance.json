@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/ticket-tailor-dark.svg",
+  "source": "https://www.tickettailor.com/",
+  "found_at": "https://www.tickettailor.com/ (inline <svg class=\"logo-small\"> in the footer logo column; extracted as downloads/ticket-tailor/src1/svgs/inline-47.svg from the saved page src1/home.html)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML class attribute from the copied <svg> root",
+    "cropped the viewBox to the ticket",
+    "cleaned",
+    "light: recoloured the ticket #FFFFFF -> #222432 (element 0) and the two Ts #222432 -> #FFFFFF (elements 1, 2), which are exactly the colours of Ticket Tailor's own app icon (apple-icon.png: navy ticket, white TT); the white ticket vanished on the light tile",
+    "none: the dark file is the footer mark as published for dark backgrounds (white ticket, navy #222432 TT)"
+  ],
+  "variant": "dark mode",
+  "notes": "Replaces the CSS-inverted wordmark with the square ticket mark. Source kind is the site's footer logo (inline SVG), not the header.",
+  "license": "Ticket Tailor brand mark, used nominatively to identify the connected service; trademark rights remain with Ticket Tailor.",
+  "sha256": "27082e882f86ad054d17dd598c7935bf371fb7c35c1d631c1d1f70b124fb3786"
+}

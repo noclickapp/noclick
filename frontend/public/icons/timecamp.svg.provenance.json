@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/timecamp.svg",
+  "source": "https://www.timecamp.com/files/press/logo.zip",
+  "found_at": "https://www.timecamp.com/press/ (logo pack download; file colorIcon.svg)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox from the kit's 568x568 artboard to the mark",
+    "cleaned"
+  ],
+  "notes": "The press kit's colour icon has no background; the dark square in the current PNG is only the apple-touch-icon's tile, so it was not kept. One file works on both themes.",
+  "license": "TimeCamp brand mark, used nominatively to identify the connected service; trademark rights remain with TimeCamp.",
+  "sha256": "a41befd7538ed3996521dc81ff4170f1939f2be5785ef06d4185d5ad570c8a17"
+}

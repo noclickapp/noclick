@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/temporal-dark.svg",
+  "source": "https://images.ctfassets.net/0uuz8ydxyd9p/6h19hCTYqrDacnDV8havze/58f49e40aa15d91f34654290ddc91e75/Temporal_Symbol_light.svg",
+  "found_at": "https://temporal.io/brand",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the symbol (the kit's 1200x1200 artboard has wide margins)",
+    "cleaned editor metadata",
+    "used Temporal's own light symbol (#F2F2F2) from the brand kit, cropped the same way"
+  ],
+  "variant": "dark mode",
+  "notes": "Replaces the CSS-inverted white mark with Temporal's own per-theme symbols.",
+  "license": "Temporal brand mark, used nominatively to identify the connected service; trademark rights remain with Temporal.",
+  "sha256": "7c7b34f51eb0f5fa1a90746277a1a2387da7ec1bf3d7a961d97a4d2a9e4fa5e9"
+}

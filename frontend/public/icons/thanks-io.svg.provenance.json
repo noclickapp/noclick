@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/thanks-io.svg",
+  "source": "https://thanks.io/favicon.svg",
+  "found_at": "https://thanks.io/ (<link rel=\"icon\" type=\"image/svg+xml\"> and also its rel=\"apple-touch-icon\")",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned comments (no geometry changed; the viewBox is already the circle)"
+  ],
+  "notes": "DECISION: the indigo circle is kept because it is the mark's own app-icon shape (the white envelope needs it). thanks.io's header/docs lockup instead uses a purple #6300CC outline envelope with speed lines (raster on the homepage). An SVG of that envelope exists in the company's own GitHub (https://raw.githubusercontent.com/thanks-io/n8n-nodes-thanks-io/main/nodes/ThanksIo/icons/thanksIo.svg, saved at downloads/thanks-io/src4/) and inside the docs logo (https://mintcdn.com/thanksio/jRViseKcOKEicv0x/logo/dark.svg, src3), but its path data carries a PNG-to-SVG vectorizer signature ('M0 0 C1.16181486 -0.00256327 ...', dozens of micro-curves with slightly uneven line ends), i.e. a trace, so it was not shipped. If the reviewer prefers the envelope lockup mark, that file is the only vector of it.",
+  "license": "thanks.io brand mark, used nominatively to identify the connected service; trademark rights remain with thanks.io.",
+  "sha256": "5644ae4f89332f8e93f182b7238da92b1673817656981e5769d90f606adaaf70"
+}

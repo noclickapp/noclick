@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/universe.svg",
+  "source": "https://cdn.prod.website-files.com/64628d0a55b289f26f93662f/662147222b9467b353782c05_brand-blue-19c27a9412161d6102c1503bde5bea39c99a048003366c78c5834407c85d1639.svg",
+  "found_at": "https://www.universe.com/ (the site's own Webflow asset, 'brand-blue', referenced from the homepage)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the first letter 'u' (element 1); removed 'niverse' (elements 0,2-7)",
+    "cleaned",
+    "cropped the viewBox to the letter"
+  ],
+  "notes": "DECISION: Universe has no SVG of its icon; its SVGs are the 'universe' wordmark (white in the header, with 'a ticketmaster company'; blue #3A66E5 in brand-blue.svg). Shipped the wordmark's own 'u' in that blue, without the app icon's tile (the tile's blue, #4E78F1, exists only in the PNG). Reads as a blue U on both themes.",
+  "license": "Universe brand mark, used nominatively to identify the connected service; trademark rights remain with Universe.",
+  "sha256": "3da92288bb848294501a2de44a1d6097906edb4319de298dc6d40601778856ab"
+}

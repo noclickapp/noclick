@@ -11,13 +11,22 @@ const TemporalIcon = ({
     className?: string;
     style?: CSSProperties;
 }) => (
-    <img
-        src="/icons/temporal.svg"
-        alt=""
-        aria-hidden="true"
-        className={`brand-mono ${className ?? ''}`}
-        style={{ ...style, objectFit: 'contain' } as CSSProperties}
-    />
+    <>
+        <img
+            src="/icons/temporal.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' } as CSSProperties}
+        />
+        <img
+            src="/icons/temporal-dark.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' } as CSSProperties}
+        />
+    </>
 );
 
 export const TemporalNode: NodeDefinition = {

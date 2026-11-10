@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/splitwise.svg",
+  "source": "https://assets.splitwise.com/assets/press/logos/logos-6bcb93235caa964ffa3efa07c31a96340a9264a021e3c005b98bd8c34ca3e896.zip",
+  "found_at": "https://www.splitwise.com/press (press kit 'Logos' download) \u2014 source: logos/bg-primary.svg",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "stripped editor metadata (the drawing is unchanged)"
+  ],
+  "notes": "DECISION: this keeps Splitwise's own app-icon tile (bg-primary.svg is the press kit's app icon), as the current PNG does. icon_check flags 50% lost on the light tile because the tile's top band is pale mint #ACE4D6 against white; recolouring the brand's own tile would change the brand, so I left it. The alternative is the cube mark without the tile from sw.svg (its white S and pale top face would then need per-theme handling).",
+  "license": "Splitwise brand mark, used nominatively to identify the connected service; trademark rights remain with Splitwise.",
+  "sha256": "68985e26bb42a6f62794eaa0b9c03eeb04b21998805f83b6d636f85142ff6852"
+}
