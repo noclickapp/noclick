@@ -6,6 +6,9 @@ These describe key permissions; no OAuth consent or token introspection exists.
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 
 HUMANITIX_SCOPES = ScopeRegistry(provider="humanitix", requirements={
+    "on_new_or_updated_event": ScopeRequirement(scopes=("events:read",)),
+    "on_new_or_updated_order": ScopeRequirement(scopes=("orders:read",)),
+    "on_new_or_updated_ticket": ScopeRequirement(scopes=("tickets:read",)),
     "list_events": ScopeRequirement(scopes=("events:read",)),
     "get_event": ScopeRequirement(scopes=("events:read",)),
     "get_event_check_in_count": ScopeRequirement(scopes=("tickets:read",)),

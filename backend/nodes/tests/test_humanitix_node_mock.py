@@ -169,3 +169,127 @@ async def test_secret_reflections_removed(monkeypatch):
 
 def test_legacy_api_keys_are_accepted_and_cleaned():
     assert native.HumanitixAPIKeyCredential(api_key=" legacy-key ").api_key == "legacy-key"
+
+
+# Response fields and initial values are the provider's OpenAPI schema examples:
+# https://api.humanitix.com/v1/documentation/json#/components/schemas/{Event,Order,Ticket}
+POLL_EXAMPLES = {
+    "events": {"_id": EVENT, "name": "Hobbit Dance Off", "updatedAt": "2021-02-01T23:26:13.485Z"},
+    "orders": {"_id": "5ac599d1a488620e6cd01d87", "eventId": EVENT,
+        "firstName": "Bilbo", "lastName": "Baggins", "status": "complete", "updatedAt": "2021-02-01T23:26:13.485Z"},
+    "tickets": {"_id": "5da50970ec90824b5ca3608f", "eventId": EVENT, "orderId": "5ac599d1a488620e6cd01d87",
+        "firstName": "Bilbo", "lastName": "Baggins", "status": "complete", "updatedAt": "2021-02-01T23:26:13.485Z"},
+}
+
+
+def poll_state(instance, initial=None):
+    state = {} if initial is None else dict(initial)
+
+    async def update(mutator, **kwargs):
+        updated, result = mutator(dict(state))
+        if updated is not None:
+            state.clear()
+            state.update(updated)
+        return result
+
+    instance._update_node_state = update
+    return state
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,resource", [
+    ("on_new_or_updated_event", "events"),
+    ("on_new_or_updated_order", "orders"),
+    ("on_new_or_updated_ticket", "tickets"),
+])
+async def test_poll_baseline_repeat_update_and_agent_message(monkeypatch, operation, resource):
+    example = dict(POLL_EXAMPLES[resource])
+    body = {resource: [example], "page": 1, "pageSize": 100, "total": 1}
+    requests = transport(monkeypatch, body)
+    config = {"operation": operation, "since": "2021-02-01T23:26:13.485Z", "overrideLocation": "AU"}
+    if resource != "events":
+        config.update(eventId=EVENT, eventDateId=DATE)
+    if resource == "tickets":
+        config["status"] = "complete"
+    instance = node(config)
+    state = poll_state(instance)
+    baseline = await instance.execute({})
+    assert baseline["items"] == []
+    assert not native.HumanitixNode.should_propagate_output(baseline, config)
+    assert native.HumanitixNode.resolve_agent_event(baseline) is None
+    assert state["seen_ids"] == [example["_id"] + ":" + example["updatedAt"]]
+    assert (await instance.execute({}))["new_item_count"] == 0
+    # A controlled update to the documented timestamp field simulates an API edit.
+    example["updatedAt"] = "2021-02-02T23:26:13.485Z"
+    changed = await instance.execute({})
+    assert changed["items"] == [example] and changed["new_item_count"] == 1
+    assert native.HumanitixNode.should_propagate_output(changed, config)
+    event = native.HumanitixNode.resolve_agent_event(changed)
+    assert "new or updated " + resource in event["text"] and example["_id"] in event["text"]
+    assert ("Hobbit Dance Off" if resource == "events" else "Bilbo Baggins") in event["text"]
+    if resource != "events":
+        assert EVENT in event["text"] and event["conversation_key"] == EVENT
+    assert (await instance.execute({}))["new_item_count"] == 0
+    params = dict(requests[0].url.params)
+    assert params == {"page": "1", "pageSize": "100", "since": config["since"], "overrideLocation": "AU",
+        **({"eventDateId": DATE} if resource != "events" else {}), **({"status": "complete"} if resource == "tickets" else {})}
+    assert requests[0].url.path == ("/v1/events" if resource == "events" else f"/v1/events/{EVENT}/{resource}")
+    # Cosmetic and schedule changes retain the baseline; a declared resource change rotates it.
+    instance.node_data["config"]["label"] = "Renamed"
+    assert (await instance.execute({}))["new_item_count"] == 0
+    instance.config.config.overrideLocation = "NZ"
+    example["updatedAt"] = "2021-02-03T23:26:13.485Z"
+    assert (await instance.execute({}))["new_item_count"] == 0
+
+
+@pytest.mark.asyncio
+async def test_poll_traverses_all_pages_before_dedup_and_emits_once(monkeypatch):
+    requests = []
+    first = POLL_EXAMPLES["events"]
+    last = {**first, "_id": "5ac598ccd8fe7c0c0f212e2b"}
+    def respond(request):
+        requests.append(request)
+        page = int(request.url.params["page"])
+        return httpx.Response(200, json={"events": [first] if page == 1 else [last],
+            "page": page, "pageSize": 100, "total": 101})
+    monkeypatch.setattr(native, "guarded_async_client", lambda **kw: httpx.AsyncClient(transport=httpx.MockTransport(respond), **kw))
+    instance = node({"operation": "on_new_or_updated_event"})
+    poll_state(instance, {"seen_ids": []})
+    emitted = []
+    async def emit(output):
+        emitted.append(output)
+    instance.emit = emit
+    result = await instance.execute({})
+    assert result["items"] == [first, last]
+    assert emitted == [result] and len(requests) == 2
+    assert [r.url.params["page"] for r in requests] == ["1", "2"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("body,match", [
+    ({"events": [POLL_EXAMPLES["events"]], "page": 1, "pageSize": 100, "total": 10001}, "10,000"),
+    ({"events": [{"_id": EVENT}], "page": 1, "pageSize": 100, "total": 1}, "update time"),
+    ({"events": [POLL_EXAMPLES["events"]], "page": 2, "pageSize": 100, "total": 1}, "different poll page"),
+])
+async def test_poll_rejects_partial_or_malformed_snapshot_without_consuming_state(monkeypatch, body, match):
+    transport(monkeypatch, body)
+    instance = node({"operation": "on_new_or_updated_event"})
+    state = poll_state(instance, {"seen_ids": []})
+    with pytest.raises(ValueError, match=match):
+        await instance.execute({})
+    assert state == {"seen_ids": []}
+
+
+def test_poll_config_requires_scope_and_uses_shared_schedule_family():
+    from nodes.core.poll_trigger import PollTriggerConfigBase, poll_scope
+    for operation in native.POLL_OPERATIONS:
+        config = {"operation": operation, **({"eventId": EVENT} if operation != "on_new_or_updated_event" else {})}
+        parsed = native.HumanitixNode.parse_config({"config": config}).config
+        assert isinstance(parsed, PollTriggerConfigBase)
+        assert parsed.schedule.interval == 5
+        assert poll_scope(native.HumanitixNode, config) == poll_scope(native.HumanitixNode, {**config, "label": "New label"})
+    for operation in ["on_new_or_updated_order", "on_new_or_updated_ticket"]:
+        with pytest.raises(ValueError):
+            native.HumanitixNode.parse_config({"config": {"operation": operation}})
+    with pytest.raises(ValueError):
+        native.HumanitixNode.parse_config({"config": {"operation": "on_new_or_updated_event", "since": "yesterday"}})

@@ -1,7 +1,8 @@
 """Humanitix Public API v1.30.1: account events, orders, tickets and tags.
 
 Contract: https://api.humanitix.com/v1/documentation/json
-Lists return one page; global reads require Humanitix's special permission.
+Actions return one page; poll triggers traverse all pages before deduplication.
+Global reads require Humanitix's special permission.
 Check-in/out send exactly one POST without a body and are never retried.
 """
 from __future__ import annotations
@@ -13,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from nodes.scopes.humanitix import HUMANITIX_SCOPES
 from utils.ssrf import guarded_async_client
@@ -185,7 +187,40 @@ class ListGlobalEventDatesConfig(_Input):
         return self
 
 
-HumanitixConfig = Annotated[Union[ListEventsConfig, GetEventConfig, GetEventCheckInCountConfig, ListOrdersConfig, GetOrderConfig, ListTicketsConfig, GetTicketConfig, CheckInTicketConfig, CheckOutTicketConfig, ListTagsConfig, GetTagConfig, ListGlobalEventsConfig, ListGlobalEventDatesConfig], Field(discriminator="operation")]
+class _HumanitixPollConfig(PollTriggerConfigBase, _Input):
+    """Baseline existing records, then emit new ids or changed updatedAt versions."""
+    # Canvas metadata must not invalidate the parsed polling scope.
+    model_config = ConfigDict(extra="ignore")
+    since: Optional[str] = Field(None, title="Since", json_schema_extra={"format": "date-time"},
+        description="Only monitor results since this ISO 8601 date-time. Narrow this scope if it exceeds 10,000 records. Existing records form a baseline when armed.")
+    overrideLocation: Optional[str] = Field(None, min_length=2, max_length=2,
+        description="Humanitix account market (two-letter country code; DE for the EU).")
+
+
+class OnNewOrUpdatedEventConfig(_HumanitixPollConfig):
+    operation: Literal["on_new_or_updated_event"] = Field("on_new_or_updated_event", title="On New or Updated Event",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New or Updated Event"})
+
+
+class OnNewOrUpdatedOrderConfig(_HumanitixPollConfig):
+    operation: Literal["on_new_or_updated_order"] = Field("on_new_or_updated_order", title="On New or Updated Order",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New or Updated Order"})
+    eventId: ID = Field(..., title="Event ID", description="ID of the event to monitor.")
+    eventDateId: Optional[ID] = Field(None, title="Event Date ID", description="Optionally monitor one event date.")
+
+
+class OnNewOrUpdatedTicketConfig(_HumanitixPollConfig):
+    operation: Literal["on_new_or_updated_ticket"] = Field("on_new_or_updated_ticket", title="On New or Updated Ticket",
+        json_schema_extra={"ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+            "x-display-name": "On New or Updated Ticket"})
+    eventId: ID = Field(..., title="Event ID", description="ID of the event to monitor.")
+    eventDateId: Optional[ID] = Field(None, title="Event Date ID", description="Optionally monitor one event date.")
+    status: Optional[Literal["complete", "cancelled"]] = Field(None, description="Optionally monitor tickets of this status.")
+
+
+HumanitixConfig = Annotated[Union[ListEventsConfig, GetEventConfig, GetEventCheckInCountConfig, ListOrdersConfig, GetOrderConfig, ListTicketsConfig, GetTicketConfig, CheckInTicketConfig, CheckOutTicketConfig, ListTagsConfig, GetTagConfig, ListGlobalEventsConfig, ListGlobalEventDatesConfig, OnNewOrUpdatedEventConfig, OnNewOrUpdatedOrderConfig, OnNewOrUpdatedTicketConfig], Field(discriminator="operation")]
 
 
 class HumanitixNodeConfig(NodeConfig[HumanitixConfig, HumanitixAPIKeyCredential]):
@@ -195,7 +230,14 @@ class HumanitixNodeConfig(NodeConfig[HumanitixConfig, HumanitixAPIKeyCredential]
 ROUTES = {'list_events': ('GET', '/v1/events'), 'get_event': ('GET', '/v1/events/{eventId}'), 'get_event_check_in_count': ('GET', '/v1/events/{eventId}/check-in-count'), 'list_orders': ('GET', '/v1/events/{eventId}/orders'), 'get_order': ('GET', '/v1/events/{eventId}/orders/{orderId}'), 'list_tickets': ('GET', '/v1/events/{eventId}/tickets'), 'get_ticket': ('GET', '/v1/events/{eventId}/tickets/{ticketId}'), 'check_in_ticket': ('POST', '/v1/events/{eventId}/tickets/{ticketId}/check-in'), 'check_out_ticket': ('POST', '/v1/events/{eventId}/tickets/{ticketId}/check-out'), 'list_tags': ('GET', '/v1/tags'), 'get_tag': ('GET', '/v1/tags/{tagId}'), 'list_global_events': ('GET', '/v1/global/events'), 'list_global_event_dates': ('GET', '/v1/global/event-dates')}
 
 
-class HumanitixNode(WorkflowNode):
+POLL_OPERATIONS = {
+    "on_new_or_updated_event": (ListEventsConfig, "events"),
+    "on_new_or_updated_order": (ListOrdersConfig, "orders"),
+    "on_new_or_updated_ticket": (ListTicketsConfig, "tickets"),
+}
+
+
+class HumanitixNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-humanitix"
     scope_registry = HUMANITIX_SCOPES
     connection_evidence = ConnectionEvidence(noun="events", operation="list_events", label_keys=("name", "_id"))
@@ -204,10 +246,68 @@ class HumanitixNode(WorkflowNode):
     def get_config_model(cls):
         return HumanitixNodeConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in POLL_OPERATIONS:
+            return bool(output.get("new_item_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("operation") not in POLL_OPERATIONS:
+            return super().resolve_agent_event(output)
+        items = output.get("items", [])
+        if not items:
+            return None
+        resource = output["resource"]
+        lines = []
+        for item in items[:10]:
+            who = " ".join(filter(None, [item.get("firstName"), item.get("lastName")])) if resource != "events" else ""
+            label = item.get("name") if resource == "events" else who or resource[:-1]
+            details = [f"id {item['_id']}", f"updated {item['updatedAt']}"]
+            for field in ("eventId", "orderId", "status") if resource != "events" else ():
+                if item.get(field):
+                    details.append(f"{field} {item[field]}")
+            if output.get("event_id"):
+                details.append(f"watched event {output['event_id']}")
+            lines.append(f"- {label} ({'; '.join(details)})")
+        if len(items) > 10:
+            lines.append(f"- … and {len(items) - 10} more")
+        return {"text": f"Humanitix: {len(items)} new or updated {resource}:\n" + "\n".join(lines),
+            "conversation_key": output.get("event_id")}
+
+    async def _poll(self, config):
+        model, resource = POLL_OPERATIONS[config.operation]
+        values = config.model_dump(exclude=set(PollTriggerConfigBase.model_fields) | {"operation"}, exclude_none=True)
+        items = []
+        for page in range(1, 101):
+            result = await self._execute_operation(model.model_validate({**values, "page": page, "pageSize": 100}))
+            if result["page"] != page or result["page_size"] != 100:
+                raise ValueError("Humanitix returned a different poll page than requested")
+            items.extend(result["items"])
+            # Reject partial snapshots before changing the baseline or consuming new records.
+            if result["total"] > 10_000 or len(items) > 10_000:
+                raise ValueError("Humanitix poll exceeds 10,000 records; narrow Since or event date")
+            if result["next_page"] is None:
+                break
+        else:
+            raise ValueError("Humanitix poll did not finish pagination; narrow Since or event date")
+        if any(not isinstance(item.get("_id"), str) or not item["_id"]
+               or not isinstance(item.get("updatedAt"), str) or not item["updatedAt"] for item in items):
+            raise ValueError("Humanitix poll record is missing its id or update time")
+        fresh = await self._filter_unseen(items, lambda item: item["_id"] + ":" + item["updatedAt"])
+        return {"status": "success", "operation": config.operation, "resource": resource,
+            "event_id": getattr(config, "eventId", None), "items": fresh, "new_item_count": len(fresh)}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Humanitix API key")
         config = self.config.config
+        output = await self._poll(config) if config.operation in POLL_OPERATIONS else await self._execute_operation(config)
+        await self.emit(output)
+        return output
+
+    async def _execute_operation(self, config):
         key = self.config.credentials.api_key
         method, route = ROUTES[config.operation]
         params = config.model_dump(exclude={"operation"}, exclude_none=True)
@@ -261,5 +361,4 @@ class HumanitixNode(WorkflowNode):
                 return [redact(v) for v in value]
             return value
         output = redact(output)
-        await self.emit(output)
         return output
