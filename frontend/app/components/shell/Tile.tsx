@@ -5,9 +5,13 @@
 import type { KeyboardEvent, ReactNode } from 'react';
 import { Link } from 'react-router';
 import { Skeleton } from '~/components/ui/skeleton';
+import { useVirtualGrid } from '~/hooks/useVirtualGrid';
 import { cn } from '~/lib/utils';
 
 export const TILE_GRID = 'grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3';
+
+/** A tile with one line under its name, plus the grid's gap: the rows of a catalog. */
+const TILE_ROW_HEIGHT = 78;
 
 const TILE =
     'group flex min-w-0 cursor-pointer items-center gap-3 rounded-2xl border border-border bg-card px-3.5 py-3 text-left transition-colors hover:bg-foreground/[0.025] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-foreground/[0.08] dark:bg-foreground/[0.02] dark:hover:bg-foreground/[0.045]';
@@ -81,6 +85,27 @@ export function TileSkeletons({ count = 9 }: { count?: number }) {
                         <Skeleton className={cn('h-3.5', i % 2 ? 'w-20' : 'w-28')} />
                         <Skeleton className="h-3 w-36" />
                     </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+/** A long grid of tiles (the Connections catalog's thousand-odd apps) drawn as only the rows near the viewport: the
+ *  same columns as TILE_GRID, in the page's own scroll. Each tile `renderTile` returns carries its key. */
+export function VirtualTileGrid<T>({ items, renderTile, testId }: { items: readonly T[]; renderTile: (item: T) => ReactNode; testId?: string }) {
+    const { gridRef, rows, height, measureRow } = useVirtualGrid({ count: items.length, estimateRowHeight: TILE_ROW_HEIGHT });
+    return (
+        <div ref={gridRef} className={cn(TILE_GRID, 'relative')} style={{ height }} data-testid={testId}>
+            {rows.map((row) => (
+                <div
+                    key={row.key}
+                    data-index={row.index}
+                    ref={measureRow}
+                    className={cn(TILE_GRID, 'absolute inset-x-0 top-0 pb-2.5')}
+                    style={{ transform: `translateY(${row.top}px)` }}
+                >
+                    {items.slice(row.from, row.to).map(renderTile)}
                 </div>
             ))}
         </div>
