@@ -11,10 +11,11 @@ from typing import Annotated, Literal, Union
 from urllib.parse import quote
 
 import httpx
-from pydantic import BaseModel, ConfigDict, Field, create_model, field_validator, model_validator
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, create_model, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.cvent_operations import CVENT_OPERATIONS
+from nodes.cvent_operations import CVENT_OPERATIONS, CVENT_POLL_TRIGGERS
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.scopes.cvent import CVENT_SCOPES
 from utils.ssrf import guarded_async_client
 
@@ -102,6 +103,23 @@ def _operation_model(name, spec):
 
 
 CVENT_CONFIGS = {name: _operation_model(name, spec) for name, spec in CVENT_OPERATIONS.items()}
+
+
+class CventPollConfig(PollTriggerConfigBase):
+    model_config = ConfigDict(json_schema_extra={"x-requires-webhook": True})
+    after: AwareDatetime | None = Field(None, title="Changed Since", description="Only monitor records created or updated since this time. Existing records are recorded when armed. Narrow the date or filter if more than 10,000 records match.")
+    filter: str | None = Field(None, title="Cvent Filter", description="Optional Cvent filter expression for this resource, for example an event.id filter for attendees or sessions. Changing the filter records a fresh baseline.")
+
+
+for _name in CVENT_POLL_TRIGGERS:
+    _noun = _name.removeprefix("on_new_or_updated_").title()
+    CVENT_CONFIGS[_name] = create_model(
+        "CventOnNewOrUpdated" + _noun + "Config", __base__=CventPollConfig,
+        operation=(Literal[_name], Field(_name, json_schema_extra={
+            "ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+            "x-display-name": "New or Updated " + _noun})))
+
+
 CventConfig = Annotated[Union[tuple(CVENT_CONFIGS.values())], Field(discriminator="operation")]
 CventCredential = Union[CventClientCredential, CventOAuthCredential]
 
@@ -125,7 +143,7 @@ def _checked(response, secrets=()):
     return response.json()
 
 
-class CventNode(WorkflowNode):
+class CventNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-cvent"
     scope_registry = CVENT_SCOPES
     credential_provider_labels = {"cvent": "Cvent"}
@@ -143,6 +161,69 @@ class CventNode(WorkflowNode):
         from nodes.oauth.cvent_oauth import refresh_access_token
         return await freshen_oauth_credential(credential_data, pool=pool, user_id=user_id,
             credential_id=credential_id, refresh=refresh_access_token, provider="cvent")
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in CVENT_POLL_TRIGGERS:
+            return bool(output.get("record_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if output.get("operation") not in CVENT_POLL_TRIGGERS:
+            return super().resolve_agent_event(output)
+        records = output.get("records", [])
+        if not records:
+            return None
+        noun = output["operation"].removeprefix("on_new_or_updated_")
+        lines = []
+        for record in records:
+            if noun == "attendee":
+                contact = record.get("contact") or {}
+                name = " ".join(filter(None, [contact.get("firstName"), contact.get("lastName")]))
+                label = name or contact.get("email") or "Attendee"
+            elif noun == "contact":
+                name = " ".join(filter(None, [record.get("firstName"), record.get("lastName")]))
+                label = name or record.get("email") or "Contact"
+            else:
+                label = record.get("title") or noun.title()
+            lines.append(f"- {label} (id {record['id']})")
+        # Include the original content and related IDs so the agent can act.
+        return {"text": f"Cvent: {len(records)} new or updated {noun} record(s):\n" +
+                "\n".join(lines) + "\nRecord details: " + json.dumps(records, ensure_ascii=False),
+                "conversation_key": None}
+
+    async def _poll_records(self, client, token, config):
+        spec = CVENT_OPERATIONS[CVENT_POLL_TRIGGERS[config.operation]]
+        params = {"limit": 200}
+        if config.after is not None:
+            params["after"] = config.after.isoformat()
+        if config.filter:
+            params["filter"] = config.filter
+        records, tokens = [], set()
+        while True:
+            response = await client.get(BASE_URL + spec["path"], params=params,
+                headers={"Authorization": "Bearer " + token, "Accept": "application/json"})
+            payload = _checked(response, (token,))
+            if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
+                raise ValueError("Cvent list response must contain a data array")
+            for record in payload["data"]:
+                if not isinstance(record, dict) or not record.get("id") or not record.get("lastModified"):
+                    raise ValueError("Cvent poll records need id and lastModified")
+                records.append(record)
+            if len(records) > 10000:
+                raise ValueError("More than 10,000 Cvent records match; narrow Changed Since or Cvent Filter")
+            cursor = payload.get("paging", {}).get("nextToken")
+            if not cursor:
+                break
+            if cursor in tokens or len(tokens) >= 50:
+                raise ValueError("Cvent pagination did not finish; narrow Changed Since or Cvent Filter")
+            tokens.add(cursor)
+            params = {"token": cursor}  # Cvent tokens retain the original query.
+        fresh = await self._filter_unseen(records,
+            lambda record: json.dumps([record["id"], record["lastModified"]]))
+        return {"status": "success", "operation": config.operation,
+                "records": fresh, "record_count": len(fresh)}
 
     async def execute(self, inputs):
         if not isinstance(self.config, CventFullConfig) or not self.config.credentials:
@@ -167,6 +248,8 @@ class CventNode(WorkflowNode):
                         provider="cvent", caller_path="execute")
                     for key in ("access_token", "refresh_token", "expires_at"):
                         setattr(credential, key, data.get(key))
+            if isinstance(config, CventPollConfig):
+                return await self._poll_records(client, token, config)
             spec = CVENT_OPERATIONS[config.operation]
             values = config.model_dump(mode="json", exclude_none=True)
             path, params = spec["path"], {}

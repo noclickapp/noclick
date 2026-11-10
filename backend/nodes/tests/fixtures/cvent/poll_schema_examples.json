@@ -1,0 +1,28 @@
+{
+  "source": "https://raw.githubusercontent.com/cvent/rest-sdks/main/cvent-public-spec/openapi.yaml",
+  "note": "Record fields copied from the response schema property examples; IDs without their own example use the contract UUIDProperty example. These are schema examples, not live responses.",
+  "records": {
+    "event": {
+      "id": "9463c74e-18c6-401a-a710-ae0f485bf059",
+      "lastModified": "2019-02-12T03:00:00Z",
+      "title": "Cvent Connect 2020"
+    },
+    "attendee": {
+      "lastModified": "2019-02-12T03:00:00Z",
+      "id": "04ca6ae2-0dc3-487b-953e-86d6abbdf7d3"
+    },
+    "contact": {
+      "lastModified": "2019-02-12T03:00:00Z",
+      "title": "Event Planner",
+      "email": "h.potterfield@test.com",
+      "firstName": "Henry",
+      "lastName": "Potterfield",
+      "id": "04ca6ae2-0dc3-487b-953e-86d6abbdf7d3"
+    },
+    "session": {
+      "id": "04ca6ae2-0dc3-487b-953e-86d6abbdf7d3",
+      "lastModified": "2019-02-12T03:00:00Z",
+      "title": "Day 1 Keynote Session"
+    }
+  }
+}

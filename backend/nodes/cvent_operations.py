@@ -1,7 +1,7 @@
 """Cvent EA routes and parameters from the pinned public OpenAPI contract.
 
 https://raw.githubusercontent.com/cvent/rest-sdks/main/cvent-public-spec/openapi.yaml
-SHA256: f158e45140487183d8b82d4ba22f94fee3ab4425f781dd2be4df511823baf6ce
+SHA256: 62a22fe92fa874982281333d0c287e7c26ce4d6cb9519f78e443b4853cbc20cd
 """
 
 CVENT_OPERATIONS = {'list_events': {'method': 'GET',
@@ -408,3 +408,12 @@ CVENT_OPERATIONS = {'list_events': {'method': 'GET',
                                 'required': False,
                                 'schema': {'type': 'string', 'example': 'username DESC'}}],
                 'scopes': ['account/users:read']}}
+
+
+# The same list contracts support created/updated-time filtering via after.
+CVENT_POLL_TRIGGERS = {
+    "on_new_or_updated_event": "list_events",
+    "on_new_or_updated_attendee": "list_attendees",
+    "on_new_or_updated_contact": "list_contacts",
+    "on_new_or_updated_session": "list_sessions",
+}
