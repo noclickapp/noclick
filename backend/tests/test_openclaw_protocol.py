@@ -5,9 +5,12 @@ import os
 from pathlib import Path
 import shutil
 import sys
+import time
 
 import pytest
-from nodes.agent.openclaw_protocol import BRIDGE_READY_S, DENIED_TOOLS, GATEWAY_START_S, OpenClawReceipts, bridge_env
+from nodes.agent.openclaw_protocol import (
+    BRIDGE_READY_S, DENIED_TOOLS, GATEWAY_START_S, PLAN_ENV, OpenClawReceipts, bridge_env,
+)
 
 KEY = 'agent:main:test'
 
@@ -100,6 +103,14 @@ def wait_for(done):
     deadline = time.monotonic() + 15
     while not done() and time.monotonic() < deadline:
         time.sleep(0.02)
+if sys.argv[1:4] == ["models", "auth", "paste-token"]:
+    (state / "stored").write_text(sys.stdin.read())
+    config = pathlib.Path(os.environ["OPENCLAW_CONFIG_PATH"])
+    # OpenClaw's own config write leaves a backup, as the real command does.
+    (config.parent / (config.name + ".bak")).write_text("{{}}")
+    sys.exit(int(os.environ.get("FAKE_STORE_EXIT", "0")))
+if sys.argv[1] == "gateway":
+    (state / "gateway_env").write_text(" ".join(sorted(k for k in os.environ if k.startswith("NOCLICK_OPENCLAW_PLAN"))))
 if sys.argv[1] == "doctor":
     jump = os.environ.get("FAKE_DOCTOR_JUMP_MS")
     if jump:
@@ -189,6 +200,76 @@ async def test_bridge_starts_the_gateway_on_the_config_it_was_given(tmp_path):
             await asyncio.wait_for(proc.wait(), 5)
 
 
+def _plan_file(tmp_path, *, expires_in_s):
+    plan = tmp_path / 'plan.json'
+    expires_ms = int((time.time() + expires_in_s) * 1000) if expires_in_s is not None else 0
+    plan.write_text(json.dumps({'provider': 'openai', 'profile': 'openai:noclick', 'token': 'tok-chatgpt-access',
+                                'expires_ms': expires_ms}))
+    return plan
+
+
+async def test_bridge_stores_a_chatgpt_plans_sign_in_before_the_gateway_starts(tmp_path):
+    """OpenClaw reads credentials only from its own store, so the plan goes in
+    through its CLI first: a token profile with the expiry NoClick knows, the
+    token on stdin, the file it came in deleted, and the config backup that
+    write leaves removed before the gateway starts, which never sees the file's name."""
+    (tmp_path / 'openclaw.json').write_text('{"current": true}')
+    (tmp_path / 'migrated').touch()
+    plan = _plan_file(tmp_path, expires_in_s=6 * 3600)
+    proc, calls = await _bridge_over_fake_gateway(tmp_path, **{PLAN_ENV: str(plan)})
+    try:
+        ready = json.loads(await asyncio.wait_for(proc.stdout.readline(), 15))
+        assert ready['method'] == 'bridge/ready'
+        stored, gateway = calls()
+        prefix = 'models auth paste-token --provider openai --profile-id openai:noclick --expires-in '
+        assert stored.startswith(prefix) and stored.endswith('s skip_cron=1'), stored
+        assert 6 * 3600 - 60 < int(stored[len(prefix):].split('s ')[0]) <= 6 * 3600
+        assert gateway == 'gateway --port 1 skip_cron=1'
+        assert (tmp_path / 'stored').read_text() == 'tok-chatgpt-access\n'
+        assert not plan.exists()
+        assert sorted(p.name for p in tmp_path.glob('openclaw.json*')) == ['openclaw.json']
+        assert (tmp_path / 'gateway_env').read_text() == ''
+    finally:
+        if proc.returncode is None:
+            proc.terminate()
+            await asyncio.wait_for(proc.wait(), 5)
+
+
+async def test_a_later_start_finds_the_sign_in_already_stored(tmp_path):
+    """The sandbox's first start stored it; a gateway started again (a hand-back) starts without storing anything."""
+    (tmp_path / 'migrated').touch()
+    proc, calls = await _bridge_over_fake_gateway(tmp_path, **{PLAN_ENV: str(tmp_path / 'plan.json')})
+    try:
+        ready = json.loads(await asyncio.wait_for(proc.stdout.readline(), 15))
+        assert ready['method'] == 'bridge/ready'
+        assert calls() == ['gateway --port 1 skip_cron=1']
+    finally:
+        if proc.returncode is None:
+            proc.terminate()
+            await asyncio.wait_for(proc.wait(), 5)
+
+
+@pytest.mark.parametrize('expires_in_s, store_exit, said', [
+    (-60, '0', b"The ChatGPT plan's sign-in has expired; sign in to it again."),
+    (3600, '1', b"OpenClaw could not store the ChatGPT plan's sign-in (exit 1)"),
+])
+async def test_a_sign_in_that_cant_be_stored_fails_the_start(tmp_path, expires_in_s, store_exit, said):
+    """No gateway starts without the plan: its turns would fail on no credential instead."""
+    (tmp_path / 'migrated').touch()
+    plan = _plan_file(tmp_path, expires_in_s=expires_in_s)
+    proc, calls = await _bridge_over_fake_gateway(tmp_path, **{PLAN_ENV: str(plan)}, FAKE_STORE_EXIT=store_exit)
+    try:
+        assert await asyncio.wait_for(proc.wait(), 15) == 1
+        assert await proc.stdout.read() == b''
+        assert said in await proc.stderr.read()
+        assert not plan.exists()
+        assert not (tmp_path / 'up').exists()
+    finally:
+        if proc.returncode is None:
+            proc.terminate()
+            await asyncio.wait_for(proc.wait(), 5)
+
+
 async def test_bridge_repairs_at_most_once(tmp_path):
     proc, calls = await _bridge_over_fake_gateway(tmp_path, FAKE_DOCTOR_CANNOT_FIX='1')
     try:
@@ -235,12 +316,12 @@ async def test_bridge_stops_a_repair_that_outlasts_its_bound(tmp_path):
 
 
 def test_the_local_session_waits_out_a_repair():
-    """The open edition's session outwaits the bridge's worst case: a start
-    the gateway refuses, the repair, and the start after it."""
+    """The open edition's session outwaits the bridge's worst case: a plan's
+    sign-in stored, a start the gateway refuses, the repair, and the start after it."""
     from nodes.agent.local_process import openclaw as local_openclaw
 
     env = bridge_env()
-    assert BRIDGE_READY_S == (2 * int(env['NOCLICK_OPENCLAW_START_MS']) + int(env['NOCLICK_OPENCLAW_DOCTOR_MS'])) // 1000
+    assert BRIDGE_READY_S == (3 * int(env['NOCLICK_OPENCLAW_START_MS']) + int(env['NOCLICK_OPENCLAW_DOCTOR_MS'])) // 1000
     assert local_openclaw.GATEWAY_READY_S > BRIDGE_READY_S
 
 

@@ -10,10 +10,14 @@ from collections import OrderedDict
 # while to migrate, and a repair cut short never finishes.
 GATEWAY_START_S = 60
 DOCTOR_S = 180
-# The longest the bridge can take to report ready: a start the gateway
-# refuses, the repair, and the start after it. Whoever waits on the bridge
-# waits at least this long.
-BRIDGE_READY_S = 2 * GATEWAY_START_S + DOCTOR_S
+# The longest the bridge can take to report ready: a ChatGPT plan's sign-in
+# stored (held to a start's window), a start the gateway refuses, the repair,
+# and the start after it. Whoever waits on the bridge waits at least this long.
+BRIDGE_READY_S = 3 * GATEWAY_START_S + DOCTOR_S
+# Names a file holding a ChatGPT plan's sign-in ({provider, profile, token,
+# expires_ms}) for the bridge to store in OpenClaw's own credential store before
+# the gateway starts; it deletes the file once read.
+PLAN_ENV = "NOCLICK_OPENCLAW_PLAN"
 # OpenClaw's scheduler never runs in a gateway NoClick owns (the bridge sets
 # OPENCLAW_SKIP_CRON), so its scheduling tool would accept a reminder that
 # never fires.

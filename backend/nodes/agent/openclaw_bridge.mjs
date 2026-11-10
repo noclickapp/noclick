@@ -1,7 +1,7 @@
 // Own one local OpenClaw gateway and translate its public WS frames to JSONL.
 // Node's built-in WebSocket avoids an additional transport dependency.
 import { spawn } from 'node:child_process';
-import { readdirSync, rmSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { createInterface } from 'node:readline';
 
@@ -17,29 +17,31 @@ if (!(startMs > 0 && doctorMs > 0 && configPath)) {
   process.stderr.write('NOCLICK_OPENCLAW_START_MS, NOCLICK_OPENCLAW_DOCTOR_MS and OPENCLAW_CONFIG_PATH are required\n');
   process.exit(2);
 }
-// NoClick writes the whole config before every start, so OpenClaw's copies of
-// an earlier one (its .bak ring, last-good) hold replaced settings and tokens.
-// A gateway restores .bak over a config that looks clobbered to it (no `meta`,
-// or under half the size of the last one it ran), and doctor restores last-good.
-const configName = basename(configPath);
-for (const name of readdirSync(dirname(configPath))) {
-  if (name.startsWith(`${configName}.bak`) || name === `${configName}.last-good`) {
-    rmSync(join(dirname(configPath), name), {force: true});
-  }
-}
 // A gateway registers a 30-minute heartbeat, a weekly skill review and a daily
 // agent turn as it starts. NoClick schedules agent work itself and stops a
 // gateway soon after its turn, so no OpenClaw automation runs in one it owns.
 const env = {...process.env, OPENCLAW_SKIP_CRON: '1'};
+// A ChatGPT plan's sign-in, in the file NOCLICK_OPENCLAW_PLAN names
+// (openclaw_protocol.PLAN_ENV) for the first start: read and deleted at once,
+// then stored in OpenClaw's own credential store before the gateway starts. A
+// later start finds it there.
+const planPath = process.env.NOCLICK_OPENCLAW_PLAN;
+delete env.NOCLICK_OPENCLAW_PLAN;
+let plan = null;
+if (planPath && existsSync(planPath)) {
+  plan = JSON.parse(readFileSync(planPath, 'utf8'));
+  rmSync(planPath, {force: true});
+}
 let child;
 let migrationRestarted = false;
 let repaired = false;
 let repairing = false;
+let storing = false;
 let socket;
 let ready = false;
 let stopping = false;
 let deadline = Date.now() + startMs;
-const startTimedOut = () => !repairing && Date.now() >= deadline;
+const startTimedOut = () => !repairing && !storing && Date.now() >= deadline;
 const requestIds = new Map();
 const emit = value => process.stdout.write(JSON.stringify(value) + '\n');
 
@@ -47,6 +49,7 @@ function stop(code = 0) {
   if (stopping) return;
   stopping = true;
   socket?.close();
+  if (!child) process.exit(code);
   child.kill('SIGTERM');
   const timer = setTimeout(() => { child.kill('SIGKILL'); process.exit(code); }, 2000);
   child.once('exit', () => { clearTimeout(timer); process.exit(code); });
@@ -87,7 +90,56 @@ function launch() {
     } else stop(code || 1);
   });
 }
-launch();
+// NoClick writes the whole config before every start, so OpenClaw's copies of
+// an earlier one (its .bak ring, last-good) hold replaced settings and tokens.
+// A gateway restores .bak over a config that looks clobbered to it (no `meta`,
+// or under half the size of the last one it ran), and doctor restores last-good.
+// Storing a sign-in writes a .bak too, so they go after it.
+function begin() {
+  const configName = basename(configPath);
+  for (const name of readdirSync(dirname(configPath))) {
+    if (name.startsWith(`${configName}.bak`) || name === `${configName}.last-good`) {
+      rmSync(join(dirname(configPath), name), {force: true});
+    }
+  }
+  launch();
+}
+// The token profile holds no refresh token, so the sign-in is renewed by
+// NoClick alone; it carries the expiry NoClick knows, and one already past
+// fails here rather than as the turn's.
+function storePlan() {
+  const args = ['models', 'auth', 'paste-token', '--provider', plan.provider, '--profile-id', plan.profile];
+  if (plan.expires_ms > 0) {
+    const seconds = Math.floor((plan.expires_ms - Date.now()) / 1000);
+    if (seconds <= 0) {
+      process.stderr.write('The ChatGPT plan\'s sign-in has expired; sign in to it again.\n');
+      process.exit(1);
+    }
+    args.push('--expires-in', `${seconds}s`);
+  }
+  storing = true;
+  const store = spawn(command[0], args, {stdio: ['pipe', 'pipe', 'pipe'], env});
+  store.stdout.pipe(process.stderr);
+  store.stderr.pipe(process.stderr);
+  const timer = setTimeout(() => {
+    process.stderr.write(`Storing the ChatGPT plan's sign-in did not finish within ${startMs / 1000}s\n`);
+    store.kill('SIGKILL');
+    process.exit(1);
+  }, startMs);
+  store.on('error', error => { process.stderr.write(error.message + '\n'); process.exit(1); });
+  store.on('exit', code => {
+    clearTimeout(timer);
+    storing = false;
+    if (code !== 0) {
+      process.stderr.write(`OpenClaw could not store the ChatGPT plan's sign-in (exit ${code})\n`);
+      process.exit(1);
+    }
+    deadline = Date.now() + startMs;
+    if (!stopping) begin();
+  });
+  store.stdin.end(plan.token + '\n');
+}
+if (plan) storePlan(); else begin();
 process.on('SIGTERM', () => stop());
 process.on('SIGINT', () => stop());
 
