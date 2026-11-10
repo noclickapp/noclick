@@ -53,6 +53,25 @@ _HISTORY_KEY = "sdk_history"
 _TRAILING_ITEM_TYPES = ("function_call_output", "reasoning")
 
 
+# What a call reads as when the turn that made it was stopped (or cut off) before it answered: closed, so the next
+# turn's model neither runs it again nor takes it for unfinished work.
+STOPPED_CALL = ("Stopped before it finished: the person stopped this turn (or it was cut off), so this call may not "
+                "have run to the end and its result isn't known. Don't run it again unless they ask.")
+
+
+def close_unanswered(items: List[dict]) -> List[dict]:
+    """``items`` with a result after each tool call no result answers (``STOPPED_CALL``), right after the call."""
+    answered = {it.get("call_id") for it in items if it.get("type") == "function_call_output"}
+    if all(it.get("call_id") in answered for it in items if it.get("type") == "function_call"):
+        return items
+    out: List[dict] = []
+    for item in items:
+        out.append(item)
+        if item.get("type") == "function_call" and item.get("call_id") not in answered:
+            out.append({"type": "function_call_output", "call_id": item.get("call_id"), "output": STOPPED_CALL})
+    return out
+
+
 def coherent_tail(items: List[dict], limit: int) -> List[dict]:
     """The last ``limit`` items, advanced to a boundary the provider accepts.
     A window that opens on a tool output whose call was cut off (or reasoning
@@ -129,7 +148,7 @@ class PostgresSession:
         # execute_bash rows) otherwise kills EVERY subsequent turn on the
         # provider's context limit — the conversation heals instead of
         # staying bricked. Read-side only; the stored row is untouched.
-        items = [clip_history_item(it) for it in _extract_history(row["metadata"])]
+        items = close_unanswered([clip_history_item(it) for it in _extract_history(row["metadata"])])
         if limit is not None and limit < len(items):
             return coherent_tail(items, limit)
         return items

@@ -63,3 +63,22 @@ async def test_a_read_only_session_remembers_but_is_not_remembered(monkeypatch):
     assert await session.pop_item() is None
     await session.clear_session()
     pool.execute.assert_not_awaited()
+
+
+def test_a_call_its_stopped_turn_never_answered_is_closed_for_the_next_turn():
+    """A turn stopped mid-call kept the call and no result: the next turn reads it closed, so its model neither runs it
+    again nor answers it (a stopped ``sleep 150 && echo too-late`` ran again and became the next reply)."""
+    from coder.openai_agent.session import STOPPED_CALL, close_unanswered
+
+    items = [
+        {"role": "user", "content": "Run the slow command."},
+        {"type": "function_call", "call_id": "c1", "name": "execute_bash", "arguments": "{}"},
+        {"type": "function_call", "call_id": "c2", "name": "read", "arguments": "{}"},
+        {"type": "function_call_output", "call_id": "c2", "output": "ok"},
+        {"role": "user", "content": "Reply with exactly after."},
+    ]
+    closed = close_unanswered(items)
+    assert [i.get("call_id") or i.get("role") for i in closed] == ["user", "c1", "c1", "c2", "c2", "user"]
+    assert closed[2] == {"type": "function_call_output", "call_id": "c1", "output": STOPPED_CALL}
+    answered = items[:1] + [items[2], items[3]]
+    assert close_unanswered(answered) == answered, "nothing to close: the history as it is"
