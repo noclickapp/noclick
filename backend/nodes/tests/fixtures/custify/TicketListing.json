@@ -1,0 +1,40 @@
+{
+  "source": "https://docs.custify.com/openapi.yaml#/components/schemas/TicketListing",
+  "body": {
+    "id": "5ea93252e0263c08145d6945",
+    "externalId": "TICKET-123",
+    "provider": "zendesk",
+    "company": [
+      "5ea93252e0263c08145d6944"
+    ],
+    "companyNames": [
+      {
+        "forte": "Acme Corp"
+      }
+    ],
+    "people": [
+      {
+        "id": "60b4d002e1a59a7c74531fcad"
+      }
+    ],
+    "peopleNames": [
+      "John Doe"
+    ],
+    "title": "Login issue with mobile app",
+    "description": "User is unable to login using their credentials on the mobile app",
+    "ticketStatus": "open",
+    "status": "active",
+    "priority": "high",
+    "assignedTo": "john.doe@example.com",
+    "assignedToName": "John Doe",
+    "openedAt": "2021-04-10T12:00:00.000Z",
+    "ratingAt": "2021-04-15T12:00:00.000Z",
+    "lastModifiedAt": "2021-05-10T12:00:00.000Z",
+    "rating": "5",
+    "tags": [
+      "5d11d5687113bc33f07573f0"
+    ],
+    "created_at": "2021-04-10T12:00:00.000Z",
+    "updated_at": "2021-05-10T12:00:00.000Z"
+  }
+}
