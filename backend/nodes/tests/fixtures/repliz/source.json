@@ -1,0 +1,6 @@
+{
+  "source": "https://api.repliz.com/public-json",
+  "version": "1.0.0",
+  "sha256": "88b90c97be27536bf72ee0434d24ca11a5b205f5fb7d858e34eb46e192faf1c2",
+  "description": "responses.json copies successful response examples from the pinned official Repliz OpenAPI contract."
+}

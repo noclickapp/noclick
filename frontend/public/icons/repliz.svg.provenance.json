@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/repliz.svg",
+  "source": "https://repliz.com/assets/index-DMfO32s8.js",
+  "source_page": "https://repliz.com",
+  "license": "Repliz trademark; official app mark",
+  "sha256": "87ac1930f74764ac62fcde73c5dd6533a89c714e5fbb36d425c7fd270e9a7f03",
+  "date": "2026-11-11",
+  "edits": [
+    "Serialized official UiLogo SVG elements from published Vue bundle, stationary open eyes and original mask; path data unchanged.",
+    "Cropped viewBox to symbol bounds.",
+    "Resolved currentColor to #000000 for theme visibility."
+  ],
+  "notes": "Official header/app symbol with eye counters preserved. Advertised favicon.svg returns HTML."
+}
