@@ -553,6 +553,155 @@
       "title": "Digistore24ListVouchersConfig",
       "type": "object"
     },
+    "Digistore24OnOrderEventConfig": {
+      "description": "Start a workflow or agent when the selected order event arrives.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_order_event",
+          "default": "on_order_event",
+          "title": "On Order Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Order Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "on_payment",
+          "enum": [
+            "on_payment",
+            "on_refund",
+            "on_chargeback",
+            "on_payment_missed",
+            "on_rebill_cancelled",
+            "on_rebill_resumed",
+            "last_paid_day"
+          ],
+          "title": "Order event",
+          "type": "string"
+        },
+        "product_ids": {
+          "default": "all",
+          "description": "Use \"all\" or comma-separated product IDs.",
+          "maxLength": 4096,
+          "title": "Products",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Digistore24 automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "Digistore24OnOrderEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "Digistore24StartRebillingConfig": {
       "additionalProperties": false,
       "description": "Start rebilling.",
@@ -849,6 +998,7 @@
           "list_purchases": "#/$defs/Digistore24ListPurchasesConfig",
           "list_transactions": "#/$defs/Digistore24ListTransactionsConfig",
           "list_vouchers": "#/$defs/Digistore24ListVouchersConfig",
+          "on_order_event": "#/$defs/Digistore24OnOrderEventConfig",
           "start_rebilling": "#/$defs/Digistore24StartRebillingConfig",
           "stop_rebilling": "#/$defs/Digistore24StopRebillingConfig",
           "update_buyer": "#/$defs/Digistore24UpdateBuyerConfig"
@@ -856,6 +1006,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/Digistore24OnOrderEventConfig"
+        },
         {
           "$ref": "#/$defs/Digistore24GetUserInfoConfig"
         },

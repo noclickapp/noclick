@@ -7,10 +7,17 @@ from __future__ import annotations
 
 from typing import Annotated, Literal, Union
 
+import hashlib
+import hmac
+import json
+import secrets
+from urllib.parse import parse_qsl
+
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client
 
@@ -159,7 +166,43 @@ class Digistore24DeleteVoucherConfig(_Input):
     code: str = Field(..., description='The voucher code or voucher ID to delete', max_length=4096, min_length=1)
 
 
+# Registration contract: /api/docs/paths/ipnSetup.yaml and ipnDelete.yaml.
+# Event fields/signatures: https://dev.digistore24.com/hc/en-us/articles/32480561422353-Events
+ORDER_EVENTS = {
+    "on_payment": ("payment", "Payment received"),
+    "on_refund": ("refund", "Payment refunded"),
+    "on_chargeback": ("chargeback", "Payment charged back"),
+    "on_payment_missed": ("payment_missed", "Recurring payment missed"),
+    "on_rebill_cancelled": ("rebill_cancelled", "Subscription rebilling cancelled"),
+    "on_rebill_resumed": ("rebill_resumed", "Subscription rebilling resumed"),
+    "last_paid_day": ("last_paid_day", "Paid period ended"),
+}
+
+
+class Digistore24OnOrderEventConfig(WebhookTriggerConfigBase):
+    """Start a workflow or agent when the selected order event arrives."""
+
+    operation: Literal["on_order_event"] = Field("on_order_event", title="On Order Event", json_schema_extra={
+        "const": "on_order_event", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On Order Event",
+    })
+    event_type: Literal[*ORDER_EVENTS] = Field("on_payment", title="Order event")
+    product_ids: str = Field("all", title="Products", max_length=4096,
+        description='Use "all" or comma-separated product IDs.')
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with Digistore24 automatically",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+    @field_validator("product_ids")
+    @classmethod
+    def valid_products(cls, value):
+        value = value.strip()
+        if value != "all" and not all(part.isascii() and part.isdigit() and int(part) > 0 for part in value.split(",")):
+            raise ValueError('Use "all" or positive product IDs separated by commas without spaces')
+        return value
+
+
 Digistore24Config = Annotated[Union[
+    Digistore24OnOrderEventConfig,
     Digistore24GetUserInfoConfig,
     Digistore24ListProductsConfig,
     Digistore24GetProductConfig,
@@ -242,7 +285,7 @@ ROUTES = {'get_user_info': ('GET', 'getUserInfo', [], []),
  'delete_voucher': ('DELETE', 'deleteVoucher', ['code'], [])}
 
 
-class Digistore24Node(WorkflowNode):
+class Digistore24Node(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-digistore24"
     connection_evidence = ConnectionEvidence(
         noun="account", identity_operation="get_user_info", label_keys=("user_name", "user_id"),
@@ -253,10 +296,129 @@ class Digistore24Node(WorkflowNode):
     def get_config_model(cls):
         return Digistore24FullConfig
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": (config or {}).get("event_type", "on_payment"),
+                "product_ids": (config or {}).get("product_ids", "all")}
+
+    @classmethod
+    async def _ipn_request(cls, credential, method, function, **kwargs):
+        key = Digistore24APIKeyCredential.model_validate(credential or {}).api_key
+        async with guarded_async_client(timeout=30.0, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, BASE + "/" + function,
+                headers={"X-DS-API-KEY": key, "Accept": "application/json"}, **kwargs)
+        response.raise_for_status()
+        # The IPN contract declares HTTP 200 with no response content.
+        if not response.content:
+            return
+        data = response.json()
+        if not isinstance(data, dict) or data.get("result") == "error" or data.get("status") == "error":
+            raise ValueError("Digistore24 rejected the IPN registration request")
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        op = Digistore24OnOrderEventConfig.model_validate(config or {})
+        # The provider deletes registrations by domain_id. Use the unique minted
+        # webhook URL so identical canvas node IDs in different workflows cannot collide.
+        domain_id = "noclick-" + hashlib.sha256(webhook_url.encode()).hexdigest()[:32]
+        secret = secrets.token_hex(30)  # 60 chars, below the documented 63-char limit.
+        await cls._ipn_request(credential, "POST", "ipnSetup", json={
+            "ipn_url": webhook_url, "name": "NoClick order events", "product_ids": op.product_ids,
+            "domain_id": domain_id, "categories": "orders", "transactions": ORDER_EVENTS[op.event_type][0],
+            "timing": "delayed", "sha_passphrase": secret,
+        })
+        return {"external_webhook_id": domain_id, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        domain_id = (config or {}).get("external_webhook_id")
+        if not domain_id:
+            raise ValueError("Digistore24 IPN domain ID is missing")
+        await cls._ipn_request(credential, "DELETE", "ipnDelete", params={"domain_id": str(domain_id)})
+
+    @staticmethod
+    def _ipn_parameters(body, headers):
+        # IPN is a form POST; JSON is also accepted for documented fixture replay.
+        content_type = next((v for k, v in headers.items() if k.lower() == "content-type"), "")
+        if content_type.split(";")[0].strip() == "application/json":
+            data = json.loads(body)
+            if not isinstance(data, dict) or not all(isinstance(v, str) for v in data.values()):
+                raise ValueError("IPN fields must be strings")
+            return data
+        pairs = parse_qsl(body.decode("utf-8"), keep_blank_values=True, strict_parsing=True)
+        if len({k for k, _ in pairs}) != len(pairs):
+            raise ValueError("Duplicate IPN fields")
+        return dict(pairs)
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        secret = (config or {}).get("signing_secret")
+        if not secret:
+            return False
+        try:
+            params = cls._ipn_parameters(body, headers)
+        except (ValueError, UnicodeError):
+            return False
+        signature = params.get("sha_sign", "")
+        # Provider's current ipn_receiver.php: case-sensitive SORT_STRING, omit
+        # sha_sign / SHASIGN and empty values; append passphrase after each pair.
+        message = "".join(f"{k}={params[k]}{secret}" for k in sorted(params)
+                          if k not in {"sha_sign", "SHASIGN"} and params[k] != "")
+        expected = hashlib.sha512(message.encode("utf-8")).hexdigest().upper()
+        return len(signature) == 128 and hmac.compare_digest(signature, expected)
+
+    @classmethod
+    def handle_webhook_handshake(cls, body, headers, config=None):
+        try:
+            params = cls._ipn_parameters(body, headers)
+        except (ValueError, UnicodeError):
+            return None
+        if params.get("event") == "connection_test" and cls.verify_webhook_signature(body, headers, config):
+            from starlette.responses import PlainTextResponse
+            return PlainTextResponse("OK")
+        return None
+
+    @classmethod
+    def webhook_ack_response(cls):
+        return {"content": "OK", "media_type": "text/plain"}
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return isinstance(payload, dict) and payload.get("event") == (config or {}).get("event_type", "on_payment")
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        # Never forward the signature, lifecycle metadata or arbitrary run inputs.
+        return {"status": "success", "operation": "on_order_event",
+                "data": {k: v for k, v in payload.items() if k not in {"sha_sign", "SHASIGN", "_webhook"}}}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("operation") != "on_order_event":
+            return super().resolve_agent_event(output)
+        event = output.get("data") or {}
+        if event.get("event") not in ORDER_EVENTS:
+            return None
+        label = ORDER_EVENTS[event["event"]][1]
+        text = (f"Digistore24: {label}. Buyer: {event.get('email') or 'not supplied'} "
+                f"(buyer ID {event.get('buyer_id') or 'not supplied'}). "
+                f"Product: {event.get('product_name') or 'not supplied'} "
+                f"(ID {event.get('product_id') or 'not supplied'}). "
+                f"Order ID: {event.get('order_id') or 'not supplied'}. "
+                f"Transaction ID: {event.get('transaction_id') or 'not supplied'}. "
+                f"Amount: {event.get('transaction_amount') or 'not supplied'} "
+                f"{event.get('transaction_currency') or ''}. Mode: {event.get('api_mode') or 'not supplied'}.")
+        return {"text": text[:4000], "conversation_key": None}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a Digistore24 API key")
         op = self.config.config
+        if isinstance(op, Digistore24OnOrderEventConfig):
+            payload = (self.node_data or {}).get("config", {}).get("_triggerPayload")
+            if not isinstance(payload, dict) or not self.filter_trigger_payload(payload, op.model_dump()):
+                return {"status": "success", "operation": op.operation, "data": {}}
+            return self.resolve_trigger_payload(payload, op.model_dump())
         key = self.config.credentials.api_key
         method, function, query_fields, body_fields = ROUTES[op.operation]
         values = op.model_dump(by_alias=True, exclude_none=True, exclude={"operation"})

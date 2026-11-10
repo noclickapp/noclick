@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/digistore24-dark.svg",
+  "source": "https://www.digistore24.com/ds24-assets/favicon.svg",
+  "source_url": "https://www.digistore24.com/ds24-assets/favicon.svg",
+  "source_page": "https://www.digistore24.com/",
+  "retrieved_at": "2026-11-11",
+  "license": "Digistore24 brand mark used nominatively; trademark rights remain with Digistore24.",
+  "sha256": "175c4ce2a55ad1578f2046f0d37f3d91ead0afe8399514565d1f5c9afe449829",
+  "edits": [
+    "Removed the source black background rectangle",
+    "Cropped viewBox to the existing symbol"
+  ],
+  "notes": "Official company favicon app mark. Original tile was brand-owned, but removed to retain the symbol alone on both themes. All path data preserved verbatim."
+}
