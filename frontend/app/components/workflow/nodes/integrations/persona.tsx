@@ -11,7 +11,7 @@ const PersonaIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const PersonaNode: NodeDefinition = {
     type: 'automation-persona', category: 'industry', label: 'Persona',
-    description: 'Manage identity verification inquiries, accounts, cases and reports',
+    description: 'Manage identity verification inquiries, accounts, cases and reports; start workflows from Persona events',
     keywords: ['identity', 'verification', 'KYC', 'compliance'],
     Icon: PersonaIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

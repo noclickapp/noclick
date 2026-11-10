@@ -1,0 +1,11 @@
+{
+  "description": "Webhook response and event fixtures are copied from the published Persona API contract, without invented fields. They exercise trigger registration and delivery offline.",
+  "source": "https://raw.githubusercontent.com/persona-id/persona-openapi/main/2026-09-29/openapi-bundled.json",
+  "version": "2026-09-29",
+  "events": "#/webhooks",
+  "responses": [
+    "#/components/examples/webhook-created",
+    "#/components/examples/webhook-enabled",
+    "#/components/examples/webhook-archived"
+  ]
+}

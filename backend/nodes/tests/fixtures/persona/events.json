@@ -1,0 +1,2133 @@
+{
+  "inquiry.created": {
+    "data": {
+      "type": "event",
+      "id": "evt_aBcDeFgHiJkLmNoPqRsTuVwX",
+      "attributes": {
+        "name": "inquiry.created",
+        "payload": {
+          "data": {
+            "type": "inquiry",
+            "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ",
+            "attributes": {
+              "status": "created",
+              "reference-id": null,
+              "note": null,
+              "behaviors": {},
+              "tags": [],
+              "creator": "creator@example.com",
+              "reviewer-comment": null,
+              "created-at": "2024-03-15T18:30:00.000Z",
+              "updated-at": "2024-03-15T18:30:00.000Z",
+              "started-at": null,
+              "expires-at": "2024-03-16T18:30:00.000Z",
+              "completed-at": null,
+              "failed-at": null,
+              "marked-for-review-at": null,
+              "decisioned-at": null,
+              "expired-at": null,
+              "redacted-at": null,
+              "previous-step-name": null,
+              "next-step-name": "start",
+              "fields": {
+                "identification-number": {
+                  "type": "string",
+                  "value": null
+                }
+              }
+            },
+            "relationships": {
+              "account": {
+                "data": null
+              },
+              "template": {
+                "data": null
+              },
+              "inquiry-template": {
+                "data": {
+                  "type": "inquiry-template",
+                  "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                }
+              },
+              "inquiry-template-version": {
+                "data": {
+                  "type": "inquiry-template-version",
+                  "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                }
+              },
+              "transaction": {
+                "data": null
+              },
+              "reviewer": {
+                "data": null
+              },
+              "reports": {
+                "data": []
+              },
+              "verifications": {
+                "data": []
+              },
+              "sessions": {
+                "data": []
+              },
+              "documents": {
+                "data": []
+              },
+              "selfies": {
+                "data": []
+              }
+            }
+          },
+          "included": [
+            {
+              "type": "inquiry-template",
+              "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc",
+              "attributes": {
+                "status": "active",
+                "name": "Example KYC Template"
+              },
+              "relationships": {
+                "latest-published-version": {
+                  "data": {
+                    "type": "inquiry-template-version",
+                    "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-template-version",
+              "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA",
+              "attributes": {
+                "status": "published",
+                "name-display": "Example KYC Flow"
+              },
+              "relationships": {
+                "inquiry-template": {
+                  "data": {
+                    "type": "inquiry-template",
+                    "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "created-at": "2024-03-15T18:30:00.000Z"
+      }
+    }
+  },
+  "inquiry.completed": {
+    "data": {
+      "type": "event",
+      "id": "evt_dEfGhIjKlMnOpQrStUvWxYzA",
+      "attributes": {
+        "name": "inquiry.completed",
+        "payload": {
+          "data": {
+            "type": "inquiry",
+            "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ",
+            "attributes": {
+              "status": "completed",
+              "reference-id": null,
+              "note": null,
+              "behaviors": {},
+              "tags": [],
+              "creator": "creator@example.com",
+              "reviewer-comment": null,
+              "created-at": "2024-03-15T18:30:00.000Z",
+              "updated-at": "2024-03-15T18:35:00.000Z",
+              "started-at": "2024-03-15T18:31:00.000Z",
+              "expires-at": null,
+              "completed-at": "2024-03-15T18:35:00.000Z",
+              "failed-at": null,
+              "marked-for-review-at": null,
+              "decisioned-at": null,
+              "expired-at": null,
+              "redacted-at": null,
+              "previous-step-name": "verification_selfie",
+              "next-step-name": "success",
+              "fields": {
+                "name-first": {
+                  "type": "string",
+                  "value": "Jane"
+                },
+                "name-middle": {
+                  "type": "string",
+                  "value": "Marie"
+                },
+                "name-last": {
+                  "type": "string",
+                  "value": "Doe"
+                },
+                "address-street-1": {
+                  "type": "string",
+                  "value": "123 Main St"
+                },
+                "address-street-2": {
+                  "type": "string",
+                  "value": null
+                },
+                "address-city": {
+                  "type": "string",
+                  "value": "San Francisco"
+                },
+                "address-subdivision": {
+                  "type": "string",
+                  "value": "California"
+                },
+                "address-postal-code": {
+                  "type": "string",
+                  "value": "94111"
+                },
+                "address-country-code": {
+                  "type": "string",
+                  "value": "US"
+                },
+                "birthdate": {
+                  "type": "date",
+                  "value": "1995-09-08"
+                },
+                "email-address": {
+                  "type": "string",
+                  "value": "jane@example.com"
+                },
+                "phone-number": {
+                  "type": "string",
+                  "value": null
+                },
+                "identification-number": {
+                  "type": "string",
+                  "value": null
+                }
+              }
+            },
+            "relationships": {
+              "account": {
+                "data": {
+                  "type": "account",
+                  "id": "act_fJ8mQpDLrYvNcBzWk5HsAxRy"
+                }
+              },
+              "template": {
+                "data": null
+              },
+              "inquiry-template": {
+                "data": {
+                  "type": "inquiry-template",
+                  "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                }
+              },
+              "inquiry-template-version": {
+                "data": {
+                  "type": "inquiry-template-version",
+                  "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                }
+              },
+              "transaction": {
+                "data": null
+              },
+              "reviewer": {
+                "data": null
+              },
+              "reports": {
+                "data": []
+              },
+              "verifications": {
+                "data": [
+                  {
+                    "type": "verification/government-id",
+                    "id": "ver_X3kHmRqV9YpZ2nBwL5tGdJcE"
+                  }
+                ]
+              },
+              "sessions": {
+                "data": [
+                  {
+                    "type": "inquiry-session",
+                    "id": "iqse_NkPwRtQv5xB8cYm2L4jZdHsF"
+                  }
+                ]
+              },
+              "documents": {
+                "data": []
+              },
+              "selfies": {
+                "data": []
+              }
+            }
+          },
+          "included": [
+            {
+              "type": "inquiry-template",
+              "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc",
+              "attributes": {
+                "status": "active",
+                "name": "Example KYC Template"
+              },
+              "relationships": {
+                "latest-published-version": {
+                  "data": {
+                    "type": "inquiry-template-version",
+                    "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-template-version",
+              "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA",
+              "attributes": {
+                "status": "published",
+                "name-display": "Example KYC Flow"
+              },
+              "relationships": {
+                "inquiry-template": {
+                  "data": {
+                    "type": "inquiry-template",
+                    "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-session",
+              "id": "iqse_NkPwRtQv5xB8cYm2L4jZdHsF",
+              "attributes": {
+                "status": "expired",
+                "created-at": "2024-03-15T18:31:00.000Z",
+                "started-at": "2024-03-15T18:31:00.000Z",
+                "expired-at": "2024-03-15T18:35:00.000Z",
+                "ip-address": "192.0.2.4",
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+                "os-name": "Mac",
+                "os-full-version": "10.15.7",
+                "device-type": "desktop",
+                "device-name": null,
+                "browser-name": "Chrome",
+                "browser-full-version": "115.0.0.0",
+                "mobile-sdk-name": null,
+                "mobile-sdk-full-version": null,
+                "device-handoff-method": null,
+                "is-proxy": false,
+                "is-tor": false,
+                "is-datacenter": false,
+                "is-vpn": false,
+                "threat-level": "low",
+                "country-code": "US",
+                "country-name": "United States",
+                "region-code": "CA",
+                "region-name": "California",
+                "latitude": 37.7749,
+                "longitude": -122.4194,
+                "gps-latitude": null,
+                "gps-longitude": null,
+                "gps-precision": null,
+                "gps-country-code": null
+              },
+              "relationships": {
+                "inquiry": {
+                  "data": {
+                    "type": "inquiry",
+                    "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "created-at": "2024-03-15T18:35:00.100Z"
+      }
+    }
+  },
+  "inquiry.failed": {
+    "data": {
+      "type": "event",
+      "id": "evt_eFgHiJkLmNoPqRsTuVwXyZaB",
+      "attributes": {
+        "name": "inquiry.failed",
+        "payload": {
+          "data": {
+            "type": "inquiry",
+            "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ",
+            "attributes": {
+              "status": "failed",
+              "reference-id": null,
+              "note": null,
+              "behaviors": {},
+              "tags": [],
+              "creator": "creator@example.com",
+              "reviewer-comment": null,
+              "created-at": "2024-03-15T18:30:00.000Z",
+              "updated-at": "2024-03-15T18:33:00.000Z",
+              "started-at": "2024-03-15T18:31:00.000Z",
+              "expires-at": null,
+              "completed-at": null,
+              "failed-at": "2024-03-15T18:33:00.000Z",
+              "marked-for-review-at": null,
+              "decisioned-at": null,
+              "expired-at": null,
+              "redacted-at": null,
+              "previous-step-name": "verification_government_id",
+              "next-step-name": "failure",
+              "fields": {
+                "name-first": {
+                  "type": "string",
+                  "value": "Jane"
+                },
+                "name-middle": {
+                  "type": "string",
+                  "value": "Marie"
+                },
+                "name-last": {
+                  "type": "string",
+                  "value": "Doe"
+                },
+                "address-street-1": {
+                  "type": "string",
+                  "value": "123 Main St"
+                },
+                "address-street-2": {
+                  "type": "string",
+                  "value": null
+                },
+                "address-city": {
+                  "type": "string",
+                  "value": "San Francisco"
+                },
+                "address-subdivision": {
+                  "type": "string",
+                  "value": "California"
+                },
+                "address-postal-code": {
+                  "type": "string",
+                  "value": "94111"
+                },
+                "address-country-code": {
+                  "type": "string",
+                  "value": "US"
+                },
+                "birthdate": {
+                  "type": "date",
+                  "value": "1995-09-08"
+                },
+                "email-address": {
+                  "type": "string",
+                  "value": "jane@example.com"
+                },
+                "phone-number": {
+                  "type": "string",
+                  "value": null
+                },
+                "identification-number": {
+                  "type": "string",
+                  "value": null
+                }
+              }
+            },
+            "relationships": {
+              "account": {
+                "data": {
+                  "type": "account",
+                  "id": "act_fJ8mQpDLrYvNcBzWk5HsAxRy"
+                }
+              },
+              "template": {
+                "data": null
+              },
+              "inquiry-template": {
+                "data": {
+                  "type": "inquiry-template",
+                  "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                }
+              },
+              "inquiry-template-version": {
+                "data": {
+                  "type": "inquiry-template-version",
+                  "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                }
+              },
+              "transaction": {
+                "data": null
+              },
+              "reviewer": {
+                "data": null
+              },
+              "reports": {
+                "data": []
+              },
+              "verifications": {
+                "data": [
+                  {
+                    "type": "verification/government-id",
+                    "id": "ver_X3kHmRqV9YpZ2nBwL5tGdJcE"
+                  }
+                ]
+              },
+              "sessions": {
+                "data": [
+                  {
+                    "type": "inquiry-session",
+                    "id": "iqse_NkPwRtQv5xB8cYm2L4jZdHsF"
+                  }
+                ]
+              },
+              "documents": {
+                "data": []
+              },
+              "selfies": {
+                "data": []
+              }
+            }
+          },
+          "included": [
+            {
+              "type": "inquiry-template",
+              "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc",
+              "attributes": {
+                "status": "active",
+                "name": "Example KYC Template"
+              },
+              "relationships": {
+                "latest-published-version": {
+                  "data": {
+                    "type": "inquiry-template-version",
+                    "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-template-version",
+              "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA",
+              "attributes": {
+                "status": "published",
+                "name-display": "Example KYC Flow"
+              },
+              "relationships": {
+                "inquiry-template": {
+                  "data": {
+                    "type": "inquiry-template",
+                    "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-session",
+              "id": "iqse_NkPwRtQv5xB8cYm2L4jZdHsF",
+              "attributes": {
+                "status": "expired",
+                "created-at": "2024-03-15T18:31:00.000Z",
+                "started-at": "2024-03-15T18:31:00.000Z",
+                "expired-at": "2024-03-15T18:33:00.000Z",
+                "ip-address": "192.0.2.4",
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+                "os-name": "Mac",
+                "os-full-version": "10.15.7",
+                "device-type": "desktop",
+                "device-name": null,
+                "browser-name": "Chrome",
+                "browser-full-version": "115.0.0.0",
+                "mobile-sdk-name": null,
+                "mobile-sdk-full-version": null,
+                "device-handoff-method": null,
+                "is-proxy": false,
+                "is-tor": false,
+                "is-datacenter": false,
+                "is-vpn": false,
+                "threat-level": "low",
+                "country-code": "US",
+                "country-name": "United States",
+                "region-code": "CA",
+                "region-name": "California",
+                "latitude": 37.7749,
+                "longitude": -122.4194,
+                "gps-latitude": null,
+                "gps-longitude": null,
+                "gps-precision": null,
+                "gps-country-code": null
+              },
+              "relationships": {
+                "inquiry": {
+                  "data": {
+                    "type": "inquiry",
+                    "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "created-at": "2024-03-15T18:33:00.100Z"
+      }
+    }
+  },
+  "inquiry.approved": {
+    "data": {
+      "type": "event",
+      "id": "evt_hIjKlMnOpQrStUvWxYzAbCdE",
+      "attributes": {
+        "name": "inquiry.approved",
+        "payload": {
+          "data": {
+            "type": "inquiry",
+            "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ",
+            "attributes": {
+              "status": "approved",
+              "reference-id": null,
+              "note": null,
+              "behaviors": {},
+              "tags": [],
+              "creator": "creator@example.com",
+              "reviewer-comment": null,
+              "created-at": "2024-03-15T18:30:00.000Z",
+              "updated-at": "2024-03-15T18:35:00.000Z",
+              "started-at": "2024-03-15T18:31:00.000Z",
+              "expires-at": null,
+              "completed-at": null,
+              "failed-at": null,
+              "marked-for-review-at": null,
+              "decisioned-at": "2024-03-15T18:35:00.000Z",
+              "expired-at": null,
+              "redacted-at": null,
+              "previous-step-name": "verification_selfie",
+              "next-step-name": "success",
+              "fields": {
+                "name-first": {
+                  "type": "string",
+                  "value": "Jane"
+                },
+                "name-middle": {
+                  "type": "string",
+                  "value": "Marie"
+                },
+                "name-last": {
+                  "type": "string",
+                  "value": "Doe"
+                },
+                "address-street-1": {
+                  "type": "string",
+                  "value": "123 Main St"
+                },
+                "address-street-2": {
+                  "type": "string",
+                  "value": null
+                },
+                "address-city": {
+                  "type": "string",
+                  "value": "San Francisco"
+                },
+                "address-subdivision": {
+                  "type": "string",
+                  "value": "California"
+                },
+                "address-postal-code": {
+                  "type": "string",
+                  "value": "94111"
+                },
+                "address-country-code": {
+                  "type": "string",
+                  "value": "US"
+                },
+                "birthdate": {
+                  "type": "date",
+                  "value": "1995-09-08"
+                },
+                "email-address": {
+                  "type": "string",
+                  "value": "jane@example.com"
+                },
+                "phone-number": {
+                  "type": "string",
+                  "value": null
+                },
+                "identification-number": {
+                  "type": "string",
+                  "value": null
+                }
+              }
+            },
+            "relationships": {
+              "account": {
+                "data": {
+                  "type": "account",
+                  "id": "act_fJ8mQpDLrYvNcBzWk5HsAxRy"
+                }
+              },
+              "template": {
+                "data": null
+              },
+              "inquiry-template": {
+                "data": {
+                  "type": "inquiry-template",
+                  "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                }
+              },
+              "inquiry-template-version": {
+                "data": {
+                  "type": "inquiry-template-version",
+                  "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                }
+              },
+              "transaction": {
+                "data": null
+              },
+              "reviewer": {
+                "data": {
+                  "type": "workflow-run",
+                  "id": "wfr_M7vXNqRpL3kBzW4tYcHdJgFs"
+                }
+              },
+              "reports": {
+                "data": []
+              },
+              "verifications": {
+                "data": [
+                  {
+                    "type": "verification/government-id",
+                    "id": "ver_X3kHmRqV9YpZ2nBwL5tGdJcE"
+                  }
+                ]
+              },
+              "sessions": {
+                "data": [
+                  {
+                    "type": "inquiry-session",
+                    "id": "iqse_NkPwRtQv5xB8cYm2L4jZdHsF"
+                  }
+                ]
+              },
+              "documents": {
+                "data": []
+              },
+              "selfies": {
+                "data": []
+              }
+            }
+          },
+          "included": [
+            {
+              "type": "inquiry-template",
+              "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc",
+              "attributes": {
+                "status": "active",
+                "name": "Example KYC Template"
+              },
+              "relationships": {
+                "latest-published-version": {
+                  "data": {
+                    "type": "inquiry-template-version",
+                    "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-template-version",
+              "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA",
+              "attributes": {
+                "status": "published",
+                "name-display": "Example KYC Flow"
+              },
+              "relationships": {
+                "inquiry-template": {
+                  "data": {
+                    "type": "inquiry-template",
+                    "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-session",
+              "id": "iqse_NkPwRtQv5xB8cYm2L4jZdHsF",
+              "attributes": {
+                "status": "expired",
+                "created-at": "2024-03-15T18:31:00.000Z",
+                "started-at": "2024-03-15T18:31:00.000Z",
+                "expired-at": "2024-03-15T18:35:00.000Z",
+                "ip-address": "192.0.2.4",
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+                "os-name": "Mac",
+                "os-full-version": "10.15.7",
+                "device-type": "desktop",
+                "device-name": null,
+                "browser-name": "Chrome",
+                "browser-full-version": "115.0.0.0",
+                "mobile-sdk-name": null,
+                "mobile-sdk-full-version": null,
+                "device-handoff-method": null,
+                "is-proxy": false,
+                "is-tor": false,
+                "is-datacenter": false,
+                "is-vpn": false,
+                "threat-level": "low",
+                "country-code": "US",
+                "country-name": "United States",
+                "region-code": "CA",
+                "region-name": "California",
+                "latitude": 37.7749,
+                "longitude": -122.4194,
+                "gps-latitude": null,
+                "gps-longitude": null,
+                "gps-precision": null,
+                "gps-country-code": null
+              },
+              "relationships": {
+                "inquiry": {
+                  "data": {
+                    "type": "inquiry",
+                    "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "created-at": "2024-03-15T18:35:00.100Z"
+      }
+    }
+  },
+  "inquiry.declined": {
+    "data": {
+      "type": "event",
+      "id": "evt_iJkLmNoPqRsTuVwXyZaBcDeF",
+      "attributes": {
+        "name": "inquiry.declined",
+        "payload": {
+          "data": {
+            "type": "inquiry",
+            "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ",
+            "attributes": {
+              "status": "declined",
+              "reference-id": null,
+              "note": null,
+              "behaviors": {},
+              "tags": [],
+              "creator": "creator@example.com",
+              "reviewer-comment": null,
+              "created-at": "2024-03-15T18:30:00.000Z",
+              "updated-at": "2024-03-15T18:35:04.000Z",
+              "started-at": "2024-03-15T18:31:00.000Z",
+              "expires-at": null,
+              "completed-at": "2024-03-15T18:34:00.000Z",
+              "failed-at": null,
+              "marked-for-review-at": null,
+              "decisioned-at": "2024-03-15T18:35:04.000Z",
+              "expired-at": null,
+              "redacted-at": null,
+              "previous-step-name": "verification_government_id",
+              "next-step-name": "failure",
+              "fields": {
+                "name-first": {
+                  "type": "string",
+                  "value": "Jane"
+                },
+                "name-middle": {
+                  "type": "string",
+                  "value": "Marie"
+                },
+                "name-last": {
+                  "type": "string",
+                  "value": "Doe"
+                },
+                "address-street-1": {
+                  "type": "string",
+                  "value": "123 Main St"
+                },
+                "address-street-2": {
+                  "type": "string",
+                  "value": null
+                },
+                "address-city": {
+                  "type": "string",
+                  "value": "San Francisco"
+                },
+                "address-subdivision": {
+                  "type": "string",
+                  "value": "California"
+                },
+                "address-postal-code": {
+                  "type": "string",
+                  "value": "94111"
+                },
+                "address-country-code": {
+                  "type": "string",
+                  "value": "US"
+                },
+                "birthdate": {
+                  "type": "date",
+                  "value": "1995-09-08"
+                },
+                "email-address": {
+                  "type": "string",
+                  "value": "jane@example.com"
+                },
+                "phone-number": {
+                  "type": "string",
+                  "value": null
+                },
+                "identification-number": {
+                  "type": "string",
+                  "value": null
+                }
+              }
+            },
+            "relationships": {
+              "account": {
+                "data": {
+                  "type": "account",
+                  "id": "act_fJ8mQpDLrYvNcBzWk5HsAxRy"
+                }
+              },
+              "template": {
+                "data": null
+              },
+              "inquiry-template": {
+                "data": {
+                  "type": "inquiry-template",
+                  "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                }
+              },
+              "inquiry-template-version": {
+                "data": {
+                  "type": "inquiry-template-version",
+                  "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                }
+              },
+              "transaction": {
+                "data": null
+              },
+              "reviewer": {
+                "data": {
+                  "type": "workflow-run",
+                  "id": "wfr_M7vXNqRpL3kBzW4tYcHdJgFs"
+                }
+              },
+              "reports": {
+                "data": []
+              },
+              "verifications": {
+                "data": [
+                  {
+                    "type": "verification/government-id",
+                    "id": "ver_X3kHmRqV9YpZ2nBwL5tGdJcE"
+                  }
+                ]
+              },
+              "sessions": {
+                "data": [
+                  {
+                    "type": "inquiry-session",
+                    "id": "iqse_NkPwRtQv5xB8cYm2L4jZdHsF"
+                  }
+                ]
+              },
+              "documents": {
+                "data": []
+              },
+              "selfies": {
+                "data": []
+              }
+            }
+          },
+          "included": [
+            {
+              "type": "inquiry-template",
+              "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc",
+              "attributes": {
+                "status": "active",
+                "name": "Example KYC Template"
+              },
+              "relationships": {
+                "latest-published-version": {
+                  "data": {
+                    "type": "inquiry-template-version",
+                    "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-template-version",
+              "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA",
+              "attributes": {
+                "status": "published",
+                "name-display": "Example KYC Flow"
+              },
+              "relationships": {
+                "inquiry-template": {
+                  "data": {
+                    "type": "inquiry-template",
+                    "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-session",
+              "id": "iqse_NkPwRtQv5xB8cYm2L4jZdHsF",
+              "attributes": {
+                "status": "expired",
+                "created-at": "2024-03-15T18:31:00.000Z",
+                "started-at": "2024-03-15T18:31:00.000Z",
+                "expired-at": "2024-03-15T18:35:00.000Z",
+                "ip-address": "192.0.2.4",
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+                "os-name": "Mac",
+                "os-full-version": "10.15.7",
+                "device-type": "desktop",
+                "device-name": null,
+                "browser-name": "Chrome",
+                "browser-full-version": "115.0.0.0",
+                "mobile-sdk-name": null,
+                "mobile-sdk-full-version": null,
+                "device-handoff-method": null,
+                "is-proxy": false,
+                "is-tor": false,
+                "is-datacenter": false,
+                "is-vpn": false,
+                "threat-level": "low",
+                "country-code": "US",
+                "country-name": "United States",
+                "region-code": "CA",
+                "region-name": "California",
+                "latitude": 37.7749,
+                "longitude": -122.4194,
+                "gps-latitude": null,
+                "gps-longitude": null,
+                "gps-precision": null,
+                "gps-country-code": null
+              },
+              "relationships": {
+                "inquiry": {
+                  "data": {
+                    "type": "inquiry",
+                    "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "created-at": "2024-03-15T18:35:04.100Z"
+      }
+    }
+  },
+  "inquiry.marked-for-review": {
+    "data": {
+      "type": "event",
+      "id": "evt_gHiJkLmNoPqRsTuVwXyZaBcD",
+      "attributes": {
+        "name": "inquiry.marked-for-review",
+        "payload": {
+          "data": {
+            "type": "inquiry",
+            "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ",
+            "attributes": {
+              "status": "needs_review",
+              "reference-id": null,
+              "note": null,
+              "behaviors": {},
+              "tags": [],
+              "creator": "creator@example.com",
+              "reviewer-comment": null,
+              "created-at": "2024-03-15T18:30:00.000Z",
+              "updated-at": "2024-03-15T18:34:00.000Z",
+              "started-at": "2024-03-15T18:31:00.000Z",
+              "expires-at": null,
+              "completed-at": null,
+              "failed-at": null,
+              "marked-for-review-at": "2024-03-15T18:34:00.000Z",
+              "decisioned-at": null,
+              "expired-at": null,
+              "redacted-at": null,
+              "previous-step-name": "verification_government_id",
+              "next-step-name": "review",
+              "fields": {
+                "name-first": {
+                  "type": "string",
+                  "value": "Jane"
+                },
+                "name-middle": {
+                  "type": "string",
+                  "value": "Marie"
+                },
+                "name-last": {
+                  "type": "string",
+                  "value": "Doe"
+                },
+                "address-street-1": {
+                  "type": "string",
+                  "value": "123 Main St"
+                },
+                "address-street-2": {
+                  "type": "string",
+                  "value": null
+                },
+                "address-city": {
+                  "type": "string",
+                  "value": "San Francisco"
+                },
+                "address-subdivision": {
+                  "type": "string",
+                  "value": "California"
+                },
+                "address-postal-code": {
+                  "type": "string",
+                  "value": "94111"
+                },
+                "address-country-code": {
+                  "type": "string",
+                  "value": "US"
+                },
+                "birthdate": {
+                  "type": "date",
+                  "value": "1995-09-08"
+                },
+                "email-address": {
+                  "type": "string",
+                  "value": "jane@example.com"
+                },
+                "phone-number": {
+                  "type": "string",
+                  "value": null
+                },
+                "identification-number": {
+                  "type": "string",
+                  "value": null
+                }
+              }
+            },
+            "relationships": {
+              "account": {
+                "data": {
+                  "type": "account",
+                  "id": "act_fJ8mQpDLrYvNcBzWk5HsAxRy"
+                }
+              },
+              "template": {
+                "data": null
+              },
+              "inquiry-template": {
+                "data": {
+                  "type": "inquiry-template",
+                  "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                }
+              },
+              "inquiry-template-version": {
+                "data": {
+                  "type": "inquiry-template-version",
+                  "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                }
+              },
+              "transaction": {
+                "data": null
+              },
+              "reviewer": {
+                "data": null
+              },
+              "reports": {
+                "data": []
+              },
+              "verifications": {
+                "data": [
+                  {
+                    "type": "verification/government-id",
+                    "id": "ver_X3kHmRqV9YpZ2nBwL5tGdJcE"
+                  }
+                ]
+              },
+              "sessions": {
+                "data": [
+                  {
+                    "type": "inquiry-session",
+                    "id": "iqse_NkPwRtQv5xB8cYm2L4jZdHsF"
+                  }
+                ]
+              },
+              "documents": {
+                "data": []
+              },
+              "selfies": {
+                "data": []
+              }
+            }
+          },
+          "included": [
+            {
+              "type": "inquiry-template",
+              "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc",
+              "attributes": {
+                "status": "active",
+                "name": "Example KYC Template"
+              },
+              "relationships": {
+                "latest-published-version": {
+                  "data": {
+                    "type": "inquiry-template-version",
+                    "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-template-version",
+              "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA",
+              "attributes": {
+                "status": "published",
+                "name-display": "Example KYC Flow"
+              },
+              "relationships": {
+                "inquiry-template": {
+                  "data": {
+                    "type": "inquiry-template",
+                    "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-session",
+              "id": "iqse_NkPwRtQv5xB8cYm2L4jZdHsF",
+              "attributes": {
+                "status": "expired",
+                "created-at": "2024-03-15T18:31:00.000Z",
+                "started-at": "2024-03-15T18:31:00.000Z",
+                "expired-at": "2024-03-15T18:34:00.000Z",
+                "ip-address": "192.0.2.4",
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+                "os-name": "Mac",
+                "os-full-version": "10.15.7",
+                "device-type": "desktop",
+                "device-name": null,
+                "browser-name": "Chrome",
+                "browser-full-version": "115.0.0.0",
+                "mobile-sdk-name": null,
+                "mobile-sdk-full-version": null,
+                "device-handoff-method": null,
+                "is-proxy": false,
+                "is-tor": false,
+                "is-datacenter": false,
+                "is-vpn": false,
+                "threat-level": "low",
+                "country-code": "US",
+                "country-name": "United States",
+                "region-code": "CA",
+                "region-name": "California",
+                "latitude": 37.7749,
+                "longitude": -122.4194,
+                "gps-latitude": null,
+                "gps-longitude": null,
+                "gps-precision": null,
+                "gps-country-code": null
+              },
+              "relationships": {
+                "inquiry": {
+                  "data": {
+                    "type": "inquiry",
+                    "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "created-at": "2024-03-15T18:34:00.100Z"
+      }
+    }
+  },
+  "inquiry.expired": {
+    "data": {
+      "type": "event",
+      "id": "evt_fGhIjKlMnOpQrStUvWxYzAbC",
+      "attributes": {
+        "name": "inquiry.expired",
+        "payload": {
+          "data": {
+            "type": "inquiry",
+            "id": "inq_kT4xVnR2bPmYwL9sTgD3cExZ",
+            "attributes": {
+              "status": "expired",
+              "reference-id": null,
+              "note": null,
+              "behaviors": {},
+              "tags": [],
+              "creator": "creator@example.com",
+              "reviewer-comment": null,
+              "created-at": "2024-03-15T18:30:00.000Z",
+              "updated-at": "2024-03-16T18:30:00.000Z",
+              "started-at": null,
+              "expires-at": null,
+              "completed-at": null,
+              "failed-at": null,
+              "marked-for-review-at": null,
+              "decisioned-at": null,
+              "expired-at": "2024-03-16T18:30:00.000Z",
+              "redacted-at": null,
+              "previous-step-name": null,
+              "next-step-name": "start",
+              "fields": {
+                "identification-number": {
+                  "type": "string",
+                  "value": null
+                }
+              }
+            },
+            "relationships": {
+              "account": {
+                "data": null
+              },
+              "template": {
+                "data": null
+              },
+              "inquiry-template": {
+                "data": {
+                  "type": "inquiry-template",
+                  "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                }
+              },
+              "inquiry-template-version": {
+                "data": {
+                  "type": "inquiry-template-version",
+                  "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                }
+              },
+              "transaction": {
+                "data": null
+              },
+              "reviewer": {
+                "data": null
+              },
+              "reports": {
+                "data": []
+              },
+              "verifications": {
+                "data": []
+              },
+              "sessions": {
+                "data": []
+              },
+              "documents": {
+                "data": []
+              },
+              "selfies": {
+                "data": []
+              }
+            }
+          },
+          "included": [
+            {
+              "type": "inquiry-template",
+              "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc",
+              "attributes": {
+                "status": "active",
+                "name": "Example KYC Template"
+              },
+              "relationships": {
+                "latest-published-version": {
+                  "data": {
+                    "type": "inquiry-template-version",
+                    "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA"
+                  }
+                }
+              }
+            },
+            {
+              "type": "inquiry-template-version",
+              "id": "itmplv_LqX3jYwK7HnRpZmCvBdF8RtA",
+              "attributes": {
+                "status": "published",
+                "name-display": "Example KYC Flow"
+              },
+              "relationships": {
+                "inquiry-template": {
+                  "data": {
+                    "type": "inquiry-template",
+                    "id": "itmpl_AbN9KvR4LmT2WqYxPdHsZgFc"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "created-at": "2024-03-16T18:30:00.100Z"
+      }
+    }
+  },
+  "account.created": {
+    "data": {
+      "type": "event",
+      "id": "evt_o9byQRbjygu76Jbtea9wuJ1boP7a",
+      "attributes": {
+        "name": "account.created",
+        "payload": {
+          "data": {
+            "type": "account",
+            "id": "act_hpNqyAbEG4HeVjZoBRNCMKkA",
+            "attributes": {
+              "reference-id": "abc-123",
+              "created-at": "2023-09-22T17:13:49.000Z",
+              "updated-at": "2023-09-23T00:22:19.000Z",
+              "redacted-at": null,
+              "fields": {
+                "name": {
+                  "type": "hash",
+                  "value": {
+                    "first": {
+                      "type": "string",
+                      "value": "Jane"
+                    },
+                    "middle": {
+                      "type": "string",
+                      "value": "Marie"
+                    },
+                    "last": {
+                      "type": "string",
+                      "value": "Doe"
+                    }
+                  }
+                },
+                "address": {
+                  "type": "hash",
+                  "value": {
+                    "street_1": {
+                      "type": "string",
+                      "value": "123 Main St"
+                    },
+                    "street_2": {
+                      "type": "string",
+                      "value": null
+                    },
+                    "subdivision": {
+                      "type": "string",
+                      "value": "California"
+                    },
+                    "city": {
+                      "type": "string",
+                      "value": "San Francisco"
+                    },
+                    "postal_code": {
+                      "type": "string",
+                      "value": "94111"
+                    },
+                    "country_code": {
+                      "type": "string",
+                      "value": "US"
+                    }
+                  }
+                },
+                "identification_numbers": {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "hash",
+                      "value": {
+                        "identification_class": {
+                          "type": "string",
+                          "value": "visa"
+                        },
+                        "identification_number": {
+                          "type": "string",
+                          "value": "12345678"
+                        },
+                        "issuing_country": {
+                          "type": "string",
+                          "value": "US"
+                        }
+                      }
+                    },
+                    {
+                      "type": "hash",
+                      "value": {
+                        "identification_class": {
+                          "type": "string",
+                          "value": "visa"
+                        },
+                        "identification_number": {
+                          "type": "string",
+                          "value": "87654321"
+                        },
+                        "issuing_country": {
+                          "type": "string",
+                          "value": "UK"
+                        }
+                      }
+                    },
+                    {
+                      "type": "hash",
+                      "value": {
+                        "identification_class": {
+                          "type": "string",
+                          "value": "cct"
+                        },
+                        "identification_number": {
+                          "type": "string",
+                          "value": "A12345678"
+                        },
+                        "issuing_country": {
+                          "type": "string",
+                          "value": "AF"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "birthdate": {
+                  "type": "date",
+                  "value": "1994-12-30"
+                },
+                "phone_number": {
+                  "type": "string",
+                  "value": "111-222-3333"
+                },
+                "email_address": {
+                  "type": "string",
+                  "value": "jane@doe.com"
+                },
+                "selfie_photo": {
+                  "type": "file",
+                  "value": null
+                }
+              },
+              "tags": [
+                "tag1",
+                "tag2"
+              ]
+            }
+          }
+        },
+        "created-at": "2024-02-15T23:48:17.732Z"
+      }
+    }
+  },
+  "case.created": {
+    "data": {
+      "type": "event",
+      "id": "evt_9MsK6zXpT4dRoAyN1uViF5eG",
+      "attributes": {
+        "name": "case.created",
+        "payload": {
+          "data": {
+            "type": "case",
+            "id": "case_gqe7rH38FvxtzhGBQmDBsjkB",
+            "attributes": {
+              "status": "Open",
+              "name": "MRR-3",
+              "resolution": null,
+              "created-at": "2024-01-15T08:12:03.000Z",
+              "updated-at": "2024-01-15T08:12:03.000Z",
+              "assigned-at": null,
+              "resolved-at": null,
+              "redacted-at": null,
+              "sla-expires-at": "2024-02-16T14:05:21.000Z",
+              "creator-id": "case_creator@withpersona.com",
+              "creator-type": "user",
+              "assignee-id": null,
+              "assigner-id": null,
+              "assigner-type": null,
+              "resolver-id": null,
+              "resolver-type": null,
+              "updater-id": null,
+              "updater-type": null,
+              "tags": [],
+              "fields": {
+                "external-integration-id": "ind_123"
+              },
+              "attachments": []
+            },
+            "relationships": {
+              "accounts": {
+                "data": [
+                  {
+                    "type": "account",
+                    "id": "act_9e3yoAUApTRMjgNoPAC7TNtz"
+                  }
+                ]
+              },
+              "case-comments": {
+                "data": []
+              },
+              "case-template": {
+                "data": {
+                  "type": "case-template",
+                  "id": "ctmpl_Jumm3K4zHwaLBBdyLUCnHbBC"
+                }
+              },
+              "case-queue": {
+                "data": {
+                  "type": "case-queue",
+                  "id": "cqueue_7JRbkcdbx9fTossK98NJvRZcmk1"
+                }
+              },
+              "inquiries": {
+                "data": [
+                  {
+                    "type": "inquiry",
+                    "id": "inq_KHK4MJCE4QvfocWB2intQ3YE"
+                  }
+                ]
+              },
+              "reports": {
+                "data": []
+              },
+              "verifications": {
+                "data": [
+                  {
+                    "type": "verification/government-id",
+                    "id": "ver_govid7Hw3XjPbN8f2Lq9kWtZmYrAdEC"
+                  },
+                  {
+                    "type": "verification/selfie",
+                    "id": "ver_self2VkP9bRcMqLnXtZjAhYdEgKfBN"
+                  }
+                ]
+              },
+              "txns": {
+                "data": []
+              }
+            }
+          },
+          "included": [
+            {
+              "type": "account",
+              "id": "act_9e3yoAUApTRMjgNoPAC7TNtz",
+              "attributes": {
+                "reference-id": "abc-123",
+                "created-at": "2023-09-22T17:13:49.000Z",
+                "updated-at": "2023-09-23T00:22:19.000Z",
+                "redacted-at": null,
+                "fields": {
+                  "name": {
+                    "type": "hash",
+                    "value": {
+                      "first": {
+                        "type": "string",
+                        "value": "Jane"
+                      },
+                      "middle": {
+                        "type": "string",
+                        "value": "Marie"
+                      },
+                      "last": {
+                        "type": "string",
+                        "value": "Doe"
+                      }
+                    }
+                  },
+                  "email_address": {
+                    "type": "string",
+                    "value": "jane@doe.com"
+                  }
+                },
+                "tags": []
+              }
+            },
+            {
+              "type": "case-template",
+              "id": "ctmpl_Jumm3K4zHwaLBBdyLUCnHbBC",
+              "attributes": {
+                "status": "active",
+                "name": "Manual Review Cases",
+                "resolutions": [
+                  "Approved",
+                  "Declined"
+                ],
+                "created-at": "2023-03-25T07:04:16.667Z",
+                "updated-at": "2023-06-01T12:00:00.000Z",
+                "archived-at": null
+              }
+            },
+            {
+              "type": "case-queue",
+              "id": "cqueue_7JRbkcdbx9fTossK98NJvRZcmk1",
+              "attributes": {
+                "status": "active",
+                "name": "High Priority Queue",
+                "created-at": "2023-03-25T07:04:16.667Z",
+                "updated-at": "2023-06-01T12:00:00.000Z",
+                "archived-at": null
+              }
+            },
+            {
+              "type": "inquiry",
+              "id": "inq_KHK4MJCE4QvfocWB2intQ3YE",
+              "attributes": {
+                "status": "needs_review",
+                "reference-id": "abc-123",
+                "note": null,
+                "behaviors": {},
+                "tags": [
+                  "manual-review"
+                ],
+                "creator": "API",
+                "reviewer-comment": null,
+                "created-at": "2024-01-15T08:00:00.000Z",
+                "started-at": "2024-01-15T08:01:00.000Z",
+                "expires-at": null,
+                "completed-at": "2024-01-15T08:11:00.000Z",
+                "failed-at": null,
+                "marked-for-review-at": "2024-01-15T08:11:30.000Z",
+                "decisioned-at": null,
+                "expired-at": null,
+                "redacted-at": null,
+                "updated-at": "2024-01-15T08:11:30.000Z",
+                "previous-step-name": "verification_selfie",
+                "next-step-name": "success",
+                "fields": {}
+              },
+              "relationships": {
+                "account": {
+                  "data": {
+                    "type": "account",
+                    "id": "act_9e3yoAUApTRMjgNoPAC7TNtz"
+                  }
+                },
+                "template": {
+                  "data": {}
+                },
+                "inquiry-template": {
+                  "data": {
+                    "type": "inquiry-template",
+                    "id": "itmpl_p8ANAJy9iqadm2buF2xcVgqH"
+                  }
+                },
+                "inquiry-template-version": {
+                  "data": {
+                    "type": "inquiry-template-version",
+                    "id": "itmplv_iXhqfNWqwYLAWs9G8Fm8hPfo"
+                  }
+                },
+                "reports": {
+                  "data": []
+                },
+                "verifications": {
+                  "data": [
+                    {
+                      "type": "verification/government-id",
+                      "id": "ver_govid7Hw3XjPbN8f2Lq9kWtZmYrAdEC"
+                    },
+                    {
+                      "type": "verification/selfie",
+                      "id": "ver_self2VkP9bRcMqLnXtZjAhYdEgKfBN"
+                    }
+                  ]
+                },
+                "sessions": {
+                  "data": []
+                },
+                "documents": {
+                  "data": []
+                },
+                "selfies": {
+                  "data": []
+                }
+              }
+            },
+            {
+              "type": "verification/government-id",
+              "id": "ver_govid7Hw3XjPbN8f2Lq9kWtZmYrAdEC",
+              "attributes": {
+                "status": "passed",
+                "created-at": "2024-01-15T08:03:24.000Z",
+                "submitted-at": "2024-01-15T08:03:24.000Z",
+                "completed-at": "2024-01-15T08:03:31.000Z",
+                "country-code": "US",
+                "checks": [
+                  {
+                    "name": "id_unprocessable_submission_detection",
+                    "category": "user_action_required",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "required"
+                  },
+                  {
+                    "name": "id_compromised_detection",
+                    "category": "fraud",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "required"
+                  },
+                  {
+                    "name": "id_disallowed_country_detection",
+                    "category": "user_action_required",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "required"
+                  }
+                ]
+              },
+              "relationships": {
+                "inquiry": {
+                  "data": {
+                    "type": "inquiry",
+                    "id": "inq_KHK4MJCE4QvfocWB2intQ3YE"
+                  }
+                }
+              }
+            },
+            {
+              "type": "verification/selfie",
+              "id": "ver_self2VkP9bRcMqLnXtZjAhYdEgKfBN",
+              "attributes": {
+                "status": "passed",
+                "created-at": "2024-01-15T08:08:10.000Z",
+                "submitted-at": "2024-01-15T08:08:30.000Z",
+                "completed-at": "2024-01-15T08:08:40.000Z",
+                "checks": [
+                  {
+                    "name": "selfie_id_comparison",
+                    "category": "fraud",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "required"
+                  },
+                  {
+                    "name": "selfie_pose_detection",
+                    "category": "fraud",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "required"
+                  },
+                  {
+                    "name": "selfie_liveness_detection",
+                    "category": "fraud",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "not_required"
+                  }
+                ]
+              },
+              "relationships": {
+                "inquiry": {
+                  "data": {
+                    "type": "inquiry",
+                    "id": "inq_KHK4MJCE4QvfocWB2intQ3YE"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "created-at": "2024-01-15T08:12:03.000Z"
+      }
+    }
+  },
+  "case.status-updated": {
+    "data": {
+      "type": "event",
+      "id": "evt_HuAS4hfXb2lZwIGV9cDqN3mO",
+      "attributes": {
+        "name": "case.status-updated",
+        "payload": {
+          "data": {
+            "type": "case",
+            "id": "case_gqe7rH38FvxtzhGBQmDBsjkB",
+            "attributes": {
+              "status": "Pending",
+              "name": "MRR-3",
+              "resolution": null,
+              "created-at": "2024-01-15T08:12:03.000Z",
+              "updated-at": "2024-01-18T11:30:42.000Z",
+              "assigned-at": "2024-01-16T14:05:21.000Z",
+              "resolved-at": null,
+              "redacted-at": null,
+              "sla-expires-at": "2024-02-16T14:05:21.000Z",
+              "creator-id": "case_creator@withpersona.com",
+              "creator-type": "user",
+              "assignee-id": "case_assignee@withpersona.com",
+              "assigner-id": "case_assigner@withpersona.com",
+              "assigner-type": "user",
+              "resolver-id": null,
+              "resolver-type": null,
+              "updater-id": "case_assignee@withpersona.com",
+              "updater-type": "user",
+              "tags": [
+                "high-priority",
+                "manual-review"
+              ],
+              "fields": {
+                "external-integration-id": "ind_123",
+                "risk-level": "medium"
+              },
+              "attachments": []
+            },
+            "relationships": {
+              "accounts": {
+                "data": [
+                  {
+                    "type": "account",
+                    "id": "act_9e3yoAUApTRMjgNoPAC7TNtz"
+                  }
+                ]
+              },
+              "case-comments": {
+                "data": []
+              },
+              "case-template": {
+                "data": {
+                  "type": "case-template",
+                  "id": "ctmpl_Jumm3K4zHwaLBBdyLUCnHbBC"
+                }
+              },
+              "case-queue": {
+                "data": {
+                  "type": "case-queue",
+                  "id": "cqueue_7JRbkcdbx9fTossK98NJvRZcmk1"
+                }
+              },
+              "inquiries": {
+                "data": [
+                  {
+                    "type": "inquiry",
+                    "id": "inq_KHK4MJCE4QvfocWB2intQ3YE"
+                  }
+                ]
+              },
+              "reports": {
+                "data": []
+              },
+              "verifications": {
+                "data": [
+                  {
+                    "type": "verification/government-id",
+                    "id": "ver_govid7Hw3XjPbN8f2Lq9kWtZmYrAdEC"
+                  },
+                  {
+                    "type": "verification/selfie",
+                    "id": "ver_self2VkP9bRcMqLnXtZjAhYdEgKfBN"
+                  }
+                ]
+              },
+              "txns": {
+                "data": []
+              }
+            }
+          },
+          "included": [
+            {
+              "type": "account",
+              "id": "act_9e3yoAUApTRMjgNoPAC7TNtz",
+              "attributes": {
+                "reference-id": "abc-123",
+                "created-at": "2023-09-22T17:13:49.000Z",
+                "updated-at": "2023-09-23T00:22:19.000Z",
+                "redacted-at": null,
+                "fields": {
+                  "name": {
+                    "type": "hash",
+                    "value": {
+                      "first": {
+                        "type": "string",
+                        "value": "Jane"
+                      },
+                      "middle": {
+                        "type": "string",
+                        "value": "Marie"
+                      },
+                      "last": {
+                        "type": "string",
+                        "value": "Doe"
+                      }
+                    }
+                  },
+                  "email_address": {
+                    "type": "string",
+                    "value": "jane@doe.com"
+                  }
+                },
+                "tags": []
+              }
+            },
+            {
+              "type": "case-template",
+              "id": "ctmpl_Jumm3K4zHwaLBBdyLUCnHbBC",
+              "attributes": {
+                "status": "active",
+                "name": "Manual Review Cases",
+                "resolutions": [
+                  "Approved",
+                  "Declined"
+                ],
+                "created-at": "2023-03-25T07:04:16.667Z",
+                "updated-at": "2023-06-01T12:00:00.000Z",
+                "archived-at": null
+              }
+            },
+            {
+              "type": "case-queue",
+              "id": "cqueue_7JRbkcdbx9fTossK98NJvRZcmk1",
+              "attributes": {
+                "status": "active",
+                "name": "High Priority Queue",
+                "created-at": "2023-03-25T07:04:16.667Z",
+                "updated-at": "2023-06-01T12:00:00.000Z",
+                "archived-at": null
+              }
+            },
+            {
+              "type": "inquiry",
+              "id": "inq_KHK4MJCE4QvfocWB2intQ3YE",
+              "attributes": {
+                "status": "needs_review",
+                "reference-id": "abc-123",
+                "note": null,
+                "behaviors": {},
+                "tags": [
+                  "manual-review"
+                ],
+                "creator": "API",
+                "reviewer-comment": null,
+                "created-at": "2024-01-15T08:00:00.000Z",
+                "started-at": "2024-01-15T08:01:00.000Z",
+                "expires-at": null,
+                "completed-at": "2024-01-15T08:11:00.000Z",
+                "failed-at": null,
+                "marked-for-review-at": "2024-01-15T08:11:30.000Z",
+                "decisioned-at": null,
+                "expired-at": null,
+                "redacted-at": null,
+                "updated-at": "2024-01-15T08:11:30.000Z",
+                "previous-step-name": "verification_selfie",
+                "next-step-name": "success",
+                "fields": {}
+              },
+              "relationships": {
+                "account": {
+                  "data": {
+                    "type": "account",
+                    "id": "act_9e3yoAUApTRMjgNoPAC7TNtz"
+                  }
+                },
+                "template": {
+                  "data": {}
+                },
+                "inquiry-template": {
+                  "data": {
+                    "type": "inquiry-template",
+                    "id": "itmpl_p8ANAJy9iqadm2buF2xcVgqH"
+                  }
+                },
+                "inquiry-template-version": {
+                  "data": {
+                    "type": "inquiry-template-version",
+                    "id": "itmplv_iXhqfNWqwYLAWs9G8Fm8hPfo"
+                  }
+                },
+                "reports": {
+                  "data": []
+                },
+                "verifications": {
+                  "data": [
+                    {
+                      "type": "verification/government-id",
+                      "id": "ver_govid7Hw3XjPbN8f2Lq9kWtZmYrAdEC"
+                    },
+                    {
+                      "type": "verification/selfie",
+                      "id": "ver_self2VkP9bRcMqLnXtZjAhYdEgKfBN"
+                    }
+                  ]
+                },
+                "sessions": {
+                  "data": []
+                },
+                "documents": {
+                  "data": []
+                },
+                "selfies": {
+                  "data": []
+                }
+              }
+            },
+            {
+              "type": "verification/government-id",
+              "id": "ver_govid7Hw3XjPbN8f2Lq9kWtZmYrAdEC",
+              "attributes": {
+                "status": "passed",
+                "created-at": "2024-01-15T08:03:24.000Z",
+                "submitted-at": "2024-01-15T08:03:24.000Z",
+                "completed-at": "2024-01-15T08:03:31.000Z",
+                "country-code": "US",
+                "checks": [
+                  {
+                    "name": "id_unprocessable_submission_detection",
+                    "category": "user_action_required",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "required"
+                  },
+                  {
+                    "name": "id_compromised_detection",
+                    "category": "fraud",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "required"
+                  },
+                  {
+                    "name": "id_disallowed_country_detection",
+                    "category": "user_action_required",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "required"
+                  }
+                ]
+              },
+              "relationships": {
+                "inquiry": {
+                  "data": {
+                    "type": "inquiry",
+                    "id": "inq_KHK4MJCE4QvfocWB2intQ3YE"
+                  }
+                }
+              }
+            },
+            {
+              "type": "verification/selfie",
+              "id": "ver_self2VkP9bRcMqLnXtZjAhYdEgKfBN",
+              "attributes": {
+                "status": "passed",
+                "created-at": "2024-01-15T08:08:10.000Z",
+                "submitted-at": "2024-01-15T08:08:30.000Z",
+                "completed-at": "2024-01-15T08:08:40.000Z",
+                "checks": [
+                  {
+                    "name": "selfie_id_comparison",
+                    "category": "fraud",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "required"
+                  },
+                  {
+                    "name": "selfie_pose_detection",
+                    "category": "fraud",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "required"
+                  },
+                  {
+                    "name": "selfie_liveness_detection",
+                    "category": "fraud",
+                    "status": "passed",
+                    "reasons": [],
+                    "requirement": "not_required"
+                  }
+                ]
+              },
+              "relationships": {
+                "inquiry": {
+                  "data": {
+                    "type": "inquiry",
+                    "id": "inq_KHK4MJCE4QvfocWB2intQ3YE"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "created-at": "2024-01-18T11:30:42.000Z"
+      }
+    }
+  }
+}

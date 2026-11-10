@@ -8,6 +8,11 @@ from __future__ import annotations
 
 from typing import Annotated, Literal, Union
 
+import hashlib
+import hmac
+import json
+from urllib.parse import quote
+
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -184,6 +189,9 @@ Operation = Annotated[Union[
     ListAccounts, GetAccount, CreateAccount, UpdateAccount,
     ListCases, GetCase, CreateCase, SetCaseStatus, ListReports, GetReport,
     ListInquiryTemplates, GetInquiryTemplate,
+    PersonaOnInquiryCreated, PersonaOnInquiryCompleted, PersonaOnInquiryFailed,
+    PersonaOnInquiryApproved, PersonaOnInquiryDeclined, PersonaOnInquiryMarkedForReview,
+    PersonaOnInquiryExpired, PersonaOnAccountCreated, PersonaOnCaseCreated, PersonaOnCaseStatusUpdated,
 ], Field(discriminator="operation")]
 
 
@@ -256,7 +264,7 @@ def request_parts(config):
     return method, route, params, body
 
 
-class PersonaNode(WorkflowNode):
+class PersonaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-persona"
     credential_provider_labels = {"persona": "Persona Account"}
     connection_evidence = ConnectionEvidence(operation="list_inquiries", noun="Persona inquiries")
@@ -265,7 +273,94 @@ class PersonaNode(WorkflowNode):
     def get_config_model(cls):
         return PersonaNodeConfig
 
+    @staticmethod
+    async def _webhook_request(credential, method, route, body=None):
+        token = PersonaAPIKeyCredential.model_validate(credential).api_key
+        async with httpx.AsyncClient(timeout=30, follow_redirects=False) as client:
+            response = await client.request(method, BASE_URL + route, headers={
+                "Authorization": "Bearer " + token, "Persona-Version": API_VERSION,
+                "Key-Inflection": "kebab", "Accept": "application/json",
+            }, **({"json": body} if body is not None else {}))
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"Persona webhook request failed (HTTP {response.status_code})")
+        return response.json()
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = TRIGGER_EVENTS[config["operation"]]
+        payload = await cls._webhook_request(credential, "POST", "/webhooks", {
+            "data": {"attributes": {"name": f"NoClick {node_id}", "url": webhook_url,
+                "enabled-events": [event], "api-version": API_VERSION, "api-key-inflection": "kebab"}}})
+        record = payload["data"]
+        webhook_id = record["id"]
+        secrets = record["attributes"]["secrets"]
+        secret = next((s["value"] for s in secrets if s.get("expires-at") is None), None)
+        if not webhook_id or not secret:
+            raise ValueError("Persona did not return the webhook ID and active signing secret")
+        # Creation returns a disabled webhook; activation requires the enable endpoint.
+        try:
+            await cls._webhook_request(credential, "POST", f"/webhooks/{quote(webhook_id, safe='')}/enable")
+        except Exception:
+            await cls._webhook_request(credential, "POST", f"/webhooks/{quote(webhook_id, safe='')}/archive")
+            raise
+        return {"external_webhook_id": webhook_id, "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        webhook_id = (config or {}).get("external_webhook_id")
+        if webhook_id and credential:
+            await cls._webhook_request(credential, "POST", f"/webhooks/{quote(str(webhook_id), safe='')}/archive")
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        secret = (config or {}).get("signing_secret")
+        if not secret:
+            return False
+        header = next((v for k, v in headers.items() if k.lower() == "persona-signature"), "")
+        # Persona sends space-separated signature sets during secret rotation.
+        for signature_set in header.split():
+            parts = dict(part.split("=", 1) for part in signature_set.split(",") if "=" in part)
+            timestamp, signature = parts.get("t"), parts.get("v1")
+            if timestamp and timestamp.isdigit() and signature and signature.isascii():
+                digest = hmac.new(secret.encode(), timestamp.encode() + b"." + body, hashlib.sha256).hexdigest()
+                if hmac.compare_digest(digest, signature):
+                    return True
+        return False
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        data = payload.get("data") or {}
+        attributes = data.get("attributes") or {}
+        return attributes.get("name") == TRIGGER_EVENTS.get(config.get("operation"))
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        event = output.get("data") or {}
+        attributes = event.get("attributes") or {}
+        kind = attributes.get("name")
+        if kind not in TRIGGER_EVENTS.values():
+            return None
+        record = (attributes.get("payload") or {}).get("data") or {}
+        resource_id = record.get("id")
+        if not resource_id:
+            return None
+        details = record.get("attributes") or {}
+        lines = [f"Persona {kind.replace('.', ' ').replace('-', ' ')}: {resource_id}",
+                 f"Event ID: {event.get('id')}", f"Occurred at: {attributes.get('created-at')}"]
+        if kind.startswith("inquiry."):
+            fields = details.get("fields") or {}
+            subject = " ".join(str((fields.get(k) or {}).get("value") or "") for k in ("name-first", "name-last")).strip()
+            if subject:
+                lines.append(f"Person: {subject}")
+        lines.append("Details: " + json.dumps(details, ensure_ascii=False, default=str)[:4000])
+        lines.append("Resource relationships: " + json.dumps(record.get("relationships") or {}, default=str)[:2000])
+        resource = kind.split(".")[0]
+        lines.append(f"To act: get_{resource} {resource}_id={resource_id}.")
+        return {"text": "\n".join(lines), "conversation_key": str(resource_id), "title": f"Persona {kind}: {resource_id}"}
+
     async def execute(self, inputs):
+        if self.config.config.operation in TRIGGER_EVENTS:
+            return inputs
         credential = self.config.credentials
         if credential is None:
             raise ValueError("Connect a Persona API key")

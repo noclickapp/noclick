@@ -110,3 +110,84 @@ def test_path_injection_rejected(bad):
 
 def test_fixture_covers_every_operation():
     assert {case["config"]["operation"] for case in CASES} == set(native.ROUTES)
+
+
+EVENTS = json.loads((Path(__file__).parent / "fixtures/persona/events.json").read_text())
+
+
+@pytest.mark.parametrize("operation,event", native.TRIGGER_EVENTS.items())
+@pytest.mark.asyncio
+async def test_webhook_lifecycle_and_documented_events(monkeypatch, operation, event):
+    calls = []
+    fixture_dir = Path(__file__).parent / "fixtures/persona"
+
+    def provider(request):
+        calls.append(request)
+        assert request.headers["Persona-Version"] == native.API_VERSION
+        assert request.headers["Authorization"] == "Bearer persona-test-secret"
+        assert request.method == "POST"
+        if request.url.path.endswith('/webhooks'):
+            attrs = json.loads(request.content)["data"]["attributes"]
+            assert attrs == {"name": "NoClick node", "url": "https://example.com/hook", "enabled-events": [event],
+                             "api-version": native.API_VERSION, "api-key-inflection": "kebab"}
+            fixture = 'webhook-created'
+        elif request.url.path.endswith('/enable'):
+            fixture = 'webhook-enabled'
+        else:
+            assert request.url.path.endswith('/wbh_ABC123/archive')
+            fixture = 'webhook-archived'
+        return httpx.Response(201 if len(calls) == 1 else 200, json=json.loads((fixture_dir / f'{fixture}.json').read_text()))
+
+    monkeypatch.setattr(native.httpx, "AsyncClient", lambda **kw: CLIENT(transport=httpx.MockTransport(provider), **kw))
+    config = {"operation": operation}
+    registration = await native.PersonaNode._register_external_webhook(
+        webhook_url="https://example.com/hook", credential={"api_key": "persona-test-secret"}, config=config, node_id="node")
+    assert registration == {"external_webhook_id": "wbh_ABC123", "signing_secret": "wbhsec_abcdefgh-1234-5678-9ijk-lmnopqrstuvw"}
+    parsed = native.PersonaNode.parse_config({"config": {**config, **registration}, "credentials": {"api_key": "persona-test-secret"}})
+    assert parsed.config.signing_secret == registration['signing_secret']
+    payload = EVENTS[event]
+    assert native.PersonaNode.filter_trigger_payload(payload, config)
+    assert not native.PersonaNode.filter_trigger_payload(payload, {"operation": "list_inquiries"})
+    output = native.PersonaNode.resolve_trigger_payload(payload, config)
+    agent_event = native.PersonaNode.resolve_agent_event(output)
+    resource_id = payload['data']['attributes']['payload']['data']['id']
+    assert agent_event['conversation_key'] == resource_id
+    assert resource_id in agent_event['text'] and 'To act: get_' in agent_event['text']
+    if event == 'inquiry.completed':
+        assert 'Jane Doe' in agent_event['text']
+    await native.PersonaNode._unregister_external_webhook(credential={"api_key": "persona-test-secret"}, config={**config, **registration}, node_id="node")
+    assert len(calls) == 3
+
+
+def test_persona_signatures_raw_body_and_rotating_sets():
+    body = json.dumps(EVENTS['inquiry.completed']).encode()
+    secret = 'wbhsec_test-secret'
+    timestamp = '1764686826'
+    digest = native.hmac.new(secret.encode(), timestamp.encode() + b'.' + body, native.hashlib.sha256).hexdigest()
+    config = {'signing_secret': secret}
+    headers = {'Persona-Signature': f't={timestamp},v1=invalid t={timestamp},v1={digest}'}
+    assert native.PersonaNode.verify_webhook_signature(body, headers, config)
+    assert not native.PersonaNode.verify_webhook_signature(body + b' ', headers, config)
+    assert not native.PersonaNode.verify_webhook_signature(body, headers, {'signing_secret': 'wrong'})
+    assert not native.PersonaNode.verify_webhook_signature(body, headers, {})
+    for value in ['', 'garbage', 'v1=bad', 't=no,v1=bad', 't=1,v1=é']:
+        assert not native.PersonaNode.verify_webhook_signature(body, {'persona-signature': value}, config)
+
+
+@pytest.mark.asyncio
+async def test_failed_enable_archives_created_webhook(monkeypatch):
+    calls = []
+    fixture = json.loads((Path(__file__).parent / "fixtures/persona/webhook-created.json").read_text())
+
+    def provider(request):
+        calls.append(request.url.path)
+        if request.url.path.endswith('/enable'):
+            return httpx.Response(403, json={"errors": [{"title": "Forbidden"}]})
+        return httpx.Response(201 if len(calls) == 1 else 200, json=fixture)
+
+    monkeypatch.setattr(native.httpx, "AsyncClient", lambda **kw: CLIENT(transport=httpx.MockTransport(provider), **kw))
+    with pytest.raises(ValueError, match='HTTP 403'):
+        await native.PersonaNode._register_external_webhook(
+            webhook_url='https://example.com/hook', credential={'api_key': 'persona-test-secret'},
+            config={'operation': 'on_inquiry_completed'}, node_id='node')
+    assert calls == ['/api/v1/webhooks', '/api/v1/webhooks/wbh_ABC123/enable', '/api/v1/webhooks/wbh_ABC123/archive']

@@ -1012,6 +1012,16 @@
           "list_inquiry_templates": "#/$defs/ListInquiryTemplates",
           "list_reports": "#/$defs/ListReports",
           "mark_inquiry_for_review": "#/$defs/ReviewInquiry",
+          "on_account_created": "#/$defs/PersonaOnAccountCreated",
+          "on_case_created": "#/$defs/PersonaOnCaseCreated",
+          "on_case_status_updated": "#/$defs/PersonaOnCaseStatusUpdated",
+          "on_inquiry_approved": "#/$defs/PersonaOnInquiryApproved",
+          "on_inquiry_completed": "#/$defs/PersonaOnInquiryCompleted",
+          "on_inquiry_created": "#/$defs/PersonaOnInquiryCreated",
+          "on_inquiry_declined": "#/$defs/PersonaOnInquiryDeclined",
+          "on_inquiry_expired": "#/$defs/PersonaOnInquiryExpired",
+          "on_inquiry_failed": "#/$defs/PersonaOnInquiryFailed",
+          "on_inquiry_marked_for_review": "#/$defs/PersonaOnInquiryMarkedForReview",
           "set_case_status": "#/$defs/SetCaseStatus",
           "set_inquiry_tags": "#/$defs/SetInquiryTags",
           "update_account": "#/$defs/UpdateAccount",
@@ -1082,6 +1092,36 @@
         },
         {
           "$ref": "#/$defs/GetInquiryTemplate"
+        },
+        {
+          "$ref": "#/$defs/PersonaOnInquiryCreated"
+        },
+        {
+          "$ref": "#/$defs/PersonaOnInquiryCompleted"
+        },
+        {
+          "$ref": "#/$defs/PersonaOnInquiryFailed"
+        },
+        {
+          "$ref": "#/$defs/PersonaOnInquiryApproved"
+        },
+        {
+          "$ref": "#/$defs/PersonaOnInquiryDeclined"
+        },
+        {
+          "$ref": "#/$defs/PersonaOnInquiryMarkedForReview"
+        },
+        {
+          "$ref": "#/$defs/PersonaOnInquiryExpired"
+        },
+        {
+          "$ref": "#/$defs/PersonaOnAccountCreated"
+        },
+        {
+          "$ref": "#/$defs/PersonaOnCaseCreated"
+        },
+        {
+          "$ref": "#/$defs/PersonaOnCaseStatusUpdated"
         }
       ],
       "title": "Config"
