@@ -1041,6 +1041,148 @@
       "x-credential-instructions": "In Greenhouse API Credentials, create Harvest V3 (OAuth) credentials and grant the scopes required for the operations you use. Enter the Client ID and Client Secret. Greenhouse permits OAuth client credentials for custom integrations; one-click authorization-code login requires a Greenhouse partner app.",
       "x-credential-url": "https://support.greenhouse.io/hc/en-us/articles/360029266032-Harvest-API-overview"
     },
+    "GreenhouseOnEventConfig": {
+      "description": "Start a workflow on a signed recruiting event (Greenhouse partners only).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Recruiting Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Recruiting Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "new_candidate_application",
+          "description": "Requires a Greenhouse partner account with harvest:webhooks:create and harvest:webhooks:destroy scopes. Webhook registration is exclusive to partners.",
+          "enum": [
+            "new_candidate_application",
+            "application_updated",
+            "candidate_stage_change",
+            "hire_candidate",
+            "reject_candidate",
+            "update_candidate"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Greenhouse automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "GreenhouseOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "GreenhouseRejectApplicationConfig": {
       "description": "Reject an application with a documented reason.",
       "properties": {
@@ -1217,6 +1359,7 @@
           "list_sources": "#/$defs/GreenhouseListSourcesConfig",
           "list_users": "#/$defs/GreenhouseListUsersConfig",
           "move_application": "#/$defs/GreenhouseMoveApplicationConfig",
+          "on_event": "#/$defs/GreenhouseOnEventConfig",
           "reject_application": "#/$defs/GreenhouseRejectApplicationConfig",
           "unreject_application": "#/$defs/GreenhouseUnrejectApplicationConfig",
           "update_candidate": "#/$defs/GreenhouseUpdateCandidateConfig"
@@ -1224,6 +1367,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/GreenhouseOnEventConfig"
+        },
         {
           "$ref": "#/$defs/GreenhouseListCandidatesConfig"
         },

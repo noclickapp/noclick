@@ -1,0 +1,1085 @@
+{
+  "new_candidate_application": {
+    "body": {
+      "action": "new_candidate_application",
+      "payload": {
+        "application": {
+          "id": 71980812,
+          "rejected_at": null,
+          "prospect": false,
+          "status": "active",
+          "applied_at": "2017-10-27T14:44:43Z",
+          "last_activity_at": "2017-10-27T14:44:42Z",
+          "url": "http://app.greenhouse.io/people/60304594?application_id=71980812",
+          "source": {
+            "id": 16,
+            "name": "LinkedIn (Prospecting)"
+          },
+          "credited_to": {
+            "id": 92120,
+            "email": "test123@example.com",
+            "name": "Greenhouse Admin",
+            "employee_id": "123ABC"
+          },
+          "rejection_reason": null,
+          "rejection_details": null,
+          "current_stage": {
+            "id": 2944102,
+            "name": "Preliminary Phone Screen",
+            "interviews": [
+              {
+                "id": 4368004,
+                "name": "Preliminary Screening Call",
+                "status": "to_be_scheduled",
+                "interview_kit": {
+                  "url": "http://app.greenhouse.io/guides/4368142/people/60304594?application_id=71980812",
+                  "content": "<p>Directions on how to conduct this interview.</p>",
+                  "questions": [
+                    {
+                      "id": 3136352,
+                      "question": "Could you tell me about your previous experience?"
+                    },
+                    {
+                      "id": 3136353,
+                      "question": "Why do you want to work with us?"
+                    }
+                  ]
+                },
+                "interviewers": []
+              }
+            ]
+          },
+          "prospect_detail": {
+            "prospect_pool": null,
+            "prospect_stage": null,
+            "prospect_owner": null
+          },
+          "custom_fields": {
+            "application_custom_test": {
+              "name": "Application Custom Test",
+              "type": "single_select",
+              "value": null
+            },
+            "custom_boolean_test": {
+              "name": "Custom Boolean Test",
+              "type": "boolean",
+              "value": null
+            }
+          },
+          "candidate": {
+            "id": 60304594,
+            "first_name": "Jane",
+            "last_name": "Smith",
+            "title": "Manager",
+            "company": "Current Company Co.",
+            "created_at": "2017-10-27T14:44:42Z",
+            "external_id": null,
+            "photo_url": null,
+            "url": "http://app.greenhouse.io/people/60304594",
+            "is_private": false,
+            "can_email": true,
+            "phone_numbers": [
+              {
+                "value": "555-555-5555",
+                "type": "mobile"
+              }
+            ],
+            "email_addresses": [
+              {
+                "value": "person@work.com",
+                "type": "work"
+              },
+              {
+                "value": "person@example.com",
+                "type": "personal"
+              }
+            ],
+            "addresses": [
+              {
+                "value": "123 Test Street\nNew York, NY 10001",
+                "type": "home"
+              }
+            ],
+            "website_addresses": [
+              {
+                "value": "mysite.com",
+                "type": "personal"
+              }
+            ],
+            "social_media_addresses": [
+              {
+                "value": "socialmedia.com"
+              }
+            ],
+            "educations": [
+              {
+                "school_name": "Stanford University",
+                "degree": "Bachelor's Degree",
+                "discipline": "Computer Science",
+                "start_date": "09/15/2007",
+                "end_date": "05/15/2011"
+              }
+            ],
+            "employments": [],
+            "recruiter": {
+              "id": 92121,
+              "email": "employee@test.com",
+              "name": "Betty Smith",
+              "employee_id": "123ABC"
+            },
+            "coordinator": {
+              "id": 92427,
+              "email": "user@example.com",
+              "name": "Bonnie Bonnet",
+              "employee_id": "456DEF"
+            },
+            "attachments": [
+              {
+                "filename": "Test Cover Letter.docx",
+                "url": "https://prod-heroku.s3.amazonaws.com/...",
+                "type": "cover_letter"
+              },
+              {
+                "filename": "Test Resume.docx",
+                "url": "https://prod-heroku.s3.amazonaws.com/...",
+                "type": "resume"
+              }
+            ],
+            "tags": [
+              "Ruby",
+              "Comp Sci"
+            ],
+            "custom_fields": {
+              "date_test": {
+                "name": "Date Test",
+                "type": "date",
+                "value": ""
+              },
+              "desired_salary": {
+                "name": "Desired Salary",
+                "type": "short_text",
+                "value": null
+              },
+              "graduation_year_1": {
+                "name": "Graduation Year",
+                "type": "single_select",
+                "value": null
+              },
+              "work_remotely": {
+                "name": "Work Remotely",
+                "type": "boolean",
+                "value": null
+              }
+            }
+          },
+          "jobs": [
+            {
+              "id": 274075,
+              "name": "Data Scientist",
+              "requisition_id": "ABC",
+              "notes": null,
+              "confidential": false,
+              "job_post_id": 263533,
+              "status": "open",
+              "created_by_id": 273555,
+              "created_at": "2016-07-14T17:21:30Z",
+              "opened_at": "2016-07-20T16:00:00Z",
+              "closed_at": null,
+              "url": "http://app.greenhouse.io/sdash/274075",
+              "departments": [
+                {
+                  "id": 8717,
+                  "name": "Data Science",
+                  "external_id": "ex-dept-1"
+                }
+              ],
+              "offices": [
+                {
+                  "id": 16478,
+                  "name": "London",
+                  "location": "London, United Kingdom",
+                  "external_id": "ex-office-1"
+                }
+              ],
+              "hiring_team": {
+                "hiring_managers": [
+                  {
+                    "user_id": 92913,
+                    "employee_id": "123ABC"
+                  }
+                ],
+                "sourcers": [
+                  {
+                    "user_id": 92427,
+                    "employee_id": null
+                  }
+                ],
+                "recruiters": [
+                  {
+                    "user_id": 92427,
+                    "employee_id": null
+                  }
+                ],
+                "coordinators": [
+                  {
+                    "user_id": 92427,
+                    "employee_id": "DEFG123"
+                  }
+                ]
+              },
+              "custom_fields": {
+                "date_test": {
+                  "name": "Date Test",
+                  "type": "date",
+                  "value": "2017-10-27"
+                },
+                "employment_type": {
+                  "name": "Employment",
+                  "type": "single_select",
+                  "value": "Full-time"
+                },
+                "replacement_role_": {
+                  "name": "Replacement Role",
+                  "type": "boolean",
+                  "value": true
+                },
+                "salary_range_2": {
+                  "name": "Salary Range",
+                  "type": "currency_range",
+                  "value": {
+                    "unit": null,
+                    "min_value": "10000.0",
+                    "max_value": "10000.0"
+                  }
+                },
+                "test_field_1": {
+                  "name": "Test Short Text Field",
+                  "type": "short_text",
+                  "value": "test"
+                },
+                "test_user_field": {
+                  "name": "Test User Field",
+                  "type": "user",
+                  "value": {
+                    "user_id": 117730,
+                    "name": "Job Admin",
+                    "email": "asegal+jobadmin@greenhouse.io",
+                    "employee_id": "user-abc"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "source": "https://developers.greenhouse.io/webhooks.html#application-created"
+  },
+  "application_updated": {
+    "body": {
+      "action": "application_updated",
+      "payload": {
+        "application": {
+          "id": 22202940,
+          "rejected_at": null,
+          "prospect": false,
+          "prospect_detail": {
+            "prospect_owner": null,
+            "prospect_pool": null,
+            "prospect_stage": null
+          },
+          "status": "active",
+          "applied_at": "2015-12-03T06:31:26Z",
+          "last_activity_at": "2015-12-03T06:31:26Z",
+          "url": "https://app.greenhouse.io/people/13857579?application_id=22202940",
+          "source": {
+            "id": 2,
+            "name": "Jobs page on your website"
+          },
+          "credited_to": {
+            "id": 3695,
+            "email": "beauregard.blacksmith.3695@example.com",
+            "name": "Beauregard Blacksmith",
+            "employee_id": "123ABC"
+          },
+          "rejection_reason": null,
+          "rejection_details": null,
+          "current_stage": {
+            "id": 711020,
+            "name": "Application Review",
+            "interviews": [
+              {
+                "id": 1063685,
+                "name": "Application Review",
+                "status": "collect_feedback",
+                "interview_kit": {
+                  "url": "http://app.greenhouse.io/guides/1063859/people/13857579",
+                  "content": "",
+                  "questions": []
+                },
+                "interviewers": []
+              }
+            ]
+          },
+          "custom_fields": {
+            "custom_application_field": {
+              "name": "Custom Application Field",
+              "type": "short_text",
+              "value": "Example"
+            }
+          },
+          "candidate": {
+            "id": 13857579,
+            "first_name": "Hank",
+            "last_name": "Von Diablo",
+            "title": null,
+            "company": null,
+            "created_at": "2015-12-03T06:31:26Z",
+            "external_id": null,
+            "photo_url": null,
+            "url": "https://app.greenhouse.io/people/13857579",
+            "is_private": false,
+            "can_email": true,
+            "phone_numbers": [
+              {
+                "value": "330-281-8004",
+                "type": "other "
+              }
+            ],
+            "email_addresses": [
+              {
+                "value": "hank.von diablo.13857579@example.com",
+                "type": "personal"
+              }
+            ],
+            "addresses": [],
+            "website_addresses": [
+              {
+                "value": "http://www.example.com/",
+                "type": "other"
+              }
+            ],
+            "social_media_addresses": [
+              {
+                "value": "https://twitter.com/TheRock"
+              }
+            ],
+            "educations": [],
+            "recruiter": null,
+            "coordinator": null,
+            "attachments": [],
+            "tags": [],
+            "custom_fields": {
+              "current_salary": {
+                "name": "Current Salary",
+                "type": "short_text",
+                "value": null
+              },
+              "desired_salary": {
+                "name": "Desired Salary",
+                "type": "short_text",
+                "value": null
+              }
+            }
+          },
+          "jobs": []
+        }
+      }
+    },
+    "source": "https://developers.greenhouse.io/webhooks.html#application-updated"
+  },
+  "hire_candidate": {
+    "body": {
+      "action": "hire_candidate",
+      "payload": {
+        "application": {
+          "id": 46194062,
+          "opening": {
+            "opening_id": "1234-56",
+            "custom_fields": []
+          },
+          "credited_to": {
+            "id": 158104,
+            "email": "bob_johnson1@localhost.com",
+            "name": "Robert Johnson",
+            "employee_id": "123ABC"
+          },
+          "source": {
+            "id": 25,
+            "public_name": "Monster"
+          },
+          "url": "https://app.greenhouse.io/people/35897443?application_id=46194062",
+          "candidate": {
+            "id": 35897443,
+            "first_name": "Johnny",
+            "last_name": "Smith",
+            "title": "Previous Title",
+            "external_id": "12345",
+            "url": "https://app.greenhouse.io/people/35897443",
+            "is_private": false,
+            "can_email": true,
+            "phone_numbers": [
+              {
+                "value": "518-555-1212",
+                "type": "work"
+              },
+              {
+                "value": "212-555-1212",
+                "type": "home"
+              }
+            ],
+            "email_addresses": [
+              {
+                "value": "personal@example.com",
+                "type": "personal"
+              },
+              {
+                "value": "work@example.com",
+                "type": "work"
+              }
+            ],
+            "addresses": [
+              {
+                "value": "455 Broadway New York, NY 10280",
+                "type": "home"
+              }
+            ],
+            "educations": [
+              {
+                "school_name": "Harvard University",
+                "degree": "Bachelor's Degree",
+                "discipline": "Information Systems",
+                "start_date": "01/01/2012",
+                "end_date": "01/01/2016"
+              }
+            ],
+            "employments": [
+              {
+                "company_name": "Greenhouse",
+                "title": "Engineer",
+                "start_date": "01/01/2012",
+                "end_date": "01/01/2016"
+              }
+            ],
+            "recruiter": {
+              "id": 55,
+              "email": "bob_johnson@localhost.com",
+              "name": "Bob Johnson",
+              "employee_id": "456DEF"
+            },
+            "coordinator": {
+              "id": 56,
+              "email": "bob_johnson_approver1@localhost.com",
+              "name": "Robert J Approver",
+              "employee_id": "789GHI"
+            },
+            "attachments": [
+              {
+                "filename": "resume.pdf",
+                "url": "https://prod-heroku.s3.amazonaws.com/...",
+                "type": "resume"
+              }
+            ],
+            "custom_fields": {
+              "desired_level": {
+                "name": "Desired Level",
+                "type": "short_text",
+                "value": "Senior"
+              },
+              "favorite_programming_language": {
+                "name": "Favorite Programming Language",
+                "type": "short_text",
+                "value": "Rails"
+              }
+            }
+          },
+          "job": {
+            "id": 323753,
+            "name": "Developer",
+            "open_date": "2014-11-20T22:49:14Z",
+            "close_date": "2014-11-25T22:49:14Z",
+            "requisition_id": null,
+            "departments": [
+              {
+                "id": 7,
+                "name": "Technology",
+                "external_id": "ex-dept-1"
+              }
+            ],
+            "offices": [
+              {
+                "id": 13,
+                "name": "New York City",
+                "location": "New York, NY",
+                "external_id": "ex-office-1"
+              },
+              {
+                "id": 14,
+                "name": "St. Louis",
+                "location": null,
+                "external_id": null
+              }
+            ],
+            "custom_fields": {
+              "approved": {
+                "name": "Approved",
+                "type": "boolean",
+                "value": true
+              },
+              "employment_type": {
+                "name": "Employment Type",
+                "type": "single_select",
+                "value": "Full-time"
+              },
+              "salary_range": {
+                "name": "SalaryRange",
+                "type": "currency_range",
+                "value": {
+                  "unit": "USD",
+                  "min_value": "10000.0",
+                  "max_value": "20000.0"
+                }
+              }
+            }
+          },
+          "jobs": [
+            {
+              "id": 323753,
+              "name": "Developer",
+              "requisition_id": null,
+              "confidential": false,
+              "opened_at": "2014-11-20T22:49:14Z",
+              "closed_at": "2014-11-25T22:49:14Z",
+              "departments": [
+                {
+                  "id": 7,
+                  "name": "Technology",
+                  "external_id": "ex-dept-1"
+                }
+              ],
+              "offices": [
+                {
+                  "id": 13,
+                  "name": "New York City",
+                  "location": "New York, NY",
+                  "external_id": "ex-office-1"
+                },
+                {
+                  "id": 14,
+                  "name": "St. Louis",
+                  "location": null,
+                  "external_id": null
+                }
+              ],
+              "custom_fields": {
+                "approved": {
+                  "name": "Approved",
+                  "type": "boolean",
+                  "value": true
+                },
+                "employment_type": {
+                  "name": "Employment Type",
+                  "type": "single_select",
+                  "value": "Full-time"
+                },
+                "salary_range": {
+                  "name": "SalaryRange",
+                  "type": "currency_range",
+                  "value": {
+                    "unit": "USD",
+                    "min_value": "10000.0",
+                    "max_value": "20000.0"
+                  }
+                }
+              }
+            }
+          ],
+          "custom_fields": {
+            "custom_application_field": {
+              "name": "Custom Application Field",
+              "type": "short_text",
+              "value": "Example123"
+            }
+          },
+          "offer": {
+            "id": 506409,
+            "version": 2,
+            "created_at": "2014-11-20T22:49:14Z",
+            "sent_at": "2014-11-10",
+            "resolved_at": "2014-11-20T22:49:14Z",
+            "starts_at": "2015-01-23",
+            "custom_fields": {
+              "salary": {
+                "name": "Salary",
+                "type": "currency",
+                "value": {
+                  "amount": 80000,
+                  "unit": "USD"
+                }
+              },
+              "seasons": {
+                "name": "Seasons",
+                "type": "multi_select",
+                "value": [
+                  "Season 1",
+                  "Season 2"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "source": "https://developers.greenhouse.io/webhooks.html#candidate-hired"
+  },
+  "candidate_stage_change": {
+    "body": {
+      "action": "candidate_stage_change",
+      "payload": {
+        "application": {
+          "id": 265277,
+          "rejected_at": null,
+          "prospect": false,
+          "status": "active",
+          "applied_at": "2013-03-22T00:00:00Z",
+          "last_activity_at": "2015-02-09T16:38:36Z",
+          "url": "https://app.greenhouse.io/people/265772?application_id= 265277",
+          "source": {
+            "id": 31,
+            "name": "Agency"
+          },
+          "credited_to": {
+            "id": 15,
+            "email": "ada@example.com",
+            "name": "Ada Lacey",
+            "employee_id": "123ABC"
+          },
+          "rejection_reason": null,
+          "rejection_details": null,
+          "current_stage": {
+            "id": 71416,
+            "name": "Assessment",
+            "interviews": [
+              {
+                "id": 113101,
+                "name": "Assessment",
+                "status": "to_be_scheduled",
+                "interview_kit": {
+                  "url": "https://app.greenhouse.io/guides/113153/people/265772",
+                  "content": "Assess their skills",
+                  "questions": []
+                },
+                "interviewers": [
+                  {
+                    "id": 2622,
+                    "display_name": "Carl Buddha",
+                    "status": "tentative"
+                  }
+                ]
+              }
+            ]
+          },
+          "custom_fields": {
+            "custom_application_field": {
+              "name": "Custom Application Field",
+              "type": "short_text",
+              "value": "Example"
+            }
+          },
+          "candidate": {
+            "id": 265772,
+            "first_name": "Giuseppe",
+            "last_name": "Hurley",
+            "title": "Great Person",
+            "company": null,
+            "created_at": "2013-10-04T01:24:44Z",
+            "external_id": "241b399ce4b0fd1c84e5528d",
+            "photo_url": null,
+            "url": "https://app.greenhouse.io/people/265772",
+            "is_private": false,
+            "can_email": true,
+            "phone_numbers": [
+              {
+                "value": "330-281-8004",
+                "type": "home"
+              }
+            ],
+            "email_addresses": [
+              {
+                "value": "giuseppe.hurley@example.com",
+                "type": "personal"
+              }
+            ],
+            "addresses": [
+              {
+                "value": "123 Fake St.",
+                "type": "home"
+              }
+            ],
+            "website_addresses": [
+              {
+                "value": "ghurley.example.com",
+                "type": "personal"
+              }
+            ],
+            "social_media_addresses": [
+              {
+                "value": "linkedin.example.com/ghurley"
+              }
+            ],
+            "educations": [
+              {
+                "school_name": "Harvard University",
+                "degree": "Bachelor's Degree",
+                "discipline": "Information Systems",
+                "start_date": "01/01/2012",
+                "end_date": "01/01/2016"
+              }
+            ],
+            "employments": [
+              {
+                "company_name": "Greenhouse",
+                "title": "Engineer",
+                "start_date": "01/01/2012",
+                "end_date": "01/01/2016"
+              }
+            ],
+            "recruiter": {
+              "id": 3128,
+              "email": "alicia.flopple.3128@example.com",
+              "name": "Alicia Flopple",
+              "employee_id": "789GHI"
+            },
+            "coordinator": {
+              "id": 3128,
+              "email": "alicia.flopple.3128@example.com",
+              "name": "Alicia Flopple",
+              "employee_id": "789GHI"
+            },
+            "attachments": [
+              {
+                "filename": "resume.pdf",
+                "url": "https://prod-heroku.s3.amazonaws.com/...",
+                "type": "resume"
+              },
+              {
+                "filename": "cover_letter.pdf",
+                "url": "https://prod-heroku.s3.amazonaws.com/...",
+                "type": "cover_letter"
+              },
+              {
+                "filename": "portfolio.pdf",
+                "url": "https://prod-heroku.s3.amazonaws.com/...",
+                "type": "attachment"
+              }
+            ],
+            "tags": [
+              "Import from Previous ATS"
+            ],
+            "custom_fields": {
+              "favorite_color": {
+                "name": "Favorite Color",
+                "type": "short_text",
+                "value": "Blue"
+              }
+            }
+          },
+          "jobs": [
+            {
+              "id": 3485,
+              "name": "Designer",
+              "requisition_id": null,
+              "notes": "Digital and print",
+              "confidential": false,
+              "job_post_id": 553282,
+              "status": "open",
+              "created_by_id": 273555,
+              "created_at": "2013-10-02T22:59:29Z",
+              "opened_at": "2015-01-23T00:25:04Z",
+              "closed_at": null,
+              "departments": [
+                {
+                  "id": 237,
+                  "name": "Community",
+                  "external_id": "ex-dept-1"
+                }
+              ],
+              "offices": [
+                {
+                  "id": 54,
+                  "name": "New York",
+                  "location": "New York, NY",
+                  "external_id": "ex-office-1"
+                }
+              ],
+              "custom_fields": {
+                "employment_type": {
+                  "name": "Employment Type",
+                  "type": "single_select",
+                  "value": "Full Time"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "source": "https://developers.greenhouse.io/webhooks.html#candidate-stage-change"
+  },
+  "reject_candidate": {
+    "body": {
+      "action": "reject_candidate",
+      "payload": {
+        "application": {
+          "id": 265293,
+          "rejected_at": "2015-02-11T15:50:41Z",
+          "prospect": false,
+          "status": "rejected",
+          "applied_at": "2013-03-22T00:00:00Z",
+          "last_activity_at": "2015-02-11T15:50:41Z",
+          "url": "https://app.greenhouse.io/people/265788?application_id=265293",
+          "source": {
+            "id": 27,
+            "public_name": "LinkedIn"
+          },
+          "credited_to": null,
+          "rejection_reason": {
+            "id": 14,
+            "name": "Too Junior",
+            "type": {
+              "id": 3,
+              "name": "Wrong skill set"
+            }
+          },
+          "rejection_details": {
+            "custom_fields": {
+              "custom_rejection_question_field": {
+                "name": "Custom Rejection Question Field",
+                "type": "short_text",
+                "value": "Example"
+              }
+            }
+          },
+          "current_stage": {
+            "id": 2708728,
+            "name": "Offer",
+            "interviews": []
+          },
+          "custom_fields": {
+            "custom_application_field": {
+              "name": "Custom Application Field",
+              "type": "short_text",
+              "value": "Example123"
+            }
+          },
+          "candidate": {
+            "id": 265788,
+            "first_name": "Hector",
+            "last_name": "Porter",
+            "title": null,
+            "company": null,
+            "created_at": "2013-10-04T01:24:48Z",
+            "external_id": null,
+            "photo_url": null,
+            "is_private": false,
+            "can_email": true,
+            "phone_numbers": [
+              {
+                "value": "330-281-8004",
+                "type": "home"
+              }
+            ],
+            "email_addresses": [
+              {
+                "value": "hector.porter.265788@example.com",
+                "type": "personal"
+              }
+            ],
+            "addresses": [],
+            "website_addresses": [],
+            "social_media_addresses": [],
+            "educations": [
+              {
+                "school_name": "Harvard University",
+                "degree": "Bachelor's Degree",
+                "discipline": "Information Systems",
+                "start_date": "01/01/2012",
+                "end_date": "01/01/2016"
+              }
+            ],
+            "employments": [
+              {
+                "company_name": "Greenhouse",
+                "title": "Engineer",
+                "start_date": "01/01/2012",
+                "end_date": "01/01/2016"
+              }
+            ],
+            "recruiter": null,
+            "coordinator": null,
+            "attachments": [
+              {
+                "filename": "resume.pdf",
+                "url": "https://prod-heroku.s3.amazonaws.com/...",
+                "type": "resume"
+              }
+            ],
+            "tags": [
+              "Imported"
+            ],
+            "custom_fields": {
+              "favorite_color": {
+                "name": "Favorite Color",
+                "type": "short_text",
+                "value": "Blue"
+              }
+            }
+          },
+          "jobs": [
+            {
+              "id": 371417,
+              "name": "Designer",
+              "requisition_id": null,
+              "notes": "Digital and print",
+              "confidential": false,
+              "job_post_id": 54321,
+              "status": "open",
+              "created_by_id": 273555,
+              "created_at": "2013-10-02T22:59:29Z",
+              "opened_at": "2015-01-23T00:25:04Z",
+              "closed_at": null,
+              "departments": [
+                {
+                  "id": 237,
+                  "name": "Community",
+                  "external_id": "ex-dept-1"
+                }
+              ],
+              "offices": [
+                {
+                  "id": 9099,
+                  "name": "New York",
+                  "location": "New York, NY",
+                  "external_id": "ex-office-1"
+                }
+              ],
+              "custom_fields": {
+                "employment_type": {
+                  "name": "Employment Type",
+                  "type": "single_select",
+                  "value": "Full Time"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "source": "https://developers.greenhouse.io/webhooks.html#candidate-prospect-rejected"
+  },
+  "update_candidate": {
+    "body": {
+      "action": "update_candidate",
+      "payload": {
+        "candidate": {
+          "id": 15696179,
+          "first_name": "Ronald",
+          "last_name": "Ronnie",
+          "title": "Director of Strategic Initiatives",
+          "company": "Example",
+          "created_at": "2016-08-23T17:51:27Z",
+          "external_id": "946aa514658",
+          "photo_url": null,
+          "url": "https://app.greenhouse.io/people/15696179",
+          "phone_numbers": [
+            {
+              "value": "911",
+              "type": "mobile"
+            }
+          ],
+          "email_addresses": [
+            {
+              "value": "123456email@email.com",
+              "type": "work"
+            }
+          ],
+          "addresses": [
+            {
+              "value": "99-99 5th Ave.\nNew York, NY 101-11",
+              "type": "home"
+            }
+          ],
+          "website_addresses": [
+            {
+              "value": "google.com",
+              "type": "personal"
+            }
+          ],
+          "social_media_addresses": [
+            {
+              "value": "@ronaldronnie99999"
+            }
+          ],
+          "educations": [
+            {
+              "school_name": "Harvard University",
+              "degree": "Bachelor's Degree",
+              "discipline": "Information Systems",
+              "start_date": "01/01/2012",
+              "end_date": "01/01/2016"
+            }
+          ],
+          "employments": [
+            {
+              "company_name": "Greenhouse",
+              "title": "Engineer",
+              "start_date": "01/01/2012",
+              "end_date": "01/01/2016"
+            }
+          ],
+          "recruiter": {
+            "id": 169779,
+            "email": "hank.hollandaise.169779@example.com",
+            "name": "Hank Hollandaise",
+            "employee_id": "123ABC"
+          },
+          "coordinator": {
+            "id": 83637,
+            "email": "sterling.kang.83637@example.com",
+            "name": "Sterling Kang",
+            "employee_id": "456DEF"
+          },
+          "attachments": [
+            {
+              "filename": "resumeA.pdf",
+              "url": "https://prod-heroku.s3.amazonaws.com/...",
+              "type": "resume"
+            },
+            {
+              "filename": "resumeB.pdf",
+              "url": "https://prod-heroku.s3.amazonaws.com/...",
+              "type": "resume"
+            }
+          ],
+          "tags": [
+            "foo",
+            "File Import"
+          ],
+          "custom_fields": {
+            "current_salary": {
+              "name": "Current Salary",
+              "type": "short_text",
+              "value": null
+            },
+            "desired_salary": {
+              "name": "Desired Salary",
+              "type": "short_text",
+              "value": null
+            }
+          }
+        }
+      }
+    },
+    "source": "https://developers.greenhouse.io/webhooks.html#candidate-prospect-updated"
+  }
+}

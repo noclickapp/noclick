@@ -18,6 +18,7 @@ const GreenhouseNodeComponent = (props: NodeProps) => (
 export const GreenhouseNode: NodeDefinition = {
     type: 'automation-greenhouse', label: 'Greenhouse',
     description: 'Greenhouse Harvest v3 recruiting automation',
+    category: 'hr-recruiting',
     Icon: GreenhouseIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: GreenhouseNodeComponent,

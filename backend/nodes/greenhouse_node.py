@@ -8,6 +8,10 @@ available to an unregistered public app. Harvest v1/v2 are deprecated.
 API: https://harvestdocs.greenhouse.io/docs/authentication
 """
 
+import hashlib
+import hmac
+import json
+import secrets
 import time
 from typing import Annotated, Any, Dict, Literal, Optional, Union
 from urllib.parse import parse_qs, urlparse
@@ -17,6 +21,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 
 API_BASE = "https://harvest.greenhouse.io/v3"
@@ -234,7 +239,71 @@ class GreenhouseListSourcesConfig(_ListConfig):
     operation: Literal["list_sources"] = _operation("list_sources", "Organization", "List Sources")
 
 
+GREENHOUSE_DELIVERY_ACTIONS = frozenset({
+    'application_updated',
+    'candidate_anonymized',
+    'candidate_stage_change',
+    'delete_application',
+    'delete_candidate',
+    'department_deleted',
+    'hire_candidate',
+    'interview_deleted',
+    'job_approved',
+    'job_created',
+    'job_deleted',
+    'job_interview_stage_deleted',
+    'job_post_created',
+    'job_post_deleted',
+    'job_post_updated',
+    'job_updated',
+    'merge_candidate',
+    'new_candidate_application',
+    'new_prospect_application',
+    'offer_approved',
+    'offer_created',
+    'offer_deleted',
+    'offer_updated',
+    'office_deleted',
+    'reject_candidate',
+    'scorecard_deleted',
+    'unhire_candidate',
+    'unreject_candidate',
+    'update_candidate',
+})
+
+# Event names and payloads: https://developers.greenhouse.io/webhooks.html
+GREENHOUSE_EVENTS = {
+    "new_candidate_application": "Application created",
+    "application_updated": "Application updated",
+    "candidate_stage_change": "Candidate stage changed",
+    "hire_candidate": "Candidate hired",
+    "reject_candidate": "Candidate rejected",
+    "update_candidate": "Candidate updated",
+}
+
+
+class GreenhouseOnEventConfig(WebhookTriggerConfigBase):
+    """Start a workflow on a signed recruiting event (Greenhouse partners only)."""
+
+    operation: Literal["on_event"] = Field("on_event", title="On Recruiting Event", json_schema_extra={
+        "const": "on_event", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On Recruiting Event",
+    })
+    event_type: Literal[
+        "new_candidate_application", "application_updated", "candidate_stage_change",
+        "hire_candidate", "reject_candidate", "update_candidate",
+    ] = Field("new_candidate_application", title="Event", description=(
+        "Requires a Greenhouse partner account with harvest:webhooks:create and "
+        "harvest:webhooks:destroy scopes. Webhook registration is exclusive to partners."
+    ))
+    webhook_url: Optional[str] = Field(
+        None, title="Webhook URL", description="Registered with Greenhouse automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True},
+    )
+
+
 GreenhouseConfig = Annotated[Union[
+    GreenhouseOnEventConfig,
     GreenhouseListCandidatesConfig, GreenhouseGetCandidateConfig,
     GreenhouseCreateCandidateConfig, GreenhouseUpdateCandidateConfig,
     GreenhouseListApplicationsConfig, GreenhouseGetApplicationConfig,
@@ -288,7 +357,7 @@ def _next_cursor(link: Optional[str], path: str) -> Optional[str]:
     return None
 
 
-class GreenhouseNode(WorkflowNode):
+class GreenhouseNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """Core recruiting actions against Harvest v3."""
 
     integration_type = "automation-greenhouse"
@@ -307,7 +376,135 @@ class GreenhouseNode(WorkflowNode):
     def get_config_model(cls):
         return GreenhouseNodeConfig
 
-    async def _token(self, client: httpx.AsyncClient, credential: GreenhouseOAuthCredential) -> str:
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": (config or {}).get("event_type", "new_candidate_application")}
+
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, *, body=None):
+        if not credential:
+            raise ValueError("Connect a Greenhouse partner account to activate this trigger")
+        creds = GreenhouseOAuthCredential.model_validate(credential)
+        async with httpx.AsyncClient(timeout=30, follow_redirects=False) as client:
+            token = await cls._token(client, creds)
+            response = await client.request(
+                method, f"{API_BASE}{path}", json=body,
+                headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
+            )
+        if method == "DELETE" and response.status_code == 404:
+            return {}
+        if response.is_error:
+            raise ValueError(f"Greenhouse webhook failed ({response.status_code}): {_error_message(response)}")
+        return response.json() if response.content else {}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event_type = (config or {}).get("event_type", "new_candidate_application")
+        if event_type not in GREENHOUSE_EVENTS:
+            raise ValueError("Choose a supported Greenhouse recruiting event")
+        secret = secrets.token_urlsafe(32)
+        # POST/DELETE contracts: https://harvestdocs.greenhouse.io/reference/post_v3-webhooks
+        data = await cls._webhook_request(credential, "POST", "/webhooks", body={
+            "endpoint_url": webhook_url, "name": f"NoClick {node_id}",
+            "event_action_type": event_type, "secret_key": secret, "max_attempts": 6,
+        })
+        hook_id = data.get("id") if isinstance(data, dict) else None
+        if not isinstance(hook_id, int) or isinstance(hook_id, bool):
+            raise ValueError("Greenhouse returned no webhook ID")
+        if data.get("deactivated") is True:
+            await cls._webhook_request(credential, "DELETE", f"/webhooks/{hook_id}")
+            raise ValueError("Greenhouse disabled the webhook after its endpoint ping failed")
+        return {"external_webhook_id": str(hook_id), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        hook_id = (config or {}).get("external_webhook_id")
+        if hook_id is None:
+            return
+        if not str(hook_id).isdigit():
+            raise ValueError("Greenhouse webhook ID must be numeric")
+        await cls._webhook_request(credential, "DELETE", f"/webhooks/{hook_id}")
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # Sign the original bytes, including escaped Unicode, never re-encoded JSON.
+        # https://developers.greenhouse.io/webhooks.html#authentication
+        secret = (config or {}).get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "signature"), "")
+        if not secret or not isinstance(signature, str) or not signature.isascii():
+            return False
+        expected = "sha256 " + hmac.new(str(secret).encode(), body, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(signature, expected)
+
+    @classmethod
+    def handle_webhook_handshake(cls, body, headers, config=None):
+        # Greenhouse pings the URL with configuration settings during registration,
+        # before its signing secret has been persisted. Acknowledge non-event JSON
+        # without dispatching it; all documented recruiting events still require HMAC.
+        try:
+            payload = json.loads(body)
+        except (ValueError, UnicodeDecodeError):
+            return None
+        if isinstance(payload, dict) and payload.get("action") not in GREENHOUSE_DELIVERY_ACTIONS:
+            return {"ok": True}
+        return None
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event_type = (config or {}).get("event_type", "new_candidate_application")
+        return (config or {}).get("operation") == "on_event" and payload.get("action") == event_type
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if not cls.filter_trigger_payload(payload, config):
+            return None
+        return {"status": "success", "action": "on_event", "data": payload}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        event = output.get("data", output) if isinstance(output, dict) else {}
+        if not isinstance(event, dict):
+            return super().resolve_agent_event(output)
+        action = event.get("action")
+        if action not in GREENHOUSE_EVENTS:
+            return super().resolve_agent_event(output)
+        payload = event.get("payload") or {}
+        if action == "update_candidate":
+            application = {}
+            candidate = payload.get("candidate") or {}
+        else:
+            application = payload.get("application") or {}
+            candidate = application.get("candidate") or {}
+        name = " ".join(str(candidate.get(k) or "") for k in ("first_name", "last_name")).strip()
+        candidate_id = candidate.get("id")
+        application_id = application.get("id")
+        lines = [f"Greenhouse: {GREENHOUSE_EVENTS[action]} — {name or 'Candidate'}"]
+        if candidate_id is not None:
+            lines.append(f"Candidate ID: {candidate_id} (get_candidate or create_note)")
+        if application_id is not None:
+            lines.append(f"Application ID: {application_id} (get_application)")
+            # A hire has a different documented shape: no status/current_stage.
+            if action != "hire_candidate":
+                if application.get("status"):
+                    lines.append(f"Status: {application['status']}")
+                stage = application.get("current_stage") or {}
+                if stage.get("name"):
+                    lines.append(f"Stage: {stage['name']} (stage ID {stage.get('id')})")
+            jobs = application.get("jobs") or []
+            for job in jobs:
+                lines.append(f"Job: {job.get('name') or 'Job'} (job ID {job.get('id')})")
+            if action == "reject_candidate":
+                reason = application.get("rejection_reason") or {}
+                if reason.get("name"):
+                    lines.append(f"Rejection reason: {reason['name']}")
+        url = candidate.get("url") if action == "update_candidate" else application.get("url")
+        if url:
+            lines.append(f"Greenhouse URL: {url}")
+        key = f"application:{application_id}" if application_id is not None else f"candidate:{candidate_id}"
+        return {"text": "\n".join(lines), "conversation_key": key, "title": f"{GREENHOUSE_EVENTS[action]}: {name}"}
+
+    @staticmethod
+    async def _token(client: httpx.AsyncClient, credential: GreenhouseOAuthCredential) -> str:
         body: Dict[str, Any] = {"grant_type": "client_credentials"}
         if credential.sub is not None:
             body["sub"] = str(credential.sub)
@@ -330,6 +527,8 @@ class GreenhouseNode(WorkflowNode):
         if not credential:
             raise ValueError("Greenhouse Harvest v3 OAuth client credentials are required")
         op = self.config.config
+        if isinstance(op, GreenhouseOnEventConfig):
+            return {"status": "success", "action": op.operation, "awaiting_event": True}
         method, path, params, body = self._request_for(op)
         async with httpx.AsyncClient(timeout=30, follow_redirects=False) as client:
             token = await self._token(client, credential)
