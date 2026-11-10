@@ -15,7 +15,7 @@ HiveIcon.displayName = 'HiveIcon';
 export const HiveNode: NodeDefinition = {
     type: 'automation-hive',
     label: 'Hive',
-    description: 'Automate Hive actions, projects, comments and labels',
+    description: 'Start workflows from new or updated Hive actions and projects; automate comments and labels',
     category: 'productivity',
     Icon: HiveIcon,
     iconColor: '',

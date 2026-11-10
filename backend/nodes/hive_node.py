@@ -1,14 +1,18 @@
 """Hive REST API v2, pinned to the provider's 2.0.0 contract.
 
-Each execution issues one request and exposes pagination for the caller.
+Actions issue one request and expose pagination for the caller. Scheduled
+triggers page through a bounded workspace scope before detecting changed records.
 """
 from __future__ import annotations
+import hashlib
+import json
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from nodes.core.credential_fields import clean_secret
 from utils.ssrf import guarded_async_client, SSRFError
 
@@ -137,7 +141,24 @@ class HiveCreateLabelConfig(_Workspace):
 class HiveListMembersConfig(_WorkspacePage):
     operation: Literal["list_members"] = Field("list_members", json_schema_extra={"ui:hidden": True})
 
-HiveConfig = Annotated[Union[HiveListWorkspacesConfig, HiveListProjectsConfig, HiveListWorkspaceProjectsConfig, HiveGetProjectConfig, HiveDeleteProjectConfig, HiveListActionsConfig, HiveSearchActionsConfig, HiveGetActionConfig, HiveCreateActionConfig, HiveUpdateActionConfig, HiveDeleteActionConfig, HiveListCommentsConfig, HiveCreateCommentConfig, HiveListSubactionsConfig, HiveListActionHistoryConfig, HiveListLabelsConfig, HiveCreateLabelConfig, HiveListMembersConfig], Field(discriminator="operation")]
+class HiveOnActionChangedConfig(PollTriggerConfigBase, _Workspace):
+    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True,
+        json_schema_extra={"x-requires-webhook": True})
+    operation: Literal["on_new_or_updated_action"] = Field("on_new_or_updated_action", title="On New or Updated Action",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+                           "x-display-name": "On New or Updated Action"})
+    project_id: str | None = Field(None, title="Project ID", description="Optionally watch actions in one project.")
+
+
+class HiveOnProjectChangedConfig(PollTriggerConfigBase, _Workspace):
+    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True,
+        json_schema_extra={"x-requires-webhook": True})
+    operation: Literal["on_new_or_updated_project"] = Field("on_new_or_updated_project", title="On New or Updated Project",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+                           "x-display-name": "On New or Updated Project"})
+
+
+HiveConfig = Annotated[Union[HiveOnActionChangedConfig, HiveOnProjectChangedConfig, HiveListWorkspacesConfig, HiveListProjectsConfig, HiveListWorkspaceProjectsConfig, HiveGetProjectConfig, HiveDeleteProjectConfig, HiveListActionsConfig, HiveSearchActionsConfig, HiveGetActionConfig, HiveCreateActionConfig, HiveUpdateActionConfig, HiveDeleteActionConfig, HiveListCommentsConfig, HiveCreateCommentConfig, HiveListSubactionsConfig, HiveListActionHistoryConfig, HiveListLabelsConfig, HiveCreateLabelConfig, HiveListMembersConfig], Field(discriminator="operation")]
 
 class HiveFullConfig(NodeConfig[HiveConfig, HiveAPIKeyCredential]):
     pass
@@ -161,7 +182,7 @@ ROUTES = {'list_workspaces': ('GET', '/workspaces', 'page'),
  'create_label': ('POST', '/workspaces/{workspace_id}/labels', 'object'),
  'list_members': ('GET', '/workspaces/{workspace_id}/users', 'page')}
 
-class HiveNode(WorkflowNode):
+class HiveNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-hive"
     connection_evidence = ConnectionEvidence(noun="Hive workspaces", operation="list_workspaces")
 
@@ -169,10 +190,76 @@ class HiveNode(WorkflowNode):
     def get_config_model(cls):
         return HiveFullConfig
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {"on_new_or_updated_action", "on_new_or_updated_project"}:
+            return bool(output.get("new_or_updated_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or "new_or_updated_count" not in output:
+            return super().resolve_agent_event(output)
+        items = output.get("items")
+        if not items:
+            return None
+        # ConnectionResponse deliberately leaves node fields open. Preserve the
+        # entire resource, including its IDs/content, without guessing its shape.
+        text = (f"Hive: {len(items)} new or updated {output['resource']} record(s) "
+                f"in workspace {output['workspace_id']}.\n"
+                + json.dumps(items, ensure_ascii=False, indent=2))
+        return {"text": text, "conversation_key": None}
+
+    async def _poll_changes(self, config):
+        resource = "action" if isinstance(config, HiveOnActionChangedConfig) else "project"
+        path = f"/workspaces/{quote(config.workspace_id, safe='')}/{resource}s"
+        params = {"first": 200, "sortBy": "modifiedAt desc"}
+        if isinstance(config, HiveOnActionChangedConfig) and config.project_id:
+            params["projectId"] = config.project_id
+        items, cursors = [], set()
+        async with guarded_async_client(timeout=30, trust_env=False, follow_redirects=False) as client:
+            for _ in range(10):
+                response = await client.request("GET", BASE + path, params=params,
+                    headers={"api_key": self.config.credentials.api_key, "Accept": "application/json"})
+                if response.status_code >= 300:
+                    raise ValueError("Hive polling request failed")
+                if "json" not in response.headers.get("content-type", "").lower():
+                    raise ValueError("Expected a JSON response")
+                body = response.json()
+                if not isinstance(body, dict) or not isinstance(body.get("edges"), list) or not isinstance(body.get("pageInfo"), dict):
+                    raise ValueError("Expected a Hive cursor page")
+                for edge in body["edges"]:
+                    if not isinstance(edge, dict) or not isinstance(edge.get("node"), dict):
+                        raise ValueError("Expected Hive resource edges")
+                    items.append(edge["node"])
+                page = body["pageInfo"]
+                if not page.get("hasNextPage"):
+                    break
+                cursor = page.get("endCursor")
+                if not isinstance(cursor, str) or not cursor or cursor in cursors:
+                    raise ValueError("Hive returned an invalid pagination cursor")
+                cursors.add(cursor)
+                params["after"] = cursor
+            else:
+                raise ValueError("Hive scope exceeds 2,000 records; narrow the watched workspace or project")
+        # A content fingerprint detects creations and edits without assuming an
+        # undocumented resource ID/timestamp field in the open node schema.
+        fresh = await self._filter_unseen(items, lambda item: hashlib.sha256(
+            json.dumps(item, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest())
+        return {"status": "success", "items": fresh, "new_or_updated_count": len(fresh),
+                "resource": resource, "workspace_id": config.workspace_id}
+
     async def execute(self, inputs):
         if not self.config.credentials:
             raise ValueError("Connect a Hive API key")
         config = self.config.config
+        if isinstance(config, (HiveOnActionChangedConfig, HiveOnProjectChangedConfig)):
+            try:
+                return await self._poll_changes(config)
+            except (httpx.HTTPError, SSRFError):
+                return {"status": "error", "error": "Hive polling request could not be completed"}
+            except (ValueError, TypeError) as exc:
+                return {"status": "error", "error": str(exc) if "scope exceeds" in str(exc) else "Hive returned an invalid polling response"}
         method, path, kind = ROUTES[config.operation]
         data = config.model_dump(exclude_none=True, exclude={"operation"})
         for field in ("workspace_id", "action_id", "project_id"):
