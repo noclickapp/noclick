@@ -1,0 +1,40 @@
+{
+  "codat": {
+    "file": "spec.json",
+    "sha256": "b8d02edf69d6158b9bd659341a4861c29d26f9feead703b4352ffdbbb6a5853f",
+    "version": "1.0",
+    "source_url": "https://raw.githubusercontent.com/codatio/oas/main/json/Codat-Assess.json",
+    "node_type": "automation-codat",
+    "credential": {
+      "credential_type": "codat_api_key",
+      "api_key": "<token>",
+      "company_id": "8a210b68-6988-11ed-a1eb-0242ac120002"
+    },
+    "webhook_signature": {
+      "header": "webhook-signature",
+      "algorithm": "sha256",
+      "encoding": "base64",
+      "message": "{id}.{timestamp}.{body}",
+      "format": "v1,{signature}",
+      "timestamp_header": "webhook-timestamp",
+      "id_header": "webhook-id",
+      "secret_encoding": "base64",
+      "secret_prefix": "whsec_",
+      "source": "https://docs.codat.io/using-the-api/webhooks/create-consumer"
+    },
+    "specs": [
+      {
+        "file": "spec.json",
+        "sha256": "b8d02edf69d6158b9bd659341a4861c29d26f9feead703b4352ffdbbb6a5853f",
+        "version": "1.0",
+        "source_url": "https://raw.githubusercontent.com/codatio/oas/main/json/Codat-Assess.json"
+      },
+      {
+        "file": "platform.json",
+        "sha256": "90d5a009d658153e959b4fe5e4981fdb138cb7d82b85b8c4e6dcfeb343a109fb",
+        "version": "3.0.0",
+        "source_url": "https://raw.githubusercontent.com/codatio/oas/main/json/Codat-Platform.json"
+      }
+    ]
+  }
+}
