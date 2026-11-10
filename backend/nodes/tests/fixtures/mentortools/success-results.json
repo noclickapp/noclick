@@ -1,0 +1,46 @@
+{
+  "source": "https://app.mentortools.com/public_api/openapi.json",
+  "version": "1.10.1",
+  "kind": "synthetic unit-test values shaped from the published response schemas; not live recordings or provider-authored examples",
+  "results": {
+    "list_courses": [
+      {
+        "id": 42,
+        "portal_id": 7,
+        "title": "Onboarding",
+        "order": 1,
+        "created_at_epoch": 1700000000,
+        "is_active": true,
+        "is_secret": false,
+        "is_archived": false,
+        "is_displayed_in_app": false,
+        "is_offline_downloadable": false
+      }
+    ],
+    "create_course": 42,
+    "update_course": true,
+    "create_module": 23,
+    "update_lesson": true,
+    "delete_lesson": true,
+    "list_files": [
+      {
+        "id": 10,
+        "name": "Welcome",
+        "file_id": "media-10",
+        "file_type": "video",
+        "extension": "mp4",
+        "size": 100,
+        "created_at": "2026-01-01T00:00:00Z"
+      }
+    ],
+    "create_folder": 12,
+    "record_payment": {
+      "external_order_id": "7-order-101",
+      "external_transaction_id": "7-pay-101"
+    },
+    "record_refund": {
+      "external_order_id": "7-order-101",
+      "external_transaction_id": "7-refund-101"
+    }
+  }
+}

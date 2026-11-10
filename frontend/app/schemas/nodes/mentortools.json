@@ -1,0 +1,1698 @@
+{
+  "$defs": {
+    "Buyer": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "description": "Buyer email address.",
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "Buyer",
+      "type": "object"
+    },
+    "CountCourses": {
+      "additionalProperties": false,
+      "description": "Count courses.",
+      "properties": {
+        "operation": {
+          "const": "count_courses",
+          "default": "count_courses",
+          "title": "Operation",
+          "type": "string"
+        },
+        "archived": {
+          "default": false,
+          "title": "Archived",
+          "type": "boolean"
+        }
+      },
+      "title": "CountCourses",
+      "type": "object"
+    },
+    "CreateCourse": {
+      "additionalProperties": false,
+      "description": "Create a course with explicit visibility flags.",
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "payload": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text or HTML course content.",
+          "title": "Payload"
+        },
+        "image_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Id"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sales page URL.",
+          "title": "Url"
+        },
+        "is_active": {
+          "default": false,
+          "title": "Is Active",
+          "type": "boolean"
+        },
+        "is_secret": {
+          "default": false,
+          "title": "Is Secret",
+          "type": "boolean"
+        },
+        "is_archived": {
+          "default": false,
+          "title": "Is Archived",
+          "type": "boolean"
+        },
+        "is_displayed_in_app": {
+          "default": false,
+          "title": "Is Displayed In App",
+          "type": "boolean"
+        },
+        "is_offline_downloadable": {
+          "default": false,
+          "title": "Is Offline Downloadable",
+          "type": "boolean"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order"
+        },
+        "launch_date_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Launch Date Enabled"
+        },
+        "launch_date": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Course launch timestamp, as accepted by Mentortools.",
+          "title": "Launch Date"
+        },
+        "operation": {
+          "const": "create_course",
+          "default": "create_course",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateCourse",
+      "type": "object"
+    },
+    "CreateFolder": {
+      "additionalProperties": false,
+      "description": "Create a media folder.",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent folder ID; omit for the root folder.",
+          "title": "Parent Folder Id"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateFolder",
+      "type": "object"
+    },
+    "CreateLesson": {
+      "additionalProperties": false,
+      "description": "Create a lesson in a module.",
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "lesson_type": {
+          "default": "lesson",
+          "enum": [
+            "lesson",
+            "quiz"
+          ],
+          "title": "Lesson Type",
+          "type": "string"
+        },
+        "payload": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payload"
+        },
+        "image_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Id"
+        },
+        "submodule_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Submodule Id"
+        },
+        "thread_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thread Id"
+        },
+        "is_active": {
+          "default": false,
+          "title": "Is Active",
+          "type": "boolean"
+        },
+        "is_published": {
+          "default": false,
+          "title": "Is Published",
+          "type": "boolean"
+        },
+        "mandatory": {
+          "default": false,
+          "title": "Mandatory",
+          "type": "boolean"
+        },
+        "available_at": {
+          "anyOf": [
+            {
+              "maximum": 36500,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delay in days after the parent module becomes available; not a timestamp.",
+          "title": "Available At"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order"
+        },
+        "module_id": {
+          "description": "Module ID returned by List Modules.",
+          "title": "Module Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_lesson",
+          "default": "create_lesson",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "module_id"
+      ],
+      "title": "CreateLesson",
+      "type": "object"
+    },
+    "CreateModule": {
+      "additionalProperties": false,
+      "description": "Create a module in a course.",
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "public_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Description"
+        },
+        "short_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Short Description"
+        },
+        "image_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Id"
+        },
+        "mandatory": {
+          "default": false,
+          "title": "Mandatory",
+          "type": "boolean"
+        },
+        "is_published": {
+          "default": false,
+          "title": "Is Published",
+          "type": "boolean"
+        },
+        "is_active": {
+          "default": false,
+          "title": "Is Active",
+          "type": "boolean"
+        },
+        "available_at": {
+          "anyOf": [
+            {
+              "maximum": 36500,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delay in days after course access is granted; not a timestamp.",
+          "title": "Available At"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order"
+        },
+        "course_id": {
+          "description": "Course ID returned by List Courses.",
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_module",
+          "default": "create_module",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "course_id"
+      ],
+      "title": "CreateModule",
+      "type": "object"
+    },
+    "DeleteCourse": {
+      "additionalProperties": false,
+      "description": "Delete a course.",
+      "properties": {
+        "course_id": {
+          "description": "Course ID returned by List Courses.",
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_course",
+          "default": "delete_course",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "DeleteCourse",
+      "type": "object"
+    },
+    "DeleteLesson": {
+      "additionalProperties": false,
+      "description": "Delete a lesson.",
+      "properties": {
+        "lesson_id": {
+          "description": "Lesson ID returned by List Lessons.",
+          "title": "Lesson Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_lesson",
+          "default": "delete_lesson",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lesson_id"
+      ],
+      "title": "DeleteLesson",
+      "type": "object"
+    },
+    "DeleteModule": {
+      "additionalProperties": false,
+      "description": "Delete a module.",
+      "properties": {
+        "module_id": {
+          "description": "Module ID returned by List Modules.",
+          "title": "Module Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_module",
+          "default": "delete_module",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "module_id"
+      ],
+      "title": "DeleteModule",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Read key, portal and owner identity.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetCourse": {
+      "additionalProperties": false,
+      "description": "Read a course.",
+      "properties": {
+        "course_id": {
+          "description": "Course ID returned by List Courses.",
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_course",
+          "default": "get_course",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "GetCourse",
+      "type": "object"
+    },
+    "GetCourseInfo": {
+      "additionalProperties": false,
+      "description": "Read a course including modules and content blocks.",
+      "properties": {
+        "course_id": {
+          "description": "Course ID returned by List Courses.",
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_course_info",
+          "default": "get_course_info",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "GetCourseInfo",
+      "type": "object"
+    },
+    "GetFile": {
+      "additionalProperties": false,
+      "description": "Read media file metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id_": {
+          "description": "Integer media database ID, not the opaque file_id hash.",
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id_"
+      ],
+      "title": "GetFile",
+      "type": "object"
+    },
+    "GetFolder": {
+      "additionalProperties": false,
+      "description": "Read a media folder.",
+      "properties": {
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id_": {
+          "description": "Integer media database ID, not the opaque file_id hash.",
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id_"
+      ],
+      "title": "GetFolder",
+      "type": "object"
+    },
+    "GetLesson": {
+      "additionalProperties": false,
+      "description": "Read a lesson.",
+      "properties": {
+        "lesson_id": {
+          "description": "Lesson ID returned by List Lessons.",
+          "title": "Lesson Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_lesson",
+          "default": "get_lesson",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lesson_id"
+      ],
+      "title": "GetLesson",
+      "type": "object"
+    },
+    "GetModule": {
+      "additionalProperties": false,
+      "description": "Read a course module.",
+      "properties": {
+        "module_id": {
+          "description": "Module ID returned by List Modules.",
+          "title": "Module Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_module",
+          "default": "get_module",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "module_id"
+      ],
+      "title": "GetModule",
+      "type": "object"
+    },
+    "ListCourses": {
+      "additionalProperties": false,
+      "description": "List one page of courses.",
+      "properties": {
+        "limit": {
+          "default": 15,
+          "description": "Maximum rows in this page. Use offset to request another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_courses",
+          "default": "list_courses",
+          "title": "Operation",
+          "type": "string"
+        },
+        "archived": {
+          "default": false,
+          "title": "Archived",
+          "type": "boolean"
+        }
+      },
+      "title": "ListCourses",
+      "type": "object"
+    },
+    "ListFiles": {
+      "additionalProperties": false,
+      "description": "List one page of media files in a folder.",
+      "properties": {
+        "limit": {
+          "default": 15,
+          "description": "Maximum rows in this page. Use offset to request another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "Operation",
+          "type": "string"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent folder ID; omit for the root folder.",
+          "title": "Parent Folder Id"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "file_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "image",
+                "video",
+                "audio",
+                "document",
+                "archive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Type",
+          "enum": [
+            "image",
+            "video",
+            "audio",
+            "document",
+            "archive"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListFiles",
+      "type": "object"
+    },
+    "ListFolders": {
+      "additionalProperties": false,
+      "description": "List one page of media folders.",
+      "properties": {
+        "limit": {
+          "default": 15,
+          "description": "Maximum rows in this page. Use offset to request another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent folder ID; omit for the root folder.",
+          "title": "Parent Folder Id"
+        }
+      },
+      "title": "ListFolders",
+      "type": "object"
+    },
+    "ListLessons": {
+      "additionalProperties": false,
+      "description": "List one page of lessons in a module.",
+      "properties": {
+        "limit": {
+          "default": 15,
+          "description": "Maximum rows in this page. Use offset to request another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "module_id": {
+          "description": "Module ID returned by List Modules.",
+          "title": "Module Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_lessons",
+          "default": "list_lessons",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "module_id"
+      ],
+      "title": "ListLessons",
+      "type": "object"
+    },
+    "ListModules": {
+      "additionalProperties": false,
+      "description": "List one page of course modules.",
+      "properties": {
+        "limit": {
+          "default": 15,
+          "description": "Maximum rows in this page. Use offset to request another page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "course_id": {
+          "description": "Course ID returned by List Courses.",
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_modules",
+          "default": "list_modules",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "ListModules",
+      "type": "object"
+    },
+    "MentortoolsAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "mentortools_api_key",
+          "default": "mentortools_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Mentortools API Key",
+      "type": "object",
+      "x-credential-instructions": "In Mentortools, open Settings \u2192 Integrations & Automations and create an API key with permission for your selected actions. Paste the key here without Bearer. NoClick sends it to app.mentortools.com as a bearer token. Connecting reads your courses; Get Account reads the key, portal and owner identity.",
+      "x-credential-url": "https://app.mentortools.com/public_api/docs"
+    },
+    "RecordPayment": {
+      "additionalProperties": false,
+      "description": "Record a payment and unlock courses for a buyer; use stable IDs for retries.",
+      "properties": {
+        "operation": {
+          "const": "record_payment",
+          "default": "record_payment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "marketplace_buyer": {
+          "$ref": "#/$defs/Buyer"
+        },
+        "course_ids": {
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Course Ids",
+          "type": "array"
+        },
+        "id": {
+          "description": "Reuse this ID for retries; the provider adds the portal prefix if absent.",
+          "minLength": 1,
+          "title": "External Order ID",
+          "type": "string"
+        },
+        "transaction": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Transaction"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "send_email": {
+          "default": false,
+          "description": "Send the provider's buyer notification email.",
+          "title": "Send Email",
+          "type": "boolean"
+        },
+        "billing_type": {
+          "default": "single_payment",
+          "enum": [
+            "single_payment",
+            "subscription",
+            "installment",
+            "free",
+            "fake",
+            "gift",
+            "single_payment_imported",
+            "subscription_imported",
+            "installment_imported",
+            "free_imported",
+            "fake_imported",
+            "gift_imported"
+          ],
+          "title": "Billing Type",
+          "type": "string"
+        },
+        "access_until": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Access end Unix timestamp in milliseconds; required for subscriptions.",
+          "title": "Access Until"
+        },
+        "occurred_at": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order Unix timestamp in milliseconds.",
+          "title": "Occurred At"
+        }
+      },
+      "required": [
+        "marketplace_buyer",
+        "course_ids",
+        "id"
+      ],
+      "title": "RecordPayment",
+      "type": "object"
+    },
+    "RecordRefund": {
+      "additionalProperties": false,
+      "description": "Record an order refund; supply a distinct refund transaction ID for retry deduplication.",
+      "properties": {
+        "operation": {
+          "const": "record_refund",
+          "default": "record_refund",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "description": "Original order ID or external_order_id returned by Record Payment.",
+          "minLength": 1,
+          "title": "Original External Order ID",
+          "type": "string"
+        },
+        "transaction": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Transaction"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RecordRefund",
+      "type": "object"
+    },
+    "Transaction": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "description": "Decimal transaction amount, e.g. 10.00.",
+          "title": "Amount",
+          "type": "number"
+        },
+        "id": {
+          "description": "Stable external transaction ID for retry deduplication. For a refund, use a new ID distinct from the payment transaction.",
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "id"
+      ],
+      "title": "Transaction",
+      "type": "object"
+    },
+    "UpdateCourse": {
+      "additionalProperties": false,
+      "description": "Update only supplied course fields.",
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "payload": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payload"
+        },
+        "image_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Id"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        },
+        "is_secret": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Secret"
+        },
+        "is_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Archived"
+        },
+        "is_displayed_in_app": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Displayed In App"
+        },
+        "is_offline_downloadable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Offline Downloadable"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order"
+        },
+        "launch_date_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Launch Date Enabled"
+        },
+        "launch_date": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Launch Date"
+        },
+        "course_id": {
+          "description": "Course ID returned by List Courses.",
+          "title": "Course Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_course",
+          "default": "update_course",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "UpdateCourse",
+      "type": "object"
+    },
+    "UpdateLesson": {
+      "additionalProperties": false,
+      "description": "Update lesson fields or move it to another module.",
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "payload": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payload"
+        },
+        "image_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Id"
+        },
+        "module_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to move the lesson to another module.",
+          "title": "Module Id"
+        },
+        "submodule_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Submodule Id"
+        },
+        "thread_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thread Id"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        },
+        "is_published": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Published"
+        },
+        "mandatory": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mandatory"
+        },
+        "available_at": {
+          "anyOf": [
+            {
+              "maximum": 36500,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delay in days after the parent module becomes available.",
+          "title": "Available At"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order"
+        },
+        "lesson_id": {
+          "description": "Lesson ID returned by List Lessons.",
+          "title": "Lesson Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_lesson",
+          "default": "update_lesson",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lesson_id"
+      ],
+      "title": "UpdateLesson",
+      "type": "object"
+    },
+    "UpdateModule": {
+      "additionalProperties": false,
+      "description": "Update only supplied module fields.",
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "public_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Description"
+        },
+        "short_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Short Description"
+        },
+        "image_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Id"
+        },
+        "mandatory": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mandatory"
+        },
+        "is_published": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Published"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Active"
+        },
+        "available_at": {
+          "anyOf": [
+            {
+              "maximum": 36500,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delay in days after course access is granted.",
+          "title": "Available At"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order"
+        },
+        "module_id": {
+          "description": "Module ID returned by List Modules.",
+          "title": "Module Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_module",
+          "default": "update_module",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "module_id"
+      ],
+      "title": "UpdateModule",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "count_courses": "#/$defs/CountCourses",
+          "create_course": "#/$defs/CreateCourse",
+          "create_folder": "#/$defs/CreateFolder",
+          "create_lesson": "#/$defs/CreateLesson",
+          "create_module": "#/$defs/CreateModule",
+          "delete_course": "#/$defs/DeleteCourse",
+          "delete_lesson": "#/$defs/DeleteLesson",
+          "delete_module": "#/$defs/DeleteModule",
+          "get_account": "#/$defs/GetAccount",
+          "get_course": "#/$defs/GetCourse",
+          "get_course_info": "#/$defs/GetCourseInfo",
+          "get_file": "#/$defs/GetFile",
+          "get_folder": "#/$defs/GetFolder",
+          "get_lesson": "#/$defs/GetLesson",
+          "get_module": "#/$defs/GetModule",
+          "list_courses": "#/$defs/ListCourses",
+          "list_files": "#/$defs/ListFiles",
+          "list_folders": "#/$defs/ListFolders",
+          "list_lessons": "#/$defs/ListLessons",
+          "list_modules": "#/$defs/ListModules",
+          "record_payment": "#/$defs/RecordPayment",
+          "record_refund": "#/$defs/RecordRefund",
+          "update_course": "#/$defs/UpdateCourse",
+          "update_lesson": "#/$defs/UpdateLesson",
+          "update_module": "#/$defs/UpdateModule"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListCourses"
+        },
+        {
+          "$ref": "#/$defs/CountCourses"
+        },
+        {
+          "$ref": "#/$defs/GetCourse"
+        },
+        {
+          "$ref": "#/$defs/GetCourseInfo"
+        },
+        {
+          "$ref": "#/$defs/CreateCourse"
+        },
+        {
+          "$ref": "#/$defs/UpdateCourse"
+        },
+        {
+          "$ref": "#/$defs/DeleteCourse"
+        },
+        {
+          "$ref": "#/$defs/ListModules"
+        },
+        {
+          "$ref": "#/$defs/GetModule"
+        },
+        {
+          "$ref": "#/$defs/CreateModule"
+        },
+        {
+          "$ref": "#/$defs/UpdateModule"
+        },
+        {
+          "$ref": "#/$defs/DeleteModule"
+        },
+        {
+          "$ref": "#/$defs/ListLessons"
+        },
+        {
+          "$ref": "#/$defs/GetLesson"
+        },
+        {
+          "$ref": "#/$defs/CreateLesson"
+        },
+        {
+          "$ref": "#/$defs/UpdateLesson"
+        },
+        {
+          "$ref": "#/$defs/DeleteLesson"
+        },
+        {
+          "$ref": "#/$defs/ListFiles"
+        },
+        {
+          "$ref": "#/$defs/GetFile"
+        },
+        {
+          "$ref": "#/$defs/ListFolders"
+        },
+        {
+          "$ref": "#/$defs/CreateFolder"
+        },
+        {
+          "$ref": "#/$defs/GetFolder"
+        },
+        {
+          "$ref": "#/$defs/RecordPayment"
+        },
+        {
+          "$ref": "#/$defs/RecordRefund"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MentortoolsAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mentortools Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
