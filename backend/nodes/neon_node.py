@@ -20,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 
 
 API_BASE = "https://console.neon.tech/api/v2"
@@ -287,14 +288,35 @@ for _action, (_method, _path, _category, _label, _body_required, _required_query
     globals()[_model_name] = _model
     _operation_models.append(_model)
 
-NeonOperation = Annotated[Union[tuple(_operation_models)], Discriminator("operation")]
+class NeonOnNewBranchConfig(PollTriggerConfigBase):
+    operation: Literal["on_new_branch"] = Field("on_new_branch", title="New Branch", json_schema_extra={
+        "const": "on_new_branch", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "New Branch",
+    })
+    project_id: str = _path_field("project_id")
+
+
+class NeonOnNewOrUpdatedBranchConfig(PollTriggerConfigBase):
+    operation: Literal["on_new_or_updated_branch"] = Field(
+        "on_new_or_updated_branch", title="New or Updated Branch", json_schema_extra={
+            "const": "on_new_or_updated_branch", "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": "New or Updated Branch",
+        },
+    )
+    project_id: str = _path_field("project_id")
+
+
+NEON_TRIGGERS = ("on_new_branch", "on_new_or_updated_branch")
+NeonOperation = Annotated[Union[tuple(_operation_models) + (
+    NeonOnNewBranchConfig, NeonOnNewOrUpdatedBranchConfig,
+)], Discriminator("operation")]
 
 
 class NeonNodeConfig(NodeConfig[NeonOperation, NeonCredential]):
     pass
 
 
-class NeonNode(WorkflowNode):
+class NeonNode(ScheduledPollTriggerMixin, WorkflowNode):
     """Manage Neon projects, branches, databases, computes and related APIs."""
 
     integration_type = "automation-neon"
@@ -312,6 +334,75 @@ class NeonNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return NeonNodeConfig
+
+    @classmethod
+    def should_propagate_output(cls, output: Dict[str, Any], config: Dict[str, Any]) -> bool:
+        if config.get("operation") in NEON_TRIGGERS:
+            return bool(output.get("branch_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        if output.get("action") not in NEON_TRIGGERS:
+            return super().resolve_agent_event(output)
+        branches = output.get("branches") or []
+        if not branches:
+            return None
+        event = "new" if output["action"] == "on_new_branch" else "new or updated"
+        lines = []
+        for branch in branches[:10]:
+            creator = (branch.get("created_by") or {}).get("name")
+            who = f"; created by {creator}" if creator else ""
+            lines.append(
+                f"- {branch['name']} (branch {branch['id']}, project {branch['project_id']}); "
+                f"state {branch['current_state']}; updated {branch['updated_at']}{who}"
+            )
+        if len(branches) > 10:
+            lines.append(f"- … and {len(branches) - 10} more")
+        return {"text": f"Neon: {len(branches)} {event} branch(es):\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_branches(self, cfg: Union[NeonOnNewBranchConfig, NeonOnNewOrUpdatedBranchConfig]):
+        # Contract: listProjectBranches, CursorPagination and Branch in the official Neon OpenAPI.
+        # Fetch the complete scope before updating seen state, so failed pages cannot consume events.
+        branches = []
+        cursor = None
+        cursors = set()
+        sort_by = "created_at" if cfg.operation == "on_new_branch" else "updated_at"
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            for _ in range(100):
+                params = {"limit": 100, "sort_by": sort_by, "sort_order": "desc"}
+                if cursor:
+                    params["cursor"] = cursor
+                response = await client.get(
+                    API_BASE + f"/projects/{quote(cfg.project_id, safe='')}/branches",
+                    headers={"Authorization": f"Bearer {self.config.credentials.api_key}",
+                             "Accept": "application/json"}, params=params,
+                )
+                if response.status_code >= 400:
+                    raise ValueError(f"Neon returned HTTP {response.status_code}")
+                data = response.json()
+                rows = data.get("branches")
+                if not isinstance(rows, list) or any(
+                    not isinstance(row, dict) or not row.get("id") or not row.get("updated_at")
+                    for row in rows
+                ):
+                    raise ValueError("Neon returned an invalid branch list")
+                branches.extend(rows)
+                cursor = (data.get("pagination") or {}).get("next")
+                if not cursor:
+                    break
+                if cursor in cursors:
+                    raise ValueError("Neon repeated a branch pagination cursor")
+                cursors.add(cursor)
+            else:
+                raise ValueError("Neon has more than 10,000 branches in this project")
+        fresh = await self._filter_unseen(
+            branches, lambda branch: branch["id"] if cfg.operation == "on_new_branch"
+            else f"{branch['id']}:{branch['updated_at']}",
+        )
+        return {"status": "success", "action": cfg.operation,
+                "branches": fresh, "branch_count": len(fresh)}
 
     @classmethod
     async def load_field_options(cls, field_name: str, credential_data: Dict[str, Any],
@@ -349,6 +440,8 @@ class NeonNode(WorkflowNode):
             raise ValueError("Neon API key credential is required")
         cfg = self.config.config
         action = cfg.operation
+        if action in NEON_TRIGGERS:
+            return await self._poll_branches(cfg)
         method, path, _, _, body_required, required_query, _ = NEON_ENDPOINTS[action]
         for param in re.findall(r"\{([^}]+)\}", path):
             value = getattr(cfg, param)
@@ -373,7 +466,7 @@ class NeonNode(WorkflowNode):
         body = parse_object(raw_body, "Request body") if raw_body else None
         if action == "set_organization_spending_limit":
             body = {"spending_limit_cents": cfg.spending_limit_cents}
-        if body_required is True and not body:
+        if body_required is True and body is None:
             raise ValueError("Request body is required")
 
         start = time.monotonic()

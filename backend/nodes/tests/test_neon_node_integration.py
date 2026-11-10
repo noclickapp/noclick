@@ -7,7 +7,7 @@ from unittest.mock import patch
 import httpx
 import pytest
 
-from nodes.neon_node import NEON_ENDPOINTS, NeonNode, NeonNodeConfig
+from nodes.neon_node import NEON_ENDPOINTS, NEON_TRIGGERS, NeonNode, NeonNodeConfig
 from tests.utils.sweep import check_each
 
 
@@ -169,7 +169,7 @@ def test_query_json_must_be_an_object(value):
 def test_generated_schema_exposes_every_operation_to_flow_canvas():
     schema = NeonNode.get_config_schema()
     choices = schema["properties"]["config"]["oneOf"]
-    assert len(choices) == len(NEON_ENDPOINTS) == 177
+    assert len(choices) == len(NEON_ENDPOINTS) + len(NEON_TRIGGERS) == 179
 
 
 @pytest.mark.parametrize("value", [0, -1, None, 1.5, "10000", True])
@@ -179,3 +179,130 @@ def test_spending_limit_requires_positive_integer_cents(value):
     with pytest.raises(ValidationError):
         make_node({"operation": "set_organization_spending_limit",
                    "org_id": "org-bold-bonus-12345678", "spending_limit_cents": value})
+
+
+# Official listProjectBranches response example, copied without editing payload fields.
+def branch_example():
+    from pathlib import Path
+    return json.loads((Path(__file__).parent / 'fixtures/neon/list-branches.json').read_text())
+
+
+def memory_state(node, state):
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+    node._update_node_state = update
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('operation', NEON_TRIGGERS)
+async def test_branch_trigger_paginates_baselines_and_emits_new_items(operation):
+    import copy
+    from nodes.core.poll_trigger import poll_scope
+    body = branch_example()
+    node = make_node({'operation': operation, 'project_id': 'shiny-wind-028834'})
+    state = {}
+    memory_state(node, state)
+    calls = []
+
+    def handle(request):
+        calls.append(request)
+        assert request.url.path == '/api/v2/projects/shiny-wind-028834/branches'
+        assert request.headers['Authorization'] == 'Bearer napi_test'
+        assert request.url.params['sort_order'] == 'desc'
+        assert request.url.params['sort_by'] == ('created_at' if operation == 'on_new_branch' else 'updated_at')
+        if request.url.params.get('cursor'):
+            assert request.url.params['cursor'] == body['pagination']['next']
+            return httpx.Response(200, json={'branches': body['branches'][1:]})
+        first = copy.deepcopy(body)
+        first['branches'] = body['branches'][:1]
+        return httpx.Response(200, json=first)
+
+    async def poll():
+        client = httpx.AsyncClient(transport=httpx.MockTransport(handle))
+        with patch('nodes.neon_node.httpx.AsyncClient', return_value=client):
+            return await node.execute({})
+
+    # Baseline just the main branch, then let the other documented branches arrive.
+    all_branches = body['branches']
+    body['branches'] = all_branches[:1]
+    first = await poll()
+    assert first['branches'] == []
+    assert node.trigger_produced_no_event(first)
+    assert NeonNode.resolve_agent_event(first) is None
+    body['branches'] = all_branches
+    new = await poll()
+    assert new['branches'] == all_branches[1:]
+    assert new['branch_count'] == 2
+    assert node.trigger_emitted_event(new)
+    event = NeonNode.resolve_agent_event(new)
+    assert 'dev2' in event['text'] and 'br-sweet-breeze-497520' in event['text']
+    assert 'shiny-wind-028834' in event['text']
+    assert NeonNode.should_propagate_output(new, {'operation': operation})
+    repeated = await poll()
+    assert repeated['branch_count'] == 0
+    assert not NeonNode.should_propagate_output(repeated, {'operation': operation})
+    assert state['scope'] == poll_scope(NeonNode, node.config.config.model_dump())
+    assert len(calls) == 6
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('operation', NEON_TRIGGERS)
+async def test_branch_trigger_detects_updates_only_in_update_mode(operation):
+    body = branch_example()
+    body.pop('pagination')
+    node = make_node({'operation': operation, 'project_id': 'shiny-wind-028834'})
+    state = {}
+    memory_state(node, state)
+    async def poll():
+        client = httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(200, json=body)))
+        with patch('nodes.neon_node.httpx.AsyncClient', return_value=client):
+            return await node.execute({})
+    await poll()
+    # Replay another documented timestamp to represent an existing branch changing.
+    body['branches'][0]['updated_at'] = body['branches'][1]['updated_at']
+    changed = await poll()
+    assert changed['branch_count'] == (0 if operation == 'on_new_branch' else 1)
+    assert (await poll())['branch_count'] == 0
+    # Changing the watched project establishes a fresh, quiet baseline.
+    node.config.config.project_id = 'spring-example-302709'
+    assert (await poll())['branch_count'] == 0
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('failure', ['http', 'invalid-list', 'cursor-loop'])
+async def test_branch_trigger_failed_pages_never_consume_events(failure):
+    body = branch_example()
+    node = make_node({'operation': 'on_new_branch', 'project_id': 'shiny-wind-028834'})
+    state = {'seen_ids': []}
+    memory_state(node, state)
+    def handle(request):
+        if not request.url.params.get('cursor'):
+            return httpx.Response(200, json=body)
+        if failure == 'http':
+            return httpx.Response(403, json={'message': 'napi_test'})
+        if failure == 'invalid-list':
+            return httpx.Response(200, json={'branches': {}})
+        return httpx.Response(200, json=body)
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handle))
+    with patch('nodes.neon_node.httpx.AsyncClient', return_value=client), pytest.raises(ValueError):
+        await node.execute({})
+    assert state == {'seen_ids': []}
+
+
+@pytest.mark.asyncio
+async def test_contract_permits_empty_object_for_updates_with_optional_fields():
+    captured = []
+    client = httpx.AsyncClient(transport=httpx.MockTransport(
+        lambda request: captured.append(request) or httpx.Response(200, json={})
+    ))
+    with patch('nodes.neon_node.httpx.AsyncClient', return_value=client):
+        result = await make_node({'operation': 'update_neon_auth_email_and_password_config',
+                                  'project_id': 'shiny-wind-028834',
+                                  'branch_id': 'br-aged-salad-637688',
+                                  'body_json': '{}'}).execute({})
+    assert result['status'] == 'success'
+    assert json.loads(captured[0].content) == {}

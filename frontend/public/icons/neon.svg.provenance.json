@@ -2,5 +2,10 @@
   "path": "frontend/public/icons/neon.svg",
   "source": "https://neon.com/brand/neon-logomark-dark-color.svg",
   "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "6f36debfc1d707351c7bc3a1e771fb24bc47700a622950e7f987edebd13efdef"
+  "sha256": "6f36debfc1d707351c7bc3a1e771fb24bc47700a622950e7f987edebd13efdef",
+  "source_url": "https://neon.com/brand/neon-logomark-dark-color.svg",
+  "page_url": "https://neon.com",
+  "date": "2026-11-11",
+  "edits": [],
+  "notes": "Official Neon app/favicon symbol. No wordmark or added background."
 }
