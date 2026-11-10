@@ -4030,7 +4030,7 @@ class TwitterNode(WorkflowNode):
             )
 
         # Pre-flight credit gate (standardized) — fail before any X API cost when
-        # the billing pool (org owner under the configured attribution policy, else the caller) is out of
+        # the billing pool (org owner under Owner Pays, else the caller) is out of
         # credits or its owner can't be resolved. BYOK skips automatically. The
         # post-op track_usage_event still records actual spend; this just stops
         # zero-credit org members from incurring X cost first.
@@ -4517,14 +4517,14 @@ class TwitterNode(WorkflowNode):
                     from billing.usage_tracker import usage_tracker
 
                     user_resource = self._is_user_resource(credentials)
-                    total_cost = apply_x_markup(
-                        get_x_cost(operation_type, quantity), user_resource
-                    )
+                    cost_usd = get_x_cost(operation_type, quantity)
+                    total_cost = apply_x_markup(cost_usd, user_resource)
                     if total_cost > 0:
                         await usage_tracker.track_usage_event(
                             UsageEventData(
                                 user_id=self.user_id,
                                 total_cost=total_cost,
+                                cost_usd=cost_usd,
                                 usage_type="api_usage",
                                 usage_subtype="twitter/x_api",
                                 quantity=Decimal(str(quantity)),
