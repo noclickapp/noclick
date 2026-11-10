@@ -1,0 +1,1362 @@
+{
+  "list_books": {
+    "items": [
+      {
+        "accounts": [],
+        "agentId": "string",
+        "autoPost": true,
+        "closingDate": "2024-01-15",
+        "collection": {
+          "agentId": "string",
+          "books": [],
+          "createdAt": "1592000000000",
+          "id": "string",
+          "name": "string",
+          "ownerUsername": "string",
+          "permission": "OWNER",
+          "updatedAt": "1592000000000"
+        },
+        "createdAt": "1592000000000",
+        "datePattern": "dd/MM/yyyy",
+        "decimalSeparator": "DOT",
+        "fractionDigits": 1,
+        "groups": [],
+        "id": "string",
+        "lastUpdateMs": "1592000000000",
+        "lockDate": "2024-01-15",
+        "logoUrl": "string",
+        "name": "string",
+        "ownerName": "string",
+        "pageSize": 1,
+        "period": "MONTH",
+        "periodStartMonth": "JANUARY",
+        "permission": "OWNER",
+        "properties": {
+          "key": "value"
+        },
+        "timeZone": "string",
+        "timeZoneOffset": 1,
+        "totalTransactions": 1,
+        "totalTransactionsCurrentMonth": 1,
+        "totalTransactionsCurrentYear": 1,
+        "updatedAt": "1592000000000",
+        "visibility": "PUBLIC"
+      }
+    ]
+  },
+  "create_book": {
+    "accounts": [
+      {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "agentId": "string",
+    "autoPost": true,
+    "closingDate": "2024-01-15",
+    "collection": {
+      "agentId": "string",
+      "books": [],
+      "createdAt": "1592000000000",
+      "id": "string",
+      "name": "string",
+      "ownerUsername": "string",
+      "permission": "OWNER",
+      "updatedAt": "1592000000000"
+    },
+    "createdAt": "1592000000000",
+    "datePattern": "dd/MM/yyyy",
+    "decimalSeparator": "DOT",
+    "fractionDigits": 1,
+    "groups": [
+      {
+        "agentId": "string",
+        "createdAt": "1592000000000",
+        "credit": true,
+        "hasAccounts": true,
+        "hasGroups": true,
+        "hidden": true,
+        "id": "string",
+        "locked": true,
+        "mixed": true,
+        "name": "string",
+        "normalizedName": "string",
+        "parent": null,
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "id": "string",
+    "lastUpdateMs": "1592000000000",
+    "lockDate": "2024-01-15",
+    "logoUrl": "string",
+    "name": "string",
+    "ownerName": "string",
+    "pageSize": 1,
+    "period": "MONTH",
+    "periodStartMonth": "JANUARY",
+    "permission": "OWNER",
+    "properties": {
+      "key": "value"
+    },
+    "timeZone": "string",
+    "timeZoneOffset": 1,
+    "totalTransactions": 1,
+    "totalTransactionsCurrentMonth": 1,
+    "totalTransactionsCurrentYear": 1,
+    "updatedAt": "1592000000000",
+    "visibility": "PUBLIC"
+  },
+  "update_book": {
+    "accounts": [
+      {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "agentId": "string",
+    "autoPost": true,
+    "closingDate": "2024-01-15",
+    "collection": {
+      "agentId": "string",
+      "books": [],
+      "createdAt": "1592000000000",
+      "id": "string",
+      "name": "string",
+      "ownerUsername": "string",
+      "permission": "OWNER",
+      "updatedAt": "1592000000000"
+    },
+    "createdAt": "1592000000000",
+    "datePattern": "dd/MM/yyyy",
+    "decimalSeparator": "DOT",
+    "fractionDigits": 1,
+    "groups": [
+      {
+        "agentId": "string",
+        "createdAt": "1592000000000",
+        "credit": true,
+        "hasAccounts": true,
+        "hasGroups": true,
+        "hidden": true,
+        "id": "string",
+        "locked": true,
+        "mixed": true,
+        "name": "string",
+        "normalizedName": "string",
+        "parent": null,
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "id": "string",
+    "lastUpdateMs": "1592000000000",
+    "lockDate": "2024-01-15",
+    "logoUrl": "string",
+    "name": "string",
+    "ownerName": "string",
+    "pageSize": 1,
+    "period": "MONTH",
+    "periodStartMonth": "JANUARY",
+    "permission": "OWNER",
+    "properties": {
+      "key": "value"
+    },
+    "timeZone": "string",
+    "timeZoneOffset": 1,
+    "totalTransactions": 1,
+    "totalTransactionsCurrentMonth": 1,
+    "totalTransactionsCurrentYear": 1,
+    "updatedAt": "1592000000000",
+    "visibility": "PUBLIC"
+  },
+  "get_book": {
+    "accounts": [
+      {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "agentId": "string",
+    "autoPost": true,
+    "closingDate": "2024-01-15",
+    "collection": {
+      "agentId": "string",
+      "books": [],
+      "createdAt": "1592000000000",
+      "id": "string",
+      "name": "string",
+      "ownerUsername": "string",
+      "permission": "OWNER",
+      "updatedAt": "1592000000000"
+    },
+    "createdAt": "1592000000000",
+    "datePattern": "dd/MM/yyyy",
+    "decimalSeparator": "DOT",
+    "fractionDigits": 1,
+    "groups": [
+      {
+        "agentId": "string",
+        "createdAt": "1592000000000",
+        "credit": true,
+        "hasAccounts": true,
+        "hasGroups": true,
+        "hidden": true,
+        "id": "string",
+        "locked": true,
+        "mixed": true,
+        "name": "string",
+        "normalizedName": "string",
+        "parent": null,
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "id": "string",
+    "lastUpdateMs": "1592000000000",
+    "lockDate": "2024-01-15",
+    "logoUrl": "string",
+    "name": "string",
+    "ownerName": "string",
+    "pageSize": 1,
+    "period": "MONTH",
+    "periodStartMonth": "JANUARY",
+    "permission": "OWNER",
+    "properties": {
+      "key": "value"
+    },
+    "timeZone": "string",
+    "timeZoneOffset": 1,
+    "totalTransactions": 1,
+    "totalTransactionsCurrentMonth": 1,
+    "totalTransactionsCurrentYear": 1,
+    "updatedAt": "1592000000000",
+    "visibility": "PUBLIC"
+  },
+  "list_accounts": {
+    "items": [
+      {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ]
+  },
+  "create_account": {
+    "agentId": "string",
+    "archived": true,
+    "balance": "string",
+    "balanceVerified": true,
+    "createdAt": "1592000000000",
+    "credit": true,
+    "groups": [
+      {
+        "agentId": "string",
+        "createdAt": "1592000000000",
+        "credit": true,
+        "hasAccounts": true,
+        "hasGroups": true,
+        "hidden": true,
+        "id": "string",
+        "locked": true,
+        "mixed": true,
+        "name": "string",
+        "normalizedName": "string",
+        "parent": null,
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "hasTransactionPosted": true,
+    "id": "string",
+    "name": "string",
+    "normalizedName": "string",
+    "permanent": true,
+    "properties": {
+      "key": "value"
+    },
+    "type": "ASSET",
+    "updatedAt": "1592000000000"
+  },
+  "update_account": {
+    "agentId": "string",
+    "archived": true,
+    "balance": "string",
+    "balanceVerified": true,
+    "createdAt": "1592000000000",
+    "credit": true,
+    "groups": [
+      {
+        "agentId": "string",
+        "createdAt": "1592000000000",
+        "credit": true,
+        "hasAccounts": true,
+        "hasGroups": true,
+        "hidden": true,
+        "id": "string",
+        "locked": true,
+        "mixed": true,
+        "name": "string",
+        "normalizedName": "string",
+        "parent": null,
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "hasTransactionPosted": true,
+    "id": "string",
+    "name": "string",
+    "normalizedName": "string",
+    "permanent": true,
+    "properties": {
+      "key": "value"
+    },
+    "type": "ASSET",
+    "updatedAt": "1592000000000"
+  },
+  "get_account": {
+    "agentId": "string",
+    "archived": true,
+    "balance": "string",
+    "balanceVerified": true,
+    "createdAt": "1592000000000",
+    "credit": true,
+    "groups": [
+      {
+        "agentId": "string",
+        "createdAt": "1592000000000",
+        "credit": true,
+        "hasAccounts": true,
+        "hasGroups": true,
+        "hidden": true,
+        "id": "string",
+        "locked": true,
+        "mixed": true,
+        "name": "string",
+        "normalizedName": "string",
+        "parent": null,
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "hasTransactionPosted": true,
+    "id": "string",
+    "name": "string",
+    "normalizedName": "string",
+    "permanent": true,
+    "properties": {
+      "key": "value"
+    },
+    "type": "ASSET",
+    "updatedAt": "1592000000000"
+  },
+  "delete_account": {
+    "agentId": "string",
+    "archived": true,
+    "balance": "string",
+    "balanceVerified": true,
+    "createdAt": "1592000000000",
+    "credit": true,
+    "groups": [
+      {
+        "agentId": "string",
+        "createdAt": "1592000000000",
+        "credit": true,
+        "hasAccounts": true,
+        "hasGroups": true,
+        "hidden": true,
+        "id": "string",
+        "locked": true,
+        "mixed": true,
+        "name": "string",
+        "normalizedName": "string",
+        "parent": null,
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "hasTransactionPosted": true,
+    "id": "string",
+    "name": "string",
+    "normalizedName": "string",
+    "permanent": true,
+    "properties": {
+      "key": "value"
+    },
+    "type": "ASSET",
+    "updatedAt": "1592000000000"
+  },
+  "get_balances": {
+    "accountBalances": [
+      {
+        "archived": true,
+        "balances": [],
+        "credit": true,
+        "cumulativeBalance": "string",
+        "cumulativeCredit": "string",
+        "cumulativeDebit": "string",
+        "empty": true,
+        "name": "string",
+        "normalizedName": "string",
+        "periodBalance": "string",
+        "periodCredit": "string",
+        "periodDebit": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        }
+      }
+    ],
+    "balancesUrl": "string",
+    "groupBalances": [
+      {
+        "accountBalances": [],
+        "balances": [],
+        "credit": true,
+        "cumulativeBalance": "string",
+        "cumulativeCredit": "string",
+        "cumulativeDebit": "string",
+        "groupBalances": [],
+        "name": "string",
+        "normalizedName": "string",
+        "periodBalance": "string",
+        "periodCredit": "string",
+        "periodDebit": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        }
+      }
+    ],
+    "nextRange": "string",
+    "periodicity": "DAILY",
+    "previousRange": "string",
+    "range": "string",
+    "rangeBeginLabel": "string",
+    "rangeEndLabel": "string"
+  },
+  "list_events": {
+    "cursor": "string",
+    "items": [
+      {
+        "agent": {
+          "id": "string",
+          "logo": "string",
+          "logoDark": "string",
+          "name": "string"
+        },
+        "book": {
+          "accounts": [],
+          "agentId": "string",
+          "autoPost": true,
+          "closingDate": "2024-01-15",
+          "collection": {
+            "agentId": "string",
+            "books": [],
+            "createdAt": "1592000000000",
+            "id": "string",
+            "name": "string",
+            "ownerUsername": "string",
+            "permission": "OWNER",
+            "updatedAt": "1592000000000"
+          },
+          "createdAt": "1592000000000",
+          "datePattern": "dd/MM/yyyy",
+          "decimalSeparator": "DOT",
+          "fractionDigits": 1,
+          "groups": [],
+          "id": "string",
+          "lastUpdateMs": "1592000000000",
+          "lockDate": "2024-01-15",
+          "logoUrl": "string",
+          "name": "string",
+          "ownerName": "string",
+          "pageSize": 1,
+          "period": "MONTH",
+          "periodStartMonth": "JANUARY",
+          "permission": "OWNER",
+          "properties": {
+            "key": "value"
+          },
+          "timeZone": "string",
+          "timeZoneOffset": 1,
+          "totalTransactions": 1,
+          "totalTransactionsCurrentMonth": 1,
+          "totalTransactionsCurrentYear": 1,
+          "updatedAt": "1592000000000",
+          "visibility": "PUBLIC"
+        },
+        "bookId": "string",
+        "botResponses": [],
+        "createdAt": "1592000000000",
+        "createdOn": "string",
+        "data": {
+          "object": {},
+          "previousAttributes": {
+            "key": "value"
+          }
+        },
+        "id": "string",
+        "resource": "string",
+        "type": "FILE_CREATED",
+        "user": {
+          "avatarUrl": "string",
+          "bankConnections": true,
+          "billingAdminEmail": "string",
+          "billingEnabled": true,
+          "daysLeftInTrial": 1,
+          "domain": {
+            "id": "string",
+            "logoUrl": "string",
+            "name": "string"
+          },
+          "domainAdmin": true,
+          "email": "string",
+          "free": true,
+          "fullName": "string",
+          "givenName": "string",
+          "hash": "string",
+          "hostedDomain": "string",
+          "id": "string",
+          "name": "string",
+          "plan": "string",
+          "planAmount": 1,
+          "planCurrency": "string",
+          "planCycle": "MONTHLY",
+          "planOverdue": true,
+          "startedTrial": true,
+          "totalTransactionsThisMonth": 1,
+          "totalTransactionsThisYear": 1,
+          "username": "string"
+        }
+      }
+    ]
+  },
+  "list_groups": {
+    "items": [
+      {
+        "agentId": "string",
+        "createdAt": "1592000000000",
+        "credit": true,
+        "hasAccounts": true,
+        "hasGroups": true,
+        "hidden": true,
+        "id": "string",
+        "locked": true,
+        "mixed": true,
+        "name": "string",
+        "normalizedName": "string",
+        "parent": null,
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ]
+  },
+  "create_group": {
+    "agentId": "string",
+    "createdAt": "1592000000000",
+    "credit": true,
+    "hasAccounts": true,
+    "hasGroups": true,
+    "hidden": true,
+    "id": "string",
+    "locked": true,
+    "mixed": true,
+    "name": "string",
+    "normalizedName": "string",
+    "parent": null,
+    "permanent": true,
+    "properties": {
+      "key": "value"
+    },
+    "type": "ASSET",
+    "updatedAt": "1592000000000"
+  },
+  "update_group": {
+    "agentId": "string",
+    "createdAt": "1592000000000",
+    "credit": true,
+    "hasAccounts": true,
+    "hasGroups": true,
+    "hidden": true,
+    "id": "string",
+    "locked": true,
+    "mixed": true,
+    "name": "string",
+    "normalizedName": "string",
+    "parent": null,
+    "permanent": true,
+    "properties": {
+      "key": "value"
+    },
+    "type": "ASSET",
+    "updatedAt": "1592000000000"
+  },
+  "get_group": {
+    "agentId": "string",
+    "createdAt": "1592000000000",
+    "credit": true,
+    "hasAccounts": true,
+    "hasGroups": true,
+    "hidden": true,
+    "id": "string",
+    "locked": true,
+    "mixed": true,
+    "name": "string",
+    "normalizedName": "string",
+    "parent": null,
+    "permanent": true,
+    "properties": {
+      "key": "value"
+    },
+    "type": "ASSET",
+    "updatedAt": "1592000000000"
+  },
+  "list_transactions": {
+    "account": "string",
+    "cursor": "string",
+    "items": [
+      {
+        "agentId": "string",
+        "agentLogo": "string",
+        "agentLogoDark": "string",
+        "agentName": "string",
+        "amount": "1234.56",
+        "checked": true,
+        "createdAt": "1592000000000",
+        "createdBy": "string",
+        "creditAccount": {
+          "agentId": "string",
+          "archived": true,
+          "balance": "string",
+          "balanceVerified": true,
+          "createdAt": "1592000000000",
+          "credit": true,
+          "groups": [],
+          "hasTransactionPosted": true,
+          "id": "string",
+          "name": "string",
+          "normalizedName": "string",
+          "permanent": true,
+          "properties": {
+            "key": "value"
+          },
+          "type": "ASSET",
+          "updatedAt": "1592000000000"
+        },
+        "date": "2024-01-15",
+        "dateFormatted": "string",
+        "dateValue": 1,
+        "debitAccount": {
+          "agentId": "string",
+          "archived": true,
+          "balance": "string",
+          "balanceVerified": true,
+          "createdAt": "1592000000000",
+          "credit": true,
+          "groups": [],
+          "hasTransactionPosted": true,
+          "id": "string",
+          "name": "string",
+          "normalizedName": "string",
+          "permanent": true,
+          "properties": {
+            "key": "value"
+          },
+          "type": "ASSET",
+          "updatedAt": "1592000000000"
+        },
+        "description": "string",
+        "draft": true,
+        "files": [],
+        "id": "string",
+        "posted": true,
+        "properties": {
+          "key": "value"
+        },
+        "remoteIds": [
+          "string"
+        ],
+        "tags": [
+          "string"
+        ],
+        "trashed": true,
+        "updatedAt": "1592000000000",
+        "urls": [
+          "string"
+        ]
+      }
+    ]
+  },
+  "create_transaction": {
+    "accounts": [
+      {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "transaction": {
+      "agentId": "string",
+      "agentLogo": "string",
+      "agentLogoDark": "string",
+      "agentName": "string",
+      "amount": "1234.56",
+      "checked": true,
+      "createdAt": "1592000000000",
+      "createdBy": "string",
+      "creditAccount": {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      },
+      "date": "2024-01-15",
+      "dateFormatted": "string",
+      "dateValue": 1,
+      "debitAccount": {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      },
+      "description": "string",
+      "draft": true,
+      "files": [],
+      "id": "string",
+      "posted": true,
+      "properties": {
+        "key": "value"
+      },
+      "remoteIds": [
+        "string"
+      ],
+      "tags": [
+        "string"
+      ],
+      "trashed": true,
+      "updatedAt": "1592000000000",
+      "urls": [
+        "string"
+      ]
+    }
+  },
+  "update_transaction": {
+    "accounts": [
+      {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "transaction": {
+      "agentId": "string",
+      "agentLogo": "string",
+      "agentLogoDark": "string",
+      "agentName": "string",
+      "amount": "1234.56",
+      "checked": true,
+      "createdAt": "1592000000000",
+      "createdBy": "string",
+      "creditAccount": {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      },
+      "date": "2024-01-15",
+      "dateFormatted": "string",
+      "dateValue": 1,
+      "debitAccount": {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      },
+      "description": "string",
+      "draft": true,
+      "files": [],
+      "id": "string",
+      "posted": true,
+      "properties": {
+        "key": "value"
+      },
+      "remoteIds": [
+        "string"
+      ],
+      "tags": [
+        "string"
+      ],
+      "trashed": true,
+      "updatedAt": "1592000000000",
+      "urls": [
+        "string"
+      ]
+    }
+  },
+  "check_transaction": {
+    "accounts": [
+      {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "transaction": {
+      "agentId": "string",
+      "agentLogo": "string",
+      "agentLogoDark": "string",
+      "agentName": "string",
+      "amount": "1234.56",
+      "checked": true,
+      "createdAt": "1592000000000",
+      "createdBy": "string",
+      "creditAccount": {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      },
+      "date": "2024-01-15",
+      "dateFormatted": "string",
+      "dateValue": 1,
+      "debitAccount": {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      },
+      "description": "string",
+      "draft": true,
+      "files": [],
+      "id": "string",
+      "posted": true,
+      "properties": {
+        "key": "value"
+      },
+      "remoteIds": [
+        "string"
+      ],
+      "tags": [
+        "string"
+      ],
+      "trashed": true,
+      "updatedAt": "1592000000000",
+      "urls": [
+        "string"
+      ]
+    }
+  },
+  "post_transaction": {
+    "accounts": [
+      {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "transaction": {
+      "agentId": "string",
+      "agentLogo": "string",
+      "agentLogoDark": "string",
+      "agentName": "string",
+      "amount": "1234.56",
+      "checked": true,
+      "createdAt": "1592000000000",
+      "createdBy": "string",
+      "creditAccount": {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      },
+      "date": "2024-01-15",
+      "dateFormatted": "string",
+      "dateValue": 1,
+      "debitAccount": {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      },
+      "description": "string",
+      "draft": true,
+      "files": [],
+      "id": "string",
+      "posted": true,
+      "properties": {
+        "key": "value"
+      },
+      "remoteIds": [
+        "string"
+      ],
+      "tags": [
+        "string"
+      ],
+      "trashed": true,
+      "updatedAt": "1592000000000",
+      "urls": [
+        "string"
+      ]
+    }
+  },
+  "trash_transaction": {
+    "accounts": [
+      {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      }
+    ],
+    "transaction": {
+      "agentId": "string",
+      "agentLogo": "string",
+      "agentLogoDark": "string",
+      "agentName": "string",
+      "amount": "1234.56",
+      "checked": true,
+      "createdAt": "1592000000000",
+      "createdBy": "string",
+      "creditAccount": {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      },
+      "date": "2024-01-15",
+      "dateFormatted": "string",
+      "dateValue": 1,
+      "debitAccount": {
+        "agentId": "string",
+        "archived": true,
+        "balance": "string",
+        "balanceVerified": true,
+        "createdAt": "1592000000000",
+        "credit": true,
+        "groups": [],
+        "hasTransactionPosted": true,
+        "id": "string",
+        "name": "string",
+        "normalizedName": "string",
+        "permanent": true,
+        "properties": {
+          "key": "value"
+        },
+        "type": "ASSET",
+        "updatedAt": "1592000000000"
+      },
+      "description": "string",
+      "draft": true,
+      "files": [],
+      "id": "string",
+      "posted": true,
+      "properties": {
+        "key": "value"
+      },
+      "remoteIds": [
+        "string"
+      ],
+      "tags": [
+        "string"
+      ],
+      "trashed": true,
+      "updatedAt": "1592000000000",
+      "urls": [
+        "string"
+      ]
+    }
+  },
+  "get_transaction": {
+    "agentId": "string",
+    "agentLogo": "string",
+    "agentLogoDark": "string",
+    "agentName": "string",
+    "amount": "1234.56",
+    "checked": true,
+    "createdAt": "1592000000000",
+    "createdBy": "string",
+    "creditAccount": {
+      "agentId": "string",
+      "archived": true,
+      "balance": "string",
+      "balanceVerified": true,
+      "createdAt": "1592000000000",
+      "credit": true,
+      "groups": [],
+      "hasTransactionPosted": true,
+      "id": "string",
+      "name": "string",
+      "normalizedName": "string",
+      "permanent": true,
+      "properties": {
+        "key": "value"
+      },
+      "type": "ASSET",
+      "updatedAt": "1592000000000"
+    },
+    "date": "2024-01-15",
+    "dateFormatted": "string",
+    "dateValue": 1,
+    "debitAccount": {
+      "agentId": "string",
+      "archived": true,
+      "balance": "string",
+      "balanceVerified": true,
+      "createdAt": "1592000000000",
+      "credit": true,
+      "groups": [],
+      "hasTransactionPosted": true,
+      "id": "string",
+      "name": "string",
+      "normalizedName": "string",
+      "permanent": true,
+      "properties": {
+        "key": "value"
+      },
+      "type": "ASSET",
+      "updatedAt": "1592000000000"
+    },
+    "description": "string",
+    "draft": true,
+    "files": [
+      {
+        "agentId": "string",
+        "content": "string",
+        "contentType": "string",
+        "createdAt": "1592000000000",
+        "id": "string",
+        "name": "string",
+        "properties": {
+          "key": "value"
+        },
+        "size": 1,
+        "updatedAt": "1592000000000",
+        "url": "string"
+      }
+    ],
+    "id": "string",
+    "posted": true,
+    "properties": {
+      "key": "value"
+    },
+    "remoteIds": [
+      "string"
+    ],
+    "tags": [
+      "string"
+    ],
+    "trashed": true,
+    "updatedAt": "1592000000000",
+    "urls": [
+      "string"
+    ]
+  },
+  "get_user": {
+    "avatarUrl": "string",
+    "bankConnections": true,
+    "billingAdminEmail": "string",
+    "billingEnabled": true,
+    "daysLeftInTrial": 1,
+    "domain": {
+      "id": "string",
+      "logoUrl": "string",
+      "name": "string"
+    },
+    "domainAdmin": true,
+    "email": "string",
+    "free": true,
+    "fullName": "string",
+    "givenName": "string",
+    "hash": "string",
+    "hostedDomain": "string",
+    "id": "string",
+    "name": "string",
+    "plan": "string",
+    "planAmount": 1,
+    "planCurrency": "string",
+    "planCycle": "MONTHLY",
+    "planOverdue": true,
+    "startedTrial": true,
+    "totalTransactionsThisMonth": 1,
+    "totalTransactionsThisYear": 1,
+    "username": "string"
+  }
+}
