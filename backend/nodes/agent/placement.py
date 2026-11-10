@@ -27,7 +27,6 @@ NO_SHELL_KEY = "_noShell"
 SANDBOX_NETWORK_KEY = "_sandboxNetwork"
 SANDBOX_SKILLS_KEY = "_sandboxSkills"
 SESSION_GENERATION_KEY = "_sessionGeneration"
-SANDBOX_SKILLS_KEY = "_sandboxSkills"
 
 
 def _runtime_value(node: Any, key: str) -> Any:
