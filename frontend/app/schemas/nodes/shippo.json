@@ -2365,6 +2365,741 @@
       "title": "ShippoListWebhooksConfig",
       "type": "object"
     },
+    "ShippoOnBatchCreatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "is_test": {
+          "default": false,
+          "description": "Receive test events instead of live events.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "hmac_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If Shippo has enabled HMAC for your account, paste the secret supplied by its solutions team. Otherwise leave empty; Shippo does not sign deliveries by default.",
+          "title": "Webhook HMAC Secret",
+          "ui:widget": "password"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Shippo automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_batch_created",
+          "default": "on_batch_created",
+          "title": "On Batch Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Batch Created",
+          "x-is-trigger": true
+        }
+      },
+      "title": "ShippoOnBatchCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ShippoOnBatchPurchasedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "is_test": {
+          "default": false,
+          "description": "Receive test events instead of live events.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "hmac_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If Shippo has enabled HMAC for your account, paste the secret supplied by its solutions team. Otherwise leave empty; Shippo does not sign deliveries by default.",
+          "title": "Webhook HMAC Secret",
+          "ui:widget": "password"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Shippo automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_batch_purchased",
+          "default": "on_batch_purchased",
+          "title": "On Batch Purchased",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Batch Purchased",
+          "x-is-trigger": true
+        }
+      },
+      "title": "ShippoOnBatchPurchasedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ShippoOnTrackingUpdatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "is_test": {
+          "default": false,
+          "description": "Receive test events instead of live events.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "hmac_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If Shippo has enabled HMAC for your account, paste the secret supplied by its solutions team. Otherwise leave empty; Shippo does not sign deliveries by default.",
+          "title": "Webhook HMAC Secret",
+          "ui:widget": "password"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Shippo automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_tracking_updated",
+          "default": "on_tracking_updated",
+          "title": "On Tracking Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Tracking Updated",
+          "x-is-trigger": true
+        }
+      },
+      "title": "ShippoOnTrackingUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ShippoOnTransactionCreatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "is_test": {
+          "default": false,
+          "description": "Receive test events instead of live events.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "hmac_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If Shippo has enabled HMAC for your account, paste the secret supplied by its solutions team. Otherwise leave empty; Shippo does not sign deliveries by default.",
+          "title": "Webhook HMAC Secret",
+          "ui:widget": "password"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Shippo automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_transaction_created",
+          "default": "on_transaction_created",
+          "title": "On Shipping Label Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Shipping Label Created",
+          "x-is-trigger": true
+        }
+      },
+      "title": "ShippoOnTransactionCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ShippoOnTransactionUpdatedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "is_test": {
+          "default": false,
+          "description": "Receive test events instead of live events.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "hmac_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If Shippo has enabled HMAC for your account, paste the secret supplied by its solutions team. Otherwise leave empty; Shippo does not sign deliveries by default.",
+          "title": "Webhook HMAC Secret",
+          "ui:widget": "password"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Shippo automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_transaction_updated",
+          "default": "on_transaction_updated",
+          "title": "On Shipping Label Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Shipping Label Updated",
+          "x-is-trigger": true
+        }
+      },
+      "title": "ShippoOnTransactionUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "ShippoPurchaseBatchConfig": {
       "properties": {
         "operation": {
@@ -2876,6 +3611,11 @@
           "list_transactions": "#/$defs/ShippoListTransactionsConfig",
           "list_user_parcel_templates": "#/$defs/ShippoListUserParcelTemplatesConfig",
           "list_webhooks": "#/$defs/ShippoListWebhooksConfig",
+          "on_batch_created": "#/$defs/ShippoOnBatchCreatedConfig",
+          "on_batch_purchased": "#/$defs/ShippoOnBatchPurchasedConfig",
+          "on_tracking_updated": "#/$defs/ShippoOnTrackingUpdatedConfig",
+          "on_transaction_created": "#/$defs/ShippoOnTransactionCreatedConfig",
+          "on_transaction_updated": "#/$defs/ShippoOnTransactionUpdatedConfig",
           "purchase_batch": "#/$defs/ShippoPurchaseBatchConfig",
           "register_carrier_account": "#/$defs/ShippoRegisterCarrierAccountConfig",
           "remove_shipments_from_batch": "#/$defs/ShippoRemoveShipmentsFromBatchConfig",
@@ -3102,6 +3842,21 @@
         },
         {
           "$ref": "#/$defs/ShippoValidateAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/ShippoOnTrackingUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/ShippoOnTransactionCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/ShippoOnTransactionUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/ShippoOnBatchCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/ShippoOnBatchPurchasedConfig"
         }
       ],
       "title": "Config"

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import mimetypes
 import re
@@ -15,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 
 # Shippo operation metadata from the provider API reference.
@@ -933,7 +936,42 @@ def _make_config(op: dict[str, Any]) -> type[BaseModel]:
 
 CONFIG_MODELS = {name: _make_config(op) for name, op in OPERATIONS.items()}
 globals().update({model.__name__: model for model in CONFIG_MODELS.values()})
-ShippoConfig = Annotated[Union[tuple(CONFIG_MODELS.values())], Discriminator("operation")]
+# https://docs.goshippo.com/tracking/webhooks and WebhookPayload in the OpenAPI.
+TRIGGER_EVENTS = {
+    "on_tracking_updated": ("track_updated", "On Tracking Updated"),
+    "on_transaction_created": ("transaction_created", "On Shipping Label Created"),
+    "on_transaction_updated": ("transaction_updated", "On Shipping Label Updated"),
+    "on_batch_created": ("batch_created", "On Batch Created"),
+    "on_batch_purchased": ("batch_purchased", "On Batch Purchased"),
+}
+
+
+class ShippoWebhookConfig(WebhookTriggerConfigBase):
+    is_test: bool = Field(False, title="Test Mode", description="Receive test events instead of live events.")
+    hmac_secret: Optional[str] = Field(
+        None, title="Webhook HMAC Secret",
+        description="If Shippo has enabled HMAC for your account, paste the secret supplied by its solutions team. Otherwise leave empty; Shippo does not sign deliveries by default.",
+        json_schema_extra={"ui:widget": "password"},
+    )
+    webhook_url: Optional[str] = Field(
+        None, title="Webhook URL", description="Registered with Shippo automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True},
+    )
+
+
+TRIGGER_MODELS = {
+    name: create_model(
+        "Shippo" + "".join(word.title() for word in name.split("_")) + "Config",
+        __base__=ShippoWebhookConfig, __module__=__name__,
+        operation=(Literal[name], Field(name, title=label, json_schema_extra={
+            "const": name, "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": label,
+        })),
+    )
+    for name, (_, label) in TRIGGER_EVENTS.items()
+}
+globals().update({model.__name__: model for model in TRIGGER_MODELS.values()})
+ShippoConfig = Annotated[Union[tuple(CONFIG_MODELS.values()) + tuple(TRIGGER_MODELS.values())], Discriminator("operation")]
 
 
 class ShippoNodeConfig(NodeConfig[ShippoConfig, ShippoApiKeyCredential]):
@@ -949,10 +987,12 @@ def _parse_json(raw: Optional[str], label: str) -> Any:
         raise ValueError(f"{label} must contain valid JSON") from exc
 
 
-class ShippoNode(WorkflowNode):
+class ShippoNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """Run one of Shippo's shipping and tracking API actions."""
 
     integration_type = "automation-shippo"
+    # Shippo enables HMAC separately through its solutions team, not registration.
+    webhook_signing_secret_not_issued = True
 
     connection_evidence = ConnectionEvidence(operation="list_addresses", noun="addresses")
     edit_examples = [
@@ -963,6 +1003,109 @@ class ShippoNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return ShippoNodeConfig
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"is_test": bool(config.get("is_test", False))}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        operation = config.get("operation")
+        if operation not in TRIGGER_EVENTS:
+            raise ValueError("Choose a Shippo trigger")
+        if not credential.get("api_key"):
+            raise ValueError("Connect Shippo before activating this trigger")
+        result = await cls._request(credential["api_key"], "create_webhook", {
+            "body_json": json.dumps({"event": TRIGGER_EVENTS[operation][0], "url": webhook_url,
+                                      "active": True, "is_test": bool(config.get("is_test", False))}),
+        })
+        external_id = result["data"].get("object_id")
+        if not external_id:
+            raise ValueError("Shippo did not return a webhook ID")
+        return {"external_webhook_id": str(external_id)}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        external_id = config.get("external_webhook_id")
+        if not external_id or not credential or not credential.get("api_key"):
+            return
+        await cls._request(credential["api_key"], "delete_webhook", {"path_webhookid": str(external_id)})
+
+    @classmethod
+    def verify_webhook_signature(cls, body: bytes, headers: dict[str, str], config: dict[str, Any]) -> bool:
+        # https://docs.goshippo.com/tracking/webhook-security
+        secret = config.get("hmac_secret")
+        if not secret:
+            return True
+        header = next((v for k, v in headers.items() if k.lower() == "shippo-auth-signature"), "")
+        parts = [part.strip() for part in header.split(",")]
+        timestamp = next((p[2:] for p in parts if p.startswith("t=")), "")
+        if not timestamp.isdigit():
+            return False
+        expected = hmac.new(str(secret).encode(), timestamp.encode() + b"." + body, hashlib.sha256).hexdigest()
+        return any(hmac.compare_digest(p[3:], expected) for p in parts if p.startswith("v1="))
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = TRIGGER_EVENTS.get(config.get("operation"))
+        return bool(event and payload.get("event") == event[0]
+                    and payload.get("test") == bool(config.get("is_test", False)))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        return {"status": "success", "operation": config.get("operation"), "data": payload}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return None
+        wrapper = output.get("data") if "status" in output else output
+        if not isinstance(wrapper, dict) or wrapper.get("event") not in {v[0] for v in TRIGGER_EVENTS.values()}:
+            return super().resolve_agent_event(output)
+        event = wrapper["event"]
+        data = wrapper.get("data")
+        if event.startswith("batch_"):
+            # Shippo delivers a string, not a nested Batch object.
+            content = str(data or "")
+            match = re.fullmatch(r"batch (\S+) (?:created|processing complete)", content)
+            batch_id = match.group(1) if match else None
+            text = f"Shippo {event.replace('_', ' ')}: {content}"
+            if batch_id:
+                text += f"\nTo act: get_batch path_batchid={batch_id}"
+            return {"text": text, "conversation_key": batch_id or content, "title": event.replace("_", " ").title()}
+        if not isinstance(data, dict):
+            return None
+        if event == "track_updated":
+            carrier = data.get("carrier") or ""
+            tracking_number = data.get("tracking_number") or ""
+            status = data.get("tracking_status") or {}
+            if not isinstance(status, dict):
+                status = {}
+            location = status.get("location") or {}
+            if not isinstance(location, dict):
+                location = {}
+            text = f"Shippo tracking updated: {carrier} {tracking_number} — {status.get('status') or 'status update'}"
+            for label, value in (("Details", status.get("status_details")), ("At", status.get("status_date")),
+                                 ("Location", ", ".join(str(location[k]) for k in ("city", "state", "country") if location.get(k))),
+                                 ("Order", data.get("metadata")), ("Transaction", data.get("transaction"))):
+                if value:
+                    text += f"\n{label}: {value}"
+            text += f"\nTo act: get_track path_carrier={carrier} path_trackingnumber={tracking_number}"
+            key = f"{carrier}:{tracking_number}"
+        else:
+            transaction_id = data.get("object_id") or ""
+            creator = data.get("created_by") or {}
+            if not isinstance(creator, dict):
+                creator = {}
+            text = f"Shippo {event.replace('_', ' ')}: {transaction_id} — {data.get('status') or 'status update'}"
+            for label, value in (("By", creator.get("username") or data.get("object_owner")),
+                                 ("Tracking number", data.get("tracking_number")), ("Label", data.get("label_url")),
+                                 ("Tracking URL", data.get("tracking_url_provider")), ("At", data.get("object_updated"))):
+                if value:
+                    text += f"\n{label}: {value}"
+            text += f"\nTo act: get_transaction path_transactionid={transaction_id}"
+            key = str(transaction_id)
+        return {"text": text, "conversation_key": key, "title": event.replace("_", " ").title()}
 
     @staticmethod
     async def _request(token: str, name: str, values: dict[str, Any]) -> dict[str, Any]:
@@ -1043,6 +1186,8 @@ class ShippoNode(WorkflowNode):
         }
 
     async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
+        if isinstance(self.config, ShippoNodeConfig) and isinstance(self.config.config, ShippoWebhookConfig):
+            return self.no_event_output(self.config.config.operation)
         if not isinstance(self.config, ShippoNodeConfig) or not self.config.credentials:
             raise ValueError("Connect a Shippo account before running this action")
         config = self.config.config

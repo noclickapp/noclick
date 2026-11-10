@@ -1,13 +1,16 @@
 """Shippo API-key schema and REST contracts without a live account."""
 
+import hashlib
+import hmac
 import json
+from pathlib import Path
 
 import httpx
 import pytest
 from pydantic import ValidationError
 
 from nodes.core.binary_output import BinaryOutput
-from nodes.shippo_node import CONFIG_MODELS, OPERATIONS, ShippoNode, ShippoNodeConfig
+from nodes.shippo_node import CONFIG_MODELS, OPERATIONS, TRIGGER_EVENTS, TRIGGER_MODELS, ShippoNode, ShippoNodeConfig
 
 
 def _config(operation: str, **fields):
@@ -185,3 +188,90 @@ async def test_non_json_error_still_reports_api_error(monkeypatch):
     _transport(monkeypatch, lambda request: httpx.Response(502, text="Bad Gateway"))
     with pytest.raises(ValueError, match="Shippo API error 502: request failed"):
         await ShippoNode._request("shippo_test_example", "list_addresses", {})
+
+# Exact payload examples from https://docs.goshippo.com/tracking/webhooks.
+
+
+def _documented_event(event):
+    return json.loads((Path(__file__).parent / 'fixtures' / 'shippo' / f'{event}.json').read_text())
+
+
+@pytest.mark.parametrize('operation', TRIGGER_EVENTS)
+@pytest.mark.asyncio
+async def test_webhook_lifecycle_and_documented_delivery(monkeypatch, operation):
+    event = TRIGGER_EVENTS[operation][0]
+    payload = _documented_event(event)
+    requests = []
+
+    def callback(request):
+        requests.append(request)
+        if request.method == 'DELETE':
+            return httpx.Response(204)
+        body = json.loads(request.content)
+        assert body == {'event': event, 'url': 'https://example.com/shippo-webhook', 'active': True, 'is_test': True}
+        assert request.url.path == '/webhooks'
+        return httpx.Response(201, json={**body, 'object_id': '9c9783fa0e1148c98eba040141801119'})
+
+    _transport(monkeypatch, callback)
+    config = _config(operation, is_test=True).config.model_dump()
+    state = await ShippoNode._register_external_webhook(
+        webhook_url='https://example.com/shippo-webhook', credential={'api_key': 'shippo_test_example'},
+        config=config, node_id='test')
+    assert state == {'external_webhook_id': '9c9783fa0e1148c98eba040141801119'}
+    config.update(state)
+    assert ShippoNode.filter_trigger_payload(payload, config)
+    assert not ShippoNode.filter_trigger_payload({**payload, 'test': False}, config)
+    assert not ShippoNode.filter_trigger_payload({**payload, 'event': 'unsupported'}, config)
+    output = ShippoNode.resolve_trigger_payload(payload, config)
+    assert output['data'] is payload
+    agent_event = ShippoNode.resolve_agent_event(output)
+    assert agent_event['conversation_key'] and agent_event['text']
+    assert 'To act:' in agent_event['text']
+    if event == 'track_updated':
+        assert '9205590164917312751089' in agent_event['text']
+        assert 'DELIVERED' in agent_event['text']
+        assert 'Las Vegas' in agent_event['text']
+    elif event.startswith('transaction_'):
+        assert payload['data']['object_id'] in agent_event['text']
+        assert payload['data']['created_by']['username'] in agent_event['text']
+        assert payload['data']['label_url'] in agent_event['text']
+    await ShippoNode._unregister_external_webhook(credential={'api_key': 'shippo_test_example'}, config=config, node_id='test')
+    assert requests[-1].method == 'DELETE'
+    assert requests[-1].url.path == '/webhooks/9c9783fa0e1148c98eba040141801119'
+    assert all(r.headers['Authorization'] == 'ShippoToken shippo_test_example' for r in requests)
+
+
+def test_hmac_signature_follows_shippo_documented_algorithm():
+    body = json.dumps(_documented_event('track_updated')).encode()
+    timestamp = '1688493073'
+    secret = 'test-hmac-secret'
+    signature = hmac.new(secret.encode(), timestamp.encode() + b'.' + body, hashlib.sha256).hexdigest()
+    headers = {'Shippo-Auth-Signature': f't={timestamp},v1={signature}'}
+    config = {'hmac_secret': secret}
+    assert ShippoNode.verify_webhook_signature(body, headers, config)
+    assert ShippoNode.verify_webhook_signature(body, {k.lower():v for k,v in headers.items()}, config)
+    assert not ShippoNode.verify_webhook_signature(body + b' ', headers, config)
+    assert not ShippoNode.verify_webhook_signature(body, headers, {'hmac_secret': 'wrong'})
+    assert not ShippoNode.verify_webhook_signature(body, {}, config)
+    assert not ShippoNode.verify_webhook_signature(body, {'Shippo-Auth-Signature': 't=no,v1=bad'}, config)
+    assert ShippoNode.verify_webhook_signature(body, {}, {})
+
+
+@pytest.mark.parametrize('operation', TRIGGER_EVENTS)
+@pytest.mark.asyncio
+async def test_trigger_manual_run_has_no_event_and_schema_declares_trigger(operation):
+    node = ShippoNode(node_id='test', node_type='automation-shippo', node_data={}, config=_config(operation))
+    result = await node.execute({'event': 'invented'})
+    assert result['status'] == 'no_event'
+    assert result['data'] == {}
+    assert TRIGGER_MODELS[operation].model_json_schema()['properties']['operation']['x-is-trigger'] is True
+    assert ShippoNode.registration_fingerprint_fields({'is_test': True}) != ShippoNode.registration_fingerprint_fields({})
+
+
+@pytest.mark.asyncio
+async def test_registration_requires_webhook_id_and_cleanup_handles_missing_registration(monkeypatch):
+    _transport(monkeypatch, lambda request: httpx.Response(201, json={}))
+    with pytest.raises(ValueError, match='webhook ID'):
+        await ShippoNode._register_external_webhook(webhook_url='https://example.com', credential={'api_key':'token'},
+                                                  config={'operation':'on_tracking_updated'}, node_id='test')
+    await ShippoNode._unregister_external_webhook(credential=None, config={}, node_id='test')
