@@ -1,0 +1,69 @@
+{
+  "body": [
+    {
+      "firstName": "Carla",
+      "lastName": "Creative",
+      "birthDate": "1998-04-19T00:00:000Z",
+      "gender": "female",
+      "title": "Miss",
+      "position": "string",
+      "language": "en-GB",
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "status": {
+        "invitationAccepted": true,
+        "isDeactivated": true
+      },
+      "createdOn": "2026-01-15T09:30:00Z",
+      "createdBy": "123e4567-e89b-12d3-a456-426614174000",
+      "updatedOn": "2026-01-15T09:30:00Z",
+      "updatedBy": "123e4567-e89b-12d3-a456-426614174000",
+      "isArchived": false,
+      "isDeactivated": false,
+      "deactivatedOn": "2026-01-15T09:30:00Z",
+      "deletedOn": "2026-01-15T09:30:00Z",
+      "hasImage": true,
+      "shouldMigrateToConnect": true,
+      "userContactInfos": [
+        {
+          "label": null,
+          "value": null,
+          "type": "address",
+          "subType": "work",
+          "addressLine1": "Torstrasse 140",
+          "addressLine2": "Hof A",
+          "zipCode": "10119",
+          "city": "Berlin",
+          "state": null,
+          "country": "DE",
+          "isAddress": true,
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "createdOn": "2026-01-15T09:30:00Z",
+          "createdBy": "123e4567-e89b-12d3-a456-426614174000",
+          "updatedOn": "2026-01-15T09:30:00Z",
+          "updatedBy": "123e4567-e89b-12d3-a456-426614174000"
+        }
+      ],
+      "resourceVersion": 637825154598057900,
+      "tags": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "name": "Design",
+          "color": "purple"
+        }
+      ],
+      "teams": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174000",
+          "name": "Designers",
+          "icon": "paintbrush",
+          "color": "purple"
+        }
+      ],
+      "isExternal": true,
+      "availableProducts": [
+        "string"
+      ]
+    }
+  ],
+  "source": "https://developers.awork.com/apiv1/users/get-users"
+}

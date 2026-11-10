@@ -1,0 +1,74 @@
+{
+  "timestamp": "2025-07-24T14:28:39.5966465+00:00",
+  "eventType": "project_added",
+  "entity": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "hasImage": false,
+    "createdOn": "2023-09-03T20:28:39.5961826Z",
+    "createdBy": "123e4567-e89b-12d3-a456-426614174000",
+    "updatedOn": "2025-07-24T14:28:40.017585Z",
+    "updatedBy": "123e4567-e89b-12d3-a456-426614174000",
+    "projectStatus": {
+      "typeOrder": 2,
+      "isArchived": false,
+      "type": "not-started",
+      "name": "Not started",
+      "id": "fb7de344-aa95-4d75-ae1b-c7c01393f267"
+    },
+    "tags": [
+      "design"
+    ],
+    "plannedDuration": 0,
+    "tasksCount": 0,
+    "tasksDoneCount": 0,
+    "members": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "userId": "123e4567-e89b-12d3-a456-426614174000",
+        "firstName": "Carla",
+        "lastName": "Creative",
+        "hasImage": false,
+        "projectRoleId": "123e4567-e89b-12d3-a456-426614174000",
+        "projectRoleName": "Project Member",
+        "isResponsible": true,
+        "isDeactivated": false
+      }
+    ],
+    "trackedDuration": 0,
+    "teams": [],
+    "projectStatusId": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "Website Design",
+    "isPrivate": false,
+    "timeBudget": 0,
+    "isBillableByDefault": false
+  },
+  "entityId": "123e4567-e89b-12d3-a456-426614174000",
+  "entityType": "project",
+  "entityLink": "https://superstar-design.awork.com/projects/123e4567-e89b-12d3-a456-426614174000",
+  "traceId": "5a8e9540f698455b48cd092811ade4e9",
+  "triggeredBy": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "firstName": "Carla",
+    "lastName": "Creative"
+  },
+  "changes": [
+    {
+      "property": "ClosedBy",
+      "new": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    {
+      "property": "ClosedOn",
+      "new": "2025-07-24T14:28:39.5966465+00:00"
+    },
+    {
+      "property": "TaskStatusId",
+      "old": "123e4567-e89b-12d3-a456-426614174000",
+      "new": "123e4567-e89b-12d3-a456-426614174001"
+    },
+    {
+      "property": "UpdatedOn",
+      "old": "2025-07-24T14:28:39.5966465+00:00",
+      "new": "2025-07-24T14:28:39.5966465+00:00"
+    }
+  ]
+}
