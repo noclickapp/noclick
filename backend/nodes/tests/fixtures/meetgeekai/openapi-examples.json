@@ -1,0 +1,211 @@
+{
+  "source": "https://docs.meetgeek.ai/api-reference/openapi.json",
+  "sha256": "0aec6b2f1214474ddf525082ccca5e6d616368188131387f10f2646f9b0afcad",
+  "description": "Response fixtures assembled recursively from the pinned provider schema property examples. No live API claims.",
+  "responses": {
+    "POST /v1/meetings/{meetingId}/download": {
+      "status": 200,
+      "body": {
+        "download_link": "https://media.meetgeek.ai/api/download?token=jQzYmM1NTAtM2NmMi00MmNhLW",
+        "expires_in": 14400
+      }
+    },
+    "POST /v1/bot/join": {
+      "status": 200,
+      "body": {
+        "meeting_id": "04688faf-b98b-468c-9723-6242b818e025",
+        "message": "MeetGeek bot will join shortly"
+      }
+    },
+    "GET /v1/meetings": {
+      "status": 200,
+      "body": {
+        "meetings": [
+          {
+            "meeting_id": "7e0f1953-b2ce-45b8-97b2-03c09da3a602",
+            "timestamp_end_utc": "2024-08-08T14:00:34Z",
+            "timestamp_start_utc": "2024-08-08T13:00:38Z"
+          }
+        ],
+        "pagination": {
+          "next_cursor": "gASVSgAAAAAAAABdlCiMGDIwMj==",
+          "previous_cursor": "sDAACgCCCBo97zDAsCqcADPUzA=="
+        }
+      }
+    },
+    "GET /v1/meetings/{meetingId}": {
+      "status": 200,
+      "body": {
+        "host_email": "sasha@example.com",
+        "language": "en-US",
+        "meeting_id": "7e0f1953-b2ce-45b8-97b2-03c09da3a602",
+        "participant_emails": [
+          "john@example.com",
+          "maria@example.com"
+        ],
+        "source": "google",
+        "join_link": "https://meet.google.com/jcn-vnax-tkf",
+        "timestamp_end_utc": "2024-08-08T14:00:34Z",
+        "timestamp_start_utc": "2024-08-08T13:00:38Z",
+        "timezone": "Europe/Paris",
+        "title": "All-hands Meeting",
+        "template": {
+          "id": 611549,
+          "name": "General meeting"
+        },
+        "team_ids": [
+          123,
+          456
+        ],
+        "event_id": "0qbhrdosgr33g7s49nq9h3uml7_20250918T080000Z"
+      }
+    },
+    "DELETE /v1/meetings/{meetingId}": {
+      "status": 200,
+      "body": null
+    },
+    "GET /v1/meetings/{meetingId}/insights": {
+      "status": 200,
+      "body": {
+        "kpi_meeting": [
+          {
+            "meeting_id": "0b9d3260-67fc-4353-a74b-ef80152f2942",
+            "title": "Engagement",
+            "score": 4.5,
+            "interpretation": "All participants actively contributed to the discussion, leading to effective interaction and good collaboration.",
+            "details": [
+              {
+                "name": "John Doe",
+                "talk_time": 20,
+                "words_min": 120,
+                "longest_talk": 5
+              }
+            ],
+            "type": "custom",
+            "created_at": "2025-10-13T07:47:51+00:00",
+            "updated_at": "2025-10-13T07:47:51+00:00"
+          }
+        ],
+        "kpi_popular_themes": {
+          "id": 2034148,
+          "meeting_id": "0b9d3260-67fc-4353-a74b-ef80152f2942",
+          "popular_list": [
+            {
+              "id": 0,
+              "name": "Technical issues",
+              "times": 5
+            }
+          ],
+          "created_at": "2025-10-13T07:47:51+00:00",
+          "updated_at": "2025-10-13T07:47:51+00:00"
+        },
+        "kpi_improvement": {
+          "id": 2034326,
+          "meeting_id": "0b9d3260-67fc-4353-a74b-ef80152f2942",
+          "keep_doing": [
+            {
+              "id": 0,
+              "text": "Participants were actively involved in the discussion, which contributed to a collaborative atmosphere.",
+              "title": "Active participant involvement"
+            }
+          ],
+          "top_suggestions": [
+            {
+              "id": 0,
+              "text": "The allocated time per topic should be better respected to avoid overruns.",
+              "title": "Better time management"
+            }
+          ],
+          "created_at": "2025-10-13T07:47:51+00:00",
+          "updated_at": "2025-10-13T07:47:51+00:00"
+        },
+        "old_view": false
+      }
+    },
+    "GET /v1/meetings/{meetingId}/highlights": {
+      "status": 200,
+      "body": {
+        "meeting_id": "17c36737-1bf5-4626-8483-88285f6a33ee",
+        "highlights": [
+          {
+            "highlightText": "John has been assigned to cross check KPIs from different company data ingestors.",
+            "label": "Task"
+          }
+        ]
+      }
+    },
+    "GET /v1/meetings/{meetingId}/summary": {
+      "status": 200,
+      "body": {
+        "meeting_id": "17c36737-1bf5-4626-8483-88285f6a33ee",
+        "ai_insights": "The meeting demonstrated a strong overall performance, particularly in clarity of action items and time management efficiency, with several instances of clear communication regarding responsibilities and effective adherence to the schedule. Engagement levels were notably high, reflecting active participation from team members, although there were some areas where clarity in action items could be improved.",
+        "summary": "John discussed the importance of monitoring the company\u2019s quarterly results by cross-checking KPIs from various data ingestors. He emphasized the need for a comprehensive approach, integrating data from sales, marketing, and customer feedback channels to get a holistic view of performance. By comparing these metrics, John believes the company can identify trends, spot discrepancies, and make data-driven decisions. He also suggested implementing real-time dashboards to ensure that key stakeholders can access up-to-date information, enabling swift adjustments to strategy as needed."
+      }
+    },
+    "GET /v1/meetings/{meetingId}/transcript": {
+      "status": 200,
+      "body": {
+        "meeting_id": "17c36737-1bf5-4626-8483-88285f6a33ee",
+        "pagination": {
+          "next_cursor": "gASVSgAAAAAAAABdlCiMGDIwMj==",
+          "previous_cursor": "sDAACgCCCBo97zDAsCqcADPUzA=="
+        },
+        "sentences": [
+          {
+            "id": 1,
+            "speaker": "John Doe",
+            "timestamp": "2024-08-08T14:00:34Z",
+            "transcript": "Previous quarter was great!"
+          }
+        ]
+      }
+    },
+    "GET /v1/teams": {
+      "status": 200,
+      "body": {
+        "share_access": [
+          {
+            "id": 101437,
+            "name": "Marketing Team"
+          },
+          {
+            "id": 101438,
+            "name": "Sales Team"
+          }
+        ],
+        "view_access": [
+          {
+            "id": 101437,
+            "name": "Marketing Team"
+          },
+          {
+            "id": 101439,
+            "name": "Engineering Team"
+          }
+        ]
+      }
+    },
+    "GET /v1/teams/{teamId}/meetings": {
+      "status": 200,
+      "body": {
+        "meetings": [
+          {
+            "meeting_id": "7e0f1953-b2ce-45b8-97b2-03c09da3a602",
+            "timestamp_end_utc": "2024-08-08T14:00:34Z",
+            "timestamp_start_utc": "2024-08-08T13:00:38Z"
+          }
+        ],
+        "pagination": {
+          "next_cursor": "gASVSgAAAAAAAABdlCiMGDIwMj==",
+          "previous_cursor": "sDAACgCCCBo97zDAsCqcADPUzA=="
+        }
+      }
+    },
+    "POST /v1/upload": {
+      "status": 202,
+      "body": {
+        "message": "The recording has been validated and submitted for analysis"
+      }
+    }
+  }
+}
