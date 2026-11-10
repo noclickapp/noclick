@@ -1,0 +1,4 @@
+{
+  "source": "https://github.com/gotify/server/blob/v3.1.1/api/message_test.go#L51-L64",
+  "body": {"id":55,"appid":2,"message":"hi","title":"hi","priority":4,"date":"2017-01-02T00:00:00Z","extras":{"test::string":"string","test::array":[1,2,3],"test::int":1,"test::float":0.5}}
+}
