@@ -20,7 +20,7 @@ export const QontoNode: NodeDefinition = {
     category: 'finance-accounting',
     label: 'Qonto',
     description:
-        'Automate Qonto transactions, invoices, clients, products and account reporting',
+        'Start workflows from Qonto transaction and invoice events; automate account reporting and bookkeeping',
     Icon: QontoIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -171,3 +171,91 @@ def test_qonto_fixture_has_no_embedded_storage_credentials():
         url = urlsplit(attachment["url"])
         assert url.scheme == "https" and url.hostname == "example.invalid"
         assert not url.query
+
+
+def webhook_examples():
+    from pathlib import Path
+    return json.loads((Path(__file__).parent / 'fixtures/qonto/webhooks.json').read_text())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('operation,event_type', list(native.WEBHOOK_TYPES.items()))
+async def test_webhook_registration_and_teardown(monkeypatch, operation, event_type):
+    # The registration schema is a flat subscription with a one-time secret.
+    from nodes.oauth.qonto_oauth import OAUTH_PROVIDER
+    secret = 'whsec_VuvcYxzMbryt1UBytq58jtGBxCgbQdzX/c0vj5ZLjUA='
+    requests = mock(monkeypatch, {'id': '123e4567-e89b-12d3-a456-426614174000', 'secret': secret}, 201)
+    credential = {'credential_type': 'qonto_oauth', 'access_token': 'synthetic-oauth-token'}
+    state = await native.QontoNode._register_external_webhook(webhook_url='https://api.partner.com/webhooks/qonto',
+        credential=credential, config={'operation': operation}, node_id='test')
+    assert json.loads(requests[0].content) == {'callback_url': 'https://api.partner.com/webhooks/qonto', 'types': [event_type]}
+    assert requests[0].headers['Authorization'] == 'Bearer synthetic-oauth-token'
+    assert state == {'external_webhook_id': '123e4567-e89b-12d3-a456-426614174000', 'signing_secret': secret}
+    parsed = native.QontoFullConfig.model_validate({'config': {'operation': operation, **state}, 'credentials': credential})
+    assert parsed.config.signing_secret == secret
+    assert parsed.config.model_dump()['external_webhook_id'] == state['external_webhook_id']
+    requests = mock(monkeypatch, None, 204)
+    await native.QontoNode._unregister_external_webhook(credential=credential, config=state, node_id='test')
+    assert requests[0].method == 'DELETE'
+    assert requests[0].url.path == '/v2/webhook_subscriptions/' + state['external_webhook_id']
+    assert OAUTH_PROVIDER.identity_url == native.BASE + '/v2/organization'
+    assert OAUTH_PROVIDER.token_auth == 'body' and OAUTH_PROVIDER.rotates_refresh_tokens
+
+
+@pytest.mark.asyncio
+async def test_api_key_cannot_register_webhooks(monkeypatch):
+    requests = mock(monkeypatch, {})
+    with pytest.raises(ValueError, match='OAuth'):
+        await native.QontoNode._register_external_webhook(webhook_url='https://api.partner.com/webhooks/qonto',
+            credential=CREDENTIAL, config={'operation': 'on_transaction'}, node_id='test')
+    assert not requests
+
+
+def test_documented_signature_vector_and_tampering():
+    # https://docs.qonto.com/guides/webhooks/setup
+    body = b'{"test":"data"}'
+    header = 't=1704110400,v1=56aff06dc227db80d6568a5070f912c601c31f20451745d257cbc0b5dfa93805'
+    verify = native.QontoNode.verify_webhook_signature
+    config = {'signing_secret': 'test-secret'}
+    assert verify(body, {'X-Qonto-Signature': header}, config)
+    assert not verify(body + b' ', {'X-Qonto-Signature': header}, config)
+    assert not verify(body, {'X-Qonto-Signature': header}, {'signing_secret': 'different'})
+    for bad in ['', 'v1=abc', 't=x,v1=abc', 't=1,t=2,v1=abc', 't=1,v1=☃', 't=1,broken']:
+        assert not verify(body, {'X-Qonto-Signature': bad}, config)
+    assert not verify(body, {'X-Qonto-Signature': header}, {})
+
+
+@pytest.mark.parametrize('operation,event_type', list(native.WEBHOOK_TYPES.items()))
+def test_documented_events_reach_workflows_and_agents(operation, event_type):
+    body = webhook_examples()[event_type]['body']
+    cls = native.QontoNode
+    config = {'operation': operation}
+    assert cls.filter_trigger_payload(body, config)
+    output = cls.resolve_trigger_payload(body, config)
+    event = cls.resolve_agent_event(output)
+    assert body['data']['id'] in event['text']
+    assert body['organization_id'] in event['text']
+    assert event['conversation_key'].endswith(body['data']['id'])
+    if operation == 'on_transaction':
+        assert 'ACME Corp' in event['text'] and 'Business lunch' in event['text']
+        assert 'get_transaction transaction_id=' in event['text']
+    else:
+        assert "McDonald's" in event['text'] and 'paid' in event['text']
+        assert 'get_client_invoice client_invoice_id=' in event['text']
+    other = 'on_client_invoice' if operation == 'on_transaction' else 'on_transaction'
+    assert not cls.filter_trigger_payload(body, {'operation': other})
+    assert not cls.filter_trigger_payload({'type': event_type, 'data': {}}, config)
+
+
+@pytest.mark.asyncio
+async def test_oauth_action_transport(monkeypatch):
+    from nodes.core import oauth_refresh
+    async def fresh(**kwargs):
+        return kwargs['credential']['access_token']
+    monkeypatch.setattr(oauth_refresh, 'ensure_fresh_oauth_token', fresh)
+    requests = mock(monkeypatch, {'organization': {'id': ID, 'name': 'Pied Piper'}})
+    instance = NodeFactory.create_node(node_id='qonto-test', node_type='automation-qonto',
+        node_data={'config': {'operation': 'get_organization'},
+            'credentials': {'credential_type': 'qonto_oauth', 'access_token': 'synthetic-oauth-token'}})
+    assert (await instance.execute({}))['status'] == 'success'
+    assert requests[0].headers['Authorization'] == 'Bearer synthetic-oauth-token'

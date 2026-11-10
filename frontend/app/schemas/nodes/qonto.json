@@ -1034,8 +1034,8 @@
           "anyOf": [
             {
               "enum": [
-                "debit",
-                "credit"
+                "credit",
+                "debit"
               ],
               "type": "string"
             },
@@ -1046,8 +1046,8 @@
           "default": null,
           "title": "Side",
           "enum": [
-            "debit",
-            "credit"
+            "credit",
+            "debit"
           ],
           "x-enum-searchable": true
         },
@@ -1203,6 +1203,322 @@
       ],
       "title": "QontoMarkSupplierInvoiceAsPaidConfig",
       "type": "object"
+    },
+    "QontoOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "qonto_oauth",
+          "default": "qonto_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Qonto Account",
+      "type": "object",
+      "x-credential-instructions": "Connect your Qonto organization. OAuth is required for triggers; API keys support the existing account and bookkeeping operations.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developers.qonto.com/",
+      "x-oauth-provider": "qonto",
+      "x-oauth-scopes": [
+        "client.read",
+        "client.write",
+        "client_invoices.read",
+        "offline_access",
+        "organization.read",
+        "product.read",
+        "product.write",
+        "supplier_invoice.read",
+        "supplier_invoice.write",
+        "webhook"
+      ]
+    },
+    "QontoOnClientInvoiceConfig": {
+      "description": "Start when a Qonto client invoice is created or updated.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_client_invoice",
+          "default": "on_client_invoice",
+          "title": "New or Updated Client Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "New or Updated Client Invoice",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically with Qonto. Connect a Qonto OAuth account to activate.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "QontoOnClientInvoiceConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "QontoOnTransactionConfig": {
+      "description": "Start when a Qonto transaction is created or updated.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_transaction",
+          "default": "on_transaction",
+          "title": "New or Updated Transaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "New or Updated Transaction",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically with Qonto. Connect a Qonto OAuth account to activate.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "QontoOnTransactionConfig",
+      "type": "object",
+      "x-requires-webhook": true
     },
     "QontoUnmarkSupplierInvoiceAsPaidConfig": {
       "additionalProperties": false,
@@ -1437,12 +1753,20 @@
           "list_supplier_invoices": "#/$defs/QontoListSupplierInvoicesConfig",
           "list_transactions": "#/$defs/QontoListTransactionsConfig",
           "mark_supplier_invoice_as_paid": "#/$defs/QontoMarkSupplierInvoiceAsPaidConfig",
+          "on_client_invoice": "#/$defs/QontoOnClientInvoiceConfig",
+          "on_transaction": "#/$defs/QontoOnTransactionConfig",
           "unmark_supplier_invoice_as_paid": "#/$defs/QontoUnmarkSupplierInvoiceAsPaidConfig",
           "update_client": "#/$defs/QontoUpdateClientConfig"
         },
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/QontoOnTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/QontoOnClientInvoiceConfig"
+        },
         {
           "$ref": "#/$defs/QontoGetOrganizationConfig"
         },
@@ -1521,11 +1845,15 @@
           "$ref": "#/$defs/QontoAPIKeyCredential"
         },
         {
+          "$ref": "#/$defs/QontoOAuthCredential"
+        },
+        {
           "type": "null"
         }
       ],
       "default": null,
-      "description": "Credentials for this node (optional if using environment variables)"
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
     }
   },
   "required": [

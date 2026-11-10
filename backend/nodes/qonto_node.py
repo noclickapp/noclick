@@ -1,10 +1,14 @@
 """Qonto Business API v2 using a customer's organization login and secret key.
 
 Contract: https://docs.qonto.com/api-reference/business-api/introduction
-Only endpoints accepting SecretKey authentication are exposed. Each operation
+Account and bookkeeping endpoints support API keys or OAuth; signed webhook triggers
+require OAuth. Each action operation
 makes exactly one request; list operations return one page and its continuation.
 """
 from __future__ import annotations
+
+import hashlib
+import hmac
 
 from datetime import date, datetime
 from typing import Annotated, Literal, Union
@@ -14,6 +18,8 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, mo
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
+from nodes.scopes.qonto import QONTO_SCOPES
 from utils.ssrf import guarded_async_client
 
 BASE = "https://thirdparty.qonto.com"
@@ -41,6 +47,21 @@ class QontoAPIKeyCredential(BaseModel):
         if not value or not value.isascii() or any(c.isspace() or ord(c) < 33 or ord(c) == 127 or c == ":" for c in value):
             raise ValueError("Paste a single credential value without a colon, prefix or whitespace")
         return value
+
+
+class QontoOAuthCredential(BaseModel):
+    model_config = ConfigDict(title="Qonto Account", hide_input_in_errors=True,
+        json_schema_extra={"x-credential-type": "oauth", "x-oauth-provider": "qonto",
+            "x-oauth-scopes": QONTO_SCOPES.declared_scopes(),
+            "x-credential-url": "https://developers.qonto.com/",
+            "x-credential-instructions": "Connect your Qonto organization. OAuth is required for triggers; API keys support the existing account and bookkeeping operations."})
+    credential_type: Literal["qonto_oauth"] = Field("qonto_oauth", json_schema_extra={"ui:hidden": True})
+    access_token: str = Field(..., title="Access Token", repr=False)
+    refresh_token: str | None = Field(None, title="Refresh Token", repr=False)
+    expires_at: str | None = Field(None, title="Token Expiry")
+
+
+QontoCredential = Union[QontoAPIKeyCredential, QontoOAuthCredential]
 
 
 class _Input(BaseModel):
@@ -260,7 +281,32 @@ class QontoDeleteProductConfig(_Input):
     product_id: str = Field(..., description="Qonto resource UUID.", json_schema_extra={"format": "uuid"})
 
 
+class QontoOnTransactionConfig(WebhookTriggerConfigBase):
+    """Start when a Qonto transaction is created or updated."""
+    operation: Literal["on_transaction"] = Field("on_transaction", title="New or Updated Transaction",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+            "x-display-name": "New or Updated Transaction"})
+    webhook_url: str | None = Field(None, title="Webhook URL",
+        description="Registered automatically with Qonto. Connect a Qonto OAuth account to activate.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+class QontoOnClientInvoiceConfig(WebhookTriggerConfigBase):
+    """Start when a Qonto client invoice is created or updated."""
+    operation: Literal["on_client_invoice"] = Field("on_client_invoice", title="New or Updated Client Invoice",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers",
+            "x-display-name": "New or Updated Client Invoice"})
+    webhook_url: str | None = Field(None, title="Webhook URL",
+        description="Registered automatically with Qonto. Connect a Qonto OAuth account to activate.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+WEBHOOK_TYPES = {"on_transaction": "v1/transactions", "on_client_invoice": "v1/client-invoices"}
+
+
 QontoConfig = Annotated[Union[
+    QontoOnTransactionConfig,
+    QontoOnClientInvoiceConfig,
     QontoGetOrganizationConfig,
     QontoListTransactionsConfig,
     QontoGetTransactionConfig,
@@ -287,7 +333,7 @@ QontoConfig = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class QontoFullConfig(NodeConfig[QontoConfig, QontoAPIKeyCredential]):
+class QontoFullConfig(NodeConfig[QontoConfig, QontoCredential]):
     pass
 
 
@@ -328,19 +374,129 @@ def _redact(value, secret):
     return value
 
 
-class QontoNode(WorkflowNode):
+class QontoNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-qonto"
+    scope_registry = QONTO_SCOPES
+    credential_provider_labels = {"qonto": "Qonto Account"}
     connection_evidence = ConnectionEvidence(noun="organization", identity_operation="get_organization")
 
     @classmethod
     def get_config_model(cls):
         return QontoFullConfig
 
+    @classmethod
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        if credential_data.get("credential_type") != "qonto_oauth":
+            return credential_data
+        from nodes.core.oauth_refresh import freshen_oauth_credential
+        from nodes.oauth.qonto_oauth import refresh_access_token
+        return await freshen_oauth_credential(credential_data, pool=pool, user_id=user_id,
+            credential_id=credential_id, refresh=refresh_access_token, provider="qonto")
+
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, body=None):
+        if credential.get("credential_type") != "qonto_oauth" or not credential.get("access_token"):
+            raise ValueError("Connect a Qonto OAuth account to activate this trigger; API keys cannot register webhooks")
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, BASE + path, json=body,
+                headers={"Authorization": "Bearer " + credential["access_token"], "Accept": "application/json"})
+        expected = 201 if method == "POST" else 204
+        if response.status_code != expected:
+            raise ValueError("Qonto webhook request failed (HTTP " + str(response.status_code) + ")")
+        return response.json() if method == "POST" else None
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event_type = WEBHOOK_TYPES.get((config or {}).get("operation"))
+        if not event_type:
+            raise ValueError("Choose a Qonto trigger operation")
+        data = await cls._webhook_request(credential, "POST", "/v2/webhook_subscriptions",
+            {"callback_url": webhook_url, "types": [event_type]})
+        if not isinstance(data, dict) or not data.get("id") or not data.get("secret"):
+            raise ValueError("Qonto did not return a subscription ID and signing secret")
+        return {"external_webhook_id": str(UUID(data["id"])), "signing_secret": data["secret"]}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        external_id = (config or {}).get("external_webhook_id")
+        if not external_id:
+            return
+        await cls._webhook_request(credential or {}, "DELETE", "/v2/webhook_subscriptions/" + str(UUID(str(external_id))))
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # https://docs.qonto.com/guides/webhooks/setup: HMAC of timestamp.raw_body.
+        secret = (config or {}).get("signing_secret")
+        if not isinstance(secret, str) or not secret:
+            return False
+        header = next((v for k, v in headers.items() if k.lower() == "x-qonto-signature"), "")
+        parts = [part.strip().split("=", 1) for part in header.split(",")]
+        timestamps = [v for k, v in parts if k == "t"] if all(len(p) == 2 for p in parts) else []
+        if len(timestamps) != 1 or not timestamps[0].isascii() or not timestamps[0].isdigit():
+            return False
+        expected = hmac.new(secret.encode(), timestamps[0].encode() + b"." + body, hashlib.sha256).hexdigest()
+        return any(hmac.compare_digest(v, expected) for k, v in parts if k == "v1" and v.isascii())
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event_type = WEBHOOK_TYPES.get((config or {}).get("operation"))
+        return bool(event_type and payload.get("type") == event_type
+            and isinstance(payload.get("data"), dict) and payload["data"].get("id"))
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        kind = output.get("type")
+        if kind not in WEBHOOK_TYPES.values():
+            return super().resolve_agent_event(output)
+        record = output.get("data")
+        if not isinstance(record, dict) or not record.get("id"):
+            return None
+        resource_id = record["id"]
+        organization_id = output.get("organization_id")
+        lines = []
+        if kind == "v1/transactions":
+            heading = "Qonto transaction " + str(record.get("event") or "changed")
+            lines += [heading, "Counterparty: " + str(record.get("clean_counterparty_name") or record.get("label") or "Unknown"),
+                "Amount: " + str(record.get("amount")) + " " + str(record.get("currency") or ""),
+                "Side: " + str(record.get("side") or ""), "Status: " + str(record.get("status") or ""),
+                "Note: " + str(record.get("note") or ""), "Reference: " + str(record.get("reference") or ""),
+                "Bank account ID: " + str(record.get("bank_account_id") or ""),
+                "To act: get_transaction transaction_id=" + str(resource_id)]
+        else:
+            heading = "Qonto client invoice changed: " + str(record.get("number") or resource_id)
+            client = record.get("client") or {}
+            total = record.get("total_amount") or {}
+            lines += [heading, "Client: " + str(client.get("name") or ""),
+                "Contact: " + str(record.get("contact_email") or ""),
+                "Amount: " + str(total.get("value") or "") + " " + str(total.get("currency") or ""),
+                "Status: " + str(record.get("status") or ""), "Due date: " + str(record.get("due_date") or ""),
+                "To act: get_client_invoice client_invoice_id=" + str(resource_id)]
+        lines += ["Resource ID: " + str(resource_id), "Organization ID: " + str(organization_id or ""),
+            "Membership ID: " + str(output.get("membership_id") or ""), "Event ID: " + str(output.get("id") or ""),
+            "At: " + str(output.get("created_at") or "")]
+        return {"text": "\n".join(lines)[:12000], "conversation_key": str(organization_id) + ":" + kind + ":" + str(resource_id), "title": heading[:200]}
+
     async def execute(self, inputs):
         if not self.config.credentials:
             raise ValueError("Connect your Qonto organization login and secret key")
         credential = self.config.credentials
         config = self.config.config
+        if config.operation in WEBHOOK_TYPES:
+            if not isinstance(credential, QontoOAuthCredential):
+                raise ValueError("Connect a Qonto OAuth account to activate this trigger")
+            if not self.filter_trigger_payload(inputs, config.model_dump()):
+                return {"status": "no_event"}
+            return self.resolve_trigger_payload(inputs, config.model_dump())
+        if isinstance(credential, QontoOAuthCredential):
+            from nodes.core.oauth_refresh import ensure_fresh_oauth_token
+            from nodes.oauth.qonto_oauth import refresh_access_token
+            data = credential.model_dump()
+            await ensure_fresh_oauth_token(credential_id=(self.node_data or {}).get("credential_id"),
+                user_id=self.user_id, credential=data, refresh=refresh_access_token,
+                provider="qonto", caller_path="execute")
+            credential.access_token = data["access_token"]
+            credential.refresh_token = data.get("refresh_token")
+            credential.expires_at = data.get("expires_at")
         method, template = ROUTES[config.operation]
         values = config.model_dump(mode="json", exclude_none=True, exclude={"operation"})
         path = template
@@ -370,9 +526,11 @@ class QontoNode(WorkflowNode):
             body["unit_price"] = {"value": body.pop("unit_price_value"), "currency": body.pop("currency")}
         elif method in {"POST", "PATCH"} and values:
             body = values
+        authorization = ("Bearer " + credential.access_token) if isinstance(credential, QontoOAuthCredential) else credential.login + ":" + credential.secret_key
+        secret = credential.access_token if isinstance(credential, QontoOAuthCredential) else credential.secret_key
         async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
             response = await client.request(method, BASE + path, params=params, json=body,
-                headers={"Authorization": credential.login + ":" + credential.secret_key, "Accept": "application/json"})
+                headers={"Authorization": authorization, "Accept": "application/json"})
         expected = 204 if method == "DELETE" else 201 if config.operation == "create_product" else 200
         if response.status_code != expected:
             message = "Qonto request failed (HTTP " + str(response.status_code) + ")"
@@ -382,7 +540,7 @@ class QontoNode(WorkflowNode):
                     message = str(error.get("errors") or error.get("message") or message)[:2000]
                 except (ValueError, AttributeError):
                     pass
-            return {"status": "error", "error": _redact(message, credential.secret_key), "http_status": response.status_code}
+            return {"status": "error", "error": _redact(message, secret), "http_status": response.status_code}
         if expected == 204:
             return {"status": "success", "deleted": True}
         if len(response.content) > 10_000_000:
@@ -390,7 +548,7 @@ class QontoNode(WorkflowNode):
         payload = response.json()
         if not isinstance(payload, dict) or payload.get("errors"):
             raise ValueError("Qonto returned an unexpected response")
-        result = {"status": "success", "data": _redact(payload, credential.secret_key)}
+        result = {"status": "success", "data": _redact(payload, secret)}
         if config.operation.startswith("list_"):
             meta = payload.get("meta", {})
             result["next_page"] = meta.get("next_page") if isinstance(meta, dict) else None
