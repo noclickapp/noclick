@@ -5,14 +5,20 @@ provider page, including its cursors, so callers can explicitly continue.
 """
 from __future__ import annotations
 
-from typing import Annotated, Literal, Optional, Union
+from typing import Annotated, Any, Literal, Optional, Union
 from urllib.parse import quote
+import base64
+import binascii
+import hashlib
+import hmac
 import re
+import time
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 BASE = "https://api.openai.com/v1"
@@ -267,7 +273,29 @@ ChatGPTOperation = Annotated[Union[
 ], Field(discriminator="operation")]
 
 
-class ChatGPTConfig(NodeConfig[ChatGPTOperation, ChatGPTAPIKeyCredential]):
+CHATGPT_WEBHOOK_EVENTS = (
+    "response.completed", "response.failed", "response.cancelled", "response.incomplete",
+    "batch.completed", "batch.failed", "batch.expired", "batch.cancelled",
+    "eval.run.succeeded", "eval.run.failed", "eval.run.canceled",
+    "fine_tuning.job.succeeded", "fine_tuning.job.failed", "fine_tuning.job.cancelled",
+)
+
+
+class ChatGPTOnEvent(WebhookTriggerConfigBase):
+    """Receive project API events; personal ChatGPT conversations are not exposed."""
+
+    operation: Literal["on_event"] = Field("on_event", title="On OpenAI Event", json_schema_extra={
+        "const": "on_event", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On OpenAI Event",
+    })
+    event_type: Literal[*CHATGPT_WEBHOOK_EVENTS] = Field(
+        "response.completed", title="Event Type",
+        description="An event in the connected OpenAI project. Response events require background responses. These events do not include personal ChatGPT conversations.")
+    webhook_url: Optional[str] = Field(None, title="Webhook URL", description="Registered with OpenAI automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+class ChatGPTConfig(NodeConfig[Annotated[Union[ChatGPTOperation, ChatGPTOnEvent], Field(discriminator="operation")], ChatGPTAPIKeyCredential]):
     pass
 
 
@@ -300,7 +328,7 @@ ROUTES = {
 }
 
 
-class ChatGPTNode(WorkflowNode):
+class ChatGPTNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-chatgpt"
     connection_evidence = ConnectionEvidence(operation="list_models", noun="available OpenAI models", proves="reachability")
 
@@ -308,10 +336,107 @@ class ChatGPTNode(WorkflowNode):
     def get_config_model(cls):
         return ChatGPTConfig
 
+    @staticmethod
+    async def _webhook_request(credential, method, path, *, body=None):
+        key = (credential or {}).get("api_key")
+        if not key:
+            raise ValueError("Connect an OpenAI project API key before activating this trigger")
+        async with guarded_async_client(follow_redirects=False, trust_env=False, timeout=45.0) as client:
+            response = await client.request(method, BASE + path,
+                headers={"Authorization": "Bearer " + key, "Accept": "application/json"},
+                **({"json": body} if body is not None else {}))
+        if method == "DELETE" and response.status_code == 404:
+            return {}
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"OpenAI webhook request failed (HTTP {response.status_code})")
+        return response.json() if response.content else {}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event_type = (config or {}).get("event_type", "response.completed")
+        if event_type not in CHATGPT_WEBHOOK_EVENTS:
+            raise ValueError("Choose a supported OpenAI event")
+        endpoint = await cls._webhook_request(credential, "POST", "/webhook_endpoints", body={
+            "url": webhook_url, "name": f"NoClick {node_id}"[:256], "event_types": [event_type]})
+        if not isinstance(endpoint, dict) or not endpoint.get("id") or not endpoint.get("signing_secret"):
+            raise ValueError("OpenAI did not return a webhook endpoint ID and signing secret")
+        return {"external_webhook_id": endpoint["id"], "signing_secret": endpoint["signing_secret"]}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = (config or {}).get("external_webhook_id")
+        if endpoint_id and credential:
+            await cls._webhook_request(credential, "DELETE", "/webhook_endpoints/" + quote(str(endpoint_id), safe=""))
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"event_type": (config or {}).get("event_type", "response.completed")}
+
+    @classmethod
+    def verify_webhook_signature(cls, body: bytes, headers: dict[str, str], config: dict[str, Any]) -> bool:
+        """OpenAI Standard Webhooks: HMAC-SHA256(id.timestamp.raw_body).
+
+        https://developers.openai.com/api/docs/guides/webhooks
+        The five-minute timestamp window and rotated signatures match the official SDK.
+        """
+        secret = (config or {}).get("signing_secret")
+        headers = {k.lower(): v for k, v in headers.items()}
+        timestamp, event_id = headers.get("webhook-timestamp", ""), headers.get("webhook-id", "")
+        if not isinstance(secret, str) or not secret or not event_id:
+            return False
+        try:
+            if abs(int(time.time()) - int(timestamp)) > 300:
+                return False
+            key = base64.b64decode(secret[6:], validate=True) if secret.startswith("whsec_") else secret.encode()
+            expected = base64.b64encode(hmac.new(key,
+                event_id.encode() + b"." + timestamp.encode() + b"." + body, hashlib.sha256).digest()).decode()
+            return any(hmac.compare_digest(expected, part[3:] if part.startswith("v1,") else part)
+                for part in headers.get("webhook-signature", "").split())
+        except (ValueError, TypeError, UnicodeError, binascii.Error):
+            return False
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        kind = payload.get("type")
+        return kind in CHATGPT_WEBHOOK_EVENTS and kind == (config or {}).get("event_type", "response.completed")
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        if (config or {}).get("operation") != "on_event" or not cls.filter_trigger_payload(payload, config):
+            return None
+        return {"status": "success", "operation": "on_event", "data": {
+            key: payload[key] for key in ("id", "type", "created_at", "data") if key in payload}}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("operation") != "on_event":
+            return super().resolve_agent_event(output)
+        event = output.get("data") or {}
+        kind, data = event.get("type"), event.get("data") or {}
+        resource_id = data.get("id")
+        if kind not in CHATGPT_WEBHOOK_EVENTS or not isinstance(resource_id, str) or not resource_id:
+            return None
+        resource_id = resource_id[:256]
+        family = kind.rsplit(".", 1)[0]
+        action = {"response": f"Read the output with get_response response_id={resource_id}.",
+            "batch": f"Read the results with get_batch batch_id={resource_id}."}.get(family,
+            "Use this resource ID to retrieve the result from the OpenAI API.")
+        return {"text": f"OpenAI reported {kind} in the connected API project.\n"
+            f"Resource ID: {resource_id}\nEvent ID: {str(event.get('id', ''))[:256]}\n"
+            f"Occurred at (Unix seconds): {event.get('created_at')}\n"
+            f"This notification contains a resource reference. {action}",
+            "conversation_key": resource_id, "title": f"OpenAI {kind}: {resource_id}"}
+
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect an OpenAI API key")
         config = self.config.config
+        if isinstance(config, ChatGPTOnEvent):
+            payload = (self.node_data or {}).get("config", {}).get("_triggerPayload") or inputs
+            result = self.resolve_trigger_payload(payload, config.model_dump())
+            if result is None:
+                return self.no_event_output("on_event", "Waiting for a matching OpenAI project event")
+            return result
         key = self.config.credentials.api_key
         method, route, has_body = ROUTES[config.operation]
         values = config.model_dump(exclude_none=True, exclude={"operation"})

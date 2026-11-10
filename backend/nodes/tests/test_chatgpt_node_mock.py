@@ -13,6 +13,7 @@ from nodes import chatgpt_node as native
 from nodes.core.registry import NodeFactory
 
 TOKEN = "synthetic-openai-project-key-42"
+EVENTS = json.loads((Path(__file__).parent / "fixtures/chatgpt/webhook_events.json").read_text())
 ROUTES = json.loads((Path(__file__).parent / "fixtures/chatgpt/routes.json").read_text())
 BODIES = {
     "search_vector_store": {"query": "What is the return policy?", "max_num_results": 10},
@@ -24,6 +25,89 @@ BODIES = {
     "create_vector_store": {"name": "Support FAQ", "file_ids": ["file-abc123"]},
 }
 IDS = {"response_id": "resp_123", "completion_id": "chatcmpl-123", "model": "gpt-4.1", "file_id": "file-abc123", "batch_id": "batch_123", "vector_store_id": "vs_123"}
+
+
+def signed_event(body, *, timestamp=None, event_id="wh_123"):
+    import base64
+    import hashlib
+    import hmac
+    import time
+    timestamp = str(int(time.time()) if timestamp is None else timestamp)
+    signature = base64.b64encode(hmac.new(b"secret",
+        event_id.encode() + b"." + timestamp.encode() + b"." + body, hashlib.sha256).digest()).decode()
+    return {"webhook-id": event_id, "webhook-timestamp": timestamp, "webhook-signature": "v1," + signature}
+
+
+@pytest.mark.parametrize("kind", native.CHATGPT_WEBHOOK_EVENTS)
+def test_chatgpt_documented_event_reaches_agent(kind):
+    event = EVENTS[kind]["body"]
+    body = json.dumps(event).encode()
+    config = {"operation": "on_event", "event_type": kind, "signing_secret": "whsec_c2VjcmV0"}
+    headers = signed_event(body)
+    assert native.ChatGPTNode.verify_webhook_signature(body, headers, config)
+    assert not native.ChatGPTNode.verify_webhook_signature(body + b" ", headers, config)
+    assert native.ChatGPTNode.filter_trigger_payload(event, config)
+    output = native.ChatGPTNode.resolve_trigger_payload({**event, "_webhook": {"headers": headers}}, config)
+    assert output["data"] == event
+    agent = native.ChatGPTNode.resolve_agent_event(output)
+    assert kind in agent["text"] and event["id"] in agent["text"] and event["data"]["id"] in agent["text"]
+    assert agent["conversation_key"] == event["data"]["id"]
+    assert "_webhook" not in str(output)
+    other = dict(config, event_type="response.failed" if kind != "response.failed" else "response.completed")
+    assert not native.ChatGPTNode.filter_trigger_payload(event, other)
+
+
+def test_chatgpt_signature_matches_official_sdk_and_rejects_replays():
+    import time
+    from openai import OpenAI
+    body = json.dumps(EVENTS["response.completed"]["body"]).encode()
+    config = {"signing_secret": "whsec_c2VjcmV0"}
+    headers = signed_event(body)
+    headers["webhook-signature"] = "v1,bad " + headers["webhook-signature"]
+    with OpenAI(api_key=TOKEN) as client:
+        client.webhooks.verify_signature(body, headers, secret=config["signing_secret"])
+    assert native.ChatGPTNode.verify_webhook_signature(body, {k.upper(): v for k, v in headers.items()}, config)
+    for offset in (-301, 301):
+        assert not native.ChatGPTNode.verify_webhook_signature(body, signed_event(body, timestamp=int(time.time()) + offset), config)
+    for missing in headers:
+        assert not native.ChatGPTNode.verify_webhook_signature(body, {k: v for k, v in headers.items() if k != missing}, config)
+    assert not native.ChatGPTNode.verify_webhook_signature(body, headers, {"signing_secret": "whsec_!bad!"})
+    assert not native.ChatGPTNode.verify_webhook_signature(body, headers, {})
+    assert not native.ChatGPTNode.verify_webhook_signature(body, dict(headers, **{"webhook-id": "other"}), config)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("kind", native.CHATGPT_WEBHOOK_EVENTS)
+async def test_chatgpt_register_and_unregister_event(monkeypatch, kind):
+    reply = {"id": "whe_123", "signing_secret": "whsec_c2VjcmV0"}
+    requests = transport(monkeypatch, body=reply)
+    config = {"operation": "on_event", "event_type": kind}
+    credential = {"api_key": TOKEN}
+    extra = await native.ChatGPTNode._register_external_webhook(webhook_url="https://hooks.hooks.example.test/test",
+        credential=credential, config=config, node_id="chatgpt-fixture")
+    assert extra == {"external_webhook_id": "whe_123", "signing_secret": reply["signing_secret"]}
+    assert requests[0].method == "POST" and str(requests[0].url) == native.BASE + "/webhook_endpoints"
+    assert json.loads(requests[0].content) == {"url": "https://hooks.hooks.example.test/test", "name": "NoClick chatgpt-fixture", "event_types": [kind]}
+    assert requests[0].headers["authorization"] == "Bearer " + TOKEN
+    await native.ChatGPTNode._unregister_external_webhook(credential=credential, config={**config, **extra}, node_id="chatgpt-fixture")
+    assert requests[1].method == "DELETE" and str(requests[1].url) == native.BASE + "/webhook_endpoints/whe_123"
+    assert native.ChatGPTNode.registration_fingerprint_fields(config) == {"event_type": kind}
+    model = native.ChatGPTConfig.model_validate({"config": {**config, **extra}, "credentials": {"credential_type": "chatgpt_api_key", **credential}})
+    assert model.config.signing_secret == reply["signing_secret"]
+
+
+@pytest.mark.asyncio
+async def test_chatgpt_trigger_manual_run_and_registration_errors(monkeypatch):
+    assert (await node({"operation": "on_event"}).execute({}))["status"] == "no_event"
+    transport(monkeypatch, body={"id": "whe_123"})
+    with pytest.raises(ValueError, match="signing secret"):
+        await native.ChatGPTNode._register_external_webhook(webhook_url="https://hooks.hooks.example.test/test",
+            credential={"api_key": TOKEN}, config={}, node_id="test")
+    transport(monkeypatch, status=403, body={"error": {"message": TOKEN}})
+    with pytest.raises(ValueError, match="HTTP 403") as error:
+        await native.ChatGPTNode._register_external_webhook(webhook_url="https://hooks.hooks.example.test/test",
+            credential={"api_key": TOKEN}, config={}, node_id="test")
+    assert TOKEN not in str(error.value)
 
 
 @pytest.fixture(autouse=True)

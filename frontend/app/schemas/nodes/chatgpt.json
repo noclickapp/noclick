@@ -946,6 +946,156 @@
       "title": "ChatGPTMessage",
       "type": "object"
     },
+    "ChatGPTOnEvent": {
+      "description": "Receive project API events; personal ChatGPT conversations are not exposed.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On OpenAI Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On OpenAI Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "response.completed",
+          "description": "An event in the connected OpenAI project. Response events require background responses. These events do not include personal ChatGPT conversations.",
+          "enum": [
+            "response.completed",
+            "response.failed",
+            "response.cancelled",
+            "response.incomplete",
+            "batch.completed",
+            "batch.failed",
+            "batch.expired",
+            "batch.cancelled",
+            "eval.run.succeeded",
+            "eval.run.failed",
+            "eval.run.canceled",
+            "fine_tuning.job.succeeded",
+            "fine_tuning.job.failed",
+            "fine_tuning.job.cancelled"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with OpenAI automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "ChatGPTOnEvent",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "ChatGPTSearchVectorStore": {
       "additionalProperties": false,
       "description": "Search a vector store for relevant text chunks.",
@@ -1038,6 +1188,7 @@
           "list_models": "#/$defs/ChatGPTListModels",
           "list_response_input_items": "#/$defs/ChatGPTListResponseInputItems",
           "list_vector_stores": "#/$defs/ChatGPTListVectorStores",
+          "on_event": "#/$defs/ChatGPTOnEvent",
           "search_vector_store": "#/$defs/ChatGPTSearchVectorStore"
         },
         "propertyName": "operation"
@@ -1117,6 +1268,9 @@
         },
         {
           "$ref": "#/$defs/ChatGPTDeleteVectorStore"
+        },
+        {
+          "$ref": "#/$defs/ChatGPTOnEvent"
         }
       ],
       "title": "Config"

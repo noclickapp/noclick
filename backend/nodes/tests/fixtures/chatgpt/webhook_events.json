@@ -1,0 +1,156 @@
+{
+  "response.completed": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "response.completed",
+      "created_at": 1719168000,
+      "data": {
+        "id": "resp_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "response.failed": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "response.failed",
+      "created_at": 1719168000,
+      "data": {
+        "id": "resp_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "response.cancelled": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "response.cancelled",
+      "created_at": 1719168000,
+      "data": {
+        "id": "resp_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "response.incomplete": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "response.incomplete",
+      "created_at": 1719168000,
+      "data": {
+        "id": "resp_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "batch.completed": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "batch.completed",
+      "created_at": 1719168000,
+      "data": {
+        "id": "batch_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "batch.failed": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "batch.failed",
+      "created_at": 1719168000,
+      "data": {
+        "id": "batch_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "batch.expired": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "batch.expired",
+      "created_at": 1719168000,
+      "data": {
+        "id": "batch_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "batch.cancelled": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "batch.cancelled",
+      "created_at": 1719168000,
+      "data": {
+        "id": "batch_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "eval.run.succeeded": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "eval.run.succeeded",
+      "created_at": 1719168000,
+      "data": {
+        "id": "evalrun_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "eval.run.failed": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "eval.run.failed",
+      "created_at": 1719168000,
+      "data": {
+        "id": "evalrun_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "eval.run.canceled": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "eval.run.canceled",
+      "created_at": 1719168000,
+      "data": {
+        "id": "evalrun_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "fine_tuning.job.succeeded": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "fine_tuning.job.succeeded",
+      "created_at": 1719168000,
+      "data": {
+        "id": "ftjob_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "fine_tuning.job.failed": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "fine_tuning.job.failed",
+      "created_at": 1719168000,
+      "data": {
+        "id": "ftjob_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  },
+  "fine_tuning.job.cancelled": {
+    "body": {
+      "id": "evt_abc123",
+      "type": "fine_tuning.job.cancelled",
+      "created_at": 1719168000,
+      "data": {
+        "id": "ftjob_abc123"
+      }
+    },
+    "source": "https://developers.openai.com/api/reference/resources/webhooks"
+  }
+}

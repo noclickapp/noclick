@@ -13,7 +13,7 @@ const ChatGPTIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const ChatGPTNode: NodeDefinition = {
     type: 'automation-chatgpt', category: 'ai', label: 'ChatGPT (OpenAI)',
-    description: 'Generate responses and embeddings, moderate text, and manage chats, files, batches and vector stores',
+    description: 'Generate responses and embeddings, manage API resources, and start workflows from OpenAI project events',
     keywords: ['chatgpt', 'openai', 'gpt', 'artificial intelligence', 'language model'],
     Icon: ChatGPTIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
