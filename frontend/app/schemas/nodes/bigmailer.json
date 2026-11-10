@@ -1,0 +1,1427 @@
+{
+  "$defs": {
+    "BigmailerApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bigmailer_api_key",
+          "default": "bigmailer_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Bigmailer API Key",
+      "type": "object",
+      "x-credential-instructions": "Open the API key management page in the BigMailer console, click Create Key, enter a name and copy the key. Paste the key here. NoClick checks it by reading your brands.",
+      "x-credential-url": "https://docs.bigmailer.io/docs/getting-started-api"
+    },
+    "BigmailerCreateContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Create contact",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "validate_email": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Validate Email",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "format": "email",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "field_values": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/BigmailerFieldValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Values"
+        },
+        "list_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "List IDs"
+        },
+        "unsubscribe_all": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unsubscribe All"
+        },
+        "unsubscribe_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unsubscribe IDs"
+        }
+      },
+      "required": [
+        "brand_id",
+        "email"
+      ],
+      "title": "BigmailerCreateContactConfig",
+      "type": "object"
+    },
+    "BigmailerCreateListConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create list",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Create list",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_id",
+        "name"
+      ],
+      "title": "BigmailerCreateListConfig",
+      "type": "object"
+    },
+    "BigmailerDeleteContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Delete contact",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_id",
+        "contact_id"
+      ],
+      "title": "BigmailerDeleteContactConfig",
+      "type": "object"
+    },
+    "BigmailerDeleteListConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_list",
+          "default": "delete_list",
+          "title": "Delete list",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Delete list",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "list_id": {
+          "format": "uuid",
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_id",
+        "list_id"
+      ],
+      "title": "BigmailerDeleteListConfig",
+      "type": "object"
+    },
+    "BigmailerFieldValue": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Field Tag Name",
+          "type": "string"
+        },
+        "string": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "String"
+        },
+        "integer": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Integer"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BigmailerFieldValue",
+      "type": "object"
+    },
+    "BigmailerGetBrandConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_brand",
+          "default": "get_brand",
+          "title": "Get brand",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Get brand",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_id"
+      ],
+      "title": "BigmailerGetBrandConfig",
+      "type": "object"
+    },
+    "BigmailerGetBulkCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_bulk_campaign",
+          "default": "get_bulk_campaign",
+          "title": "Get bulk campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Get bulk campaign",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_id",
+        "campaign_id"
+      ],
+      "title": "BigmailerGetBulkCampaignConfig",
+      "type": "object"
+    },
+    "BigmailerGetContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Get contact",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_id",
+        "contact_id"
+      ],
+      "title": "BigmailerGetContactConfig",
+      "type": "object"
+    },
+    "BigmailerGetFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_field",
+          "default": "get_field",
+          "title": "Get field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Get field",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "field_id": {
+          "format": "uuid",
+          "title": "Field ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_id",
+        "field_id"
+      ],
+      "title": "BigmailerGetFieldConfig",
+      "type": "object"
+    },
+    "BigmailerGetListConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Get list",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Get list",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "list_id": {
+          "format": "uuid",
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_id",
+        "list_id"
+      ],
+      "title": "BigmailerGetListConfig",
+      "type": "object"
+    },
+    "BigmailerGetSegmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_segment",
+          "default": "get_segment",
+          "title": "Get segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Get segment",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "segment_id": {
+          "format": "uuid",
+          "title": "Segment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_id",
+        "segment_id"
+      ],
+      "title": "BigmailerGetSegmentConfig",
+      "type": "object"
+    },
+    "BigmailerGetTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get template",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "template_id": {
+          "format": "uuid",
+          "title": "Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_id",
+        "template_id"
+      ],
+      "title": "BigmailerGetTemplateConfig",
+      "type": "object"
+    },
+    "BigmailerGetTransactionalCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_transactional_campaign",
+          "default": "get_transactional_campaign",
+          "title": "Get transactional campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Get transactional campaign",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_id",
+        "campaign_id"
+      ],
+      "title": "BigmailerGetTransactionalCampaignConfig",
+      "type": "object"
+    },
+    "BigmailerListBrandsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_brands",
+          "default": "list_brands",
+          "title": "List brands",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "List brands",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "title": "BigmailerListBrandsConfig",
+      "type": "object"
+    },
+    "BigmailerListBulkCampaignsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_bulk_campaigns",
+          "default": "list_bulk_campaigns",
+          "title": "List bulk campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "List bulk campaigns",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "brand_id"
+      ],
+      "title": "BigmailerListBulkCampaignsConfig",
+      "type": "object"
+    },
+    "BigmailerListContactsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "List contacts",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "List ID"
+        }
+      },
+      "required": [
+        "brand_id"
+      ],
+      "title": "BigmailerListContactsConfig",
+      "type": "object"
+    },
+    "BigmailerListFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "List fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "List fields",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "brand_id"
+      ],
+      "title": "BigmailerListFieldsConfig",
+      "type": "object"
+    },
+    "BigmailerListListsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "List lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "List lists",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "brand_id"
+      ],
+      "title": "BigmailerListListsConfig",
+      "type": "object"
+    },
+    "BigmailerListSegmentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_segments",
+          "default": "list_segments",
+          "title": "List segments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "List segments",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "brand_id"
+      ],
+      "title": "BigmailerListSegmentsConfig",
+      "type": "object"
+    },
+    "BigmailerListTemplatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "List templates",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "brand_id"
+      ],
+      "title": "BigmailerListTemplatesConfig",
+      "type": "object"
+    },
+    "BigmailerListTransactionalCampaignsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_transactional_campaigns",
+          "default": "list_transactional_campaigns",
+          "title": "List transactional campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "List transactional campaigns",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "brand_id"
+      ],
+      "title": "BigmailerListTransactionalCampaignsConfig",
+      "type": "object"
+    },
+    "BigmailerSendTransactionalCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "send_transactional_campaign",
+          "default": "send_transactional_campaign",
+          "title": "Send a transactional email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Send a transactional email",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "field_values": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/BigmailerFieldValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Values"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/BigmailerVariable"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        }
+      },
+      "required": [
+        "brand_id",
+        "campaign_id",
+        "email"
+      ],
+      "title": "BigmailerSendTransactionalCampaignConfig",
+      "type": "object"
+    },
+    "BigmailerUpdateContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Update contact",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "minLength": 1,
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "field_values_op": {
+          "anyOf": [
+            {
+              "enum": [
+                "add",
+                "remove",
+                "replace"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Values Op",
+          "enum": [
+            "add",
+            "remove",
+            "replace"
+          ],
+          "x-enum-searchable": true
+        },
+        "list_ids_op": {
+          "anyOf": [
+            {
+              "enum": [
+                "add",
+                "remove",
+                "replace"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "List IDs Op",
+          "enum": [
+            "add",
+            "remove",
+            "replace"
+          ],
+          "x-enum-searchable": true
+        },
+        "unsubscribe_ids_op": {
+          "anyOf": [
+            {
+              "enum": [
+                "add",
+                "remove",
+                "replace"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unsubscribe IDs Op",
+          "enum": [
+            "add",
+            "remove",
+            "replace"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Email"
+        },
+        "field_values": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/BigmailerFieldValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Values"
+        },
+        "list_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "List IDs"
+        },
+        "unsubscribe_all": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unsubscribe All"
+        },
+        "unsubscribe_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unsubscribe IDs"
+        }
+      },
+      "required": [
+        "brand_id",
+        "contact_id"
+      ],
+      "title": "BigmailerUpdateContactConfig",
+      "type": "object"
+    },
+    "BigmailerUpdateListConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_list",
+          "default": "update_list",
+          "title": "Update list",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Update list",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "list_id": {
+          "format": "uuid",
+          "title": "List ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "brand_id",
+        "list_id"
+      ],
+      "title": "BigmailerUpdateListConfig",
+      "type": "object"
+    },
+    "BigmailerUpsertContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "upsert_contact",
+          "default": "upsert_contact",
+          "title": "Create or update contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Create or update contact",
+          "x-is-trigger": false
+        },
+        "brand_id": {
+          "format": "uuid",
+          "title": "Brand ID",
+          "type": "string"
+        },
+        "validate_email": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Validate Email",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "format": "email",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "field_values": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/BigmailerFieldValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Values"
+        },
+        "list_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "List IDs"
+        },
+        "unsubscribe_all": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unsubscribe All"
+        },
+        "unsubscribe_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unsubscribe IDs"
+        }
+      },
+      "required": [
+        "brand_id",
+        "email"
+      ],
+      "title": "BigmailerUpsertContactConfig",
+      "type": "object"
+    },
+    "BigmailerVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 100000,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "BigmailerVariable",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/BigmailerCreateContactConfig",
+          "create_list": "#/$defs/BigmailerCreateListConfig",
+          "delete_contact": "#/$defs/BigmailerDeleteContactConfig",
+          "delete_list": "#/$defs/BigmailerDeleteListConfig",
+          "get_brand": "#/$defs/BigmailerGetBrandConfig",
+          "get_bulk_campaign": "#/$defs/BigmailerGetBulkCampaignConfig",
+          "get_contact": "#/$defs/BigmailerGetContactConfig",
+          "get_field": "#/$defs/BigmailerGetFieldConfig",
+          "get_list": "#/$defs/BigmailerGetListConfig",
+          "get_segment": "#/$defs/BigmailerGetSegmentConfig",
+          "get_template": "#/$defs/BigmailerGetTemplateConfig",
+          "get_transactional_campaign": "#/$defs/BigmailerGetTransactionalCampaignConfig",
+          "list_brands": "#/$defs/BigmailerListBrandsConfig",
+          "list_bulk_campaigns": "#/$defs/BigmailerListBulkCampaignsConfig",
+          "list_contacts": "#/$defs/BigmailerListContactsConfig",
+          "list_fields": "#/$defs/BigmailerListFieldsConfig",
+          "list_lists": "#/$defs/BigmailerListListsConfig",
+          "list_segments": "#/$defs/BigmailerListSegmentsConfig",
+          "list_templates": "#/$defs/BigmailerListTemplatesConfig",
+          "list_transactional_campaigns": "#/$defs/BigmailerListTransactionalCampaignsConfig",
+          "send_transactional_campaign": "#/$defs/BigmailerSendTransactionalCampaignConfig",
+          "update_contact": "#/$defs/BigmailerUpdateContactConfig",
+          "update_list": "#/$defs/BigmailerUpdateListConfig",
+          "upsert_contact": "#/$defs/BigmailerUpsertContactConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BigmailerListBrandsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerGetBrandConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerUpsertContactConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerUpdateListConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerDeleteListConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerGetFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerListSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerGetSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerListBulkCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerGetBulkCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerListTransactionalCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerGetTransactionalCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/BigmailerSendTransactionalCampaignConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BigmailerApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bigmailer Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create or update a BigMailer contact",
+    "Send a BigMailer transactional email",
+    "List BigMailer audiences and campaigns"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

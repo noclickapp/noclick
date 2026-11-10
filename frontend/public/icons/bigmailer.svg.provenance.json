@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/bigmailer.svg",
+  "source": "https://www.bigmailer.io/wp-content/uploads/2021/03/bigmailer_logo.svg",
+  "license": "BigMailer trademark; official vendor logo used to identify the BigMailer integration",
+  "sha256": "32a3c80c499a4a582363daa569fc328bf13112fa21597adcd8f2082320602287",
+  "modifications": "Removed trailing whitespace; SVG artwork unchanged."
+}
