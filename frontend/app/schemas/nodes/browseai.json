@@ -1,0 +1,1335 @@
+{
+  "$defs": {
+    "BrowseaiAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "browseai_api_key",
+          "default": "browseai_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Browse AI API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Browse AI secret API key from Dashboard \u2192 API. Do not include the Bearer prefix.",
+      "x-credential-url": "https://dashboard.browse.ai/api"
+    },
+    "BrowseaiCreateBulkRunConfig": {
+      "additionalProperties": false,
+      "description": "Bulk run tasks.",
+      "properties": {
+        "operation": {
+          "const": "create_bulk_run",
+          "default": "create_bulk_run",
+          "title": "Create Bulk Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A string that describes the bulk run.",
+          "title": "Title"
+        },
+        "inputParameters_json": {
+          "description": "An array of input parameters to override the task's default input parameters. Enter JSON.",
+          "title": "Input Parameters",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "robotId",
+        "inputParameters_json"
+      ],
+      "title": "BrowseaiCreateBulkRunConfig",
+      "type": "object"
+    },
+    "BrowseaiCreateMonitorConfig": {
+      "additionalProperties": false,
+      "description": "Create a new monitor on a robot.",
+      "properties": {
+        "operation": {
+          "const": "create_monitor",
+          "default": "create_monitor",
+          "title": "Create Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Monitor name",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "inputParameters_json": {
+          "description": "An object of input parameters to override default input parameters. Enter JSON.",
+          "title": "Input Parameters",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "recurring schedule.\n",
+          "title": "Schedule"
+        },
+        "notifyOnCapturedScreenshotChange": {
+          "description": "If set to `true`, an email notification will be sent to you when a change is detected in captured screenshots.",
+          "title": "Notify On Captured Screenshot Change",
+          "type": "boolean"
+        },
+        "notifyOnCapturedTextChange": {
+          "description": "If set to `true`, an email notification will be sent to you when a change is detected in captured texts.",
+          "title": "Notify On Captured Text Change",
+          "type": "boolean"
+        },
+        "capturedScreenshotNotificationThreshold": {
+          "description": "The \"screenshot changed\" email notification will be sent to you if the change is greater than this threshold (in percent).",
+          "title": "Captured Screenshot Notification Threshold",
+          "type": "number"
+        }
+      },
+      "required": [
+        "robotId",
+        "name",
+        "inputParameters_json",
+        "notifyOnCapturedScreenshotChange",
+        "notifyOnCapturedTextChange",
+        "capturedScreenshotNotificationThreshold"
+      ],
+      "title": "BrowseaiCreateMonitorConfig",
+      "type": "object"
+    },
+    "BrowseaiCreateWebhookConfig": {
+      "additionalProperties": false,
+      "description": "Create a new webhook on a robot.",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "hookUrl": {
+          "description": "Webhook URL",
+          "title": "Hook URL",
+          "type": "string"
+        },
+        "eventType": {
+          "description": "",
+          "enum": [
+            "taskCapturedDataChanged",
+            "taskFinished",
+            "taskFinishedSuccessfully",
+            "taskFinishedWithError",
+            "tableExportFinishedSuccessfully"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "robotId",
+        "hookUrl",
+        "eventType"
+      ],
+      "title": "BrowseaiCreateWebhookConfig",
+      "type": "object"
+    },
+    "BrowseaiDeleteMonitorConfig": {
+      "additionalProperties": false,
+      "description": "Delete a robot's monitor.",
+      "properties": {
+        "operation": {
+          "const": "delete_monitor",
+          "default": "delete_monitor",
+          "title": "Delete Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "monitorId": {
+          "description": "Unique monitor ID\n\nYou can find a monitor's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Monitor ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "robotId",
+        "monitorId"
+      ],
+      "title": "BrowseaiDeleteMonitorConfig",
+      "type": "object"
+    },
+    "BrowseaiDeleteWebhookConfig": {
+      "additionalProperties": false,
+      "description": "Delete a robot's webhook.",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "webhookId": {
+          "description": "Unique webhookId ID\n",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "robotId",
+        "webhookId"
+      ],
+      "title": "BrowseaiDeleteWebhookConfig",
+      "type": "object"
+    },
+    "BrowseaiGetBulkRunConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a robot's bulk run.",
+      "properties": {
+        "operation": {
+          "const": "get_bulk_run",
+          "default": "get_bulk_run",
+          "title": "Get Bulk Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "bulkRunId": {
+          "description": "Unique bulk run ID\n",
+          "title": "Bulk Run ID",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number",
+          "title": "Page"
+        }
+      },
+      "required": [
+        "robotId",
+        "bulkRunId"
+      ],
+      "title": "BrowseaiGetBulkRunConfig",
+      "type": "object"
+    },
+    "BrowseaiGetMonitorConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a robot's monitor.",
+      "properties": {
+        "operation": {
+          "const": "get_monitor",
+          "default": "get_monitor",
+          "title": "Get Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "monitorId": {
+          "description": "Unique monitor ID\n\nYou can find a monitor's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Monitor ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "robotId",
+        "monitorId"
+      ],
+      "title": "BrowseaiGetMonitorConfig",
+      "type": "object"
+    },
+    "BrowseaiGetRobotConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve single robot by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_robot",
+          "default": "get_robot",
+          "title": "Get Robot",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID You can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "robotId"
+      ],
+      "title": "BrowseaiGetRobotConfig",
+      "type": "object"
+    },
+    "BrowseaiGetTaskConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a task.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "taskId": {
+          "description": "Unique task ID",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "robotId",
+        "taskId"
+      ],
+      "title": "BrowseaiGetTaskConfig",
+      "type": "object"
+    },
+    "BrowseaiListBulkRunsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a robot's bulk runs list.",
+      "properties": {
+        "operation": {
+          "const": "list_bulk_runs",
+          "default": "list_bulk_runs",
+          "title": "List Bulk Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number",
+          "title": "Page"
+        }
+      },
+      "required": [
+        "robotId"
+      ],
+      "title": "BrowseaiListBulkRunsConfig",
+      "type": "object"
+    },
+    "BrowseaiListMonitorsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a robot's monitors.",
+      "properties": {
+        "operation": {
+          "const": "list_monitors",
+          "default": "list_monitors",
+          "title": "List Monitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "robotId"
+      ],
+      "title": "BrowseaiListMonitorsConfig",
+      "type": "object"
+    },
+    "BrowseaiListRobotsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve list of robots under your account.",
+      "properties": {
+        "operation": {
+          "const": "list_robots",
+          "default": "list_robots",
+          "title": "List Robots",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "title": "BrowseaiListRobotsConfig",
+      "type": "object"
+    },
+    "BrowseaiListTasksConfig": {
+      "additionalProperties": false,
+      "description": "Get all tasks by a robot.",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number",
+          "title": "Page"
+        },
+        "pageSize": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page size",
+          "title": "Page Size"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "failed",
+                "successful",
+                "in-progress"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task status",
+          "title": "Status",
+          "enum": [
+            "failed",
+            "successful",
+            "in-progress"
+          ],
+          "x-enum-searchable": true
+        },
+        "robotBulkRunId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "filter the result based on robot bulk run ID",
+          "title": "Robot Bulk Run ID"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A comma separated list of fields to sort by. Default sorting is ascending and prefixing field names with a hyphen '-' yields a descending order.",
+          "title": "Sort"
+        },
+        "includeRetried": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "by passing false you can exclude the retried tasks",
+          "title": "Include Retried"
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "From task creation date and time in the form of a Unix timestamp",
+          "title": "From Date"
+        },
+        "toDate": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "To task creation date and time in the form of a Unix timestamp",
+          "title": "To Date"
+        }
+      },
+      "required": [
+        "robotId"
+      ],
+      "title": "BrowseaiListTasksConfig",
+      "type": "object"
+    },
+    "BrowseaiListTeamsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve list of teams under user account.",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        }
+      },
+      "title": "BrowseaiListTeamsConfig",
+      "type": "object"
+    },
+    "BrowseaiListWebhooksConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a robot's webhooks.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "robotId"
+      ],
+      "title": "BrowseaiListWebhooksConfig",
+      "type": "object"
+    },
+    "BrowseaiOnDataChangedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_data_changed",
+          "default": "on_data_changed",
+          "title": "On Data Changed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "robotId": {
+          "minLength": 1,
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically. Browse AI sends unsigned deliveries; keep this URL private.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "robotId"
+      ],
+      "title": "BrowseaiOnDataChangedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BrowseaiOnTableExportFinishedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_table_export_finished",
+          "default": "on_table_export_finished",
+          "title": "On Table Export Finished",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "robotId": {
+          "minLength": 1,
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically. Browse AI sends unsigned deliveries; keep this URL private.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "robotId"
+      ],
+      "title": "BrowseaiOnTableExportFinishedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BrowseaiOnTaskFinishedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_task_finished",
+          "default": "on_task_finished",
+          "title": "On Task Finished",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "robotId": {
+          "minLength": 1,
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered automatically. Browse AI sends unsigned deliveries; keep this URL private.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "robotId"
+      ],
+      "title": "BrowseaiOnTaskFinishedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BrowseaiRunTaskConfig": {
+      "additionalProperties": false,
+      "description": "Run a robot.",
+      "properties": {
+        "operation": {
+          "const": "run_task",
+          "default": "run_task",
+          "title": "Run Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "recordVideo": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Try to record a video while running the task. This is not guaranteed to work as the robot might skip video recording if the site is too heavy.",
+          "title": "Record Video"
+        },
+        "inputParameters_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An object of input parameters to override default input parameters. Enter JSON.",
+          "title": "Input Parameters",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "robotId"
+      ],
+      "title": "BrowseaiRunTaskConfig",
+      "type": "object"
+    },
+    "BrowseaiUpdateMonitorConfig": {
+      "additionalProperties": false,
+      "description": "Update a robot's monitor.",
+      "properties": {
+        "operation": {
+          "const": "update_monitor",
+          "default": "update_monitor",
+          "title": "Update Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-is-trigger": false
+        },
+        "robotId": {
+          "description": "Unique robot ID\n\nYou can find a robot's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Robot ID",
+          "type": "string"
+        },
+        "monitorId": {
+          "description": "Unique monitor ID\n\nYou can find a monitor's ID by opening it on the dashboard and copying its ID in the browser address bar.\n",
+          "title": "Monitor ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Monitor name",
+          "title": "Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "paused"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to `paused`, the monitor will stop working until an `active` status is sent.",
+          "title": "Status",
+          "enum": [
+            "active",
+            "paused"
+          ],
+          "x-enum-searchable": true
+        },
+        "inputParameters_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An object of input parameters to override default input parameters. Enter JSON.",
+          "title": "Input Parameters",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "recurring schedule.\n",
+          "title": "Schedule"
+        },
+        "notifyOnCapturedScreenshotChange": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to `true`, an email notification will be sent to you when a change is detected in captured screenshots.",
+          "title": "Notify On Captured Screenshot Change"
+        },
+        "notifyOnCapturedTextChange": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to `true`, an email notification will be sent to you when a change is detected in captured texts.",
+          "title": "Notify On Captured Text Change"
+        },
+        "capturedScreenshotNotificationThreshold": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The \"screenshot changed\" email notification will be sent to you if the change is greater than this threshold (in percent).",
+          "title": "Captured Screenshot Notification Threshold"
+        }
+      },
+      "required": [
+        "robotId",
+        "monitorId"
+      ],
+      "title": "BrowseaiUpdateMonitorConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_bulk_run": "#/$defs/BrowseaiCreateBulkRunConfig",
+          "create_monitor": "#/$defs/BrowseaiCreateMonitorConfig",
+          "create_webhook": "#/$defs/BrowseaiCreateWebhookConfig",
+          "delete_monitor": "#/$defs/BrowseaiDeleteMonitorConfig",
+          "delete_webhook": "#/$defs/BrowseaiDeleteWebhookConfig",
+          "get_bulk_run": "#/$defs/BrowseaiGetBulkRunConfig",
+          "get_monitor": "#/$defs/BrowseaiGetMonitorConfig",
+          "get_robot": "#/$defs/BrowseaiGetRobotConfig",
+          "get_task": "#/$defs/BrowseaiGetTaskConfig",
+          "list_bulk_runs": "#/$defs/BrowseaiListBulkRunsConfig",
+          "list_monitors": "#/$defs/BrowseaiListMonitorsConfig",
+          "list_robots": "#/$defs/BrowseaiListRobotsConfig",
+          "list_tasks": "#/$defs/BrowseaiListTasksConfig",
+          "list_teams": "#/$defs/BrowseaiListTeamsConfig",
+          "list_webhooks": "#/$defs/BrowseaiListWebhooksConfig",
+          "on_data_changed": "#/$defs/BrowseaiOnDataChangedConfig",
+          "on_table_export_finished": "#/$defs/BrowseaiOnTableExportFinishedConfig",
+          "on_task_finished": "#/$defs/BrowseaiOnTaskFinishedConfig",
+          "run_task": "#/$defs/BrowseaiRunTaskConfig",
+          "update_monitor": "#/$defs/BrowseaiUpdateMonitorConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BrowseaiListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiListRobotsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiGetRobotConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiRunTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiListMonitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiCreateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiGetMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiUpdateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiDeleteMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiCreateBulkRunConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiListBulkRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiGetBulkRunConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiOnTaskFinishedConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiOnDataChangedConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowseaiOnTableExportFinishedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BrowseaiAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Browseai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
