@@ -1,0 +1,1155 @@
+{
+  "$defs": {
+    "DreamstudioAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "dreamstudio_api_key",
+          "default": "dreamstudio_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "DreamStudio API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Stability AI API key, without the Bearer prefix. Image generation uses your account credits. NoClick verifies the key by reading your account.",
+      "x-credential-url": "https://platform.stability.ai/account/keys"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Read your account identity and organization memberships.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetBalance": {
+      "additionalProperties": false,
+      "description": "Read the credit balance for your account or organization.",
+      "properties": {
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional organization ID; otherwise uses your default organization.",
+          "title": "Organization"
+        },
+        "operation": {
+          "const": "get_balance",
+          "default": "get_balance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetBalance",
+      "type": "object"
+    },
+    "ImageSchedule": {
+      "additionalProperties": false,
+      "description": "Transform an image using diffusion step scheduling (uses credits).",
+      "properties": {
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional organization ID; otherwise uses your default organization.",
+          "title": "Organization"
+        },
+        "engine_id": {
+          "description": "Engine ID from List Engines; choose an engine supporting this action.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Engine Id",
+          "type": "string"
+        },
+        "text_prompts": {
+          "items": {
+            "$ref": "#/$defs/TextPrompt"
+          },
+          "minItems": 1,
+          "title": "Text Prompts",
+          "type": "array"
+        },
+        "cfg_scale": {
+          "default": 7,
+          "maximum": 35,
+          "minimum": 0,
+          "title": "Cfg Scale",
+          "type": "number"
+        },
+        "clip_guidance_preset": {
+          "default": "NONE",
+          "enum": [
+            "FAST_BLUE",
+            "FAST_GREEN",
+            "NONE",
+            "SIMPLE",
+            "SLOW",
+            "SLOWER",
+            "SLOWEST"
+          ],
+          "title": "Clip Guidance Preset",
+          "type": "string"
+        },
+        "sampler": {
+          "anyOf": [
+            {
+              "enum": [
+                "DDIM",
+                "DDPM",
+                "K_DPMPP_2M",
+                "K_DPMPP_2S_ANCESTRAL",
+                "K_DPM_2",
+                "K_DPM_2_ANCESTRAL",
+                "K_EULER",
+                "K_EULER_ANCESTRAL",
+                "K_HEUN",
+                "K_LMS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sampler",
+          "enum": [
+            "DDIM",
+            "DDPM",
+            "K_DPMPP_2M",
+            "K_DPMPP_2S_ANCESTRAL",
+            "K_DPM_2",
+            "K_DPM_2_ANCESTRAL",
+            "K_EULER",
+            "K_EULER_ANCESTRAL",
+            "K_HEUN",
+            "K_LMS"
+          ],
+          "x-enum-searchable": true
+        },
+        "samples": {
+          "default": 1,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Samples",
+          "type": "integer"
+        },
+        "seed": {
+          "default": 0,
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "steps": {
+          "default": 50,
+          "maximum": 150,
+          "minimum": 10,
+          "title": "Steps",
+          "type": "integer"
+        },
+        "init_image": {
+          "contentEncoding": "base64",
+          "contentMediaType": "image/png",
+          "description": "PNG image bytes encoded as base64; dimensions must match the engine.",
+          "title": "Init Image",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "image_to_image_schedule",
+          "default": "image_to_image_schedule",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "step_schedule_start": {
+          "default": 0.65,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Step Schedule Start",
+          "type": "number"
+        },
+        "step_schedule_end": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step Schedule End"
+        }
+      },
+      "required": [
+        "engine_id",
+        "text_prompts",
+        "init_image"
+      ],
+      "title": "ImageSchedule",
+      "type": "object"
+    },
+    "ImageStrength": {
+      "additionalProperties": false,
+      "description": "Transform an image using image strength (uses credits).",
+      "properties": {
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional organization ID; otherwise uses your default organization.",
+          "title": "Organization"
+        },
+        "engine_id": {
+          "description": "Engine ID from List Engines; choose an engine supporting this action.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Engine Id",
+          "type": "string"
+        },
+        "text_prompts": {
+          "items": {
+            "$ref": "#/$defs/TextPrompt"
+          },
+          "minItems": 1,
+          "title": "Text Prompts",
+          "type": "array"
+        },
+        "cfg_scale": {
+          "default": 7,
+          "maximum": 35,
+          "minimum": 0,
+          "title": "Cfg Scale",
+          "type": "number"
+        },
+        "clip_guidance_preset": {
+          "default": "NONE",
+          "enum": [
+            "FAST_BLUE",
+            "FAST_GREEN",
+            "NONE",
+            "SIMPLE",
+            "SLOW",
+            "SLOWER",
+            "SLOWEST"
+          ],
+          "title": "Clip Guidance Preset",
+          "type": "string"
+        },
+        "sampler": {
+          "anyOf": [
+            {
+              "enum": [
+                "DDIM",
+                "DDPM",
+                "K_DPMPP_2M",
+                "K_DPMPP_2S_ANCESTRAL",
+                "K_DPM_2",
+                "K_DPM_2_ANCESTRAL",
+                "K_EULER",
+                "K_EULER_ANCESTRAL",
+                "K_HEUN",
+                "K_LMS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sampler",
+          "enum": [
+            "DDIM",
+            "DDPM",
+            "K_DPMPP_2M",
+            "K_DPMPP_2S_ANCESTRAL",
+            "K_DPM_2",
+            "K_DPM_2_ANCESTRAL",
+            "K_EULER",
+            "K_EULER_ANCESTRAL",
+            "K_HEUN",
+            "K_LMS"
+          ],
+          "x-enum-searchable": true
+        },
+        "samples": {
+          "default": 1,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Samples",
+          "type": "integer"
+        },
+        "seed": {
+          "default": 0,
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "steps": {
+          "default": 50,
+          "maximum": 150,
+          "minimum": 10,
+          "title": "Steps",
+          "type": "integer"
+        },
+        "init_image": {
+          "contentEncoding": "base64",
+          "contentMediaType": "image/png",
+          "description": "PNG image bytes encoded as base64; dimensions must match the engine.",
+          "title": "Init Image",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "image_to_image_strength",
+          "default": "image_to_image_strength",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "image_strength": {
+          "default": 0.35,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Image Strength",
+          "type": "number"
+        }
+      },
+      "required": [
+        "engine_id",
+        "text_prompts",
+        "init_image"
+      ],
+      "title": "ImageStrength",
+      "type": "object"
+    },
+    "ListEngines": {
+      "additionalProperties": false,
+      "description": "List engines available to your account or organization.",
+      "properties": {
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional organization ID; otherwise uses your default organization.",
+          "title": "Organization"
+        },
+        "operation": {
+          "const": "list_engines",
+          "default": "list_engines",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListEngines",
+      "type": "object"
+    },
+    "MaskAlpha": {
+      "additionalProperties": false,
+      "description": "Inpaint transparent pixels from the source PNG alpha channel (uses credits).",
+      "properties": {
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional organization ID; otherwise uses your default organization.",
+          "title": "Organization"
+        },
+        "engine_id": {
+          "description": "Engine ID from List Engines; choose an engine supporting this action.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Engine Id",
+          "type": "string"
+        },
+        "text_prompts": {
+          "items": {
+            "$ref": "#/$defs/TextPrompt"
+          },
+          "minItems": 1,
+          "title": "Text Prompts",
+          "type": "array"
+        },
+        "cfg_scale": {
+          "default": 7,
+          "maximum": 35,
+          "minimum": 0,
+          "title": "Cfg Scale",
+          "type": "number"
+        },
+        "clip_guidance_preset": {
+          "default": "NONE",
+          "enum": [
+            "FAST_BLUE",
+            "FAST_GREEN",
+            "NONE",
+            "SIMPLE",
+            "SLOW",
+            "SLOWER",
+            "SLOWEST"
+          ],
+          "title": "Clip Guidance Preset",
+          "type": "string"
+        },
+        "sampler": {
+          "anyOf": [
+            {
+              "enum": [
+                "DDIM",
+                "DDPM",
+                "K_DPMPP_2M",
+                "K_DPMPP_2S_ANCESTRAL",
+                "K_DPM_2",
+                "K_DPM_2_ANCESTRAL",
+                "K_EULER",
+                "K_EULER_ANCESTRAL",
+                "K_HEUN",
+                "K_LMS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sampler",
+          "enum": [
+            "DDIM",
+            "DDPM",
+            "K_DPMPP_2M",
+            "K_DPMPP_2S_ANCESTRAL",
+            "K_DPM_2",
+            "K_DPM_2_ANCESTRAL",
+            "K_EULER",
+            "K_EULER_ANCESTRAL",
+            "K_HEUN",
+            "K_LMS"
+          ],
+          "x-enum-searchable": true
+        },
+        "samples": {
+          "default": 1,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Samples",
+          "type": "integer"
+        },
+        "seed": {
+          "default": 0,
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "steps": {
+          "default": 50,
+          "maximum": 150,
+          "minimum": 10,
+          "title": "Steps",
+          "type": "integer"
+        },
+        "init_image": {
+          "contentEncoding": "base64",
+          "contentMediaType": "image/png",
+          "description": "PNG image bytes encoded as base64; dimensions must match the engine.",
+          "title": "Init Image",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "mask_alpha",
+          "default": "mask_alpha",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "engine_id",
+        "text_prompts",
+        "init_image"
+      ],
+      "title": "MaskAlpha",
+      "type": "object"
+    },
+    "MaskBlack": {
+      "additionalProperties": false,
+      "description": "Inpaint black mask pixels while preserving white pixels (uses credits).",
+      "properties": {
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional organization ID; otherwise uses your default organization.",
+          "title": "Organization"
+        },
+        "engine_id": {
+          "description": "Engine ID from List Engines; choose an engine supporting this action.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Engine Id",
+          "type": "string"
+        },
+        "text_prompts": {
+          "items": {
+            "$ref": "#/$defs/TextPrompt"
+          },
+          "minItems": 1,
+          "title": "Text Prompts",
+          "type": "array"
+        },
+        "cfg_scale": {
+          "default": 7,
+          "maximum": 35,
+          "minimum": 0,
+          "title": "Cfg Scale",
+          "type": "number"
+        },
+        "clip_guidance_preset": {
+          "default": "NONE",
+          "enum": [
+            "FAST_BLUE",
+            "FAST_GREEN",
+            "NONE",
+            "SIMPLE",
+            "SLOW",
+            "SLOWER",
+            "SLOWEST"
+          ],
+          "title": "Clip Guidance Preset",
+          "type": "string"
+        },
+        "sampler": {
+          "anyOf": [
+            {
+              "enum": [
+                "DDIM",
+                "DDPM",
+                "K_DPMPP_2M",
+                "K_DPMPP_2S_ANCESTRAL",
+                "K_DPM_2",
+                "K_DPM_2_ANCESTRAL",
+                "K_EULER",
+                "K_EULER_ANCESTRAL",
+                "K_HEUN",
+                "K_LMS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sampler",
+          "enum": [
+            "DDIM",
+            "DDPM",
+            "K_DPMPP_2M",
+            "K_DPMPP_2S_ANCESTRAL",
+            "K_DPM_2",
+            "K_DPM_2_ANCESTRAL",
+            "K_EULER",
+            "K_EULER_ANCESTRAL",
+            "K_HEUN",
+            "K_LMS"
+          ],
+          "x-enum-searchable": true
+        },
+        "samples": {
+          "default": 1,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Samples",
+          "type": "integer"
+        },
+        "seed": {
+          "default": 0,
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "steps": {
+          "default": 50,
+          "maximum": 150,
+          "minimum": 10,
+          "title": "Steps",
+          "type": "integer"
+        },
+        "init_image": {
+          "contentEncoding": "base64",
+          "contentMediaType": "image/png",
+          "description": "PNG image bytes encoded as base64; dimensions must match the engine.",
+          "title": "Init Image",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "mask_image": {
+          "contentEncoding": "base64",
+          "contentMediaType": "image/png",
+          "description": "Grayscale PNG mask encoded as base64, with the same dimensions as the source.",
+          "title": "Mask Image",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mask_black",
+          "default": "mask_black",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "engine_id",
+        "text_prompts",
+        "init_image",
+        "mask_image"
+      ],
+      "title": "MaskBlack",
+      "type": "object"
+    },
+    "MaskWhite": {
+      "additionalProperties": false,
+      "description": "Inpaint white mask pixels while preserving black pixels (uses credits).",
+      "properties": {
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional organization ID; otherwise uses your default organization.",
+          "title": "Organization"
+        },
+        "engine_id": {
+          "description": "Engine ID from List Engines; choose an engine supporting this action.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Engine Id",
+          "type": "string"
+        },
+        "text_prompts": {
+          "items": {
+            "$ref": "#/$defs/TextPrompt"
+          },
+          "minItems": 1,
+          "title": "Text Prompts",
+          "type": "array"
+        },
+        "cfg_scale": {
+          "default": 7,
+          "maximum": 35,
+          "minimum": 0,
+          "title": "Cfg Scale",
+          "type": "number"
+        },
+        "clip_guidance_preset": {
+          "default": "NONE",
+          "enum": [
+            "FAST_BLUE",
+            "FAST_GREEN",
+            "NONE",
+            "SIMPLE",
+            "SLOW",
+            "SLOWER",
+            "SLOWEST"
+          ],
+          "title": "Clip Guidance Preset",
+          "type": "string"
+        },
+        "sampler": {
+          "anyOf": [
+            {
+              "enum": [
+                "DDIM",
+                "DDPM",
+                "K_DPMPP_2M",
+                "K_DPMPP_2S_ANCESTRAL",
+                "K_DPM_2",
+                "K_DPM_2_ANCESTRAL",
+                "K_EULER",
+                "K_EULER_ANCESTRAL",
+                "K_HEUN",
+                "K_LMS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sampler",
+          "enum": [
+            "DDIM",
+            "DDPM",
+            "K_DPMPP_2M",
+            "K_DPMPP_2S_ANCESTRAL",
+            "K_DPM_2",
+            "K_DPM_2_ANCESTRAL",
+            "K_EULER",
+            "K_EULER_ANCESTRAL",
+            "K_HEUN",
+            "K_LMS"
+          ],
+          "x-enum-searchable": true
+        },
+        "samples": {
+          "default": 1,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Samples",
+          "type": "integer"
+        },
+        "seed": {
+          "default": 0,
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "steps": {
+          "default": 50,
+          "maximum": 150,
+          "minimum": 10,
+          "title": "Steps",
+          "type": "integer"
+        },
+        "init_image": {
+          "contentEncoding": "base64",
+          "contentMediaType": "image/png",
+          "description": "PNG image bytes encoded as base64; dimensions must match the engine.",
+          "title": "Init Image",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "mask_image": {
+          "contentEncoding": "base64",
+          "contentMediaType": "image/png",
+          "description": "Grayscale PNG mask encoded as base64, with the same dimensions as the source.",
+          "title": "Mask Image",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mask_white",
+          "default": "mask_white",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "engine_id",
+        "text_prompts",
+        "init_image",
+        "mask_image"
+      ],
+      "title": "MaskWhite",
+      "type": "object"
+    },
+    "TextPrompt": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Negative weights discourage the prompt.",
+          "title": "Weight"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "TextPrompt",
+      "type": "object"
+    },
+    "TextToImage": {
+      "additionalProperties": false,
+      "description": "Generate images from weighted text prompts (uses credits).",
+      "properties": {
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional organization ID; otherwise uses your default organization.",
+          "title": "Organization"
+        },
+        "engine_id": {
+          "description": "Engine ID from List Engines; choose an engine supporting this action.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Engine Id",
+          "type": "string"
+        },
+        "text_prompts": {
+          "items": {
+            "$ref": "#/$defs/TextPrompt"
+          },
+          "minItems": 1,
+          "title": "Text Prompts",
+          "type": "array"
+        },
+        "cfg_scale": {
+          "default": 7,
+          "maximum": 35,
+          "minimum": 0,
+          "title": "Cfg Scale",
+          "type": "number"
+        },
+        "clip_guidance_preset": {
+          "default": "NONE",
+          "enum": [
+            "FAST_BLUE",
+            "FAST_GREEN",
+            "NONE",
+            "SIMPLE",
+            "SLOW",
+            "SLOWER",
+            "SLOWEST"
+          ],
+          "title": "Clip Guidance Preset",
+          "type": "string"
+        },
+        "sampler": {
+          "anyOf": [
+            {
+              "enum": [
+                "DDIM",
+                "DDPM",
+                "K_DPMPP_2M",
+                "K_DPMPP_2S_ANCESTRAL",
+                "K_DPM_2",
+                "K_DPM_2_ANCESTRAL",
+                "K_EULER",
+                "K_EULER_ANCESTRAL",
+                "K_HEUN",
+                "K_LMS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sampler",
+          "enum": [
+            "DDIM",
+            "DDPM",
+            "K_DPMPP_2M",
+            "K_DPMPP_2S_ANCESTRAL",
+            "K_DPM_2",
+            "K_DPM_2_ANCESTRAL",
+            "K_EULER",
+            "K_EULER_ANCESTRAL",
+            "K_HEUN",
+            "K_LMS"
+          ],
+          "x-enum-searchable": true
+        },
+        "samples": {
+          "default": 1,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Samples",
+          "type": "integer"
+        },
+        "seed": {
+          "default": 0,
+          "maximum": 4294967295,
+          "minimum": 0,
+          "title": "Seed",
+          "type": "integer"
+        },
+        "steps": {
+          "default": 50,
+          "maximum": 150,
+          "minimum": 10,
+          "title": "Steps",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "text_to_image",
+          "default": "text_to_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "width": {
+          "default": 512,
+          "minimum": 128,
+          "multipleOf": 64,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 512,
+          "minimum": 128,
+          "multipleOf": 64,
+          "title": "Height",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "engine_id",
+        "text_prompts"
+      ],
+      "title": "TextToImage",
+      "type": "object"
+    },
+    "UpscaleImage": {
+      "additionalProperties": false,
+      "description": "Upscale a PNG, optionally choosing one target dimension (uses credits).",
+      "properties": {
+        "organization": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional organization ID; otherwise uses your default organization.",
+          "title": "Organization"
+        },
+        "engine_id": {
+          "description": "Engine ID from List Engines; choose an engine supporting this action.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Engine Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "upscale_image",
+          "default": "upscale_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "image": {
+          "contentEncoding": "base64",
+          "contentMediaType": "image/png",
+          "description": "PNG bytes encoded as base64.",
+          "title": "Image",
+          "type": "string"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "minimum": 512,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "minimum": 512,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        }
+      },
+      "required": [
+        "engine_id",
+        "image"
+      ],
+      "title": "UpscaleImage",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_account": "#/$defs/GetAccount",
+          "get_balance": "#/$defs/GetBalance",
+          "image_to_image_schedule": "#/$defs/ImageSchedule",
+          "image_to_image_strength": "#/$defs/ImageStrength",
+          "list_engines": "#/$defs/ListEngines",
+          "mask_alpha": "#/$defs/MaskAlpha",
+          "mask_black": "#/$defs/MaskBlack",
+          "mask_white": "#/$defs/MaskWhite",
+          "text_to_image": "#/$defs/TextToImage",
+          "upscale_image": "#/$defs/UpscaleImage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/GetBalance"
+        },
+        {
+          "$ref": "#/$defs/ListEngines"
+        },
+        {
+          "$ref": "#/$defs/TextToImage"
+        },
+        {
+          "$ref": "#/$defs/ImageStrength"
+        },
+        {
+          "$ref": "#/$defs/ImageSchedule"
+        },
+        {
+          "$ref": "#/$defs/UpscaleImage"
+        },
+        {
+          "$ref": "#/$defs/MaskAlpha"
+        },
+        {
+          "$ref": "#/$defs/MaskWhite"
+        },
+        {
+          "$ref": "#/$defs/MaskBlack"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DreamstudioAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dreamstudio Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
