@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/rootly.svg",
+  "source": "https://rootly.com/brand/rootly-logo-glyph.svg",
+  "found_at": "https://rootly.com/brand (The Rootly Brand Book: 'glyph', SVG download, brand colour)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (file otherwise unchanged)"
+  ],
+  "notes": "Kept the purple rounded tile: the brand book ships the glyph in the brand colour only on that tile (the other glyph files are plain black and plain white), and it is Rootly's favicon/app icon. One file reads on both themes.",
+  "license": "Rootly brand mark, used nominatively to identify the connected service; trademark rights remain with Rootly.",
+  "sha256": "a3c2b262d1e02deb2b7ee0ae14a0e948f3ea406ad7afa649d82db13a6b8e2c90"
+}

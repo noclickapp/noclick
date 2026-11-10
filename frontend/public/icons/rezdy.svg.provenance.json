@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/rezdy.svg",
-  "source": "https://rezdy.com/wp-content/themes/rezdy/img/favicons/safari-pinned-tab.svg",
-  "license": "Rezdy brand mark, used to identify the integration; all rights reserved by Rezdy.",
-  "sha256": "80e44b1becc146abd16f0fc5ac918d6c535f636aa9e5211a78f3e3d0e1c6a4d8"
+  "source": "https://auth.rezdy.com/rezdy-logo-black.svg",
+  "found_at": "https://app.rezdy.com/login (redirects to auth.rezdy.com; its app bundle /static/js/main.40b059d4.chunk.js references /rezdy-logo-black.svg and /rezdy-logo.svg)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the disc symbol (element 6), dropped the 'rezdy' wordmark (elements 0-5)",
+    "cropped the viewBox to the disc",
+    "cleaned (also removed the leading Illustrator comment)"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: Rezdy's logo files (header and app login) are navy #19232D, with a white version for dark backgrounds; its favicon/apple-touch-icon is the same disc in blue #0046D1 (also the mask-icon colour), but no blue vector exists. Shipped the company's own navy (light) and white (dark) files. If the reviewer prefers the favicon blue, downloads/rezdy/final/rezdy-blue-option.svg is the navy file with #19232D recoloured to #0046D1 (derives from the same source, reads on both themes, one file).",
+  "license": "Rezdy brand mark, used nominatively to identify the connected service; trademark rights remain with Rezdy.",
+  "sha256": "b4b8a8ebe8efdda807cb99a4369eb0b3cb1d8e493ed077eee4572f36b3493756"
 }

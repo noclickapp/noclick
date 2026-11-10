@@ -12,7 +12,7 @@ const SignRequestIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/signrequest.png"
+        src="/icons/signrequest.svg"
         alt=""
         aria-hidden="true"
         className={className}

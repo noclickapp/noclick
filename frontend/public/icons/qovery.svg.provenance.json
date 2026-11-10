@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/qovery.svg",
-  "source": "https://www.qovery.com/logos/qovery-logo-black.svg",
-  "license": "Qovery trademark; official vendor asset used to identify the integration",
-  "sha256": "73151b5ed1f07558883c253b8f84319c8aed93358ec33628c20128e4c66d723c"
+  "source": "https://www.qovery.com/favicon.svg",
+  "found_at": "https://www.qovery.com/ (<link rel=\"icon\" type=\"image/svg+xml\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (viewBox already the 48x48 tile; kept the brand's rounded purple tile)"
+  ],
+  "notes": "DECISION: tile or bare mark. I shipped the favicon tile (Qovery's app icon, as the reviewer note suggests). If the reviewer prefers the bare purple mark, it is element 0 of src1/qovery-logo-black.svg (wordmark element 1 dropped, cropped); a draft is at work/agents/b25/alt/qovery_mark.svg and it reads on both themes.",
+  "license": "Qovery brand mark, used nominatively to identify the connected service; trademark rights remain with Qovery.",
+  "sha256": "9a672aed82539d3fbadb88b8ff283eeb3e1b06877ef62e988ca65fa8175f9a6e"
 }

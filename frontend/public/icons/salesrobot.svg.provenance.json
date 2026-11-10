@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/salesrobot.svg",
+  "source": "https://app.salesrobot.co/assets/logo-white-B8wMpSlq.svg",
+  "found_at": "https://app.salesrobot.co/ (the app's bundle assets/index-tIEKXUIo.js imports it as the on-dark logo; logo-black-Cwqd1Cp4.svg beside it)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the white \"SalesRobot\" wordmark (element 9)",
+    "kept the blue robot head, antennae, ears and eyes (elements 0-8)",
+    "cropped the viewBox to the robot",
+    "cleaned"
+  ],
+  "notes": "DECISION: the robot's face is a cut-out in this file, so it shows the tile: white on the light theme (like the app icon) and dark on the dark theme (as in SalesRobot's own on-dark logo). The app icon PNG has a white face on both. Colour is the file's #59DAF7, slightly lighter than the PNG's blue.",
+  "license": "SalesRobot brand mark, used nominatively to identify the connected service; trademark rights remain with SalesRobot.",
+  "sha256": "a927d2bda88428ccc6ee4eba413630fe24e80c540258ff09dded34514db1265f"
+}

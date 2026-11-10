@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/pneumatic.svg",
+  "source": "https://www.pneumatic.app/images/logos/pneumatic.svg",
+  "found_at": "https://www.pneumatic.app/ (header <img src=\"/images/logos/pneumatic.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'Pneumatic' wordmark path (element 0), kept the #262522 rounded-square tile and the yellow #FEC336 P (elements 1, 2)",
+    "cropped the viewBox to the tile (no pad)",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: icon_check flags the #262522 tile as a black background; it is Pneumatic's own app-icon tile (the header logo draws it as a rounded square, the favicon as a circle), so I kept it in light mode. In dark mode the tile disappears into the wells, so the dark file is the brand's yellow P without the tile rather than a recoloured tile. Reviewer may prefer the tile file for both themes (the P stays visible on dark).",
+  "license": "Pneumatic brand mark, used nominatively to identify the connected service; trademark rights remain with Pneumatic.",
+  "sha256": "3bd6863db0f3bcabb1fe318f8a1977efdcb052c539d54e7d91c3bf0067116b32"
+}

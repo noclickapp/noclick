@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/practice-better-dark.svg",
+  "source": "https://cdn.prod.website-files.com/6718175ada2bc9a32b0d5998/6718175ada2bc9a32b0d5da4_PB-logo-mark-transDarkBG.svg",
+  "found_at": "https://practicebetter.io/ and https://practicebetter.io/brand (header logo for light backgrounds)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'practice better' wordmark (elements 2-16), kept the two half-discs (elements 0, 1: #5FE089 top, #004F3E bottom)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "none: the dark file is Practice Better's own dark-background mark PB-logo-mark-transDarkBG.svg (white top, #5FE089 bottom; the current NoClick file), cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "Practice Better publishes the mark in two colourings, light-background (green over dark green) and dark-background (white over green), so each theme uses the company's own file. The /brand page's full media kit is a Google Drive folder, not fetched.",
+  "license": "Practice Better brand mark, used nominatively to identify the connected service; trademark rights remain with Practice Better.",
+  "sha256": "d523bf7eb26ab5ed271fb1cd9a42c223f5b0e2eb7e611d7e80ead9f756f620d5"
+}

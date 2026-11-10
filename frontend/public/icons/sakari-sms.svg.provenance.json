@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/sakari-sms.svg",
+  "source": "https://assets.sakari.io/images/sakari-icon.svg",
+  "found_at": "Sakari's own asset host assets.sakari.io, beside sakari-logo.svg, which is the header logo of https://developer.sakari.io/",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the hexagon S",
+    "cleaned"
+  ],
+  "notes": "The current PNG is the WRONG COMPANY: it is Mintlify's default favicon (green leaves) that developer.sakari.io serves (its /favicon.svg is the same leaves). Replaced with Sakari's own S icon. The name sakari-icon.svg was found by probing the asset folder of the docs header logo; it is not linked from a page I could read.",
+  "license": "Sakari brand mark, used nominatively to identify the connected service; trademark rights remain with Sakari.",
+  "sha256": "209959344712e7fb95afd2277473e9ec82fb07a925d1d3858cd02b7e93e73387"
+}

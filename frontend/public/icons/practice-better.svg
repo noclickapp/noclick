@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 250 250">
+<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" version="1.1" viewBox="-0.824 1.037 42.847 42.787">
   <defs>
     <style>
       .cls-1 {
-        fill: #fff;
+        fill: #004f3e;
       }
 
       .cls-1, .cls-2 {
@@ -15,6 +14,6 @@
       }
     </style>
   </defs>
-  <path class="cls-1" d="M0,0h250c-11.1,59-62.8,103.6-125,103.6S11.1,59,0,0Z"/>
-  <path class="cls-2" d="M250,249.9h0c0,0-250,0-250,0h0c11-59.1,62.8-103.7,125-103.7s114,44.6,125,103.6Z"/>
-</svg>
+  <path class="cls-2" d="M41.03,1.93c-1.82,9.67-10.31,16.99-20.51,16.99S1.82,11.61,0,1.93h41.03Z"/>
+  <path class="cls-1" d="M41.03,42.94v.02H0v-.02c1.81-9.68,10.31-17.01,20.51-17.01s18.7,7.32,20.51,17.01h.01Z"/>
+  </svg>

@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/rentcast.svg",
+  "source": "https://cdn.prod.website-files.com/5fcfc6872ea226dee1432ecd/60219306aeb29e44c4c33e34_logo.svg",
+  "found_at": "https://www.rentcast.io/ (nav and footer logo <img class='logo-icon nav-bar-logo'>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the gradient bars-and-roof symbol (element 0), dropped the 'rentcast' wordmark (element 1)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "Gradient reads on both themes, so one file; the white square behind the old PNG is gone.",
+  "license": "RentCast brand mark, used nominatively to identify the connected service; trademark rights remain with RentCast.",
+  "sha256": "75306a35728b87236d34591e5c196f356954c1f3d77d1336b816a1720253295a"
+}

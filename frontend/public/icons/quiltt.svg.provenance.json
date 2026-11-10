@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/quiltt.svg",
+  "source": "https://cdn.prod.website-files.com/6643cc066d97630f20e328a5/677d522d5dac24a49b33d6dd_Icon%20Purple.svg",
+  "found_at": "https://www.quiltt.io/press-kit",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "The current PNG is the whole QUILTT lockup on a near-black square; the kit's purple icon reads on both themes (lost_dark 0, lost_light 0), so one file and no background.",
+  "license": "Quiltt brand mark, used nominatively to identify the connected service; trademark rights remain with Quiltt.",
+  "sha256": "a97a12db2e564c444ba3bbbd7fed61825f817870a6a8032b6bb486a17f92bf5b"
+}

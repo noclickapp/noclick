@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/prisma.svg",
   "source": "https://raw.githubusercontent.com/prisma/presskit/main/Assets/logo-mark/logo-mark.svg",
-  "license": "Prisma brand mark, used nominatively under https://github.com/prisma/presskit guidelines; trademark rights remain with Prisma.",
-  "sha256": "55c618ce090b34530647a6760caaac3597b39f722034c9b0f9feb7e44a0debbb"
+  "found_at": "https://github.com/prisma/presskit (Prisma's presskit, updated 2026-08 with the new logo; README 'Logo Mark')",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the white background rect (element 0) that sat behind the stripes, so the gaps between stripes are open as in prisma.io's own icon.svg",
+    "cleaned"
+  ],
+  "notes": "The cyan/red/yellow stripes form a square: that square is the mark itself, not a background, so icon_check's coloured-canvas note is expected. The reviewer's 'verify company and mark' is answered: it is Prisma's current (2026) mark; the old dark prism triangle is retired. The white rect removal changes only the thin gaps between stripes, which now show the theme's background (as on prisma.io).",
+  "license": "Prisma brand mark, used nominatively to identify the connected service; trademark rights remain with Prisma.",
+  "sha256": "1f4ed5094b3f79e165582e39483327b2b10b27ba4e4e714c9db59b00f0017446"
 }

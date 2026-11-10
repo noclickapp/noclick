@@ -6,7 +6,10 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const SafetyCultureIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/safetyculture.svg" alt="" className={className} style={{ ...style, backgroundColor: '#1c1714', borderRadius: 8, padding: 4, objectFit: 'contain' }} {...props} />
+        <>
+            <img ref={ref} src="/icons/safetyculture.svg" alt="" className={`${className ?? ''} dark:hidden`} style={{ ...style, objectFit: 'contain' }} {...props} />
+            <img src="/icons/safetyculture-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`} style={{ ...style, objectFit: 'contain' }} {...props} />
+        </>
     ),
 );
 SafetyCultureIcon.displayName = 'SafetyCultureIcon';

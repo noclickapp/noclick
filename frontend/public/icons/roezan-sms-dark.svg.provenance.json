@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/roezan-sms-dark.svg",
+  "source": "https://www.roezan.com/assets/roezan-logo-white-transparent.svg",
+  "found_at": "https://www.roezan.com/ (header logo <img src=/assets/logo.svg>; the white version /assets/roezan-logo-white-transparent.svg is on the same page)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the speech-bubble symbol (elements 6-14: white fill, outline and the three text lines), dropped the 'Roezan' wordmark (elements 0-5)",
+    "cropped the viewBox to the bubble",
+    "cleaned",
+    "dark file is Roezan's own white logo (roezan-logo-white-transparent.svg): kept the bubble (elements 6-13), dropped the wordmark (0-5), cropped, cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: the light file (white-filled bubble, black outline) also reads on dark much like Roezan's apple-touch-icon, but icon_check flags 21% of its outline as lost on dark, so the dark file is Roezan's own white outline logo. Swap if the reviewer prefers the filled bubble on dark.",
+  "license": "Roezan brand mark, used nominatively to identify the connected service; trademark rights remain with Roezan.",
+  "sha256": "3a7c8d7ebff2960e941a5f09e863f3e998d65d543fa570093fc18c425ae0045c"
+}

@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 // Rossum brand mark from https://rossum.ai
 const RossumIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/rossum.svg" alt="" aria-hidden="true" className={`${className || ''} dark:invert`}
+    <img src="/icons/rossum.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, objectFit: 'contain' }} />
 );
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={RossumIcon} iconColor="" />;

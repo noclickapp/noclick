@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/promptlayer.svg",
-  "source": "https://www.promptlayer.com/logo.svg",
-  "license": "PromptLayer trademark; official publisher asset used to identify the PromptLayer integration.",
-  "sha256": "67d1092bc6ef0ff6ffec858116b68aa5a8f107e71cf4e2b3098aadd32400057f"
+  "source": "https://raw.githubusercontent.com/MagnivOrg/n8n-node/HEAD/nodes/RunAgent/runAgent.svg",
+  "found_at": "https://github.com/MagnivOrg/n8n-node (PromptLayer's own n8n node; MagnivOrg is PromptLayer's GitHub org; the same file is public/logo.svg in MagnivOrg/prompt-layer-zapier)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the cake (the file's 2500x2500 canvas has wide margins)",
+    "cleaned"
+  ],
+  "notes": "DECISION: PromptLayer's mark is a slice of cake, not the shark (the current file is promptlayer.com/logo.svg, a shark mascot used nowhere on the current site, app or docs). But the cake has two drawings: promptlayer.com and the app (dashboard.promptlayer.com) now use a glossy 3D cake with a cherry, which exists only as PNG (icon.png, promptlayer-cake-color PNG; the app's promptlayer-cake-color_xmas.svg is a PNG wrapped in SVG, rejected), while the docs site, the n8n node and the Zapier app use this flat strawberry cake, the only real vector. I shipped the flat cake; if the reviewer requires the website's cherry cake, this is no-official-svg. www.promptlayer.com/icons/bigCake.svg is a one-colour traced outline (1,650 subpaths), not the logo.",
+  "license": "PromptLayer brand mark, used nominatively to identify the connected service; trademark rights remain with PromptLayer.",
+  "sha256": "1a27fc05dd223dd1647b0eeab9299b873d7408cf3aa8e5e061e35d7330e3a67f"
 }

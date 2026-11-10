@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/sevdesk.svg",
   "source": "https://my.sevdesk.de/images/logo.svg",
-  "license": "Sevdesk trademark; official publisher asset used to identify the Sevdesk integration",
-  "sha256": "4b0c048a1a9ece017cbcda940f32786f8188aa48a6e09962df2366d5dd44a3a3"
+  "found_at": "https://my.sevdesk.de/ (the app's login page logo; the current NoClick icon's recorded source)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the #FB523B rounded tile (element 0) and its white bar-chart glyph (element 1); removed the 'sevdesk' wordmark (element 2)",
+    "cropped the viewBox to the tile (no pad: it is the app-icon tile)",
+    "cleaned"
+  ],
+  "notes": "The coral tile is kept because it is sevdesk's own app icon (favicon and apple-touch-icon are this tile).",
+  "license": "sevdesk brand mark, used nominatively to identify the connected service; trademark rights remain with sevdesk.",
+  "sha256": "81fc441697cb557dcfbe5edd0dc998865672ef9d3e04fc76a358d825f58d78e4"
 }

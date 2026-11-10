@@ -5,8 +5,8 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const RilletIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/rillet.svg" alt="" aria-hidden="true" className={['brand-mono', className].filter(Boolean).join(' ')}
-        style={{ ...style, objectFit: 'contain', filter: 'invert(1) ' + (style?.filter || 'invert(var(--brand-invert, 0))') } as CSSProperties} />
+    <img src="/icons/rillet.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, objectFit: 'contain' } as CSSProperties} />
 );
 
 export const RilletNode: NodeDefinition = {

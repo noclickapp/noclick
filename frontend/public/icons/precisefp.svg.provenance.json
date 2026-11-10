@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/precisefp.svg",
+  "source": "https://precisefp.com/wp-content/uploads/2024/03/logo-header.svg",
+  "found_at": "https://precisefp.com/ (header logo; the site blocks plain curl via Cloudflare, fetched with a browser user agent)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the 'Precise' wordmark (element 0) and the 'F' 'P' letters (elements 6, 7), kept the green target and the grey arrow (elements 1-5)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: the favicon/app-icon PNG (wp-content/uploads/2023/07/symbol.400x400*.png, the current NoClick file) draws the target head-on as circles with white-filled rings; the only vector, the header lockup, draws it as perspective ellipses with open (transparent) rings. Same symbol, different drawing. No SVG of the circular symbol exists that I could find (precisefp.com uploads only logo-header.svg and logo-footer.svg; app.precisefp.com uses PNGs: symbol.blue.white.32x32.png, logo.white.md.png; /brand, /press not linked). If the reviewer requires the circular app-icon drawing, this is no-official-svg.",
+  "license": "PreciseFP brand mark, used nominatively to identify the connected service; trademark rights remain with PreciseFP.",
+  "sha256": "80e86ea71c46bc08fac52f0b513dd2c84bcbc75a1f2157764c3b54bff76a4fd7"
+}

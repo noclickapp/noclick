@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/scoro-dark.svg",
+  "source": "https://www.scoro.com/wp-content/themes/scoro-web/assets/rebranding/home--logo-dark.svg",
+  "found_at": "https://www.scoro.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the S (subpath 0 of the wordmark path, element 0) and the pink square (element 1)",
+    "removed the \"coro\" subpaths 1-6 of element 0",
+    "cropped the viewBox to the S",
+    "cleaned",
+    "#343F53 -> #FFFFFF on the S (Scoro's own home--logo-white.svg draws it white); the pink square stays #E43958"
+  ],
+  "variant": "dark mode",
+  "license": "Scoro brand mark, used nominatively to identify the connected service; trademark rights remain with Scoro.",
+  "sha256": "9a2bc9badd36309d9ec91cb5651de2b316d25ccbf06e86ad15a81efce11be2bc"
+}

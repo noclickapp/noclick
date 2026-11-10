@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/razorpay-dark.svg",
+  "source": "https://mintcdn.com/razorpay-881012b3/puuu1wI-BbW3rsp2/logo/dark.svg",
+  "found_at": "https://razorpay.com/docs/ (Mintlify config logo.light)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the blue slash (element 0) and, of the compound element 1, only its first subpath (the navy triangle); dropped the 'Razorpay' letters (element 1 subpaths 1-13) and the grey 'Docs' (element 2)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "taken from Razorpay's own dark logo (same edits): blue #3395FF slash and the triangle in white instead of navy #072654"
+  ],
+  "variant": "dark mode",
+  "notes": "Razorpay's newsroom 'Brand Assets' page offers no logo files; the homepage (Framer) header logo is not a standalone SVG; the only logo.svg in github.com/razorpay (razorpay-cursor-plugins) is a 'PLACEHOLDER' RZP text tile, not usable. simple-icons has a one-colour razorpay mark, not needed.",
+  "license": "Razorpay brand mark, used nominatively to identify the connected service; trademark rights remain with Razorpay.",
+  "sha256": "620a5d0a1e1e4d68a7064d703127f89de62aade975d443537e53c81adf77ad09"
+}

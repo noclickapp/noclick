@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/reclaim-ai-dark.svg",
+  "source": "https://cdn.prod.website-files.com/67859049c02d67b2cfcceebf/6ad7e3af82127ccec9d430ec_dropboxreclaim_logo_on_light.svg",
+  "found_at": "https://reclaim.ai/ (header logo, 'Dropbox Reclaim')",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the four-shape glyph (elements 0-3: blue square #0061FE, two #1E1919 circles, blue triangle); dropped the 'Dropbox' and 'Reclaim' words (elements 4-5)",
+    "cropped the viewBox to the glyph (pad 0.02)",
+    "cleaned",
+    "#1E1919 -> #686663 on the two circles (elements 0 and 3), the grey Reclaim's own dark-mode favicon uses (reclaim dbx glyph dark.png, sampled; copy at downloads/reclaim-ai/ref/)"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: two current marks. reclaim.ai (marketing site, now Dropbox Reclaim) uses this blue/black glyph; app.reclaim.ai still serves the older Reclaim app icon as favicon.svg (purple #5267EA tile with pink square, navy circle, cream circle, yellow triangle; kept at downloads/reclaim-ai/src2/favicon.svg, a clean vector usable as-is). I followed the marketing site and the current NoClick icon. Dark variant: I used Reclaim's own dark-mode grey for the circles; a white-circle alternative is at work/agents/b25/alt/reclaim-ai-dark-white.svg if the reviewer prefers the brief's black -> white.",
+  "license": "Reclaim.ai (Dropbox Reclaim) brand mark, used nominatively to identify the connected service; trademark rights remain with Reclaim.ai (Dropbox Reclaim).",
+  "sha256": "5f8c91103cfb9110327a00cd7eede72fae177e98e303d0016b7748b4f52f37d7"
+}

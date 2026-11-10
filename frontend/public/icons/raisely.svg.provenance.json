@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/raisely.svg",
+  "source": "https://cdn.prod.website-files.com/68f6c4a3bcdca22a4de5c375/68fba30a43d1f79f2dc11601_raisely-colored-svg-3b3aac.svg",
+  "found_at": "https://raisely.com/ (the Organization 'logo' in its JSON-LD; the header uses the white version raisley-white.svg, src2)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the circle-and-chevron mark (element 1); dropped the 'Raisely' wordmark (element 0) and the black 'Powered by Velora' line (elements 2-16)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "The purple reads on both themes (lost_dark 0), so one file.",
+  "license": "Raisely brand mark, used nominatively to identify the connected service; trademark rights remain with Raisely.",
+  "sha256": "bcc83bc3e09fec3055cf33c64d119ba4ce4d5732c6151e46fd30120778fbe189"
+}

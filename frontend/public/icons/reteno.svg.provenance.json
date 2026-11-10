@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/reteno.svg",
+  "source": "https://reteno.com/ (inline footer logo <svg> in <div class='a-logo_footer w-embed'>, viewBox 0 0 199 48, <title>Reteno</title>)",
+  "found_at": "https://reteno.com/ (footer logo; the header logo is the same mark in currentColor, inline-00.svg)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the #FC531F mark (element 6), dropped the 'reteno' wordmark (elements 0-5)",
+    "cropped the viewBox to the mark",
+    "cleaned (dropped the <title>)"
+  ],
+  "notes": "The footer's orange copy was used rather than the header's currentColor copy, so the brand colour is in the file. Orange reads on both themes, so one file.",
+  "license": "Reteno brand mark, used nominatively to identify the connected service; trademark rights remain with Reteno.",
+  "sha256": "7ce1bc4b98969b327cfe1281d3bd977c1da4743c30e72ab4f6bad41c2418bd0c"
+}

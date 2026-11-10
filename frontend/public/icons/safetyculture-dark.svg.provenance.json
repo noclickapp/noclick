@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/safetyculture-dark.svg",
+  "source": "https://app.safetyculture.com/static-assets/common/mitti-favicon.svg",
+  "found_at": "https://app.mitti.com/ (<link rel=\"icon\" type=\"image/svg+xml\">; same on app.safetyculture.com)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the white square background (element 0)",
+    "kept the M and its gradient swoosh (elements 1, 2)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "#1C1714 -> #FFFFFF on the M (Mitti's own dark favicon and apple-touch icon draw the M white)"
+  ],
+  "variant": "dark mode",
+  "notes": "Replaces the \"Mitti by SafetyCulture\" wordmark with the app's M mark, as the reviewer suggested.",
+  "license": "Mitti (SafetyCulture) brand mark, used nominatively to identify the connected service; trademark rights remain with Mitti (SafetyCulture).",
+  "sha256": "966ad6f57dff36d84733000eaaf9d2ade9a4cbb8bf0b015fda10109f5319b6cc"
+}

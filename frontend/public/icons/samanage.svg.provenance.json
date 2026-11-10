@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/samanage.svg",
-  "source": "https://documentation.solarwinds.com/resources/centralnav/images/solarwinds-csc-logo.svg",
-  "license": "SolarWinds brand mark used nominatively to identify SolarWinds Service Desk. Trademark rights remain with SolarWinds.",
-  "sha256": "2f3bbd444dffad795fc5faa4d7b8cf4427e3a054e7e7eaf53f2d1b813c30442e"
+  "source": "https://p1.aprimocdn.net/solarwinds/b0a24941-e427-43df-ab04-b2420142eddf/SW_Logo_Flame_Web_Orange_Original%20file.svg",
+  "found_at": "https://www.solarwinds.com/ (the page's Builder.io data uses it as an Icon; the header lockup there is a PNG)",
+  "source_kind": "parent company site",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the registered-trademark sign (elements 0, 1)",
+    "kept the three flame strokes (elements 2-4)",
+    "cropped the viewBox to the flame",
+    "cleaned"
+  ],
+  "notes": "SolarWinds publishes the flame alone as \"SW_Logo_Flame_Web_Orange\"; I dropped its small (R) mark, which would be a speck at 22px.",
+  "license": "SolarWinds brand mark, used nominatively to identify the connected service; trademark rights remain with SolarWinds.",
+  "sha256": "4f6c840929a37215c73081289e6289526e0507e79019d663e9758e90b46ffe99"
 }

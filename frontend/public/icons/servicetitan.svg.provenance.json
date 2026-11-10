@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/servicetitan.svg",
+  "source": "https://www.servicetitan.com/",
+  "found_at": "https://www.servicetitan.com/ (inline SVG sprite in the page: symbols #inline-st-logo-tertiary (black) and #inline-st-logo (white), used by the header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "took the black header logo symbol #inline-st-logo-tertiary out of the sprite (unwrapped from <symbol> into an <svg>, work/agents/b28/st-symbol-tertiary.svg)",
+    "kept the Titan-with-wrench figure (elements 13-18); removed the 'ServiceTitan' letters and the (R) (elements 0-12)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: colour. servicetitan.com's favicon draws the Titan in navy (#003954), but only as an ICO/PNG; every vector the company serves (the homepage header logo in black and white, the login page's LogoST in #3A3A3A) is monochrome. I shipped the header's black Titan for light and its white Titan for dark. derive passes against the sprite file inline-00.svg (it reads the symbols).",
+  "license": "ServiceTitan brand mark, used nominatively to identify the connected service; trademark rights remain with ServiceTitan.",
+  "sha256": "66d2f3845376ee5b052fdd76d8c385d7b43a20c8ca7ac5a8afe06988d6a29901"
+}

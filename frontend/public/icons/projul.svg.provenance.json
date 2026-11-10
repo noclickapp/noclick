@@ -1,7 +1,16 @@
 {
   "path": "frontend/public/icons/projul.svg",
   "source": "https://projul.com/images/logo/projul-logo.svg",
-  "license": "Official Projul brand mark used nominatively to identify the connected service; trademark rights remain with Projul.",
-  "sha256": "95cd9f5cb2f6f662ba0a11910408826f58c58aa0d92be38d55abcea25dcc10a8",
-  "modifications": "Removed trailing whitespace only; SVG artwork unchanged."
+  "found_at": "https://projul.com/ (header <img src=\"/images/logo/projul-logo.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the blue 'projul' wordmark (element 0), kept the #3A3A3A hammer (element 1)",
+    "cropped the viewBox to the hammer",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The current file is the full lockup (same source file, byte-identical); only the hammer is kept now.",
+  "license": "Projul brand mark, used nominatively to identify the connected service; trademark rights remain with Projul.",
+  "sha256": "180c788c4660149219318fb61d5a242ded65e7260ab31b54340e86bea741d929"
 }

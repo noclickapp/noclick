@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/polygon.svg",
+  "source": "https://raw.githubusercontent.com/massive-com/mcp_massive/HEAD/assets/massive-icon-logo.svg",
+  "found_at": "https://github.com/massive-com/mcp_massive/tree/master/assets (Massive's own MCP server repo; the massive-com GitHub org, also polygon-io, links https://massive.com)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (no geometry changes: the file is already the app icon, a #155DFC rounded tile with a white M)"
+  ],
+  "notes": "DECISION: Polygon.io rebranded to Massive; the current icon is the retired Polygon.io mark. I used Massive's current app icon. The integration's label still says 'Polygon': the reviewer may want to rename it 'Massive (Polygon.io)'. The blue tile is the brand's own app icon (favicon and repo icon), so icon_check's coloured-tile note is expected. Not to be confused with Polygon (blockchain), whose mark is in simple-icons/svgl.",
+  "license": "Massive (formerly Polygon.io) brand mark, used nominatively to identify the connected service; trademark rights remain with Massive (formerly Polygon.io).",
+  "sha256": "0cd61455abdcc9a3edc64e7eae0c31da763199bc3afd97499a6be0596f3c451d"
+}

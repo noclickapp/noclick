@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/savvycal.svg",
+  "source": "https://drive.google.com/uc?export=download&id=1okqUVkvgHnHaxwTNU04MIMOZQ8rrprUq",
+  "found_at": "https://savvycal.com/brand (\"Logo files\" -> Google Drive folder Logos/S Logo, file S_logo_Green.svg)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the S",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The app icon's lime (#B9FF78-ish) tile is only a PNG; the kit's S logos come in Green, Black and White, used Green (light) and White (dark).",
+  "license": "SavvyCal brand mark, used nominatively to identify the connected service; trademark rights remain with SavvyCal.",
+  "sha256": "c8f368206445aa5e6f0c54b0e75c6d86a754d51521df6dbde09654859a17bce2"
+}

@@ -12,7 +12,7 @@ const PolymarketIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/polymarket.png"
+        src="/icons/polymarket.svg"
         alt=""
         aria-hidden="true"
         className={className}

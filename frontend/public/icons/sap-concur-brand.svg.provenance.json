@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/sap-concur-brand.svg",
-  "source": "https://www.concur.com/ (SAP Concur official brand asset, unmodified)",
-  "license": "Brand mark of its owner, used nominatively to identify the connected service; no trademark rights claimed or granted",
-  "sha256": "be93ac6d6c7eedca8775ae64ad77becc27c1c5fb07448fc222523e1bb435c282"
+  "source": "https://raw.githubusercontent.com/SAP/ui5-webcomponents-ngx/HEAD/apps/documentation/src/assets/images/sap-logo-svg.svg",
+  "found_at": "https://github.com/SAP/ui5-webcomponents-ngx (SAP's own repo; same file name as the logo concur.com's header loads from www.sap.com/content/dam/application/shared/logos/sap-logo-svg.svg, which refuses non-browser downloads)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the SAP shape (no padding: the shape is the tile)",
+    "cleaned"
+  ],
+  "notes": "DECISION: SAP Concur has no logo of its own any more. Options: (a) shipped: the SAP logo, as concur.com's header shows it; it is 2:1, so icon_check flags wordmark-shape, but it is SAP's whole logo, not a mark plus a name; (b) concur.com's SVG favicon, the letterless flat #0070F2 SAP shape (the current file, also SAP Horizon's sap-logo-shape.svg in SAP/theming-base-content), which reads as an empty blue block; (c) the SAP Concur app's own icon, a blue briefcase (App Store AppIconConcur PNG), for which no SVG exists anywhere I looked.",
+  "license": "SAP Concur brand mark, used nominatively to identify the connected service; trademark rights remain with SAP Concur.",
+  "sha256": "fbb9e185b21d1bd4187cbcbc14349975963f1316003df02b101d26e2eae62e6e"
 }

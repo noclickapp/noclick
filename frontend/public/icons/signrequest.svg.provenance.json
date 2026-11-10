@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/signrequest.svg",
+  "source": "https://signrequest.com/",
+  "found_at": "https://signrequest.com/ (inline <svg class=\"logo logo-primary site__footer__logo\"> in the site footer, linking to the home page; raw copy downloads/signrequest/src1/inline/inline-01.svg)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML attributes on the root svg (class, ng-show and the valueless ng-cloak, which made the file unparseable as XML); the body is byte-identical to the page's svg, saved as work/agents/b28/signrequest-footer-rootclean.svg",
+    "the logo is one compound path: kept the pen-and-box mark's subpaths 16-18, dropped the 'SignRequest' letters (subpaths 0-15, 19)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: SignRequest's app icon is this mark in white on a blue (#3C78D8-ish) square, but that tile exists only as PNG (images/favicons/*, the press page's logo-simple.png; /img/icons/safari-pinned-tab.svg linked from the page is a 404). I shipped the bare mark in the footer logo's #366cd8, which reads on both themes. derive was run against the root-cleaned copy (source_file), since the raw page svg does not parse.",
+  "license": "SignRequest brand mark, used nominatively to identify the connected service; trademark rights remain with SignRequest.",
+  "sha256": "9e685aee177d22dfad80fddb94272d8741b4686005a03afdc40e9c1fb9c4a083"
+}

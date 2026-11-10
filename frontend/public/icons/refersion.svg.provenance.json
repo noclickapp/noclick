@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/refersion.svg",
   "source": "https://refersion.dev/img/refersion-logo.svg",
-  "license": "Refersion trademark; used to identify the Refersion integration",
-  "sha256": "3f45d2ddb085bdb79b153a1baf38e9cc57bff81dfb2b34be5f31fe9844d6c518"
+  "found_at": "https://refersion.dev/ (Refersion's developer docs; Docusaurus navbar logo)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "light file: #FFFFFF -> #221F4E on the mark (element 0), Refersion's own navy (--rfsn-navy in refersion.dev's CSS, the colour of its favicon tile)"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: the only Refersion vector is the white mark (refersion.com's header logos and favicons are PNG; refersion.com has no press/brand page). Light file recolours it to Refersion's navy #221F4E (its own CSS variable and favicon tile) rather than shipping a tile; dark file keeps it white. The reviewer note suggested the navy tile, which exists only as PNG.",
+  "license": "Refersion brand mark, used nominatively to identify the connected service; trademark rights remain with Refersion.",
+  "sha256": "2570c231dab19f64c594eec328ace71e6d5b0004b9e71f2630d78493fb980b8c"
 }

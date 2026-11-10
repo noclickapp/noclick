@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/safetyculture.svg",
-  "source": "https://files.readme.io/c916d5f48445b95025f76f7cbfcaa549df8b781953d7c3c247d555b47b4259d7-mitti-bysc-white.svg",
-  "license": "Mitti (by SafetyCulture) trademark; exact official developer portal logo used to identify the integration. https://developer.mitti.com/docs/mitti-apps-guide",
-  "sha256": "18d562483ec133ce9d0294c1d884d7bd37392fc01eab4d0e6f53a43f08690c84"
+  "source": "https://app.safetyculture.com/static-assets/common/mitti-favicon.svg",
+  "found_at": "https://app.mitti.com/ (<link rel=\"icon\" type=\"image/svg+xml\">; same on app.safetyculture.com)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the white square background (element 0)",
+    "kept the M and its gradient swoosh (elements 1, 2)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Replaces the \"Mitti by SafetyCulture\" wordmark with the app's M mark, as the reviewer suggested.",
+  "license": "Mitti (SafetyCulture) brand mark, used nominatively to identify the connected service; trademark rights remain with Mitti (SafetyCulture).",
+  "sha256": "e3f6b4142312084d240974001215886a753ee2d8b26a63b3747c75408ea3121d"
 }

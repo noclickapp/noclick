@@ -6,8 +6,12 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const ServiceTitanIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/servicetitan.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+    <>
+        <img src="/icons/servicetitan.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+        <img src="/icons/servicetitan-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+    </>
 );
 
 export const ServiceTitanNode: NodeDefinition = {

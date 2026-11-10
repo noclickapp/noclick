@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/pylon-1.svg",
+  "source": "https://cdn.prod.website-files.com/6a33fafd575abd58bf59afd5/6a4e4b11b407ae35d52dbea4_6893466f185268ae1af990f7_Pylon.svg",
+  "found_at": "https://www.usepylon.com/ (the 'Pylon' author picture on its blog cards, e.g. the 'Pylon x Devin' post)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "source_kind is 'company site': the file is Pylon's own upload on its Webflow site, used as the Pylon author avatar, not the header (the header logo, src1/pylon_logo.svg, is the white mark + 'Pylon' wordmark for the dark nav). app.usepylon.com/favicon.svg just wraps a PNG (src4). The purple reads on both themes (lost_dark 0), so one file.",
+  "license": "Pylon brand mark, used nominatively to identify the connected service; trademark rights remain with Pylon.",
+  "sha256": "ca7b2d8ba324d6099df4d4dc59ce715946580b9f22c91efd1d1ffaef2af8cd04"
+}

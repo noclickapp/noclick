@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/seven-io.svg",
+  "source": "https://raw.githubusercontent.com/seven-io/freshdesk/main/app/styles/images/icon.svg",
+  "found_at": "https://github.com/seven-io/freshdesk (seven.io's own GitHub org; the Freshdesk app's icon)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the invisible fill:none frame rect (element 0)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "removed the Illustrator generator comment"
+  ],
+  "notes": "seven.io's site header Logo.svg / Logo-white.svg draw a thinner gradient version of the 7 next to the wordmark; the app icon/favicon is this bold solid one, which seven.io only serves as PNG on its site, so I took the vector from their own GitHub org. The triage's 'vanishes-light' flag for the PNG does not apply: the green reads on both tiles. Other seven-io repos carry an older #00D488 bold 7 (automatisch assets/favicon.svg, src4) and the thin gradient mark (n8n-nodes, src10).",
+  "license": "seven (seven communications GmbH, seven.io) brand mark, used nominatively to identify the connected service; trademark rights remain with seven (seven communications GmbH, seven.io).",
+  "sha256": "344b3bb03177af088980ef1296dd78fa7dacdb21e119964d9f32a993cad31233"
+}

@@ -11,19 +11,34 @@ const ProjulIcon = ({
     className?: string;
     style?: CSSProperties;
 }) => (
-    <img
-        src="/icons/projul.svg"
-        alt=""
-        aria-hidden="true"
-        className={className}
-        style={
-            {
-                ...style,
-                '--brand-invert': 0,
-                objectFit: 'contain',
-            } as CSSProperties
-        }
-    />
+    <>
+        <img
+            src="/icons/projul.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} dark:hidden`}
+            style={
+                {
+                    ...style,
+                    '--brand-invert': 0,
+                    objectFit: 'contain',
+                } as CSSProperties
+            }
+        />
+        <img
+            src="/icons/projul-dark.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${className ?? ''} hidden dark:block`}
+            style={
+                {
+                    ...style,
+                    '--brand-invert': 0,
+                    objectFit: 'contain',
+                } as CSSProperties
+            }
+        />
+    </>
 );
 
 export const ProjulNode: NodeDefinition = {

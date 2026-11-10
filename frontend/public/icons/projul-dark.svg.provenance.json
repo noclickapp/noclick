@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/projul-dark.svg",
+  "source": "https://projul.com/images/logo/projul-logo-white.svg",
+  "found_at": "https://projul.com/ (header <img src=\"/images/logo/projul-logo.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the blue 'projul' wordmark (element 0), kept the #3A3A3A hammer (element 1)",
+    "cropped the viewBox to the hammer",
+    "cleaned",
+    "none: the dark file is the hammer (element 1) of Projul's own white logo projul-logo-white.svg, cropped and cleaned the same way"
+  ],
+  "variant": "dark mode",
+  "notes": "The current file is the full lockup (same source file, byte-identical); only the hammer is kept now.",
+  "license": "Projul brand mark, used nominatively to identify the connected service; trademark rights remain with Projul.",
+  "sha256": "7ce346d7604f23ad84c745f79d7ad76bb742701bba3a972445469550d38bb7c9"
+}

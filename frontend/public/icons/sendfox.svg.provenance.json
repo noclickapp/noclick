@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/sendfox.svg",
-  "source": "https://sendfox.com/img/sendfox-logo.svg (official API info.x-logo.url)",
-  "license": "SendFox brand mark used nominatively to identify the service; trademark rights remain with SendFox.",
-  "sha256": "d0d8049807648ea8b94f3ab068e95a7775fd1a9a3476efdc99309122e725f1eb"
+  "source": "https://cdn.sendfox.com/img/brand-guideline/brandmark-color.svg",
+  "found_at": "https://sendfox.com/ (brand-guideline images embedded on the homepage: brandmark-color, logo-color, logo-white; brandmark-white also exists)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the brandmark",
+    "cleaned"
+  ],
+  "notes": "DECISION: icon_check flags vanishes-light (52%): the envelope's pale blue #CCDFED has little contrast on the white/#f3f3f4 tiles. It is SendFox's own colour, drawn the same way on white in its apple-touch icon, and reads in the sheet, so I kept one file. A light file would need #CCDFED recoloured to a colour SendFox doesn't use for it (e.g. the wordmark slate #4C5366); the brand kit's other version, brandmark-white.svg, is all white.",
+  "license": "SendFox brand mark, used nominatively to identify the connected service; trademark rights remain with SendFox.",
+  "sha256": "53e9c86fbeed383af41ef7b2560946af5d8454b9e34ca53f7a555fc15c3d6714"
 }

@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/responsys.svg",
-  "source": "https://www.oracle.com/apac/news/resources/",
-  "license": "Oracle trademark; unmodified vendor wordmark",
-  "sha256": "0b0ae5525b4ad992711031becd184c1b22f6840d62ada037eaf9e7ed4153702c"
+  "source": "https://www.oracle.com/legal/logos.html (inline header <svg class=\"u38-oicn-small\">, the small Oracle 'O' in the global u38 header)",
+  "found_at": "https://www.oracle.com/legal/logos.html (Oracle's logo and trademark guidelines page, carrying oracle.com's global header)",
+  "source_kind": "parent company site",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML class attribute from the root <svg>",
+    "cropped the viewBox to the O",
+    "cleaned"
+  ],
+  "notes": "Responsys has no mark of its own; this is Oracle's O, as the reviewer suggested (matches the eloqua fix). Red reads on both themes, so one file. The O is 1.58:1 wide by design.",
+  "license": "Oracle (Oracle Responsys) brand mark, used nominatively to identify the connected service; trademark rights remain with Oracle (Oracle Responsys).",
+  "sha256": "19178d37b33980775dfe1107472947f4f5a5b82c887f1ab3a7d2b1416d4b12ff"
 }

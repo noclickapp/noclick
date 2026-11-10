@@ -1,0 +1,19 @@
+{
+  "path": "frontend/public/icons/rosette-text-analytics-dark.svg",
+  "source": "https://www.babelstreet.com/ (inline header <svg aria-label=\"Babel Street\">, viewBox 0 0 576 162, drawn in .st0 {fill:#fff})",
+  "found_at": "https://www.babelstreet.com/ (site header logo, linked 'Home page')",
+  "source_kind": "parent company site",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML class attribute from the root <svg>",
+    "kept the square-spiral mark (elements 11-13: two polygons and the centre square), dropped the 'BABEL STREET' letters (elements 0-10)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "light file: #FFFFFF \u2192 #00203F on the mark (the site's own --background navy, which is also the navy of Babel Street's favicons), since the white header mark vanishes on the light tile",
+    "dark file keeps the header's own white (#FFFFFF), unrecoloured"
+  ],
+  "variant": "dark mode",
+  "notes": "Rosette has no mark of its own any more; this is Babel Street's mark. The only vector Babel Street serves is the white header logo, so the light-theme navy is a recolour to the site's own navy (the favicon colour), not a published navy file.",
+  "license": "Babel Street (Rosette Text Analytics) brand mark, used nominatively to identify the connected service; trademark rights remain with Babel Street (Rosette Text Analytics).",
+  "sha256": "5801d7e557bd88164f899d9c9fb205b8287c09d0560dc6f69a49dd8cce474343"
+}

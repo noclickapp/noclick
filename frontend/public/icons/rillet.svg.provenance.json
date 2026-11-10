@@ -1,6 +1,13 @@
 {
   "path": "frontend/public/icons/rillet.svg",
-  "source": "https://www.rillet.com/ (inline SVG in the Rillet home navigation logo)",
-  "license": "Rillet brand mark used nominatively to identify the connected service. Trademark rights remain with Rillet.",
-  "sha256": "60783306789cbc57570d98befb529e91274c046c40ef3aa0c577e51bb24cc483"
+  "source": "https://app.rillet.io/favicon.svg",
+  "found_at": "https://app.rillet.io/ (Rillet's app, <link rel=icon href=/favicon.svg>)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (file otherwise unchanged)"
+  ],
+  "notes": "Kept the purple rounded tile: it is Rillet's own app icon (the app's SVG favicon and the site's webclip). The white R and purple tile read on both themes, so one file and no CSS filter needed.",
+  "license": "Rillet brand mark, used nominatively to identify the connected service; trademark rights remain with Rillet.",
+  "sha256": "28d406ebd7297bd4c71dad26304b1cececd6c9f800cf41637a1d26a094a05a6a"
 }

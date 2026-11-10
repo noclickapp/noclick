@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/signpath.svg",
+  "source": "https://signpath.io/",
+  "found_at": "https://signpath.io/ (Framer site: the header logo <use href=\"#svg513886680_4387\"> points at this template <svg> in the page's #svg-templates block)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the hexagon-with-flag mark (element 0, the hexagon with the flag knocked out); removed the 'SignPath' letters (elements 1-8)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: colour. SignPath's app icon is this hexagon in a blue-to-purple gradient with a white flag, but that exists only as PNG (Framer favicons, docs favicon, Okta login logo). Every vector of the mark is flat: the current site header in white (used here), the docs' older cyan #00b1e6 logo (docs.signpath.io/assets/signpath-logo.svg, downloads/signpath/src3/, older branding), and white/black icons in the SignPath/docs-product repo. So I shipped the current header mark white for dark mode and black for light mode. Keep the gradient PNG instead if the colour matters more than the vector.",
+  "license": "SignPath brand mark, used nominatively to identify the connected service; trademark rights remain with SignPath.",
+  "sha256": "6f651834888a74ebbd15e49938e5cb3c9cf42c874606c841a4396e740a826cea"
+}

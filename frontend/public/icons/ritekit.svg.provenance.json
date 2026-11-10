@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/ritekit.svg",
+  "source": "https://ritekit.com/assets/img/ritekit/logo-symbol.svg",
+  "found_at": "https://ritekit.com/ (the page loads /assets/img/ritekit/logo.svg as its product logo and each sister product's /assets/img/<product>/logo-symbol.svg as nav icons; RiteKit's own logo-symbol.svg sits in the same folder as its logo.svg)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned (also removed the XML declaration and DOCTYPE)"
+  ],
+  "notes": "The symbol-only file is RiteKit's own (same path pattern as its sister products' nav icons); it is not linked from the homepage itself. Magenta reads on both themes, so one file.",
+  "license": "RiteKit brand mark, used nominatively to identify the connected service; trademark rights remain with RiteKit.",
+  "sha256": "c5475b920745333141b94f2e430355aa2ed4bd027641a4578f8637970c5308d5"
+}

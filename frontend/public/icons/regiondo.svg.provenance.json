@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/regiondo.svg",
+  "source": "https://pro.regiondo.com/ (inline header <svg> 'Regiondo GmbH logotype go to homepage', viewBox 0 0 190.7 48.2)",
+  "found_at": "https://pro.regiondo.com/ (site header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML enable-background style from the root <svg>",
+    "in element 0 (wordmark + phone top as one compound path) kept only subpath 12 (the phone's upper outline), dropped the 'REGIONDO' letters (subpaths 0-11)",
+    "kept elements 1-3 (ticket outline, phone lower outline, speaker and button)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "Orange reads on both themes, so one file; the white square behind the old PNG is gone.",
+  "license": "Regiondo brand mark, used nominatively to identify the connected service; trademark rights remain with Regiondo.",
+  "sha256": "d2adb3aec9dcec556302f55682b4f38bef0c247b9b7d0e1fcfe2c6bf04b36a7a"
+}

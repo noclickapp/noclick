@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/signupgenius.svg",
-  "source": "https://developer.signupgenius.com/images/logo-api-portal.svg",
+  "source": "https://www.signupgenius.com/n_images/SignUpGenius-Logo-FullColor.svg",
+  "found_at": "https://www.signupgenius.com/ (header logo; the same file is the logo shown on https://www.signupgenius.com/media)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the lightbulb-with-check mark: black outlines (elements 42, 43), green #6f8839 check (44), yellow gradient bulb fill (61) and the white halo shapes that sit behind the outlines (1-9); removed the 'SignUpGenius' letters and (R) (elements 0, 10-41, 45-60)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: one file for both themes. icon_check flags 'vanishes-dark 36%' (the black outlines) and 'vanishes-light 21%' (the white halo), but the logo is drawn for both: on white the halo disappears and the black outlines show (as the favicon), on dark the white halo traces every outline, which is how SignUpGenius's own API-portal logo sits on its dark header. A black-to-white recolour for dark made it worse (outline and halo merged into a pale blob), so I dropped it. The media page's logo zips (cdn.sanity.io .../staging/*.zip) all return 404.",
   "license": "SignUpGenius brand mark, used nominatively to identify the connected service; trademark rights remain with SignUpGenius.",
-  "sha256": "6105cf9694468bab8efc759ff8d275f61fc63abe20b7a1e4172507741ffde7ca"
+  "sha256": "84ed03d21b79af53d0418f265d87539fea6446d5d4c2eed998edec1e20867c07"
 }

@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/shippo-brand-vector.svg",
-  "source": "https://iconlogovector.com/logo/shippo",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "07bce16e94ffc46028f04f269b3ab981b5771ffb87f8c1815e7a6fcebbcceaaf"
+  "source": "https://cdn.prod.website-files.com/6462967bbf70fa5b5b227351/646f4a30ebd66f72e353f486_shippo-logo-mobile.svg",
+  "found_at": "goshippo.com site header (img.header__logo-mobile in the mobile menu header, e.g. on https://goshippo.com/press, saved as downloads/shippo/src1/press-404.html); the desktop header uses 646bd3ac70ee08fca9869afe_shippo-logo-dark.svg, the same mark with the wordmark",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "used the header's mark-only mobile logo (no wordmark)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "goshippo.com's favicon draws the capybara in navy on a white disc (PNG only); the site's vector logo is near-black #1B1D1D, which I kept. The dark variant replaces the CSS invert the old icon relied on.",
+  "license": "Shippo brand mark, used nominatively to identify the connected service; trademark rights remain with Shippo.",
+  "sha256": "590ff1400b5d9b389024d7a4d7d88a58305ba9f39c246fe67f200d8ad1e85eb5"
 }

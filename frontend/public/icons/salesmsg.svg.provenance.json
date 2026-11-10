@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/salesmsg.svg",
   "source": "https://cdn.prod.website-files.com/69e96921d5da6f25318d4dcb/69ead79985a743f6cd22c151_Logo%20salesmsg.svg",
-  "license": "Salesmsg trademark; official website asset used to identify the Salesmsg integration",
-  "sha256": "fb83e0748c7f7ffb5075b1b3946fffaf630ddd3354f84b10696d8a5870053851"
+  "found_at": "https://www.salesmessage.com/ (header logo; also the current file's provenance)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the wordmark paths \"sales\" and \"msg\" (elements 2, 3)",
+    "removed the white backing shape (element 0), so the chart line is cut out of the blue bubble",
+    "cropped the viewBox to the bubble",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Light file draws the chart line as a cut-out (the tile shows through, white on white like the favicon) because the file's white backing fails the light check where the line leaves the bubble at bottom left; dark file keeps the white backing. Both are the file's own elements.",
+  "license": "Salesmsg brand mark, used nominatively to identify the connected service; trademark rights remain with Salesmsg.",
+  "sha256": "5fd3ff1c5b550e5b71c0a6f4894dea622e19852dd7469252099483c981aab6f1"
 }

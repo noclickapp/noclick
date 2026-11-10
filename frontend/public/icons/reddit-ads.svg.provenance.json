@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/reddit-ads.svg",
+  "source": "https://cdn.prod.website-files.com/685eb01de588fa3e7e23b7c0/68a5589cb228f615d89d1bf8_Reddit_Logo%201.svg",
+  "found_at": "https://www.business.reddit.com/ (Reddit for Business, where ads.reddit.com redirects; the same file is linked from the Reddit Ads API docs https://ads-api.reddit.com/docs/)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the Snoo symbol (elements 0-16: orange #FF4500 speech-bubble circle and the gradient Snoo face); dropped the white 'reddit' letters (elements 17-22)",
+    "cropped the viewBox to the symbol (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "The orange bubble reads on both themes, so one file. simple-icons and svgl also have Reddit, but Reddit's own files are preferred. The left ear renders slightly pink in our rasteriser; it is identical in the untouched source (its own radial gradient), not an edit.",
+  "license": "Reddit (Reddit Ads) brand mark, used nominatively to identify the connected service; trademark rights remain with Reddit (Reddit Ads).",
+  "sha256": "aeb32a7f68adcb6f7d869ab4518e8d024062ccc73c2992db1d750052732397f6"
+}

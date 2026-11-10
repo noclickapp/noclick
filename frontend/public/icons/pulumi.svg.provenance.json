@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/pulumi.svg",
-  "source": "https://raw.githubusercontent.com/pulumi/docs/master/assets/fingerprinted/logos/brand/pulumi-mark.svg (official Pulumi brand mark; byte-for-byte verified)",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "2ff13df2c355746e06f3f84162d630b2d7a875e6b07a180a9187a50ba7d70db5"
+  "source": "https://brand.pulumi.com/pulumi-brand-assets.zip (entry brand-assets/logos/svg/pulumi-logo-mark-color-light.svg)",
+  "found_at": "https://brand.pulumi.com/ (www.pulumi.com/brand/ redirects there)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "Replaces the all-purple pulumi-mark.svg from the docs repo with the current multicolour mark (reviewer note was right). The kit's -light and -dark mark files are identical apart from clip ids, and the purple reads on dark (lost_dark 0), so one file.",
+  "license": "Pulumi brand mark, used nominatively to identify the connected service; trademark rights remain with Pulumi.",
+  "sha256": "4398d8d5fba82f1a93d1d85cc584f7e1fd9d53381947558ea72c03ba5d8ce084"
 }

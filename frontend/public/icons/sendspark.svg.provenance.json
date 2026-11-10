@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/sendspark.svg",
+  "source": "https://www.sendspark.com/ (inline <svg viewBox=\"0 0 130 22\"> header logo)",
+  "found_at": "https://www.sendspark.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "the extracted inline-00.svg carries valueless data-astro-cid attributes; removed them (inline-00-xmlsafe.svg) so it parses, nothing drawn changed",
+    "kept the play-in-a-speech-bubble mark (element 0)",
+    "removed the \"sendspark\" wordmark (element 1)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: Sendspark draws the mark in three purples: #7733FF on the website header (shipped), #6140FF in the docs logo (downloads/sendspark/src3/logo.svg), #4C50FF in the favicon PNG.",
+  "license": "Sendspark brand mark, used nominatively to identify the connected service; trademark rights remain with Sendspark.",
+  "sha256": "3c73165d0a66c97cd3c9a57664f0331be654f447198451787f8bbe6dcee1f189"
+}

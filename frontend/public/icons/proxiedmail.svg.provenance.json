@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/proxiedmail.svg",
+  "source": "https://proxiedmail.com/ (inline <svg class=\"logo-svg\"> in the header)",
+  "found_at": "https://proxiedmail.com/ (header logo, inline SVG; saved page downloads/proxiedmail/src1/home.html)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "copied the inline header <svg> out of the page and removed its class attribute (downloads/proxiedmail/src4/header-logo.svg)",
+    "removed the 'ProxiedMail' wordmark (element 0), kept the round mark (elements 1-4: two half-discs and the envelope)",
+    "recoloured black -> #406AF6, the brand blue of ProxiedMail's own SVG icon (/images/v2/favicons/safari-pinned-tab.svg) and its app icon (apple-touch-icon #416AF7)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: the site's header draws this mark in black; the app icon (apple-touch-icon, favicons) draws the identical shape in blue. I recoloured the header's black to the brand blue so it reads as the app icon and works on both themes as one file. If the reviewer prefers the header's colour as published, the black version is work/agents/b24/proxiedmail-black.svg (it would need a white dark-mode variant). The site's safari-pinned-tab.svg is a different glyph (code brackets <> in a blue circle) and was not used; /images/logo.svg is a wordmark only.",
+  "license": "ProxiedMail brand mark, used nominatively to identify the connected service; trademark rights remain with ProxiedMail.",
+  "sha256": "d1e96273baaa6b36fc07f3997f91b28de725412d5bc83f8bf06f04105d8ea35d"
+}

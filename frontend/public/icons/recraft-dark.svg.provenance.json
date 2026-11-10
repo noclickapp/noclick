@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/recraft-dark.svg",
+  "source": "https://www.dropbox.com/scl/fi/2zei1mcz58oeat53u8xk0/Recraft_pr_assets.zip?rlkey=slpc98pjwk99np74ul17st1fk (entry Recraft_assets/Recraft Logos/Svg/logo Black.svg)",
+  "found_at": "https://www.recraft.ai/press-releases ('recraft_assets.zip' link)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "black -> #FFFFFF on the 'R' (element 0), which vanishes on the dark tile"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: I shipped the bare R (black on light, white on dark) rather than the kit's app-icon tile 'Icon White' (white R on a black rx=115 tile): that tile is the brand's own, but on NoClick's dark tile it disappears (icon_check lost_dark 0.75), leaving a floating white R anyway. If the reviewer prefers the tile, use src2/Icon_White.svg as is.",
+  "license": "Recraft brand mark, used nominatively to identify the connected service; trademark rights remain with Recraft.",
+  "sha256": "f53332b17df3775c5b7e1452f20495deb2fc2534cab5606ba90cb0af0a32302a"
+}

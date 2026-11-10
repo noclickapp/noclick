@@ -1,0 +1,19 @@
+{
+  "path": "frontend/public/icons/seam.svg",
+  "source": "https://www.seam.co/ (inline <svg viewBox=\"0 0 72 20\"> header logo)",
+  "found_at": "https://www.seam.co/ (header logo, the home link)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the root class \"text-txt-1\" before cropping",
+    "kept the S-link mark (element 0)",
+    "removed the \"seam\" wordmark (elements 1-4)",
+    "currentColor -> #000000 (the page's text colour in light mode)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The black rounded tile of Seam's app icon exists only as PNG, so shipped the bare mark in black (light) and white (dark).",
+  "license": "Seam brand mark, used nominatively to identify the connected service; trademark rights remain with Seam.",
+  "sha256": "bec1bfd4850e8464ad307dc8fd96948a62a0eff4e8467862f0ccead2fec4bc70"
+}
