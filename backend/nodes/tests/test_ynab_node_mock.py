@@ -133,3 +133,144 @@ def test_ynab_invalid_ids_amounts_and_dates_are_refused(config):
 
 def test_ynab_token_paste_noise_is_trimmed():
     assert ynab.YnabPersonalAccessTokenCredential(access_token="  " + TOKEN + "\n").access_token == TOKEN
+
+
+TRIGGERS = [
+    ("on_new_or_updated_transaction", "list_transactions", "transactions"),
+    ("on_new_or_updated_scheduled_transaction", "list_scheduled_transactions", "scheduled_transactions"),
+]
+
+
+def delta_example(action, member, *, knowledge=100):
+    # These payload fields are the TransactionDetail / ScheduledTransactionDetail
+    # schemas in https://api.ynab.com/papi/open_api_spec.yaml. Reuse the action
+    # HTTP fixtures so the trigger and action exercise the same API envelope.
+    from copy import deepcopy
+    data = deepcopy(next(case["response"]["data"] for case in CASES
+                         if case["config"]["operation"] == action))
+    data["server_knowledge"] = knowledge
+    assert data[member]
+    for item in data[member]:
+        item.update(account_id="00000000-0000-4000-8000-000000000001",
+                    account_name="Checking", category_id=None, category_name=None,
+                    payee_name=None, amount=-12500, memo="Groceries", deleted=False,
+                    subtransactions=[])
+        item.pop("name", None)
+        if member == "transactions":
+            item.update(date="2016-12-01", approved=True, cleared="uncleared")
+        else:
+            item.update(date_first="2016-12-01", date_next="2016-12-01", frequency="monthly")
+    return data
+
+
+@pytest.fixture
+def poll_state(monkeypatch):
+    state = {}
+
+    async def update(self, mutator, **kwargs):
+        updated, result = mutator(dict(state))
+        if updated is not None:
+            state.clear()
+            state.update(updated)
+        return result
+
+    monkeypatch.setattr(ynab.YnabNode, "_update_node_state", update)
+    return state
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,action,member", TRIGGERS)
+async def test_ynab_delta_triggers_baseline_updates_reversions_deletions_and_empty_ticks(
+        transport, poll_state, operation, action, member):
+    from copy import deepcopy
+    requests, replies = transport
+    instance = node({"operation": operation, "plan_id": "last-used"})
+    original = delta_example(action, member)
+    replies.append((200, {"data": original}))
+    first = await instance.execute({})
+    assert first[member] == []
+    assert instance.trigger_produced_no_event(first)
+    assert instance.resolve_agent_event(first) is None
+    assert poll_state["server_knowledge"] == 100
+    assert not requests[-1].url.params
+    for knowledge, memo, deleted in [(101, "Changed memo", False), (102, original[member][0].get("memo"), False), (103, None, True)]:
+        changed = deepcopy(original)
+        changed["server_knowledge"] = knowledge
+        changed[member][0].update(memo=memo, deleted=deleted)
+        replies.append((200, {"data": changed}))
+        result = await instance.execute({})
+        assert result[member] == changed[member]
+        assert result["changed_count"] == len(changed[member])
+        assert dict(requests[-1].url.params) == {"last_knowledge_of_server": str(knowledge - 1)}
+        assert instance.trigger_emitted_event(result)
+        assert instance.should_propagate_output(result, {"operation": operation})
+        text = instance.resolve_agent_event(result)["text"]
+        assert "last-used" in text and str(changed[member][0]["id"]) in text
+        assert "Deleted" in text if deleted else "New or updated" in text
+        assert "milliunits" in text and TOKEN not in text
+    replies.append((200, {"data": {member: [], "server_knowledge": 104}}))
+    empty = await instance.execute({})
+    assert empty["changed_count"] == 0
+    assert not instance.should_propagate_output(empty, {"operation": operation})
+    assert poll_state["server_knowledge"] == 104
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,action,member", TRIGGERS)
+async def test_ynab_delta_trigger_scope_rotation_and_arm_do_not_consume_events(
+        transport, poll_state, operation, action, member):
+    _, replies = transport
+    instance = node({"operation": operation, "plan_id": "last-used"})
+    replies.append((200, {"data": delta_example(action, member)}))
+    await instance.execute({})
+    before = dict(poll_state)
+    instance._poll_baseline_only = True
+    replies.append((200, {"data": delta_example(action, member, knowledge=101)}))
+    assert (await instance.execute({}))["changed_count"] == 0
+    assert poll_state == before
+    instance = node({"operation": operation, "plan_id": "different-plan"})
+    replies.append((200, {"data": delta_example(action, member, knowledge=1)}))
+    assert (await instance.execute({}))["changed_count"] == 0
+    assert poll_state["scope"] != before["scope"]
+    assert poll_state["server_knowledge"] == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,action,member", TRIGGERS)
+async def test_ynab_delta_trigger_error_never_advances_cursor(
+        transport, poll_state, operation, action, member):
+    _, replies = transport
+    instance = node({"operation": operation, "plan_id": "default"})
+    replies.append((200, {"data": delta_example(action, member)}))
+    await instance.execute({})
+    before = dict(poll_state)
+    for status, body in [(429, {"error": {"name": "Too many requests"}}),
+                         (200, {"data": {member: [], "server_knowledge": 99}}),
+                         (200, {"data": {member: [], "server_knowledge": None}}),
+                         (200, {"data": {member: [{}], "server_knowledge": 101}})]:
+        replies.append((status, body))
+        with pytest.raises(ValueError):
+            await instance.execute({})
+        assert poll_state == before
+
+
+@pytest.mark.asyncio
+async def test_ynab_overlapping_delta_poll_emits_once(transport, poll_state, monkeypatch):
+    _, replies = transport
+    instance = node({"operation": "on_new_or_updated_transaction", "plan_id": "default", "since_date": "2016-12-01"})
+    replies.append((200, {"data": delta_example("list_transactions", "transactions")}))
+    await instance.execute({})
+    real_request = ynab.YnabNode._request
+
+    async def racing_request(cls, *args, **kwargs):
+        data = await real_request(*args, **kwargs)
+        # Another tick has already committed and emitted this cursor.
+        poll_state["server_knowledge"] = data["server_knowledge"]
+        return data
+
+    monkeypatch.setattr(ynab.YnabNode, "_request", classmethod(racing_request))
+    replies.append((200, {"data": delta_example("list_transactions", "transactions", knowledge=101)}))
+    result = await instance.execute({})
+    assert result["changed_count"] == 0
+    assert poll_state["server_knowledge"] == 101
+    assert dict(transport[0][-1].url.params) == {"last_knowledge_of_server": "100", "since_date": "2016-12-01"}

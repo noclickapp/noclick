@@ -1,7 +1,7 @@
 """YNAB v1 operations using an account owner's personal access token.
 
-Each action sends one request to the published 1.89.0 plans API. Amounts stay
-in integer milliunits, and delta reads retain the server knowledge cursor.
+Actions and scheduled triggers use the published plans API. Amounts stay
+in integer milliunits, and delta polls retain the server knowledge cursor.
 """
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin, poll_scope
 from utils.ssrf import guarded_async_client
 
 BASE_URL = "https://api.ynab.com/v1"
@@ -247,6 +248,25 @@ class DeleteScheduledTransaction(GetScheduledTransaction):
     operation: Literal["delete_scheduled_transaction"] = Field("delete_scheduled_transaction", json_schema_extra={"ui:hidden": True})
 
 
+class OnNewOrUpdatedTransaction(PollTriggerConfigBase, _Plan):
+    """Watch transaction changes, including deletions, after the initial baseline."""
+    operation: Literal["on_new_or_updated_transaction"] = Field(
+        "on_new_or_updated_transaction", title="On New or Updated Transaction",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True,
+            "x-category": "Triggers", "x-display-name": "On New or Updated Transaction"})
+    since_date: Date | None = Field(None, description=(
+        "Watch transactions dated on or after this date. If omitted, YNAB defaults "
+        "to one year ago. Existing transactions are baselined when armed."))
+
+
+class OnNewOrUpdatedScheduledTransaction(PollTriggerConfigBase, _Plan):
+    """Watch future/recurring transaction changes, including deletions, after arming."""
+    operation: Literal["on_new_or_updated_scheduled_transaction"] = Field(
+        "on_new_or_updated_scheduled_transaction", title="On New or Updated Scheduled Transaction",
+        json_schema_extra={"ui:hidden": True, "x-is-trigger": True,
+            "x-category": "Triggers", "x-display-name": "On New or Updated Scheduled Transaction"})
+
+
 YnabOperation = Annotated[Union[
     GetUser, ListPlans, GetPlan, ListAccounts, GetAccount, CreateAccount,
     ListCategories, GetCategory, UpdateCategory, UpdateMonthCategory, ListPayees,
@@ -254,6 +274,7 @@ YnabOperation = Annotated[Union[
     GetTransaction, CreateTransaction, UpdateTransaction, DeleteTransaction,
     ListScheduledTransactions, GetScheduledTransaction, CreateScheduledTransaction,
     UpdateScheduledTransaction, DeleteScheduledTransaction,
+    OnNewOrUpdatedTransaction, OnNewOrUpdatedScheduledTransaction,
 ], Field(discriminator="operation")]
 
 
@@ -291,13 +312,83 @@ ROUTES = {
 }
 
 
-class YnabNode(WorkflowNode):
+class YnabNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-ynab"
     connection_evidence = ConnectionEvidence(field="plan_id", noun="plans", operation="list_plans")
 
     @classmethod
     def get_config_model(cls):
         return YnabNodeConfig
+
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") in {
+            "on_new_or_updated_transaction", "on_new_or_updated_scheduled_transaction",
+        }:
+            return bool(output.get("changed_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        operation = output.get("operation")
+        if operation not in {"on_new_or_updated_transaction", "on_new_or_updated_scheduled_transaction"}:
+            return super().resolve_agent_event(output)
+        scheduled = operation == "on_new_or_updated_scheduled_transaction"
+        items = output.get("scheduled_transactions" if scheduled else "transactions", [])
+        if not items:
+            return None
+        lines = []
+        for item in items[:10]:
+            when = item.get("date_next") if scheduled else item.get("date")
+            lines.append(
+                f"- {'Deleted' if item.get('deleted') else 'New or updated'} "
+                f"{'scheduled transaction' if scheduled else 'transaction'} {item['id']}: "
+                f"{item.get('payee_name') or 'No payee'}; "
+                f"account {item.get('account_name') or item['account_id']} ({item['account_id']}); "
+                f"{'next date' if scheduled else 'date'} {when}; "
+                f"amount {item['amount']} milliunits; "
+                f"category {item.get('category_name') or 'Uncategorized'} ({item.get('category_id')}); "
+                f"memo: {item.get('memo') or '(none)'}")
+        if len(items) > 10:
+            lines.append(f"- … and {len(items) - 10} more changes in the output")
+        return {"text": f"YNAB plan {output['plan_id']}: {len(items)} transaction change(s).\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_delta(self, config):
+        # YNAB documents delta requests rather than update timestamps:
+        # https://api.ynab.com/#deltas. Persist the cursor atomically with the
+        # baseline so overlapping polls cannot emit the same changes twice.
+        scope = poll_scope(type(self), config.model_dump(mode="json"))
+        snapshot = await self._update_node_state(lambda state: (None, dict(state)))
+        rebaseline = snapshot.get("scope") is not None and snapshot["scope"] != scope
+        baseline = "seen_ids" not in snapshot or rebaseline
+        cursor = None if rebaseline else snapshot.get("server_knowledge")
+        scheduled = isinstance(config, OnNewOrUpdatedScheduledTransaction)
+        member = "scheduled_transactions" if scheduled else "transactions"
+        params = {}
+        if cursor is not None:
+            params["last_knowledge_of_server"] = cursor
+        if not scheduled and config.since_date is not None:
+            params["since_date"] = config.since_date.isoformat()
+        data = await self._request(self.config.credentials, "GET",
+            f"/plans/{quote(config.plan_id, safe='')}/{member}", params=params)
+        items, knowledge = data.get(member), data.get("server_knowledge")
+        if (not isinstance(items, list) or any(not isinstance(item, dict) or not item.get("id") for item in items)
+                or type(knowledge) is not int or knowledge < 0):
+            raise ValueError("YNAB returned an invalid delta response")
+        if cursor is not None and knowledge < cursor:
+            raise ValueError("YNAB returned an older server knowledge cursor")
+
+        def advance(state):
+            if state != snapshot or (getattr(self, "_poll_baseline_only", False) and not baseline):
+                return None, []
+            fresh = [] if baseline or knowledge == cursor else items
+            return {"seen_ids": [], "scope": scope, "server_knowledge": knowledge}, fresh
+
+        fresh = await self._update_node_state(advance, skip_result=[])
+        self._poll_emitted_count = len(fresh)
+        return {"status": "success", "operation": config.operation, "plan_id": config.plan_id,
+                member: fresh, "changed_count": len(fresh), "server_knowledge": knowledge}
 
     @classmethod
     async def _request(cls, credential, method, path, *, params=None, body=None):
@@ -334,6 +425,8 @@ class YnabNode(WorkflowNode):
         if self.config is None or self.config.credentials is None:
             raise ValueError("Connect a YNAB personal access token")
         config = self.config.config
+        if isinstance(config, (OnNewOrUpdatedTransaction, OnNewOrUpdatedScheduledTransaction)):
+            return await self._poll_delta(config)
         method, template, wrapper, member = ROUTES[config.operation]
         values = config.model_dump(mode="json", exclude_unset=True)
         path_fields = re.findall(r"\{(\w+)\}", template)
