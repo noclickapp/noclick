@@ -1,0 +1,260 @@
+{
+  "POST /movies": {
+    "body": {
+      "success": true,
+      "project": "JkGxEoPRF9EgRb32",
+      "timestamp": "2026-05-12T10:49:52.924Z"
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/movies-create"
+  },
+  "GET /movies": {
+    "body": {
+      "success": true,
+      "from": "2026-05-01T00:00:00.000Z",
+      "to": "2026-05-12T23:59:59.999Z",
+      "count": 25,
+      "limit": 100,
+      "has_next": false,
+      "has_prev": false,
+      "next_token": null,
+      "movies": [
+        {
+          "success": true,
+          "status": "done",
+          "message": "",
+          "project": "JkGxEoPRF9EgRb32",
+          "url": "https://assets.json2video.com/clients/xxxxxxxx/renders/2026-05-12-36066.mp4",
+          "thumbnail": "https://assets.json2video.com/clients/xxxxxxxx/renders/2026-05-12-36066.jpg",
+          "audio_url": null,
+          "ass": "https://assets.json2video.com/clients/xxxxxxxx/renders/2026-05-12-36066.ass",
+          "created_at": "2026-05-12T07:41:41.946Z",
+          "ended_at": "2026-05-12T07:44:57.108Z",
+          "duration": 108.2,
+          "size": 6876189,
+          "width": 1080,
+          "height": 1920,
+          "rendering_time": 195,
+          "client-data": {},
+          "consumed_credits": []
+        }
+      ],
+      "remaining_quota": {
+        "time": 1807
+      }
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/movies-status",
+    "notes": "Expanded the docs literal \"movie object as above\" reference with the preceding movie object verbatim; all movie fields/values are copied, not generated."
+  },
+  "GET /movies?project=JkGxEoPRF9EgRb32": {
+    "body": {
+      "success": true,
+      "movie": {
+        "success": true,
+        "status": "done",
+        "message": "",
+        "project": "JkGxEoPRF9EgRb32",
+        "url": "https://assets.json2video.com/clients/xxxxxxxx/renders/2026-05-12-36066.mp4",
+        "thumbnail": "https://assets.json2video.com/clients/xxxxxxxx/renders/2026-05-12-36066.jpg",
+        "audio_url": null,
+        "ass": "https://assets.json2video.com/clients/xxxxxxxx/renders/2026-05-12-36066.ass",
+        "created_at": "2026-05-12T07:41:41.946Z",
+        "ended_at": "2026-05-12T07:44:57.108Z",
+        "duration": 108.2,
+        "size": 6876189,
+        "width": 1080,
+        "height": 1920,
+        "rendering_time": 195,
+        "client-data": {},
+        "consumed_credits": []
+      },
+      "remaining_quota": {
+        "movies": 0,
+        "drafts": 0,
+        "time": 1807
+      }
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/movies-status"
+  },
+  "DELETE /movies": {
+    "body": {
+      "success": true,
+      "project": "AbCdEfGhIjKlMnOp",
+      "deleted_at": "2026-07-27T16:04:11.312Z",
+      "timestamp": "2026-07-27T16:04:11.480Z"
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/movies-delete"
+  },
+  "GET /templates": {
+    "body": {
+      "success": true,
+      "count": 12,
+      "templates": [
+        {
+          "id": "abc123def456ghi789jk",
+          "name": "Product showcase",
+          "tags": [
+            "showcase"
+          ],
+          "created_at": "2026-04-01T12:00:00.000Z",
+          "updated_at": "2026-04-15T09:30:00.000Z"
+        }
+      ],
+      "timestamp": "2026-05-12T10:49:52.924Z"
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/templates-list"
+  },
+  "GET /templates?id=abc123def456ghi789jk&scopes=movie": {
+    "body": {
+      "success": true,
+      "template": {
+        "id": "abc123def456ghi789jk",
+        "name": "Product showcase",
+        "tags": [
+          "showcase"
+        ],
+        "movie": "{\"resolution\":\"full-hd\",\"scenes\":[]}",
+        "created_at": "2026-04-01T12:00:00.000Z",
+        "updated_at": "2026-04-15T09:30:00.000Z"
+      },
+      "timestamp": "2026-05-12T10:49:52.924Z"
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/templates-list"
+  },
+  "POST /templates": {
+    "body": {
+      "success": true,
+      "templateId": "abc123def456ghi789jk",
+      "timestamp": "2026-05-12T10:49:52.924Z"
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/templates-create"
+  },
+  "DELETE /templates": {
+    "body": {
+      "success": true,
+      "timestamp": "2026-05-12T10:49:52.924Z"
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/templates-delete"
+  },
+  "GET /templates/library": {
+    "body": {
+      "success": true,
+      "count": 24,
+      "templates": [
+        {
+          "id": "abc123def456ghi789jk",
+          "name": "Product showcase",
+          "tags": [
+            "showcase",
+            "published"
+          ],
+          "width": 1920,
+          "height": 1080,
+          "aspect_ratio": 1.78,
+          "prompt": true,
+          "created_at": "2026-04-01T12:00:00.000Z",
+          "updated_at": "2026-04-15T09:30:00.000Z",
+          "video_url": "https://json2video-cdn2.s3.amazonaws.com/templates/abc123def456ghi789jk/example.mp4",
+          "thumbnail_url": "https://json2video-cdn2.s3.amazonaws.com/templates/abc123def456ghi789jk/thumbnail.jpg"
+        }
+      ],
+      "timestamp": "2026-07-08T10:49:52.924Z"
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/templates-library"
+  },
+  "GET /media": {
+    "body": {
+      "success": true,
+      "storage": {
+        "used_bytes": 12582912,
+        "free_allowance": 52428800,
+        "credits_per_week": 0,
+        "blocked": false,
+        "blocked_at": null
+      }
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/media-list"
+  },
+  "GET /media/file": {
+    "body": {
+      "success": true,
+      "file": {
+        "name": "clip.mp4",
+        "folder": "videos",
+        "type": "video",
+        "contentType": "video/mp4",
+        "size": 3145728,
+        "url": "https://media.json2video.com/{client_id}/files/videos/clip.mp4",
+        "thumbnailUrl": null,
+        "status": "uploaded",
+        "temporary": false,
+        "created_at": "2026-04-12T08:15:00.000Z"
+      }
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/media-list"
+  },
+  "GET /media/folder": {
+    "body": {
+      "success": true,
+      "path": "videos",
+      "total_size": 8388608,
+      "total_files": 4,
+      "total": 4,
+      "page": 0,
+      "page_size": 20,
+      "folders": [
+        "raw"
+      ],
+      "files": [
+        {
+          "name": "clip.mp4",
+          "folder": "videos",
+          "type": "video",
+          "contentType": "video/mp4",
+          "size": 3145728,
+          "url": "https://media.json2video.com/{client_id}/files/videos/clip.mp4",
+          "thumbnailUrl": null,
+          "status": "uploaded",
+          "created_at": "2026-04-12T08:15:00.000Z"
+        }
+      ]
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/media-list"
+  },
+  "POST /media/file": {
+    "body": {
+      "success": true,
+      "uploadUrl": "https://json2video-media.s3.amazonaws.com/...&X-Amz-Signature=...",
+      "fileUrl": "https://media.json2video.com/{client_id}/files/videos/clip.mp4",
+      "expiresIn": 120
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/media-upload"
+  },
+  "POST /media/folder": {
+    "body": {
+      "success": true,
+      "timestamp": "2026-05-12T10:49:52.924Z"
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/media-upload"
+  },
+  "PUT /media/file": {
+    "body": {
+      "success": true,
+      "timestamp": "2026-05-12T10:49:52.924Z"
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/media-move"
+  },
+  "DELETE /media/file": {
+    "body": {
+      "success": true,
+      "timestamp": "2026-05-12T10:49:52.924Z"
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/media-delete"
+  },
+  "DELETE /media/folder": {
+    "body": {
+      "success": true,
+      "timestamp": "2026-05-12T10:49:52.924Z"
+    },
+    "source": "https://json2video.com/docs/v2/reference/api-endpoints/media-delete"
+  }
+}

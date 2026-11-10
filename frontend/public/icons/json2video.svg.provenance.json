@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/json2video.svg",
+  "source": "https://json2video.com/images/json2video-logo.svg",
+  "source_page": "https://json2video.com/",
+  "date": "2026-11-11",
+  "license": "JSON2Video trademark; used to identify the JSON2Video integration",
+  "sha256": "00498c9dea6ea362fc085dcdde2082010d4d3bd4c31a3b8b221b8ba3622ab9a2",
+  "edits": [],
+  "notes": "Official blue symbol used by the company as its SVG favicon (link rel=icon type=image/svg+xml). Original SVG unchanged; no wordmark, background, recoloring or filters. Blue #4392f1 works on light and dark tiles."
+}
