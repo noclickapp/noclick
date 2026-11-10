@@ -1,0 +1,19 @@
+{
+  "issue_list": {
+    "source": "https://www.jetbrains.com/help/youtrack/devportal/resource-api-issues.html",
+    "body": [
+      {"description": null, "summary": "Sprint 3. Task 2", "reporter": {"login": "root", "$type": "User"}, "idReadable": "SP-38", "id": "2-42", "$type": "Issue"},
+      {"description": "Let's create new issue from REST API", "summary": "Issue from REST #1", "reporter": {"login": "root", "$type": "User"}, "idReadable": "SP-7", "id": "2-6", "$type": "Issue"}
+    ]
+  },
+  "create_issue": {
+    "source": "https://www.jetbrains.com/help/youtrack/devportal/resource-api-issues.html",
+    "request": {"summary": "Houston!", "description": "We have a problem!", "project": {"id": "0-0"}},
+    "body": {"idReadable": "SP-39", "$type": "Issue"}
+  },
+  "add_tag": {
+    "source": "https://www.jetbrains.com/help/youtrack/devportal/resource-api-issues-issueID-tags.html",
+    "request": {"id": "146-25"},
+    "body": {"owner": {"login": "jane.doe", "name": "Jane Doe", "$type": "User"}, "visibleFor": {"name": "All Users", "id": "23-0", "$type": "UserGroup"}, "name": "productivity", "id": "146-25", "$type": "Tag"}
+  }
+}

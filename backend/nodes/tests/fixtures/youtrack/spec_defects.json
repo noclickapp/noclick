@@ -1,0 +1,20 @@
+[
+  {
+    "operation": "create_issue",
+    "contract_operation": "POST /issues",
+    "issue": "The reused Project schema marks id readOnly, so request validation rejects project.id. JetBrains explicitly requires project (id) and its create-issue example sends project.id=0-0.",
+    "source": "https://www.jetbrains.com/help/youtrack/devportal/resource-api-issues.html"
+  },
+  {
+    "operation": "apply_command",
+    "contract_operation": "POST /commands",
+    "issue": "The reused Issue schema marks id and idReadable readOnly, so request validation rejects the issue reference. JetBrains explicitly requires issues containing id or idReadable and its examples send idReadable.",
+    "source": "https://www.jetbrains.com/help/youtrack/devportal/resource-api-commands.html"
+  },
+  {
+    "operation": "add_issue_tag",
+    "contract_operation": "POST /issues/{id}/tags",
+    "issue": "The reused Tag schema marks id readOnly, so request validation rejects the existing tag reference. JetBrains explicitly requires id and its add-tag example sends id=146-25.",
+    "source": "https://www.jetbrains.com/help/youtrack/devportal/resource-api-issues-issueID-tags.html"
+  }
+]

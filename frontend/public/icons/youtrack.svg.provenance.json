@@ -1,0 +1,10 @@
+{
+  "path": "frontend/public/icons/youtrack.svg",
+  "source": "https://resources.jetbrains.com/storage/logos/web/youtrack/youtrack.svg",
+  "source_page": "https://www.jetbrains.com/youtrack/",
+  "retrieved_at": "2026-11-11",
+  "license": "JetBrains trademark; used to identify the YouTrack integration",
+  "sha256": "8d24afab8dc235cab5d67f6af4a7b0c59233e8b9ef668f9489ee50888a435e08",
+  "edits": [],
+  "notes": "Official YouTrack app mark with its own integral black YT tile and pink gradient, copied unchanged. The black tile and white letters are brand elements, not an added background."
+}
