@@ -1,0 +1,29 @@
+{
+  "success": {
+    "total": 4
+  },
+  "contents": {
+    "uuid": [
+      {
+        "uuid": "b201b88e-b0d2-4e82-9ea8-d2d1e25b3bd0",
+        "version": 4
+      },
+      {
+        "uuid": "75becbbb-ae68-4e1a-95b1-c2dfc7a5891a",
+        "version": 4
+      },
+      {
+        "uuid": "3cffa9ad-00a9-4d7a-87f3-85626808444f",
+        "version": 4
+      },
+      {
+        "uuid": "d2c477c2-a2e3-463a-a3c5-0f131c9826c2",
+        "version": 4
+      }
+    ],
+    "copyright": {
+      "year": "2020",
+      "url": "  https://fungenerators.com/random/uuid"
+    }
+  }
+}

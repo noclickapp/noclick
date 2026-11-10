@@ -1,0 +1,19 @@
+{
+  "success": {
+    "total": 4
+  },
+  "contents": [
+    {
+      "uuid": "1419cdfc-7ffc-4074-93c0-cd047e58c716",
+      "version": "4"
+    },
+    {
+      "uuid": "4b5c78fe-9c8b-4351-89a6-c7b573b286de",
+      "version": "4"
+    }
+  ],
+  "copyright": {
+    "url": "http://fungenerators.com",
+    "year": "2024"
+  }
+}
