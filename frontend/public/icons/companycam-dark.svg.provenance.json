@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/companycam-dark.svg",
+  "source": "https://assets.c.companycam.com/safari-pinned-tab.svg",
+  "source_kind": "the current official file (edited)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dark mode: #000000 -> #FFFFFF"
+  ],
+  "variant": "dark mode",
+  "license": "CompanyCam trademark; official provider asset used to identify the integration.",
+  "sha256": "76eb5ef30672e5204798d3a450010c2c5f83434f485787c748eaac6e1186b7df"
+}

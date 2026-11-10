@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/futureagi-dark.svg",
+  "source": "https://futureagi.com/favicon.svg",
+  "found_at": "https://github.com/future-agi/docs/blob/main/public/logo/Icon.svg (Future AGI's own docs repo; fetched with gh api)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "none: the dark file is the company's own silver star (its SVG favicon), cleaned and cropped"
+  ],
+  "variant": "dark mode",
+  "notes": "Light and dark are the company's own two versions (purple for light, silver for dark), not a recolour. The silver star is identical to the current file.",
+  "license": "Future AGI brand mark, used nominatively to identify the connected service; trademark rights remain with Future AGI.",
+  "sha256": "15c94b060d127e33cc9773c8fd0d6eb4a00bbc3e8cac57fe8737ca5c5ce7b642"
+}
