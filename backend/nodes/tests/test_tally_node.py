@@ -1,6 +1,9 @@
 """Tally REST contract tests with an in-process HTTP transport."""
 
 import json
+import base64
+import hashlib
+import hmac
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -29,7 +32,77 @@ from nodes.tally_node import (
     TallyNodeConfig,
     _ENDPOINTS,
     _request_details,
+    NewFormSubmissionConfig,
 )
+
+
+def documented_event():
+    return json.loads((Path(__file__).parent / "fixtures/tally/form_response.json").read_text())["body"]
+
+
+@pytest.mark.asyncio
+async def test_submission_trigger_lifecycle(monkeypatch):
+    requests = []
+
+    def handler(request):
+        requests.append(request)
+        assert request.headers["authorization"] == "Bearer test-secret"
+        assert request.headers["tally-version"] == API_VERSION
+        if request.method == "POST":
+            body = json.loads(request.content)
+            assert body["formId"] == documented_event()["data"]["formId"]
+            assert body["eventTypes"] == ["FORM_RESPONSE"]
+            assert body["url"] == "https://example.com/webhook"
+            assert len(body["signingSecret"]) >= 32
+            return httpx.Response(201, json={"id": "webhook-1"})
+        assert request.method == "DELETE"
+        assert request.url.path == "/webhooks/webhook-1"
+        return httpx.Response(204)
+
+    mock_http(monkeypatch, handler)
+    config = NewFormSubmissionConfig(form_id=documented_event()["data"]["formId"])
+    credential = {"api_key": "test-secret"}
+    state = await TallyNode._register_external_webhook(
+        webhook_url="https://example.com/webhook", credential=credential,
+        config=config.model_dump(), node_id="test")
+    assert state["signing_secret"] == json.loads(requests[0].content)["signingSecret"]
+    config = config.model_copy(update=state)
+    assert NewFormSubmissionConfig.model_validate(config.model_dump()).external_webhook_id == "webhook-1"
+    await TallyNode._unregister_external_webhook(credential=credential, config=config.model_dump(), node_id="test")
+    assert len(requests) == 2
+    assert TallyNode.registration_fingerprint_fields(config.model_dump()) == {"form_id": config.form_id}
+    assert (await make_node(config).execute({}))["status"] == "no_event"
+
+
+def test_documented_submission_signature_and_agent_message():
+    event = documented_event()
+    body = json.dumps(event, ensure_ascii=False).encode()
+    secret = "YOUR_SIGNING_SECRET"
+    signature = base64.b64encode(hmac.new(secret.encode(), body, hashlib.sha256).digest()).decode()
+    config = {"operation": "on_form_submission", "form_id": event["data"]["formId"], "signing_secret": secret}
+    assert TallyNode.verify_webhook_signature(body, {"Tally-Signature": signature}, config)
+    assert not TallyNode.verify_webhook_signature(body + b" ", {"tally-signature": signature}, config)
+    assert not TallyNode.verify_webhook_signature(body, {}, config)
+    assert not TallyNode.verify_webhook_signature(body, {"tally-signature": signature}, {})
+    assert not TallyNode.verify_webhook_signature(body, {"tally-signature": "bad"}, config)
+    assert TallyNode.filter_trigger_payload(event, config)
+    assert not TallyNode.filter_trigger_payload(event, {**config, "form_id": "another-form"})
+    assert not TallyNode.filter_trigger_payload({**event, "eventType": "other"}, config)
+    turn = TallyNode.resolve_agent_event(TallyNode.resolve_trigger_payload(event, config))
+    for text in ("alice@example.com", "Webhook payload", "Hello world", "In progress", "Swimming", "Skiing", "get_submission", "2wgx4n", "VwbNEw"):
+        assert text in turn["text"]
+    assert turn["conversation_key"] == event["data"]["submissionId"]
+    assert TallyNode.resolve_agent_event({"status": "no_event", "data": {}}) is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status, body", [(403, {"message": "Forbidden"}), (201, {})])
+async def test_trigger_registration_failures(monkeypatch, status, body):
+    mock_http(monkeypatch, lambda _: httpx.Response(status, json=body))
+    with pytest.raises(ValueError):
+        await TallyNode._register_external_webhook(
+            webhook_url="https://example.com/webhook", credential={"api_key": "test-secret"},
+            config={"form_id": "VwbNEw"}, node_id="test")
 
 
 def make_node(operation, *, credential=True):

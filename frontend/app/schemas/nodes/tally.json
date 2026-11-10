@@ -998,6 +998,141 @@
       "title": "ListWorkspacesConfig",
       "type": "object"
     },
+    "NewFormSubmissionConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_form_submission",
+          "default": "on_form_submission",
+          "title": "New Form Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "New Form Submission",
+          "x-is-trigger": true
+        },
+        "form_id": {
+          "minLength": 1,
+          "title": "Form ID",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Tally automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "NewFormSubmissionConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "RemoveOrganizationUserConfig": {
       "properties": {
         "operation": {
@@ -1557,6 +1692,7 @@
           "list_webhook_events": "#/$defs/ListWebhookEventsConfig",
           "list_webhooks": "#/$defs/ListWebhooksConfig",
           "list_workspaces": "#/$defs/ListWorkspacesConfig",
+          "on_form_submission": "#/$defs/NewFormSubmissionConfig",
           "remove_organization_user": "#/$defs/RemoveOrganizationUserConfig",
           "retry_webhook_event": "#/$defs/RetryWebhookEventConfig",
           "update_folder": "#/$defs/UpdateFolderConfig",
@@ -1569,6 +1705,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/NewFormSubmissionConfig"
+        },
         {
           "$ref": "#/$defs/ListFormsConfig"
         },
@@ -1712,7 +1851,7 @@
   "x-edit-examples": [
     "List my Tally forms and their latest submissions",
     "Get form analytics for the last month",
-    "Create a Tally webhook for new responses"
+    "Start a workflow or agent when a new Tally form submission arrives"
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

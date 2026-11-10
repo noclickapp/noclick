@@ -5,7 +5,11 @@ Endpoint contract: https://developers.tally.so/api-reference/openapi.json
 
 from __future__ import annotations
 
+import base64
+import hashlib
+import hmac
 import json
+import secrets
 import re
 from typing import Annotated, Any, Literal, Optional, Union
 from urllib.parse import quote
@@ -16,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.vendor_mcp import mcp_credential
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 API_BASE = "https://api.tally.so"
 API_VERSION = "2025-02-01"
@@ -402,8 +407,23 @@ class RetryWebhookEventConfig(BaseModel):
     event_id: str = Field(..., min_length=1, title="Event Id")
 
 
+class NewFormSubmissionConfig(WebhookTriggerConfigBase):
+    operation: Literal["on_form_submission"] = Field(
+        "on_form_submission", title="New Form Submission",
+        json_schema_extra={"const": "on_form_submission", "ui:hidden": True,
+                           "x-category": "Triggers", "x-display-name": "New Form Submission",
+                           "x-is-trigger": True},
+    )
+    form_id: str = Field(..., min_length=1, title="Form ID")
+    webhook_url: Optional[str] = Field(
+        None, title="Webhook URL", description="Registered with Tally automatically",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True},
+    )
+
+
 TallyConfig = Annotated[
     Union[
+        NewFormSubmissionConfig,
         ListFormsConfig,
         CreateFormConfig,
         GetFormConfig,
@@ -602,7 +622,7 @@ def _request_details(config: TallyConfig) -> tuple[str, str, dict[str, Any], Any
     return method, path, params, body
 
 
-class TallyNode(WorkflowNode):
+class TallyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-tally"
     credential_provider_labels = {"tally": "Tally Account"}
 
@@ -612,17 +632,108 @@ class TallyNode(WorkflowNode):
     edit_examples = [
         "List my Tally forms and their latest submissions",
         "Get form analytics for the last month",
-        "Create a Tally webhook for new responses",
+        "Start a workflow or agent when a new Tally form submission arrives",
     ]
 
     @classmethod
     def get_config_model(cls):
         return TallyNodeConfig
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {"form_id": config.get("form_id")}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        form_id = config.get("form_id")
+        if not form_id:
+            raise ValueError("Choose a Tally form before activating this trigger")
+        secret = secrets.token_urlsafe(32)
+        data = await cls._webhook_request(credential, "POST", "/webhooks", body={
+            "formId": form_id, "url": webhook_url, "eventTypes": ["FORM_RESPONSE"],
+            "signingSecret": secret,
+        })
+        if not isinstance(data, dict) or not data.get("id"):
+            raise ValueError("Tally did not return a webhook ID")
+        return {"external_webhook_id": str(data["id"]), "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        webhook_id = config.get("external_webhook_id")
+        if webhook_id and credential:
+            await cls._webhook_request(
+                credential, "DELETE", f"/webhooks/{quote(str(webhook_id), safe='')}")
+
+    @staticmethod
+    async def _webhook_request(credential, method, path, *, body=None):
+        token = (credential or {}).get("api_key")
+        if not token:
+            raise ValueError("Connect Tally before activating this trigger")
+        async with httpx.AsyncClient(timeout=30, follow_redirects=False) as client:
+            response = await client.request(method, f"{API_BASE}{path}", json=body, headers={
+                "Authorization": f"Bearer {token}", "Accept": "application/json",
+                "tally-version": API_VERSION,
+            })
+        if method == "DELETE" and response.status_code == 404:
+            return {}
+        if response.is_error or response.is_redirect:
+            raise ValueError(f"Tally webhook API error {response.status_code}")
+        return response.json() if response.content else {}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # https://tally.so/help/webhooks: HMAC-SHA256, base64, Tally-Signature.
+        secret = (config or {}).get("signing_secret")
+        signature = next((v for k, v in headers.items() if k.lower() == "tally-signature"), "")
+        if not secret or not signature:
+            return False
+        expected = base64.b64encode(hmac.new(secret.encode(), body, hashlib.sha256).digest()).decode()
+        return hmac.compare_digest(expected.encode(), signature.encode())
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        if config.get("operation") != "on_form_submission":
+            return True
+        data = payload.get("data")
+        return (payload.get("eventType") == "FORM_RESPONSE" and isinstance(data, dict)
+                and data.get("formId") == config.get("form_id"))
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("eventType") != "FORM_RESPONSE":
+            return None
+        data = output.get("data")
+        if not isinstance(data, dict) or not data.get("submissionId"):
+            return None
+        fields = data.get("fields") or []
+        email = next((f.get("value") for f in fields if isinstance(f, dict)
+                      and f.get("type") == "INPUT_EMAIL" and f.get("value")), None)
+        respondent = email or data.get("respondentId") or "Someone"
+        form = data.get("formName") or data.get("formId")
+        lines = [f"{respondent} submitted Tally form {form}.",
+                 f"Form ID: {data.get('formId')}; submission ID: {data['submissionId']}; "
+                 f"respondent ID: {data.get('respondentId')}",
+                 f"Submitted at: {data.get('createdAt')}", "Answers:"]
+        for field in fields:
+            if not isinstance(field, dict):
+                continue
+            value = field.get("value")
+            options = {o.get("id"): o.get("text") for o in (field["options"] if "options" in field else [])
+                       if isinstance(o, dict)}
+            if isinstance(value, list) and options:
+                value = [options.get(v, v) if isinstance(v, str) else v for v in value]
+            content = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
+            lines.append(f"{field.get('label') or field.get('key')}: {content}")
+        lines.append(f"To act: get_submission form_id={data.get('formId')} submission_id={data['submissionId']}.")
+        return {"text": "\n".join(lines), "conversation_key": str(data["submissionId"]),
+                "title": f"New submission: {form}"}
+
     async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(self.config, TallyNodeConfig) or not self.config.credentials:
             raise ValueError("Connect Tally before running this action")
         config = self.config.config
+        if isinstance(config, NewFormSubmissionConfig):
+            return self.no_event_output(config.operation)
         method, path, params, body = _request_details(config)
         headers = {
             "Authorization": f"Bearer {self.config.credentials.api_key}",

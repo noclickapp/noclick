@@ -25,7 +25,7 @@ export const TallyNode: NodeDefinition = {
     category: 'forms',
     label: 'Tally',
     description:
-        'Create forms, manage submissions, inspect analytics, and configure webhooks',
+        'Start workflows and agents on new submissions, manage forms, and inspect analytics',
     Icon: TallyIcon,
     iconColor: '',
     dimensions: DIMENSIONS,
