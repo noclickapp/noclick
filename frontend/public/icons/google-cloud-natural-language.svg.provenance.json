@@ -1,0 +1,12 @@
+{
+  "path": "frontend/public/icons/google-cloud-natural-language.svg",
+  "source": "https://services.google.com/fh/files/misc/category-icons.zip",
+  "source_page": "https://cloud.google.com/icons",
+  "date": "2026-11-11",
+  "license": "Google Cloud product icon usage guidelines; Google trademark",
+  "sha256": "10cf12ddd4ecfb13216989abee8984f51c6b948aa21eb2869fa632f738cab86d",
+  "edits": [
+    "Cropped viewBox to the existing mark; no paths or colors changed."
+  ],
+  "notes": "Official current AI / Machine Learning product mark. Google assigns Cloud Natural Language API this category mark in https://services.google.com/fh/files/misc/google-cloud-product-icons.pdf. Blue #4285f4 and gray #9aa0a6 strokes remain visible on dark and light tiles; no background. Archive entry: Category Icons/AI _ Machine Learning/SVG/AIMachineLearning-512-color.svg."
+}

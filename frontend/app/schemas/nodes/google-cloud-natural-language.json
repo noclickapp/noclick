@@ -1,0 +1,1049 @@
+{
+  "$defs": {
+    "AnalyzeEntitiesStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "encoding_type": {
+          "default": "UTF8",
+          "description": "Encoding used to calculate token, entity and sentence offsets.",
+          "enum": [
+            "NONE",
+            "UTF8",
+            "UTF16",
+            "UTF32"
+          ],
+          "title": "Offset Encoding",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "gcs_content_uri": {
+          "description": "gs://bucket/object path to a publicly readable text or HTML object. Object versioning is unsupported. NoClick sends the URI to Google without downloading it.",
+          "minLength": 1,
+          "title": "Cloud Storage URI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "analyze_entities_from_storage",
+          "default": "analyze_entities_from_storage",
+          "title": "Analyze Entities from Cloud Storage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Analyze Entities from Cloud Storage",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "gcs_content_uri"
+      ],
+      "title": "AnalyzeEntitiesStorage",
+      "type": "object"
+    },
+    "AnalyzeEntitiesText": {
+      "additionalProperties": false,
+      "properties": {
+        "encoding_type": {
+          "default": "UTF8",
+          "description": "Encoding used to calculate token, entity and sentence offsets.",
+          "enum": [
+            "NONE",
+            "UTF8",
+            "UTF16",
+            "UTF32"
+          ],
+          "title": "Offset Encoding",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "content": {
+          "description": "Document text or HTML to analyze.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "analyze_entities",
+          "default": "analyze_entities",
+          "title": "Analyze Entities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Analyze Entities",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "AnalyzeEntitiesText",
+      "type": "object"
+    },
+    "AnalyzeEntitySentimentStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "encoding_type": {
+          "default": "UTF8",
+          "description": "Encoding used to calculate token, entity and sentence offsets.",
+          "enum": [
+            "NONE",
+            "UTF8",
+            "UTF16",
+            "UTF32"
+          ],
+          "title": "Offset Encoding",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "gcs_content_uri": {
+          "description": "gs://bucket/object path to a publicly readable text or HTML object. Object versioning is unsupported. NoClick sends the URI to Google without downloading it.",
+          "minLength": 1,
+          "title": "Cloud Storage URI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "analyze_entity_sentiment_from_storage",
+          "default": "analyze_entity_sentiment_from_storage",
+          "title": "Analyze Entity Sentiment from Cloud Storage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Analyze Entity Sentiment from Cloud Storage",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "gcs_content_uri"
+      ],
+      "title": "AnalyzeEntitySentimentStorage",
+      "type": "object"
+    },
+    "AnalyzeEntitySentimentText": {
+      "additionalProperties": false,
+      "properties": {
+        "encoding_type": {
+          "default": "UTF8",
+          "description": "Encoding used to calculate token, entity and sentence offsets.",
+          "enum": [
+            "NONE",
+            "UTF8",
+            "UTF16",
+            "UTF32"
+          ],
+          "title": "Offset Encoding",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "content": {
+          "description": "Document text or HTML to analyze.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "analyze_entity_sentiment",
+          "default": "analyze_entity_sentiment",
+          "title": "Analyze Entity Sentiment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Analyze Entity Sentiment",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "AnalyzeEntitySentimentText",
+      "type": "object"
+    },
+    "AnalyzeSentimentStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "encoding_type": {
+          "default": "UTF8",
+          "description": "Encoding used to calculate token, entity and sentence offsets.",
+          "enum": [
+            "NONE",
+            "UTF8",
+            "UTF16",
+            "UTF32"
+          ],
+          "title": "Offset Encoding",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "gcs_content_uri": {
+          "description": "gs://bucket/object path to a publicly readable text or HTML object. Object versioning is unsupported. NoClick sends the URI to Google without downloading it.",
+          "minLength": 1,
+          "title": "Cloud Storage URI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "analyze_sentiment_from_storage",
+          "default": "analyze_sentiment_from_storage",
+          "title": "Analyze Sentiment from Cloud Storage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Analyze Sentiment from Cloud Storage",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "gcs_content_uri"
+      ],
+      "title": "AnalyzeSentimentStorage",
+      "type": "object"
+    },
+    "AnalyzeSentimentText": {
+      "additionalProperties": false,
+      "properties": {
+        "encoding_type": {
+          "default": "UTF8",
+          "description": "Encoding used to calculate token, entity and sentence offsets.",
+          "enum": [
+            "NONE",
+            "UTF8",
+            "UTF16",
+            "UTF32"
+          ],
+          "title": "Offset Encoding",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "content": {
+          "description": "Document text or HTML to analyze.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "analyze_sentiment",
+          "default": "analyze_sentiment",
+          "title": "Analyze Sentiment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Analyze Sentiment",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "AnalyzeSentimentText",
+      "type": "object"
+    },
+    "AnalyzeSyntaxStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "encoding_type": {
+          "default": "UTF8",
+          "description": "Encoding used to calculate token, entity and sentence offsets.",
+          "enum": [
+            "NONE",
+            "UTF8",
+            "UTF16",
+            "UTF32"
+          ],
+          "title": "Offset Encoding",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "gcs_content_uri": {
+          "description": "gs://bucket/object path to a publicly readable text or HTML object. Object versioning is unsupported. NoClick sends the URI to Google without downloading it.",
+          "minLength": 1,
+          "title": "Cloud Storage URI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "analyze_syntax_from_storage",
+          "default": "analyze_syntax_from_storage",
+          "title": "Analyze Syntax from Cloud Storage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Analyze Syntax from Cloud Storage",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "gcs_content_uri"
+      ],
+      "title": "AnalyzeSyntaxStorage",
+      "type": "object"
+    },
+    "AnalyzeSyntaxText": {
+      "additionalProperties": false,
+      "properties": {
+        "encoding_type": {
+          "default": "UTF8",
+          "description": "Encoding used to calculate token, entity and sentence offsets.",
+          "enum": [
+            "NONE",
+            "UTF8",
+            "UTF16",
+            "UTF32"
+          ],
+          "title": "Offset Encoding",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "content": {
+          "description": "Document text or HTML to analyze.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "analyze_syntax",
+          "default": "analyze_syntax",
+          "title": "Analyze Syntax",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Analyze Syntax",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "AnalyzeSyntaxText",
+      "type": "object"
+    },
+    "AnnotateTextStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "extract_document_sentiment": {
+          "default": true,
+          "title": "Document Sentiment",
+          "type": "boolean"
+        },
+        "extract_entities": {
+          "default": true,
+          "title": "Entities",
+          "type": "boolean"
+        },
+        "extract_syntax": {
+          "default": true,
+          "title": "Syntax",
+          "type": "boolean"
+        },
+        "extract_entity_sentiment": {
+          "default": false,
+          "title": "Entity Sentiment",
+          "type": "boolean"
+        },
+        "classify_text": {
+          "default": false,
+          "title": "Classify Text",
+          "type": "boolean"
+        },
+        "moderate_text": {
+          "default": false,
+          "title": "Moderate Text",
+          "type": "boolean"
+        },
+        "classification_model": {
+          "default": "v2",
+          "enum": [
+            "v1",
+            "v2"
+          ],
+          "title": "Classification Model",
+          "type": "string"
+        },
+        "encoding_type": {
+          "default": "UTF8",
+          "description": "Encoding used to calculate token, entity and sentence offsets.",
+          "enum": [
+            "NONE",
+            "UTF8",
+            "UTF16",
+            "UTF32"
+          ],
+          "title": "Offset Encoding",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "gcs_content_uri": {
+          "description": "gs://bucket/object path to a publicly readable text or HTML object. Object versioning is unsupported. NoClick sends the URI to Google without downloading it.",
+          "minLength": 1,
+          "title": "Cloud Storage URI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "annotate_text_from_storage",
+          "default": "annotate_text_from_storage",
+          "title": "Annotate Text from Cloud Storage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Annotate Text from Cloud Storage",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "gcs_content_uri"
+      ],
+      "title": "AnnotateTextStorage",
+      "type": "object"
+    },
+    "AnnotateTextText": {
+      "additionalProperties": false,
+      "properties": {
+        "extract_document_sentiment": {
+          "default": true,
+          "title": "Document Sentiment",
+          "type": "boolean"
+        },
+        "extract_entities": {
+          "default": true,
+          "title": "Entities",
+          "type": "boolean"
+        },
+        "extract_syntax": {
+          "default": true,
+          "title": "Syntax",
+          "type": "boolean"
+        },
+        "extract_entity_sentiment": {
+          "default": false,
+          "title": "Entity Sentiment",
+          "type": "boolean"
+        },
+        "classify_text": {
+          "default": false,
+          "title": "Classify Text",
+          "type": "boolean"
+        },
+        "moderate_text": {
+          "default": false,
+          "title": "Moderate Text",
+          "type": "boolean"
+        },
+        "classification_model": {
+          "default": "v2",
+          "enum": [
+            "v1",
+            "v2"
+          ],
+          "title": "Classification Model",
+          "type": "string"
+        },
+        "encoding_type": {
+          "default": "UTF8",
+          "description": "Encoding used to calculate token, entity and sentence offsets.",
+          "enum": [
+            "NONE",
+            "UTF8",
+            "UTF16",
+            "UTF32"
+          ],
+          "title": "Offset Encoding",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "content": {
+          "description": "Document text or HTML to analyze.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "annotate_text",
+          "default": "annotate_text",
+          "title": "Annotate Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Annotate Text",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "AnnotateTextText",
+      "type": "object"
+    },
+    "CheckConnection": {
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Check API Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connection",
+          "x-display-name": "Check API Key",
+          "x-is-trigger": false
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "ClassifyTextStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "classification_model": {
+          "default": "v2",
+          "description": "v1 requires at least 20 words. v2 supports shorter documents and a larger category taxonomy.",
+          "enum": [
+            "v1",
+            "v2"
+          ],
+          "title": "Classification Model",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "gcs_content_uri": {
+          "description": "gs://bucket/object path to a publicly readable text or HTML object. Object versioning is unsupported. NoClick sends the URI to Google without downloading it.",
+          "minLength": 1,
+          "title": "Cloud Storage URI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "classify_text_from_storage",
+          "default": "classify_text_from_storage",
+          "title": "Classify Text from Cloud Storage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Classify Text from Cloud Storage",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "gcs_content_uri"
+      ],
+      "title": "ClassifyTextStorage",
+      "type": "object"
+    },
+    "ClassifyTextText": {
+      "additionalProperties": false,
+      "properties": {
+        "classification_model": {
+          "default": "v2",
+          "description": "v1 requires at least 20 words. v2 supports shorter documents and a larger category taxonomy.",
+          "enum": [
+            "v1",
+            "v2"
+          ],
+          "title": "Classification Model",
+          "type": "string"
+        },
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "content": {
+          "description": "Document text or HTML to analyze.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "classify_text",
+          "default": "classify_text",
+          "title": "Classify Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Classify Text",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "ClassifyTextText",
+      "type": "object"
+    },
+    "GoogleCloudNaturalLanguageAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "google_cloud_natural_language_api_key",
+          "default": "google_cloud_natural_language_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:help": "Paste the key string from your Google Cloud project's Credentials page.",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Google Cloud Natural Language API Key",
+      "type": "object",
+      "x-credential-instructions": "Enable the Cloud Natural Language API and billing on your Google Cloud project, then paste an API key allowed to call this API. NoClick sends it in the x-goog-api-key header. Connecting analyzes the fixed text 'Hello, world!' and consumes analysis quota. This proves key acceptance, not account identity. With an API key, Cloud Storage documents must be publicly readable; private objects need an authenticated principal.",
+      "x-credential-type": "api_key",
+      "x-credential-url": "https://console.cloud.google.com/apis/credentials"
+    },
+    "ModerateTextStorage": {
+      "additionalProperties": false,
+      "properties": {
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "gcs_content_uri": {
+          "description": "gs://bucket/object path to a publicly readable text or HTML object. Object versioning is unsupported. NoClick sends the URI to Google without downloading it.",
+          "minLength": 1,
+          "title": "Cloud Storage URI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "moderate_text_from_storage",
+          "default": "moderate_text_from_storage",
+          "title": "Moderate Text from Cloud Storage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Moderate Text from Cloud Storage",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "gcs_content_uri"
+      ],
+      "title": "ModerateTextStorage",
+      "type": "object"
+    },
+    "ModerateTextText": {
+      "additionalProperties": false,
+      "properties": {
+        "document_type": {
+          "default": "PLAIN_TEXT",
+          "enum": [
+            "PLAIN_TEXT",
+            "HTML"
+          ],
+          "title": "Document Type",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO or BCP-47 code, such as en. Leave empty to detect the language. Supported languages vary by analysis method.",
+          "title": "Language"
+        },
+        "content": {
+          "description": "Document text or HTML to analyze.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "operation": {
+          "const": "moderate_text",
+          "default": "moderate_text",
+          "title": "Moderate Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Analysis",
+          "x-display-name": "Moderate Text",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "ModerateTextText",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "analyze_entities": "#/$defs/AnalyzeEntitiesText",
+          "analyze_entities_from_storage": "#/$defs/AnalyzeEntitiesStorage",
+          "analyze_entity_sentiment": "#/$defs/AnalyzeEntitySentimentText",
+          "analyze_entity_sentiment_from_storage": "#/$defs/AnalyzeEntitySentimentStorage",
+          "analyze_sentiment": "#/$defs/AnalyzeSentimentText",
+          "analyze_sentiment_from_storage": "#/$defs/AnalyzeSentimentStorage",
+          "analyze_syntax": "#/$defs/AnalyzeSyntaxText",
+          "analyze_syntax_from_storage": "#/$defs/AnalyzeSyntaxStorage",
+          "annotate_text": "#/$defs/AnnotateTextText",
+          "annotate_text_from_storage": "#/$defs/AnnotateTextStorage",
+          "check_connection": "#/$defs/CheckConnection",
+          "classify_text": "#/$defs/ClassifyTextText",
+          "classify_text_from_storage": "#/$defs/ClassifyTextStorage",
+          "moderate_text": "#/$defs/ModerateTextText",
+          "moderate_text_from_storage": "#/$defs/ModerateTextStorage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/AnalyzeSentimentText"
+        },
+        {
+          "$ref": "#/$defs/AnalyzeSentimentStorage"
+        },
+        {
+          "$ref": "#/$defs/AnalyzeEntitiesText"
+        },
+        {
+          "$ref": "#/$defs/AnalyzeEntitiesStorage"
+        },
+        {
+          "$ref": "#/$defs/AnalyzeEntitySentimentText"
+        },
+        {
+          "$ref": "#/$defs/AnalyzeEntitySentimentStorage"
+        },
+        {
+          "$ref": "#/$defs/ClassifyTextText"
+        },
+        {
+          "$ref": "#/$defs/ClassifyTextStorage"
+        },
+        {
+          "$ref": "#/$defs/ModerateTextText"
+        },
+        {
+          "$ref": "#/$defs/ModerateTextStorage"
+        },
+        {
+          "$ref": "#/$defs/AnalyzeSyntaxText"
+        },
+        {
+          "$ref": "#/$defs/AnalyzeSyntaxStorage"
+        },
+        {
+          "$ref": "#/$defs/AnnotateTextText"
+        },
+        {
+          "$ref": "#/$defs/AnnotateTextStorage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleCloudNaturalLanguageAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-cloud-natural-language Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
