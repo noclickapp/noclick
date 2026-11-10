@@ -1,0 +1,43 @@
+[
+  {
+    "body": {
+      "recommended": {
+        "property": {
+          "id": "prop_abc123",
+          "name": "Hotel Blue Sky",
+          "property_type": "hotel",
+          "rating": 4.7,
+          "location": {
+            "lat": 41.91,
+            "lon": 12.48,
+            "city": "Rome",
+            "country": "IT"
+          },
+          "amenities": [
+            "wifi",
+            "spa",
+            "breakfast"
+          ],
+          "ota_coverage": [
+            "Booking",
+            "Expedia"
+          ],
+          "price": {
+            "amount": 210.0,
+            "currency": "EUR",
+            "ota": "Booking",
+            "refundable": true
+          },
+          "availability_status": "available"
+        }
+      },
+      "alternatives": [],
+      "metadata": {
+        "price_as_of": "2026-05-28T10:14:33Z",
+        "total_options_considered": 47,
+        "request_id": "req_01HXYZ..."
+      }
+    },
+    "source": "https://b2a.bluepillow.com/docs/api/decide/"
+  }
+]

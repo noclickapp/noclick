@@ -1,0 +1,38 @@
+[
+  {
+    "body": {
+      "recommended": {
+        "property": {
+          "id": "prop_abc123",
+          "name": "Hotel Blue Sky",
+          "offers": [
+            {
+              "ota": "Booking",
+              "amount": 210.0,
+              "currency": "EUR",
+              "refundable": true
+            },
+            {
+              "ota": "Expedia",
+              "amount": 218.5,
+              "currency": "EUR",
+              "refundable": false
+            }
+          ],
+          "price": {
+            "amount": 210.0,
+            "currency": "EUR",
+            "ota": "Booking"
+          },
+          "availability_status": "available"
+        }
+      },
+      "alternatives": [],
+      "metadata": {
+        "total_options_considered": 1,
+        "request_id": "req_..."
+      }
+    },
+    "source": "https://b2a.bluepillow.com/docs/api/recommendations/"
+  }
+]

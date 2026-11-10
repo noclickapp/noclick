@@ -1,0 +1,17 @@
+[
+  {
+    "body": {
+      "still_valid": false,
+      "price_delta_eur": 18.5,
+      "delta_percent": 8.8,
+      "refreshed_offer": {
+        "amount": 228.5,
+        "currency": "EUR",
+        "ota": "Booking",
+        "refundable": true
+      },
+      "reason": "price_changed"
+    },
+    "source": "https://b2a.bluepillow.com/docs/api/validate/"
+  }
+]
