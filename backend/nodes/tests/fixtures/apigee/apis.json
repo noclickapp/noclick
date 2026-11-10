@@ -1,0 +1,5 @@
+{
+  "source": "https://github.com/apigee/registry/blob/main/openapi.yaml#/components/schemas/ListApisResponse",
+  "kind": "schema-derived synthetic fixture, not a live recording or provider example",
+  "body": {"apis": [{"name": "projects/sample-project/locations/global/apis/petstore", "displayName": "Petstore", "updateTime": "2026-11-01T12:00:00Z"}]}
+}

@@ -1,0 +1,11 @@
+{
+  "evidence": "openapi",
+  "live_account": "No existing Registry API test credential was provided; no sign-in or live provider call was made.",
+  "auth_source": "https://github.com/apigee/registry/blob/main/auth/HOSTED.sh",
+  "auth_usage": "https://github.com/apigee/registry/blob/main/cmd/registry/README.md#running-with-apigee-api-hub",
+  "field_mask_source": "https://protobuf.dev/reference/protobuf/google.protobuf/#field-mask",
+  "poll_evidence": "ListApis filter can refer to all Api message fields, including createTime and updateTime. Api.name and Api.updateTime drive the shared poll-family deduplication.",
+  "parser_advisory": "The synthetic full response repeats nextPageToken on every page. The node rejects that nonadvancing cursor instead of consuming an incomplete poll. Local tests verify repeated-cursor rejection, pagination, baseline, deduplication and update detection.",
+  "auth_contract_limit": "The upstream OpenAPI omits securitySchemes; bearer-header placement is covered by the local request test against the official auth instructions. Conformance auth_checked is therefore zero.",
+  "rest_auth_source": "https://docs.cloud.google.com/docs/authentication/rest"
+}

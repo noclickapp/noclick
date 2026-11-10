@@ -1,0 +1,910 @@
+[
+  {
+    "provider": "apigee",
+    "node_type": "automation-apigee",
+    "checked": 21,
+    "passed": 20,
+    "failed": 1,
+    "fixture_errors": 0,
+    "response_checked": 21,
+    "auth_checked": 0,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 20,
+      "total": 35
+    },
+    "triggers": {
+      "checked": 1,
+      "passed": 0
+    },
+    "operations": [
+      {
+        "operation": "list_apis",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis?pageSize=100&pageToken=1&filter=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/projects/{project}/locations/{location}/apis",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "7e57128593f37480df651c44c9f1e003923c67eaa69bda63f5aee613a379c4ee"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_apis",
+          "page_size": 100,
+          "page_token": "1",
+          "filter": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "create_api",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis?apiId=conformance",
+            "content_type": "application/json",
+            "body": "{\"displayName\":\"1\",\"description\":\"1\",\"availability\":\"1\",\"recommendedVersion\":\"1\",\"recommendedDeployment\":\"1\",\"labels\":{},\"annotations\":{}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "138",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /v1/projects/{project}/locations/{location}/apis",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "7b1f788de4ece735b64789eb4d5c79ecd4c48b30f1e401c68fb3fe6d8bfd71e0"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_api",
+          "api_id": "conformance",
+          "display_name": "1",
+          "description": "1",
+          "availability": "1",
+          "recommended_version": "1",
+          "recommended_deployment": "1",
+          "labels": {},
+          "annotations": {}
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_api",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/projects/{project}/locations/{location}/apis/{api}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "7b1f788de4ece735b64789eb4d5c79ecd4c48b30f1e401c68fb3fe6d8bfd71e0"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_api",
+          "api_id": "2024-01-01"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "delete_api",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01?force=false",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /v1/projects/{project}/locations/{location}/apis/{api}",
+            "security_declared": false,
+            "response_status": 200,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_api",
+          "api_id": "2024-01-01",
+          "force": false
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "update_api",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PATCH",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01?allowMissing=false&updateMask=displayName%2Cdescription%2Cavailability%2CrecommendedVersion%2CrecommendedDeployment%2Clabels%2Cannotations",
+            "content_type": "application/json",
+            "body": "{\"displayName\":\"1\",\"description\":\"1\",\"availability\":\"1\",\"recommendedVersion\":\"1\",\"recommendedDeployment\":\"1\",\"labels\":{},\"annotations\":{},\"name\":\"projects/sample-project/locations/global/apis/2024-01-01\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "204",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PATCH /v1/projects/{project}/locations/{location}/apis/{api}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "7b1f788de4ece735b64789eb4d5c79ecd4c48b30f1e401c68fb3fe6d8bfd71e0"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_api",
+          "api_id": "2024-01-01",
+          "allow_missing": false,
+          "display_name": "1",
+          "description": "1",
+          "availability": "1",
+          "recommended_version": "1",
+          "recommended_deployment": "1",
+          "labels": {},
+          "annotations": {}
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_deployments",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/deployments?pageSize=100&pageToken=1&filter=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/projects/{project}/locations/{location}/apis/{api}/deployments",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "5d1371457f7764624493657261f2af7715ec8484717e1e94ce0efb883b8952b0"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_deployments",
+          "api_id": "2024-01-01",
+          "page_size": 100,
+          "page_token": "1",
+          "filter": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "create_deployment",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/deployments?apiDeploymentId=conformance",
+            "content_type": "application/json",
+            "body": "{\"displayName\":\"1\",\"description\":\"1\",\"apiSpecRevision\":\"1\",\"endpointUri\":\"1\",\"externalChannelUri\":\"1\",\"intendedAudience\":\"1\",\"accessGuidance\":\"1\",\"labels\":{},\"annotations\":{}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "175",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /v1/projects/{project}/locations/{location}/apis/{api}/deployments",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "e453a6f5e1d48db67d11dd98c39e7b6ce67791a6eb8adfae680cc2a7b22c4cf5"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_deployment",
+          "api_id": "2024-01-01",
+          "api_deployment_id": "conformance",
+          "display_name": "1",
+          "description": "1",
+          "api_spec_revision": "1",
+          "endpoint_uri": "1",
+          "external_channel_uri": "1",
+          "intended_audience": "1",
+          "access_guidance": "1",
+          "labels": {},
+          "annotations": {}
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_deployment",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/deployments/2024-01-01",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/projects/{project}/locations/{location}/apis/{api}/deployments/{deployment}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "e453a6f5e1d48db67d11dd98c39e7b6ce67791a6eb8adfae680cc2a7b22c4cf5"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_deployment",
+          "api_id": "2024-01-01",
+          "deployment_id": "2024-01-01"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "delete_deployment",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/deployments/2024-01-01?force=false",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /v1/projects/{project}/locations/{location}/apis/{api}/deployments/{deployment}",
+            "security_declared": false,
+            "response_status": 200,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_deployment",
+          "api_id": "2024-01-01",
+          "deployment_id": "2024-01-01",
+          "force": false
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "update_deployment",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PATCH",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/deployments/2024-01-01?allowMissing=false&updateMask=displayName%2Cdescription%2CapiSpecRevision%2CendpointUri%2CexternalChannelUri%2CintendedAudience%2CaccessGuidance%2Clabels%2Cannotations",
+            "content_type": "application/json",
+            "body": "{\"displayName\":\"1\",\"description\":\"1\",\"apiSpecRevision\":\"1\",\"endpointUri\":\"1\",\"externalChannelUri\":\"1\",\"intendedAudience\":\"1\",\"accessGuidance\":\"1\",\"labels\":{},\"annotations\":{},\"name\":\"projects/sample-project/locations/global/apis/2024-01-01/deployments/2024-01-01\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "264",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PATCH /v1/projects/{project}/locations/{location}/apis/{api}/deployments/{deployment}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "e453a6f5e1d48db67d11dd98c39e7b6ce67791a6eb8adfae680cc2a7b22c4cf5"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_deployment",
+          "api_id": "2024-01-01",
+          "deployment_id": "2024-01-01",
+          "allow_missing": false,
+          "display_name": "1",
+          "description": "1",
+          "api_spec_revision": "1",
+          "endpoint_uri": "1",
+          "external_channel_uri": "1",
+          "intended_audience": "1",
+          "access_guidance": "1",
+          "labels": {},
+          "annotations": {}
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_versions",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/versions?pageSize=100&pageToken=1&filter=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/projects/{project}/locations/{location}/apis/{api}/versions",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f54708975d05b70fe133f4c5deb522577798f6b11a87d294a9e503cf2ce5acec"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_versions",
+          "api_id": "2024-01-01",
+          "page_size": 100,
+          "page_token": "1",
+          "filter": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "create_version",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/versions?apiVersionId=conformance",
+            "content_type": "application/json",
+            "body": "{\"displayName\":\"1\",\"description\":\"1\",\"state\":\"1\",\"labels\":{},\"annotations\":{}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "78",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /v1/projects/{project}/locations/{location}/apis/{api}/versions",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "bd1f8c2ffa06d6ce3f87c88a8abc2a721edbb19b7d3bae340fdab6537cfa20ec"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_version",
+          "api_id": "2024-01-01",
+          "api_version_id": "conformance",
+          "display_name": "1",
+          "description": "1",
+          "state": "1",
+          "labels": {},
+          "annotations": {}
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_version",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/versions/2024-01-01",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/projects/{project}/locations/{location}/apis/{api}/versions/{version}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "bd1f8c2ffa06d6ce3f87c88a8abc2a721edbb19b7d3bae340fdab6537cfa20ec"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_version",
+          "api_id": "2024-01-01",
+          "version_id": "2024-01-01"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "delete_version",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/versions/2024-01-01?force=false",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /v1/projects/{project}/locations/{location}/apis/{api}/versions/{version}",
+            "security_declared": false,
+            "response_status": 200,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_version",
+          "api_id": "2024-01-01",
+          "version_id": "2024-01-01",
+          "force": false
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "update_version",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PATCH",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/versions/2024-01-01?allowMissing=false&updateMask=displayName%2Cdescription%2Cstate%2Clabels%2Cannotations",
+            "content_type": "application/json",
+            "body": "{\"displayName\":\"1\",\"description\":\"1\",\"state\":\"1\",\"labels\":{},\"annotations\":{},\"name\":\"projects/sample-project/locations/global/apis/2024-01-01/versions/2024-01-01\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "164",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PATCH /v1/projects/{project}/locations/{location}/apis/{api}/versions/{version}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "bd1f8c2ffa06d6ce3f87c88a8abc2a721edbb19b7d3bae340fdab6537cfa20ec"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_version",
+          "api_id": "2024-01-01",
+          "version_id": "2024-01-01",
+          "allow_missing": false,
+          "display_name": "1",
+          "description": "1",
+          "state": "1",
+          "labels": {},
+          "annotations": {}
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_specs",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/versions/2024-01-01/specs?pageSize=100&pageToken=1&filter=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/projects/{project}/locations/{location}/apis/{api}/versions/{version}/specs",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "768b099ca90bac8d21cd34dc1ce2a3e6d8099d615cf17b60817b23d0b6ff59bb"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_specs",
+          "api_id": "2024-01-01",
+          "version_id": "2024-01-01",
+          "page_size": 100,
+          "page_token": "1",
+          "filter": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "create_spec",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/versions/2024-01-01/specs?apiSpecId=conformance",
+            "content_type": "application/json",
+            "body": "{\"filename\":\"1\",\"description\":\"1\",\"mimeType\":\"1\",\"sourceUri\":\"1\",\"contents\":\"1\",\"labels\":{},\"annotations\":{}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "109",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /v1/projects/{project}/locations/{location}/apis/{api}/versions/{version}/specs",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f9f111f9897e9a6c98f25f72be4f8b71df7ca45d1c1131a6178ceb89f5e7125a"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_spec",
+          "api_id": "2024-01-01",
+          "version_id": "2024-01-01",
+          "api_spec_id": "conformance",
+          "filename": "1",
+          "description": "1",
+          "mime_type": "1",
+          "source_uri": "1",
+          "contents": "1",
+          "labels": {},
+          "annotations": {}
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_spec",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/versions/2024-01-01/specs/2024-01-01",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/projects/{project}/locations/{location}/apis/{api}/versions/{version}/specs/{spec}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f9f111f9897e9a6c98f25f72be4f8b71df7ca45d1c1131a6178ceb89f5e7125a"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_spec",
+          "api_id": "2024-01-01",
+          "version_id": "2024-01-01",
+          "spec_id": "2024-01-01"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "delete_spec",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/versions/2024-01-01/specs/2024-01-01?force=false",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /v1/projects/{project}/locations/{location}/apis/{api}/versions/{version}/specs/{spec}",
+            "security_declared": false,
+            "response_status": 200,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_spec",
+          "api_id": "2024-01-01",
+          "version_id": "2024-01-01",
+          "spec_id": "2024-01-01",
+          "force": false
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "update_spec",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PATCH",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis/2024-01-01/versions/2024-01-01/specs/2024-01-01?allowMissing=false&updateMask=filename%2Cdescription%2CmimeType%2CsourceUri%2Ccontents%2Clabels%2Cannotations",
+            "content_type": "application/json",
+            "body": "{\"filename\":\"1\",\"description\":\"1\",\"mimeType\":\"1\",\"sourceUri\":\"1\",\"contents\":\"1\",\"labels\":{},\"annotations\":{},\"name\":\"projects/sample-project/locations/global/apis/2024-01-01/versions/2024-01-01/specs/2024-01-01\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "212",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PATCH /v1/projects/{project}/locations/{location}/apis/{api}/versions/{version}/specs/{spec}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f9f111f9897e9a6c98f25f72be4f8b71df7ca45d1c1131a6178ceb89f5e7125a"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_spec",
+          "api_id": "2024-01-01",
+          "version_id": "2024-01-01",
+          "spec_id": "2024-01-01",
+          "allow_missing": false,
+          "filename": "1",
+          "description": "1",
+          "mime_type": "1",
+          "source_uri": "1",
+          "contents": "1",
+          "labels": {},
+          "annotations": {}
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "on_api_updated",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis?pageSize=100&filter=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/projects/{project}/locations/{location}/apis",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "7e57128593f37480df651c44c9f1e003923c67eaa69bda63f5aee613a379c4ee"
+          },
+          {
+            "method": "GET",
+            "url": "https://apigeeregistry.googleapis.com/v1/projects/sample-project/locations/global/apis?pageSize=100&pageToken=1&filter=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "apigeeregistry.googleapis.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /v1/projects/{project}/locations/{location}/apis",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "7e57128593f37480df651c44c9f1e003923c67eaa69bda63f5aee613a379c4ee"
+          }
+        ],
+        "failures": [
+          "execution: ValueError: Registry API returned a repeated page token"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "on_api_updated",
+          "filter": "1"
+        },
+        "trigger": {
+          "kind": "poll",
+          "failures": [],
+          "advisory": []
+        },
+        "passed": false
+      }
+    ]
+  }
+]
