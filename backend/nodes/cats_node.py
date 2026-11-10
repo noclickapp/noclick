@@ -503,7 +503,7 @@ class CatsNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if config.operation in TRIGGER_EVENTS:
             payload = (self.node_data.get("config") or {}).get("_triggerPayload")
             if not isinstance(payload, dict):
-                raise ValueError("CATS trigger needs a webhook delivery")
+                return self.no_event_output(config.operation)
             return self.resolve_trigger_payload(payload, config.model_dump())
         method, route = ROUTES[config.operation]
         values = config.model_dump(exclude_none=True, exclude={"operation"})

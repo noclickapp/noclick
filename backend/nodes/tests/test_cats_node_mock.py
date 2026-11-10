@@ -229,3 +229,11 @@ async def test_cats_webhook_cleanup_does_not_silently_lose_registration():
     with pytest.raises(ValueError, match="Connect CATS"):
         await native.CatsNode._unregister_external_webhook(credential=None,
             config={"external_webhook_id": "7637"}, node_id="cats-test")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", native.TRIGGER_EVENTS)
+async def test_cats_manual_trigger_run_has_no_event(operation):
+    result = await node({"operation": operation}).execute({})
+    assert result["status"] == "no_event"
+    assert result["data"] == {}
