@@ -7,9 +7,10 @@ and handles instantiation of nodes based on type.
 
 import logging
 from pathlib import Path
-from typing import Dict, Optional, Type, Any
+from collections.abc import Mapping, MutableMapping
+from typing import Dict, Optional, Type, Any, Union
 from nodes.core.base import WorkflowNode
-from nodes.core.discovery import discover_nodes, merge_node_entries
+from nodes.core.discovery import Declaration, declare_nodes, merge_node_entries
 from nodes.telegram_node import TelegramNode
 from nodes.phone_node import PhoneNode
 from nodes.agent_node import AgentNode
