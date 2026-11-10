@@ -1,0 +1,13 @@
+{
+  "body": {
+    "data": [
+      {
+        "code": "EM_104",
+        "message": "OK"
+      }
+    ],
+    "message": "OK",
+    "request_id": "req-xxxx"
+  },
+  "source": "https://www.zoho.com/cpaas/help/api/batch-email-sending.html"
+}

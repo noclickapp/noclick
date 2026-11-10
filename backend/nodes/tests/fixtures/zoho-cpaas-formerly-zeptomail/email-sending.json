@@ -1,0 +1,20 @@
+{
+  "body": {
+    "data": [
+      {
+        "code": "EM_104",
+        "additional_info": [
+          {
+            "to": {
+              "email_address": {}
+            }
+          }
+        ],
+        "message": "OK"
+      }
+    ],
+    "message": "OK",
+    "request_id": "req-xxxx"
+  },
+  "source": "https://www.zoho.com/cpaas/help/api/email-sending.html"
+}

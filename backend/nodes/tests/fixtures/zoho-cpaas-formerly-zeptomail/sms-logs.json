@@ -1,0 +1,28 @@
+{
+  "source": "https://www.zoho.com/cpaas/help/api/get-sms-logs.html",
+  "body": {
+    "metadata": {
+      "offset": 0,
+      "count": 1
+    },
+    "data": [
+      {
+        "client_reference": "otp-482913",
+        "template_key": "6200ca60-921a-11f1-92c4-2a30dd3b833c",
+        "agent_id": "11b40318ea8775",
+        "chunks": "1",
+        "message_id": "7fff7400-b676-11f1-b0ad-b6d94062a427",
+        "sender_name": "EXAMPL",
+        "is_batch_request": false,
+        "time_taken": 1822,
+        "sender_key": "2d6f4a1b9c35",
+        "request_time": "2026-09-22T16:42:29+05:30",
+        "process_state": "processed",
+        "to": "+919876543210",
+        "request_id": "2d6f.14350939.i1.7fff7400-b676-11f1-b0ad-b6d94062a427.1a0c8d26ce9",
+        "status": "delivered"
+      }
+    ],
+    "status": "success"
+  }
+}
