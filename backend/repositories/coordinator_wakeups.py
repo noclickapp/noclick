@@ -7,6 +7,7 @@ decides what to do next. A started turn is never blindly replayed after a crash.
 import asyncio
 import uuid
 
+from repositories import conversation_history
 from repositories.conversation import ConversationRepo
 from repositories.coordinator_jobs import TERMINAL
 
@@ -36,6 +37,8 @@ class CoordinatorWakeupRepo:
                        WHERE conversation_id=$1 AND user_id=$2::uuid RETURNING conversation_id""",
                     f"coordinator:{user_id}", user_id, str(uuid.uuid4()),
                 )
+                if row is not None:
+                    await conversation_history.clear(conn, f"coordinator:{user_id}")
                 await conn.execute(
                     "UPDATE coordinator_wakeups SET status='skipped', lease_until=NULL "
                     "WHERE user_id=$1::uuid AND status NOT IN ('done','skipped')", user_id,

@@ -9,7 +9,9 @@ in favor of a real durable store that survives container restarts.
 Storage model
 -------------
 Items live in ``conversations.metadata.sdk_history`` (JSONB array on
-the existing ``conversations`` table — no migration needed). The
+the existing ``conversations`` table), and every write also lands in
+``conversation_history_items``, one row per item, where reads move once
+each history has been copied (``repositories/conversation_history.py``). The
 existing ``conversations.events`` array is left untouched; it's the
 chat UI's display log, which has a different shape (action/source/
 args/message/timestamp) and a different lifecycle (the chat handler
@@ -170,28 +172,31 @@ class PostgresSession:
         # single string element instead of a flat list of items.
         # Concat happens server-side via ``||`` so concurrent runs each
         # see the prior writes.
+        from repositories import conversation_history
         from utils.database_pool import get_native_pool
-        await get_native_pool().execute(
-            f"""
-            INSERT INTO conversations (conversation_id, user_id, workflow_id, node_id, metadata)
-            VALUES ($1, $2, $3, $4,
-                    jsonb_build_object('{_HISTORY_KEY}', $5::jsonb))
-            ON CONFLICT (conversation_id) DO UPDATE SET
-                metadata = jsonb_set(
-                    COALESCE(conversations.metadata, '{{}}'::jsonb),
-                    '{{{_HISTORY_KEY}}}',
-                    COALESCE(conversations.metadata->'{_HISTORY_KEY}', '[]'::jsonb) || $5::jsonb,
-                    true
-                ),
-                last_activity = NOW(),
-                deleted_at = NULL
-            """,
-            self.session_id,
-            self._user_id,
-            self._workflow_id,
-            self._node_id,
-            cleaned,
-        )
+        async with get_native_pool().acquire() as conn, conn.transaction():
+            await conn.execute(
+                f"""
+                INSERT INTO conversations (conversation_id, user_id, workflow_id, node_id, metadata)
+                VALUES ($1, $2, $3, $4,
+                        jsonb_build_object('{_HISTORY_KEY}', $5::jsonb))
+                ON CONFLICT (conversation_id) DO UPDATE SET
+                    metadata = jsonb_set(
+                        COALESCE(conversations.metadata, '{{}}'::jsonb),
+                        '{{{_HISTORY_KEY}}}',
+                        COALESCE(conversations.metadata->'{_HISTORY_KEY}', '[]'::jsonb) || $5::jsonb,
+                        true
+                    ),
+                    last_activity = NOW(),
+                    deleted_at = NULL
+                """,
+                self.session_id,
+                self._user_id,
+                self._workflow_id,
+                self._node_id,
+                cleaned,
+            )
+            await conversation_history.append(conn, self.session_id, cleaned)
 
     async def pop_item(self) -> Optional[dict]:
         """Remove and return the most recent item, or None if empty.
@@ -203,58 +208,64 @@ class PostgresSession:
         """
         if self._read_only:
             return None
+        from repositories import conversation_history
         from utils.database_pool import get_native_pool
-        row = await get_native_pool().fetchrow(
-            f"""
-            WITH old AS (
-                SELECT metadata->'{_HISTORY_KEY}'->-1 AS popped,
-                       jsonb_array_length(metadata->'{_HISTORY_KEY}') AS prev_len
-                FROM conversations
+        async with get_native_pool().acquire() as conn, conn.transaction():
+            row = await conn.fetchrow(
+                f"""
+                WITH old AS (
+                    SELECT metadata->'{_HISTORY_KEY}'->-1 AS popped,
+                           jsonb_array_length(metadata->'{_HISTORY_KEY}') AS prev_len
+                    FROM conversations
+                    WHERE conversation_id = $1
+                      AND metadata->'{_HISTORY_KEY}' IS NOT NULL
+                      AND jsonb_array_length(metadata->'{_HISTORY_KEY}') > 0
+                )
+                UPDATE conversations
+                SET metadata = jsonb_set(
+                    COALESCE(metadata, '{{}}'::jsonb),
+                    '{{{_HISTORY_KEY}}}',
+                    COALESCE(
+                        (SELECT jsonb_agg(elem ORDER BY ord)
+                           FROM jsonb_array_elements(metadata->'{_HISTORY_KEY}')
+                                WITH ORDINALITY AS t(elem, ord)
+                           WHERE ord < (SELECT prev_len FROM old)),
+                        '[]'::jsonb
+                    ),
+                    true
+                )
                 WHERE conversation_id = $1
-                  AND metadata->'{_HISTORY_KEY}' IS NOT NULL
-                  AND jsonb_array_length(metadata->'{_HISTORY_KEY}') > 0
+                  AND EXISTS (SELECT 1 FROM old)
+                RETURNING (SELECT popped FROM old) AS popped
+                """,
+                self.session_id,
             )
-            UPDATE conversations
-            SET metadata = jsonb_set(
-                COALESCE(metadata, '{{}}'::jsonb),
-                '{{{_HISTORY_KEY}}}',
-                COALESCE(
-                    (SELECT jsonb_agg(elem ORDER BY ord)
-                       FROM jsonb_array_elements(metadata->'{_HISTORY_KEY}')
-                            WITH ORDINALITY AS t(elem, ord)
-                       WHERE ord < (SELECT prev_len FROM old)),
-                    '[]'::jsonb
-                ),
-                true
-            )
-            WHERE conversation_id = $1
-              AND EXISTS (SELECT 1 FROM old)
-            RETURNING (SELECT popped FROM old) AS popped
-            """,
-            self.session_id,
-        )
-        if not row:
-            return None
+            if not row:
+                return None
+            await conversation_history.pop(conn, self.session_id)
         return _decode_jsonb(row["popped"])
 
     async def clear_session(self) -> None:
         """Wipe all items for this session (does NOT delete the row)."""
         if self._read_only:
             return
+        from repositories import conversation_history
         from utils.database_pool import get_native_pool
-        await get_native_pool().execute(
-            f"""
-            UPDATE conversations
-            SET metadata = jsonb_set(
-                COALESCE(metadata, '{{}}'::jsonb),
-                '{{{_HISTORY_KEY}}}',
-                '[]'::jsonb,
-                true
+        async with get_native_pool().acquire() as conn, conn.transaction():
+            await conn.execute(
+                f"""
+                UPDATE conversations
+                SET metadata = jsonb_set(
+                    COALESCE(metadata, '{{}}'::jsonb),
+                    '{{{_HISTORY_KEY}}}',
+                    '[]'::jsonb,
+                    true
+                )
+                WHERE conversation_id = $1
+                """,
+                self.session_id,
             )
-            WHERE conversation_id = $1
-            """,
-            self.session_id,
-        )
+            await conversation_history.clear(conn, self.session_id)
 
 
 # ---------------------------------------------------------------------- #

@@ -627,7 +627,9 @@ class ConversationRepo:
     async def reset_conversation(self, conversation_id: str, user_id: str) -> bool:
         """Wipe a conversation in place — transcript, SDK history, parked ask —
         keeping its id, for a durable per-account thread that starts over."""
-        async with self._pool.acquire() as conn:
+        from repositories import conversation_history
+
+        async with self._pool.acquire() as conn, conn.transaction():
             row = await conn.fetchrow(
                 """
                 UPDATE conversations
@@ -642,6 +644,8 @@ class ConversationRepo:
                 """,
                 conversation_id, user_id,
             )
+            if row is not None:
+                await conversation_history.clear(conn, conversation_id)
         return row is not None
 
     # ──────────────────────────────────────────────────────────────────────

@@ -9,7 +9,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from repositories import account_merge
+from repositories import account_merge, conversation_history
 from repositories.account_merge import (
     SPECIAL_COLUMNS, USER_KEYED_SQL, merge_accounts, personal_workspace,
 )
@@ -92,6 +92,9 @@ async def test_a_merge_moves_the_work_keeps_the_history_and_retires_the_phone_ac
         "INSERT INTO conversations (conversation_id, user_id, events, metadata) VALUES ($1, $2::uuid, $3, $4)",
         f"coordinator:{target}", target, [{"role": "user", "message": "hi from the web"}],
         {"sdk_history": [{"role": "user", "content": "hi from the web"}]})
+    # Each history as the session writes it, in its rows too.
+    await conversation_history.append(pool, f"coordinator:{target}", [{"role": "user", "content": "hi from the web"}])
+    await conversation_history.append(pool, f"coordinator:{source}", [{"role": "user", "content": "water the ferns"}])
     for user_id, schema_hash, seen, delivered in ((source, "both", 1, True), (source, "its", 1, False),
                                                  (target, "both", 5, False)):
         await pool.execute(
@@ -122,6 +125,9 @@ async def test_a_merge_moves_the_work_keeps_the_history_and_retires_the_phone_ac
     conv = await pool.fetchrow("SELECT events, metadata FROM conversations WHERE conversation_id = $1", f"coordinator:{target}")
     assert [e["message"] for e in conv["events"]] == ["hi from the web", "water the ferns"]
     assert len(conv["metadata"]["sdk_history"]) == 2
+    assert [i["content"] for i in await conversation_history.read(pool, f"coordinator:{target}")] == [
+        "hi from the web", "water the ferns"]
+    assert await conversation_history.read(pool, f"coordinator:{source}") == []
     assert await pool.fetchval("SELECT 1 FROM conversations WHERE conversation_id = $1", f"coordinator:{source}") is None
 
     # The number now reaches the target; usage history stays with the retired account.

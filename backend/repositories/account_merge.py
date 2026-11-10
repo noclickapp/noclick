@@ -16,6 +16,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, Optional
 
+from repositories import conversation_history
+
 MOVE_COLUMNS = (
     ("account_node_output_schemas", "user_id"),
     ("agent_email_replies", "user_id"),
@@ -251,6 +253,7 @@ async def merge_accounts(conn, *, source: str, target: str) -> MergeResult:
                 last_activity = GREATEST(t.last_activity, s.last_activity)
             FROM conversations s WHERE t.conversation_id = $2 AND s.conversation_id = $1
             """, s_conv, t_conv)
+        await conversation_history.append_from(conn, s_conv, t_conv)
         await conn.execute("DELETE FROM conversations WHERE conversation_id = $1", s_conv)
     else:
         await conn.execute("UPDATE conversations SET conversation_id = $2 WHERE conversation_id = $1", s_conv, t_conv)
