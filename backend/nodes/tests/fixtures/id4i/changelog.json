@@ -1,0 +1,42 @@
+{
+  "offset": 0,
+  "limit": 100,
+  "total": null,
+  "elements": [
+    {
+      "id": "e4",
+      "message": "{{&actor}} hat den Api Key {{&apiKey}} {{#newActiveState}}aktiviert{{/newActiveState}}{{^newActiveState}}deaktiviert{{/newActiveState}}",
+      "messageProperties": {
+        "actor": {
+          "value": "a.vratny",
+          "type": "user",
+          "id": "a.vratny"
+        },
+        "apiKey": {
+          "id": "d6afe146-b952-459a-93df-5c1108ebff6e",
+          "type": "apikey",
+          "value": "My Api Key"
+        },
+        "newActiveState": true
+      },
+      "timestamp": 1521469408
+    },
+    {
+      "id": "e3",
+      "message": "{{&actor}} hat den Api Key {{&apiKey}} angelegt",
+      "messageProperties": {
+        "actor": {
+          "value": "a.vratny",
+          "type": "user",
+          "id": "a.vratny"
+        },
+        "apiKey": {
+          "id": "d6afe146-b952-459a-93df-5c1108ebff6e",
+          "type": "apikey",
+          "value": "My Api Key"
+        }
+      },
+      "timestamp": 1521469367
+    }
+  ]
+}

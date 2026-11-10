@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/id4i-dark.svg",
+  "source": "https://raw.githubusercontent.com/BlueRainSoftware/support/02bfcb438b5ef1ad05c91add6c3cb611887acdaf/id4i-icon.svg",
+  "source_page": "https://github.com/BlueRainSoftware/support/blob/02bfcb438b5ef1ad05c91add6c3cb611887acdaf/id4i-icon.svg",
+  "license": "Official ID4i brand asset; trademark belongs to BlueRain Software GmbH & Co. KG. Used to identify the integration.",
+  "sha256": "268532d92c74f8b16f45fb974d665a246e11a852a5cd596e41dc452261720d5d",
+  "date": "2026-11-11",
+  "edits": [
+    "Removed the off-canvas wordmark group; retained original square app mark.",
+    "Recoloured only the dark navy frame to white for dark tiles.",
+    "Serialized XML and normalized trailing whitespace."
+  ],
+  "notes": "Company-owned support repository, linked from the official developer guide; original blue interior and open frame preserved."
+}

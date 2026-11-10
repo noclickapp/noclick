@@ -1,0 +1,1 @@
+changelog.json is the unchanged "Example Changelog" JSON from the provider developer guide: https://backend.id4i.de/docs/reference/en/reference.html#_auditing (retrieved 2026-11-11). The published schema omits nullability on total and declares all messageProperties values to be objects, while this example contains null and a boolean. The node preserves these documented values.
