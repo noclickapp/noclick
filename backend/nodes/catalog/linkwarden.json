@@ -12,7 +12,8 @@
    "oauth_provider": null,
    "method": "linkwarden_access_token",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

@@ -12,7 +12,8 @@
    "oauth_provider": null,
    "method": "porkbun_api_key",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

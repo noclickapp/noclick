@@ -12,7 +12,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   },
   {
    "type": "miniflux",
@@ -20,7 +21,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   },
   {
    "type": "feedly",
@@ -28,7 +30,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   },
   {
    "type": "freshrss",
@@ -36,7 +39,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   },
   {
    "type": "rss_app",
@@ -44,7 +48,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

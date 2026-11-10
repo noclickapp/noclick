@@ -12,7 +12,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   },
   {
    "type": "cvent_oauth",
@@ -20,7 +21,8 @@
    "oauth_provider": "cvent",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

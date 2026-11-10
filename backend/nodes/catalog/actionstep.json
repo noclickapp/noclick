@@ -12,7 +12,8 @@
    "oauth_provider": "actionstep",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

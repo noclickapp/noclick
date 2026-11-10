@@ -19,7 +19,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   },
   {
    "type": "twilio_api_key",
@@ -27,7 +28,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   },
   {
    "type": "sendgrid_api_key",
@@ -35,7 +37,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

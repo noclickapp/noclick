@@ -12,7 +12,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   },
   {
    "type": "posthog_project_api_key",
@@ -20,7 +21,8 @@
    "oauth_provider": null,
    "method": null,
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   },
   {
    "type": "posthog_oauth",
@@ -28,7 +30,8 @@
    "oauth_provider": "posthog",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

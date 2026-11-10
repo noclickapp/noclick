@@ -14,7 +14,8 @@
    "oauth_provider": "tidy",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

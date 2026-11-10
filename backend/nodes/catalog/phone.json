@@ -19,6 +19,7 @@
    "method": "purchase",
    "hidden": false,
    "pinned": true,
+   "borrowed": false,
    "linked_fields": [
     "number_sid"
    ]

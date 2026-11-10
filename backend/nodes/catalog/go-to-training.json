@@ -12,7 +12,8 @@
    "oauth_provider": "go_to_training",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

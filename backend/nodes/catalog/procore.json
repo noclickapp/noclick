@@ -12,7 +12,8 @@
    "oauth_provider": "procore",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

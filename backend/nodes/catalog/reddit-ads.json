@@ -12,7 +12,8 @@
    "oauth_provider": "reddit",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": true
   }
  ],
  "operations": [

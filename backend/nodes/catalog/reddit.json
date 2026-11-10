@@ -12,7 +12,8 @@
    "oauth_provider": "reddit",
    "method": "oauth",
    "hidden": true,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   },
   {
    "type": "reddit_script",
@@ -20,7 +21,8 @@
    "oauth_provider": null,
    "method": "script",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

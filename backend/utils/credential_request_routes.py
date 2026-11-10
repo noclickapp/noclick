@@ -67,19 +67,12 @@ def _oauth_providers_by_type() -> dict[str, str]:
     if _oauth_provider_cache is not None:
         return _oauth_provider_cache
 
-    candidates = []
+    from nodes.core.catalog import every_node_facts
     from nodes.core.credential_connect import owners_first
-    from nodes.core.registry import NODE_REGISTRY
-    for node_type, node_class in NODE_REGISTRY.items():
-        try:
-            schema = node_class.get_config_schema()
-        except Exception:
-            logger.exception("Reading %s's schema for its OAuth providers failed", node_class.__name__)
-            continue
-        for title, defn in schema.get('$defs', {}).items():
-            provider, cred_type = defn.get('x-oauth-provider'), _resolve_credential_type(title, defn)
-            if provider and cred_type:
-                candidates.append((node_type, cred_type, provider))
+
+    candidates = [(node_type, credential["type"], credential["oauth_provider"])
+                  for node_type, facts in every_node_facts().items() for credential in facts["credentials"]
+                  if credential["oauth_provider"] and credential["pinned"]]
     providers: dict[str, str] = {}
     for _, cred_type, provider in owners_first(candidates):
         providers.setdefault(cred_type, provider)
@@ -264,72 +257,16 @@ def _schema_credential(node_type: str, credential_type: str) -> Optional[tuple[s
     """``(title, definition)`` of the credential method ``node_type``'s schema pins to ``credential_type``."""
     from nodes.core.registry import NODE_REGISTRY
 
-    Returns (fields_cache, siblings_cache, methods_cache).
-    """
-    fields_cache: dict[str, list[dict]] = {}
-    siblings_cache: dict[str, list[dict]] = {}
-    methods_cache: dict[str, dict] = {}
-    try:
-        from nodes.core.credential_connect import owners_first
-        from nodes.core.registry import NODE_REGISTRY
-
-        definitions = []
-        sibling_groups = []
-        for node_type, node_class in NODE_REGISTRY.items():
-            try:
-                schema = node_class.get_config_schema()
-                defs = schema.get('$defs', {})
-
-                for title, defn in defs.items():
-                    cred_type = _resolve_credential_type(title, defn)
-                    if cred_type:
-                        definitions.append((node_type, cred_type, title, defn))
-
-                # --- Build sibling groups from the credentials anyOf union ---
-                cred_prop = schema.get('properties', {}).get('credentials', {})
-                any_of = cred_prop.get('anyOf', [])
-                refs = [e for e in any_of if '$ref' in e]
-                if len(refs) <= 1:
-                    continue  # no siblings to map
-
-                sibling_methods: list[dict] = []
-                for ref in refs:
-                    title = ref['$ref'].split('/')[-1]
-                    defn = defs.get(title, {})
-                    # x-credential-hidden methods (e.g. OAuth pending provider app
-                    # approval) are hidden in-app — don't offer them here either.
-                    if defn.get('x-credential-hidden'):
-                        continue
-                    method = _method_dict_from_defn(title, defn)
-                    if method:
-                        sibling_methods.append(method)
-
-                for method in sibling_methods:
-                    sibling_groups.append((node_type, method['credential_type'], sibling_methods))
-            except Exception:
-                continue
-
-        # --- Field + per-type method cache entries, then each type's sibling group ---
-        seen_types: set[str] = set()
-        for _, cred_type, title, defn in owners_first(definitions):
-            if cred_type in seen_types:
-                continue
-            seen_types.add(cred_type)
-            if defn.get('x-credential-type') != 'oauth':
-                fields_cache[cred_type] = _extract_fields_from_schema(defn)
-            method = _method_dict_from_defn(title, defn)
-            if method:
-                methods_cache[cred_type] = method
-        for _, cred_type, sibling_methods in owners_first(sibling_groups):
-            siblings_cache.setdefault(cred_type, sibling_methods)
-    except Exception as e:
-        logger.warning(f"Failed to build credential caches: {e}")
-    return fields_cache, siblings_cache, methods_cache
+    for title, defn in NODE_REGISTRY[node_type].get_config_schema().get('$defs', {}).items():
+        if _resolve_credential_type(title, defn) == credential_type:
+            return title, defn
+    return None
 
 
 @lru_cache(maxsize=None)
 def _credential_definition(credential_type: str) -> Optional[tuple[str, dict]]:
-    """The method of the first node, in registry order, whose schema pins ``credential_type``."""
+    """The method of the first node whose schema pins ``credential_type``: its owner, before the nodes borrowing
+    it (``credential_holders`` gives them in that order)."""
     from nodes.core.catalog import credential_holders
 
     for node_type, credential in credential_holders(credential_type):
@@ -365,11 +302,11 @@ def _node_sibling_methods(node_type: str) -> list[dict]:
 
 @lru_cache(maxsize=None)
 def _sibling_methods(credential_type: str) -> tuple:
-    """The methods offered beside ``credential_type``: the last node in registry order whose union offers it
-    with others decides, as the whole-registry sweep this replaced let each later node overwrite the last."""
+    """The methods offered beside ``credential_type``: those of the first node whose union offers it with others,
+    its owner before the nodes borrowing it."""
     from nodes.core.catalog import credential_holders
 
-    for node_type, credential in reversed(credential_holders(credential_type)):
+    for node_type, credential in credential_holders(credential_type):
         if credential["hidden"] or not credential["pinned"]:
             continue
         methods = _node_sibling_methods(node_type)

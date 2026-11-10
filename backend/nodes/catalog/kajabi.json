@@ -18,7 +18,8 @@
    "oauth_provider": null,
    "method": "kajabi_access_token",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

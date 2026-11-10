@@ -18,7 +18,8 @@
    "oauth_provider": "join-it",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

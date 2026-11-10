@@ -180,33 +180,26 @@ def owners_first(candidates: Iterable[Tuple[Any, ...]]) -> List[Tuple[Any, ...]]
     """Candidates ``(node_type, credential_type, ...)`` for "the node for a credential type", in registration order
     except that each type's owner comes before the nodes borrowing it. A first-wins lookup over them lands on the
     owner whatever the registration order, and on a borrower only for what the owner doesn't offer (a hidden
-    method, a type its schema doesn't pin)."""
-    from nodes.core.registry import NODE_REGISTRY
+    method, a type its schema doesn't pin). Which types a node borrows is read from the node catalog, so no
+    integration is imported."""
+    from nodes.core.catalog import borrows
 
-    return sorted(candidates, key=lambda c: c[1] in NODE_REGISTRY[c[0]].borrowed_credential_types)
-
-
-@lru_cache(maxsize=1)
-def _class_index() -> Dict[str, Tuple[str, Type[BaseModel]]]:
-    from nodes.core.registry import NODE_REGISTRY
-
-    index: Dict[str, Tuple[str, Type[BaseModel]]] = {}
-    candidates = (
-        (node_type, credential_type_of(cls), cls)
-        for node_type, node_cls in NODE_REGISTRY.items() for cls in credential_classes_for_node(node_cls)
-    )
-    for node_type, ct, cls in owners_first(c for c in candidates if c[1]):
-        index.setdefault(ct, (node_type, cls))
-    return index
+    return sorted(candidates, key=lambda c: borrows(c[0], c[1]))
 
 
 def resolve_credential_class(credential_type: Optional[str]) -> Optional[Tuple[str, Type[BaseModel]]]:
     """``(node_type, credential class)`` for a stored ``credential_type``, or None.
 
-    The node is the credential type's owner (credential_type_owners), so this is a lookup, not a search.
-    None covers types no node declares (agent OAuth sign-ins, legacy rows),
-    which shape as-is.
+    The node is the credential type's owner (credential_type_owners): the first of the node catalog's holders,
+    which lists the owner before the nodes borrowing it, so only that node's integration is imported. None
+    covers types no node declares (agent OAuth sign-ins, legacy rows), which shape as-is.
     """
+    return _class_index(credential_type or "")
+
+
+@lru_cache(maxsize=None)
+def _class_index(credential_type: str) -> Optional[Tuple[str, Type[BaseModel]]]:
+    """Each type's entry, filled as it's first asked for."""
     from nodes.core.catalog import credential_holders
     from nodes.core.registry import NODE_REGISTRY
 

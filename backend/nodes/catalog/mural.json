@@ -12,7 +12,8 @@
    "oauth_provider": "mural",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

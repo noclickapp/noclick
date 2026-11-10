@@ -12,7 +12,8 @@
    "oauth_provider": "zoho_work_drive",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

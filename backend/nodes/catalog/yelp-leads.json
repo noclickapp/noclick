@@ -17,7 +17,8 @@
    "oauth_provider": "yelp_leads",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

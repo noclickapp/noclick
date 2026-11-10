@@ -16,7 +16,8 @@
    "oauth_provider": "precisefp",
    "method": "oauth",
    "hidden": false,
-   "pinned": true
+   "pinned": true,
+   "borrowed": false
   }
  ],
  "operations": [

@@ -10,9 +10,8 @@ import re
 
 @lru_cache(maxsize=1)
 def connection_catalog():
-    from nodes.core.registry import NODE_REGISTRY
-    from nodes.core.credential_connect import credential_classes_for_node, credential_type_of, owners_first
-    from nodes.agent.node_op_tools import node_supports_op_tools
+    from nodes.core.catalog import every_node_facts
+    from nodes.core.credential_connect import owners_first
 
     candidates = []
     providers = {}
@@ -21,11 +20,12 @@ def connection_catalog():
         for credential in facts["credentials"]:
             if credential["hidden"]:
                 continue
+            kind = credential["type"]
             candidates.append((node_type, kind, {
                 "credential_type": kind,
-                "name": schema.get("title", kind),
-                "oauth_provider": schema.get("x-oauth-provider"),
-                "connection_method": schema.get("x-credential-type"),
+                "name": kind if credential["title"] is None else credential["title"],
+                "oauth_provider": credential["oauth_provider"],
+                "connection_method": credential["method"],
             }))
             types.append(kind)
         if facts["agent_tool_provider"] and types:

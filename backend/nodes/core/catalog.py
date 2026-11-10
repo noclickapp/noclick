@@ -5,8 +5,9 @@ Each registered type has a generated file, ``nodes/catalog/<type without "automa
 - its canvas definition's words: ``label``, ``description``, ``category``, ``keywords``
   (``scripts/node_definitions.py``);
 - its credential methods, in the order its config accepts them: ``type``, ``title``,
-  ``oauth_provider``, ``method`` (``x-credential-type``), ``hidden`` and whether the
-  schema ``pinned`` the type as a constant;
+  ``oauth_provider``, ``method`` (``x-credential-type``), ``hidden``, whether the
+  schema ``pinned`` the type as a constant, and whether the node ``borrowed`` it from
+  the type's owner (``borrowed_credential_types``);
 - its operations, as ``coder.workflow.operation_catalog.get_operations_for_node_type``
   lists them: ``name``, ``display_name``, ``category``, ``description``, ``is_trigger``;
 - ``agent_tool_provider`` (``node_op_tools.node_supports_op_tools``), ``credentialed`` (its config
@@ -67,6 +68,7 @@ def class_facts(node_type: str, node_class: Any) -> Dict[str, Any]:
             "method": credential_schema.get("x-credential-type"),
             "hidden": bool(credential_schema.get("x-credential-hidden")),
             "pinned": credential_type in pinned,
+            "borrowed": credential_type in node_class.borrowed_credential_types,
         }
         if getattr(credential_class, "linked_fields", ()):
             credential["linked_fields"] = list(credential_class.linked_fields)
@@ -129,12 +131,13 @@ def _credential_index(node_types: Tuple[str, ...]) -> Dict[str, Tuple[Tuple[str,
     for node_type in node_types:
         for credential in node_facts(node_type)["credentials"]:
             index.setdefault(credential["type"], []).append((node_type, credential))
-    return {credential_type: tuple(holders) for credential_type, holders in index.items()}
+    return {credential_type: tuple(sorted(holders, key=lambda holder: holder[1]["borrowed"]))
+            for credential_type, holders in index.items()}
 
 
 def credential_holders(credential_type: Optional[str]) -> Tuple[Tuple[str, Dict[str, Any]], ...]:
-    """``(node type, its credential method)`` for each type whose config accepts ``credential_type``, in
-    registry order."""
+    """``(node type, its credential method)`` for each type whose config accepts ``credential_type``: the
+    type's owner first, then the nodes borrowing it, each in registry order."""
     from nodes.core.registry import NODE_REGISTRY
 
     return _credential_index(tuple(NODE_REGISTRY)).get(credential_type or "", ())
@@ -145,3 +148,9 @@ def credential_types() -> Tuple[str, ...]:
     from nodes.core.registry import NODE_REGISTRY
 
     return tuple(_credential_index(tuple(NODE_REGISTRY)))
+
+
+def borrows(node_type: str, credential_type: str) -> bool:
+    """Whether ``node_type`` uses ``credential_type`` as another node's (its ``borrowed_credential_types``)."""
+    return any(credential["type"] == credential_type and credential["borrowed"]
+               for credential in node_facts(node_type)["credentials"])
