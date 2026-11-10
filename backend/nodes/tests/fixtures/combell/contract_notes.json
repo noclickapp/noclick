@@ -1,0 +1,197 @@
+{
+  "contract": {
+    "source_url": "https://api.combell.com/v2/documentation/swagger-v2.json",
+    "version": "v2",
+    "sha256": "b83b5173d433006df250fa169ff1788a9e5b7a9123cb9aafad30b024fa3b6499"
+  },
+  "spec_defects": [
+    {
+      "operation": "get_account",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: account_id / KeyError: 'account_id'",
+      "reason": "The published route /accounts/{accountId} uses camelCase placeholders, while its path parameter declarations use snake_case: account_id. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/GetAccount",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "GET",
+      "path": "/accounts/{accountId}",
+      "actual_url": "https://api.combell.com/v2/accounts/1"
+    },
+    {
+      "operation": "list_dns_records",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: domain_name / KeyError: 'domain_name'",
+      "reason": "The published route /dns/{domainName}/records uses camelCase placeholders, while its path parameter declarations use snake_case: domain_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/GetRecords",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "GET",
+      "path": "/dns/{domainName}/records",
+      "actual_url": "https://api.combell.com/v2/dns/2024-01-01T00%3A00%3A00Z/records?skip=1&take=1&type=1&record_name=1&service=1"
+    },
+    {
+      "operation": "get_dns_record",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: domain_name / KeyError: 'domain_name'",
+      "reason": "The published route /dns/{domainName}/records/{recordId} uses camelCase placeholders, while its path parameter declarations use snake_case: domain_name, record_id. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/GetRecord",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "GET",
+      "path": "/dns/{domainName}/records/{recordId}",
+      "actual_url": "https://api.combell.com/v2/dns/2024-01-01T00%3A00%3A00Z/records/2024-01-01T00%3A00%3A00Z"
+    },
+    {
+      "operation": "create_dns_record",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: domain_name / KeyError: 'domain_name'",
+      "reason": "The published route /dns/{domainName}/records uses camelCase placeholders, while its path parameter declarations use snake_case: domain_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/CreateRecord",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "POST",
+      "path": "/dns/{domainName}/records",
+      "actual_url": "https://api.combell.com/v2/dns/2024-01-01T00%3A00%3A00Z/records"
+    },
+    {
+      "operation": "update_dns_record",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: domain_name / KeyError: 'domain_name'",
+      "reason": "The published route /dns/{domainName}/records/{recordId} uses camelCase placeholders, while its path parameter declarations use snake_case: domain_name, record_id. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/EditRecord",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "PUT",
+      "path": "/dns/{domainName}/records/{recordId}",
+      "actual_url": "https://api.combell.com/v2/dns/2024-01-01T00%3A00%3A00Z/records/2024-01-01T00%3A00%3A00Z"
+    },
+    {
+      "operation": "delete_dns_record",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: domain_name / KeyError: 'domain_name'",
+      "reason": "The published route /dns/{domainName}/records/{recordId} uses camelCase placeholders, while its path parameter declarations use snake_case: domain_name, record_id. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/DeleteRecord",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "DELETE",
+      "path": "/dns/{domainName}/records/{recordId}",
+      "actual_url": "https://api.combell.com/v2/dns/2024-01-01T00%3A00%3A00Z/records/2024-01-01T00%3A00%3A00Z"
+    },
+    {
+      "operation": "get_domain",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: domain_name / KeyError: 'domain_name'",
+      "reason": "The published route /domains/{domainName} uses camelCase placeholders, while its path parameter declarations use snake_case: domain_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/GetDomain",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "GET",
+      "path": "/domains/{domainName}",
+      "actual_url": "https://api.combell.com/v2/domains/2024-01-01T00%3A00%3A00Z"
+    },
+    {
+      "operation": "update_nameservers",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: domain_name / KeyError: 'domain_name'",
+      "reason": "The published route /domains/{domainName}/nameservers uses camelCase placeholders, while its path parameter declarations use snake_case: domain_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/EditNameServers",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "PUT",
+      "path": "/domains/{domainName}/nameservers",
+      "actual_url": "https://api.combell.com/v2/domains/1/nameservers"
+    },
+    {
+      "operation": "update_domain_renewal",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: domain_name / KeyError: 'domain_name'",
+      "reason": "The published route /domains/{domainName}/renew uses camelCase placeholders, while its path parameter declarations use snake_case: domain_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/ConfigureDomain",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "PUT",
+      "path": "/domains/{domainName}/renew",
+      "actual_url": "https://api.combell.com/v2/domains/2024-01-01T00%3A00%3A00Z/renew"
+    },
+    {
+      "operation": "get_linux_hosting",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: domain_name / KeyError: 'domain_name'",
+      "reason": "The published route /linuxhostings/{domainName} uses camelCase placeholders, while its path parameter declarations use snake_case: domain_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/GetLinuxHosting",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "GET",
+      "path": "/linuxhostings/{domainName}",
+      "actual_url": "https://api.combell.com/v2/linuxhostings/2024-01-01T00%3A00%3A00Z"
+    },
+    {
+      "operation": "update_php_version",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: domain_name / KeyError: 'domain_name'",
+      "reason": "The published route /linuxhostings/{domainName}/phpsettings/version uses camelCase placeholders, while its path parameter declarations use snake_case: domain_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/ChangePhpVersion",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "PUT",
+      "path": "/linuxhostings/{domainName}/phpsettings/version",
+      "actual_url": "https://api.combell.com/v2/linuxhostings/2024-01-01T00%3A00%3A00Z/phpsettings/version"
+    },
+    {
+      "operation": "get_mailbox",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: mailbox_name / KeyError: 'mailbox_name'",
+      "reason": "The published route /mailboxes/{mailboxName} uses camelCase placeholders, while its path parameter declarations use snake_case: mailbox_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/GetMailbox",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "GET",
+      "path": "/mailboxes/{mailboxName}",
+      "actual_url": "https://api.combell.com/v2/mailboxes/2024-01-01T00%3A00%3A00Z"
+    },
+    {
+      "operation": "delete_mailbox",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: mailbox_name / KeyError: 'mailbox_name'",
+      "reason": "The published route /mailboxes/{mailboxName} uses camelCase placeholders, while its path parameter declarations use snake_case: mailbox_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/DeleteMailbox",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "DELETE",
+      "path": "/mailboxes/{mailboxName}",
+      "actual_url": "https://api.combell.com/v2/mailboxes/2024-01-01T00%3A00%3A00Z"
+    },
+    {
+      "operation": "update_mailbox_autoreply",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: mailbox_name / KeyError: 'mailbox_name'",
+      "reason": "The published route /mailboxes/{mailboxName}/autoreply uses camelCase placeholders, while its path parameter declarations use snake_case: mailbox_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/ConfigureMailboxAutoReply",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "PUT",
+      "path": "/mailboxes/{mailboxName}/autoreply",
+      "actual_url": "https://api.combell.com/v2/mailboxes/2024-01-01T00%3A00%3A00Z/autoreply"
+    },
+    {
+      "operation": "update_mailbox_autoforward",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: mailbox_name / KeyError: 'mailbox_name'",
+      "reason": "The published route /mailboxes/{mailboxName}/autoforward uses camelCase placeholders, while its path parameter declarations use snake_case: mailbox_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/ConfigureMailboxAutoForward",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "PUT",
+      "path": "/mailboxes/{mailboxName}/autoforward",
+      "actual_url": "https://api.combell.com/v2/mailboxes/2024-01-01T00%3A00%3A00Z/autoforward"
+    },
+    {
+      "operation": "get_mysql_database",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: database_name / KeyError: 'database_name'",
+      "reason": "The published route /mysqldatabases/{databaseName} uses camelCase placeholders, while its path parameter declarations use snake_case: database_name. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/GetMySqlDatabase",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "GET",
+      "path": "/mysqldatabases/{databaseName}",
+      "actual_url": "https://api.combell.com/v2/mysqldatabases/2024-01-01T00%3A00%3A00Z"
+    },
+    {
+      "operation": "get_provisioning_job",
+      "kind": "d",
+      "failure": "request: MissingRequiredParameter: Missing required path parameter: job_id / KeyError: 'job_id'",
+      "reason": "The published route /provisioningjobs/{jobId} uses camelCase placeholders, while its path parameter declarations use snake_case: job_id. A concrete URL has no parameter-name labels: the node substitutes each supplied identifier into the documented route position. The spec cannot bind its own declared names to those route placeholders.",
+      "source": "https://api.combell.com/v2/documentation#operation/GetProvisioningJob",
+      "contract_source": "https://api.combell.com/v2/documentation/swagger-v2.json",
+      "method": "GET",
+      "path": "/provisioningjobs/{jobId}",
+      "actual_url": "https://api.combell.com/v2/provisioningjobs/00000000-0000-4000-8000-000000000001"
+    }
+  ],
+  "triggers_absent": "No API webhook registration or list endpoint with created/updated time ordering or filtering is published in the Combell Public API v2 contract or its documentation."
+}

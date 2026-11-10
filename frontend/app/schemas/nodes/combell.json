@@ -1,0 +1,1330 @@
+{
+  "$defs": {
+    "CombellAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "combell_api_key",
+          "default": "combell_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret"
+      ],
+      "title": "Combell API Key",
+      "type": "object",
+      "x-credential-instructions": "In your Combell reseller control panel, copy your API key and secret and whitelist the IP addresses NoClick uses to connect. Paste both values below. NoClick signs requests with HMAC-SHA256 and reads your accounts to check access. Write access depends on your reseller permissions.",
+      "x-credential-url": "https://api.combell.com/v2/documentation"
+    },
+    "CombellCreateAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_account",
+          "default": "create_account",
+          "title": "Create Account",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "identifier": {
+          "description": "An identifier for the account.\r\n\r\nShould be a domain name for hosting accounts.",
+          "title": "Identifier",
+          "type": "string"
+        },
+        "servicepack_id": {
+          "description": "The servicepack id that defines the account.",
+          "minimum": 1,
+          "title": "Servicepack Id",
+          "type": "integer"
+        },
+        "ftp_password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ftp password for the account.\r\n\r\nApplies only if the servicepack contains hosting.\r\n\r\nPasswords have to adhere to following rules:\r\n<ul><li>Between 8-20 characters.</li><li>Must be a mix of letters and digits.</li><li>Must contain at least one digit (0-9).</li><li>Must contain at least one letter (a-z).</li><li>Cannot contain spaces.</li><li>Cannot contain characters: * \u20ac $ & + } { ' \" \\ </li></ul>",
+          "title": "Ftp Password",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "identifier",
+        "servicepack_id"
+      ],
+      "title": "CombellCreateAccount",
+      "type": "object"
+    },
+    "CombellCreateDnsRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_dns_record",
+          "default": "create_dns_record",
+          "title": "Create Dns Record",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_name": {
+          "description": "The domain name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The id of the record\r\nThis value is ignored for creation of new records.",
+          "title": "Id"
+        },
+        "type": {
+          "description": "The type of the record (A, AAAA, CAA, CNAME, MX, TXT, SRV, ALIAS and TLSA).",
+          "title": "Type",
+          "type": "string"
+        },
+        "record_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the record.\r\n\r\nThis is the host name, alias defined by the record.\r\n\r\nAn empty record or '@' is equal to the domain name.\r\n\r\nApplies to A, AAAA, MX, CNAME, TXT, CAA, ALIAS and TLSA records.\r\n\r\nWhen type is TLSA the recommended value format is port number, protocol and host: _25._tcp.\r\n\r\nDoes not apply for SRV records.",
+          "title": "Record Name"
+        },
+        "ttl": {
+          "default": 3600,
+          "description": "Time to live of the record in seconds.\r\n\r\nIt defines the time frame that clients can cache the information.\r\n\r\nThe value MUST be between 60 and 86400. The default value is 3600 (= 1 hour).",
+          "maximum": 86400,
+          "minimum": 60,
+          "title": "Ttl",
+          "type": "integer"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Variable data depending on the record type.\r\n<ul><li>A: the IPv4 address.</li><li>AAAA: the IPv6 address.</li><li>CNAME: canonical name of an alias.</li><li>MX: fully qualified domain name of a mail host.</li><li>SRV: does not apply. Data for the SRV records can be found in specific properties.</li><li>TXT: free form text data.</li><li>CAA: format should match specific values for flag, tag and ca: \"{flag} {tag} {ca}\".\r\n        <ul><li>The flag. The values 128 (critical) or 0 (non-critical) are expected, with 0 as the default.</li><li>The tag. A tag specifies which actions an authorized CA can take in terms of issuing SSL/TLS certificates.\r\n<ul><li>The value \"issue\": explicitly authorizes a single certificate authority to issue a certificate (any type) for the hostname.</li><li>The value \"issuewild\": explicitly authorizes a single certificate authority to issue a wildcard certificate (and only wildcard) for the hostname.</li><li>The value \"iodef\": specifies a URL to which a certificate authority may report policy violations.</li></ul></li><li>The ca. This is the domain of the CA (Certification Authority) that has the authority to issue certificates for the domain in question. If the value is a semicolon (;), it means that no CA has the authority to issue a certificate for that domain.</li></ul></li><li>ALIAS: canonical name of an alias.</li><li>TLSA: format should match specific values for usage, selector, matching type and data: \"{usage} {selector} {matching_type} {data}\"\r\n        <ul><li>The usage. The first field after the TLSA text in the DNS RR, specifies how to verify the certificate.\r\n<ul><li>A value of 0 is for what is commonly called CA constraint (and PKIX-TA). The certificate provided when establishing TLS must be issued by the listed root-CA or one of its intermediate CAs, with a valid certification path to a root-CA already trusted by the application doing the verification.</li><li>A value of 1 is for what is commonly called Service certificate constraint (and PKIX-EE). The certificate used must match the TLSA record exactly, and it must also pass PKIX certification path validation to a trusted root-CA.</li><li>A value of 2 is for what is commonly called Trust Anchor Assertion (and DANE-TA). The certificate used has a valid certification path pointing back to the certificate mention in this record, but there is no need for it to pass the PKIX certification path validation to a trusted root-CA.</li><li>A value of 3 is for what is commonly called Domain issued certificate (and DANE-EE). The services uses a self-signed certificate. It is not signed by anyone else, and is exactly this record.</li></ul></li><li>The selector. When connecting to the service and a certificate is received, the selector field specifies which parts of it should be checked.\r\n<ul><li>A value of 0 means to select the entire certificate for matching.</li><li>A value of 1 means to select just the public key for certificate matching. Matching the public key is often sufficient, as this is likely to be unique.</li></ul></li><li>The matching type.\r\n<ul><li>A type of 0 means the entire information selected is present in the certificate association data.</li><li>A type of 1 means to do a SHA-256 hash of the selected data.</li><li>A type of 2 means to do a SHA-512 hash of the selected data.</li></ul></li><li>The actual data to be matched given the settings of the other fields. This is a long text string of hexadecimal data.</li></ul></li></ul>",
+          "title": "Content"
+        },
+        "priority": {
+          "default": 10,
+          "description": "The priority for MX or SRV records.\r\n\r\nA lower value means more preferred.\r\n\r\nThe value MUST be a positive integer less or equal to 9999.",
+          "maximum": 9999,
+          "minimum": 1,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "service": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The symbolic name of the desired service for SRV records.\r\n\r\nEditing the value is not possible. You should add a new SRV record and can delete the existing record.",
+          "title": "Service"
+        },
+        "weight": {
+          "default": 0,
+          "description": "The weight for SRV records with the same priority.\r\n\r\nA higher value means more preferred.",
+          "title": "Weight",
+          "type": "integer"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The canonical hostname of the machine providing the service for SRV records.\r\n\r\nEditing the value is not possible. You should add a new SRV record and delete the existing record.",
+          "title": "Target"
+        },
+        "protocol": {
+          "default": "TCP",
+          "description": "Used for the creation of SRV records. Possible options: TCP, UDP, ...\r\n\r\nEditing the value is not possible. You should add a new SRV record and delete the existing record.",
+          "title": "Protocol",
+          "type": "string"
+        },
+        "port": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The port for SRV records.\r\n\r\nThe value MUST be a positive integer.\r\n\r\nEditing the value is not possible. You should add a new SRV record and delete the existing record.",
+          "title": "Port"
+        }
+      },
+      "required": [
+        "domain_name",
+        "type"
+      ],
+      "title": "CombellCreateDnsRecord",
+      "type": "object"
+    },
+    "CombellCreateMailbox": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_mailbox",
+          "default": "create_mailbox",
+          "title": "Create Mailbox",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email_address": {
+          "description": "E-mail address",
+          "title": "Email Address",
+          "type": "string"
+        },
+        "account_id": {
+          "description": "Mail zone account id",
+          "minimum": 1,
+          "title": "Account Id",
+          "type": "integer"
+        },
+        "password": {
+          "description": "The password for the mailbox.\r\n\r\nPasswords have to adhere to following rules:\r\n<ul><li>Between 8-20 characters.</li><li>Must be a mix of letters and digits.</li><li>Must contain at least one digit (0-9).</li><li>Must contain at least one letter (a-z).</li><li>Cannot contain spaces.</li><li>Cannot contain characters: * \u20ac $ & + } { ' \" \\ </li></ul>",
+          "title": "Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "email_address",
+        "account_id",
+        "password"
+      ],
+      "title": "CombellCreateMailbox",
+      "type": "object"
+    },
+    "CombellDeleteDnsRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_dns_record",
+          "default": "delete_dns_record",
+          "title": "Delete Dns Record",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_name": {
+          "description": "The domain name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The id of the record.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_name",
+        "record_id"
+      ],
+      "title": "CombellDeleteDnsRecord",
+      "type": "object"
+    },
+    "CombellDeleteMailbox": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_mailbox",
+          "default": "delete_mailbox",
+          "title": "Delete Mailbox",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_name": {
+          "description": "Mailbox name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Mailbox Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mailbox_name"
+      ],
+      "title": "CombellDeleteMailbox",
+      "type": "object"
+    },
+    "CombellGetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_id": {
+          "description": "The id of the account.",
+          "minimum": 1,
+          "title": "Account Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "CombellGetAccount",
+      "type": "object"
+    },
+    "CombellGetDnsRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_dns_record",
+          "default": "get_dns_record",
+          "title": "Get Dns Record",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_name": {
+          "description": "The domain name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The id of the record.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_name",
+        "record_id"
+      ],
+      "title": "CombellGetDnsRecord",
+      "type": "object"
+    },
+    "CombellGetDomain": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_domain",
+          "default": "get_domain",
+          "title": "Get Domain",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_name": {
+          "description": "The domain name",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Domain Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_name"
+      ],
+      "title": "CombellGetDomain",
+      "type": "object"
+    },
+    "CombellGetLinuxHosting": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_linux_hosting",
+          "default": "get_linux_hosting",
+          "title": "Get Linux Hosting",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_name": {
+          "description": "The Linux hosting domain name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Domain Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_name"
+      ],
+      "title": "CombellGetLinuxHosting",
+      "type": "object"
+    },
+    "CombellGetMailbox": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_mailbox",
+          "default": "get_mailbox",
+          "title": "Get Mailbox",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_name": {
+          "description": "Mailbox name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Mailbox Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mailbox_name"
+      ],
+      "title": "CombellGetMailbox",
+      "type": "object"
+    },
+    "CombellGetMysqlDatabase": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_mysql_database",
+          "default": "get_mysql_database",
+          "title": "Get Mysql Database",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "database_name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Database Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database_name"
+      ],
+      "title": "CombellGetMysqlDatabase",
+      "type": "object"
+    },
+    "CombellGetProvisioningJob": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_provisioning_job",
+          "default": "get_provisioning_job",
+          "title": "Get Provisioning Job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "format": "uuid",
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "CombellGetProvisioningJob",
+      "type": "object"
+    },
+    "CombellListAccounts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List Accounts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "skip": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to skip in the resultset.",
+          "title": "Skip"
+        },
+        "take": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to return in the resultset. The returned count can be equal or less than this number.",
+          "title": "Take"
+        },
+        "asset_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "domain",
+                "linux_hosting",
+                "mysql",
+                "dns",
+                "mailbox",
+                "windows_hosting"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters the list, returning only accounts containing the specified asset type.",
+          "title": "Asset Type",
+          "enum": [
+            "domain",
+            "linux_hosting",
+            "mysql",
+            "dns",
+            "mailbox",
+            "windows_hosting"
+          ],
+          "x-enum-searchable": true
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only accounts, matching the specified identifier.",
+          "title": "Identifier"
+        }
+      },
+      "title": "CombellListAccounts",
+      "type": "object"
+    },
+    "CombellListDnsRecords": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_dns_records",
+          "default": "list_dns_records",
+          "title": "List Dns Records",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_name": {
+          "description": "The domain name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "skip": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to skip in the resultset.",
+          "title": "Skip"
+        },
+        "take": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to return in the resultset. The returned count can be equal or less than this number.",
+          "title": "Take"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters records matching the type. Most other filters only apply when this filter is specified.",
+          "title": "Type"
+        },
+        "record_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters records matching the record name. This filter only applies to lookups of A, AAAA, CAA, CNAME, MX, TXT, SRV, ALIAS and TLSA records.",
+          "title": "Record Name"
+        },
+        "service": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters records for the service. This filter only applies to lookups of SRV records.",
+          "title": "Service"
+        }
+      },
+      "required": [
+        "domain_name"
+      ],
+      "title": "CombellListDnsRecords",
+      "type": "object"
+    },
+    "CombellListDomains": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_domains",
+          "default": "list_domains",
+          "title": "List Domains",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "skip": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to skip in the resultset.",
+          "title": "Skip"
+        },
+        "take": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to return in the resultset. The returned count can be equal or less than this number.",
+          "title": "Take"
+        }
+      },
+      "title": "CombellListDomains",
+      "type": "object"
+    },
+    "CombellListLinuxHostings": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_linux_hostings",
+          "default": "list_linux_hostings",
+          "title": "List Linux Hostings",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "skip": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to skip in the resultset.",
+          "title": "Skip"
+        },
+        "take": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to return in the resultset. The returned count can be equal or less than this number.",
+          "title": "Take"
+        }
+      },
+      "title": "CombellListLinuxHostings",
+      "type": "object"
+    },
+    "CombellListMailboxes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_mailboxes",
+          "default": "list_mailboxes",
+          "title": "List Mailboxes",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_name": {
+          "description": "Obligated domain name for getting mailboxes.",
+          "title": "Domain Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_name"
+      ],
+      "title": "CombellListMailboxes",
+      "type": "object"
+    },
+    "CombellListMysqlDatabases": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_mysql_databases",
+          "default": "list_mysql_databases",
+          "title": "List Mysql Databases",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "skip": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to skip in the resultset.",
+          "title": "Skip"
+        },
+        "take": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of items to return in the resultset. The returned count can be equal or less than this number.",
+          "title": "Take"
+        }
+      },
+      "title": "CombellListMysqlDatabases",
+      "type": "object"
+    },
+    "CombellListServicepacks": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_servicepacks",
+          "default": "list_servicepacks",
+          "title": "List Servicepacks",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CombellListServicepacks",
+      "type": "object"
+    },
+    "CombellUpdateDnsRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_dns_record",
+          "default": "update_dns_record",
+          "title": "Update Dns Record",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_name": {
+          "description": "The domain name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The id of the record.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Record Id",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The id of the record\r\nThis value is ignored for creation of new records.",
+          "title": "Id"
+        },
+        "type": {
+          "description": "The type of the record (A, AAAA, CAA, CNAME, MX, TXT, SRV, ALIAS and TLSA).",
+          "title": "Type",
+          "type": "string"
+        },
+        "record_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the record.\r\n\r\nThis is the host name, alias defined by the record.\r\n\r\nAn empty record or '@' is equal to the domain name.\r\n\r\nApplies to A, AAAA, MX, CNAME, TXT, CAA, ALIAS and TLSA records.\r\n\r\nWhen type is TLSA the recommended value format is port number, protocol and host: _25._tcp.\r\n\r\nDoes not apply for SRV records.",
+          "title": "Record Name"
+        },
+        "ttl": {
+          "default": 3600,
+          "description": "Time to live of the record in seconds.\r\n\r\nIt defines the time frame that clients can cache the information.\r\n\r\nThe value MUST be between 60 and 86400. The default value is 3600 (= 1 hour).",
+          "maximum": 86400,
+          "minimum": 60,
+          "title": "Ttl",
+          "type": "integer"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Variable data depending on the record type.\r\n<ul><li>A: the IPv4 address.</li><li>AAAA: the IPv6 address.</li><li>CNAME: canonical name of an alias.</li><li>MX: fully qualified domain name of a mail host.</li><li>SRV: does not apply. Data for the SRV records can be found in specific properties.</li><li>TXT: free form text data.</li><li>CAA: format should match specific values for flag, tag and ca: \"{flag} {tag} {ca}\".\r\n        <ul><li>The flag. The values 128 (critical) or 0 (non-critical) are expected, with 0 as the default.</li><li>The tag. A tag specifies which actions an authorized CA can take in terms of issuing SSL/TLS certificates.\r\n<ul><li>The value \"issue\": explicitly authorizes a single certificate authority to issue a certificate (any type) for the hostname.</li><li>The value \"issuewild\": explicitly authorizes a single certificate authority to issue a wildcard certificate (and only wildcard) for the hostname.</li><li>The value \"iodef\": specifies a URL to which a certificate authority may report policy violations.</li></ul></li><li>The ca. This is the domain of the CA (Certification Authority) that has the authority to issue certificates for the domain in question. If the value is a semicolon (;), it means that no CA has the authority to issue a certificate for that domain.</li></ul></li><li>ALIAS: canonical name of an alias.</li><li>TLSA: format should match specific values for usage, selector, matching type and data: \"{usage} {selector} {matching_type} {data}\"\r\n        <ul><li>The usage. The first field after the TLSA text in the DNS RR, specifies how to verify the certificate.\r\n<ul><li>A value of 0 is for what is commonly called CA constraint (and PKIX-TA). The certificate provided when establishing TLS must be issued by the listed root-CA or one of its intermediate CAs, with a valid certification path to a root-CA already trusted by the application doing the verification.</li><li>A value of 1 is for what is commonly called Service certificate constraint (and PKIX-EE). The certificate used must match the TLSA record exactly, and it must also pass PKIX certification path validation to a trusted root-CA.</li><li>A value of 2 is for what is commonly called Trust Anchor Assertion (and DANE-TA). The certificate used has a valid certification path pointing back to the certificate mention in this record, but there is no need for it to pass the PKIX certification path validation to a trusted root-CA.</li><li>A value of 3 is for what is commonly called Domain issued certificate (and DANE-EE). The services uses a self-signed certificate. It is not signed by anyone else, and is exactly this record.</li></ul></li><li>The selector. When connecting to the service and a certificate is received, the selector field specifies which parts of it should be checked.\r\n<ul><li>A value of 0 means to select the entire certificate for matching.</li><li>A value of 1 means to select just the public key for certificate matching. Matching the public key is often sufficient, as this is likely to be unique.</li></ul></li><li>The matching type.\r\n<ul><li>A type of 0 means the entire information selected is present in the certificate association data.</li><li>A type of 1 means to do a SHA-256 hash of the selected data.</li><li>A type of 2 means to do a SHA-512 hash of the selected data.</li></ul></li><li>The actual data to be matched given the settings of the other fields. This is a long text string of hexadecimal data.</li></ul></li></ul>",
+          "title": "Content"
+        },
+        "priority": {
+          "default": 10,
+          "description": "The priority for MX or SRV records.\r\n\r\nA lower value means more preferred.\r\n\r\nThe value MUST be a positive integer less or equal to 9999.",
+          "maximum": 9999,
+          "minimum": 1,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "service": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The symbolic name of the desired service for SRV records.\r\n\r\nEditing the value is not possible. You should add a new SRV record and can delete the existing record.",
+          "title": "Service"
+        },
+        "weight": {
+          "default": 0,
+          "description": "The weight for SRV records with the same priority.\r\n\r\nA higher value means more preferred.",
+          "title": "Weight",
+          "type": "integer"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The canonical hostname of the machine providing the service for SRV records.\r\n\r\nEditing the value is not possible. You should add a new SRV record and delete the existing record.",
+          "title": "Target"
+        },
+        "protocol": {
+          "default": "TCP",
+          "description": "Used for the creation of SRV records. Possible options: TCP, UDP, ...\r\n\r\nEditing the value is not possible. You should add a new SRV record and delete the existing record.",
+          "title": "Protocol",
+          "type": "string"
+        },
+        "port": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The port for SRV records.\r\n\r\nThe value MUST be a positive integer.\r\n\r\nEditing the value is not possible. You should add a new SRV record and delete the existing record.",
+          "title": "Port"
+        }
+      },
+      "required": [
+        "domain_name",
+        "record_id",
+        "type"
+      ],
+      "title": "CombellUpdateDnsRecord",
+      "type": "object"
+    },
+    "CombellUpdateDomainRenewal": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_domain_renewal",
+          "default": "update_domain_renewal",
+          "title": "Update Domain Renewal",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_name": {
+          "description": "The domain name",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "will_renew": {
+          "description": "Indication of renewal.",
+          "title": "Will Renew",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "domain_name",
+        "will_renew"
+      ],
+      "title": "CombellUpdateDomainRenewal",
+      "type": "object"
+    },
+    "CombellUpdateMailboxAutoforward": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_mailbox_autoforward",
+          "default": "update_mailbox_autoforward",
+          "title": "Update Mailbox Autoforward",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_name": {
+          "description": "Mailbox name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Mailbox Name",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Enabled",
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "email_addresses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "E-mail addresses to which e-mails are forwarded",
+          "title": "Email Addresses"
+        },
+        "copy_to_myself": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy to myself",
+          "title": "Copy To Myself"
+        }
+      },
+      "required": [
+        "mailbox_name",
+        "enabled"
+      ],
+      "title": "CombellUpdateMailboxAutoforward",
+      "type": "object"
+    },
+    "CombellUpdateMailboxAutoreply": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_mailbox_autoreply",
+          "default": "update_mailbox_autoreply",
+          "title": "Update Mailbox Autoreply",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_name": {
+          "description": "Mailbox name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Mailbox Name",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Enabled",
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Subject",
+          "title": "Subject"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Message",
+          "title": "Message"
+        }
+      },
+      "required": [
+        "mailbox_name",
+        "enabled"
+      ],
+      "title": "CombellUpdateMailboxAutoreply",
+      "type": "object"
+    },
+    "CombellUpdateNameservers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_nameservers",
+          "default": "update_nameservers",
+          "title": "Update Nameservers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_name": {
+          "description": "The domain name",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "name_servers": {
+          "description": "List of name servers.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Name Servers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "domain_name",
+        "name_servers"
+      ],
+      "title": "CombellUpdateNameservers",
+      "type": "object"
+    },
+    "CombellUpdatePhpVersion": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_php_version",
+          "default": "update_php_version",
+          "title": "Update Php Version",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain_name": {
+          "description": "Linux hosting domain name.",
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[^/\\\\?#\\x00-\\x20]+$",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "version": {
+          "description": "Php version",
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_name",
+        "version"
+      ],
+      "title": "CombellUpdatePhpVersion",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_account": "#/$defs/CombellCreateAccount",
+          "create_dns_record": "#/$defs/CombellCreateDnsRecord",
+          "create_mailbox": "#/$defs/CombellCreateMailbox",
+          "delete_dns_record": "#/$defs/CombellDeleteDnsRecord",
+          "delete_mailbox": "#/$defs/CombellDeleteMailbox",
+          "get_account": "#/$defs/CombellGetAccount",
+          "get_dns_record": "#/$defs/CombellGetDnsRecord",
+          "get_domain": "#/$defs/CombellGetDomain",
+          "get_linux_hosting": "#/$defs/CombellGetLinuxHosting",
+          "get_mailbox": "#/$defs/CombellGetMailbox",
+          "get_mysql_database": "#/$defs/CombellGetMysqlDatabase",
+          "get_provisioning_job": "#/$defs/CombellGetProvisioningJob",
+          "list_accounts": "#/$defs/CombellListAccounts",
+          "list_dns_records": "#/$defs/CombellListDnsRecords",
+          "list_domains": "#/$defs/CombellListDomains",
+          "list_linux_hostings": "#/$defs/CombellListLinuxHostings",
+          "list_mailboxes": "#/$defs/CombellListMailboxes",
+          "list_mysql_databases": "#/$defs/CombellListMysqlDatabases",
+          "list_servicepacks": "#/$defs/CombellListServicepacks",
+          "update_dns_record": "#/$defs/CombellUpdateDnsRecord",
+          "update_domain_renewal": "#/$defs/CombellUpdateDomainRenewal",
+          "update_mailbox_autoforward": "#/$defs/CombellUpdateMailboxAutoforward",
+          "update_mailbox_autoreply": "#/$defs/CombellUpdateMailboxAutoreply",
+          "update_nameservers": "#/$defs/CombellUpdateNameservers",
+          "update_php_version": "#/$defs/CombellUpdatePhpVersion"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CombellListAccounts"
+        },
+        {
+          "$ref": "#/$defs/CombellGetAccount"
+        },
+        {
+          "$ref": "#/$defs/CombellCreateAccount"
+        },
+        {
+          "$ref": "#/$defs/CombellListDnsRecords"
+        },
+        {
+          "$ref": "#/$defs/CombellGetDnsRecord"
+        },
+        {
+          "$ref": "#/$defs/CombellCreateDnsRecord"
+        },
+        {
+          "$ref": "#/$defs/CombellUpdateDnsRecord"
+        },
+        {
+          "$ref": "#/$defs/CombellDeleteDnsRecord"
+        },
+        {
+          "$ref": "#/$defs/CombellListDomains"
+        },
+        {
+          "$ref": "#/$defs/CombellGetDomain"
+        },
+        {
+          "$ref": "#/$defs/CombellUpdateNameservers"
+        },
+        {
+          "$ref": "#/$defs/CombellUpdateDomainRenewal"
+        },
+        {
+          "$ref": "#/$defs/CombellListLinuxHostings"
+        },
+        {
+          "$ref": "#/$defs/CombellGetLinuxHosting"
+        },
+        {
+          "$ref": "#/$defs/CombellUpdatePhpVersion"
+        },
+        {
+          "$ref": "#/$defs/CombellListMailboxes"
+        },
+        {
+          "$ref": "#/$defs/CombellGetMailbox"
+        },
+        {
+          "$ref": "#/$defs/CombellCreateMailbox"
+        },
+        {
+          "$ref": "#/$defs/CombellDeleteMailbox"
+        },
+        {
+          "$ref": "#/$defs/CombellUpdateMailboxAutoreply"
+        },
+        {
+          "$ref": "#/$defs/CombellUpdateMailboxAutoforward"
+        },
+        {
+          "$ref": "#/$defs/CombellListMysqlDatabases"
+        },
+        {
+          "$ref": "#/$defs/CombellGetMysqlDatabase"
+        },
+        {
+          "$ref": "#/$defs/CombellGetProvisioningJob"
+        },
+        {
+          "$ref": "#/$defs/CombellListServicepacks"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CombellAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Combell Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

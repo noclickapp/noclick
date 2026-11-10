@@ -1,0 +1,127 @@
+{
+  "list_accounts": {
+    "method": "GET",
+    "path": "/accounts",
+    "operation_id": "GetAccounts"
+  },
+  "get_account": {
+    "method": "GET",
+    "path": "/accounts/{accountId}",
+    "operation_id": "GetAccount"
+  },
+  "create_account": {
+    "method": "POST",
+    "path": "/accounts",
+    "operation_id": "CreateAccount"
+  },
+  "list_dns_records": {
+    "method": "GET",
+    "path": "/dns/{domainName}/records",
+    "operation_id": "GetRecords"
+  },
+  "get_dns_record": {
+    "method": "GET",
+    "path": "/dns/{domainName}/records/{recordId}",
+    "operation_id": "GetRecord"
+  },
+  "create_dns_record": {
+    "method": "POST",
+    "path": "/dns/{domainName}/records",
+    "operation_id": "CreateRecord"
+  },
+  "update_dns_record": {
+    "method": "PUT",
+    "path": "/dns/{domainName}/records/{recordId}",
+    "operation_id": "EditRecord"
+  },
+  "delete_dns_record": {
+    "method": "DELETE",
+    "path": "/dns/{domainName}/records/{recordId}",
+    "operation_id": "DeleteRecord"
+  },
+  "list_domains": {
+    "method": "GET",
+    "path": "/domains",
+    "operation_id": "GetDomains"
+  },
+  "get_domain": {
+    "method": "GET",
+    "path": "/domains/{domainName}",
+    "operation_id": "GetDomain"
+  },
+  "update_nameservers": {
+    "method": "PUT",
+    "path": "/domains/{domainName}/nameservers",
+    "operation_id": "EditNameServers"
+  },
+  "update_domain_renewal": {
+    "method": "PUT",
+    "path": "/domains/{domainName}/renew",
+    "operation_id": "ConfigureDomain"
+  },
+  "list_linux_hostings": {
+    "method": "GET",
+    "path": "/linuxhostings",
+    "operation_id": "GetLinuxHostings"
+  },
+  "get_linux_hosting": {
+    "method": "GET",
+    "path": "/linuxhostings/{domainName}",
+    "operation_id": "GetLinuxHosting"
+  },
+  "update_php_version": {
+    "method": "PUT",
+    "path": "/linuxhostings/{domainName}/phpsettings/version",
+    "operation_id": "ChangePhpVersion"
+  },
+  "list_mailboxes": {
+    "method": "GET",
+    "path": "/mailboxes",
+    "operation_id": "GetMailboxes"
+  },
+  "get_mailbox": {
+    "method": "GET",
+    "path": "/mailboxes/{mailboxName}",
+    "operation_id": "GetMailbox"
+  },
+  "create_mailbox": {
+    "method": "POST",
+    "path": "/mailboxes",
+    "operation_id": "CreateMailbox"
+  },
+  "delete_mailbox": {
+    "method": "DELETE",
+    "path": "/mailboxes/{mailboxName}",
+    "operation_id": "DeleteMailbox"
+  },
+  "update_mailbox_autoreply": {
+    "method": "PUT",
+    "path": "/mailboxes/{mailboxName}/autoreply",
+    "operation_id": "ConfigureMailboxAutoReply"
+  },
+  "update_mailbox_autoforward": {
+    "method": "PUT",
+    "path": "/mailboxes/{mailboxName}/autoforward",
+    "operation_id": "ConfigureMailboxAutoForward"
+  },
+  "list_mysql_databases": {
+    "method": "GET",
+    "path": "/mysqldatabases",
+    "operation_id": "GetMySqlDatabases"
+  },
+  "get_mysql_database": {
+    "method": "GET",
+    "path": "/mysqldatabases/{databaseName}",
+    "operation_id": "GetMySqlDatabase"
+  },
+  "get_provisioning_job": {
+    "method": "GET",
+    "path": "/provisioningjobs/{jobId}",
+    "operation_id": "GetProvisioningJob"
+  },
+  "list_servicepacks": {
+    "method": "GET",
+    "path": "/servicepacks",
+    "operation_id": "Servicepacks"
+  }
+}
