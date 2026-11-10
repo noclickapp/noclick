@@ -3,17 +3,9 @@ Tests for workflow node state persistence.
 Verifies that state is correctly saved and loaded from the workflow_node_state table.
 """
 
-import os
 import pytest
 import uuid
 from unittest.mock import MagicMock, patch, AsyncMock
-
-# Set test database URLs if not set. Backend runtime reads POSTGRES_POOLER_URL
-# only; POSTGRES_URL is kept for migrations/scripts/legacy paths.
-if 'POSTGRES_POOLER_URL' not in os.environ:
-    os.environ['POSTGRES_POOLER_URL'] = 'postgresql://postgres:postgres@127.0.0.1:54322/postgres'
-if 'POSTGRES_URL' not in os.environ:
-    os.environ['POSTGRES_URL'] = 'postgresql://postgres:postgres@127.0.0.1:54322/postgres'
 
 
 class TestStateManagerNode:

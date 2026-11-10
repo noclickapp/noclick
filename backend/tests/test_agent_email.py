@@ -2,41 +2,17 @@
 per-node unsubscribe scoping, reply-address lifecycle, the reply → agent-turn
 fire, the outbound send's gates/charge/headers, and owner-presence steering.
 
-Repo SQL runs against the LOCAL postgres (skipped when unreachable); the rest
-is unit-tested with fakes.
+Repo SQL runs against the test Postgres container; the rest is unit-tested
+with fakes.
 """
-import os
 import uuid
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-LOCAL_DSN = os.environ.get(
-    "NC_TEST_POSTGRES_URL", "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
-)
-
-
 @pytest.fixture(autouse=True)
 def relay_secret(monkeypatch):
     monkeypatch.setenv("EMAIL_RELAY_SECRET", "test-relay-secret")
-
-
-@pytest.fixture
-async def local_pool():
-    import asyncpg
-
-    from utils.database_pool import setup_asyncpg_codecs
-
-    try:
-        pool = await asyncpg.create_pool(
-            LOCAL_DSN, min_size=1, max_size=2, timeout=5, init=setup_asyncpg_codecs,
-        )
-    except Exception:
-        pytest.skip("local postgres unavailable")
-    try:
-        yield pool
-    finally:
-        await pool.close()
 
 
 # ── unsubscribe signature + scope ────────────────────────────────────────────
@@ -74,15 +50,16 @@ class TestDisableSig:
 
 
 @pytest.mark.asyncio
-async def test_disable_flips_only_the_target_node(local_pool, monkeypatch):
+async def test_disable_flips_only_the_target_node(postgres_pool, monkeypatch):
     """The unsubscribe link's scope: enable_email_updates='false' on ONE node's
     saved config; sibling agents keep theirs."""
     from utils.agent_email import disable_agent_email_updates
 
-    async with local_pool.acquire() as conn:
-        row = await conn.fetchrow("SELECT id FROM auth.users LIMIT 1")
-    if not row:
-        pytest.skip("no local users to satisfy the workflows FK")
+    async with postgres_pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "INSERT INTO auth.users (email, raw_user_meta_data) VALUES ($1, '{}'::jsonb) RETURNING id",
+            f"{uuid.uuid4().hex[:8]}@example.com",
+        )
     wf_id = str(uuid.uuid4())
     blob = {
         "nodes": [
@@ -93,15 +70,15 @@ async def test_disable_flips_only_the_target_node(local_pool, monkeypatch):
         ],
         "edges": [],
     }
-    await local_pool.execute(
+    await postgres_pool.execute(
         "INSERT INTO workflows (id, owner_id, name, workflow) VALUES ($1::uuid, $2, $3, $4)",
         wf_id, row["id"], "Email scope test", blob,
     )
-    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: local_pool)
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: postgres_pool)
     try:
         result = await disable_agent_email_updates(wf_id, "agent_1")
         assert result == {"workflow_name": "Email scope test", "node_label": "Mailer"}
-        saved = await local_pool.fetchval(
+        saved = await postgres_pool.fetchval(
             "SELECT workflow FROM workflows WHERE id = $1::uuid", wf_id
         )
         import json
@@ -116,58 +93,59 @@ async def test_disable_flips_only_the_target_node(local_pool, monkeypatch):
         assert await disable_agent_email_updates(wf_id, "gone") is None
         assert await disable_agent_email_updates(str(uuid.uuid4()), "agent_1") is None
     finally:
-        await local_pool.execute("DELETE FROM workflows WHERE id = $1::uuid", wf_id)
+        await postgres_pool.execute("DELETE FROM workflows WHERE id = $1::uuid", wf_id)
 
 
 # ── reply-address lifecycle ──────────────────────────────────────────────────
 
 
 @pytest.mark.asyncio
-async def test_reply_address_mint_reuse_and_resolve(local_pool):
+async def test_reply_address_mint_reuse_and_resolve(postgres_pool):
     from utils.agent_email import (
         AGENT_REPLY_PREFIX,
         mint_reply_address,
         resolve_reply_address,
     )
 
-    async with local_pool.acquire() as conn:
-        row = await conn.fetchrow("SELECT id FROM auth.users LIMIT 1")
-    if not row:
-        pytest.skip("no local users to satisfy the FK")
+    async with postgres_pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "INSERT INTO auth.users (email, raw_user_meta_data) VALUES ($1, '{}'::jsonb) RETURNING id",
+            f"{uuid.uuid4().hex[:8]}@example.com",
+        )
     user_id = str(row["id"])
     wf_id = str(uuid.uuid4())
     try:
         addr = await mint_reply_address(
-            local_pool, user_id=user_id, workflow_id=wf_id,
+            postgres_pool, user_id=user_id, workflow_id=wf_id,
             node_id="agent_1", conversation_id="ck:wf:agent_1:tg:9",
         )
         assert addr.startswith(AGENT_REPLY_PREFIX) and "@" in addr
         # Same scope reuses the row — stable address keeps mail threads intact.
         again = await mint_reply_address(
-            local_pool, user_id=user_id, workflow_id=wf_id,
+            postgres_pool, user_id=user_id, workflow_id=wf_id,
             node_id="agent_1", conversation_id="ck:wf:agent_1:tg:9",
         )
         assert again == addr
         # A different conversation gets its own address.
         other = await mint_reply_address(
-            local_pool, user_id=user_id, workflow_id=wf_id,
+            postgres_pool, user_id=user_id, workflow_id=wf_id,
             node_id="agent_1", conversation_id=None,
         )
         assert other != addr
 
-        ctx = await resolve_reply_address(local_pool, addr.split("@")[0])
+        ctx = await resolve_reply_address(postgres_pool, addr.split("@")[0])
         assert str(ctx["user_id"]) == user_id
         assert str(ctx["workflow_id"]) == wf_id
         assert ctx["node_id"] == "agent_1"
         assert ctx["conversation_id"] == "ck:wf:agent_1:tg:9"
 
         # Garbage local parts resolve to None, never raise.
-        assert await resolve_reply_address(local_pool, f"{AGENT_REPLY_PREFIX}nope") is None
+        assert await resolve_reply_address(postgres_pool, f"{AGENT_REPLY_PREFIX}nope") is None
         assert await resolve_reply_address(
-            local_pool, f"{AGENT_REPLY_PREFIX}{uuid.uuid4().hex}"
+            postgres_pool, f"{AGENT_REPLY_PREFIX}{uuid.uuid4().hex}"
         ) is None
     finally:
-        await local_pool.execute(
+        await postgres_pool.execute(
             "DELETE FROM agent_email_replies WHERE workflow_id = $1::uuid", wf_id
         )
 

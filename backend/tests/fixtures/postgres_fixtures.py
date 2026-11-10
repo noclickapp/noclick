@@ -50,7 +50,7 @@ import asyncpg
 from asyncpg.exceptions import UniqueViolationError, ForeignKeyViolationError
 
 # Explicitly declare exports
-__all__ = ['postgres_container', 'postgres_db', 'UniqueViolationError', 'ForeignKeyViolationError']
+__all__ = ['postgres_container', 'postgres_db', 'postgres_pool', 'UniqueViolationError', 'ForeignKeyViolationError']
 
 logger = logging.getLogger(__name__)
 
@@ -465,3 +465,21 @@ async def postgres_db(postgres_container) -> AsyncGenerator[asyncpg.Connection, 
 
         await conn.close()
         logger.info("Rolled back transaction and closed connection")
+
+
+@pytest_asyncio.fixture
+async def postgres_pool(postgres_container) -> AsyncGenerator[asyncpg.Pool, None]:
+    """A pool on the test container, for code that takes one (a repository, ``get_native_pool``). Unlike
+    ``postgres_db`` its writes commit: the module reset clears them."""
+    await _initialize_database_once(postgres_container)
+    from utils.database_pool import setup_asyncpg_codecs
+
+    pool = await asyncpg.create_pool(
+        host=postgres_container.get_container_host_ip(), port=postgres_container.get_exposed_port(5432),
+        user=postgres_container.username, password=postgres_container.password, database=postgres_container.dbname,
+        min_size=1, max_size=2, init=setup_asyncpg_codecs,
+    )
+    try:
+        yield pool
+    finally:
+        await pool.close()

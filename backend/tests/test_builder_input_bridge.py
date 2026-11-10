@@ -1,8 +1,8 @@
 """Builder input bridge: public capability links for answering a parked
 agent-initiated builder run's <ask/> without a NoClick account (2026-07-19).
 
-Repo SQL runs against the LOCAL postgres (skipped when unreachable); routes,
-minting, and the finalize hooks are unit-tested with fakes.
+Repo SQL runs against the test Postgres container; routes, minting, and the
+finalize hooks are unit-tested with fakes.
 """
 import uuid
 from types import SimpleNamespace
@@ -10,26 +10,25 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from tests.test_builder_decision_loop import LOCAL_DSN, local_pool  # noqa: F401 (fixture)
-
 from tests.fixtures.capabilities import claimed_accounts  # noqa: F401  (fixtures)
 
 pytestmark = pytest.mark.usefixtures("claimed_accounts")
 
 
-# ── repo SQL (real local DB) ─────────────────────────────────────────────────
+# ── repo SQL (real Postgres) ─────────────────────────────────────────────────
 
 
 @pytest.mark.asyncio
-async def test_bridge_link_lifecycle_roundtrip(local_pool):  # noqa: F811
+async def test_bridge_link_lifecycle_roundtrip(postgres_pool):
     from repositories.builder_bridge import BuilderBridgeRepo
 
-    async with local_pool.acquire() as conn:
-        row = await conn.fetchrow("SELECT id FROM auth.users LIMIT 1")
-    if not row:
-        pytest.skip("no local users to satisfy the FK")
+    async with postgres_pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "INSERT INTO auth.users (email, raw_user_meta_data) VALUES ($1, '{}'::jsonb) RETURNING id",
+            f"{uuid.uuid4().hex[:8]}@example.com",
+        )
     user_id = str(row["id"])
-    repo = BuilderBridgeRepo(local_pool)
+    repo = BuilderBridgeRepo(postgres_pool)
     link_id = None
     try:
         link_id = await repo.create_link(
@@ -57,7 +56,7 @@ async def test_bridge_link_lifecycle_roundtrip(local_pool):  # noqa: F811
         assert await repo.load_pending(str(uuid.uuid4())) is None
     finally:
         if link_id:
-            async with local_pool.acquire() as conn:
+            async with postgres_pool.acquire() as conn:
                 await conn.execute(
                     "DELETE FROM builder_input_links WHERE id=$1::uuid", link_id
                 )
@@ -385,17 +384,18 @@ async def test_complete_finalizer_relays_result(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_load_origin_restores_agent_return_address(local_pool):  # noqa: F811
+async def test_load_origin_restores_agent_return_address(postgres_pool):
     """The resume path rebuilds user_context from scratch — the bridge link row
     is the durable agent-origin record it restores from. Without it, a
     bridge-answered run's completion never reaches the agent."""
     from repositories.builder_bridge import BuilderBridgeRepo
 
-    async with local_pool.acquire() as conn:
-        row = await conn.fetchrow("SELECT id FROM auth.users LIMIT 1")
-    if not row:
-        pytest.skip("no local users to satisfy the FK")
-    repo = BuilderBridgeRepo(local_pool)
+    async with postgres_pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "INSERT INTO auth.users (email, raw_user_meta_data) VALUES ($1, '{}'::jsonb) RETURNING id",
+            f"{uuid.uuid4().hex[:8]}@example.com",
+        )
+    repo = BuilderBridgeRepo(postgres_pool)
     conv = f"agent-builder:wf:agent_1:{uuid.uuid4().hex[:8]}"
     link_id = await repo.create_link(
         user_id=str(row["id"]), workflow_id=str(uuid.uuid4()),
@@ -410,7 +410,7 @@ async def test_load_origin_restores_agent_return_address(local_pool):  # noqa: F
         }
         assert await repo.load_origin("agent-builder:no:such:conv") is None
     finally:
-        async with local_pool.acquire() as conn:
+        async with postgres_pool.acquire() as conn:
             await conn.execute("DELETE FROM builder_input_links WHERE id=$1::uuid", link_id)
 
 
@@ -482,16 +482,17 @@ async def test_share_ask_mints_idempotently_for_owner(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_drawer_answer_voids_outstanding_links(local_pool):  # noqa: F811
+async def test_drawer_answer_voids_outstanding_links(postgres_pool):
     """Answering the ask anywhere (drawer or another link) must expire every
     still-pending link for it — a stale public page kept loading otherwise."""
     from repositories.builder_bridge import BuilderBridgeRepo
 
-    async with local_pool.acquire() as conn:
-        row = await conn.fetchrow("SELECT id FROM auth.users LIMIT 1")
-    if not row:
-        pytest.skip("no local users to satisfy the FK")
-    repo = BuilderBridgeRepo(local_pool)
+    async with postgres_pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "INSERT INTO auth.users (email, raw_user_meta_data) VALUES ($1, '{}'::jsonb) RETURNING id",
+            f"{uuid.uuid4().hex[:8]}@example.com",
+        )
+    repo = BuilderBridgeRepo(postgres_pool)
     conv = f"agent-builder:void:{uuid.uuid4().hex[:8]}"
     link_id = await repo.create_link(
         user_id=str(row["id"]), workflow_id=str(uuid.uuid4()),
@@ -505,7 +506,7 @@ async def test_drawer_answer_voids_outstanding_links(local_pool):  # noqa: F811
         # Voided links also lose the exactly-once consume race cleanly.
         assert await repo.mark_answered(link_id) is False
     finally:
-        async with local_pool.acquire() as conn:
+        async with postgres_pool.acquire() as conn:
             await conn.execute("DELETE FROM builder_input_links WHERE id=$1::uuid", link_id)
 
 
