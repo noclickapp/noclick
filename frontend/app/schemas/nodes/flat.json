@@ -1,0 +1,1436 @@
+{
+  "$defs": {
+    "AddScoreCollaboratorConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "addScoreCollaborator",
+          "default": "addScoreCollaborator",
+          "title": "Add a new collaborator",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        },
+        "user": {
+          "minLength": 1,
+          "title": "User",
+          "type": "string"
+        },
+        "aclRead": {
+          "default": true,
+          "title": "Aclread",
+          "type": "boolean"
+        },
+        "aclWrite": {
+          "default": false,
+          "title": "Aclwrite",
+          "type": "boolean"
+        },
+        "aclAdmin": {
+          "default": false,
+          "title": "Acladmin",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "score",
+        "user"
+      ],
+      "title": "AddScoreCollaboratorConfig",
+      "type": "object"
+    },
+    "AddScoreToCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "addScoreToCollection",
+          "default": "addScoreToCollection",
+          "title": "Add a score to the collection",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection",
+        "score"
+      ],
+      "title": "AddScoreToCollectionConfig",
+      "type": "object"
+    },
+    "CreateCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "createCollection",
+          "default": "createCollection",
+          "title": "Create a new collection",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "privacy": {
+          "default": "private",
+          "enum": [
+            "private",
+            "privateLink",
+            "public"
+          ],
+          "title": "Privacy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateCollectionConfig",
+      "type": "object"
+    },
+    "DeleteCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "deleteCollection",
+          "default": "deleteCollection",
+          "title": "Delete the collection",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "DeleteCollectionConfig",
+      "type": "object"
+    },
+    "DeleteScoreCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "deleteScoreComment",
+          "default": "deleteScoreComment",
+          "title": "Delete a comment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        },
+        "comment_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Comment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score",
+        "comment_id"
+      ],
+      "title": "DeleteScoreCommentConfig",
+      "type": "object"
+    },
+    "DeleteScoreConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "deleteScore",
+          "default": "deleteScore",
+          "title": "Delete a score",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "DeleteScoreConfig",
+      "type": "object"
+    },
+    "DeleteScoreFromCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "deleteScoreFromCollection",
+          "default": "deleteScoreFromCollection",
+          "title": "Delete a score from the collection",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection",
+        "score"
+      ],
+      "title": "DeleteScoreFromCollectionConfig",
+      "type": "object"
+    },
+    "EditCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "editCollection",
+          "default": "editCollection",
+          "title": "Update a collection's metadata",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection",
+        "title"
+      ],
+      "title": "EditCollectionConfig",
+      "type": "object"
+    },
+    "EditScoreConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "editScore",
+          "default": "editScore",
+          "title": "Edit a score's metadata",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "composer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Composer"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "score",
+        "title"
+      ],
+      "title": "EditScoreConfig",
+      "type": "object"
+    },
+    "FlatCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "flat_token",
+          "default": "flat_token",
+          "title": "Credential Type",
+          "type": "string"
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Flat Personal Token",
+      "type": "object",
+      "x-credential-instructions": "Create an app, then REST API > Personal tokens. Select account.public_profile, collections, scores and scores.social. Paste the personal token below.",
+      "x-credential-url": "https://flat.io/developers/apps"
+    },
+    "ForkScoreConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "forkScore",
+          "default": "forkScore",
+          "title": "Fork a score",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        },
+        "collection": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Collection"
+        },
+        "keepOriginalTitle": {
+          "default": false,
+          "title": "Keeporiginaltitle",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "ForkScoreConfig",
+      "type": "object"
+    },
+    "GetAuthenticatedUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "getAuthenticatedUser",
+          "default": "getAuthenticatedUser",
+          "title": "Get current user account",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetAuthenticatedUserConfig",
+      "type": "object"
+    },
+    "GetCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "getCollection",
+          "default": "getCollection",
+          "title": "Get collection details",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "GetCollectionConfig",
+      "type": "object"
+    },
+    "GetScoreCollaboratorsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "getScoreCollaborators",
+          "default": "getScoreCollaborators",
+          "title": "List the collaborators",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "GetScoreCollaboratorsConfig",
+      "type": "object"
+    },
+    "GetScoreCommentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "getScoreComments",
+          "default": "getScoreComments",
+          "title": "List comments",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "GetScoreCommentsConfig",
+      "type": "object"
+    },
+    "GetScoreConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "getScore",
+          "default": "getScore",
+          "title": "Get a score's metadata",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "GetScoreConfig",
+      "type": "object"
+    },
+    "GetScoreRevisionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "getScoreRevisions",
+          "default": "getScoreRevisions",
+          "title": "List the revisions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "GetScoreRevisionsConfig",
+      "type": "object"
+    },
+    "ListCollectionScoresConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "listCollectionScores",
+          "default": "listCollectionScores",
+          "title": "List the scores contained in a collection",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        },
+        "sort": {
+          "default": "modificationDate",
+          "enum": [
+            "creationDate",
+            "modificationDate",
+            "title"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "direction": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "ListCollectionScoresConfig",
+      "type": "object"
+    },
+    "ListCollectionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "listCollections",
+          "default": "listCollections",
+          "title": "List the collections",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "parent": {
+          "default": "user",
+          "title": "Parent",
+          "type": "string"
+        },
+        "sort": {
+          "default": "modificationDate",
+          "enum": [
+            "creationDate",
+            "modificationDate",
+            "title"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "direction": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next"
+        }
+      },
+      "title": "ListCollectionsConfig",
+      "type": "object"
+    },
+    "OnUpdatedCollectionConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_updated_collection",
+          "default": "on_updated_collection",
+          "title": "New or Updated Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "parent": {
+          "default": "user",
+          "title": "Parent",
+          "type": "string"
+        }
+      },
+      "title": "OnUpdatedCollectionConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnUpdatedScoreConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_updated_score",
+          "default": "on_updated_score",
+          "title": "New or Updated Score",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-is-trigger": true
+        },
+        "collection": {
+          "default": "allScores",
+          "description": "Collection ID or allScores for the full account library",
+          "title": "Collection",
+          "type": "string"
+        }
+      },
+      "title": "OnUpdatedScoreConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostScoreCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "postScoreComment",
+          "default": "postScoreComment",
+          "title": "Post a new comment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        },
+        "comment": {
+          "description": "Plain text without mention markup",
+          "minLength": 1,
+          "title": "Comment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score",
+        "comment"
+      ],
+      "title": "PostScoreCommentConfig",
+      "type": "object"
+    },
+    "RemoveScoreCollaboratorConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "removeScoreCollaborator",
+          "default": "removeScoreCollaborator",
+          "title": "Delete a collaborator",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        },
+        "collaborator": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Collaborator",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score",
+        "collaborator"
+      ],
+      "title": "RemoveScoreCollaboratorConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "UntrashCollectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "untrashCollection",
+          "default": "untrashCollection",
+          "title": "Untrash a collection",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "UntrashCollectionConfig",
+      "type": "object"
+    },
+    "UntrashScoreConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "untrashScore",
+          "default": "untrashScore",
+          "title": "Untrash a score",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "UntrashScoreConfig",
+      "type": "object"
+    },
+    "UpdateScoreCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "updateScoreComment",
+          "default": "updateScoreComment",
+          "title": "Update an existing comment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "score": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Score",
+          "type": "string"
+        },
+        "comment_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Comment Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score",
+        "comment_id",
+        "text"
+      ],
+      "title": "UpdateScoreCommentConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "addScoreCollaborator": "#/$defs/AddScoreCollaboratorConfig",
+          "addScoreToCollection": "#/$defs/AddScoreToCollectionConfig",
+          "createCollection": "#/$defs/CreateCollectionConfig",
+          "deleteCollection": "#/$defs/DeleteCollectionConfig",
+          "deleteScore": "#/$defs/DeleteScoreConfig",
+          "deleteScoreComment": "#/$defs/DeleteScoreCommentConfig",
+          "deleteScoreFromCollection": "#/$defs/DeleteScoreFromCollectionConfig",
+          "editCollection": "#/$defs/EditCollectionConfig",
+          "editScore": "#/$defs/EditScoreConfig",
+          "forkScore": "#/$defs/ForkScoreConfig",
+          "getAuthenticatedUser": "#/$defs/GetAuthenticatedUserConfig",
+          "getCollection": "#/$defs/GetCollectionConfig",
+          "getScore": "#/$defs/GetScoreConfig",
+          "getScoreCollaborators": "#/$defs/GetScoreCollaboratorsConfig",
+          "getScoreComments": "#/$defs/GetScoreCommentsConfig",
+          "getScoreRevisions": "#/$defs/GetScoreRevisionsConfig",
+          "listCollectionScores": "#/$defs/ListCollectionScoresConfig",
+          "listCollections": "#/$defs/ListCollectionsConfig",
+          "on_updated_collection": "#/$defs/OnUpdatedCollectionConfig",
+          "on_updated_score": "#/$defs/OnUpdatedScoreConfig",
+          "postScoreComment": "#/$defs/PostScoreCommentConfig",
+          "removeScoreCollaborator": "#/$defs/RemoveScoreCollaboratorConfig",
+          "untrashCollection": "#/$defs/UntrashCollectionConfig",
+          "untrashScore": "#/$defs/UntrashScoreConfig",
+          "updateScoreComment": "#/$defs/UpdateScoreCommentConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/EditCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/UntrashCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCollectionScoresConfig"
+        },
+        {
+          "$ref": "#/$defs/AddScoreToCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteScoreFromCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/GetAuthenticatedUserConfig"
+        },
+        {
+          "$ref": "#/$defs/GetScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/EditScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/UntrashScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/ForkScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/GetScoreCollaboratorsConfig"
+        },
+        {
+          "$ref": "#/$defs/AddScoreCollaboratorConfig"
+        },
+        {
+          "$ref": "#/$defs/RemoveScoreCollaboratorConfig"
+        },
+        {
+          "$ref": "#/$defs/GetScoreCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostScoreCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateScoreCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteScoreCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/GetScoreRevisionsConfig"
+        },
+        {
+          "$ref": "#/$defs/OnUpdatedScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/OnUpdatedCollectionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FlatCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Flat Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,16 @@
+{
+  "source": "https://flat.io/developers/docs/openapi.yaml#/components/schemas/ScoreSummary",
+  "body": {
+    "id": "000000000000000000000000",
+    "title": "My score",
+    "privacy": "private",
+    "user": {
+      "id": "000000000000000000000001",
+      "username": "flat",
+      "name": "Flat Team",
+      "printableName": "Flat Team",
+      "picture": "https://flat.io/img/logo_flat.svg"
+    },
+    "htmlUrl": "https://flat.io/score/000000000000000000000000"
+  }
+}
