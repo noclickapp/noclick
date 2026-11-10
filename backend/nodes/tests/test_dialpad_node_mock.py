@@ -208,3 +208,102 @@ def test_typed_api_key_uses_field_based_credential_schema():
     assert DialpadAPIKeyCredential(api_key='test-key').credential_type == 'dialpad_api_key'
     generated = json.loads((Path(__file__).resolve().parents[3] / 'frontend/app/schemas/nodes/dialpad.json').read_text())
     assert generated['$defs']['DialpadAPIKeyCredential'] == credential
+
+
+# Examples copied from Dialpad's call-events and sms-events documentation.
+# A trailing comma in the published recap summary example was removed to parse its JSON.
+EVENTS = json.loads((Path(__file__).parent / 'fixtures/dialpad/events.json').read_text())
+
+
+def signed_event(body, secret='test-secret', algorithm='HS256'):
+    import base64
+    import hashlib
+    import hmac
+    encode = lambda value: base64.urlsafe_b64encode(value).rstrip(b'=')
+    message = encode(json.dumps({'alg': algorithm, 'typ': 'JWT'}).encode()) + b'.' + encode(json.dumps(body).encode())
+    return message + b'.' + encode(hmac.new(secret.encode(), message, hashlib.sha256).digest())
+
+
+@pytest.mark.parametrize('case', EVENTS.values(), ids=EVENTS.keys())
+def test_documented_signed_events(case):
+    event = case['body']
+    config = {'operation': 'on_call', 'call_state': 'all', 'signing_secret': 'test-secret'} if 'call_id' in event else {
+        'operation': 'on_sms', 'direction': 'all', 'signing_secret': 'test-secret'}
+    body = signed_event(event)
+    assert DialpadNode.verify_webhook_signature(body, {}, config)
+    assert not DialpadNode.verify_webhook_signature(body + b' ', {}, config)
+    assert not DialpadNode.verify_webhook_signature(body, {}, {**config, 'signing_secret': 'wrong'})
+    assert not DialpadNode.verify_webhook_signature(signed_event(event, algorithm='none'), {}, config)
+    assert not DialpadNode.verify_webhook_signature(json.dumps(event).encode(), {}, config)
+    for raw in (body, body.decode()):
+        payload = {'raw': raw}
+        assert DialpadNode.filter_trigger_payload(payload, config)
+        output = DialpadNode.resolve_trigger_payload(payload, config)
+        assert output == event
+        turn = DialpadNode.resolve_agent_event(output)
+        assert str(event.get('call_id', event.get('id'))) in turn['text']
+        assert 'Dialpad' in turn['text']
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('operation,family', [('on_call', 'call'), ('on_sms', 'sms')])
+async def test_webhook_registration_and_cleanup(operation, family):
+    requests = []
+    def handle(request):
+        requests.append(request)
+        if request.method == 'DELETE':
+            return httpx.Response(200, json={})
+        return httpx.Response(200, json={'id': '193' if request.url.path.endswith('webhooks') else '5620703441190912'})
+    original = httpx.AsyncClient
+    config = {'operation': operation, 'target_id': 123, 'target_type': 'user'}
+    with patch('nodes.dialpad_node.httpx.AsyncClient', side_effect=lambda **kw: original(transport=httpx.MockTransport(handle), **kw)):
+        state = await DialpadNode._register_external_webhook(webhook_url='https://example.com/webhook', credential={'api_key': 'key'}, config=config, node_id='test')
+        await DialpadNode._unregister_external_webhook(credential={'api_key': 'key'}, config={**config, **state}, node_id='test')
+    assert json.loads(requests[0].content) == {'hook_url': 'https://example.com/webhook', 'secret': state['signing_secret']}
+    subscription = json.loads(requests[1].content)
+    assert subscription['endpoint_id'] == 193
+    assert subscription['target_id'] == 123
+    assert subscription['target_type'] == 'user'
+    assert subscription.get('call_states') == (['hangup'] if family == 'call' else None)
+    assert subscription.get('direction') == ('inbound' if family == 'sms' else None)
+    assert [r.url.path for r in requests[2:]] == [f'/api/v2/subscriptions/{family}/5620703441190912', '/api/v2/webhooks/193']
+    assert all(r.headers['Authorization'] == 'Bearer key' for r in requests)
+    assert (await node({'operation': operation}).execute({}))['status'] == 'no_event'
+
+
+@pytest.mark.asyncio
+async def test_subscription_failure_removes_created_webhook():
+    requests = []
+    def handle(request):
+        requests.append(request)
+        return httpx.Response(400, json={'error': 'rejected'}) if '/subscriptions/' in request.url.path else httpx.Response(200, json={'id': '193'})
+    original = httpx.AsyncClient
+    with patch('nodes.dialpad_node.httpx.AsyncClient', side_effect=lambda **kw: original(transport=httpx.MockTransport(handle), **kw)):
+        with pytest.raises(httpx.HTTPStatusError):
+            await DialpadNode._register_external_webhook(webhook_url='https://example.com', credential={'api_key': 'key'}, config={'operation': 'on_call'}, node_id='test')
+    assert requests[-1].method == 'DELETE'
+    assert requests[-1].url.path == '/api/v2/webhooks/193'
+
+
+def test_trigger_filters_and_scope_fields():
+    call = next(v['body'] for v in EVENTS.values() if v['body'].get('state') == 'hangup')
+    sms = next(v['body'] for v in EVENTS.values() if v['body'].get('direction') == 'inbound' and 'id' in v['body'])
+    assert not DialpadNode.filter_trigger_payload(call, {'operation': 'on_call', 'call_state': 'missed'})
+    assert not DialpadNode.filter_trigger_payload(sms, {'operation': 'on_sms', 'direction': 'outbound'})
+    assert not DialpadNode.filter_trigger_payload(sms, {'operation': 'on_call', 'call_state': 'all'})
+    assert not DialpadNode.filter_trigger_payload(call, {'operation': 'on_sms', 'direction': 'all'})
+    with pytest.raises(ValidationError, match='both target'):
+        DialpadNodeConfig(config={'operation': 'on_call', 'target_id': 1})
+    assert DialpadNode.registration_fingerprint_fields({'operation': 'on_sms', 'direction': 'inbound'}) != DialpadNode.registration_fingerprint_fields({'operation': 'on_sms', 'direction': 'outbound'})
+
+
+@pytest.mark.asyncio
+async def test_delivery_after_row_secret_fallback_with_stale_config():
+    from utils.webhook_routes import _apply_trigger_node_hooks
+    event = next(case['body'] for case in EVENTS.values() if case['body'].get('state') == 'hangup')
+    body = signed_event(event, secret='new-row-secret')
+    config = {'operation': 'on_call', 'call_state': 'hangup', 'signing_secret': 'old-config-secret'}
+    trigger = {'type': 'automation-dialpad', 'id': 'test', 'config': config}
+    assert await _apply_trigger_node_hooks(trigger, body, {}, webhook_secret='new-row-secret') is None
+    assert DialpadNode.filter_trigger_payload({'raw': body}, config)
+    assert DialpadNode.resolve_trigger_payload({'raw': body.decode()}, config) == event

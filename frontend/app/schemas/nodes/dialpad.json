@@ -665,6 +665,404 @@
       "title": "DialpadListUsersConfig",
       "type": "object"
     },
+    "DialpadOnCallConfig": {
+      "description": "Call state changes, including missed calls, voicemail and completed calls.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Dialpad automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "target_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Dialpad user or group to watch.",
+          "title": "Target ID"
+        },
+        "target_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "callcenter",
+                "callrouter",
+                "channel",
+                "coachinggroup",
+                "coachingteam",
+                "department",
+                "office",
+                "room",
+                "staffgroup",
+                "unknown",
+                "user"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Type",
+          "enum": [
+            "callcenter",
+            "callrouter",
+            "channel",
+            "coachinggroup",
+            "coachingteam",
+            "department",
+            "office",
+            "room",
+            "staffgroup",
+            "unknown",
+            "user"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "on_call",
+          "default": "on_call",
+          "title": "On Call Event",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Call Event",
+          "x-is-trigger": true
+        },
+        "call_state": {
+          "default": "hangup",
+          "description": "Call state that starts the workflow.",
+          "enum": [
+            "all",
+            "ringing",
+            "calling",
+            "connected",
+            "missed",
+            "hangup",
+            "voicemail",
+            "voicemail_uploaded",
+            "transcription",
+            "recording",
+            "call_transcription",
+            "recap_summary"
+          ],
+          "title": "Call State",
+          "type": "string"
+        }
+      },
+      "title": "DialpadOnCallConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "DialpadOnSmsConfig": {
+      "description": "Receive incoming or outgoing SMS events.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Dialpad automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "target_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Dialpad user or group to watch.",
+          "title": "Target ID"
+        },
+        "target_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "callcenter",
+                "callrouter",
+                "channel",
+                "coachinggroup",
+                "coachingteam",
+                "department",
+                "office",
+                "room",
+                "staffgroup",
+                "unknown",
+                "user"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Type",
+          "enum": [
+            "callcenter",
+            "callrouter",
+            "channel",
+            "coachinggroup",
+            "coachingteam",
+            "department",
+            "office",
+            "room",
+            "staffgroup",
+            "unknown",
+            "user"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "on_sms",
+          "default": "on_sms",
+          "title": "On SMS Event",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On SMS Event",
+          "x-is-trigger": true
+        },
+        "direction": {
+          "default": "inbound",
+          "enum": [
+            "inbound",
+            "outbound",
+            "all"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "status": {
+          "default": false,
+          "title": "Include Delivery Status Updates",
+          "type": "boolean"
+        },
+        "include_internal": {
+          "default": false,
+          "title": "Include Internal Messages",
+          "type": "boolean"
+        }
+      },
+      "title": "DialpadOnSmsConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "DialpadSendSmsConfig": {
       "additionalProperties": false,
       "description": "SMS -- Send",
@@ -1083,6 +1481,8 @@
           "list_calls": "#/$defs/DialpadListCallsConfig",
           "list_contacts": "#/$defs/DialpadListContactsConfig",
           "list_users": "#/$defs/DialpadListUsersConfig",
+          "on_call": "#/$defs/DialpadOnCallConfig",
+          "on_sms": "#/$defs/DialpadOnSmsConfig",
           "send_sms": "#/$defs/DialpadSendSmsConfig",
           "set_user_dnd": "#/$defs/DialpadSetUserDndConfig",
           "transfer_call": "#/$defs/DialpadTransferCallConfig",
@@ -1092,6 +1492,12 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/DialpadOnCallConfig"
+        },
+        {
+          "$ref": "#/$defs/DialpadOnSmsConfig"
+        },
         {
           "$ref": "#/$defs/DialpadListCallsConfig"
         },

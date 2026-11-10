@@ -1,0 +1,747 @@
+{
+  "call:Inbound Hangup": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": 1582853674998,
+      "internal_number": "+16010123456",
+      "duration": 13303.755000000001,
+      "total_duration": 19303.775,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 5747322335264768,
+      "state": "hangup",
+      "date_started": 1582853645285,
+      "transcription_text": null,
+      "direction": "inbound",
+      "date_connected": 1582853661695,
+      "voicemail_link": null,
+      "is_transferred": false,
+      "was_recorded": false,
+      "date_rang": 1582853645838,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111"
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Inbound Ringing": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": null,
+      "internal_number": "+16010123456",
+      "duration": null,
+      "total_duration": null,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 5747322335264768,
+      "state": "ringing",
+      "date_started": 1582853645285,
+      "transcription_text": null,
+      "direction": "inbound",
+      "date_connected": null,
+      "voicemail_link": null,
+      "is_transferred": false,
+      "was_recorded": false,
+      "date_rang": 1582853645838,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111"
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Inbound Voicemail Hangup": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": 1582853883616,
+      "internal_number": "+16010123456",
+      "duration": null,
+      "total_duration": null,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 6580619776884736,
+      "state": "hangup",
+      "date_started": 1582853854278,
+      "transcription_text": null,
+      "direction": "inbound",
+      "date_connected": null,
+      "voicemail_link": "https://dialpadbeta.com/v/6580619776884736",
+      "is_transferred": false,
+      "was_recorded": false,
+      "date_rang": 1582853854874,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111"
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Inbound Connected": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": null,
+      "internal_number": "+16010123456",
+      "duration": null,
+      "total_duration": null,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 5747322335264768,
+      "state": "connected",
+      "date_started": 1582853645285,
+      "transcription_text": null,
+      "direction": "inbound",
+      "date_connected": 1582853661695,
+      "voicemail_link": null,
+      "is_transferred": false,
+      "was_recorded": false,
+      "date_rang": 1582853645838,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111"
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Inbound Voicemail": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": null,
+      "internal_number": "+16010123456",
+      "duration": null,
+      "total_duration": null,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 6580619776884736,
+      "state": "voicemail",
+      "date_started": 1582853854278,
+      "transcription_text": null,
+      "direction": "inbound",
+      "date_connected": null,
+      "voicemail_link": null,
+      "is_transferred": false,
+      "was_recorded": false,
+      "date_rang": 1582853854874,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111"
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Outbound Calling": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": null,
+      "internal_number": "+16010123456",
+      "duration": null,
+      "total_duration": null,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 4978137078431744,
+      "state": "calling",
+      "date_started": 1582853788099,
+      "transcription_text": null,
+      "direction": "outbound",
+      "date_connected": null,
+      "voicemail_link": null,
+      "is_transferred": false,
+      "was_recorded": false,
+      "date_rang": null,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111"
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Outbound Connected": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": null,
+      "internal_number": "+16010123456",
+      "duration": null,
+      "total_duration": null,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 4978137078431744,
+      "state": "connected",
+      "date_started": 1582853788099,
+      "transcription_text": null,
+      "direction": "outbound",
+      "date_connected": 1582853801664,
+      "voicemail_link": null,
+      "is_transferred": false,
+      "was_recorded": false,
+      "date_rang": null,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111"
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Outbound Hangup": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": 1582853818129,
+      "internal_number": "+16010123456",
+      "duration": 16464.904000000002,
+      "total_duration": 19303.775,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 4978137078431744,
+      "state": "hangup",
+      "date_started": 1582853788099,
+      "transcription_text": null,
+      "direction": "outbound",
+      "date_connected": 1582853801664,
+      "voicemail_link": null,
+      "is_transferred": false,
+      "was_recorded": false,
+      "date_rang": null,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111"
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Inbound Transcription": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": 1582853883616,
+      "internal_number": "+16010123456",
+      "duration": null,
+      "total_duration": null,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 6580619776884736,
+      "state": "transcription",
+      "date_started": 1582853854278,
+      "transcription_text": "",
+      "direction": "inbound",
+      "date_connected": null,
+      "voicemail_link": "https://dialpadbeta.com/v/6580619776884736",
+      "is_transferred": false,
+      "was_recorded": false,
+      "date_rang": 1582853854874,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111"
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Outbound Recording": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": 1620694975723,
+      "internal_number": "+16010123456",
+      "duration": 23263.819000000003,
+      "total_duration": 34673.775,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 4978137078431744,
+      "state": "recording",
+      "date_started": 1620694942713,
+      "transcription_text": null,
+      "direction": "outbound",
+      "date_connected": 1620694952459,
+      "voicemail_link": null,
+      "is_transferred": false,
+      "was_recorded": true,
+      "recording_url": [
+        "https://dialpad.com/r/6086754856781234",
+        "https://dialpad.com/r/6086754856787890"
+      ],
+      "date_rang": null,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111"
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Inbound Recap Summary": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": 1620694975723,
+      "internal_number": "+16010123456",
+      "duration": 23263.819000000003,
+      "total_duration": 34673.775,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 4978137078431744,
+      "state": "recording",
+      "date_started": 1620694942713,
+      "transcription_text": null,
+      "direction": "inbound",
+      "date_connected": 1620694952459,
+      "voicemail_link": null,
+      "is_transferred": false,
+      "was_recorded": true,
+      "recording_url": [
+        "https://dialpad.com/r/6086754856781234",
+        "https://dialpad.com/r/6086754856787890"
+      ],
+      "date_rang": null,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111",
+      "mos_score": 4.5,
+      "labels": [],
+      "recap_summary": "Connor and Victoria greet each other and exchange pleasantries about their day. They briefly discuss the weather, expressing confusion about how to correctly describe it."
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Inbound Ai Playbook": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": 1620694975723,
+      "internal_number": "+16010123456",
+      "duration": 23263.819000000003,
+      "total_duration": 34673.775,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 4978137078431744,
+      "state": "recording",
+      "date_started": 1620694942713,
+      "transcription_text": null,
+      "direction": "inbound",
+      "date_connected": 1620694952459,
+      "voicemail_link": null,
+      "is_transferred": false,
+      "was_recorded": true,
+      "recording_url": [
+        "https://dialpad.com/r/6086754856781234",
+        "https://dialpad.com/r/6086754856787890"
+      ],
+      "date_rang": null,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111",
+      "mos_score": 4.5,
+      "labels": [],
+      "ai_playbook": {
+        "playbook_applied_name": "BANT",
+        "playbook_item_detection_count": 1,
+        "playbook_item_total_count": 4,
+        "playbook_adherence_rate": 0.25,
+        "topic_summary": [
+          {
+            "ai_detection_desc": "The agent asked about the budget for this project or solution.",
+            "ai_detection_end": 1717568907792,
+            "ai_detection_start": 1717568884124,
+            "is_ai_detected": true,
+            "is_covered": true,
+            "topic": "sales_budget"
+          },
+          {
+            "ai_detection_desc": "The agent asked about the key decision-makers involved in the purchase.",
+            "ai_detection_end": 1717568907792,
+            "ai_detection_start": 1717568884124,
+            "is_ai_detected": true,
+            "is_covered": true,
+            "topic": "sales_authority"
+          }
+        ]
+      }
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "call:Inbound Call Transcription": {
+    "body": {
+      "master_call_id": null,
+      "date_ended": 1582853674998,
+      "internal_number": "+16010123456",
+      "duration": 13303.755000000001,
+      "total_duration": 19303.775,
+      "entry_point_target": {},
+      "proxy_target": {},
+      "call_dispositions": null,
+      "entry_point_call_id": null,
+      "operator_call_id": null,
+      "call_id": 5747322335264768,
+      "state": "call_transcription",
+      "date_started": 1582853645285,
+      "transcription_text": null,
+      "direction": "inbound",
+      "date_connected": 1582853661695,
+      "voicemail_link": null,
+      "is_transferred": false,
+      "was_recorded": false,
+      "date_rang": 1582853645838,
+      "target": {
+        "phone": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "sample",
+        "email": "test@dialpad.com",
+        "office_id": 4632479632575683
+      },
+      "contact": {
+        "phone": "+16043111111",
+        "type": "google",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "Test for a Long Name",
+        "email": ""
+      },
+      "group_id": null,
+      "external_number": "+16043111111",
+      "date_first_rang": 1746468976291,
+      "date_queued": null,
+      "target_availability_status": "open",
+      "callback_requested": null,
+      "talk_time": 68000,
+      "hold_time": 23000,
+      "csat_score": null,
+      "routing_breadcrumbs": [],
+      "event_timestamp": 1746469090029,
+      "mos_score": 4.41,
+      "labels": [],
+      "voicemail_recording_id": null,
+      "call_recording_ids": [],
+      "recording_details": [],
+      "company_call_review_share_link": "https://dialpadbeta.com/shared/call/6jhoDM1CxJpGvu9oAyZ51gwxRHxcHtvTc2dHsYpodJMy",
+      "public_call_review_share_link": "https://dialpadbeta.com/shared/call/JHnYmszvH9DJpXTRtZfLfF3oBPT2f2sXMQ0166H50m49"
+    },
+    "source": "https://developers.dialpad.com/docs/call-events"
+  },
+  "sms:User outbound text message": {
+    "body": {
+      "id": 5747322335264456,
+      "created_date": 1582853674998,
+      "direction": "outbound",
+      "target": {
+        "phone_number": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "target name"
+      },
+      "contact": {
+        "phone_number": "+16043111111",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "contact name"
+      },
+      "to_number": [
+        "+16043111111"
+      ],
+      "from_number": "+16010123456",
+      "sender_id": null,
+      "mms": false,
+      "text": "outbound message"
+    },
+    "source": "https://developers.dialpad.com/docs/sms-events"
+  },
+  "sms:User outbound mms message": {
+    "body": {
+      "id": 5747322335264456,
+      "created_date": 1582853674998,
+      "direction": "outbound",
+      "target": {
+        "phone_number": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "target name"
+      },
+      "contact": {
+        "phone_number": "+16043111111",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "contact name"
+      },
+      "to_number": [
+        "+16043111111"
+      ],
+      "from_number": "+16010123456",
+      "sender_id": null,
+      "mms": true,
+      "text": "https://lh3.googleusercontent.com/linktoimage"
+    },
+    "source": "https://developers.dialpad.com/docs/sms-events"
+  },
+  "sms:User outbound group text message": {
+    "body": {
+      "id": 5747322335264456,
+      "created_date": 1582853674998,
+      "direction": "outbound",
+      "target": {
+        "phone_number": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "target name"
+      },
+      "contact": {
+        "phone_number": null,
+        "name": "target name, contact name, contact name2",
+        "members": [
+          {
+            "phone_number": "+16043111111",
+            "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+            "name": "contact name"
+          },
+          {
+            "phone_number": "+16043111112",
+            "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/317894aba8b367348",
+            "name": "contact name2"
+          }
+        ]
+      },
+      "to_number": [
+        "+16043111111",
+        "+16043111112"
+      ],
+      "from_number": "+16010123456",
+      "sender_id": null,
+      "mms": false,
+      "text": "outbound group message"
+    },
+    "source": "https://developers.dialpad.com/docs/sms-events"
+  },
+  "sms:Office outbound text message": {
+    "body": {
+      "id": 5747322335264456,
+      "created_date": 1582853674998,
+      "direction": "outbound",
+      "target": {
+        "phone_number": "+16010123456",
+        "type": "office",
+        "id": 5908860123459876,
+        "name": "office name"
+      },
+      "contact": {
+        "phone_number": "+16043111111",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "contact name"
+      },
+      "to_number": [
+        "+16043111111"
+      ],
+      "from_number": "+16010123456",
+      "sender_id": 5908860123456789,
+      "mms": false,
+      "text": "office outbound message"
+    },
+    "source": "https://developers.dialpad.com/docs/sms-events"
+  },
+  "sms:User inbound text message": {
+    "body": {
+      "id": 5747322335264456,
+      "created_date": 1582853674998,
+      "direction": "inbound",
+      "target": {
+        "phone_number": "+16010123456",
+        "type": "user",
+        "id": 5908860123456789,
+        "name": "target name"
+      },
+      "contact": {
+        "phone_number": "+16043111111",
+        "id": "http://www.google.com/m8/feeds/contacts/test@dialpad.com/base/21042cfc8b367347",
+        "name": "contact name"
+      },
+      "to_number": [
+        "+16010123456"
+      ],
+      "from_number": "+16043111111",
+      "sender_id": null,
+      "mms": false,
+      "text": "inbound message"
+    },
+    "source": "https://developers.dialpad.com/docs/sms-events"
+  }
+}

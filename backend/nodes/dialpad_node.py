@@ -8,12 +8,18 @@ Spec: https://dialpad.com/static/openapi/platform-v1.0.json
 from typing import Annotated, Any, Dict, Literal, Optional, Union
 from urllib.parse import quote
 import time
+import base64
+import hashlib
+import hmac
+import json
+import secrets
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 
 API_BASE = "https://dialpad.com"
 
@@ -203,7 +209,39 @@ class DialpadGetCompanyConfig(DialpadOperation):
     operation: Literal["get_company"] = Field("get_company", title='Get Company')
 
 
+class DialpadEventConfig(WebhookTriggerConfigBase):
+    webhook_url: Optional[str] = Field(None, title="Webhook URL", description="Registered with Dialpad automatically.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+    target_id: Optional[int] = Field(None, title="Target ID", description="Optional Dialpad user or group to watch.")
+    target_type: Optional[Literal['callcenter', 'callrouter', 'channel', 'coachinggroup', 'coachingteam', 'department', 'office', 'room', 'staffgroup', 'unknown', 'user']] = Field(None, title="Target Type")
+
+    @model_validator(mode="after")
+    def validate_target(self):
+        if (self.target_id is None) != (self.target_type is None):
+            raise ValueError("Provide both target ID and target type")
+        return self
+
+
+class DialpadOnCallConfig(DialpadEventConfig):
+    """Call state changes, including missed calls, voicemail and completed calls."""
+    operation: Literal["on_call"] = Field("on_call", title="On Call Event", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On Call Event"})
+    call_state: Literal['all', 'ringing', 'calling', 'connected', 'missed', 'hangup', 'voicemail', 'voicemail_uploaded', 'transcription', 'recording', 'call_transcription', 'recap_summary'] = Field(
+        "hangup", title="Call State", description="Call state that starts the workflow.")
+
+
+class DialpadOnSmsConfig(DialpadEventConfig):
+    """Receive incoming or outgoing SMS events."""
+    operation: Literal["on_sms"] = Field("on_sms", title="On SMS Event", json_schema_extra={
+        "x-is-trigger": True, "x-category": "Triggers", "x-display-name": "On SMS Event"})
+    direction: Literal['inbound', 'outbound', 'all'] = Field("inbound", title="Direction")
+    status: bool = Field(False, title="Include Delivery Status Updates")
+    include_internal: bool = Field(False, title="Include Internal Messages")
+
+
 DialpadConfig = Annotated[Union[
+    DialpadOnCallConfig,
+    DialpadOnSmsConfig,
     DialpadListCallsConfig,
     DialpadGetCallConfig,
     DialpadInitiateCallConfig,
@@ -259,7 +297,7 @@ ARRAY_FIELDS = {
     'update_user': ['emails'],
 }
 
-class DialpadNode(WorkflowNode):
+class DialpadNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-dialpad"
 
     @classmethod
@@ -270,6 +308,147 @@ class DialpadNode(WorkflowNode):
         operation="list_users", noun="users", identity_operation="get_company",
     )
 
+    @staticmethod
+    async def _webhook_request(credential, method, path, body=None):
+        token = (credential or {}).get("api_key")
+        if not token:
+            raise ValueError("Connect Dialpad before activating this trigger")
+        async with httpx.AsyncClient(timeout=30) as client:
+            response = await client.request(method, API_BASE + path,
+                headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
+                **({"json": body} if body is not None else {}))
+        response.raise_for_status()
+        return response.json() if response.content else {}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        # Official OpenAPI: webhooks.create, webhook_{call,sms}_event_subscription.create.
+        operation = config.get("operation")
+        if operation not in ("on_call", "on_sms"):
+            raise ValueError("Choose a Dialpad trigger")
+        secret = secrets.token_urlsafe(32)
+        webhook = await cls._webhook_request(credential, "POST", "/api/v2/webhooks",
+            {"hook_url": webhook_url, "secret": secret})
+        webhook_id = webhook["id"]
+        family = "call" if operation == "on_call" else "sms"
+        body = {"endpoint_id": int(webhook_id), "enabled": True}
+        if family == "call":
+            body["call_states"] = [config.get("call_state", "hangup")]
+        else:
+            body.update({"direction": config.get("direction", "inbound"),
+                "status": config.get("status", False), "include_internal": config.get("include_internal", False)})
+        for key in ("target_id", "target_type"):
+            if config.get(key) is not None:
+                body[key] = config[key]
+        try:
+            subscription = await cls._webhook_request(credential, "POST", f"/api/v2/subscriptions/{family}", body)
+            subscription_id = subscription["id"]
+        except Exception:
+            await cls._webhook_request(credential, "DELETE", f"/api/v2/webhooks/{quote(str(webhook_id), safe='')}")
+            raise
+        return {"external_webhook_id": json.dumps({"webhook": str(webhook_id), "subscription": str(subscription_id), "family": family}),
+                "signing_secret": secret}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        if not credential or not config.get("external_webhook_id"):
+            return
+        ids = json.loads(config["external_webhook_id"])
+        for path in (f"/api/v2/subscriptions/{ids['family']}/{quote(ids['subscription'], safe='')}",
+                     f"/api/v2/webhooks/{quote(ids['webhook'], safe='')}"):
+            try:
+                await cls._webhook_request(credential, "DELETE", path)
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code != 404:
+                    raise
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        fields = ("target_id", "target_type", "call_state") if config.get("operation") == "on_call" else (
+            "target_id", "target_type", "direction", "status", "include_internal")
+        return {key: config.get(key) for key in fields}
+
+    @staticmethod
+    def _decode_jwt(body, secret):
+        # Dialpad sends the compact HS256 JWT as the delivery body, not a header.
+        if not secret:
+            raise ValueError("Missing Dialpad signing secret")
+        raw = body.encode() if isinstance(body, str) else body
+        header, payload, signature = raw.split(b".")
+        decode = lambda value: base64.b64decode(value + b"=" * (-len(value) % 4), altchars=b"-_", validate=True)
+        if json.loads(decode(header)).get("alg") != "HS256":
+            raise ValueError("Unsupported Dialpad signature algorithm")
+        expected = hmac.new(secret.encode(), header + b"." + payload, hashlib.sha256).digest()
+        if not hmac.compare_digest(decode(signature), expected):
+            raise ValueError("Invalid Dialpad signature")
+        data = json.loads(decode(payload))
+        if not isinstance(data, dict):
+            raise ValueError("Invalid Dialpad event")
+        return data
+
+    @classmethod
+    def verify_webhook_signature(cls, body: bytes, headers: dict[str, str], config: dict[str, Any]) -> bool:
+        try:
+            cls._decode_jwt(body, config.get("signing_secret"))
+            return True
+        except (ValueError, TypeError, AttributeError, UnicodeError):
+            return False
+
+    @classmethod
+    def _delivery(cls, payload, config):
+        # Both delivery paths verify the JWT before calling payload hooks, using
+        # the persisted row secret when the config's autosave has not caught up.
+        # Decode here without re-verifying against that potentially stale config.
+        if "raw" in payload:
+            raw = payload["raw"]
+            raw = raw.encode() if isinstance(raw, str) else raw
+            encoded = raw.split(b".")[1]
+            data = json.loads(base64.b64decode(encoded + b"=" * (-len(encoded) % 4), altchars=b"-_", validate=True))
+            if not isinstance(data, dict):
+                raise ValueError("Invalid Dialpad event")
+            return data
+        return payload
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event = cls._delivery(payload, config)
+        if config.get("operation") == "on_call":
+            return "call_id" in event and (config.get("call_state", "hangup") == "all" or event.get("state") == config.get("call_state", "hangup"))
+        return "id" in event and "direction" in event and (config.get("direction", "inbound") == "all" or event["direction"] == config.get("direction", "inbound"))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        return cls._delivery(payload, config)
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return super().resolve_agent_event(output)
+        is_call = "call_id" in output
+        if not is_call and "id" not in output:
+            return super().resolve_agent_event(output)
+        event_id = output["call_id" if is_call else "id"]
+        contact = output.get("contact") or {}
+        target = output.get("target") or {}
+        party = contact.get("name") or "External contact"
+        destination = target.get("name") or str(target.get("id") or "Dialpad")
+        heading = f"Dialpad {'call ' + str(output.get('state')) if is_call else 'SMS'}: {party} ({output.get('direction')}) — {destination}"
+        lines = [heading, f"{'Call' if is_call else 'Message'} ID: {event_id}", f"Target ID: {target.get('id')}"]
+        if is_call:
+            lines += [f"External number: {output.get('external_number')}", f"Internal number: {output.get('internal_number')}",
+                      f"Started: {output.get('date_started')}"]
+            for key in ("transcription_text", "voicemail_link", "recap_summary"):
+                if key in output and output[key]:
+                    lines.append(f"{key}: {str(output[key])[:4000]}")
+            lines.append(f"To act: get_call id={event_id}.")
+        else:
+            lines += [f"From: {output.get('from_number')}", f"To: {output.get('to_number')}"]
+            for key in ("text", "message_status"):
+                if key in output and output[key]:
+                    lines.append(f"{key}: {str(output[key])[:4000]}")
+            lines.append("To reply: send_sms with the target user ID or phone number and the contact's number.")
+        return {"text": "\n".join(lines), "conversation_key": f"dialpad:{'call' if is_call else 'sms'}:{event_id}", "title": heading}
+
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         started = time.perf_counter()
         if not isinstance(self.config, DialpadNodeConfig):
@@ -278,6 +457,8 @@ class DialpadNode(WorkflowNode):
             raise ValueError("Dialpad API key is required")
         op = self.config.config
         action = op.operation
+        if action in ("on_call", "on_sms"):
+            return self.no_event_output(action)
         method, path = ROUTES[action]
         values = op.model_dump(exclude_none=True, exclude={"operation"})
         if "{id}" in path:
