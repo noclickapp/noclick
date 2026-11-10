@@ -7,15 +7,15 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 const UnleashIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <>
         <img src="/icons/unleash.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
-            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+            style={{ ...style, objectFit: 'contain' }} />
         <img src="/icons/unleash-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
-            style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+            style={{ ...style, objectFit: 'contain' }} />
     </>
 );
 
 export const UnleashNode: NodeDefinition = {
     type: 'automation-unleash', category: 'developer-tools', label: 'Unleash',
-    description: 'Manage feature flags, rollout strategies, environments and targeting segments',
+    description: 'Trigger workflows and agents from flag changes; manage feature flags, rollout strategies, environments and targeting segments',
     Icon: UnleashIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={UnleashIcon} iconColor="" />),

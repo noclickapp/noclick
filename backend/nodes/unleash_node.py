@@ -5,6 +5,7 @@ Each operation performs exactly one request; writes are never retried.
 """
 from __future__ import annotations
 
+import json
 import re
 from typing import Annotated, Literal, Union
 from urllib.parse import quote, urlsplit
@@ -14,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 
@@ -23,6 +25,8 @@ class _Input(BaseModel):
     @field_validator("*")
     @classmethod
     def path_component(cls, value, info):
+        if value is None:
+            return value
         if info.field_name in {"project_id", "feature_name", "environment", "strategy_id"}:
             if not isinstance(value, str) or value in {".", ".."} or any(ord(c) < 32 or ord(c) == 127 for c in value):
                 raise ValueError("Use a single resource name without dot traversal or control characters")
@@ -241,7 +245,49 @@ class UnleashDeleteSegmentConfig(_Segment):
     operation: Literal["delete_segment"] = Field("delete_segment", json_schema_extra={"ui:hidden": True})
 
 
+class _UnleashWebhookConfig(WebhookTriggerConfigBase, _Input):
+    project_id: str | None = Field(None, min_length=1, max_length=255, title="Project", description="Omit to watch all projects.", json_schema_extra=_picker("project_id"))
+    environment: str | None = Field(None, min_length=1, max_length=255, title="Environment", description="Omit to watch all environments. Events without an environment only match an unfiltered trigger.", json_schema_extra=_picker("environment"))
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with Unleash automatically. Keep this URL private: Unleash does not sign deliveries.", json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True})
+
+
+def _trigger(operation, label):
+    return Field(operation, title=label, json_schema_extra={"ui:hidden": True, "x-is-trigger": True, "x-category": "Triggers", "x-display-name": label})
+
+
+class UnleashOnFeatureCreatedConfig(_UnleashWebhookConfig):
+    """Start when a feature flag is created."""
+    operation: Literal["on_feature_created"] = _trigger("on_feature_created", "On Feature Flag Created")
+
+
+class UnleashOnStrategyAddedConfig(_UnleashWebhookConfig):
+    """Start when a rollout strategy is added to a flag."""
+    operation: Literal["on_strategy_added"] = _trigger("on_strategy_added", "On Flag Strategy Added")
+
+
+class UnleashOnFeatureTaggedConfig(_UnleashWebhookConfig):
+    """Start when a tag is added to a feature flag."""
+    operation: Literal["on_feature_tagged"] = _trigger("on_feature_tagged", "On Feature Flag Tagged")
+
+
+class UnleashOnFeatureMovedConfig(_UnleashWebhookConfig):
+    """Start when a feature flag moves to another project."""
+    operation: Literal["on_feature_moved"] = _trigger("on_feature_moved", "On Feature Flag Moved")
+
+
+TRIGGER_EVENTS = {
+    "on_feature_created": "feature-created",
+    "on_strategy_added": "feature-strategy-add",
+    "on_feature_tagged": "feature-tagged",
+    "on_feature_moved": "feature-project-change",
+}
+
+
 UnleashConfig = Annotated[Union[
+    UnleashOnFeatureCreatedConfig,
+    UnleashOnStrategyAddedConfig,
+    UnleashOnFeatureTaggedConfig,
+    UnleashOnFeatureMovedConfig,
     UnleashListProjectsConfig,
     UnleashGetProjectConfig,
     UnleashListFeaturesConfig,
@@ -301,9 +347,111 @@ ROUTES = {
 PATH_FIELDS = {"project_id", "feature_name", "environment", "strategy_id", "segment_id"}
 
 
-class UnleashNode(WorkflowNode):
+class UnleashNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-unleash"
     connection_evidence = ConnectionEvidence(field="project_id", operation="list_projects", noun="Unleash projects")
+    webhook_signing_secret_not_issued = True
+    webhook_replace_stale_endpoint = True
+
+    @classmethod
+    async def _webhook_request(cls, credential, method, path, body=None):
+        auth = UnleashTokenCredential.model_validate(credential)
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, auth.instance_url + path,
+                headers={"Authorization": auth.api_token, "Accept": "application/json"},
+                **({"json": body} if body is not None else {}))
+        if method == "DELETE" and response.status_code == 404:
+            return None
+        if not 200 <= response.status_code < 300:
+            raise ValueError(f"Unleash webhook {method} failed ({response.status_code})")
+        return response.json() if response.content else None
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        event = TRIGGER_EVENTS.get(config.get("operation"))
+        if event is None:
+            raise ValueError("Choose a supported Unleash trigger")
+        # Provider parameters: https://docs.getunleash.io/integrate/webhook.
+        # No body template: retain the provider's complete event and its ids.
+        body = {"provider": "webhook", "enabled": True, "description": f"NoClick {node_id}",
+            "events": [event], "parameters": {"url": webhook_url, "contentType": "application/json"},
+            "projects": [config["project_id"]] if config.get("project_id") else [],
+            "environments": [config["environment"]] if config.get("environment") else []}
+        result = await cls._webhook_request(credential, "POST", "/api/admin/addons", body)
+        if not isinstance(result, dict) or not isinstance(result.get("id"), int) or isinstance(result["id"], bool) or result["id"] < 1:
+            raise ValueError("Unleash did not return a webhook integration ID")
+        return {"external_webhook_id": str(result["id"])}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        addon_id = config.get("external_webhook_id")
+        if addon_id is None:
+            return
+        if not credential:
+            raise ValueError("Connect Unleash to remove its webhook integration")
+        await cls._webhook_request(credential, "DELETE", "/api/admin/addons/" + quote(str(addon_id), safe=""))
+
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        return {key: config.get(key) for key in ("project_id", "environment")}
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # https://docs.getunleash.io/integrate/webhook: only the URL is required.
+        # Unleash sends unsigned JSON; the private NoClick URL is the capability.
+        return True
+
+    @classmethod
+    def _matching_events(cls, payload, config):
+        if not isinstance(payload, dict):
+            return []
+        events = payload["events"] if "events" in payload else [payload]
+        if not isinstance(events, list):
+            return []
+        expected = TRIGGER_EVENTS.get(config.get("operation"))
+        return [event for event in events if isinstance(event, dict) and expected is not None
+            and event.get("type") == expected and event.get("id") is not None
+            and all(not config.get(key) or event.get(field) == config[key]
+                for key, field in (("project_id", "project"), ("environment", "environment")))]
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        return bool(cls._matching_events(payload, config))
+
+    @classmethod
+    def resolve_trigger_payload(cls, payload, config):
+        events = cls._matching_events(payload, config)
+        if not events:
+            return cls.no_event_output(config.get("operation", "Unleash trigger"))
+        return events[0] if len(events) == 1 else {"events": events}
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return None
+        events = output["events"] if "events" in output else [output]
+        if not isinstance(events, list):
+            return None
+        lines, keys, titles = [], [], []
+        for event in events:
+            if not isinstance(event, dict) or event.get("type") not in TRIGGER_EVENTS.values():
+                continue
+            kind, flag, project = event["type"], event.get("featureName"), event.get("project")
+            heading = f"Unleash {kind}: {flag or 'feature flag'}"
+            lines += [heading, f"By: {event.get('createdBy')}; at: {event.get('createdAt')}",
+                f"Project: {project}; environment: {event.get('environment')}; event ID: {event.get('id')}"]
+            if event.get("summary"):
+                lines.append(str(event["summary"]))
+            for key, label in (("data", "Current details"), ("preData", "Previous details")):
+                if event.get(key) is not None:
+                    lines.append(f"{label}: " + json.dumps(event[key], ensure_ascii=False))
+            if flag and project:
+                lines.append(f"To act: get_feature project_id={project} feature_name={flag}.")
+            keys.append(f"{project}/{flag}" if project and flag else str(event.get("id")))
+            titles.append(heading)
+        if not lines:
+            return None
+        return {"text": "\n".join(lines), "conversation_key": keys[0] if len(set(keys)) == 1 else "unleash-events", "title": titles[0]}
 
     @classmethod
     def get_config_model(cls):
@@ -347,6 +495,8 @@ class UnleashNode(WorkflowNode):
         if not isinstance(self.config, UnleashFullConfig) or not self.config.credentials:
             raise ValueError("Connect an Unleash access token")
         config, credential = self.config.config, self.config.credentials
+        if config.operation in TRIGGER_EVENTS:
+            return self.no_event_output(config.operation)
         method, template = ROUTES[config.operation]
         values = config.model_dump(exclude_none=True, by_alias=False)
         # Each path component is encoded independently; no input can add a route or query.

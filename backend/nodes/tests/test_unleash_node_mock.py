@@ -2,6 +2,7 @@
 import asyncio
 import json
 import socket
+from pathlib import Path
 from unittest.mock import AsyncMock
 
 import httpx
@@ -168,3 +169,91 @@ async def test_empty_update_never_sends(transport):
     with pytest.raises(ValueError, match="at least one field"):
         await node("update_feature", F).execute({})
     assert transport[0] == []
+
+
+# Provider examples retain their source URLs alongside each verbatim payload.
+WEBHOOK_EVENTS = json.loads((Path(__file__).parent / "fixtures/unleash/webhook-events.json").read_text())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,event_type", unleash.TRIGGER_EVENTS.items())
+async def test_webhook_registration_delivery_and_teardown(transport, operation, event_type):
+    requests, replies = transport
+    config = {"operation": operation, "project_id": "test-project", "environment": None}
+    replies.append((200, {"id": 7, "provider": "webhook", "description": None, "enabled": True,
+        "parameters": {}, "events": [event_type]}))
+    registered = await unleash.UnleashNode._register_external_webhook(
+        webhook_url="https://fixture.hooks.example.test/webhook/secret", credential=AUTH, config=config, node_id="flag")
+    assert registered == {"external_webhook_id": "7"}
+    assert requests[0].method == "POST" and requests[0].url.path == "/api/admin/addons"
+    assert json.loads(requests[0].content) == {"provider": "webhook", "enabled": True,
+        "description": "NoClick flag", "events": [event_type],
+        "parameters": {"url": "https://fixture.hooks.example.test/webhook/secret", "contentType": "application/json"},
+        "projects": ["test-project"], "environments": []}
+    payload = WEBHOOK_EVENTS[event_type]["body"]
+    config["project_id"] = payload["project"]
+    assert unleash.UnleashNode.verify_webhook_signature(json.dumps(payload).encode(), {}, config)
+    assert unleash.UnleashNode.filter_trigger_payload(payload, config)
+    output = unleash.UnleashNode.resolve_trigger_payload(payload, config)
+    assert output == payload
+    event = unleash.UnleashNode.resolve_agent_event(output)
+    assert payload["createdBy"] in event["text"] and payload["featureName"] in event["text"]
+    assert payload["project"] in event["text"] and str(payload["id"]) in event["text"]
+    assert "get_feature project_id=" in event["text"]
+    assert event["conversation_key"] == payload["project"] + "/" + payload["featureName"]
+    assert json.dumps(payload["data"], ensure_ascii=False) in event["text"]
+    replies.append((200, None))
+    await unleash.UnleashNode._unregister_external_webhook(credential=AUTH,
+        config={**config, **registered}, node_id="flag")
+    assert requests[1].method == "DELETE" and requests[1].url.path == "/api/admin/addons/7"
+
+
+@pytest.mark.parametrize("operation,event_type", unleash.TRIGGER_EVENTS.items())
+def test_webhook_filters_and_batch_payloads(operation, event_type):
+    payload = WEBHOOK_EVENTS[event_type]["body"]
+    config = {"operation": operation}
+    for changed in ({"project_id": "wrong-project"}, {"environment": "wrong-environment"}, {"operation": "list_projects"}):
+        assert not unleash.UnleashNode.filter_trigger_payload(payload, {**config, **changed})
+    assert not unleash.UnleashNode.filter_trigger_payload({}, config)
+    assert not unleash.UnleashNode.filter_trigger_payload({"events": None}, config)
+    other = {"type": "unrelated", "id": 999}
+    batch = {"version": 1, "events": [payload, other, payload]}
+    assert unleash.UnleashNode.resolve_trigger_payload(batch, config) == {"events": [payload, payload]}
+    assert unleash.UnleashNode.resolve_agent_event({"events": [payload, payload]})["text"].count("To act:") == 2
+    assert unleash.UnleashNode.resolve_trigger_payload(other, config)["status"] == "no_event"
+
+
+def test_documented_webhook_batch_and_registration_scope():
+    payload = WEBHOOK_EVENTS["feature-created-batch"]["body"]
+    config = {"operation": "on_feature_created", "project_id": "default", "environment": "development"}
+    assert unleash.UnleashNode.filter_trigger_payload(payload, config)
+    assert unleash.UnleashNode.resolve_trigger_payload(payload, config) == payload["events"][0]
+    assert unleash.UnleashNode.registration_fingerprint_fields(config) == {"project_id": "default", "environment": "development"}
+    parsed = unleash.UnleashOnFeatureCreatedConfig(project_id=None, environment=None, external_webhook_id="7")
+    assert parsed.external_webhook_id == "7"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", unleash.TRIGGER_EVENTS)
+async def test_manual_trigger_run_has_no_event_and_no_http(transport, operation):
+    output = await node(operation).execute({"other-step": {"id": "not-a-delivery"}})
+    assert output["status"] == "no_event"
+    assert transport[0] == []
+
+
+@pytest.mark.asyncio
+async def test_webhook_failures_are_visible_and_not_retried(transport):
+    transport[1].append((403, {"message": AUTH["api_token"]}))
+    with pytest.raises(ValueError, match="403") as error:
+        await unleash.UnleashNode._register_external_webhook(webhook_url="https://fixture.hooks.example.test/webhook/x",
+            credential=AUTH, config={"operation": "on_feature_created"}, node_id="flag")
+    assert AUTH["api_token"] not in str(error.value)
+    assert len(transport[0]) == 1
+    transport[1].append((200, {}))
+    with pytest.raises(ValueError, match="integration ID"):
+        await unleash.UnleashNode._register_external_webhook(webhook_url="https://fixture.hooks.example.test/webhook/x",
+            credential=AUTH, config={"operation": "on_feature_created"}, node_id="flag")
+    transport[1].append((404, None))
+    await unleash.UnleashNode._unregister_external_webhook(credential=AUTH, config={"external_webhook_id": "7"}, node_id="flag")
+    with pytest.raises(ValueError, match="Connect Unleash"):
+        await unleash.UnleashNode._unregister_external_webhook(credential=None, config={"external_webhook_id": "7"}, node_id="flag")

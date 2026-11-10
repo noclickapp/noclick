@@ -1,0 +1,162 @@
+{
+  "feature-created": {
+    "body": {
+      "id": 27332,
+      "type": "feature-created",
+      "createdBy": "user@getunleash.io",
+      "createdAt": "2024-10-03T11:09:53.225Z",
+      "createdByUserId": 110,
+      "data": {
+        "name": "test-flag",
+        "description": null,
+        "type": "release",
+        "project": "test-project",
+        "stale": false,
+        "createdAt": "2024-10-03T11:09:53.201Z",
+        "lastSeenAt": null,
+        "impressionData": false,
+        "archivedAt": null,
+        "archived": false
+      },
+      "preData": null,
+      "tags": [],
+      "featureName": "test-flag",
+      "project": "test-project",
+      "environment": null,
+      "label": "Flag created",
+      "summary": "**user@getunleash.io** created **test-flag** in ... "
+    },
+    "source": "https://docs.getunleash.io/reference/events#feature-created"
+  },
+  "feature-project-change": {
+    "body": {
+      "id": 27332,
+      "type": "feature-project-change",
+      "createdBy": "user@getunleash.io",
+      "createdAt": "2024-10-03T11:09:53.225Z",
+      "createdByUserId": 110,
+      "data": {
+        "newProject": "test-project",
+        "oldProject": "old-test-project"
+      },
+      "preData": null,
+      "tags": [],
+      "featureName": "test-flag",
+      "project": "test-project",
+      "environment": null,
+      "label": "Flag moved to a new project",
+      "summary": "**user@getunleash.io** moved **test-flag** from ... "
+    },
+    "source": "https://docs.getunleash.io/reference/events#feature-project-change"
+  },
+  "feature-tagged": {
+    "body": {
+      "id": 27333,
+      "type": "feature-tagged",
+      "createdBy": "user@getunleash.io",
+      "createdAt": "2024-10-03T11:09:53.225Z",
+      "createdByUserId": 110,
+      "data": {
+        "type": "simple",
+        "value": "tag2"
+      },
+      "preData": null,
+      "tags": [
+        {
+          "type": "simple",
+          "value": "tag2"
+        }
+      ],
+      "featureName": "test-flag",
+      "project": "test-project",
+      "environment": null,
+      "label": "Flag tagged",
+      "summary": "**user@getunleash.io** tagged **test-flag** with ... "
+    },
+    "source": "https://docs.getunleash.io/reference/events#feature-tagged"
+  },
+  "feature-strategy-add": {
+    "body": {
+      "id": 27335,
+      "type": "feature-strategy-add",
+      "createdBy": "user@getunleash.io",
+      "createdAt": "2024-10-03T11:09:53.225Z",
+      "createdByUserId": 110,
+      "data": {
+        "id": "3f4bf713-696c-43a4-8ce7-d6c607108858",
+        "name": "flexibleRollout",
+        "title": null,
+        "disabled": false,
+        "parameters": {
+          "groupId": "new-feature",
+          "rollout": "67",
+          "stickiness": "default"
+        },
+        "variants": [],
+        "sortOrder": 0,
+        "segments": []
+      },
+      "preData": null,
+      "tags": [],
+      "featureName": "new-feature",
+      "project": "my-other-project",
+      "environment": "default",
+      "label": "Flag strategy added",
+      "summary": "**user@getunleash.io** added strategy"
+    },
+    "source": "https://docs.getunleash.io/reference/events#feature-strategy-add"
+  },
+  "feature-created-batch": {
+    "body": {
+      "version": 1,
+      "events": [
+        {
+          "id": 1,
+          "createdAt": "2023-07-05T12:56:00.000Z",
+          "type": "feature-created",
+          "createdBy": "johndoe",
+          "createdByUserId": 1337,
+          "environment": "development",
+          "project": "default",
+          "featureName": "my.first.feature",
+          "data": {
+            "createdAt": "2022-05-31T13:32:20.547Z",
+            "description": "Flag description",
+            "impressionData": true,
+            "lastSeenAt": null,
+            "name": "new-feature",
+            "project": "my-project",
+            "stale": false,
+            "type": "release",
+            "variants": []
+          },
+          "preData": {
+            "createdAt": "2022-05-31T13:32:20.547Z",
+            "description": "Flag description",
+            "impressionData": true,
+            "lastSeenAt": null,
+            "name": "new-feature",
+            "project": "my-project",
+            "stale": false,
+            "type": "release",
+            "variants": []
+          },
+          "tags": [
+            {
+              "value": "a-tag-value",
+              "type": "simple",
+              "color": "#FFFFFF"
+            }
+          ],
+          "label": "string",
+          "summary": "string",
+          "ip": "192.168.1.1",
+          "groupType": "change-request",
+          "groupId": "01HQVX5K8P9EXAMPLE123456"
+        }
+      ],
+      "totalEvents": 842
+    },
+    "source": "https://docs.getunleash.io/integrate/webhook"
+  }
+}
