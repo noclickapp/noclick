@@ -4,6 +4,8 @@
     "issue": "OpenAPI servers URL omits /v3",
     "contract": "https://docs.catsone.com/openapi.yaml",
     "docs": "https://docs.catsone.com/#host",
-    "detail": "The published OpenAPI server omits /v3. Host docs and every API example use https://api.catsone.com/v3. This causes all 25 existing operations and both trigger registrations to report No spec operation; trigger signature, event filtering, payload and agent-event checks succeed. Native tests validate the existing operations and webhook lifecycle using provider examples. The unmodified catalog is retained."
+    "detail": "The unchanged published OpenAPI declares https://api.catsone.com with /webhooks and other unprefixed paths. Its own Host description and current provider docs require https://api.catsone.com/v3. The updated harness reproduces both trigger registration failures before it can validate registration or cleanup. Documented event delivery, signature, filtering, payload hooks, field reads and agent-event checks pass, but neither trigger has a passing conformance verdict. Native lifecycle tests do not satisfy that merge gate. An unauthenticated GET probe returned 404 at /webhooks and 401 at /v3/webhooks; removing /v3 is not a valid node fix. The harness only supports server_url for absent/relative/empty whole-URL servers; it cannot bind this fixed absolute server to the documented v3 base. A provider-corrected published pin or upstream, source-linked catalog server-base override is required; changing the pinned bytes or shared harness is outside this integration-only task.",
+    "trigger_conformance": "blocked",
+    "required_upstream_change": "Support a source-linked catalog override for this documented fixed-server base-path defect, or supply a corrected provider-authored OpenAPI pin."
   }
 ]
