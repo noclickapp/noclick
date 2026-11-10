@@ -13,6 +13,8 @@ runtime that can't enforce it never takes it. ``_sandboxSkills`` is the
 skills a coding harness finds where it reads skills (``[{skill_id,
 account_user_id, version, name, digest, files}]``, ``files`` each version's
 ``[{path, size, sha256}]``), written at its sandbox's cold start.
+``_sessionGeneration`` is which of its conversation's harness session stores a
+coding harness resumes (a revert starts the next one); unset, the first.
 """
 
 from __future__ import annotations
@@ -24,6 +26,7 @@ SANDBOX_VOLUMES_KEY = "_sandboxVolumes"
 NO_SHELL_KEY = "_noShell"
 SANDBOX_NETWORK_KEY = "_sandboxNetwork"
 SANDBOX_SKILLS_KEY = "_sandboxSkills"
+SESSION_GENERATION_KEY = "_sessionGeneration"
 
 
 def _runtime_value(node: Any, key: str) -> Any:
