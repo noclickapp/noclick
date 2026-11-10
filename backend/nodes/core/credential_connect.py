@@ -312,6 +312,10 @@ def shape_credential(
     if resolved is None:
         return data, {}, None
     _, cls = resolved
+    # The type is never a typed-in field (typed_fields leaves it out): a class that requires it gets the one named.
+    declared = cls.model_fields.get("credential_type")
+    if declared is not None and declared.is_required() and "credential_type" not in data:
+        data["credential_type"] = credential_type
 
     errors: Dict[str, str] = {}
     for name, title in _secret_fields(cls).items():

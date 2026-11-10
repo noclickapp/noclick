@@ -93,6 +93,17 @@ def test_shape_strips_and_writes_back_the_class_normalisation():
     assert data["surface_extra"] == "kept"
 
 
+def test_shape_fills_a_type_its_class_requires():
+    """A credential's type is never a typed-in field, and Bookeo's OAuth class requires its own (a token without one
+    is a bearer token): shaping fills the type it was asked to shape. A class whose type has a default is left as
+    typed."""
+    data, errors, _ = cc.shape_credential("bookeo_oauth", {"access_token": "token"})
+    assert errors == {} and data["credential_type"] == "bookeo_oauth"
+    data, errors, _ = cc.shape_credential(
+        "bookeo_bearer_token", {"access_token": "token", "expires_at": "2030-01-01T00:00:00Z"})
+    assert errors == {} and "credential_type" not in data
+
+
 def test_shape_reports_url_shaped_secrets_per_field():
     site = "https://us-east-1.online.tableau.com/#/site/acme"
     _, errors, _ = cc.shape_credential(
