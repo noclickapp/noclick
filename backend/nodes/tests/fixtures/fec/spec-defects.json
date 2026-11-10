@@ -1,0 +1,12 @@
+[
+  {
+    "kind": "d",
+    "contract_location": "security[0]",
+    "problem": "The published Swagger security requirement combines ApiKeyHeaderAuth, ApiKeyQueryAuth and apiKey in a single AND requirement. The last two duplicate api_key in the query. Thus every header-only request is rejected by the contract validator.",
+    "node_behavior": "Send the pasted key in X-Api-Key only, to the fixed official API host.",
+    "docs": ["https://api.data.gov/docs/developer-manual/", "https://github.com/fecgov/openFEC/blob/develop/README.md"],
+    "evidence": "The official API gateway manual says the key may be passed in a few different ways and to pick whichever is easiest, and documents the X-Api-Key header. The FEC's official README says staging and production use API Umbrella at api.data.gov for authentication. The contract itself defines ApiKeyHeaderAuth as X-Api-Key. All 21 operations fail only authentication; no routes, parameters, response parsing or trigger-field checks fail.",
+    "affected_operations": "all 21 operations including on_new_filing",
+    "repair": "No contract repair or authentication override applied. Original bytes and security requirement are preserved in the conversion."
+  }
+]

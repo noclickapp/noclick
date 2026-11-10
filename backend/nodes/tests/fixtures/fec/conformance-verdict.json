@@ -1,0 +1,39 @@
+{
+ "provider": "fec",
+ "ready": false,
+ "blocking": [
+  "list_candidates: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "get_candidate: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_candidate_committees: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_candidate_filings: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "get_candidate_totals: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_candidate_history: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_committees: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "get_committee: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_committee_candidates: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_committee_filings: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_committee_reports: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "get_committee_totals: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_filings: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_contributions: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_disbursements: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_independent_expenditures: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_electioneering: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_communication_costs: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_elections: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "list_calendar_dates: request: ValueError: Authentication is missing or in the wrong location/scheme",
+  "on_new_filing: request: ValueError: Authentication is missing or in the wrong location/scheme"
+ ],
+ "advisory": [],
+ "stats": {
+  "operations": 21,
+  "skipped": 0,
+  "request_ok": 0,
+  "authored_parser_ok": 0,
+  "generated_only": 21,
+  "local_ok": 0
+ },
+ "triggers": {
+  "on_new_filing": "failed"
+ }
+}

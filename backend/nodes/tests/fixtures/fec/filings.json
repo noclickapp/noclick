@@ -1,0 +1,4 @@
+{
+  "results": [{"file_number": 1, "committee_id": "C00000001", "receipt_date": "2026-01-01", "form_type": "F3", "amendment_indicator": "N"}],
+  "pagination": {"page": 1, "pages": 1, "per_page": 100, "count": 1}
+}

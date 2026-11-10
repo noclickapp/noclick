@@ -1,0 +1,111 @@
+{
+  "note": "Supplement only. The unmodified main report still blocks on the provider security contradiction. No security override or contract repair used.",
+  "requests_checked": 21,
+  "checks": [
+    {
+      "operation": "list_candidates",
+      "contract_operation": "GET /v1/candidates/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "get_candidate",
+      "contract_operation": "GET /v1/candidate/{candidate_id}/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_candidate_committees",
+      "contract_operation": "GET /v1/candidate/{candidate_id}/committees/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_candidate_filings",
+      "contract_operation": "GET /v1/candidate/{candidate_id}/filings/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "get_candidate_totals",
+      "contract_operation": "GET /v1/candidate/{candidate_id}/totals/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_candidate_history",
+      "contract_operation": "GET /v1/candidate/{candidate_id}/history/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_committees",
+      "contract_operation": "GET /v1/committees/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "get_committee",
+      "contract_operation": "GET /v1/committee/{committee_id}/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_committee_candidates",
+      "contract_operation": "GET /v1/committee/{committee_id}/candidates/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_committee_filings",
+      "contract_operation": "GET /v1/committee/{committee_id}/filings/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_committee_reports",
+      "contract_operation": "GET /v1/committee/{committee_id}/reports/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "get_committee_totals",
+      "contract_operation": "GET /v1/committee/{committee_id}/totals/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_filings",
+      "contract_operation": "GET /v1/filings/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_contributions",
+      "contract_operation": "GET /v1/schedules/schedule_a/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_disbursements",
+      "contract_operation": "GET /v1/schedules/schedule_b/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_independent_expenditures",
+      "contract_operation": "GET /v1/schedules/schedule_e/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_electioneering",
+      "contract_operation": "GET /v1/electioneering/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_communication_costs",
+      "contract_operation": "GET /v1/communication_costs/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_elections",
+      "contract_operation": "GET /v1/elections/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "list_calendar_dates",
+      "contract_operation": "GET /v1/calendar-dates/",
+      "parameters_and_body_valid": true
+    },
+    {
+      "operation": "on_new_filing",
+      "contract_operation": "GET /v1/filings/",
+      "parameters_and_body_valid": true
+    }
+  ]
+}
