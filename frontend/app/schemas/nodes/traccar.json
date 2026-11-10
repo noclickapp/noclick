@@ -1,0 +1,1365 @@
+{
+  "$defs": {
+    "CommandBody": {
+      "properties": {
+        "deviceId": {
+          "exclusiveMinimum": 0,
+          "title": "Deviceid",
+          "type": "integer"
+        },
+        "type": {
+          "description": "Command type supported by this device",
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "textChannel": {
+          "default": false,
+          "title": "Textchannel",
+          "type": "boolean"
+        },
+        "attributes": {
+          "additionalProperties": true,
+          "title": "Attributes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "deviceId",
+        "type"
+      ],
+      "title": "CommandBody",
+      "type": "object"
+    },
+    "DeviceBody": {
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "uniqueId": {
+          "minLength": 1,
+          "title": "Unique device ID",
+          "type": "string"
+        },
+        "groupId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Groupid"
+        },
+        "disabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Disabled"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "contact": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        }
+      },
+      "required": [
+        "name",
+        "uniqueId"
+      ],
+      "title": "DeviceBody",
+      "type": "object"
+    },
+    "GeofenceBody": {
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "area": {
+          "description": "Traccar geofence WKT area",
+          "minLength": 1,
+          "title": "Area",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "calendarId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Calendarid"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        }
+      },
+      "required": [
+        "name",
+        "area"
+      ],
+      "title": "GeofenceBody",
+      "type": "object"
+    },
+    "GroupBody": {
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "groupId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Groupid"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GroupBody",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "TraccarCreateDeviceConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_device",
+          "default": "create_device",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Device"
+        },
+        "body": {
+          "$ref": "#/$defs/DeviceBody",
+          "title": "Resource fields"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "TraccarCreateDeviceConfig",
+      "type": "object"
+    },
+    "TraccarCreateGeofenceConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_geofence",
+          "default": "create_geofence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Geofence"
+        },
+        "body": {
+          "$ref": "#/$defs/GeofenceBody",
+          "title": "Resource fields"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "TraccarCreateGeofenceConfig",
+      "type": "object"
+    },
+    "TraccarCreateGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Create Group"
+        },
+        "body": {
+          "$ref": "#/$defs/GroupBody",
+          "title": "Resource fields"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "TraccarCreateGroupConfig",
+      "type": "object"
+    },
+    "TraccarDeleteDeviceConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_device",
+          "default": "delete_device",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Device"
+        },
+        "resource_id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "TraccarDeleteDeviceConfig",
+      "type": "object"
+    },
+    "TraccarDeleteGeofenceConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_geofence",
+          "default": "delete_geofence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Delete Geofence"
+        },
+        "resource_id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "TraccarDeleteGeofenceConfig",
+      "type": "object"
+    },
+    "TraccarGetCommandTypesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_command_types",
+          "default": "get_command_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Command Types"
+        },
+        "device_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for all accessible devices",
+          "title": "Device Id"
+        }
+      },
+      "title": "TraccarGetCommandTypesConfig",
+      "type": "object"
+    },
+    "TraccarGetDeviceConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_device",
+          "default": "get_device",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Device"
+        },
+        "resource_id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "TraccarGetDeviceConfig",
+      "type": "object"
+    },
+    "TraccarGetEventConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Event"
+        },
+        "resource_id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "TraccarGetEventConfig",
+      "type": "object"
+    },
+    "TraccarGetGeofenceConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_geofence",
+          "default": "get_geofence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Geofence"
+        },
+        "resource_id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "TraccarGetGeofenceConfig",
+      "type": "object"
+    },
+    "TraccarListCommandsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_commands",
+          "default": "list_commands",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Commands"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "TraccarListCommandsConfig",
+      "type": "object"
+    },
+    "TraccarListDevicesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_devices",
+          "default": "list_devices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Devices"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "TraccarListDevicesConfig",
+      "type": "object"
+    },
+    "TraccarListGeofencesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_geofences",
+          "default": "list_geofences",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Geofences"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "TraccarListGeofencesConfig",
+      "type": "object"
+    },
+    "TraccarListGroupsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Groups"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "TraccarListGroupsConfig",
+      "type": "object"
+    },
+    "TraccarListPositionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_positions",
+          "default": "list_positions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "List Positions"
+        },
+        "device_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for all accessible devices",
+          "title": "Device Id"
+        }
+      },
+      "title": "TraccarListPositionsConfig",
+      "type": "object"
+    },
+    "TraccarOnEventConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_event",
+          "default": "on_new_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "On New Device Event",
+          "x-is-trigger": true
+        },
+        "device_id": {
+          "exclusiveMinimum": 0,
+          "title": "Device ID",
+          "type": "integer"
+        },
+        "lookback_minutes": {
+          "default": 60,
+          "description": "Overlap window; choose longer than the schedule interval. First poll establishes a baseline.",
+          "maximum": 1440,
+          "minimum": 5,
+          "title": "Lookback Minutes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "device_id"
+      ],
+      "title": "TraccarOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TraccarReportEventsConfig": {
+      "properties": {
+        "device_id": {
+          "exclusiveMinimum": 0,
+          "title": "Device ID",
+          "type": "integer"
+        },
+        "from_time": {
+          "format": "date-time",
+          "title": "From (ISO 8601)",
+          "type": "string"
+        },
+        "to_time": {
+          "format": "date-time",
+          "title": "To (ISO 8601)",
+          "type": "string"
+        },
+        "operation": {
+          "const": "report_events",
+          "default": "report_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Report Events"
+        }
+      },
+      "required": [
+        "device_id",
+        "from_time",
+        "to_time"
+      ],
+      "title": "TraccarReportEventsConfig",
+      "type": "object"
+    },
+    "TraccarReportRouteConfig": {
+      "properties": {
+        "device_id": {
+          "exclusiveMinimum": 0,
+          "title": "Device ID",
+          "type": "integer"
+        },
+        "from_time": {
+          "format": "date-time",
+          "title": "From (ISO 8601)",
+          "type": "string"
+        },
+        "to_time": {
+          "format": "date-time",
+          "title": "To (ISO 8601)",
+          "type": "string"
+        },
+        "operation": {
+          "const": "report_route",
+          "default": "report_route",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Report Route"
+        }
+      },
+      "required": [
+        "device_id",
+        "from_time",
+        "to_time"
+      ],
+      "title": "TraccarReportRouteConfig",
+      "type": "object"
+    },
+    "TraccarReportStopsConfig": {
+      "properties": {
+        "device_id": {
+          "exclusiveMinimum": 0,
+          "title": "Device ID",
+          "type": "integer"
+        },
+        "from_time": {
+          "format": "date-time",
+          "title": "From (ISO 8601)",
+          "type": "string"
+        },
+        "to_time": {
+          "format": "date-time",
+          "title": "To (ISO 8601)",
+          "type": "string"
+        },
+        "operation": {
+          "const": "report_stops",
+          "default": "report_stops",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Report Stops"
+        }
+      },
+      "required": [
+        "device_id",
+        "from_time",
+        "to_time"
+      ],
+      "title": "TraccarReportStopsConfig",
+      "type": "object"
+    },
+    "TraccarReportSummaryConfig": {
+      "properties": {
+        "device_id": {
+          "exclusiveMinimum": 0,
+          "title": "Device ID",
+          "type": "integer"
+        },
+        "from_time": {
+          "format": "date-time",
+          "title": "From (ISO 8601)",
+          "type": "string"
+        },
+        "to_time": {
+          "format": "date-time",
+          "title": "To (ISO 8601)",
+          "type": "string"
+        },
+        "operation": {
+          "const": "report_summary",
+          "default": "report_summary",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Report Summary"
+        }
+      },
+      "required": [
+        "device_id",
+        "from_time",
+        "to_time"
+      ],
+      "title": "TraccarReportSummaryConfig",
+      "type": "object"
+    },
+    "TraccarReportTripsConfig": {
+      "properties": {
+        "device_id": {
+          "exclusiveMinimum": 0,
+          "title": "Device ID",
+          "type": "integer"
+        },
+        "from_time": {
+          "format": "date-time",
+          "title": "From (ISO 8601)",
+          "type": "string"
+        },
+        "to_time": {
+          "format": "date-time",
+          "title": "To (ISO 8601)",
+          "type": "string"
+        },
+        "operation": {
+          "const": "report_trips",
+          "default": "report_trips",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Report Trips"
+        }
+      },
+      "required": [
+        "device_id",
+        "from_time",
+        "to_time"
+      ],
+      "title": "TraccarReportTripsConfig",
+      "type": "object"
+    },
+    "TraccarSendCommandConfig": {
+      "properties": {
+        "operation": {
+          "const": "send_command",
+          "default": "send_command",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Send Command"
+        },
+        "body": {
+          "$ref": "#/$defs/CommandBody",
+          "title": "Resource fields"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "TraccarSendCommandConfig",
+      "type": "object"
+    },
+    "TraccarTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "traccar_token",
+          "default": "traccar_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "server_url": {
+          "description": "HTTPS origin of your Traccar server, for example https://demo.traccar.org",
+          "title": "Server URL",
+          "type": "string"
+        },
+        "api_token": {
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "server_url",
+        "api_token"
+      ],
+      "title": "Traccar API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing Traccar bearer token and your server HTTPS origin (without /api). Generate a token in your Traccar account settings. The token has your account permissions.",
+      "x-credential-url": "https://www.traccar.org/api-reference/"
+    },
+    "TraccarUpdateDeviceConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_device",
+          "default": "update_device",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Device"
+        },
+        "resource_id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "body": {
+          "$ref": "#/$defs/DeviceBody",
+          "title": "Resource fields"
+        }
+      },
+      "required": [
+        "resource_id",
+        "body"
+      ],
+      "title": "TraccarUpdateDeviceConfig",
+      "type": "object"
+    },
+    "TraccarUpdateGeofenceConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_geofence",
+          "default": "update_geofence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Update Geofence"
+        },
+        "resource_id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "body": {
+          "$ref": "#/$defs/GeofenceBody",
+          "title": "Resource fields"
+        }
+      },
+      "required": [
+        "resource_id",
+        "body"
+      ],
+      "title": "TraccarUpdateGeofenceConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_device": "#/$defs/TraccarCreateDeviceConfig",
+          "create_geofence": "#/$defs/TraccarCreateGeofenceConfig",
+          "create_group": "#/$defs/TraccarCreateGroupConfig",
+          "delete_device": "#/$defs/TraccarDeleteDeviceConfig",
+          "delete_geofence": "#/$defs/TraccarDeleteGeofenceConfig",
+          "get_command_types": "#/$defs/TraccarGetCommandTypesConfig",
+          "get_device": "#/$defs/TraccarGetDeviceConfig",
+          "get_event": "#/$defs/TraccarGetEventConfig",
+          "get_geofence": "#/$defs/TraccarGetGeofenceConfig",
+          "list_commands": "#/$defs/TraccarListCommandsConfig",
+          "list_devices": "#/$defs/TraccarListDevicesConfig",
+          "list_geofences": "#/$defs/TraccarListGeofencesConfig",
+          "list_groups": "#/$defs/TraccarListGroupsConfig",
+          "list_positions": "#/$defs/TraccarListPositionsConfig",
+          "on_new_event": "#/$defs/TraccarOnEventConfig",
+          "report_events": "#/$defs/TraccarReportEventsConfig",
+          "report_route": "#/$defs/TraccarReportRouteConfig",
+          "report_stops": "#/$defs/TraccarReportStopsConfig",
+          "report_summary": "#/$defs/TraccarReportSummaryConfig",
+          "report_trips": "#/$defs/TraccarReportTripsConfig",
+          "send_command": "#/$defs/TraccarSendCommandConfig",
+          "update_device": "#/$defs/TraccarUpdateDeviceConfig",
+          "update_geofence": "#/$defs/TraccarUpdateGeofenceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TraccarListDevicesConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarGetDeviceConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarCreateDeviceConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarUpdateDeviceConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarDeleteDeviceConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarCreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarListGeofencesConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarGetGeofenceConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarCreateGeofenceConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarUpdateGeofenceConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarDeleteGeofenceConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarListPositionsConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarListCommandsConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarGetCommandTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarSendCommandConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarReportRouteConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarReportEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarReportTripsConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarReportSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarReportStopsConfig"
+        },
+        {
+          "$ref": "#/$defs/TraccarOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TraccarTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Traccar Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

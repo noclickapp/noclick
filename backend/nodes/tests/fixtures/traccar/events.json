@@ -1,0 +1,11 @@
+[
+  {
+    "id": 42,
+    "deviceId": 42,
+    "type": "deviceOnline",
+    "eventTime": "2026-01-01T00:00:00Z",
+    "positionId": 12,
+    "geofenceId": 0,
+    "attributes": {}
+  }
+]
