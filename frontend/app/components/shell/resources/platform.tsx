@@ -79,6 +79,9 @@ export interface PlatformResources {
     Body: ComponentType<{ item: ResourceItem; now: string }>;
     /** A platform item's own actions in its page's header, beside the removal (a skill's Attach to and ⋯). */
     Actions?: ComponentType<{ item: ResourceItem }>;
+    /** Why a kind's own way of getting one can't be used on this deployment yet, in a sentence: its button is greyed
+     *  out with these words (a computer of yours while agents don't run on machines here). */
+    unavailable?: Partial<Record<KindId, string>>;
     /** Making one of a kind here (?kind=&new=1, over its list): `onDone` takes the new item's id, or null when it was left. */
     Create?: Partial<Record<KindId, ComponentType<{ onDone: (id: string | null) => void }>>>;
     /** A live figure a platform item's row shows beside its price (a website's requests this week), or nothing. */

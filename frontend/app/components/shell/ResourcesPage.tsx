@@ -104,7 +104,7 @@ function List({ children }: { children: ReactNode }) {
 }
 
 /** One kind, empty: what it is and the ways to get one (by hand, where there is a way, or by asking NoClick). */
-function EmptyKind({ kind, manual }: { kind: KindDef; manual?: { label: string; run: () => void } }) {
+function EmptyKind({ kind, manual }: { kind: KindDef; manual?: { label: string; run: () => void; refusal?: string } }) {
     const Icon = kind.icon;
     return (
         <div className="flex flex-col items-center px-6 py-16 text-center">
@@ -115,7 +115,7 @@ function EmptyKind({ kind, manual }: { kind: KindDef; manual?: { label: string; 
             <p className="mt-1 max-w-sm text-[14px] leading-relaxed text-muted-foreground">{kind.empty}</p>
             <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
                 {manual && (
-                    <button type="button" onClick={manual.run} className={BUTTON_PRIMARY}>
+                    <button type="button" onClick={manual.run} disabled={!!manual.refusal} title={manual.refusal} className={BUTTON_PRIMARY}>
                         <Plus className="h-4 w-4" />
                         {manual.label}
                     </button>
@@ -127,6 +127,7 @@ function EmptyKind({ kind, manual }: { kind: KindDef; manual?: { label: string; 
                     </button>
                 )}
             </div>
+            {manual?.refusal && <p className="mt-3 max-w-sm text-[13px] text-muted-foreground">{manual.refusal}</p>}
         </div>
     );
 }
@@ -255,7 +256,7 @@ export function ResourcesView() {
     // A kind's page for getting one by hand; one that's bought needs billing.
     const manualFor = (kind: KindId) => {
         const manual = kindDef(kind).manual;
-        return manual && (billing || !manual.bought) ? { label: manual.label, short: manual.short, run: () => openBuy(kind) } : undefined;
+        return manual && (billing || !manual.bought) ? { label: manual.label, short: manual.short, run: () => openBuy(kind), refusal: platform?.unavailable?.[kind] } : undefined;
     };
     const activeKind = kinds.find((k) => k.id === params.get('kind'))?.id ?? null;
     const resourceId = params.get('resource');
@@ -368,10 +369,13 @@ export function ResourcesView() {
                 back={{ label: 'Resources', onBack: () => go(null) }}
                 actions={
                     manualFor(kind.id) && items[activeKind].length > 0 ? (
-                        <button type="button" onClick={manualFor(kind.id)!.run} className={BUTTON_PRIMARY}>
-                            <Plus className="h-4 w-4" />
-                            {manualFor(kind.id)!.label}
-                        </button>
+                        <span className="flex flex-col items-end gap-1">
+                            <button type="button" onClick={manualFor(kind.id)!.run} disabled={!!manualFor(kind.id)!.refusal} title={manualFor(kind.id)!.refusal} className={BUTTON_PRIMARY}>
+                                <Plus className="h-4 w-4" />
+                                {manualFor(kind.id)!.label}
+                            </button>
+                            {manualFor(kind.id)!.refusal && <span className="max-w-[280px] text-right text-[12.5px] text-muted-foreground">{manualFor(kind.id)!.refusal}</span>}
+                        </span>
                     ) : undefined
                 }
             >
@@ -435,11 +439,13 @@ export function ResourcesView() {
                                     manualFor(k.id) && !list.length ? (
                                         <button
                                             type="button"
+                                            disabled={!!manualFor(k.id)!.refusal}
+                                            title={manualFor(k.id)!.refusal}
                                             onClick={(event) => {
                                                 event.stopPropagation();
                                                 manualFor(k.id)!.run();
                                             }}
-                                            className="inline-flex h-8 shrink-0 items-center rounded-full px-3.5 text-[13px] font-medium text-foreground ring-1 ring-inset ring-border transition-colors hover:bg-foreground/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:ring-foreground/[0.14]"
+                                            className="inline-flex h-8 shrink-0 items-center rounded-full px-3.5 text-[13px] font-medium text-foreground ring-1 ring-inset ring-border transition-colors hover:bg-foreground/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 dark:ring-foreground/[0.14]"
                                         >
                                             {manualFor(k.id)!.short}
                                         </button>
