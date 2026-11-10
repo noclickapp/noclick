@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/languagetool-dark.svg",
+  "source": "https://languagetool.org/images/logo_color.svg",
+  "found_at": "https://languagetool.org/ (header logo via https://languagetool.org/css/base.css, .logo.plain:before)",
+  "retrieved": "2026-11-11",
+  "license": "LanguageTool trademark; used nominatively to identify the service.",
+  "sha256": "506de0cbe37a95b8a2bcdfa0d20ae55adc3407d815fa8998c91e6548e73c5948",
+  "edits": [
+    "Cropped viewBox to existing LT and blue underline mark.",
+    "Recoloured only the black LT letters white for dark surfaces."
+  ],
+  "notes": "Official LT app mark, without a background. All original path data and the blue colour are preserved."
+}
