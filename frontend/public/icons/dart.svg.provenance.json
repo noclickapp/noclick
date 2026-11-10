@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/dart.svg",
+  "source": "https://dart-static.s3.us-east-1.amazonaws.com/website/Dart_brand_assets.zip (Dart_brand_assets/Dart.svg)",
+  "found_at": "https://www.dartai.com/brand (Dart's brand page, 'Download' brand assets)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: Dart.svg is the app icon itself (white mark on the #5420DD rounded square, rx 200 of 800)",
+    "stripped editor metadata"
+  ],
+  "notes": "The purple rounded square is kept because it is Dart's own app icon (the kit ships it as 'Dart.svg' beside a circle version 'Dart_symbol.svg'). If the reviewer prefers the bare mark, the same kit's Dart_outline_symbol.svg is the mark alone in #5420DD on no background.",
+  "license": "Dart brand mark, used nominatively to identify the connected service; trademark rights remain with Dart.",
+  "sha256": "9b88ae04b0f92edd8210532753533967affde3c3b08f800a4aed93e1571ae268"
+}

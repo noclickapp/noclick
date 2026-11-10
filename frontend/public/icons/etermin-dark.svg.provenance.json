@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/etermin-dark.svg",
+  "source": "https://www.etermin.net/w/img/logo.svg",
+  "found_at": "https://www.etermin.net/ (header <img src=/images/eTermin-4C-blau.svg>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the cloud (element 7, #284378), the orange clock face (8) and hands (9); removed the 'eTermin' wordmark (elements 0-6)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "dark file taken from eTermin's own white logo (footer logo): kept the same three elements (white cloud, orange clock), removed its wordmark (0-6), cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "The Safari mask icon is a potrace trace and the touch icon URL serves HTML, so the header SVG is the source. The navy cloud is a thin line that is low-contrast on the dark tile (icon_check passes it), so the dark file uses eTermin's own white-cloud version.",
+  "license": "eTermin brand mark, used nominatively to identify the connected service; trademark rights remain with eTermin.",
+  "sha256": "cfa1d7e1593f959ebb77380cc1e9bc0bbfab3a1a1a342a9b1413a2b3b68e4012"
+}

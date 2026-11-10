@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/e2b.svg",
+  "source": "https://e2b.dev/brand/e2b-symbol-black-s.svg",
+  "found_at": "https://e2b.dev/brand (Symbol, black, small-size artwork)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the symbol",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Used the brand kit's size-specific 's' symbol (32x30 artboard, drawn for small sizes); 'm' and 'l' versions and a fire-orange colourway also exist on the brand page.",
+  "license": "E2B brand mark, used nominatively to identify the connected service; trademark rights remain with E2B.",
+  "sha256": "22ab1d9ee14dc7cf6cdfe514d2cf1ca249fcc3a2b439ab837221a7ab59fd8232"
+}

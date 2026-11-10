@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/ez-texting.svg",
+  "source": "https://www.eztexting.com/sites/default/files/brand-assets/EZ-texting-icon-black-r.svg",
+  "found_at": "https://www.eztexting.com/brand (Brand Guidelines: 'Icon' black and white; also in EZ-Logo-Package.zip, src3)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the two-loop icon (elements 1, 2); removed the small \u00ae (element 0)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The brand publishes the icon only in black and white; the favicon puts it on an indigo tile that is not in the brand kit, so no tile. The \u00ae was dropped as text in an app-icon context; reviewer may keep it.",
+  "license": "EZ Texting brand mark, used nominatively to identify the connected service; trademark rights remain with EZ Texting.",
+  "sha256": "bdb44e04aa2d3a3f5480674cb97e19c991c66f2666e00cd9968c75a883089cd2"
+}

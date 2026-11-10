@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/content-snare.svg",
+  "source": "https://contentsnare.com/wp-content/uploads/2021/08/content-snare-logo.svg",
+  "found_at": "https://contentsnare.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the mark (elements 12-14: pink, cyan and purple shapes), removed the white 'content snare' wordmark (elements 0-11)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "license": "Content Snare brand mark, used nominatively to identify the connected service; trademark rights remain with Content Snare.",
+  "sha256": "0b5f8e1ddcdbd2de70bdc5e64a033803c2a76d31dce1f5aee093d366aca47613"
+}

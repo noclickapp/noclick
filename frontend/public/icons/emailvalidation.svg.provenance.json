@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/emailvalidation.svg",
   "source": "https://emailvalidation.io/img/emailvalidation_logo_black.svg",
-  "license": "Provider-owned brand logo; used to identify the Emailvalidation integration.",
-  "sha256": "319ce902e681233d94395332c864c64c8a402a5aae22c6b9bbcc84112ffff32d"
+  "found_at": "https://emailvalidation.io/ (header logo; same file as the recorded current source)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the app symbol (element 0: #44A0FF\u2192#2660FF gradient rounded square; element 1: white paper-plane outline); removed the 'emailvalidation' letters and the empty text box (elements 2-17)",
+    "cropped the viewBox to the tile (no pad)",
+    "cleaned"
+  ],
+  "notes": "Kept the blue rounded square: it is the brand's own app-icon tile (the apple-touch icon is exactly this tile and plane). Reads on both themes, so one file.",
+  "license": "emailvalidation.io brand mark, used nominatively to identify the connected service; trademark rights remain with emailvalidation.io.",
+  "sha256": "0f00ac67f26bae38c4fdaa12e7b3ed8962b630882daccc4d8d0a5a051bb59558"
 }

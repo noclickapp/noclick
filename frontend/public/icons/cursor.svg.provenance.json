@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/cursor.svg",
-  "source": "https://github.com/noclickapp/noclick-cloud/blob/2d6fed1fd955ea6daae0ea21c26311db1b7914e5/frontend/public/icons/cursor.svg",
-  "license": "Cursor brand mark, used nominatively to identify the connected service; no trademark rights are claimed or granted. Preserved from noclickapp/noclick-cloud#1456.",
-  "sha256": "8de176c7315023c45019d018910a7bde2e38d12eca5ebd2a5890027462dee3dc"
+  "source": "https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/brand/cursor-brand-assets.zip",
+  "found_at": "https://cursor.com/brand (Download brand assets zip; files General Logos/Cube/SVG/CUBE_2D_LIGHT.svg and CUBE_2D_DARK.svg)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the cube",
+    "cleaned (Illustrator comment and XML prolog)"
+  ],
+  "variant": "light mode",
+  "notes": "Used the brand kit flat 2D cube in its own light (#26251e) and dark (#edecec) versions rather than the 2.5D shaded cube (CUBE_25D.svg, which has a white facet that vanishes on light). Cursor app icons in the kit are PNG only, so no tile.",
+  "license": "Cursor (Anysphere) brand mark, used nominatively to identify the connected service; trademark rights remain with Cursor (Anysphere).",
+  "sha256": "458e8b563b8fb0c8a31eb5cac902316e5746c6d4ec8ee28f08e3765498dfa617"
 }

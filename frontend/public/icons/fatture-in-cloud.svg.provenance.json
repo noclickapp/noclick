@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/fatture-in-cloud.svg",
+  "source": "https://secure-static.fattureincloud.it/3a8c32081b490ac5e9658693cd45c9b0/assets/ficLogoHorizontal2RowsColor-ChKCA5Hf.svg",
+  "found_at": "https://secure.fattureincloud.it/login (the web app; referenced in its bundle assets/index-CL_8ndHL.js)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the gradient 't s' mark (elements 0-13); removed the 'Fatture in Cloud.it' wordmark (elements 14-29)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "The marketing site's only SVG is a white one-colour lockup (src1); the colour version came from the app. icon_check finds nothing lost on either theme (the triage's vanishes-light came from the PNG).",
+  "license": "Fatture in Cloud brand mark, used nominatively to identify the connected service; trademark rights remain with Fatture in Cloud.",
+  "sha256": "876e373692aac6564a2874d0088d4683c3f944443f89c66d33b115d4de6a9ec3"
+}

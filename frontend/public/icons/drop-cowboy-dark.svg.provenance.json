@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/drop-cowboy-dark.svg",
+  "source": "https://www.dropcowboy.com/assets/9a54a207-1fae-4395-a568-a26db3a031e2/DC-logo-black.svg",
+  "found_at": "https://www.dropcowboy.com/ (header logo <img>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the masked-cowboy mark (elements 0-4: hat, hat band, bandana and collar); removed the 'DROP COWBOY' letters and \u00ae (elements 5-16)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "#231F20 \u2192 #ffffff on the whole mark (all line work is near-black and touches the tile)"
+  ],
+  "variant": "dark mode",
+  "notes": "The apple-touch icon (blue gradient tile, white cowboy) exists only as PNG, so the tile-less line mark is used. The line work is thin; check legibility at 22px.",
+  "license": "Drop Cowboy brand mark, used nominatively to identify the connected service; trademark rights remain with Drop Cowboy.",
+  "sha256": "a88e7fa406cdb0ee436a07b045752b7584e1b0698c3240b6c341c571cf91a1ff"
+}

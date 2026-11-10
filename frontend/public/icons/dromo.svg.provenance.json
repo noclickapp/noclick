@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/dromo.svg",
+  "source": "https://dromo.io/favicon.svg",
+  "found_at": "https://dromo.io/ (<link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the white rounded-square background (element 0)",
+    "cropped the viewBox to the stack",
+    "cleaned"
+  ],
+  "notes": "DECISION: the lower two layers are #0052CC at opacity .4/.7, so on the dark tile they read as deep navy rather than light blue (still visible; icon_check lost_dark 0). The source has no dark version and svgtool cannot change opacity, so one file. The stack is 1.35:1 wide by design.",
+  "license": "Dromo brand mark, used nominatively to identify the connected service; trademark rights remain with Dromo.",
+  "sha256": "b223e4e37d03289ff215a6f36a72de023d3739438762c31628cbd138265a3c6c"
+}

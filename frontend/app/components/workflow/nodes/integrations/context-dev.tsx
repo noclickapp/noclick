@@ -14,7 +14,7 @@ const ContextDevIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/context-dev.png"
+        src="/icons/context-dev.svg"
         alt=""
         aria-hidden="true"
         className={className}

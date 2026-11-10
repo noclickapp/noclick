@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/datarobot.svg",
+  "source": "https://www.datarobot.com/ (inline <svg> header logo, 120x19)",
+  "found_at": "https://www.datarobot.com/ (site header)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the nine stepped bars of the mark (elements 7-15); removed the 'DataRobot' wordmark (elements 0-6, 16, 17)",
+    "cropped the viewBox to the mark and removed the page's stray lowercase viewbox=\"0 0 120 19\" attribute",
+    "stripped whitespace/metadata"
+  ],
+  "variant": "light mode",
+  "notes": "The black square of the favicon is dropped (triage asked to remove the black background); the bare monochrome mark is near-black in light mode and white in dark mode.",
+  "license": "DataRobot brand mark, used nominatively to identify the connected service; trademark rights remain with DataRobot.",
+  "sha256": "67c3ff6a276ce46592eeabddc4acfd24705ed77594f883bf957ba64b86ff2a81"
+}

@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/firmable.svg",
+  "source": "https://firmable.ai/wp-content/uploads/2026/01/firmable-favicon.svg",
+  "found_at": "https://firmable.ai/ (<link rel=\"icon\" href=\".../firmable-favicon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The site also lists a 2026-08 512px WebP app tile (white mark on an orange-to-violet gradient, work/refs/firmable/ref1.webp); it is raster only, so the orange mark from the SVG favicon and header logo is used. Orange reads on both themes; one file.",
+  "license": "Firmable brand mark, used nominatively to identify the connected service; trademark rights remain with Firmable.",
+  "sha256": "44be2396a83f46dd11d8af997d94ecb58ea6d5095bcc3e878607245f05e3b0c7"
+}

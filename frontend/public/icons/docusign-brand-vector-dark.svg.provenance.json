@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/docusign-brand-vector-dark.svg",
+  "source": "https://cdn.prod.website-files.com/67d160f23e7ffa1df49339fc/67f6d6ec00573f1a4f6cd59b_2.svg",
+  "found_at": "https://brand.docusign.com/logo (Docusign's brand site, the vertical full-colour logo)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the mark (elements 0-2: #4C00FF square, #FF5252 D, black overlap); removed the 'docusign' wordmark paths (elements 3-11)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "dark file taken from Docusign's own logo for dark backgrounds on the same brand page (white-wordmark lockup, 2.svg): kept its mark (elements 12-14), where the overlap square is white instead of black; removed the wordmark and 'IAM' paths (elements 0-11)"
+  ],
+  "variant": "dark mode",
+  "notes": "The 2.svg dark source is the 'docusign IAM' lockup on the brand page; only its mark is used. Its <defs> keeps three unused wordmark gradients (harmless). In the light file the black overlap square only meets the tile at one corner point; icon_check flagged the light file 22% lost on dark, hence the dark file.",
+  "license": "Docusign brand mark, used nominatively to identify the connected service; trademark rights remain with Docusign.",
+  "sha256": "2f9d4e40c72ee0ab2768a089c98ee8d84ce913f56e160b6828dc144890bc5c31"
+}

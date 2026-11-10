@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/cometapi.svg",
+  "source": "https://mintcdn.com/cometapi/cmhWX83dzrkf2F-2/logo/comet.svg",
+  "found_at": "https://apidoc.cometapi.com/ (Mintlify docs config: \"favicon\"; the docs' header logos comet-light.svg/comet-dark.svg carry the same mark beside the wordmark)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The SVG looks like a clean auto-trace exported through Figma (duplicate corner points, off-white #FAFDFE/#FCFDFE fills), but it is 4 smooth paths with no fringe or stepped edges, so I shipped it. The near-white parts sit inside the cyan shape, so one file works on both themes.",
+  "license": "CometAPI brand mark, used nominatively to identify the connected service; trademark rights remain with CometAPI.",
+  "sha256": "15074906e8b2f73456a5a91cf4ab212f33eb1545f727b69ad4ba3c3807ffe33e"
+}

@@ -4,8 +4,12 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const DubIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-  <img src="/icons/dub-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-    style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+  <>
+      <img src="/icons/dub-preferred-brand.svg" alt="" aria-hidden="true" className={`${className ?? ''} dark:hidden`}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+      <img src="/icons/dub-preferred-brand-dark.svg" alt="" aria-hidden="true" className={`${className ?? ''} hidden dark:block`}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+  </>
 );
 
 export const DubNode: NodeDefinition = {

@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/documenso.svg",
-  "source": "https://github.com/noclickapp/noclick-cloud/blob/4994ad873228f3cae1b663f152f567f35bf973ca/frontend/public/icons/documenso.svg",
-  "license": "Documenso vendor mark; used to identify the integration. Trademark rights belong to Documenso.",
-  "sha256": "9d10e7156ca16ea6af5523b9dc5c52143a8264187b1e1a000799c86189951d1d"
+  "source": "https://documenso.com/ (inline header logo: the 'Icon' <svg> inside <a data-framer-name=\"Logo\" href=\"./\">, a <use href=\"#svg12502534225\"/> whose symbol is defined later in the same page)",
+  "found_at": "https://documenso.com/",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "copied the page's symbol svg12502534225 verbatim into a standalone SVG (only change: Framer's paint var(--token-b76d7218\u2026, rgb(23, 23, 23)) resolved to its fallback rgb(23, 23, 23)); saved page at downloads/documenso/src6/home.html",
+    "cropped the viewBox to the seal",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The previous documenso.svg was an auto-traced bitmap (stroke paths with vector-effect, 180x180 viewBox), not an official file. The header mark is the seal with its inner detail lines; at icon size it reads as the double wavy outline of the favicon/apple-touch PNG.",
+  "license": "Documenso brand mark, used nominatively to identify the connected service; trademark rights remain with Documenso.",
+  "sha256": "07f488963a5b0c74cea1d695752c25125f06522b051f09055e75b3cab93f89d3"
 }

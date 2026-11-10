@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/dock-certs-dark.svg",
+  "source": "https://truvera.io/ (inline <svg width=\"144\" height=\"32\">, header logo)",
+  "found_at": "https://truvera.io/ (Truvera's own site)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the inline svg is the dotted Truvera mark alone",
+    "removed the page's HTML style attribute (margin/size) from the root svg",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata",
+    "taken from the site's own white header logo (inline <svg> 144x32, clip id logo-white_svg__a: the same mark in white and #38BDF8 beside the 'truvera' wordmark): kept the mark (elements 0-12), dropped the wordmark (element 13), removed the HTML style attribute, cropped"
+  ],
+  "variant": "dark mode",
+  "notes": "Dock Certs is now Truvera; both files are Truvera's current mark. The favicon's black circle is dropped.",
+  "license": "Truvera (formerly Dock Certs, by Dock) brand mark, used nominatively to identify the connected service; trademark rights remain with Truvera (formerly Dock Certs, by Dock).",
+  "sha256": "4c3a83b1f38875195d02781b65883737afe80ec9c172929672b3a96ec197b7cc"
+}

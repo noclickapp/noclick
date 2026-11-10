@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/conveyor.svg",
+  "source": "https://www.conveyor.com/",
+  "found_at": "https://www.conveyor.com/ (inline <svg> in the nav brand link, div.nav_logo.is-white; page saved as downloads/conveyor/src2/homepage.html and extracted with scripts/extract_svg.py)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the dark-green Conveyor wordmark paths (elements 0-7)",
+    "cropped the viewBox to the teal mark",
+    "cleaned"
+  ],
+  "notes": "icon_check flags vanishes-light 44% for the brand teal #33C69F on white; on the sheet it reads clearly, so no recolour. The HTML extractor lowercased two attributes (a leftover inert viewbox=\"0 0 145 32\" and maskunits), harmless: the real viewBox is set by crop and the mask is a full white rect. downloads/conveyor/src1/logo.svg is a customer logo from the case-study slider, not used.",
+  "license": "Conveyor brand mark, used nominatively to identify the connected service; trademark rights remain with Conveyor.",
+  "sha256": "c27478c13ec7c264e696547c963b6b9cb804f43ef35509eb5eb6c116666a8620"
+}

@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/fleetio-dark.svg",
+  "source": "https://developer.fleetio.com/img/logo-reversed.svg",
+  "found_at": "https://developer.fleetio.com/ (navbar logo, light theme)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the car (element 0) and the green arrow (element 1), removed the 'Fleetio' and 'Developer Portal' wordmark paths (elements 2-3)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "took the same two elements (0-1) from the company's own reversed logo, then cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "fleetio.com and secure.fleetio.com sit behind a DataDome/Cloudflare challenge, so the developer portal's logo files were used. The dark file is Fleetio's own reversed logo, which is all white (the arrow too, as on its help-centre favicon). If the reviewer would rather keep the green arrow in dark mode, recolour #262C2D -> #FFFFFF in the light file instead. The mark is 1.7:1 wide by design (a car).",
+  "license": "Fleetio brand mark, used nominatively to identify the connected service; trademark rights remain with Fleetio.",
+  "sha256": "bdfc12367f08e40275010dd38424aef7efd05511e46eef5a9c8b24edfcf25e7f"
+}

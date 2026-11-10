@@ -4,7 +4,7 @@ import type { NodeProps } from '@xyflow/react';
 import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 const ConvertAPIIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/convertapi.png" alt="" aria-hidden="true" className={className} style={{ ...style, objectFit: 'contain' }} />
+    <img src="/icons/convertapi.svg" alt="" aria-hidden="true" className={className} style={{ ...style, objectFit: 'contain' }} />
 );
 export const ConvertAPINode: NodeDefinition = {
     type: 'automation-convertapi', label: 'ConvertAPI',

@@ -6,7 +6,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const FirmableIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/firmable.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
+        <img ref={ref} src="/icons/firmable.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );
 FirmableIcon.displayName = 'FirmableIcon';

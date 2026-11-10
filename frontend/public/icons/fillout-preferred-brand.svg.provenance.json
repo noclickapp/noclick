@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/fillout-preferred-brand.svg",
-  "source": "https://logos.composio.dev/api/fillout_forms (carried from noclickapp/noclick4#2553)",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "77dd62a2004f8ae72b83ab338a7bb0fc8d0b9f4c62d6796c0b6803317882f891"
+  "source": "https://www.fillout.com/fillout-icon.svg",
+  "found_at": "https://www.fillout.com/brand ('Fillout Icon \u2014 for tight layouts or logo-only grids', its Download button; same file in Fillout-Brand-Assets.zip and in fillout/n8n-nodes-fillout)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept everything (yellow #FFC738 rounded tile, its light arcs, the 'Fillout' wordmark)",
+    "cropped the viewBox to the tile (pad 0)",
+    "cleaned"
+  ],
+  "notes": "Reviewer decision: the brand's official icon is the wordmark set in its yellow tile. The favicon's 'F' (two bars and a dot on the same tile) exists only as ICO/PNG \u2014 the current file is an AI vectorisation of it ('SVG created with Arrow, by QuiverAI', via logos.composio.dev), which breaks rule 3 and must go. At 22px the word is small but legible.",
+  "license": "Fillout brand mark, used nominatively to identify the connected service; trademark rights remain with Fillout.",
+  "sha256": "b4bb9d49a7855d1b2acc1bb6a0d543fbfe3e5b667991ed7e5142cd3b9d950e56"
 }

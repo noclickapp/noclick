@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/emelia-dark.svg",
+  "source": "https://docs.emelia.io/icon.svg?icon.2sk0ixjkf0ujt.svg",
+  "found_at": "https://docs.emelia.io/ (Emelia's API docs; <link rel=\"icon\" href=\"/icon.svg?\u2026\">)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "light file: the file's own dark-mode rule '@media (prefers-color-scheme: dark){.t{fill:#FFFFFF}}' recoloured #FFFFFF \u2192 #1F344B so the navy wing never turns white on a light tile when the OS is in dark mode",
+    "cleaned",
+    "#1F344B \u2192 #FFFFFF on the navy wing (element 2, class .t), which is what the file itself does under prefers-color-scheme: dark"
+  ],
+  "variant": "dark mode",
+  "notes": "emelia.io's own /images/logo.svg only wraps a PNG (<pattern><image>) and was not used. The docs icon's orange (#F46B10) is more saturated than the favicon PNG's coral; parts are at 90% opacity as published.",
+  "license": "Emelia brand mark, used nominatively to identify the connected service; trademark rights remain with Emelia.",
+  "sha256": "1192dc2196d4190cf2c456b87b2a798105017777e97e2d8341f4b6de771b66aa"
+}

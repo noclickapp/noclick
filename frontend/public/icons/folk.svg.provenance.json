@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/folk.svg",
+  "source": "https://www.folk.app/",
+  "found_at": "https://www.folk.app/ (the logo's brand menu, item 'Copy logo': the SVG it copies is the menu item's data-copy-svg attribute; saved verbatim, unescaped, as copy-logo.svg)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The site's own 'Copy logo' SVG is the filled version of the mark; the menu's preview file Logo primary.svg draws the ring as a 1.6px stroke and would also do. folk's favicons sit the mark on a white disc, but that exists only as PNG, so the dark file recolours the mark to white instead.",
+  "license": "folk brand mark, used nominatively to identify the connected service; trademark rights remain with folk.",
+  "sha256": "fe268153764154a4e84316a8d0d91a0de8d56ae7c25654c399ada016d47c62ea"
+}

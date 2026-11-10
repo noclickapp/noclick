@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/fly.svg",
-  "source": "https://fly.io/phx/ui/images/favicon/safari-pinned-tab-987c7fc8f545337872c691fbc736e9c4.svg?vsn=d",
-  "license": "Fly.io brand mark used nominatively to identify the service; trademark rights remain with Fly.io.",
-  "sha256": "e34d862ef614d7c8d5d72bd180c3ba00f8236fda817ab8c5414240cd1c4a03ab"
+  "source": "https://mintcdn.com/fly-io/v-XOGeVK6s4rQ-4y/images/brand/brandmark.svg",
+  "found_at": "https://fly.io/docs/about/brand/ ('Color Brandmark' download)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The reviewer was right: the black balloon in the current file is the retired mark (the old safari-pinned-tab). The purple gradient tile is part of Fly's own brandmark, not an added background. The light file also reads on dark (navy balloon, icon_check lost_dark 0); the dark file is Fly's own dark-background version, as its docs use it.",
+  "license": "Fly.io brand mark, used nominatively to identify the connected service; trademark rights remain with Fly.io.",
+  "sha256": "1bdc0d3449f08f484c80a2d880ddc2ce462b5de05853995a4001e618c76395d9"
 }

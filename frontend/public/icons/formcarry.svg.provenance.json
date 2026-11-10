@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/formcarry.svg",
+  "source": "https://formcarry.com/formcarry_logo.svg",
+  "found_at": "https://formcarry.com/ (header and footer <img src=\"/formcarry_logo.svg\" alt=\"formcarry\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the three-bar mark (elements 0-2), removed the navy 'formcarry.' wordmark (elements 3-12)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The header logo shades the bars in three blues (#293FFF, #1579FF, #00B3FF); the PNG apple-touch icon uses one blue. The header file is the site's current logo, so its colours are kept. Blues read on both themes; one file.",
+  "license": "formcarry brand mark, used nominatively to identify the connected service; trademark rights remain with formcarry.",
+  "sha256": "194b86d6c21389bef257d27b7992f4460d1835b54cbbfbe3bba88e450402c515"
+}

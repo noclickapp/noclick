@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/dialpad.svg",
-  "source": "https://dialtone.dialpad.com/downloads/ \u2192 Download all Icons \u2192 SVG \u2192 Dialpad-Icon-Circle-Dark.svg; https://drive.google.com/uc?export=download&id=1tg2nFE9kYxtgZ_LLtuaZL5sKMcG6gmUg (unmodified official asset)",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "83b098780fede12f14b5da5e0513464744002698dca3e69e49bfb040e1553cec"
+  "source": "https://dialtone.dialpad.com/assets/images/favicons/favicon.svg",
+  "found_at": "https://dialtone.dialpad.com/ (Dialtone, Dialpad's own design system site: <link rel=\"icon\"> SVG favicon)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the favicon is Dialpad's app icon (white sparkle and 'd' on the purple-to-orange gradient rounded square)",
+    "dropped the fixed 24x24 width/height (viewBox unchanged)",
+    "stripped editor metadata"
+  ],
+  "notes": "Answers the reviewer: the current dialpad.svg (Dialpad-Icon-Circle-Dark, an orange sparkle and pink d on a near-black circle) is an official alternate but not the app icon, and its dark circle vanishes on the dark theme. dialpad.com and Dialtone both use the gradient rounded square as the app/site icon, so that tile is kept as the brand's own app icon.",
+  "license": "Dialpad brand mark, used nominatively to identify the connected service; trademark rights remain with Dialpad.",
+  "sha256": "33a8b32ba5a6a8d92ae5778b1fa159dc43f2ac52b1fc448c62a9cccf2e8e9185"
 }

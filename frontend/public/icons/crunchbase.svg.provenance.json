@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/crunchbase.svg",
+  "source": "https://github.com/simple-icons/simple-icons/blob/develop/icons/crunchbase.svg",
+  "found_at": "simple-icons (local copy downloads/_simple-icons/package/icons/crunchbase.svg; its recorded source is https://crunchbase.com)",
+  "source_kind": "simple-icons",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "recoloured the single path from the default black to Crunchbase blue #146AFF (the hex in Crunchbase press asset name crunchbase_2022_146AFF_logo_blue and the about.crunchbase.com favicon pixel colour)",
+    "viewBox already tight (crop changed nothing)",
+    "cleaned (dropped the <title>)"
+  ],
+  "notes": "Crunchbase publishes only wordmark SVGs (press page https://about.crunchbase.com/press: cb_logo_bluevector.svg, downloads/crunchbase/src3; site Logo (Blue).svg, src1; homepage white crunchbase-logo.svg, src2); the cb tile exists first-party only as PNG, so simple-icons was used. In the simple-icons drawing the cb is knocked out of the square, so on the dark theme the letters show the dark tile instead of white as in the webclip; reviewer may prefer keeping it or not. Blue chosen is #146AFF; the webclip is slightly deeper (#0061FF).",
+  "license": "Crunchbase brand mark, used nominatively to identify the connected service; trademark rights remain with Crunchbase.",
+  "sha256": "b24abc5e789a27bba8845c35206ff4f43be0c560b1bc692f8dd9a182425d0062"
+}

@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/funnelcockpit.svg",
-  "source": "https://static.funnelcockpit.com/assets/images/fc-logo/logo-light-mode.svg",
-  "license": "FunnelCockpit trademark; official publisher logo used to identify the integration.",
-  "sha256": "ae9b8072d7df210dd57c8b052d4f8fe2ac5e7eaa14c6b1f577a29c651d7cb559"
+  "source": "https://funnelcockpit.com/assets/favicon.svg",
+  "found_at": "https://funnelcockpit.com/ (<link rel=\"icon\" type=\"image/svg+xml\" href=\"/assets/favicon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned (the favicon is already the mark alone)"
+  ],
+  "notes": "Replaces the wide wordmark with the square mark. Both blues read on both themes; one file. The apple-touch icon sets the mark on a dark-navy gradient tile, which exists only as PNG.",
+  "license": "FunnelCockpit brand mark, used nominatively to identify the connected service; trademark rights remain with FunnelCockpit.",
+  "sha256": "2c736b123ce947947bfe926fd30211fa123b1cf3ba6336ae1ebca929514da7f8"
 }

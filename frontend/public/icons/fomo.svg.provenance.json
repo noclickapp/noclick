@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/fomo.svg",
+  "source": "https://usefomo.com/assets/landing/brand/fomo--brand-pack-f7a425d1e58e6f4e78c19e1abe7296c20dc77f9421064e091813bd301a4bf93a.zip",
+  "found_at": "https://usefomo.com/brand ('brand pack' download; file icon/fomo--icon.svg inside the zip)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned (the brand pack's icon is already the app mark: a white 'F.' on Fomo's orange #FCA161 square)"
+  ],
+  "notes": "The orange square is Fomo's own app icon (the brand pack's 'icon'), so it stays; icon_check flags the full-canvas tile for that reason. The pack's square has sharp corners; the PNG favicons round them. The site's safari-pinned-tab.svg is a potrace trace (faceted dot, wobbly edges), so it was not used. The brand pack dates from 2022 but its icon matches the favicons served today.",
+  "license": "Fomo brand mark, used nominatively to identify the connected service; trademark rights remain with Fomo.",
+  "sha256": "a1da8541748e6042b65c36a55b918c89c7be685c0c2d98fede632c55cc9ce660"
+}

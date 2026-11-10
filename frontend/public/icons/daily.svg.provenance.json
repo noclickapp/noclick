@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/daily.svg",
+  "source": "https://mintcdn.com/daily-co/UZ5SeZfPxiPGRDvT/logo/light.svg",
+  "found_at": "https://docs.daily.co/ (Daily's own docs site; its Mintlify config names logo.light / logo.dark)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the gradient parallelogram mark (element 0); removed the 'daily' wordmark and TM (elements 1-6)",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata"
+  ],
+  "notes": "The docs' dark.svg has the identical gradient mark (only the wordmark turns white), so one file serves both themes. The homepage header draws the parallelogram in plain black; the coloured gradient is the app/favicon mark.",
+  "license": "Daily brand mark, used nominatively to identify the connected service; trademark rights remain with Daily.",
+  "sha256": "7970f5adcf211676c4cf533f8b37d0afae7af30460b935072ea0a99c2c7c1461"
+}

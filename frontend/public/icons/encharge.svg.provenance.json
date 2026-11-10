@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/encharge.svg",
+  "source": "https://encharge.io/wp-content/uploads/2019/07/logo-dark-symbol-1.svg",
+  "found_at": "https://encharge.io/ (the symbol <img> on the homepage, served through its NitroPack CDN as cdn-aipmi.nitrocdn.com/\u2026/encharge.io/wp-content/uploads/2019/07/logo-dark-symbol-1.svg; byte-identical on encharge.io itself)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the symbol",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "No white symbol is published (logo-light-symbol*.svg / logo-white-symbol*.svg 404), so the dark file is a recolour.",
+  "license": "Encharge brand mark, used nominatively to identify the connected service; trademark rights remain with Encharge.",
+  "sha256": "cf49e6fe1b8435d9b8227d610486e3e1402549bb7f1a8eddd4d7b3c1ccc813b9"
+}

@@ -5,7 +5,7 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const DailyIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/daily.png" alt="" aria-hidden="true" className={className}
+    <img src="/icons/daily.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, objectFit: 'contain' } as CSSProperties} />
 );
 

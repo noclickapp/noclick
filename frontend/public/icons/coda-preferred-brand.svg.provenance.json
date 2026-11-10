@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/coda-preferred-brand.svg",
-  "source": "https://logos.composio.dev/api/coda",
-  "license": "Coda brand artwork; trademark belongs to its owner. Used to identify the integration.",
-  "sha256": "78481740e94decc9aec436b4af4e8e3c2f2c50439e037b8286c5c1216750803a"
+  "source": "https://cdn.coda.io/icons/svg/color/coda.svg",
+  "found_at": "https://coda.io/ (its icons live under cdn.coda.io/icons/; the page links the same mark as cdn.coda.io/icons/png/color/coda-*.png favicons, and the SVG sits beside them)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "Heads-up for the reviewer: Coda is being rebranded as 'Superhuman Docs' (Grammarly/Superhuman). coda.io's header now shows a 'Superhuman Docs' wordmark and coda.io/brand redirects to docs.superhuman.com/brand (404); superhuman.com/media-assets has no Docs logo. The Coda C mark is still coda.io's favicon and the API is still coda.io, so I kept Coda. Revisit if the integration is renamed.",
+  "license": "Coda brand mark, used nominatively to identify the connected service; trademark rights remain with Coda.",
+  "sha256": "5a60375aa61a55639ddacced02e0df0bbfcc96e5194546bedebb56525b5f8f13"
 }

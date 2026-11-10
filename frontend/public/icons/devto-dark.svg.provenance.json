@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/devto-dark.svg",
+  "source": "https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg",
+  "found_at": "https://dev.to/brand (DEV's brand guidelines: Downloads > SVG > 'Black DEV')",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the file is the classic DEV badge alone (one path: the black rounded square with the letters D, E, V cut out)",
+    "cropped the viewBox from 448x512 to the 448x448 badge (no padding: the badge is the app icon)",
+    "stripped editor metadata",
+    "#000000 -> #FFFFFF on the badge (the only drawn part; the letters are holes, so on the dark tile they show the tile's own dark colour)"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: the black badge vanishes on the dark tile, so the dark file is the badge recoloured white (DEV then reads dark-on-white). DEV's other official primary variant, the Rainbow DEV badge (downloads/devto/src7/dev-rainbow.svg, from the same brand page), reads on both themes with no recolouring if the reviewer prefers it for dark mode.",
+  "license": "DEV Community brand mark, used nominatively to identify the connected service; trademark rights remain with DEV Community.",
+  "sha256": "3f66b1f62ebaba6fa1d495cda6a367e1b7682a13880f2af6e0f5cbabd92fe85a"
+}

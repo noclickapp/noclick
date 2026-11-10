@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/emnify-dark.svg",
+  "source": "https://portal.emnify.com/img/icons/safari-pinned-tab.svg",
+  "found_at": "https://portal.emnify.com/sign-in (the emnify Portal app's icon set, /img/icons/, beside its apple-touch and favicon PNGs)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the EM mark",
+    "cleaned",
+    "#000035 \u2192 #ffffff on all six bars (the deep-navy mark vanishes on the dark tile)"
+  ],
+  "variant": "dark mode",
+  "notes": "The file is a clean Figma export (6 paths, rounded bars), not a potrace trace. The EM mark is 2.2:1 wide by design, so icon_check flags wordmark-shape; it is emnify's app/favicon mark, not the 'emnify' wordmark the old file was. The emnify.com header has the same EM above the wordmark, but its own clipPath trims the M's right bar, so the portal file was used.",
+  "license": "emnify brand mark, used nominatively to identify the connected service; trademark rights remain with emnify.",
+  "sha256": "3423daa00a96a8d51ac696eb17c284e7b69d91242242db0b89ce4f621e35a793"
+}

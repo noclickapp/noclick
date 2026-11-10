@@ -12,7 +12,7 @@ const DartIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/dart.png"
+        src="/icons/dart.svg"
         alt=""
         aria-hidden="true"
         className={className}

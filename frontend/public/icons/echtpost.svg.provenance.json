@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/echtpost.svg",
+  "source": "https://echtpost.de/favicon.svg",
+  "found_at": "https://echtpost.de/ (<link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the stamp",
+    "cleaned"
+  ],
+  "notes": "DECISION: the only vector stamp-with-E is this favicon, which is drawn on a 16px pixel grid (shape-rendering crispEdges; designed pixel art, not a trace), so it looks blocky at 48px and differs from the smooth tilted white stamp on a teal tile in the apple-touch PNG. The other SVG option is the plain teal stamp (no E) from the header logo (downloads/echtpost/src4/inline-00.svg element 9). Teal reads on both themes, so one file.",
+  "license": "EchtPost brand mark, used nominatively to identify the connected service; trademark rights remain with EchtPost.",
+  "sha256": "df1e45f6305a15df7f504baa12c89b6a18e646dface1f0676d2afe7390171c29"
+}

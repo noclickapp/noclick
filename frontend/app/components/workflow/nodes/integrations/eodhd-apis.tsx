@@ -14,7 +14,7 @@ const EodhdApisIcon: SvgIconComponent = forwardRef<
 >(({ className, style, ...props }, ref) => (
     <img
         ref={ref}
-        src="/icons/eodhd-apis.png"
+        src="/icons/eodhd-apis.svg"
         alt=""
         className={className}
         style={{ ...style, objectFit: 'contain' }}

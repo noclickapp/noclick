@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/crowdin.svg",
-  "source": "https://github.com/simple-icons/simple-icons/blob/develop/icons/crowdin.svg",
-  "license": "Simple Icons CC0; Crowdin trademark used to identify the connected service.",
-  "sha256": "9dbe8a89d492e3075dc9bf35a2399551ef7ca95aa358061a532b79a223a33fd6"
+  "source": "https://d2gma3rgtloi6d.cloudfront.net/astro-website/_astro/crowdin-logo-light.CZHTv0JL.svg",
+  "found_at": "https://crowdin.com/ (header logo, light version; paired with crowdin-logo-dark)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the crowdin wordmark paths (elements 0-6)",
+    "kept the slate #263238 rounded tile (element 7) and the white mark (elements 8-13): it is Crowdin app icon, identical to crowdin.com/astro-website/favicon.svg",
+    "cropped the viewBox to the tile with no padding",
+    "cleaned"
+  ],
+  "notes": "One file for both themes: icon_check shows nothing lost on dark (the white mark carries it; the slate tile edge is subtle on #111). Crowdin also publishes a dark-mode logo with a white tile and slate mark (downloads/crowdin/src3/crowdin-logo-dark.svg); not used, since a white tile on the dark theme is a white background the triage would flag. The background flag on the shipped file is the brand own app-icon tile.",
+  "license": "Crowdin brand mark, used nominatively to identify the connected service; trademark rights remain with Crowdin.",
+  "sha256": "8fb584431294a09d5adc6ec9d7954c7389a5b031e8e4817fe4b3029713865768"
 }

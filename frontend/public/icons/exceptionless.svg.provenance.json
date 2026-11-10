@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/exceptionless.svg",
+  "source": "https://raw.githubusercontent.com/exceptionless/MediaKit/master/icon.svg",
+  "found_at": "https://github.com/exceptionless/MediaKit (Exceptionless's own media kit repo: icon.svg)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept both elements (the #558B01 rounded tile and the #EDEFE9 E)",
+    "cropped the viewBox to the tile (pad 0)",
+    "cleaned"
+  ],
+  "notes": "The green rounded tile is Exceptionless's own app icon/favicon, so it stays. The file is a clean two-path outline whose coordinates look potrace-derived (scale(0.1,-0.1) group) but it has smooth curves, no fringe or stepping. The favicon's white sparkle highlight is not in the vector. The media kit's other SVGs (exceptionless.svg, logo-dark) are the wordmark.",
+  "license": "Exceptionless brand mark, used nominatively to identify the connected service; trademark rights remain with Exceptionless.",
+  "sha256": "2ea157726f140c91629a69f2cc460afe33c87f7874c8fa20587ae6423ffb93a9"
+}

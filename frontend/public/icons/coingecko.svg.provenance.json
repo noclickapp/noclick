@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/coingecko.svg",
+  "source": "https://3936590801-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FuBDUa2ODcAkHHV15nEGc%2Fuploads%2FwxPh8w7T5qZabdC5qb0i%2FCG-GT%20Logos.zip?alt=media&token=57828ee9-0a87-4598-92a1-7a580f0f861b (CG-GT Logos/CG/CG-Symbol.svg)",
+  "found_at": "https://brand.coingecko.com/resources/brand-kit (CoinGecko Brand Guidelines; coingecko.com/en/branding redirects there)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the symbol",
+    "cleaned"
+  ],
+  "notes": "src7/CG-Symbol.svg is a straight copy of the zip's CG/CG-Symbol.svg (moved out of the folder with spaces in its name so the tools read it). The triage's 'vanishes-light' was the yellow disc of the PNG; icon_check reports lost_light 0.0 for the vector, and the disc is the brand's own, so one file.",
+  "license": "CoinGecko brand mark, used nominatively to identify the connected service; trademark rights remain with CoinGecko.",
+  "sha256": "883d31b6e80d184018ec55c440ef29849cf9415608183fe6e7e38d74fd145bd4"
+}

@@ -9,14 +9,23 @@ const DocumensoIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/documenso.svg"
-        alt=""
-        className={className}
-        style={style}
-        {...props}
-    />
+    <>
+        <img
+            ref={ref}
+            src="/icons/documenso.svg"
+            alt=""
+            className={`${className ?? ''} dark:hidden`}
+            style={style}
+            {...props}
+        />
+        <img
+            src="/icons/documenso-dark.svg"
+            alt=""
+            className={`${className ?? ''} hidden dark:block`}
+            style={style}
+            {...props}
+        />
+    </>
 ));
 DocumensoIcon.displayName = 'DocumensoIcon';
 

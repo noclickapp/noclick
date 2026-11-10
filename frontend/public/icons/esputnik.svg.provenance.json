@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/esputnik.svg",
-  "source": "https://esputnik.com/",
-  "license": "Brand mark of its owner, shown nominatively to identify the service; no trademark rights are claimed or granted.",
-  "sha256": "75e9258bcc4b031fe2b40b51f73623132e69d5a3e13c23b65005e8bf8c1a5113"
+  "source": "https://esputnik.com/uk (inline header SVG sprite, <symbol id=\"site-logo\">)",
+  "found_at": "https://esputnik.com/uk header logo (<use href=#site-logo>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the blue #2B64CD 'e' disc (element 2); removed the 'eSputnik' wordmark, 'Omnichannel CDP' line and the yellow/blue flag (elements 0,1,3-6)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "svgtool cannot edit inside a <symbol>, so the edit started from the current esputnik.svg, which is that same symbol unwrapped; derive against the re-downloaded sprite (src1/extracted/inline-00.svg) passes. eSputnik now also trades as Yespo (yespo.io, different logo); esputnik.com, whose API the node calls, still uses this mark. The docs site's files.readme.io/08db41f-Logo.svg (src2) is an older white e, not used.",
+  "license": "eSputnik (Yespo) brand mark, used nominatively to identify the connected service; trademark rights remain with eSputnik (Yespo).",
+  "sha256": "90a3bfa258080e3b8be5749c53701706dc70a3b7207aae8cd06180239af952ce"
 }

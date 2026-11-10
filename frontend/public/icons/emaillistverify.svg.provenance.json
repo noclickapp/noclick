@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/emaillistverify.svg",
+  "source": "https://emaillistverify.com/favicon.svg",
+  "found_at": "https://emaillistverify.com/ (<link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the check (2% pad)",
+    "cleaned"
+  ],
+  "notes": "Teal reads on both themes, so one file.",
+  "license": "EmailListVerify brand mark, used nominatively to identify the connected service; trademark rights remain with EmailListVerify.",
+  "sha256": "7a1e4cad04fda01eeeb49d3e3a4c26ec1c18745fffb2bde7634aeef2f4641ae7"
+}

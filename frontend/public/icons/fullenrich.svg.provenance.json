@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/fullenrich.svg",
+  "source": "https://fullenrich.com/_app/immutable/assets/fe-black-wordmark.DVXgtZHm.svg",
+  "found_at": "https://fullenrich.com/ (header logo: <img src=\".../fe-black-wordmark...svg\" class=\"dark:hidden\"> beside the white one for dark mode)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the star and the ring-with-waves (elements 0-1), removed the 'FullEnrich' wordmark paths (elements 2-11)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Drops the black background of the current PNG. The site's SVG favicon (downloads/fullenrich/src1/favicon.svg) sets the mark in white on a black disc; if the reviewer counts that disc as FullEnrich's app icon, that file works on both themes as is (cleaned only). The header mark draws the ring and waves a little heavier than the favicon.",
+  "license": "FullEnrich brand mark, used nominatively to identify the connected service; trademark rights remain with FullEnrich.",
+  "sha256": "6a0f1afcc386fdd67892f64b8dba6f22fde2c3a2b385978816a0037a071310fe"
+}

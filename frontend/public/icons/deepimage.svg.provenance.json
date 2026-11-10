@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/deepimage.svg",
+  "source": "https://deep-image.ai/_next/static/media/logo-deepimage-dark.f2390316.svg",
+  "found_at": "https://deep-image.ai/ (header logo <img>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the eye-in-viewfinder mark (elements 9-15: four corner brackets, two eye arcs, the pupil); removed the 'DeepImage' wordmark (elements 0-8)",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata"
+  ],
+  "variant": "light mode",
+  "notes": "The navy square of the app icon is dropped (triage asked to remove the dark background); the light file is the mark exactly as the site's on-white logo draws it (light-blue mark, navy pupil). The site's safari-pinned-tab.svg is the same mark in one colour (not used).",
+  "license": "Deep Image (deep-image.ai) brand mark, used nominatively to identify the connected service; trademark rights remain with Deep Image (deep-image.ai).",
+  "sha256": "9c201fb322f8de0aeff5b3f4817dcb8a97825a0d288c04021864cbf46d52c41f"
+}

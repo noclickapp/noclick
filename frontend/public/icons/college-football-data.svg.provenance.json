@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/college-football-data.svg",
+  "source": "https://collegefootballdata.com/brand/cfbd-icon.svg",
+  "found_at": "https://collegefootballdata.com/brand/ (the folder the site serves its brand assets from, e.g. /brand/cfbd-watermark.png used by the page; cfbd-icon.svg answers there as image/svg+xml)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed a stray 4px speck outside the tile (element 10)",
+    "cropped the viewBox to the tile (no pad: it is the app-icon tile)",
+    "cleaned"
+  ],
+  "notes": "REVIEWER: the company's only SVG is an auto-trace (vectorizer.ai style: 6-digit coordinates under transform=scale(0.241211), a stray speck I removed). It is clean (10 paths, smooth edges, no fringe), so I shipped it; reject if traces are out regardless of quality. The navy tile is the brand's app icon (the favicon), kept; icon_check flags it as a dark 'background' and the tile's edge is faint on the dark theme, but the letters read.",
+  "license": "College Football Data (CFBD) brand mark, used nominatively to identify the connected service; trademark rights remain with College Football Data (CFBD).",
+  "sha256": "29e6a13eafff43dc06a00cceeee608b6fbd344c4a6b437ab7f719ce0409924a5"
+}

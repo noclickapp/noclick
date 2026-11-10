@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/foursquare.svg",
+  "source": "https://docs.foursquare.com/",
+  "found_at": "https://docs.foursquare.com/ (inline <svg> of the stacked 'F / SQ' mark in the page's footer section)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the root's inline sizing style (width:100%; max-width:75px) so it fills its box",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "unfilled paths given an explicit #000000 (their default black)"
+  ],
+  "variant": "light mode",
+  "notes": "Foursquare's favicon sets the mark in white on a black square, but that tile exists only as PNG, so the plain mark ships: black on light, white on dark (the Q's counter stays open). The homepage header is the FOURSQUARE wordmark (header_new_logo.svg), not used.",
+  "license": "Foursquare brand mark, used nominatively to identify the connected service; trademark rights remain with Foursquare.",
+  "sha256": "c05416f160b54c58f40e8f2b5de28e456d29c2b261d10a5532844303b08dc92d"
+}

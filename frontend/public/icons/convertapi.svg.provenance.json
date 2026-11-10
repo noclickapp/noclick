@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/convertapi.svg",
+  "source": "https://www.convertapi.com/static/img/logo.svg",
+  "found_at": "https://www.convertapi.com/docs/getting-started (header <img src=\"/static/img/logo.svg\" alt=\"ConvertApi Logo\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the white ConvertAPI wordmark paths (elements 2-11)",
+    "removed a duplicate chevron path (element 0, identical to 12)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "icon_check flags vanishes-light 61% for the brand orange #ff9750 on white; on the sheet it reads clearly on the light tile, and recolouring would change the brand colour, so no light variant. www.convertapi.com homepage is behind a Cloudflare challenge; the docs page on the same domain served the header logo.",
+  "license": "ConvertAPI brand mark, used nominatively to identify the connected service; trademark rights remain with ConvertAPI.",
+  "sha256": "856496b248d3694749963fb5b2f8969539d4848a221d196b5c4737cf12eb4ba5"
+}

@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/enrich-layer-dark.svg",
+  "source": "https://enrichlayer.com/frontend/enrichlayer/logomark.svg",
+  "found_at": "https://enrichlayer.com/ \u2014 served from the same folder as the header logo (frontend/enrichlayer/logo.svg, whose stack mark it matches element for element); not linked from a page I could find",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "light file: recoloured the cream #F3EEE8 back face (element 12) to #1E1E1E (the brand's own manifest background colour) so it shows on white",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "dark file keeps the source colours (green slabs, cream #F3EEE8 face); cropped and cleaned only"
+  ],
+  "variant": "dark mode",
+  "notes": "The current file is a composite of two boxes (not the logo). The mark's cream face is designed for dark backgrounds and vanishes on light; the light file recolours only that face to #1E1E1E \u2014 reviewer may prefer a different dark tone. No official light-background version exists.",
+  "license": "Enrich Layer brand mark, used nominatively to identify the connected service; trademark rights remain with Enrich Layer.",
+  "sha256": "a083d5b0e687640cf74bbb0704b5e22a634b4ca9181125bb8ba57d36bf38f4aa"
+}

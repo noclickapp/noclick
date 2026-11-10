@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/content-studio.svg",
+  "source": "https://contentstudio.io/images/contentstudio-logo.svg",
+  "found_at": "https://contentstudio.io/ (header logo; also linked from https://contentstudio.io/brand-assets)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the mark (element 1, the blue #0068E5 disc, and element 2, its three light #E8F2FE strokes), removed the navy 'ContentStudio' wordmark (element 0)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "contentstudio.io/brand-assets offers only PNG icon packs and logos (icon-packs.zip, brand-logos.zip), so the vector is the header logo. The disc is part of the mark (the brand's icon is this blue circle), not an added background.",
+  "license": "ContentStudio brand mark, used nominatively to identify the connected service; trademark rights remain with ContentStudio.",
+  "sha256": "4faa8f98f69509967bd82b846d1515fc3b5de8160c1b3876f692918c678f9dc0"
+}

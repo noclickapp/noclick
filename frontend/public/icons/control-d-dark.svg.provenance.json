@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/control-d-dark.svg",
+  "source": "https://controld.com/ (inline <svg aria-label=\"CONTROLD company logo\">, copied byte-for-byte)",
+  "found_at": "https://controld.com/ (the same logo SVG is on /pricing and /free-dns)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "light mode only: #D0E4F3 -> #010818 on all four petals (the published light blue vanishes on the light tile)",
+    "dark file is the logo as published: four petals in #D0E4F3 (only cropped and cleaned)"
+  ],
+  "variant": "dark mode",
+  "notes": "The logo is published only in light blue #D0E4F3, which vanishes on the light tile, so the light-theme file recolours the petals #D0E4F3 -> #010818, the navy Control D's own animated hero logo uses for its disc. The favicon's navy tile exists only as PNG; the docs (docs.controld.com, ReadMe) carry ReadMe's placeholder brandmark, not Control D's. No press/brand page; GitHub Control-D-Inc has no logo.",
+  "license": "Control D brand mark, used nominatively to identify the connected service; trademark rights remain with Control D.",
+  "sha256": "972fd1318a5e06a9b452bd0d5025dc5776d6579eb1bde14220164847108be722"
+}

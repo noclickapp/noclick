@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/debitura.svg",
-  "source": "https://docs.debitura.com/img/debitura-logo.svg",
-  "license": "Debitura official brand mark, used nominatively to identify the service; trademark rights remain with Debitura.",
-  "sha256": "c4fe07f8f9b59c958c1aedee5526eb1a9b86da9a31d236022ad12381bd58fe29"
+  "source": "https://www.debitura.com/ (inline <svg viewBox=\"0 8 256 232\"> in the header's dark-mode logo span, class h-logo-dark)",
+  "found_at": "https://www.debitura.com/ (site header)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "the inline svg is the two-polygon mark alone (the 'Debitura.' text beside it is an HTML <span>, not part of the svg)",
+    "light file: #36B37E -> #007E60 and #F2C519 -> #FFD124, the exact two colours of Debitura's favicon (work/refs/debitura/ref0.png) and of its docs logo (docs.debitura.com/img/debitura-logo.svg)",
+    "cropped the viewBox to the mark"
+  ],
+  "variant": "light mode",
+  "notes": "The docs logo's mark (downloads/debitura/src4/debitura-logo.svg) uses the favicon colours but a flatter, wordmark-lockup proportion; the favicon and the 2026 site header use this taller one, so the header geometry is used and only recoloured for light mode to the favicon's own colours. The light-mode header logo itself is a PNG (dx-m0f023af0c.png).",
+  "license": "Debitura brand mark, used nominatively to identify the connected service; trademark rights remain with Debitura.",
+  "sha256": "5a1587868f96bb4064cdee3cc20421490c0cc647b014a5b739fa66579fd101f1"
 }

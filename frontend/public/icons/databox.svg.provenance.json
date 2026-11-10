@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/databox.svg",
+  "source": "https://databox.com/wp-content/themes/databox/inc/img/favicons/favicon.svg",
+  "found_at": "https://databox.com/ (<link rel=\"icon\" type=\"image/svg+xml\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the favicon is the blue hexagon with its three white bars alone",
+    "cropped the viewBox to the mark",
+    "stripped the RealFaviconGenerator metadata"
+  ],
+  "license": "Databox brand mark, used nominatively to identify the connected service; trademark rights remain with Databox.",
+  "sha256": "38451a14ebc1ffdb2e2ce5cbb501b3cda84f0183e7e62532a68523b79a355d32"
+}

@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/fareharbor.svg",
-  "source": "https://fareharbor.com/ (official header SVG with class fareharbor-logo)",
+  "source": "https://fareharbor.com/login/ (inline <svg id=\"fh-logo-circle\">)",
+  "found_at": "https://fareharbor.com/login/ \u2014 FareHarbor's app login page, where the circle mark is drawn with style=\"color: var(--_fh_blue)\"",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "recoloured the (unset, default black) fill to #0A6ECE, the value of --_fh_blue that the page applies to this SVG (also the logo's blue in the header SVG and simple-icons)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "The primary logo (ticket + wordmark, header SVG and the EPS-only brand zip at pages.fareharbor.com/logo) is a horizontal lockup the guidelines say not to split; the circle mark is the app/favicon mark. The lighthouse is cut out of the disc (open), so it shows the tile colour. The favicon uses a duller #2E6BA6; I used the page's own brand blue #0A6ECE.",
   "license": "FareHarbor brand mark, used nominatively to identify the connected service; trademark rights remain with FareHarbor.",
-  "sha256": "5104154e7d1fb275fa82e51bf763a8782732143bdfd48768f507b358aa3de68f"
+  "sha256": "54e84cdc772d9e64483b15105e1f11f8d562736ec51d5debf3bb5dc5ad0e00fd"
 }

@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/financial-datasets-ai-dark.svg",
+  "source": "https://www.financialdatasets.ai/logos/dark.svg",
+  "found_at": "https://www.financialdatasets.ai/ (header <img class=\"dark:hidden\" src=/logos/light.svg> and <img src=/logos/dark.svg> for dark mode)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the cube outline (elements 0-2, black strokes); removed the 'Financial Datasets' wordmark (element 3)",
+    "cropped the viewBox to the mark incl. stroke width (pad 0.02)",
+    "cleaned",
+    "dark file from the site's own dark-mode logo: same cube (elements 0-2, #DFE2E5 strokes), wordmark removed, cropped, cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "The company's mark is the Lucide 'box' icon (their own logo files say so in a comment). The favicon puts it on a black tile, which was not kept (black background); the header's own light and dark versions are used instead.",
+  "license": "Financial Datasets brand mark, used nominatively to identify the connected service; trademark rights remain with Financial Datasets.",
+  "sha256": "3c092d3825523a066a67e56317d0646b3595cb2e28e84e2e39a4e7718d07b5f1"
+}

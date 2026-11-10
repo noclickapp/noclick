@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/dadata-ru.svg",
-  "source": "https://dadata.ru/img/dadata-logo.svg",
-  "license": "Dadata brand mark, used nominatively to identify the connected service; trademark rights remain with Dadata.",
-  "sha256": "1b291d825a30f02b21a856f9d1cec028e3298e11c6b93d8a284c260bf14b3877"
+  "source": "https://raw.githubusercontent.com/hflabs/dadata-uptime/master/assets/logo.svg",
+  "found_at": "https://status.dadata.ru/ (DaData status page <img src=\"https://raw.githubusercontent.com/hflabs/dadata-uptime/master/assets/logo.svg\">; repo hflabs/dadata-uptime, owned by HFLabs, the maker of DaData)",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the red #EF4741 rounded square and white D as is: it is DaData app icon",
+    "viewBox trimmed to the tile (0 0 512 499.5) with no padding",
+    "cleaned (Figma title/desc)"
+  ],
+  "notes": "The coloured background is DaData own app-icon tile (the favicon), so it stays. Replaces the DaData wordmark-in-red-box SVG (no viewBox) that was 3.4:1 wide. dadata.ru mask icon (/img/safari-pinned-tab.svg) is 404.",
+  "license": "DaData (HFLabs) brand mark, used nominatively to identify the connected service; trademark rights remain with DaData (HFLabs).",
+  "sha256": "0fa83c8e78bd57ccb66b87970c757af14648c9ec082d07bf1dee8e40ff58d01e"
 }

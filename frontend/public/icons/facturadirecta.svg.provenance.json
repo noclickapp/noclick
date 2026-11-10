@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/facturadirecta.svg",
+  "source": "https://www.facturadirecta.com/images/logo-icon.svg",
+  "found_at": "https://www.facturadirecta.com/ (<meta name=smartbanner:icon-apple / smartbanner:icon-google content=.../images/logo-icon.svg>, the app icon of its smart app banner)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept both elements (the D outline and the F)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "license": "FacturaDirecta brand mark, used nominatively to identify the connected service; trademark rights remain with FacturaDirecta.",
+  "sha256": "68e9fe62f44737859cbacd8d00cb7e4d0b5110aa4fb9813d50a8a06dd9b05a67"
+}

@@ -10,14 +10,23 @@ const FireberryIcon: SvgIconComponent = forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/fireberry.png"
-        alt=""
-        className={className}
-        style={{ ...style, objectFit: 'contain' }}
-        {...props}
-    />
+    <>
+        <img
+            ref={ref}
+            src="/icons/fireberry.svg"
+            alt=""
+            className={`${className ?? ''} dark:hidden`}
+            style={{ ...style, objectFit: 'contain' }}
+            {...props}
+        />
+        <img
+            src="/icons/fireberry-dark.svg"
+            alt=""
+            className={`${className ?? ''} hidden dark:block`}
+            style={{ ...style, objectFit: 'contain' }}
+            {...props}
+        />
+    </>
 ));
 FireberryIcon.displayName = 'FireberryIcon';
 

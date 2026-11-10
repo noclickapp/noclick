@@ -5,8 +5,12 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 
 const FixerIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/fixer.png" alt="" className={className}
-            style={{ ...style, objectFit: 'contain' }} {...props} />
+        <>
+            <img ref={ref} src="/icons/fixer.svg" alt="" className={`${className ?? ''} dark:hidden`}
+                style={{ ...style, objectFit: 'contain' }} {...props} />
+            <img src="/icons/fixer-dark.svg" alt="" className={`${className ?? ''} hidden dark:block`}
+                style={{ ...style, objectFit: 'contain' }} {...props} />
+        </>
     ),
 );
 FixerIcon.displayName = 'FixerIcon';

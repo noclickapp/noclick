@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/etermin.svg",
   "source": "https://www.etermin.net/images/eTermin-4C-blau.svg",
+  "found_at": "https://www.etermin.net/ (header <img src=/images/eTermin-4C-blau.svg>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the cloud (element 7, #284378), the orange clock face (8) and hands (9); removed the 'eTermin' wordmark (elements 0-6)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The Safari mask icon is a potrace trace and the touch icon URL serves HTML, so the header SVG is the source. The navy cloud is a thin line that is low-contrast on the dark tile (icon_check passes it), so the dark file uses eTermin's own white-cloud version.",
   "license": "eTermin brand mark, used nominatively to identify the connected service; trademark rights remain with eTermin.",
-  "sha256": "5263953b4664eeebca1b66df2d6823bad3e998e7d79d7b8995788f04d6ff6418"
+  "sha256": "c957c97b892272b2c6ac7cdf54c6697288fdf2b48b40fc8328f8296ae0413263"
 }

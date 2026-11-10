@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/cloze.svg",
+  "source": "https://ai.cloze.com/wp-content/themes/cloze_custom/images/cloze-logo.svg",
+  "found_at": "https://www.cloze.com/ (redirects to https://ai.cloze.com/; header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the seven-piece square mark (elements 0-6), removed the black 'cloze' wordmark (elements 7-11)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "icon_check flags 'vanishes-light 14%': that is the brand's yellow #F2B336 triangles on white, not a white part; left as the brand colours. No background, so works on dark.",
+  "license": "Cloze brand mark, used nominatively to identify the connected service; trademark rights remain with Cloze.",
+  "sha256": "6c299f5b7a21954e59eb366227b7f4467afd775867fac87826e18f9e22ecc39d"
+}

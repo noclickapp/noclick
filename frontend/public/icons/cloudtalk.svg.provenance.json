@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/cloudtalk.svg",
+  "source": "https://media.cloudtalk.io/2026/07/Logo_Symbol.zip (Logo_Symbol/Symbol/Main_Blue/SVG/Symbol_Main_512x512.svg)",
+  "found_at": "https://www.cloudtalk.io/brand-assets/",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cleaned editor attributes; nothing removed (the blue #0527FF rounded square is CloudTalk's own app-icon tile, the 'Symbol' in its brand kit)"
+  ],
+  "notes": "Single file works on both themes: the blue tile is the brand's app icon. The kit also has an all-white variant (Alternative_White) if a tile-less mark is ever wanted.",
+  "license": "CloudTalk brand mark, used nominatively to identify the connected service; trademark rights remain with CloudTalk.",
+  "sha256": "860ad5aa87e001d50ee115956cc1c133e69fc0a84014d1e0170eb96984437317"
+}

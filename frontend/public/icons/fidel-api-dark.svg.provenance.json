@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/fidel-api-dark.svg",
+  "source": "https://cdn.prod.website-files.com/664367022d45646327c93232/6658fd95244903316b932e21_fidel_logo_icon.svg",
+  "found_at": "https://fidelapi.com/ (footer logo <img>)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the black F mark (element 0); removed the 'FIDEL API' wordmark (elements 1-8)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned",
+    "dark file from the header logo icon: kept its white F (element 1), removed the black rounded-square tile (element 0); cropped and cleaned"
+  ],
+  "variant": "dark mode",
+  "notes": "Fidel's app icon is the white F on a black rounded square; the black tile was dropped (icon_check rejects black backgrounds) and the F shipped black for light, white for dark, both from Fidel's own files. Reviewer may prefer the tile kept.",
+  "license": "Fidel API brand mark, used nominatively to identify the connected service; trademark rights remain with Fidel API.",
+  "sha256": "8a42c0f5b4c650d70faceb11f1c55ad04425aa63b40695a1604bbd12b5a87ac9"
+}

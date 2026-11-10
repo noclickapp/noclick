@@ -1,7 +1,14 @@
 {
   "path": "frontend/public/icons/currents-api.svg",
-  "source": "https://currentsapi.services/favicon.ico",
-  "license": "Currents API brand mark, used nominatively to identify the service. Trademark rights remain with Currents API.",
-  "sha256": "dc3b9f49642daacb4be009c62f65d311674f8451cf1454b5798c12bdfe708761",
-  "modifications": "Trailing whitespace normalized; SVG artwork preserved."
+  "source": "https://currentsapi.services/img/logo-only.svg?q=1772759572",
+  "found_at": "https://currentsapi.services/en (<link rel=\"icon\" type=\"image/svg+xml\" href=\"/img/logo-only.svg\">, also used on the page as /en/img/logo-only.svg)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the wave mark",
+    "cleaned (Inkscape namedview/metadata removed)"
+  ],
+  "notes": "The mark is drawn as a blue rect clipped by the wave path (clipPath9), as Inkscape exported it; derive and icon_check handle it. The Inkscape layer is named \"Image\", so the wave may have been traced in Inkscape, but its edges are smooth at 900px with no fringe, so it ships. A leading Inkscape comment survives clean (harmless).",
+  "license": "Currents API brand mark, used nominatively to identify the connected service; trademark rights remain with Currents API.",
+  "sha256": "d234ff9e2455a8ea712b53bf51b6b15e69c77f53b9a335678800824111b10b4c"
 }

@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/docugenerate.svg",
+  "source": "https://www.docugenerate.com/favicon.svg",
+  "found_at": "https://app.docugenerate.com/ and https://api.docugenerate.com/ (<link rel=\"icon\"> SVG favicon; the app serves the identical file at /favicon.svg)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the favicon is the three stacked documents with text lines alone, in #0D47A1",
+    "cropped the viewBox to the mark",
+    "stripped editor metadata"
+  ],
+  "variant": "light mode",
+  "notes": "The deep blue reads on the dark tile (icon_check: nothing lost) but is dim there; if the reviewer wants more contrast in dark mode, DocuGenerate's own white version of the mark is in its header logo (downloads/docugenerate/src2/logo.svg, elements 0-7).",
+  "license": "DocuGenerate brand mark, used nominatively to identify the connected service; trademark rights remain with DocuGenerate.",
+  "sha256": "b0d720694e378deb90ca952ac01266bd9dc4ef9a1b337ab6a441429a10e38eb7"
+}

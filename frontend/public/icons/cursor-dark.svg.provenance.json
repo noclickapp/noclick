@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/cursor-dark.svg",
+  "source": "https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/brand/cursor-brand-assets.zip",
+  "found_at": "https://cursor.com/brand (Download brand assets zip; files General Logos/Cube/SVG/CUBE_2D_LIGHT.svg and CUBE_2D_DARK.svg)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the cube",
+    "cleaned (Illustrator comment and XML prolog)",
+    "none: the dark file is Cursor own CUBE_2D_DARK.svg (#edecec), cropped and cleaned the same way"
+  ],
+  "variant": "dark mode",
+  "notes": "Used the brand kit flat 2D cube in its own light (#26251e) and dark (#edecec) versions rather than the 2.5D shaded cube (CUBE_25D.svg, which has a white facet that vanishes on light). Cursor app icons in the kit are PNG only, so no tile.",
+  "license": "Cursor (Anysphere) brand mark, used nominatively to identify the connected service; trademark rights remain with Cursor (Anysphere).",
+  "sha256": "77461ab5fbdff9fa307b55e6cee1eb0451a3fef8a973839d7e96f683ee319237"
+}

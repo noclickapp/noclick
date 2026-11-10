@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/convolo-ai.svg",
   "source": "https://cdn.prod.website-files.com/6a56097426f319b7b5265218/6a60aa820f977527cb240197_bc-logo.svg",
-  "license": "Brightcall trademark; official logo used to identify the Convolo Ai integration. Published on https://www.brightcall.ai/.",
-  "sha256": "fc1e42ee9a5b030544cd4ae4786ad96e6fb3065bd7faf82d2a882bc13d34aa31"
+  "found_at": "https://www.brightcall.ai/en (header logo <img>; the footer logo is the same drawing)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only subpaths 0-2 of the single compound path (the circle and its B cut-out); dropped the Brightcall.ai wordmark subpaths 3-22",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "In the vector logo the B is knocked out of the blue circle (evenodd), so on a dark tile it shows as a dark B, while the PNG app icon has a white B. Left open per the no-filled-counters rule; reviewer may prefer it. The file keeps the source preserveAspectRatio=\"none\"; the cropped viewBox is square (32.84 x 32.80), so it does not distort in square slots.",
+  "license": "Brightcall (formerly Convolo) brand mark, used nominatively to identify the connected service; trademark rights remain with Brightcall (formerly Convolo).",
+  "sha256": "6b18a1fe10fcb4bdee0870ce0825377c7aa40f6f8b1a4d625d67f8bd313d687a"
 }

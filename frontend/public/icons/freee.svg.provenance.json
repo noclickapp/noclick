@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/freee.svg",
   "source": "https://www.freee.co.jp/static/1f4f72049d0c1690b533cb60cbe6468f/logo.svg",
-  "license": "Freee trademark; official website logo used solely to identify the integration.",
-  "sha256": "1fb283762fddce6f5e15281357e51aca814acd72d35b8373f47dc1409ca7141a"
+  "found_at": "https://www.freee.co.jp/ (header logo; the current file's recorded source, re-downloaded byte-identical)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the swallow's subpath (subpath 4) of the blue compound path (element 0), dropping the 'freee' script and its e counters (subpaths 0-3)",
+    "kept the white eye and belly (element 1)",
+    "cropped the viewBox to the bird",
+    "cleaned"
+  ],
+  "notes": "freee's favicon is the swallow alone, so the bird is its app mark. The white belly and eye sit inside the blue body, and blue reads on both themes; one file. No brand kit found (corp.freee.co.jp/brand 404; developer.freee.co.jp only has wordmark logos).",
+  "license": "freee brand mark, used nominatively to identify the connected service; trademark rights remain with freee.",
+  "sha256": "43336a3302b9430c262fea746a467c797bcbd3539b7606207fb9dc1d2943ee83"
 }

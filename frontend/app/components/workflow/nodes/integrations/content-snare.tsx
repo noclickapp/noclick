@@ -12,7 +12,7 @@ const ContentSnareIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/content-snare.png"
+        src="/icons/content-snare.svg"
         alt=""
         aria-hidden="true"
         className={className}

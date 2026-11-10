@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/docsautomator.svg",
+  "source": "https://app.docsautomator.co/assets/docsautomator-icon-C28yBtvn.svg",
+  "found_at": "https://app.docsautomator.co/login (DocsAutomator's app; its login page preloads this icon)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the file is DocsAutomator's app icon (white gears on the indigo gradient document tile with its folded corner)",
+    "stripped the Illustrator comment and editor metadata"
+  ],
+  "notes": "The indigo document-with-folded-corner is the mark itself (DocsAutomator's app icon), not an added background, so it is kept.",
+  "license": "DocsAutomator brand mark, used nominatively to identify the connected service; trademark rights remain with DocsAutomator.",
+  "sha256": "8feac3eda6d24fb6ad8025d8a0df334b58bb53fb801642b173c54e100349e282"
+}

@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/coinmarketcap.svg",
   "source": "https://s2.coinmarketcap.com/static/cloud/img/coinmarketcap_1.svg",
-  "license": "CoinMarketCap trademark; official asset used to identify the CoinMarketCap integration.",
-  "sha256": "e8bd9cd02dc50c289fff9ceea02e6f652c744de4a82a9d80f9fe97aa5b67b080"
+  "found_at": "https://coinmarketcap.com/ (header logo)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the ring-and-M symbol (subpaths 0-1 of the single compound path), removed the 'CoinMarketCap' wordmark subpaths (2-20)",
+    "cropped the viewBox to the symbol",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "Replaces the tiny-wordmark file with the symbol in CoinMarketCap's own black (#17181B) and white versions. Alternative if the reviewer wants the blue: the site's own nav icon https://s2.coinmarketcap.com/static/cloud/img/menu/MenuCmcIconV3.svg (downloads/coinmarketcap/src3/) is the white symbol on a #486DF7 disc; the app icon itself is a blue square, which no SVG I found carries.",
+  "license": "CoinMarketCap brand mark, used nominatively to identify the connected service; trademark rights remain with CoinMarketCap.",
+  "sha256": "98c375133481cd337c33b3e610368ace23934bec4832e51f35b094ba81246d77"
 }

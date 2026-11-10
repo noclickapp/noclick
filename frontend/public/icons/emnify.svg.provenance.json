@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/emnify.svg",
-  "source": "https://docs.emnify.com/_fern-files/emnify.docs.buildwithfern.com/14765f04c5a0426d2b7f9c3850b6eb44189a8e3cca9474491b1c05d07d8589d9/assets/emnify-dark.svg",
-  "license": "EMnify brand mark, used nominatively to identify the connected service; trademark rights remain with EMnify.",
-  "sha256": "14765f04c5a0426d2b7f9c3850b6eb44189a8e3cca9474491b1c05d07d8589d9"
+  "source": "https://portal.emnify.com/img/icons/safari-pinned-tab.svg",
+  "found_at": "https://portal.emnify.com/sign-in (the emnify Portal app's icon set, /img/icons/, beside its apple-touch and favicon PNGs)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "cropped the viewBox to the EM mark",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The file is a clean Figma export (6 paths, rounded bars), not a potrace trace. The EM mark is 2.2:1 wide by design, so icon_check flags wordmark-shape; it is emnify's app/favicon mark, not the 'emnify' wordmark the old file was. The emnify.com header has the same EM above the wordmark, but its own clipPath trims the M's right bar, so the portal file was used.",
+  "license": "emnify brand mark, used nominatively to identify the connected service; trademark rights remain with emnify.",
+  "sha256": "c472bb644d48196538fc9195d83d99fa6343c9c58511660f30d0c32c26842605"
 }
