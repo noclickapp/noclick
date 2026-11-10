@@ -1,0 +1,10 @@
+{
+  "printjob_succeeded.json": {
+    "source": "https://apidocs.ezeep.com/ezeepblue/api/rest_api/webhooks/README.html",
+    "description": "Complete provider-published request content from Implement an endpoint."
+  },
+  "webhook_registration.json": {
+    "source": "https://apidocs.ezeep.com/ezeepblue/api/rest_api/webhooks/README.html",
+    "description": "Complete Add an endpoint example response."
+  }
+}

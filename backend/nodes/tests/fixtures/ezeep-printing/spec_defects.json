@@ -1,0 +1,14 @@
+[
+  {
+    "kind": "d",
+    "defect": "The printing schema refers to undefined BearerAuth while only basicAuth is defined. All printing endpoints use bearer OAuth2 tokens.",
+    "docs_url": "https://apidocs.ezeep.com/ezeepblue/auth/README.html",
+    "treatment": "Catalog auth_override=bearer, with the official auth documentation as source; contract bytes remain unchanged."
+  },
+  {
+    "kind": "d",
+    "defect": "The printing-only schema omits POST /webhooks/endpoints and DELETE /webhooks/endpoints/{endpoint_id}. This is the sole cause of the webhook registration conformance blockers.",
+    "docs_url": "https://apidocs.ezeep.com/ezeepblue/api/rest_api/webhooks/README.html",
+    "treatment": "Register/unregister exactly as documented; the unit tests cover both requests and HTTP Basic delivery authentication, and the conformance harness delivers the complete published event example without unknown field reads."
+  }
+]

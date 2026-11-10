@@ -1,0 +1,1094 @@
+[
+  {
+    "provider": "ezeep-printing",
+    "node_type": "automation-ezeep-printing",
+    "checked": 25,
+    "passed": 24,
+    "failed": 1,
+    "fixture_errors": 0,
+    "response_checked": 24,
+    "auth_checked": 24,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 24,
+      "total": 106
+    },
+    "triggers": {
+      "checked": 1,
+      "passed": 0
+    },
+    "operations": [
+      {
+        "operation": "get_current_user",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/users/me/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/users/me/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "3729ce02ec60ce37cea18bba3b7e668c2f14d85b68a6c12040ba104481ecfe37"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_current_user"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_printers",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/printers/?limit=100&offset=0&q=1&location=1&connector_id=00000000-0000-4000-8000-000000000001&status=ON",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/printers/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "ba6f26927a1451cba3a235abe7952672a9dd4d9545324f645d74cb309238b59b"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_printers",
+          "limit": 100,
+          "offset": 0,
+          "q": "1",
+          "location": "1",
+          "connector_id": "00000000-0000-4000-8000-000000000001",
+          "status": "ON"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_printer",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/printers/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/printers/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "c5c87270f0d81a55238f48ad83bc2c634f407ea1b4e1c2e97540888192ef7bbd"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_printer",
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "update_printer",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PATCH",
+            "url": "https://api2.ezeep.com/printing/v1/printers/00000000-0000-4000-8000-000000000001/",
+            "content_type": "application/json",
+            "body": "{\"name\":\"1\",\"location\":\"1\",\"manual_driver_id\":\"00000000-0000-4000-8000-000000000001\",\"is_favorite\":false}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "105",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PATCH /printing/v1/printers/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "c5c87270f0d81a55238f48ad83bc2c634f407ea1b4e1c2e97540888192ef7bbd"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_printer",
+          "id": "00000000-0000-4000-8000-000000000001",
+          "name": "1",
+          "location": "1",
+          "manual_driver_id": "00000000-0000-4000-8000-000000000001",
+          "is_favorite": false
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "delete_printer",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api2.ezeep.com/printing/v1/printers/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /printing/v1/printers/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_status": 204,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_printer",
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_printer_capabilities",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/printers/00000000-0000-4000-8000-000000000001/capabilities/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/printers/{printer_id}/capabilities/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_status": 200,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_printer_capabilities",
+          "printer_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_print_jobs",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/printjobs/?limit=100&offset=0&q=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/printjobs/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "889bfd235aa859039a590fecaabb31b8cb88b8f0b36f9f7e0f365b6a9070240b"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_print_jobs",
+          "limit": 100,
+          "offset": 0,
+          "q": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_print_job",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/printjobs/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/printjobs/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f4813785f8a6e807327a29bdd4218ff3d0c02e93e6ea3cd85cc3d94c7bebd1c1"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_print_job",
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "delete_print_job",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api2.ezeep.com/printing/v1/printjobs/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /printing/v1/printjobs/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_status": 204,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_print_job",
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_connectors",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/connectors/?limit=100&offset=0&q=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/connectors/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "e94fc6c4076e0166bdc85bcb17f0c79888137c21824476a17fc5789ae1836471"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_connectors",
+          "limit": 100,
+          "offset": 0,
+          "q": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_connector",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/connectors/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/connectors/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "679d3105d1d50eee38bfc430cf5af33a3cead7c9f0f65b931962424ee752b5b7"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_connector",
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "update_connector",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PATCH",
+            "url": "https://api2.ezeep.com/printing/v1/connectors/00000000-0000-4000-8000-000000000001/",
+            "content_type": "application/json",
+            "body": "{\"readable_name\":\"1\",\"description\":\"1\",\"location\":\"1\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "54",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PATCH /printing/v1/connectors/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "679d3105d1d50eee38bfc430cf5af33a3cead7c9f0f65b931962424ee752b5b7"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_connector",
+          "id": "00000000-0000-4000-8000-000000000001",
+          "readable_name": "1",
+          "description": "1",
+          "location": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_groups",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/groups/?limit=100&offset=0&q=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/groups/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "ca520e8521de8536ce788e21f3745aa52173f1ed2209da0675ad7a87352eec99"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_groups",
+          "limit": 100,
+          "offset": 0,
+          "q": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_group",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/groups/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/groups/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "53b52c8aac643613c9ec9402ecd4fe7e8a50baf1b30ce8c4a293d5673d8624af"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_group",
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "create_group",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api2.ezeep.com/printing/v1/groups/",
+            "content_type": "application/json",
+            "body": "{\"name\":\"1\",\"description\":\"1\",\"local_printing_enabled\":false,\"myprinters_enabled\":false}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "88",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /printing/v1/groups/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 201,
+            "response_sha256": "53b52c8aac643613c9ec9402ecd4fe7e8a50baf1b30ce8c4a293d5673d8624af"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_group",
+          "name": "1",
+          "description": "1",
+          "local_printing_enabled": false,
+          "myprinters_enabled": false
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "update_group",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PATCH",
+            "url": "https://api2.ezeep.com/printing/v1/groups/00000000-0000-4000-8000-000000000001/",
+            "content_type": "application/json",
+            "body": "{\"name\":\"1\",\"description\":\"1\",\"local_printing_enabled\":false,\"myprinters_enabled\":false}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "88",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PATCH /printing/v1/groups/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "53b52c8aac643613c9ec9402ecd4fe7e8a50baf1b30ce8c4a293d5673d8624af"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_group",
+          "id": "00000000-0000-4000-8000-000000000001",
+          "name": "1",
+          "description": "1",
+          "local_printing_enabled": false,
+          "myprinters_enabled": false
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "delete_group",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api2.ezeep.com/printing/v1/groups/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /printing/v1/groups/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_status": 204,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_group",
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_users",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/users/?limit=100&offset=0&q=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/users/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "593179d8264a2d1fe7070086adae90f504704a748a12bdee2e421b126edf171d"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_users",
+          "limit": 100,
+          "offset": 0,
+          "q": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_user",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/users/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/users/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "3729ce02ec60ce37cea18bba3b7e668c2f14d85b68a6c12040ba104481ecfe37"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_user",
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_printer_profiles",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/printer_profiles/?limit=100&offset=0&q=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/printer_profiles/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "6e7f13b136b6da1b99df6497368869a140d2ae8c7e93b3dc20ff6af1ca217cda"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_printer_profiles",
+          "limit": 100,
+          "offset": 0,
+          "q": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_printer_profile",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api2.ezeep.com/printing/v1/printer_profiles/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /printing/v1/printer_profiles/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "a24c4bb91c9afc42d445a31fb659af0aee43b9e32640d428749659002e257370"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_printer_profile",
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "create_printer_profile",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api2.ezeep.com/printing/v1/printer_profiles/",
+            "content_type": "application/json",
+            "body": "{\"name\":\"1\",\"description\":\"1\",\"color\":\"MONOCHROME\",\"orientation\":\"LANDSCAPE\",\"duplex\":\"DUPLEX_SIMPLEX\",\"paper_name\":\"1\",\"resolution\":1,\"tray\":\"1\",\"selected_printers\":[\"00000000-0000-4000-8000-000000000001\"]}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "207",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /printing/v1/printer_profiles/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 201,
+            "response_sha256": "a24c4bb91c9afc42d445a31fb659af0aee43b9e32640d428749659002e257370"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_printer_profile",
+          "name": "1",
+          "description": "1",
+          "color": "MONOCHROME",
+          "orientation": "LANDSCAPE",
+          "duplex": "DUPLEX_SIMPLEX",
+          "paper_name": "1",
+          "resolution": 1,
+          "tray": "1",
+          "selected_printers": [
+            "00000000-0000-4000-8000-000000000001"
+          ]
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "update_printer_profile",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PATCH",
+            "url": "https://api2.ezeep.com/printing/v1/printer_profiles/00000000-0000-4000-8000-000000000001/",
+            "content_type": "application/json",
+            "body": "{\"name\":\"1\",\"description\":\"1\",\"color\":\"MONOCHROME\",\"orientation\":\"LANDSCAPE\",\"duplex\":\"DUPLEX_SIMPLEX\",\"paper_name\":\"1\",\"resolution\":1,\"tray\":\"1\",\"selected_printers\":[\"00000000-0000-4000-8000-000000000001\"]}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "207",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PATCH /printing/v1/printer_profiles/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "a24c4bb91c9afc42d445a31fb659af0aee43b9e32640d428749659002e257370"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_printer_profile",
+          "id": "00000000-0000-4000-8000-000000000001",
+          "name": "1",
+          "description": "1",
+          "color": "MONOCHROME",
+          "orientation": "LANDSCAPE",
+          "duplex": "DUPLEX_SIMPLEX",
+          "paper_name": "1",
+          "resolution": 1,
+          "tray": "1",
+          "selected_printers": [
+            "00000000-0000-4000-8000-000000000001"
+          ]
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "delete_printer_profile",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api2.ezeep.com/printing/v1/printer_profiles/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /printing/v1/printer_profiles/{id}/",
+            "security_declared": true,
+            "auth_override": {
+              "scheme": "bearer",
+              "source": "https://apidocs.ezeep.com/ezeepblue/auth/README.html"
+            },
+            "response_status": 204,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_printer_profile",
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "on_print_job_succeeded",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api2.ezeep.com/webhooks/endpoints",
+            "content_type": "application/json",
+            "body": "{\"name\":\"NoClick conformance\",\"url\":\"https://conformance.hooks.example.test/webhook/conformance\",\"topics\":[\"printjob_succeeded\"],\"authentication_scheme\":\"basic\",\"basic_username\":\"noclick\",\"basic_password\":\"VuyXmEbuvoSm-RitRscjzRwGwz7faipmzCK2o6dNq8g\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api2.ezeep.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "244",
+              "content-type": "application/json"
+            }
+          }
+        ],
+        "failures": [
+          "ValueError: No spec operation for POST https://api2.ezeep.com/webhooks/endpoints"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "on_print_job_succeeded"
+        },
+        "trigger": {
+          "kind": "webhook",
+          "registration": "failed",
+          "events": [
+            {
+              "event": "printjob_succeeded",
+              "where": "events.json",
+              "source": "docs",
+              "outcome": "delivered",
+              "failures": [],
+              "reads": 18
+            }
+          ],
+          "failures": [
+            "registration: ValueError: No spec operation for POST https://api2.ezeep.com/webhooks/endpoints"
+          ],
+          "advisory": [
+            "signature not checkable offline: HTTP Basic authentication (RFC 7617) with a random per-endpoint password; no body HMAC. Covered by node tests."
+          ],
+          "signature": "unsupported"
+        },
+        "passed": false
+      }
+    ]
+  }
+]
