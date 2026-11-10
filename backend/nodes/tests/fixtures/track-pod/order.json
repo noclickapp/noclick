@@ -1,0 +1,15 @@
+{
+  "source": "https://api.track-pod.com/swagger/v1/swagger.json",
+  "version": "2.0",
+  "description": "Order response assembled from the provider-published schema property examples (not a live recording).",
+  "order": {
+    "Number": "cv30001-2",
+    "Id": "10000345",
+    "Client": "Maxima",
+    "Address": "2 St Josephs Crescent, Liverpool L3 3JF",
+    "Status": "Delivered",
+    "StatusDate": "2019-02-01T15:31:00",
+    "TrackId": "3F2504E0-4F89-11D3-9A0C-0305E82C3301",
+    "Note": "Only to sign Invoice"
+  }
+}
