@@ -32,22 +32,29 @@ export interface IntegrationMetadata {
     autoSelectCredential: boolean;
 }
 
-/** Refuse conflicting declarations rather than depending on glob evaluation order. */
-export function mergeDeclarations<T>(existing: Record<string, T>, additions: Record<string, T>): Record<string, T> {
-    const merged = { ...existing };
+/** Adds `additions` into `target`, refusing conflicting declarations rather than depending on glob evaluation order. */
+function addDeclarations<T>(target: Record<string, T>, additions: Record<string, T>): void {
     for (const [key, value] of Object.entries(additions)) {
-        if (key in merged && JSON.stringify(merged[key]) !== JSON.stringify(value)) {
+        if (key in target && JSON.stringify(target[key]) !== JSON.stringify(value)) {
             throw new Error(`Conflicting integration declaration: ${key}`);
         }
-        merged[key] = value;
+        target[key] = value;
     }
+}
+
+/** `existing` with `additions`, refusing conflicting declarations. */
+export function mergeDeclarations<T>(existing: Record<string, T>, additions: Record<string, T>): Record<string, T> {
+    const merged = { ...existing };
+    addDeclarations(merged, additions);
     return merged;
 }
 
 export function collectIntegrationMetadata(files: Record<string, IntegrationMetadata>) {
-    let nodeMeta: Record<string, NodeMetaEntry> = {};
-    let credentialTypes: Record<string, string> = {};
-    let providerLabels: Record<string, string> = {};
+    // Each integration adds into the same maps: copying them per integration was quadratic, and every page paid it
+    // at load (about a second of a throttled laptop's main thread at 1,000 integrations).
+    const nodeMeta: Record<string, NodeMetaEntry> = {};
+    const credentialTypes: Record<string, string> = {};
+    const providerLabels: Record<string, string> = {};
     const autoSelectTypes: string[] = [];
     const oauthProviders: Record<string, PublicOAuthProvider> = Object.create(null);
     for (const [path, meta] of Object.entries(files).sort(([a], [b]) => a.localeCompare(b))) {
@@ -55,9 +62,9 @@ export function collectIntegrationMetadata(files: Record<string, IntegrationMeta
         if (meta.type !== `automation-${slug}` || meta.type in nodeMeta) {
             throw new Error(`Invalid or duplicate integration metadata: ${path}`);
         }
-        nodeMeta = mergeDeclarations(nodeMeta, { [meta.type]: meta.nodeMeta });
-        credentialTypes = mergeDeclarations(credentialTypes, meta.credentialTypes);
-        providerLabels = mergeDeclarations(providerLabels, meta.providerLabels);
+        nodeMeta[meta.type] = meta.nodeMeta;
+        addDeclarations(credentialTypes, meta.credentialTypes);
+        addDeclarations(providerLabels, meta.providerLabels);
         for (const spec of meta.oauthProviders ?? []) {
             if (spec.provider in oauthProviders) throw new Error(`Duplicate OAuth provider: ${spec.provider}`);
             if (!Object.values(meta.credentialTypes).includes(spec.credentialType)) throw new Error(`Unknown OAuth credential: ${spec.credentialType}`);

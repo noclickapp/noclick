@@ -20,6 +20,10 @@ describe('integration metadata', () => {
     });
     it('rejects conflicting credential titles and path/type mismatches', () => {
         expect(() => mergeDeclarations({ Example: 'a' }, { Example: 'b' })).toThrow(/Conflicting/);
+        const other = { ...example, type: 'automation-other', credentialTypes: { ExampleCredential: 'other_api_key' } };
+        expect(() => collectIntegrationMetadata({ 'example.json': example, 'other.json': other })).toThrow(/Conflicting/);
+        const sameLabel = { ...example, type: 'automation-other', credentialTypes: {}, providerLabels: { example: 'Example API Key' } };
+        expect(collectIntegrationMetadata({ 'example.json': example, 'other.json': sameLabel }).providerLabels).toEqual({ example: 'Example API Key' });
         expect(() => collectIntegrationMetadata({ 'wrong.json': example })).toThrow(/Invalid/);
         expect(mergeDeclarations({ Example: 'a' }, { Example: 'a' })).toEqual({ Example: 'a' });
     });
