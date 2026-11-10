@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <act:act xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    	xmlns:act="http://www.gov.bc.ca/2013/legislation/act" 
+    	xmlns:bcl="http://www.gov.bc.ca/2013/bclegislation" 
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:in="http://www.qp.gov.bc.ca/2013/inline" 
+        xmlns:fun="http://www.bclaws.ca/xslt/functions" 
+        xmlns:oasis="http://docs.oasis-open.org/ns/oasis-exchange/table" 
+        xmlns:reg="http://www.gov.bc.ca/2013/legislation/regulation"
+        xsi:schemaLocation="http://www.gov.bc.ca/2013/legislation/act 
+        	http://standards.qp.gov.bc.ca/standards/act.xsd" 
+        id="00_01009_01">
+        <act:title>Drinking Water Protection Act</act:title>
+        <act:chapter>9</act:chapter>
+        <act:yearenacted>2001</act:yearenacted>
+        <act:currency>
+            <act:tlc>E3tlc01009</act:tlc>
+        </act:currency>
+        <act:assentedto>April 11, 2001</act:assentedto>
+        <act:content>
+            <bcl:part id="d2e25">
+                <bcl:num>1</bcl:num>
+                <bcl:text>Introductory Provisions</bcl:text>
+                <bcl:section id="d2e34">
+                    <bcl:marginalnote>Definitions</bcl:marginalnote>
+                    <bcl:num>1</bcl:num>
+                    <bcl:text>In this Act:</bcl:text>
+                    <bcl:definition id="d2e45">
+                        <bcl:text>
+                            <bcl:term>aquifer</bcl:term>means an aquifer as defined in the 
+                            <bcl:link resource="leg" xlink:href="/legislation/96483_01" xlink:type="locator"><in:doc>Water 
+                            Act</in:doc></bcl:link>;</bcl:text>
+                    </bcl:definition>

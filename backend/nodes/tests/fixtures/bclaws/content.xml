@@ -1,0 +1,22 @@
+<root>
+        <index>
+            <CIVIX_DOCUMENT_TITLE>Statutes and Regulations</CIVIX_DOCUMENT_TITLE>
+            <CIVIX_DOCUMENT_ID>statreg</CIVIX_DOCUMENT_ID>
+            <CIVIX_INDEX_ID>statreg</CIVIX_INDEX_ID>
+            <CIVIX_DOCUMENT_TYPE>index</CIVIX_DOCUMENT_TYPE>
+            <CIVIX_INDEX_FIELDS>XPATH:chapter://*:chapter</CIVIX_INDEX_FIELDS>
+            <CIVIX_INDEX_FIELDS>XPATH:desc://*:desc</CIVIX_INDEX_FIELDS>
+            <CIVIX_INDEX_FIELDS>XPATH:oic://*:oic</CIVIX_INDEX_FIELDS>
+            <CIVIX_INDEX_FIELDS>XPATH:term://*:term</CIVIX_INDEX_FIELDS>
+            <CIVIX_INDEX_FIELDS>XPATH:regnum:/*[1]/*:regnum</CIVIX_INDEX_FIELDS>
+            <CIVIX_INDEX_FIELDS>XPATH:type:/*[1]/name()</CIVIX_INDEX_FIELDS>
+            <CIVIX_INDEX_FIELDS>XPATH:marginalnote://*:marginalnote</CIVIX_INDEX_FIELDS>
+            <CIVIX_INDEX_FIELDS>XPATH:yearenacted:/*[1]/*:yearenacted</CIVIX_INDEX_FIELDS>
+            <CIVIX_INDEX_FIELDS>XPATH:insert://*:insert</CIVIX_INDEX_FIELDS>
+            <CIVIX_INDEX_FIELDS>XPATH:hnote://*:hnote</CIVIX_INDEX_FIELDS>
+            <CIVIX_INDEX_FIELDS>
+            XPATH:amendment://text()[preceding::processing-instruction()[1][name() = 'amendment-start']]
+            </CIVIX_INDEX_FIELDS>
+            <CIVIX_INDEX_FIELDS>XPATH:title://*:title[1]</CIVIX_INDEX_FIELDS>
+        </index>
+    </root>

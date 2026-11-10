@@ -1,0 +1,27 @@
+{
+  "content.xml": {
+    "source": "https://www.bclaws.gov.bc.ca/civix/template/complete/api/API_content.html",
+    "example_index": 0,
+    "note": "Provider example copied from displayed preformatted text; may be shortened by publisher."
+  },
+  "directory.xml": {
+    "source": "https://www.bclaws.gov.bc.ca/civix/template/complete/api/API_content.html",
+    "example_index": 1,
+    "note": "Provider example copied from displayed preformatted text; may be shortened by publisher."
+  },
+  "document-metadata.xml": {
+    "source": "https://www.bclaws.gov.bc.ca/civix/template/complete/api/API_document.html",
+    "example_index": 0,
+    "note": "Provider example copied from displayed preformatted text; may be shortened by publisher."
+  },
+  "document-excerpt.xml": {
+    "source": "https://www.bclaws.gov.bc.ca/civix/template/complete/api/API_document.html",
+    "example_index": 1,
+    "note": "Provider example copied from displayed preformatted text; may be shortened by publisher."
+  },
+  "search.xml": {
+    "source": "https://www.bclaws.gov.bc.ca/civix/template/complete/api/API_search.html",
+    "example_index": 0,
+    "note": "Provider example copied from displayed preformatted text; may be shortened by publisher."
+  }
+}
