@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
+import { ShortcutTooltip } from '~/components/shared/ShortcutTooltip';
 
 interface CopyButtonProps {
     value: string;
@@ -24,17 +25,20 @@ export function CopyButton({ value, className = '' }: CopyButtonProps) {
     };
 
     return (
-        <button
-            type="button"
-            onClick={handleCopy}
-            className={`p-1.5 rounded hover:bg-foreground/[0.08] transition-colors shrink-0 ${className}`}
-            title={copied ? 'Copied!' : 'Copy to clipboard'}
-        >
-            {copied ? (
-                <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
-            ) : (
-                <Copy className="w-4 h-4 text-muted-foreground" />
-            )}
-        </button>
+        // An icon button is a circle, named by the app's tooltip.
+        <ShortcutTooltip label={copied ? 'Copied' : 'Copy'}>
+            <button
+                type="button"
+                onClick={handleCopy}
+                aria-label={copied ? 'Copied' : 'Copy'}
+                className={`p-1.5 rounded-full hover:bg-foreground/[0.08] transition-colors shrink-0 ${className}`}
+            >
+                {copied ? (
+                    <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                ) : (
+                    <Copy className="w-4 h-4 text-muted-foreground" />
+                )}
+            </button>
+        </ShortcutTooltip>
     );
 }
