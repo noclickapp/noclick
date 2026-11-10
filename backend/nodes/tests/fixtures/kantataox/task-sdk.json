@@ -1,0 +1,15 @@
+{
+  "count": 1,
+  "results": [
+    {
+      "key": "stories",
+      "id": "7"
+    }
+  ],
+  "stories": {
+    "7": {
+      "title": "My new record",
+      "id": "7"
+    }
+  }
+}

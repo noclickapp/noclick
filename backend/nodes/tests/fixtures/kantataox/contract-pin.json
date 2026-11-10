@@ -1,0 +1,49 @@
+{
+  "evidence": "openapi",
+  "original_contract": {
+    "file": "openapi.yaml",
+    "sha256": "c129aa6f7cf94f433a7469fa18355a32434c2e8cb8d745c842862fc5c9a5d64e",
+    "version": "1.0.0",
+    "source_url": "https://app.mavenlink.com/oas/specification"
+  },
+  "validated_representation": {
+    "file": "openapi3.json",
+    "sha256": "3bb2fe2649ca4a70e5e65a030d48dccba9b8e9b89cf766e44558c611c0eb7fe0",
+    "version": "1.0.0",
+    "source_url": "https://app.mavenlink.com/oas/specification"
+  },
+  "conversion_audit": {
+    "operations_unchanged": 418,
+    "schemas_retained": 129,
+    "info_unchanged": true,
+    "original_hash_unchanged": true,
+    "tool": {
+      "tool": "swagger2openapi",
+      "version": "7.0.8",
+      "command": "npx --yes swagger2openapi@7.0.8 --patch --verbose openapi.yaml -o openapi3.json",
+      "note": "Original pinned bytes retained. --patch removes invalid collectionFormat: csv on two scalar string query parameters in unused foreign-exchange and accounting-delete endpoints; no scalar serialization changes. All method/path/operationId mappings and schema definitions retained."
+    },
+    "warnings": [],
+    "schema_semantics_unchanged": true,
+    "schema_renaming": "The 19 names containing :: were renamed with _ and all references updated by the converter. After this mechanical reference renaming, all 129 schema definitions are identical."
+  },
+  "spec_notes": [
+    {
+      "contract": "The success schemas leave results[].key and results[].id unconstrained and do not correlate them with the resource index. Generated full responses can contain arbitrary key/id values unrelated to the resource index, unlike the documented canonical results envelope. The node correctly rejects unmatched references; these are generated-response parser advisories, not request failures.",
+      "docs": "https://app.mavenlink.com/oas/specification",
+      "section": "info.description: Response Format and Includes",
+      "blocking": false
+    },
+    {
+      "contract": "Two unused operations declare collectionFormat: csv on a scalar string query csv_file, which Swagger does not permit. swagger2openapi --patch removes those annotations; scalar string encoding is unchanged and the original published bytes remain pinned.",
+      "operations": [
+        "POST /foreign_exchange/exchange_tables/{id}/rates",
+        "PUT /project_accounting_records/delete"
+      ],
+      "docs": "https://app.mavenlink.com/oas/specification",
+      "blocking": false
+    }
+  ],
+  "live_recorded": false,
+  "node_source_sha256": "201ba08d51cc99e38c89e056c29ded6945d4e1b6d0002ef26ceb0d93b1684e8c"
+}
