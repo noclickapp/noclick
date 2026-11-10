@@ -7,9 +7,9 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 // Unmodified compact brand asset from https://www.fillout.com
 import type { CSSProperties as BrandCSSProperties } from 'react';
 
-// Sourced brand artwork: https://logos.composio.dev/api/fillout_forms
+// Fillout's own favicon PNG (its app mark exists only as raster)
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/fillout-preferred-brand.svg" alt="" aria-hidden="true" className={className}
+    <img src="/icons/fillout-preferred-brand.png" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
