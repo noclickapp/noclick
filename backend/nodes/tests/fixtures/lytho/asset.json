@@ -1,0 +1,14 @@
+{
+  "source": "https://edge.us-1.lytho.us/dam/openapi/index.html#/components/schemas/AssetExternalResponse",
+  "kind": "synthetic-schema-instance",
+  "note": "Not a live recording or provider-authored example. Only fields declared by AssetExternalResponse are used.",
+  "body": {
+    "id": "asset-42",
+    "name": "Brand kit",
+    "fileName": "brand.png",
+    "description": "Approved brand artwork",
+    "createdBy": "creator-1",
+    "creationDate": "2026-11-09T10:00:00Z",
+    "modificationDate": "2026-11-09T11:00:00Z"
+  }
+}
