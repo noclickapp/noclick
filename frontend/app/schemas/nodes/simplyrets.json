@@ -1,0 +1,3466 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "SimplyRETSCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "simplyrets_api_key",
+          "default": "simplyrets_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret"
+      ],
+      "title": "SimplyRETS API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key and API secret from your SimplyRETS app. NoClick sends them as the Basic username and password over HTTPS to api.simplyrets.com. Your MLS feed determines which listings and endpoints are available.",
+      "x-credential-url": "https://simplyrets.com/account#/apps"
+    },
+    "SimplyRETSGetAccountMetadataConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account_metadata",
+          "default": "get_account_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Account Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SimplyRETSGetAccountMetadataConfig",
+      "type": "object"
+    },
+    "SimplyRETSGetMarketAnalyticsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_market_analytics",
+          "default": "get_market_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Market Analytics",
+          "x-is-trigger": false
+        },
+        "q": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A textual keyword search. This parameter will search  the following\nfields, when available:\n\n  - listingId (MLS #)\n  - street number\n  - street name\n  - unit number\n  - city\n  - postal code\n  - subdivision name\n  - mls area (major)\n\nThe `q` parameter can be specified multiple times in a\nquery. For example, `q=Houston&q=mlsid_12345`.",
+          "title": "Q"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Active",
+                  "Pending",
+                  "Closed",
+                  "ActiveUnderContract",
+                  "Hold",
+                  "Withdrawn",
+                  "Expired",
+                  "Delete",
+                  "Incomplete",
+                  "ComingSoon"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request listings by a specific status. This parameter defaults to active and you can specify multiple statuses in a single query.\nListing statuses depend on your RETS vendor's field availability. Below is a brief description of each status with possible synonyms which may map to your RETS vendor-specific statuses.\n- **Active**: Active Listing which is still on the market\n- **ActiveUnderContract**: An offer has been accepted but the listing is still on market. Synonyms: Accepting Backup Offers, Backup Offer, Active With Accepted. Synonyms: Offer, Backup, Contingent\n- **Pending**: An offer has been accepted and the listing is no longer on market. Synonyms: Offer Accepted, Under Contract\n- **ComingSoon**: This is a listing that has not yet been on market but will be on market soon.\n- **Closed**: The purchase agreement has been fulfilled or the lease agreement has been executed. Synonyms: Sold, Leased, Rented, Closed Sale",
+          "title": "Status"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "residential",
+                  "rental",
+                  "mobilehome",
+                  "condominium",
+                  "multifamily",
+                  "commercial",
+                  "commerciallease",
+                  "land",
+                  "farm"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request listings by a specific property type. This\ndefaults to Residential and Rental. You can specify\nmultiple property types in a single query.",
+          "title": "Type"
+        },
+        "subtype": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "apartment",
+                  "boatslip",
+                  "singlefamilyresidence",
+                  "deededparking",
+                  "cabin",
+                  "condominium",
+                  "duplex",
+                  "manufacturedhome",
+                  "ownyourown",
+                  "quadruplex",
+                  "stockcooperative",
+                  "townhouse",
+                  "timeshare",
+                  "triplex",
+                  "manufacturedonland",
+                  "farmandranch",
+                  "agriculture",
+                  "business",
+                  "hotelmotel",
+                  "industrial",
+                  "mixeduse",
+                  "officespace",
+                  "retail",
+                  "unimprovedland",
+                  "warehouse"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request listings by a specific property sub type.\n\n*NOTE* not all sub type filters are available for all vendors.",
+          "title": "Subtype"
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by the `listAgent` id.  Note, the\nAgent ID is provided by your RETS vendor or MLS.\n\nThe co-listing agent is not included in this query parameter.",
+          "title": "Agent"
+        },
+        "salesAgent": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by the `sales.agent` id.  Note, the\nAgent ID is provided by your RETS vendor or MLS.\nThe co-sales or co-buyer's agent is not included in this query parameter.",
+          "title": "Salesagent"
+        },
+        "brokers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by brokerage with a Broker\nID. For some MLS areas, this is the ListOfficeId (Listing\nOffice ID).  You can specific multiple broker\nparameters. Note, this query parameter is only available\nif a Broker ID is provided by your RETS vendor or MLS.",
+          "title": "Brokers"
+        },
+        "minprice": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum price.",
+          "title": "Minprice"
+        },
+        "maxprice": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum price",
+          "title": "Maxprice"
+        },
+        "minarea": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum area size in Sq Ft.",
+          "title": "Minarea"
+        },
+        "maxarea": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum area size in Sq Ft.",
+          "title": "Maxarea"
+        },
+        "minbaths": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum number of bathrooms.",
+          "title": "Minbaths"
+        },
+        "maxbaths": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of bathrooms.",
+          "title": "Maxbaths"
+        },
+        "minbeds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum number of bedrooms.",
+          "title": "Minbeds"
+        },
+        "maxbeds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of bedrooms.",
+          "title": "Maxbeds"
+        },
+        "maxdom": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of days on market.  _Note\nthat your RETS vendor or MLS must provide Days on Market data._",
+          "title": "Maxdom"
+        },
+        "minyear": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a minimum year built.",
+          "title": "Minyear"
+        },
+        "maxyear": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a maximum year built.",
+          "title": "Maxyear"
+        },
+        "minacres": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a minimum acreage.",
+          "title": "Minacres"
+        },
+        "maxacres": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a maximum acreage.",
+          "title": "Maxacres"
+        },
+        "minGarageSpaces": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum number of garage spaces.",
+          "title": "Mingaragespaces"
+        },
+        "maxGarageSpaces": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of garage spaces.",
+          "title": "Maxgaragespaces"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set the number of listings to return in the response.\nThis defaults to 20 listings, and can be a maximum of 500.\nTo paginate through to the next page of listings, take a\nlook at the `offset` parameter, or the Link in the HTTP\nHeader.",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Increase the offset parameter by the limit to go to the\nnext \"page\" of listings. Also take a look at the Link HTTP\nHeader for pre-built pagination.\n\n*NOTE:* Use the `lastId` field to paginate response\n\n*NOTE:* If you're offset is too high, you will receive an\n`HTTP 400 offset too high` error message.",
+          "title": "Offset"
+        },
+        "lastId": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used as a cursor for pagination. When using `lastId`, the `sort` parameter\nwill not work.",
+          "title": "Lastid"
+        },
+        "vendor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used to specify the RETS vendor to search from. This\nparameter is required on multi-MLS apps. You can query one\nvendor at a time. To get your vendor id's make an HTTP\nOPTIONS request to https://api.simplyrets.com.\n\n`curl -XOPTIONS https://api.simplyrets.com/properties` Required on multi-MLS accounts; copy a vendor ID from Get Account Metadata.",
+          "title": "Vendor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "vendor"
+          }
+        },
+        "postalCodes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by postal codes / zip\ncode. You can specify multiple.",
+          "title": "Postalcodes"
+        },
+        "features": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings by specific **interior features**.  You can use the parameter multiple times to filter by multiple features. For example, to search for `Wet Bar` and `High Ceiling`:\n``` https://simplyrets.com/services?features=Wet%20Bar&features=High%20Ceiling ```\nThe list of `features` provided by your RETS vendor or MLS can be seen by sending an `OPTIONS` request to the `/properties` endpoint:\n``` curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/properties ```",
+          "title": "Features"
+        },
+        "exteriorFeatures": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings by specific **exterior features**.  You can use the parameter multiple times to filter by multiple features. For example, to search for `Proch` and `Fully Fenced`:\n``` https://simplyrets.com/services?exteriorFeatures=Porch&exteriorFeatures=Fully+Fenced ```",
+          "title": "Exteriorfeatures"
+        },
+        "pool": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings on pool features (`.property.pool`). There are multiple ways to use this parameter:\n- `pool=true`: Return listings where `.property.pool` is NOT\n  `false` or `null`.\n- `pool=false`: Return listings where `.property.pool` IS\n  `false` or `null`.\n- `pool=QUERY`: Return listings with a matching\n  `.property.pool` value. Example: `?pool=Private`.\n\nIf this parameter is used multiple times in a single query, return listings that match any of the provided values.",
+          "title": "Pool"
+        },
+        "water": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings on WaterBodyName (`.property.water`). There are multiple ways to use this parameter:\n- `water=true`: Return listings where `.property.water` is NOT\n  `false` or `null`.\n- `water=false`: Return listings where `.property.water` is\n  `false` or `null`.\n- `water=QUERY`: Return listings with a matching\n  `.property.water` value.\n\nIf this parameter is used multiple times in a single query, return listings that match any of the provided values.",
+          "title": "Water"
+        },
+        "neighborhoods": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by specific neighborhoods and\nsubdivisions. You can specify multiple `neighborhoods` by\nusing the query parameter multiple times.\n\nThe `neighborhoods` query parameter is case-insensitive.\n\nThe list of `neighborhoods` provided by your RETS vendor or\nMLS can be seen by sending an `OPTIONS` request to the\n`/properties` endpoint:\n\n`curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/properties`",
+          "title": "Neighborhoods"
+        },
+        "cities": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by specific cities. You can\nspecify multiple `cities` query parameters.\n\nThe `cities` query parameter is case-insensitive.\n\nThe list of `cities` provided by your RETS vendor or MLS can\nbe seen by sending an `OPTIONS` request to the `/properties`\nendpoint:\n\n`curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/openhouses`",
+          "title": "Cities"
+        },
+        "counties": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by specific counties. You can\nspecify multiple `counties` parameters.\n\nThe `counties` query parameter is case-insensitive.\n\nThe list of `counties` provided by your RETS vendor or MLS\ncan be seen by sending an `OPTIONS` request to the\n`/properties` endpoint:\n\n`curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/openhouses`",
+          "title": "Counties"
+        },
+        "points": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return listings that are within a set of latitude\nlongitude coordinates. For example;\n```\n29.723837,-95.69778\n29.938275,-95.69778\n29.938275,-95.32974\n29.723837,-95.32974\n```\n\nNote that some RETS vendors do not provide latitude and\nlongitude with their listings, which is required for this\nparameter to work. In these cases, SimplyRETS offers a\n[Geocoding Addon](https://simplyrets.com/services#geocoding).\n\nCheck out our\n[blog post](https://simplyrets.com/blog/interactive-map-search.html)\non using the `points` parameter to build a map-based app\nin javascript.",
+          "title": "Points"
+        },
+        "idx": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "null",
+                  "listing",
+                  "address",
+                  "ignore"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify the IDX display requirements for the listings in the response. The `idx` parameter checks if the `internetAddressDisplay` and `internetEntireListingDisplay` for each listing are true (or `null`) or false based on this setting.\n##### **`idx=null`** (default)\n  - `internetAddressDisplay` must be true\n  - `internetEntireListingDisplay` must be true\n##### **`idx=listing`**\n  - `internetAddressDisplay` is ignored\n  - `internetEntireListingDisplay` must be true\n##### **`idx=address`**\n  - `internetAddressDisplay` must be true\n  - `internetEntireListingDisplay` is ignored\n##### **`idx=ignore`**\n  - `internetAddressDisplay` is ignored\n  - `internetEntireListingDisplay` is ignored\n\nLearn more about SimplyRETS's [IDX compliance features here](/topics/fields-and-features-for-idx-compliance) and please check with your MLS or data feed provider on the rules and requirements for displaying restricted listings.",
+          "title": "Idx"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "compliance",
+                  "rooms"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enable additional fields in the API response. The available\n`include` values are:\n\n- `include=compliance`: Adds `.compliance` data to the API\n  response.  Compliance data will contain extra fields that\n  may be required in your IDX display. Please check your MLS's\n  or association's specific IDX display requirements.\n\n- `include=rooms`: Adds `.rooms` data to the API response.\n  Rooms data contains additional information about individual\n  rooms on the property (e.g. bedrooms, living room). Not all\n  feeds support this extended data. Enabled upon request.",
+          "title": "Include"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "listprice",
+                "-listprice",
+                "listdate",
+                "-listdate",
+                "closedate",
+                "-closedate",
+                "beds",
+                "-beds",
+                "baths",
+                "-baths"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort the response by a specific field. Values starting\nwith a minus (-) denote descending order, while the others\nare ascending.",
+          "title": "Sort",
+          "enum": [
+            "listprice",
+            "-listprice",
+            "listdate",
+            "-listdate",
+            "closedate",
+            "-closedate",
+            "beds",
+            "-beds",
+            "baths",
+            "-baths"
+          ],
+          "x-enum-searchable": true
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to `true`, The `X-Total-Count` header will be\nreturned, showing the total number of items matching the query.\n\nCounting the listings can contribute to slower API calls\ndue to the extra queries that need to be run to get an\nexact count.\n\nEnabling count may decrease API response/page load times,\nespecially on larger datasets.",
+          "title": "Count"
+        }
+      },
+      "title": "SimplyRETSGetMarketAnalyticsConfig",
+      "type": "object"
+    },
+    "SimplyRETSGetOfficeMetadataConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_office_metadata",
+          "default": "get_office_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Office Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SimplyRETSGetOfficeMetadataConfig",
+      "type": "object"
+    },
+    "SimplyRETSGetOpenhouseConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_openhouse",
+          "default": "get_openhouse",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Open House",
+          "x-is-trigger": false
+        },
+        "openHouseKey": {
+          "description": "A unique OpenHouse identification key",
+          "minimum": 1,
+          "title": "Openhousekey",
+          "type": "integer"
+        },
+        "vendor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify the RETS vendor to search. This parameter is\n**required on multi-mls accounts**. You can query one\nvendor at a time. Your vendor IDs can be found in your\naccount panel, or you can make an HTTP OPTIONS request to\nhttps://api.simplyrets.com.\n\n```\ncurl -XOPTIONS https://api.simplyrets.com/properties\n``` Required on multi-MLS accounts; copy a vendor ID from Get Account Metadata.",
+          "title": "Vendor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "vendor"
+          }
+        },
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include a extra fields which are not in the default\nresponse body. Available values:\n\n- 'rooms': include parameter will include\n   any additional rooms as a list.\n\nNote that your RETS vendor or MLS must provide these\nfields in their RETS data for them to be available in the\nAPI response. In the future, fields which require an\n'include' may become available by default.",
+          "title": "Include"
+        }
+      },
+      "required": [
+        "openHouseKey"
+      ],
+      "title": "SimplyRETSGetOpenhouseConfig",
+      "type": "object"
+    },
+    "SimplyRETSGetPropertyAnalyticsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_property_analytics",
+          "default": "get_property_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Listing Analytics",
+          "x-is-trigger": false
+        },
+        "mlsId": {
+          "description": "The `mlsId` field is a unique identifier which is specific\nto the SimplyRETS API only.  This field is different from\nthe `listingId` field (which is the public number given to\na listing by the RETS vendor or MLS and is not used here).",
+          "minimum": 1,
+          "title": "Mlsid",
+          "type": "integer"
+        },
+        "vendor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used to specify the RETS vendor to search from. This\nparameter is required on multi-MLS apps. You can query one\nvendor at a time. To get your vendor id's make an HTTP\nOPTIONS request to https://api.simplyrets.com.\n\n`curl -XOPTIONS https://api.simplyrets.com/properties` Required on multi-MLS accounts; copy a vendor ID from Get Account Metadata.",
+          "title": "Vendor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "vendor"
+          }
+        }
+      },
+      "required": [
+        "mlsId"
+      ],
+      "title": "SimplyRETSGetPropertyAnalyticsConfig",
+      "type": "object"
+    },
+    "SimplyRETSGetPropertyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_property",
+          "default": "get_property",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Listing",
+          "x-is-trigger": false
+        },
+        "mlsId": {
+          "description": "The `mlsId` field is a unique identifier which is specific\nto the SimplyRETS API only.  This field is different from\nthe `listingId` field (which is the public number given to\na listing by the RETS vendor or MLS and is not used here).",
+          "minimum": 1,
+          "title": "Mlsid",
+          "type": "integer"
+        },
+        "vendor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify the RETS vendor to search. This parameter is\n**required on multi-mls accounts**. You can query one\nvendor at a time. Your vendor IDs can be found in your\naccount panel, or you can make an HTTP OPTIONS request to\nhttps://api.simplyrets.com.\n\n```\ncurl -XOPTIONS https://api.simplyrets.com/properties\n``` Required on multi-MLS accounts; copy a vendor ID from Get Account Metadata.",
+          "title": "Vendor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "vendor"
+          }
+        }
+      },
+      "required": [
+        "mlsId"
+      ],
+      "title": "SimplyRETSGetPropertyConfig",
+      "type": "object"
+    },
+    "SimplyRETSGetPropertyMetadataConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_property_metadata",
+          "default": "get_property_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Get Listing Metadata",
+          "x-is-trigger": false
+        },
+        "vendor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used to specify the RETS vendor to search from. This\nparameter is required on multi-MLS apps. You can query one\nvendor at a time. To get your vendor id's make an HTTP\nOPTIONS request to https://api.simplyrets.com.\n\n`curl -XOPTIONS https://api.simplyrets.com/properties` Required on multi-MLS accounts; copy a vendor ID from Get Account Metadata.",
+          "title": "Vendor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "vendor"
+          }
+        }
+      },
+      "title": "SimplyRETSGetPropertyMetadataConfig",
+      "type": "object"
+    },
+    "SimplyRETSListAgentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_agents",
+          "default": "list_agents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search Agents",
+          "x-is-trigger": false
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A keyword search on the Agents API. The `q` parameter will\nsearch the `.id` and `.contact.email` fields, and return\nlistings matching the criteria. `q` can be provided multiple\ntimes.",
+          "title": "Q"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter agents by name. You can provide a first name, last\nname, or both.",
+          "title": "Name"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter agents by their `address.state` field.",
+          "title": "State"
+        }
+      },
+      "title": "SimplyRETSListAgentsConfig",
+      "type": "object"
+    },
+    "SimplyRETSListOfficesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_offices",
+          "default": "list_offices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search Offices",
+          "x-is-trigger": false
+        },
+        "q": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search offices by MLS office ID, main office MLS ID, email, or name.\nIDs and email use exact matches; names use case-insensitive partial\nmatches. Repeat `q` to match any of the supplied values, for example\n`?q=ABC123&q=Example`.",
+          "title": "Q"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter offices by a case-insensitive partial match on their name.",
+          "title": "Name"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter offices by a case-insensitive partial match on `address.state`.",
+          "title": "State"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `true` to include the total number of matching offices in the\n`X-Total-Count` response header.",
+          "title": "Count"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of matching offices to skip. Increase by `limit` to request\nthe next page, or follow the `Link` response header. A positive\noffset that returns no offices produces an HTTP 400 error.",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of offices to return per page.",
+          "title": "Limit"
+        },
+        "vendor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used to specify the RETS vendor to search from. This\nparameter is required on multi-MLS apps. You can query one\nvendor at a time. To get your vendor id's make an HTTP\nOPTIONS request to https://api.simplyrets.com.\n\n`curl -XOPTIONS https://api.simplyrets.com/properties` Required on multi-MLS accounts; copy a vendor ID from Get Account Metadata.",
+          "title": "Vendor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "vendor"
+          }
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Select the feed username when your API credentials have multiple\nusernames for the selected vendor. Required in that case; the\nusername must be associated with your API credentials.",
+          "title": "Username"
+        }
+      },
+      "title": "SimplyRETSListOfficesConfig",
+      "type": "object"
+    },
+    "SimplyRETSListOpenhousesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_openhouses",
+          "default": "list_openhouses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search Open Houses",
+          "x-is-trigger": false
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "residential",
+                "rental",
+                "mobilehome",
+                "condominium",
+                "multifamily",
+                "commercial",
+                "commerciallease",
+                "land",
+                "farm"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request open houses by it's listing's property type. This defaults to\nResidential, and you can only specify one type in a single query.",
+          "title": "Type",
+          "enum": [
+            "residential",
+            "rental",
+            "mobilehome",
+            "condominium",
+            "multifamily",
+            "commercial",
+            "commerciallease",
+            "land",
+            "farm"
+          ],
+          "x-enum-searchable": true
+        },
+        "listingId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request open houses for a specific `listingId`.",
+          "title": "Listingid"
+        },
+        "cities": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the open houses returned by a list of valid cities.\n\nThe `cities` query parameter is case-insensitive.\n\nThe list of `cities` provided by your RETS vendor or MLS can\nbe seen by sending an `OPTIONS` request to the `/properties`\nendpoint:\n\n`curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/openhouses`",
+          "title": "Cities"
+        },
+        "vendor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify the RETS vendor to search. This parameter is\n**required on multi-mls accounts**. You can query one\nvendor at a time. Your vendor IDs can be found in your\naccount panel, or you can make an HTTP OPTIONS request to\nhttps://api.simplyrets.com.\n\n```\ncurl -XOPTIONS https://api.simplyrets.com/properties\n``` Required on multi-MLS accounts; copy a vendor ID from Get Account Metadata.",
+          "title": "Vendor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "vendor"
+          }
+        },
+        "brokers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter open houses by brokerage with a Broker ID.  You can specific\nmultiple broker parameters. Note, the Broker ID is provided by your\nRETS vendor or MLS.",
+          "title": "Brokers"
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the open houses returned by an agent ID.  Note, the\nAgent ID is provided by your RETS vendor or MLS.",
+          "title": "Agent"
+        },
+        "minprice": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter open houses by the minimum price of it's corresponding listing.",
+          "title": "Minprice"
+        },
+        "maxprice": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter open houses by the maximum price of it's corresponding listing.",
+          "title": "Maxprice"
+        },
+        "startdate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scheduled date and time of the open house showing",
+          "title": "Startdate"
+        },
+        "lastId": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used as a cursor for pagination.",
+          "title": "Lastid"
+        },
+        "minarea": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter open houses by the minimum living area of it's corresponding\nlisting.",
+          "title": "Minarea"
+        },
+        "minbeds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter open houses by the minimum number bedrooms of it's\ncorresponding listing.",
+          "title": "Minbeds"
+        },
+        "minbaths": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter open houses by the minimum number of bathrooms of it's\ncorresponding listing.",
+          "title": "Minbaths"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Increase the offset parameter by the limit to go to the\nnext \"page\" of listings. Also take a look at the Link HTTP\nHeader for pre-built pagination.\n\n*NOTE:* Use the `lastId` parameter for pagination.",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of records returned in the API response. This\ncan be set to any number between 1 and 500.\n\nThe default limit is 12 on the `/openhouses` endpoint.",
+          "title": "Limit"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "listprice",
+                "-listprice",
+                "listdate",
+                "-listdate",
+                "beds",
+                "-beds",
+                "baths",
+                "-baths"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort the response by a specific field. Values starting\nwith a minus (-) denote descending order, while the others\nare ascending.",
+          "title": "Sort",
+          "enum": [
+            "listprice",
+            "-listprice",
+            "listdate",
+            "-listdate",
+            "beds",
+            "-beds",
+            "baths",
+            "-baths"
+          ],
+          "x-enum-searchable": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include a extra fields which are not in the default response body. Available values:\n- 'rooms': include parameter will include\n   any additional rooms as a list.\n\nNote that your RETS vendor or MLS must provide these fields in their RETS data for them to be available in the API response. In the future, fields which require an 'include' may become available by default.",
+          "title": "Include"
+        }
+      },
+      "title": "SimplyRETSListOpenhousesConfig",
+      "type": "object"
+    },
+    "SimplyRETSListPropertiesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_properties",
+          "default": "list_properties",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search Listings",
+          "x-is-trigger": false
+        },
+        "q": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A textual keyword search. This parameter will search  the following\nfields, when available:\n\n  - listingId (MLS #)\n  - street number\n  - street name\n  - unit number\n  - city\n  - postal code\n  - subdivision name\n  - mls area (major)\n\nThe `q` parameter can be specified multiple times in a\nquery. For example, `q=Houston&q=mlsid_12345`.",
+          "title": "Q"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Active",
+                  "Pending",
+                  "Closed",
+                  "ActiveUnderContract",
+                  "Hold",
+                  "Withdrawn",
+                  "Expired",
+                  "Delete",
+                  "Incomplete",
+                  "ComingSoon"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request listings by a specific status. This parameter defaults to active and you can specify multiple statuses in a single query.\nListing statuses depend on your RETS vendor's field availability. Below is a brief description of each status with possible synonyms which may map to your RETS vendor-specific statuses.\n- **Active**: Active Listing which is still on the market\n- **ActiveUnderContract**: An offer has been accepted but the listing is still on market. Synonyms: Accepting Backup Offers, Backup Offer, Active With Accepted. Synonyms: Offer, Backup, Contingent\n- **Pending**: An offer has been accepted and the listing is no longer on market. Synonyms: Offer Accepted, Under Contract\n- **ComingSoon**: This is a listing that has not yet been on market but will be on market soon.\n- **Closed**: The purchase agreement has been fulfilled or the lease agreement has been executed. Synonyms: Sold, Leased, Rented, Closed Sale",
+          "title": "Status"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "residential",
+                  "rental",
+                  "mobilehome",
+                  "condominium",
+                  "multifamily",
+                  "commercial",
+                  "commerciallease",
+                  "land",
+                  "farm"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request listings by a specific property type. This\ndefaults to Residential and Rental. You can specify\nmultiple property types in a single query.",
+          "title": "Type"
+        },
+        "subtype": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "apartment",
+                  "boatslip",
+                  "singlefamilyresidence",
+                  "deededparking",
+                  "cabin",
+                  "condominium",
+                  "duplex",
+                  "manufacturedhome",
+                  "ownyourown",
+                  "quadruplex",
+                  "stockcooperative",
+                  "townhouse",
+                  "timeshare",
+                  "triplex",
+                  "manufacturedonland",
+                  "farmandranch",
+                  "agriculture",
+                  "business",
+                  "hotelmotel",
+                  "industrial",
+                  "mixeduse",
+                  "officespace",
+                  "retail",
+                  "unimprovedland",
+                  "warehouse"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request listings by a specific property sub type.\n\n*NOTE* not all sub type filters are available for all vendors.",
+          "title": "Subtype"
+        },
+        "subTypeText": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by `.property.subTypeText`. The `subTypeText`\nis the original MLS SubType value.  This parameter can be used\nmultiple times.\n\nPlease refer to your MLS for an exact list of possible values.",
+          "title": "Subtypetext"
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by the `listAgent` id.  Note, the\nAgent ID is provided by your RETS vendor or MLS.\n\nThe co-listing agent is not included in this query parameter.",
+          "title": "Agent"
+        },
+        "coListAgent": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by the CoListAgent (`.coAgent.id`) field.\nNote, the CoListAgent ID is provided by the MLS.\n\nThe primary ListAgent is not included in this query parameter.",
+          "title": "Colistagent"
+        },
+        "salesAgent": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by the `sales.agent` id.  Note, the\nAgent ID is provided by your RETS vendor or MLS.\nThe co-sales or co-buyer's agent is not included in this query parameter.",
+          "title": "Salesagent"
+        },
+        "brokers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by brokerage with a Broker\nID. For some MLS areas, this is the ListOfficeId (Listing\nOffice ID).  You can specific multiple broker\nparameters. Note, this query parameter is only available\nif a Broker ID is provided by your RETS vendor or MLS.",
+          "title": "Brokers"
+        },
+        "specialListingConditions": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings by special listing conditions like REO,\nShort Sale, Auction, etc.\n\nNote: The available `specialListingConditions` values are\ndependent on the data provided by your MLS.",
+          "title": "Speciallistingconditions"
+        },
+        "ownership": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by the `ownership` field.\n\nNote: The possible values for this field varies. Consult your\nMLS for a list of available `ownership` values.",
+          "title": "Ownership"
+        },
+        "minprice": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum price.",
+          "title": "Minprice"
+        },
+        "maxprice": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum price",
+          "title": "Maxprice"
+        },
+        "minarea": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum area size in Sq Ft.",
+          "title": "Minarea"
+        },
+        "maxarea": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum area size in Sq Ft.",
+          "title": "Maxarea"
+        },
+        "minbaths": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum number of bathrooms.",
+          "title": "Minbaths"
+        },
+        "maxbaths": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of bathrooms.",
+          "title": "Maxbaths"
+        },
+        "minbeds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum number of bedrooms.",
+          "title": "Minbeds"
+        },
+        "maxbeds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of bedrooms.",
+          "title": "Maxbeds"
+        },
+        "maxdom": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of days on market.  _Note\nthat your RETS vendor or MLS must provide Days on Market data._",
+          "title": "Maxdom"
+        },
+        "minlistdate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query listings with a `.listDate` _after_ (or equal to) this value.\n\n**Note:** By default this is parsed and compared as UTC unless\na timezone is specified in the parameter.",
+          "title": "Minlistdate"
+        },
+        "maxlistdate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query listings with a `.listDate` _before_ (or equal to) this value.\n\n**Note:** By default this is parsed and compared as UTC unless\na timezone is specified in the parameter.",
+          "title": "Maxlistdate"
+        },
+        "modified": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return listings whose MLS modification timestamp is on or after\n(greater than or equal to) this value. Use this filter to retrieve\nlistings updated since a given date or time.\n\nAccepted values include `YYYY-MM-DD`, `MM/DD/YYYY`, and timestamps\nusing either a `T` or a space between the date and time, with\noptional fractional seconds. A timestamp can include `Z`, a numeric\ntimezone offset (such as `-07:00`), or a timezone abbreviation\n(such as `UTC` or `CST`). Examples: `2026-10-01`,\n`2026-10-01T13:27:01.42Z`, and `2026-10-01 13:27:01`.\n\nValues without a timezone are interpreted as UTC. A date without\na time is interpreted as midnight. URL-encode spaces and any `+`\nin timezone offsets when sending this parameter.\n\nInvalid values are ignored, so no modification-time filter is\napplied. This filter is also ignored for feeds that do not provide\nMLS modification timestamps. Other search filters still apply.",
+          "title": "Modified"
+        },
+        "minyear": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a minimum year built.",
+          "title": "Minyear"
+        },
+        "maxyear": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a maximum year built.",
+          "title": "Maxyear"
+        },
+        "minacres": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a minimum acreage.",
+          "title": "Minacres"
+        },
+        "maxacres": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a maximum acreage.",
+          "title": "Maxacres"
+        },
+        "minGarageSpaces": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum number of garage spaces.",
+          "title": "Mingaragespaces"
+        },
+        "maxGarageSpaces": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of garage spaces.",
+          "title": "Maxgaragespaces"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set the number of listings to return in the response.\nThis defaults to 20 listings, and can be a maximum of 500.\nTo paginate through to the next page of listings, take a\nlook at the `offset` parameter, or the Link in the HTTP\nHeader.",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Increase the offset parameter by the limit to go to the\nnext \"page\" of listings. Also take a look at the Link HTTP\nHeader for pre-built pagination.\n\n*NOTE:* Use the `lastId` field to paginate response\n\n*NOTE:* If you're offset is too high, you will receive an\n`HTTP 400 offset too high` error message.",
+          "title": "Offset"
+        },
+        "lastId": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used as a cursor for pagination. When using `lastId`, the `sort` parameter\nwill not work.",
+          "title": "Lastid"
+        },
+        "vendor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used to specify the RETS vendor to search from. This\nparameter is required on multi-MLS apps. You can query one\nvendor at a time. To get your vendor id's make an HTTP\nOPTIONS request to https://api.simplyrets.com.\n\n`curl -XOPTIONS https://api.simplyrets.com/properties` Required on multi-MLS accounts; copy a vendor ID from Get Account Metadata.",
+          "title": "Vendor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "vendor"
+          }
+        },
+        "postalCodes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by postal codes / zip\ncode. You can specify multiple.",
+          "title": "Postalcodes"
+        },
+        "features": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings by specific **interior features**.  You can use the parameter multiple times to filter by multiple features. For example, to search for `Wet Bar` and `High Ceiling`:\n``` https://simplyrets.com/services?features=Wet%20Bar&features=High%20Ceiling ```\nThe list of `features` provided by your RETS vendor or MLS can be seen by sending an `OPTIONS` request to the `/properties` endpoint:\n``` curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/properties ```",
+          "title": "Features"
+        },
+        "exteriorFeatures": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings by specific **exterior features**.  You can use the parameter multiple times to filter by multiple features. For example, to search for `Proch` and `Fully Fenced`:\n``` https://simplyrets.com/services?exteriorFeatures=Porch&exteriorFeatures=Fully+Fenced ```",
+          "title": "Exteriorfeatures"
+        },
+        "pool": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings on pool features (`.property.pool`). There are multiple ways to use this parameter:\n- `pool=true`: Return listings where `.property.pool` is NOT\n  `false` or `null`.\n- `pool=false`: Return listings where `.property.pool` IS\n  `false` or `null`.\n- `pool=QUERY`: Return listings with a matching\n  `.property.pool` value. Example: `?pool=Private`.\n\nIf this parameter is used multiple times in a single query, return listings that match any of the provided values.",
+          "title": "Pool"
+        },
+        "water": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings on WaterBodyName (`.property.water`). There are multiple ways to use this parameter:\n- `water=true`: Return listings where `.property.water` is NOT\n  `false` or `null`.\n- `water=false`: Return listings where `.property.water` is\n  `false` or `null`.\n- `water=QUERY`: Return listings with a matching\n  `.property.water` value.\n\nIf this parameter is used multiple times in a single query, return listings that match any of the provided values.",
+          "title": "Water"
+        },
+        "neighborhoods": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by specific neighborhoods and\nsubdivisions. You can specify multiple `neighborhoods` by\nusing the query parameter multiple times.\n\nThe `neighborhoods` query parameter is case-insensitive.\n\nThe list of `neighborhoods` provided by your RETS vendor or\nMLS can be seen by sending an `OPTIONS` request to the\n`/properties` endpoint:\n\n`curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/properties`",
+          "title": "Neighborhoods"
+        },
+        "cities": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by specific cities. You can\nspecify multiple `cities` query parameters.\n\nThe `cities` query parameter is case-insensitive.\n\nThe list of `cities` provided by your RETS vendor or MLS can\nbe seen by sending an `OPTIONS` request to the `/properties`\nendpoint:\n\n`curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/openhouses`",
+          "title": "Cities"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings by state or province. You can specify multiple `state` parameters and the parameter is case insensitive.",
+          "title": "State"
+        },
+        "counties": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by specific counties. You can\nspecify multiple `counties` parameters.\n\nThe `counties` query parameter is case-insensitive.\n\nThe list of `counties` provided by your RETS vendor or MLS\ncan be seen by sending an `OPTIONS` request to the\n`/properties` endpoint:\n\n`curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/openhouses`",
+          "title": "Counties"
+        },
+        "points": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return listings that are within a set of latitude\nlongitude coordinates. For example;\n```\n29.723837,-95.69778\n29.938275,-95.69778\n29.938275,-95.32974\n29.723837,-95.32974\n```\n\nNote that some RETS vendors do not provide latitude and\nlongitude with their listings, which is required for this\nparameter to work. In these cases, SimplyRETS offers a\n[Geocoding Addon](https://simplyrets.com/services#geocoding).\n\nCheck out our\n[blog post](https://simplyrets.com/blog/interactive-map-search.html)\non using the `points` parameter to build a map-based app\nin javascript.",
+          "title": "Points"
+        },
+        "idx": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "null",
+                  "listing",
+                  "address",
+                  "ignore"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify the IDX display requirements for the listings in the response. The `idx` parameter checks if the `internetAddressDisplay` and `internetEntireListingDisplay` for each listing are true (or `null`) or false based on this setting.\n##### **`idx=null`** (default)\n  - `internetAddressDisplay` must be true\n  - `internetEntireListingDisplay` must be true\n##### **`idx=listing`**\n  - `internetAddressDisplay` is ignored\n  - `internetEntireListingDisplay` must be true\n##### **`idx=address`**\n  - `internetAddressDisplay` must be true\n  - `internetEntireListingDisplay` is ignored\n##### **`idx=ignore`**\n  - `internetAddressDisplay` is ignored\n  - `internetEntireListingDisplay` is ignored\n\nLearn more about SimplyRETS's [IDX compliance features here](/topics/fields-and-features-for-idx-compliance) and please check with your MLS or data feed provider on the rules and requirements for displaying restricted listings.",
+          "title": "Idx"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "compliance",
+                  "rooms"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enable additional fields in the API response. The available\n`include` values are:\n\n- `include=compliance`: Adds `.compliance` data to the API\n  response.  Compliance data will contain extra fields that\n  may be required in your IDX display. Please check your MLS's\n  or association's specific IDX display requirements.\n\n- `include=rooms`: Adds `.rooms` data to the API response.\n  Rooms data contains additional information about individual\n  rooms on the property (e.g. bedrooms, living room). Not all\n  feeds support this extended data. Enabled upon request.",
+          "title": "Include"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "listprice",
+                "-listprice",
+                "listdate",
+                "-listdate",
+                "closedate",
+                "-closedate",
+                "beds",
+                "-beds",
+                "baths",
+                "-baths"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort the response by a specific field. Values starting\nwith a minus (-) denote descending order, while the others\nare ascending.",
+          "title": "Sort",
+          "enum": [
+            "listprice",
+            "-listprice",
+            "listdate",
+            "-listdate",
+            "closedate",
+            "-closedate",
+            "beds",
+            "-beds",
+            "baths",
+            "-baths"
+          ],
+          "x-enum-searchable": true
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set to `true`, The `X-Total-Count` header will be\nreturned, showing the total number of items matching the query.\n\nCounting the listings can contribute to slower API calls\ndue to the extra queries that need to be run to get an\nexact count.\n\nEnabling count may decrease API response/page load times,\nespecially on larger datasets.",
+          "title": "Count"
+        }
+      },
+      "title": "SimplyRETSListPropertiesConfig",
+      "type": "object"
+    },
+    "SimplyRETSListPropertyKeysConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_property_keys",
+          "default": "list_property_keys",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-display-name": "Search Listing Keys",
+          "x-is-trigger": false
+        },
+        "q": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A textual keyword search. This parameter will search  the following\nfields, when available:\n\n  - listingId (MLS #)\n  - street number\n  - street name\n  - unit number\n  - city\n  - postal code\n  - subdivision name\n  - mls area (major)\n\nThe `q` parameter can be specified multiple times in a\nquery. For example, `q=Houston&q=mlsid_12345`.",
+          "title": "Q"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Active",
+                  "Pending",
+                  "Closed",
+                  "ActiveUnderContract",
+                  "Hold",
+                  "Withdrawn",
+                  "Expired",
+                  "Delete",
+                  "Incomplete",
+                  "ComingSoon"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request listings by a specific status. This parameter defaults to active and you can specify multiple statuses in a single query.\nListing statuses depend on your RETS vendor's field availability. Below is a brief description of each status with possible synonyms which may map to your RETS vendor-specific statuses.\n- **Active**: Active Listing which is still on the market\n- **ActiveUnderContract**: An offer has been accepted but the listing is still on market. Synonyms: Accepting Backup Offers, Backup Offer, Active With Accepted. Synonyms: Offer, Backup, Contingent\n- **Pending**: An offer has been accepted and the listing is no longer on market. Synonyms: Offer Accepted, Under Contract\n- **ComingSoon**: This is a listing that has not yet been on market but will be on market soon.\n- **Closed**: The purchase agreement has been fulfilled or the lease agreement has been executed. Synonyms: Sold, Leased, Rented, Closed Sale",
+          "title": "Status"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "residential",
+                  "rental",
+                  "mobilehome",
+                  "condominium",
+                  "multifamily",
+                  "commercial",
+                  "commerciallease",
+                  "land",
+                  "farm"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request listings by a specific property type. This\ndefaults to Residential and Rental. You can specify\nmultiple property types in a single query.",
+          "title": "Type"
+        },
+        "subtype": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "apartment",
+                  "boatslip",
+                  "singlefamilyresidence",
+                  "deededparking",
+                  "cabin",
+                  "condominium",
+                  "duplex",
+                  "manufacturedhome",
+                  "ownyourown",
+                  "quadruplex",
+                  "stockcooperative",
+                  "townhouse",
+                  "timeshare",
+                  "triplex",
+                  "manufacturedonland",
+                  "farmandranch",
+                  "agriculture",
+                  "business",
+                  "hotelmotel",
+                  "industrial",
+                  "mixeduse",
+                  "officespace",
+                  "retail",
+                  "unimprovedland",
+                  "warehouse"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request listings by a specific property sub type.\n\n*NOTE* not all sub type filters are available for all vendors.",
+          "title": "Subtype"
+        },
+        "subTypeText": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by `.property.subTypeText`. The `subTypeText`\nis the original MLS SubType value.  This parameter can be used\nmultiple times.\n\nPlease refer to your MLS for an exact list of possible values.",
+          "title": "Subtypetext"
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by the `listAgent` id.  Note, the\nAgent ID is provided by your RETS vendor or MLS.\n\nThe co-listing agent is not included in this query parameter.",
+          "title": "Agent"
+        },
+        "coListAgent": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by the CoListAgent (`.coAgent.id`) field.\nNote, the CoListAgent ID is provided by the MLS.\n\nThe primary ListAgent is not included in this query parameter.",
+          "title": "Colistagent"
+        },
+        "salesAgent": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by the `sales.agent` id.  Note, the\nAgent ID is provided by your RETS vendor or MLS.\nThe co-sales or co-buyer's agent is not included in this query parameter.",
+          "title": "Salesagent"
+        },
+        "brokers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by brokerage with a Broker\nID. For some MLS areas, this is the ListOfficeId (Listing\nOffice ID).  You can specific multiple broker\nparameters. Note, this query parameter is only available\nif a Broker ID is provided by your RETS vendor or MLS.",
+          "title": "Brokers"
+        },
+        "specialListingConditions": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings by special listing conditions like REO,\nShort Sale, Auction, etc.\n\nNote: The available `specialListingConditions` values are\ndependent on the data provided by your MLS.",
+          "title": "Speciallistingconditions"
+        },
+        "ownership": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by the `ownership` field.\n\nNote: The possible values for this field varies. Consult your\nMLS for a list of available `ownership` values.",
+          "title": "Ownership"
+        },
+        "minprice": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum price.",
+          "title": "Minprice"
+        },
+        "maxprice": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum price",
+          "title": "Maxprice"
+        },
+        "minarea": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum area size in Sq Ft.",
+          "title": "Minarea"
+        },
+        "maxarea": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum area size in Sq Ft.",
+          "title": "Maxarea"
+        },
+        "minbaths": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum number of bathrooms.",
+          "title": "Minbaths"
+        },
+        "maxbaths": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of bathrooms.",
+          "title": "Maxbaths"
+        },
+        "minbeds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum number of bedrooms.",
+          "title": "Minbeds"
+        },
+        "maxbeds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of bedrooms.",
+          "title": "Maxbeds"
+        },
+        "maxdom": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of days on market.  _Note\nthat your RETS vendor or MLS must provide Days on Market data._",
+          "title": "Maxdom"
+        },
+        "minlistdate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query listings with a `.listDate` _after_ (or equal to) this value.\n\n**Note:** By default this is parsed and compared as UTC unless\na timezone is specified in the parameter.",
+          "title": "Minlistdate"
+        },
+        "maxlistdate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query listings with a `.listDate` _before_ (or equal to) this value.\n\n**Note:** By default this is parsed and compared as UTC unless\na timezone is specified in the parameter.",
+          "title": "Maxlistdate"
+        },
+        "modified": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return listings whose MLS modification timestamp is on or after\n(greater than or equal to) this value. Use this filter to retrieve\nlistings updated since a given date or time.\n\nAccepted values include `YYYY-MM-DD`, `MM/DD/YYYY`, and timestamps\nusing either a `T` or a space between the date and time, with\noptional fractional seconds. A timestamp can include `Z`, a numeric\ntimezone offset (such as `-07:00`), or a timezone abbreviation\n(such as `UTC` or `CST`). Examples: `2026-10-01`,\n`2026-10-01T13:27:01.42Z`, and `2026-10-01 13:27:01`.\n\nValues without a timezone are interpreted as UTC. A date without\na time is interpreted as midnight. URL-encode spaces and any `+`\nin timezone offsets when sending this parameter.\n\nInvalid values are ignored, so no modification-time filter is\napplied. This filter is also ignored for feeds that do not provide\nMLS modification timestamps. Other search filters still apply.",
+          "title": "Modified"
+        },
+        "minyear": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a minimum year built.",
+          "title": "Minyear"
+        },
+        "maxyear": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a maximum year built.",
+          "title": "Maxyear"
+        },
+        "minacres": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a minimum acreage.",
+          "title": "Minacres"
+        },
+        "maxacres": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a setting a maximum acreage.",
+          "title": "Maxacres"
+        },
+        "minGarageSpaces": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a minimum number of garage spaces.",
+          "title": "Mingaragespaces"
+        },
+        "maxGarageSpaces": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings by a maximum number of garage spaces.",
+          "title": "Maxgaragespaces"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 5000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set the number of listing keys to return. Defaults to 20 and is\ncapped at 5000 when using offset pagination, or 500 when using\nthe `lastId` cursor.",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Increase the offset parameter by the limit to go to the\nnext \"page\" of listings. Also take a look at the Link HTTP\nHeader for pre-built pagination.\n\n*NOTE:* Use the `lastId` field to paginate response\n\n*NOTE:* If you're offset is too high, you will receive an\n`HTTP 400 offset too high` error message.",
+          "title": "Offset"
+        },
+        "lastId": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used as a cursor for pagination. When using `lastId`, the `sort` parameter\nwill not work.",
+          "title": "Lastid"
+        },
+        "vendor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used to specify the RETS vendor to search from. This\nparameter is required on multi-MLS apps. You can query one\nvendor at a time. To get your vendor id's make an HTTP\nOPTIONS request to https://api.simplyrets.com.\n\n`curl -XOPTIONS https://api.simplyrets.com/properties` Required on multi-MLS accounts; copy a vendor ID from Get Account Metadata.",
+          "title": "Vendor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "vendor"
+          }
+        },
+        "postalCodes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by postal codes / zip\ncode. You can specify multiple.",
+          "title": "Postalcodes"
+        },
+        "features": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings by specific **interior features**.  You can use the parameter multiple times to filter by multiple features. For example, to search for `Wet Bar` and `High Ceiling`:\n``` https://simplyrets.com/services?features=Wet%20Bar&features=High%20Ceiling ```\nThe list of `features` provided by your RETS vendor or MLS can be seen by sending an `OPTIONS` request to the `/properties` endpoint:\n``` curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/properties ```",
+          "title": "Features"
+        },
+        "exteriorFeatures": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings by specific **exterior features**.  You can use the parameter multiple times to filter by multiple features. For example, to search for `Proch` and `Fully Fenced`:\n``` https://simplyrets.com/services?exteriorFeatures=Porch&exteriorFeatures=Fully+Fenced ```",
+          "title": "Exteriorfeatures"
+        },
+        "water": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter listings on WaterBodyName (`.property.water`). There are multiple ways to use this parameter:\n- `water=true`: Return listings where `.property.water` is NOT\n  `false` or `null`.\n- `water=false`: Return listings where `.property.water` is\n  `false` or `null`.\n- `water=QUERY`: Return listings with a matching\n  `.property.water` value.\n\nIf this parameter is used multiple times in a single query, return listings that match any of the provided values.",
+          "title": "Water"
+        },
+        "neighborhoods": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by specific neighborhoods and\nsubdivisions. You can specify multiple `neighborhoods` by\nusing the query parameter multiple times.\n\nThe `neighborhoods` query parameter is case-insensitive.\n\nThe list of `neighborhoods` provided by your RETS vendor or\nMLS can be seen by sending an `OPTIONS` request to the\n`/properties` endpoint:\n\n`curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/properties`",
+          "title": "Neighborhoods"
+        },
+        "cities": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by specific cities. You can\nspecify multiple `cities` query parameters.\n\nThe `cities` query parameter is case-insensitive.\n\nThe list of `cities` provided by your RETS vendor or MLS can\nbe seen by sending an `OPTIONS` request to the `/properties`\nendpoint:\n\n`curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/openhouses`",
+          "title": "Cities"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings by state or province. You can specify multiple `state` parameters and the parameter is case insensitive.",
+          "title": "State"
+        },
+        "counties": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the listings returned by specific counties. You can\nspecify multiple `counties` parameters.\n\nThe `counties` query parameter is case-insensitive.\n\nThe list of `counties` provided by your RETS vendor or MLS\ncan be seen by sending an `OPTIONS` request to the\n`/properties` endpoint:\n\n`curl -XOPTIONS -u simplyrets:simplyrets https://api.simplyrets.com/openhouses`",
+          "title": "Counties"
+        },
+        "points": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return listings that are within a set of latitude\nlongitude coordinates. For example;\n```\n29.723837,-95.69778\n29.938275,-95.69778\n29.938275,-95.32974\n29.723837,-95.32974\n```\n\nNote that some RETS vendors do not provide latitude and\nlongitude with their listings, which is required for this\nparameter to work. In these cases, SimplyRETS offers a\n[Geocoding Addon](https://simplyrets.com/services#geocoding).\n\nCheck out our\n[blog post](https://simplyrets.com/blog/interactive-map-search.html)\non using the `points` parameter to build a map-based app\nin javascript.",
+          "title": "Points"
+        },
+        "idx": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "null",
+                  "listing",
+                  "address",
+                  "ignore"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specify the IDX display requirements for the listings in the response. The `idx` parameter checks if the `internetAddressDisplay` and `internetEntireListingDisplay` for each listing are true (or `null`) or false based on this setting.\n##### **`idx=null`** (default)\n  - `internetAddressDisplay` must be true\n  - `internetEntireListingDisplay` must be true\n##### **`idx=listing`**\n  - `internetAddressDisplay` is ignored\n  - `internetEntireListingDisplay` must be true\n##### **`idx=address`**\n  - `internetAddressDisplay` must be true\n  - `internetEntireListingDisplay` is ignored\n##### **`idx=ignore`**\n  - `internetAddressDisplay` is ignored\n  - `internetEntireListingDisplay` is ignored\n\nLearn more about SimplyRETS's [IDX compliance features here](/topics/fields-and-features-for-idx-compliance) and please check with your MLS or data feed provider on the rules and requirements for displaying restricted listings.",
+          "title": "Idx"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "listprice",
+                "-listprice",
+                "listdate",
+                "-listdate",
+                "closedate",
+                "-closedate",
+                "beds",
+                "-beds",
+                "baths",
+                "-baths"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort the response by a specific field. Values starting\nwith a minus (-) denote descending order, while the others\nare ascending.",
+          "title": "Sort",
+          "enum": [
+            "listprice",
+            "-listprice",
+            "listdate",
+            "-listdate",
+            "closedate",
+            "-closedate",
+            "beds",
+            "-beds",
+            "baths",
+            "-baths"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "SimplyRETSListPropertyKeysConfig",
+      "type": "object"
+    },
+    "SimplyRETSOnNewOrUpdatedPropertyConfig": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_property",
+          "default": "on_new_or_updated_property",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Listing",
+          "x-is-trigger": true
+        },
+        "vendor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vendor ID, required for multi-MLS accounts.",
+          "title": "Vendor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "vendor"
+          }
+        },
+        "modified": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional fixed earliest MLS modification time, e.g. 2026-10-01T00:00:00Z. Feeds without modification timestamps ignore this filter. First poll establishes a baseline.",
+          "title": "Modified"
+        },
+        "cities": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cities"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "Active",
+                  "Pending",
+                  "Closed",
+                  "ActiveUnderContract",
+                  "Hold",
+                  "Withdrawn",
+                  "Expired",
+                  "Delete",
+                  "Incomplete",
+                  "ComingSoon"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Statuses to monitor. When omitted SimplyRETS defaults to Active.",
+          "title": "Status"
+        }
+      },
+      "title": "SimplyRETSOnNewOrUpdatedPropertyConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_account_metadata": "#/$defs/SimplyRETSGetAccountMetadataConfig",
+          "get_market_analytics": "#/$defs/SimplyRETSGetMarketAnalyticsConfig",
+          "get_office_metadata": "#/$defs/SimplyRETSGetOfficeMetadataConfig",
+          "get_openhouse": "#/$defs/SimplyRETSGetOpenhouseConfig",
+          "get_property": "#/$defs/SimplyRETSGetPropertyConfig",
+          "get_property_analytics": "#/$defs/SimplyRETSGetPropertyAnalyticsConfig",
+          "get_property_metadata": "#/$defs/SimplyRETSGetPropertyMetadataConfig",
+          "list_agents": "#/$defs/SimplyRETSListAgentsConfig",
+          "list_offices": "#/$defs/SimplyRETSListOfficesConfig",
+          "list_openhouses": "#/$defs/SimplyRETSListOpenhousesConfig",
+          "list_properties": "#/$defs/SimplyRETSListPropertiesConfig",
+          "list_property_keys": "#/$defs/SimplyRETSListPropertyKeysConfig",
+          "on_new_or_updated_property": "#/$defs/SimplyRETSOnNewOrUpdatedPropertyConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SimplyRETSListPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSGetPropertyConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSListOpenhousesConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSGetOpenhouseConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSListPropertyKeysConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSListAgentsConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSListOfficesConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSGetMarketAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSGetPropertyAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSGetAccountMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSGetPropertyMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSGetOfficeMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/SimplyRETSOnNewOrUpdatedPropertyConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SimplyRETSCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Simplyrets Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
