@@ -6,6 +6,18 @@ import { join } from 'node:path';
 import { requirementsFromSchema, methodFromRequirement } from '~/components/credential/credentialMethods';
 const schema = JSON.parse(readFileSync(join(__dirname, '../../app/schemas/nodes/whop.json'), 'utf8'));
 describe('Whop connect method', () => {
+  it('exposes the webhook trigger with its supported commerce events', () => {
+    const trigger = schema.$defs.WhopOnEventConfig;
+    expect(trigger['x-requires-webhook']).toBe(true);
+    expect(trigger.properties.operation['x-is-trigger']).toBe(true);
+    expect(trigger.properties.event_type.enum).toEqual([
+      'payment.succeeded', 'payment.failed', 'payment.requires_action',
+      'membership.activated', 'membership.updated', 'membership.trial_ending_soon',
+      'refund.created', 'refund.updated', 'dispute.created', 'dispute.updated',
+    ]);
+    expect(trigger.properties.webhook_url['ui:loadValue']).toBe(true);
+    expect(trigger.properties.signing_secret['ui:hidden']).toBe(true);
+  });
   it('offers the production account API key with a password field and setup link', () => {
     const methods = requirementsFromSchema(schema).map(methodFromRequirement);
     expect(methods).toHaveLength(1);

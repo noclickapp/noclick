@@ -850,6 +850,170 @@
       "title": "WhopListRefundsConfig",
       "type": "object"
     },
+    "WhopOnEventConfig": {
+      "description": "Start a workflow when a signed Whop commerce event arrives.\n\nNeeds developer:manage_webhook and the selected event's receive/read permissions:\nhttps://docs.whop.com/developer/guides/webhooks",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Whop Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Whop Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "payment.succeeded",
+          "description": "The event that starts this workflow. Membership updates include cancellation/status changes.",
+          "enum": [
+            "payment.succeeded",
+            "payment.failed",
+            "payment.requires_action",
+            "membership.activated",
+            "membership.updated",
+            "membership.trial_ending_soon",
+            "refund.created",
+            "refund.updated",
+            "dispute.created",
+            "dispute.updated"
+          ],
+          "title": "Event",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "resource_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the API key's current account. Set a biz_ or app_ ID to watch that resource.",
+          "title": "Account or App ID"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Whop automatically. The key needs developer:manage_webhook plus the selected event's permissions; see Whop's webhook reference.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:help": "https://docs.whop.com/developer/guides/webhooks",
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "WhopOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
     "WhopPublishProductConfig": {
       "additionalProperties": false,
       "description": "Publish Product. Permissions: [{'bearerAuth': ['access_pass:update']}]",
@@ -1121,6 +1285,7 @@
           "list_products": "#/$defs/WhopListProductsConfig",
           "list_promo_codes": "#/$defs/WhopListPromoCodesConfig",
           "list_refunds": "#/$defs/WhopListRefundsConfig",
+          "on_event": "#/$defs/WhopOnEventConfig",
           "publish_product": "#/$defs/WhopPublishProductConfig",
           "refund_payment": "#/$defs/WhopRefundPaymentConfig",
           "unpublish_product": "#/$defs/WhopUnpublishProductConfig",
@@ -1130,6 +1295,9 @@
         "propertyName": "operation"
       },
       "oneOf": [
+        {
+          "$ref": "#/$defs/WhopOnEventConfig"
+        },
         {
           "$ref": "#/$defs/WhopGetAccountConfig"
         },

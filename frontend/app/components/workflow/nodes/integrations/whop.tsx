@@ -17,7 +17,7 @@ WhopIcon.displayName = 'WhopIcon';
 export const WhopNode: NodeDefinition = {
     type: 'automation-whop',
     label: 'Whop',
-    description: 'Manage Whop products, memberships, payments and promo codes',
+    description: 'Start workflows from Whop payments, memberships, refunds and disputes; manage products and promo codes',
     category: 'ecommerce',
     Icon: WhopIcon,
     iconColor: '',

@@ -5,12 +5,18 @@ cursor page; pass page_info.end_cursor as after to continue. Writes run once,
 without automatic retries (a lost response may have applied the write).
 Contract: https://api.whop.com/api/v1/openapi.json
 """
+import base64
+import hashlib
+import hmac
+import time
 from typing import Annotated, Literal, Union
 from urllib.parse import quote
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.agent_events import prune_empty
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
 from utils.ssrf import guarded_async_client
 
 BASE = "https://api.whop.com/api/v1"
@@ -216,7 +222,34 @@ class WhopDeactivatePromoCodeConfig(_Input):
     id: str = Field(..., min_length=1, max_length=200, title="Resource ID")
 
 
-WhopConfig = Annotated[Union[WhopGetAccountConfig, WhopListProductsConfig, WhopGetProductConfig, WhopListMembershipsConfig, WhopGetMembershipConfig, WhopListPaymentsConfig, WhopGetPaymentConfig, WhopListRefundsConfig, WhopGetRefundConfig, WhopListPromoCodesConfig, WhopGetPromoCodeConfig, WhopCreateProductConfig, WhopUpdateProductConfig, WhopDeleteProductConfig, WhopPublishProductConfig, WhopUnpublishProductConfig, WhopUpdateMembershipConfig, WhopCancelMembershipConfig, WhopRefundPaymentConfig, WhopCreatePromoCodeConfig, WhopActivatePromoCodeConfig, WhopDeactivatePromoCodeConfig], Field(discriminator="operation")]
+WHOP_WEBHOOK_EVENTS = (
+    "payment.succeeded", "payment.failed", "payment.requires_action",
+    "membership.activated", "membership.updated", "membership.trial_ending_soon",
+    "refund.created", "refund.updated", "dispute.created", "dispute.updated",
+)
+
+
+class WhopOnEventConfig(WebhookTriggerConfigBase):
+    """Start a workflow when a signed Whop commerce event arrives.
+
+    Needs developer:manage_webhook and the selected event's receive/read permissions:
+    https://docs.whop.com/developer/guides/webhooks
+    """
+    operation: Literal["on_event"] = Field("on_event", title="On Whop Event", json_schema_extra={
+        "ui:hidden": True, "x-category": "Triggers", "x-is-trigger": True,
+        "x-display-name": "On Whop Event",
+    })
+    event_type: Literal[*WHOP_WEBHOOK_EVENTS] = Field(
+        "payment.succeeded", title="Event", description="The event that starts this workflow. Membership updates include cancellation/status changes.",
+        json_schema_extra={"x-enum-searchable": True})
+    resource_id: str | None = Field(None, min_length=1, max_length=200, pattern=r"^[A-Za-z0-9_]+$",
+        title="Account or App ID", description="Omit for the API key's current account. Set a biz_ or app_ ID to watch that resource.")
+    webhook_url: str | None = Field(None, title="Webhook URL", description="Registered with Whop automatically. The key needs developer:manage_webhook plus the selected event's permissions; see Whop's webhook reference.",
+        json_schema_extra={"ui:widget": "webhook", "ui:copyable": True, "ui:loadValue": True,
+                           "ui:help": "https://docs.whop.com/developer/guides/webhooks"})
+
+
+WhopConfig = Annotated[Union[WhopOnEventConfig, WhopGetAccountConfig, WhopListProductsConfig, WhopGetProductConfig, WhopListMembershipsConfig, WhopGetMembershipConfig, WhopListPaymentsConfig, WhopGetPaymentConfig, WhopListRefundsConfig, WhopGetRefundConfig, WhopListPromoCodesConfig, WhopGetPromoCodeConfig, WhopCreateProductConfig, WhopUpdateProductConfig, WhopDeleteProductConfig, WhopPublishProductConfig, WhopUnpublishProductConfig, WhopUpdateMembershipConfig, WhopCancelMembershipConfig, WhopRefundPaymentConfig, WhopCreatePromoCodeConfig, WhopActivatePromoCodeConfig, WhopDeactivatePromoCodeConfig], Field(discriminator="operation")]
 
 class WhopFullConfig(NodeConfig[WhopConfig, WhopAPIKeyCredential]):
     pass
@@ -225,7 +258,7 @@ class WhopFullConfig(NodeConfig[WhopConfig, WhopAPIKeyCredential]):
 ROUTES = {'get_account': ('GET', '/accounts/me'), 'list_products': ('GET', '/products'), 'get_product': ('GET', '/products/{id}'), 'list_memberships': ('GET', '/memberships'), 'get_membership': ('GET', '/memberships/{id}'), 'list_payments': ('GET', '/payments'), 'get_payment': ('GET', '/payments/{id}'), 'list_refunds': ('GET', '/refunds'), 'get_refund': ('GET', '/refunds/{id}'), 'list_promo_codes': ('GET', '/promo_codes'), 'get_promo_code': ('GET', '/promo_codes/{id}'), 'create_product': ('POST', '/products'), 'update_product': ('PATCH', '/products/{id}'), 'delete_product': ('DELETE', '/products/{id}'), 'publish_product': ('POST', '/products/{id}/publish'), 'unpublish_product': ('POST', '/products/{id}/unpublish'), 'update_membership': ('PATCH', '/memberships/{id}'), 'cancel_membership': ('POST', '/memberships/{id}/cancel'), 'refund_payment': ('POST', '/payments/{id}/refund'), 'create_promo_code': ('POST', '/promo_codes'), 'activate_promo_code': ('POST', '/promo_codes/{id}/activate'), 'deactivate_promo_code': ('POST', '/promo_codes/{id}/deactivate')}
 
 
-class WhopNode(WorkflowNode):
+class WhopNode(ExternalWebhookTriggerMixin, WorkflowNode):
     integration_type = "automation-whop"
     connection_evidence = ConnectionEvidence(noun="Whop account", identity_operation="get_account")
 
@@ -233,28 +266,142 @@ class WhopNode(WorkflowNode):
     def get_config_model(cls):
         return WhopFullConfig
 
+    @classmethod
+    def registration_fingerprint_fields(cls, config):
+        parsed = WhopOnEventConfig.model_validate(config or {})
+        return {"event_type": parsed.event_type, "resource_id": parsed.resource_id}
+
+    @classmethod
+    async def _register_external_webhook(cls, *, webhook_url, credential, config, node_id):
+        parsed = WhopOnEventConfig.model_validate(config or {})
+        body = {"url": webhook_url, "events": [parsed.event_type], "enabled": True,
+                "api_version_date": "2026-11-07"}
+        if parsed.resource_id:
+            body["resource_id"] = parsed.resource_id
+        result = await cls._request(credential, "POST", "/webhooks", json=body)
+        if not isinstance(result, dict) or not result.get("id") or not result.get("webhook_secret"):
+            raise ValueError("Whop did not return a webhook ID and signing secret")
+        return {"external_webhook_id": result["id"], "signing_secret": result["webhook_secret"]}
+
+    @classmethod
+    async def _unregister_external_webhook(cls, *, credential, config, node_id):
+        endpoint_id = (config or {}).get("external_webhook_id")
+        if endpoint_id:
+            await cls._request(credential, "DELETE", "/webhooks/" + quote(str(endpoint_id), safe=""))
+
+    @classmethod
+    def verify_webhook_signature(cls, body, headers, config):
+        # Whop's ws_ secret is used verbatim, not decoded or prefix-stripped.
+        # https://docs.whop.com/developer/guides/webhooks#verify-without-an-sdk
+        secret = (config or {}).get("signing_secret")
+        lowered = {key.lower(): value for key, value in headers.items()}
+        timestamp = lowered.get("webhook-timestamp", "")
+        message_id = lowered.get("webhook-id", "")
+        if not secret or not message_id or len(timestamp) > 12 or not timestamp.isascii() or not timestamp.isdigit():
+            return False
+        if abs(time.time() - int(timestamp)) > 300:
+            return False
+        message = message_id.encode() + b"." + timestamp.encode() + b"." + body
+        expected = base64.b64encode(hmac.new(str(secret).encode(), message, hashlib.sha256).digest()).decode()
+        return any(hmac.compare_digest(part.encode(), ("v1," + expected).encode())
+                   for part in lowered.get("webhook-signature", "").split())
+
+    @classmethod
+    def filter_trigger_payload(cls, payload, config):
+        event_type = (config or {}).get("event_type", "payment.succeeded")
+        return (config or {}).get("operation") == "on_event" and event_type in WHOP_WEBHOOK_EVENTS and payload.get("type") == event_type
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict):
+            return None
+        event = output.get("data") if "status" in output else output
+        if not isinstance(event, dict) or event.get("type") not in WHOP_WEBHOOK_EVENTS:
+            return None
+        kind = event["type"]
+        record = event.get("data")
+        if not isinstance(record, dict) or not record.get("id"):
+            return None
+        lines = [f"Whop {kind.replace('.', ' ')}", f"Resource ID: {record['id']}"]
+        def fact(label, value):
+            if value is not None and value != "":
+                lines.append(f"{label}: {prune_empty(str(value), max_str=1200)}")
+        fact("Status", record.get("status"))
+        fact("Account ID", event.get("account_id"))
+        fact("Event ID", event.get("id"))
+        fact("At", event.get("timestamp"))
+        if kind.startswith("payment."):
+            user = record.get("user") or {}
+            fact("Customer", user.get("name"))
+            fact("User ID", user.get("id"))
+            fact("Email", record.get("customer_email"))
+            for field in ("membership_id", "member_id", "product_id"):
+                fact(field, record.get(field))
+            total = record.get("total") or {}
+            fact("Amount", f"{total.get('amount')} {total.get('currency')}" if total else None)
+            fact("Failure", record.get("failure_message"))
+            fact("Recovery URL", record.get("recovery_url"))
+            lines.append(f"To act: get_payment id={record['id']}; use membership_id with get_membership.")
+        elif kind.startswith("membership."):
+            fact("User ID", record.get("user_id"))
+            fact("Member ID", record.get("member_id"))
+            fact("Product", (record.get("product") or {}).get("title"))
+            fact("Account", (record.get("account") or {}).get("title"))
+            fact("Cancels at period end", record.get("cancel_at_period_end"))
+            fact("Cancellation reason", record.get("cancellation_reason"))
+            fact("Period ends", record.get("current_period_end"))
+            fact("Manage URL", record.get("manage_url"))
+            lines.append(f"To act: get_membership or update_membership id={record['id']}.")
+        elif kind.startswith("refund."):
+            payment = record.get("payment") or {}
+            user = payment.get("user") or {}
+            fact("Customer", user.get("name"))
+            fact("Email", user.get("email"))
+            fact("Payment ID", payment.get("id"))
+            fact("Amount", f"{record.get('amount')} {record.get('currency')}")
+            lines.append(f"To act: get_refund id={record['id']}.")
+        elif kind.startswith("dispute."):
+            buyer = record.get("buyer") or {}
+            fact("Customer", buyer.get("name"))
+            fact("Email", buyer.get("email"))
+            fact("User ID", buyer.get("user_id"))
+            fact("Payment ID", (record.get("payment") or {}).get("id"))
+            fact("Reason", record.get("reason"))
+            fact("Amount", f"{record.get('amount')} {record.get('currency')}")
+            fact("Evidence due", record.get("evidence_due_at"))
+        return {"text": "\n".join(lines), "conversation_key": str(record["id"]),
+                "title": f"Whop {kind}: {record['id']}"}
+
+    @staticmethod
+    async def _request(credential, method, route, **kwargs):
+        if not credential or not credential.get("api_key"):
+            raise ValueError("Connect a Whop API key")
+        key = WhopAPIKeyCredential.model_validate(credential).api_key
+        headers = {"Authorization": "Bearer " + key, "Accept": "application/json", "Api-Version-Date": "2026-11-07"}
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
+            response = await client.request(method, BASE + route, headers=headers, **kwargs)
+        if not 200 <= response.status_code < 300:
+            message = response.text[:2000].replace(key, "[redacted]")
+            raise ValueError(f"Whop HTTP {response.status_code}: {message}")
+        if response.status_code == 204 or not response.content:
+            return {}
+        data = response.json()
+        if not isinstance(data, (dict, list)):
+            raise ValueError("Expected Whop JSON object or array")
+        return data
+
     async def execute(self, inputs):
         if not self.config or not self.config.credentials:
             raise ValueError("Connect a Whop API key")
         config = self.config.config
+        if isinstance(config, WhopOnEventConfig):
+            return {"status": "success", "data": {}}
         method, route = ROUTES[config.operation]
         values = config.model_dump(exclude_none=True, exclude={"operation"})
         if "{id}" in route:
             route = route.replace("{id}", quote(values.pop("id"), safe=""))
-        headers = {"Authorization": "Bearer " + self.config.credentials.api_key, "Accept": "application/json", "Api-Version-Date": "2026-11-07"}
         kwargs = {"params": values} if method == "GET" else {"json": values} if method != "DELETE" else {}
-        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
-            response = await client.request(method, BASE + route, headers=headers, **kwargs)
-        if not 200 <= response.status_code < 300:
-            # Preserve provider rejection text for connect, while redacting the key.
-            message = response.text[:2000].replace(self.config.credentials.api_key, "[redacted]")
-            raise ValueError(f"Whop HTTP {response.status_code}: {message}")
-        if response.status_code == 204 or not response.content:
-            data = {}
-        else:
-            data = response.json()
-            if not isinstance(data, (dict, list)):
-                raise ValueError("Expected Whop JSON object or array")
+        data = await self._request(self.config.credentials.model_dump(), method, route, **kwargs)
         output = {"status": "success", "data": data}
         await self.emit(output)
         return output
