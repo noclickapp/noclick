@@ -1,0 +1,17 @@
+{
+  "content": [
+    {
+      "id": 42,
+      "name": "Marta",
+      "surname": "Garcia",
+      "email": "marta.garcia@example.com",
+      "modifiedBy": "agent1",
+      "dateCreated": "2021-01-09T10:35:24Z",
+      "dateModified": "2021-02-08T09:27:14Z"
+    }
+  ],
+  "totalPages": 1,
+  "totalElements": 1,
+  "size": 500,
+  "number": 0
+}

@@ -1,0 +1,2524 @@
+{
+  "$defs": {
+    "InmobaliaCRMCreateActivityLogConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_activity_log",
+          "default": "create_activity_log",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-contract-operation": "createActivityLog",
+          "x-display-name": "Create Activity Log",
+          "x-is-trigger": false
+        },
+        "contactMain": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "contactMain"
+        },
+        "dateCompleted": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UTC due/completion time. For an activity log this cannot be in the future.",
+          "title": "dateCompleted"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "maxLength": 25000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "details"
+        },
+        "responsible": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "responsible"
+        },
+        "subject": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "subject",
+          "type": "string"
+        },
+        "type": {
+          "description": "An agency activity type from List Activity Types.",
+          "maxLength": 45,
+          "minLength": 2,
+          "pattern": "^[^\"'<>&\\s][^\"'<>&\\r\\n]*[^\"'<>&\\s]$",
+          "title": "type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject",
+        "type"
+      ],
+      "title": "InmobaliaCRMCreateActivityLogConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMCreateActivityTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_activity_task",
+          "default": "create_activity_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-contract-operation": "createActivityTask",
+          "x-display-name": "Create Activity Task",
+          "x-is-trigger": false
+        },
+        "contactMain": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "contactMain"
+        },
+        "dateCompleted": {
+          "description": "UTC due/completion time. For an activity log this cannot be in the future.",
+          "format": "date-time",
+          "title": "dateCompleted",
+          "type": "string"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "maxLength": 25000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "details"
+        },
+        "responsible": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "responsible"
+        },
+        "status": {
+          "enum": [
+            "PENDING",
+            "COMPLETED"
+          ],
+          "title": "status",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "subject",
+          "type": "string"
+        },
+        "type": {
+          "description": "An agency activity type from List Activity Types.",
+          "maxLength": 45,
+          "minLength": 2,
+          "pattern": "^[^\"'<>&\\s][^\"'<>&\\r\\n]*[^\"'<>&\\s]$",
+          "title": "type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dateCompleted",
+        "status",
+        "subject",
+        "type"
+      ],
+      "title": "InmobaliaCRMCreateActivityTaskConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-contract-operation": "createContact",
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "archived"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "company"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "email"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "pattern": "^\\+[1-9][0-9]{1,14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "mobile"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "name"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 25000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "notes"
+        },
+        "surname": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "surname"
+        },
+        "telephone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "pattern": "^\\+[1-9][0-9]{1,14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "telephone"
+        },
+        "typeBuyer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "typeBuyer"
+        },
+        "typeOwner": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "typeOwner"
+        }
+      },
+      "title": "InmobaliaCRMCreateContactConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMCreateWebLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_web_lead",
+          "default": "create_web_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Web Leads",
+          "x-contract-operation": "createWebLead",
+          "x-display-name": "Create Web Lead",
+          "x-is-trigger": false
+        },
+        "comments": {
+          "anyOf": [
+            {
+              "maxLength": 25000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The lead's message.",
+          "title": "comments"
+        },
+        "contact": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "contact"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "phone"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "properties",
+          "description": "Property references of interest, such as P12345."
+        },
+        "source": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "pattern": "^https?://[^\\s]+$",
+          "title": "source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "InmobaliaCRMCreateWebLeadConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMGetActivityTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_activity_task",
+          "default": "get_activity_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-contract-operation": "getActivityTaskById",
+          "x-display-name": "Get Activity Task",
+          "x-is-trigger": false
+        },
+        "activityTaskId": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "activityTask ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "activityTaskId"
+      ],
+      "title": "InmobaliaCRMGetActivityTaskConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-contract-operation": "getContactById",
+          "x-display-name": "Get Contact",
+          "x-is-trigger": false
+        },
+        "contactId": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "contact ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contactId"
+      ],
+      "title": "InmobaliaCRMGetContactConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-contract-operation": "getCurrentUser",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "InmobaliaCRMGetCurrentUserConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMGetEnquiryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_enquiry",
+          "default": "get_enquiry",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Enquiries",
+          "x-contract-operation": "getEnquiryById",
+          "x-display-name": "Get Enquiry",
+          "x-is-trigger": false
+        },
+        "enquiryId": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "enquiry ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enquiryId"
+      ],
+      "title": "InmobaliaCRMGetEnquiryConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMGetPropertyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_property",
+          "default": "get_property",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Properties",
+          "x-contract-operation": "getPropertyById",
+          "x-display-name": "Get Property",
+          "x-is-trigger": false
+        },
+        "propertyId": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "property ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "propertyId"
+      ],
+      "title": "InmobaliaCRMGetPropertyConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMGetWebLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_web_lead",
+          "default": "get_web_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Web Leads",
+          "x-contract-operation": "getWebLeadById",
+          "x-display-name": "Get Web Lead",
+          "x-is-trigger": false
+        },
+        "webLeadId": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "webLead ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "webLeadId"
+      ],
+      "title": "InmobaliaCRMGetWebLeadConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMListActivityLogsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_activity_logs",
+          "default": "list_activity_logs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-contract-operation": "listActivityLogs",
+          "x-display-name": "List Activity Logs",
+          "x-is-trigger": false
+        },
+        "fromDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "fromDateCreated"
+        },
+        "fromDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "fromDateModified"
+        },
+        "page": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort criteria such as dateCreated,asc. Multiple criteria are sent as repeated sort parameters.",
+          "title": "sort"
+        },
+        "toDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "toDateCreated"
+        },
+        "toDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "toDateModified"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An agency activity type from List Activity Types.",
+          "title": "type"
+        }
+      },
+      "title": "InmobaliaCRMListActivityLogsConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMListActivityTasksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_activity_tasks",
+          "default": "list_activity_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-contract-operation": "listActivityTasks",
+          "x-display-name": "List Activity Tasks",
+          "x-is-trigger": false
+        },
+        "fromDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "fromDateCreated"
+        },
+        "fromDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "fromDateModified"
+        },
+        "page": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort criteria such as dateCreated,asc. Multiple criteria are sent as repeated sort parameters.",
+          "title": "sort"
+        },
+        "toDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "toDateCreated"
+        },
+        "toDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "toDateModified"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An agency activity type from List Activity Types.",
+          "title": "type"
+        }
+      },
+      "title": "InmobaliaCRMListActivityTasksConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMListActivityTypesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_activity_types",
+          "default": "list_activity_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-contract-operation": "getActivityTypes",
+          "x-display-name": "List Activity Types",
+          "x-is-trigger": false
+        }
+      },
+      "title": "InmobaliaCRMListActivityTypesConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-contract-operation": "listContacts",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "archived"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "email"
+        },
+        "emailAndPhoneAsOr": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "emailAndPhoneAsOr"
+        },
+        "fromDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "fromDateCreated"
+        },
+        "fromDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "fromDateModified"
+        },
+        "page": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "page",
+          "type": "integer"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "phone"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort criteria such as dateCreated,asc. Multiple criteria are sent as repeated sort parameters.",
+          "title": "sort"
+        },
+        "toDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "toDateCreated"
+        },
+        "toDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "toDateModified"
+        }
+      },
+      "title": "InmobaliaCRMListContactsConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMListEnquiriesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_enquiries",
+          "default": "list_enquiries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Enquiries",
+          "x-contract-operation": "listEnquiries",
+          "x-display-name": "List Enquiries",
+          "x-is-trigger": false
+        },
+        "fromDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "fromDateCreated"
+        },
+        "fromDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "fromDateModified"
+        },
+        "page": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort criteria such as dateCreated,asc. Multiple criteria are sent as repeated sort parameters.",
+          "title": "sort"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "ACTIVE",
+                  "LOST",
+                  "WON"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "status"
+        },
+        "toDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "toDateCreated"
+        },
+        "toDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "toDateModified"
+        },
+        "transactionType": {
+          "anyOf": [
+            {
+              "enum": [
+                "SALE",
+                "RENT_SHORTTERM",
+                "RENT_LONGTERM"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "transactionType",
+          "enum": [
+            "SALE",
+            "RENT_SHORTTERM",
+            "RENT_LONGTERM"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "InmobaliaCRMListEnquiriesConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMListPropertiesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_properties",
+          "default": "list_properties",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Properties",
+          "x-contract-operation": "listProperties",
+          "x-display-name": "List Properties",
+          "x-is-trigger": false
+        },
+        "countryIso": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "countryIso"
+        },
+        "fromDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "fromDateCreated"
+        },
+        "fromDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "fromDateModified"
+        },
+        "page": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort criteria such as dateCreated,asc. Multiple criteria are sent as repeated sort parameters.",
+          "title": "sort"
+        },
+        "statusPublish": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "statusPublish"
+        },
+        "toDateCreated": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "toDateCreated"
+        },
+        "toDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "toDateModified"
+        }
+      },
+      "title": "InmobaliaCRMListPropertiesConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMListUsersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-contract-operation": "listUsers",
+          "x-display-name": "List Users",
+          "x-is-trigger": false
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "enabled"
+        }
+      },
+      "title": "InmobaliaCRMListUsersConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMListWebLeadsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_web_leads",
+          "default": "list_web_leads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Web Leads",
+          "x-contract-operation": "listWebLeads",
+          "x-display-name": "List Web Leads",
+          "x-is-trigger": false
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "fromDate"
+        },
+        "page": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 20,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort criteria such as dateCreated,asc. Multiple criteria are sent as repeated sort parameters.",
+          "title": "sort"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "PENDING",
+                "PROCESSED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "status",
+          "enum": [
+            "PENDING",
+            "PROCESSED"
+          ],
+          "x-enum-searchable": true
+        },
+        "toDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "toDate"
+        }
+      },
+      "title": "InmobaliaCRMListWebLeadsConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMPatchContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "patch_contact",
+          "default": "patch_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-contract-operation": "patchContact",
+          "x-display-name": "Edit Contact Fields",
+          "x-is-trigger": false
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "archived"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "company"
+        },
+        "contactId": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "contact ID",
+          "type": "integer"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "email"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "pattern": "^\\+[1-9][0-9]{1,14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "mobile"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "name"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 25000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "notes"
+        },
+        "surname": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "surname"
+        },
+        "telephone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 1,
+              "pattern": "^\\+[1-9][0-9]{1,14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "telephone"
+        },
+        "typeBuyer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "typeBuyer"
+        },
+        "typeOwner": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "typeOwner"
+        }
+      },
+      "required": [
+        "contactId"
+      ],
+      "title": "InmobaliaCRMPatchContactConfig",
+      "type": "object"
+    },
+    "InmobaliaCRMPersonalToken": {
+      "properties": {
+        "credential_type": {
+          "const": "inmobalia_crm_pat",
+          "default": "inmobalia_crm_pat",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Inmobalia CRM Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your Inmobalia CRM Personal Access Token (PAT). It uses your CRM user's permissions. NoClick sends it as a bearer token only to api-crm.inmobalia.com. Include permission to read your current user for the connection check, plus the resources you automate.",
+      "x-credential-url": "https://api-crm.inmobalia.com/docs/api-docs"
+    },
+    "InmobaliaCRMProcessWebLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "process_web_lead",
+          "default": "process_web_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Web Leads",
+          "x-contract-operation": "processWebLead",
+          "x-display-name": "Process Web Lead",
+          "x-is-trigger": false
+        },
+        "contact": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "contact",
+          "type": "integer"
+        },
+        "webLeadId": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "webLead ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact",
+        "webLeadId"
+      ],
+      "title": "InmobaliaCRMProcessWebLeadConfig",
+      "type": "object"
+    },
+    "OnNewOrUpdatedContact": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_contact",
+          "default": "on_new_or_updated_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Contact",
+          "x-is-trigger": true
+        },
+        "fromDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive lower bound; existing versions are baselined when armed.",
+          "title": "Modified since (UTC)"
+        }
+      },
+      "title": "OnNewOrUpdatedContact",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnNewOrUpdatedProperty": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_or_updated_property",
+          "default": "on_new_or_updated_property",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New or Updated Property",
+          "x-is-trigger": true
+        },
+        "fromDateModified": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive lower bound; existing versions are baselined when armed.",
+          "title": "Modified since (UTC)"
+        }
+      },
+      "title": "OnNewOrUpdatedProperty",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OnNewWebLead": {
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_web_lead",
+          "default": "on_new_web_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Web Lead",
+          "x-is-trigger": true
+        },
+        "fromDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional inclusive lower bound for the watched history. Existing leads are baselined when armed.",
+          "title": "Received since (UTC)"
+        }
+      },
+      "title": "OnNewWebLead",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_activity_log": "#/$defs/InmobaliaCRMCreateActivityLogConfig",
+          "create_activity_task": "#/$defs/InmobaliaCRMCreateActivityTaskConfig",
+          "create_contact": "#/$defs/InmobaliaCRMCreateContactConfig",
+          "create_web_lead": "#/$defs/InmobaliaCRMCreateWebLeadConfig",
+          "get_activity_task": "#/$defs/InmobaliaCRMGetActivityTaskConfig",
+          "get_contact": "#/$defs/InmobaliaCRMGetContactConfig",
+          "get_current_user": "#/$defs/InmobaliaCRMGetCurrentUserConfig",
+          "get_enquiry": "#/$defs/InmobaliaCRMGetEnquiryConfig",
+          "get_property": "#/$defs/InmobaliaCRMGetPropertyConfig",
+          "get_web_lead": "#/$defs/InmobaliaCRMGetWebLeadConfig",
+          "list_activity_logs": "#/$defs/InmobaliaCRMListActivityLogsConfig",
+          "list_activity_tasks": "#/$defs/InmobaliaCRMListActivityTasksConfig",
+          "list_activity_types": "#/$defs/InmobaliaCRMListActivityTypesConfig",
+          "list_contacts": "#/$defs/InmobaliaCRMListContactsConfig",
+          "list_enquiries": "#/$defs/InmobaliaCRMListEnquiriesConfig",
+          "list_properties": "#/$defs/InmobaliaCRMListPropertiesConfig",
+          "list_users": "#/$defs/InmobaliaCRMListUsersConfig",
+          "list_web_leads": "#/$defs/InmobaliaCRMListWebLeadsConfig",
+          "on_new_or_updated_contact": "#/$defs/OnNewOrUpdatedContact",
+          "on_new_or_updated_property": "#/$defs/OnNewOrUpdatedProperty",
+          "on_new_web_lead": "#/$defs/OnNewWebLead",
+          "patch_contact": "#/$defs/InmobaliaCRMPatchContactConfig",
+          "process_web_lead": "#/$defs/InmobaliaCRMProcessWebLeadConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/InmobaliaCRMGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMListActivityTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMPatchContactConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMListWebLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMGetWebLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMCreateWebLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMProcessWebLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMListPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMGetPropertyConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMListEnquiriesConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMGetEnquiryConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMListActivityTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMGetActivityTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMCreateActivityTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMListActivityLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/InmobaliaCRMCreateActivityLogConfig"
+        },
+        {
+          "$ref": "#/$defs/OnNewWebLead"
+        },
+        {
+          "$ref": "#/$defs/OnNewOrUpdatedContact"
+        },
+        {
+          "$ref": "#/$defs/OnNewOrUpdatedProperty"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/InmobaliaCRMPersonalToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Inmobalia-crm Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a contact from a web form",
+    "Watch for new web leads",
+    "Create a follow-up activity task",
+    "Find properties modified this week"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
