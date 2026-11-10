@@ -1,0 +1,568 @@
+[
+  {
+    "provider": "domainsdb",
+    "node_type": "automation-domainsdb",
+    "checked": 13,
+    "passed": 11,
+    "failed": 2,
+    "fixture_errors": 0,
+    "response_checked": 13,
+    "auth_checked": 0,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 11,
+      "total": 14
+    },
+    "triggers": {
+      "checked": 2,
+      "passed": 0
+    },
+    "operations": [
+      {
+        "operation": "search_domains",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/domains/search?date=1&page=1&limit=50&domain=1&zone=1&country=1&isDead=false&A=1&NS=1&CNAME=1&MX=1&TXT=1&api_key=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /domains/search",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0d80add30bb64a739ce8543f7d4b52d44c9ef66334c105b106be90a82d3bacef"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "search_domains",
+          "date": "1",
+          "page": "1",
+          "limit": 50,
+          "domain": "1",
+          "zone": "1",
+          "country": "1",
+          "isDead": false,
+          "A": "1",
+          "NS": "1",
+          "CNAME": "1",
+          "MX": "1",
+          "TXT": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_tld_domains",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/domains/tld/1?date=1&page=1&limit=50&domain=1&country=1&isDead=false&A=1&NS=1&CNAME=1&MX=1&TXT=1&api_key=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /domains/tld/{zone_id}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0d80add30bb64a739ce8543f7d4b52d44c9ef66334c105b106be90a82d3bacef"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_tld_domains",
+          "zone_id": "1",
+          "date": "1",
+          "page": "1",
+          "limit": 50,
+          "domain": "1",
+          "country": "1",
+          "isDead": false,
+          "A": "1",
+          "NS": "1",
+          "CNAME": "1",
+          "MX": "1",
+          "TXT": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "search_tld_domains",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/domains/tld/1/search?date=1&page=1&limit=50&domain=1&country=1&isDead=false&A=1&NS=1&CNAME=1&MX=1&TXT=1&api_key=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /domains/tld/{zone_id}/search",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0d80add30bb64a739ce8543f7d4b52d44c9ef66334c105b106be90a82d3bacef"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "search_tld_domains",
+          "zone_id": "1",
+          "date": "1",
+          "page": "1",
+          "limit": 50,
+          "domain": "1",
+          "country": "1",
+          "isDead": false,
+          "A": "1",
+          "NS": "1",
+          "CNAME": "1",
+          "MX": "1",
+          "TXT": "1"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_added_domains",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/domains/updates/added?date=1&page=1&limit=50&api_key=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /domains/updates/added",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0d80add30bb64a739ce8543f7d4b52d44c9ef66334c105b106be90a82d3bacef"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_added_domains",
+          "date": "1",
+          "page": "1",
+          "limit": 50
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_deleted_domains",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/domains/updates/deleted?date=1&page=1&limit=50&api_key=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /domains/updates/deleted",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0d80add30bb64a739ce8543f7d4b52d44c9ef66334c105b106be90a82d3bacef"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_deleted_domains",
+          "date": "1",
+          "page": "1",
+          "limit": 50
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_updates",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/domains/updates/list?api_key=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /domains/updates/list",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "7fe816d361a7232c87456f785a50b8dedd80303ed96807b947f781e5da19cd16"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_updates"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_api_info",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/info/api?api_key=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /info/api",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f026672853111e0626500673e9cfcca1d7dec28ca4350e0e6b84d40ed0ddc803"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_api_info"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_statistics",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/info/stat/?page=1&limit=50",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /info/stat/",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "63707f81070bb163927795d45d3bb3ac42919e809528fc70716e76a48d08a186"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_statistics",
+          "page": "1",
+          "limit": 50
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_zone_statistics",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/info/stat/1?page=1&limit=50",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /info/stat/{zone}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "69ad6e9ef10ffac456ab0b6f713e1c04073d4111326e1b4f12e05a6898bf15f9"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_zone_statistics",
+          "zone": "1",
+          "page": "1",
+          "limit": 50
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "list_tlds",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/info/tld/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /info/tld/",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "4ddb4041690989fd455efeb6abca9229eae7a346ab78cf6e0947892e8aa4c003"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_tlds"
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "get_tld",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/info/tld/1?page=1&limit=50",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /info/tld/{zone}",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "2bba188c702a6505b1fb3bbd5a90b1557203d84ee17831f182acb1d301d871fd"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_tld",
+          "zone": "1",
+          "page": "1",
+          "limit": 50
+        },
+        "trigger": null,
+        "passed": true
+      },
+      {
+        "operation": "on_added_domain",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/domains/updates/added?limit=50&date=1&api_key=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /domains/updates/added",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0d80add30bb64a739ce8543f7d4b52d44c9ef66334c105b106be90a82d3bacef"
+          },
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/domains/updates/added?limit=50&date=1&api_key=conformance-fake-token&page=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /domains/updates/added",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0d80add30bb64a739ce8543f7d4b52d44c9ef66334c105b106be90a82d3bacef"
+          }
+        ],
+        "failures": [
+          "execution: ValueError: Domain feed exceeds the poll bound or repeats a page; choose an update date"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "on_added_domain",
+          "date": "1"
+        },
+        "trigger": {
+          "kind": "poll",
+          "failures": [],
+          "advisory": []
+        },
+        "passed": false
+      },
+      {
+        "operation": "on_deleted_domain",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/domains/updates/deleted?limit=50&date=1&api_key=conformance-fake-token",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /domains/updates/deleted",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0d80add30bb64a739ce8543f7d4b52d44c9ef66334c105b106be90a82d3bacef"
+          },
+          {
+            "method": "GET",
+            "url": "https://api.domains-index.com/v1/domains/updates/deleted?limit=50&date=1&api_key=conformance-fake-token&page=1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.domains-index.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /domains/updates/deleted",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0d80add30bb64a739ce8543f7d4b52d44c9ef66334c105b106be90a82d3bacef"
+          }
+        ],
+        "failures": [
+          "execution: ValueError: Domain feed exceeds the poll bound or repeats a page; choose an update date"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "on_deleted_domain",
+          "date": "1"
+        },
+        "trigger": {
+          "kind": "poll",
+          "failures": [],
+          "advisory": []
+        },
+        "passed": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,21 @@
+{
+ "provider": "domainsdb",
+ "ready": true,
+ "blocking": [],
+ "advisory": [
+  "on_added_domain: parser on generated response: execution: ValueError: Domain feed exceeds the poll bound or repeats a page; choose an update date",
+  "on_deleted_domain: parser on generated response: execution: ValueError: Domain feed exceeds the poll bound or repeats a page; choose an update date"
+ ],
+ "stats": {
+  "operations": 13,
+  "skipped": 0,
+  "request_ok": 13,
+  "authored_parser_ok": 0,
+  "generated_only": 13,
+  "local_ok": 0
+ },
+ "triggers": {
+  "on_added_domain": "passed",
+  "on_deleted_domain": "passed"
+ }
+}

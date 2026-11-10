@@ -1,0 +1,21 @@
+{
+  "domainsdb": {
+    "file": "openapi3.json",
+    "sha256": "586f804c454b8c9f35410912074b69c570ef2d6f5d0f5306b2f2f4b31aaca896",
+    "version": "1.0",
+    "source_url": "https://api.domains-index.com/v1/swagger.json",
+    "node_type": "automation-domainsdb",
+    "credential": {
+      "credential_type": "domainsdb_api_key",
+      "api_key": "<token>"
+    },
+    "converted_from": {
+      "file": "openapi.json",
+      "sha256": "b2bfbcb7ed785a0be866c02d9efd4c43e5f5584e62984e6d45874d9202189204",
+      "source_url": "https://api.domains-index.com/v1/swagger.json",
+      "converter": "swagger2openapi@7.0.8",
+      "patches": []
+    },
+    "server_url": "https://api.domains-index.com/v1"
+  }
+}
