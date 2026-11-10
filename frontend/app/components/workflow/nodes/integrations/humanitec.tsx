@@ -5,7 +5,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 export function HumanitecIcon({ className, style }: { className?: string; style?: CSSProperties }) {
     return <img src="/icons/humanitec.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} draggable={false} />;
+        style={{ ...style, objectFit: 'contain' }} draggable={false} />;
 }
 export const HumanitecNode: NodeDefinition = {
     type: 'automation-humanitec', category: 'cloud-hosting', label: 'Humanitec',

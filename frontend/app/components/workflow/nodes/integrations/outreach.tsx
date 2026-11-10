@@ -8,7 +8,7 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://www.outreach.ai/home
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/outreach-brand-vector.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const OutreachNode: NodeDefinition = {

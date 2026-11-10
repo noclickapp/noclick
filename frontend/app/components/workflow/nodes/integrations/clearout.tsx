@@ -8,7 +8,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const ClearoutIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/clearout.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const ClearoutNode: NodeDefinition = {

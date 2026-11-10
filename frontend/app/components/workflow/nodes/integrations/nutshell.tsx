@@ -6,7 +6,7 @@ import { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const NutshellIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/nutshell-brand-vector.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 const NutshellNodeComponent = (props: NodeProps) => (

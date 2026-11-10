@@ -8,7 +8,7 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://github.com/grocy/grocy/blob/9e1020b7f8994e2d3e3e890da64ceba9903b2fb2/public/img/icon.svg
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/grocy-brand-vector.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 const GrocyNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;

@@ -9,7 +9,7 @@ import type { NodeDefinition, SvgIconComponent } from '~/components/workflow/nod
 // Sourced brand artwork: https://logos.composio.dev/api/predict_leads
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/predictleads-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 const PredictLeadsIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(

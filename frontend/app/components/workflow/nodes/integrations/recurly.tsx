@@ -11,7 +11,7 @@ import { ThemedBrandImg } from '~/components/shared/ThemedBrandImg';
 // Sourced brand artwork: https://logos.composio.dev/api/recurly
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/recurly-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 const RecurlyIcon: SvgIconComponent = forwardRef<

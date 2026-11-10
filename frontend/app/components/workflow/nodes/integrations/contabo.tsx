@@ -9,7 +9,7 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 // Sourced brand artwork: https://cdn.contabo.com/contabo-logo-2.svg
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/contabo.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={PreferredBrandIcon} iconColor="" />;

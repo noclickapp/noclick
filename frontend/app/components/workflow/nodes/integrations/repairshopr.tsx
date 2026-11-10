@@ -8,7 +8,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const RepairshoprIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/repairshopr.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, objectFit: 'contain', '--brand-invert': 0 } as CSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const RepairshoprNode: NodeDefinition = {

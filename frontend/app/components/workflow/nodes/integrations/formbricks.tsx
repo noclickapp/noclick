@@ -9,7 +9,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 // Sourced brand artwork: https://formbricks.com/_next/static/media/footerlogo.e272c0f1.svg
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/formbricks-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };

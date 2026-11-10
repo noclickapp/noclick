@@ -12,7 +12,7 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 // Sourced brand artwork: https://logos.composio.dev/api/ilert
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/ilert-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const IlertIcon = ({ style, ...props }: ImgHTMLAttributes<HTMLImageElement>) => (

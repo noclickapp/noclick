@@ -5,7 +5,7 @@ import { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const BillIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/bill-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const BillNode: NodeDefinition = {

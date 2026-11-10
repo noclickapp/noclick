@@ -16,13 +16,7 @@ const DartIcon = ({
         alt=""
         aria-hidden="true"
         className={className}
-        style={
-            {
-                ...style,
-                objectFit: 'contain',
-                '--brand-invert': 0,
-            } as CSSProperties
-        }
+        style={{ ...style, objectFit: 'contain' }}
     />
 );
 

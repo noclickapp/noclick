@@ -8,7 +8,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const MagentoV2Icon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/magento-v2.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const MagentoV2Node: NodeDefinition = {

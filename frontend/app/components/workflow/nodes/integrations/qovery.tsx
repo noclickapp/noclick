@@ -7,7 +7,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 // Official Qovery wordmark, preserved unchanged from the vendor asset.
 const QoveryIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/qovery.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const QoveryNode: NodeDefinition = {

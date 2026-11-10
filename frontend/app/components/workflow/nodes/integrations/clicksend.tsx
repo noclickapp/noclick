@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 import type { CSSProperties } from 'react';
 const Icon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
   <img src="/icons/clicksend-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-    style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+    style={{ ...style, objectFit: 'contain' }} />
 );
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={Icon} iconColor="" />;
 export const ClickSendNode: NodeDefinition = {

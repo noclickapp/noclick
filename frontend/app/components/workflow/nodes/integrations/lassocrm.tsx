@@ -8,7 +8,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const LassoCRMIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/lassocrm.png" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain', background: '#244c66', padding: 3, borderRadius: 4 } as CSSProperties} />
+        style={{ ...style, objectFit: 'contain', background: '#244c66', padding: 3, borderRadius: 4 }} />
 );
 
 export const LassoCRMNode: NodeDefinition = {

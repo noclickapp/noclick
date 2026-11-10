@@ -7,7 +7,7 @@ import { NodeDefinition } from '~/components/workflow/nodes/types';
 // Sourced brand artwork: https://logos.composio.dev/api/xero
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/xero-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };

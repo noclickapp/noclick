@@ -7,7 +7,7 @@ import { NodeDefinition } from '~/components/workflow/nodes/types';
 // Sourced brand artwork: https://www.algolia.com/files/live/sites/algolia-assets/files/icons/algolia-logo-for-favicon.svg
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/algolia-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };

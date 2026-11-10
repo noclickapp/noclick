@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const TalentLMSIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/talentlms.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const TalentLMSNode: NodeDefinition = {

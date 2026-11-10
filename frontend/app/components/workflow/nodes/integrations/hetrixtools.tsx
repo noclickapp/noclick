@@ -9,7 +9,7 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://hetrixtools.com
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/hetrixtools-brand-vector.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 const HetrixToolsIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(

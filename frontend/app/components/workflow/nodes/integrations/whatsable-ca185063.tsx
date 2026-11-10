@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const WhatsAbleIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/whatsable-ca185063.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const WhatsAbleNode: NodeDefinition = {

@@ -13,7 +13,7 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 // Sourced brand artwork: https://acculynx.com/wp-content/uploads/2023/05/acculynx-logo-navy-orange-gray.svg
 const PreferredBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/acculynx-preferred-brand.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 const AccuLynxIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(

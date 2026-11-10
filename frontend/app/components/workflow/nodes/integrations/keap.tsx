@@ -19,13 +19,7 @@ const KeapIcon = ({
         alt=""
         aria-hidden="true"
         className={className}
-        style={
-            {
-                ...style,
-                '--brand-invert': 0,
-                objectFit: 'contain',
-            } as CSSProperties
-        }
+        style={{ ...style, objectFit: 'contain' }}
     />
 );
 

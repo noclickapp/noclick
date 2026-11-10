@@ -11,7 +11,7 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 // Native source artwork: https://www.bokun.io/wp-content/uploads/2026/02/Brand-Marketing-PDF-New-Brand.pdf
 const NativeSourceBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/bokun-native-brand-20261012.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const BokunNode: NodeDefinition = {

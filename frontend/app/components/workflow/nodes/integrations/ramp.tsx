@@ -7,7 +7,7 @@ import { NodeDefinition } from '~/components/workflow/nodes/types';
 
 const RampIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
     <img src="/icons/ramp.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const RampNode: NodeDefinition = {

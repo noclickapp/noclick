@@ -7,7 +7,7 @@ import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://vervoe.com
 export const VervoeIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/vervoe.svg" alt="" aria-hidden="true" className={className}
-        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+        style={{ ...style, objectFit: 'contain' }} />
 );
 
 export const VervoeNode: NodeDefinition = {
