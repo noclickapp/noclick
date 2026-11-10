@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/yodeck.svg",
   "source": "https://www.yodeck.com/",
-  "license": "Vendor trademark; used to identify Yodeck integration.",
-  "sha256": "1ddc7178427248fdd311bd8eb7b6ae7e8d0e01ba43913b04d99874767b28f1f3"
+  "found_at": "https://www.yodeck.com/ (header logo: inline <svg class=\"ydk-logo\"> holding <svg class=\"ydk-logo__full\"> and <svg class=\"ydk-logo__quote\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "took the header's own quote-only logo (the nested <svg class=\"ydk-logo__quote\">, viewBox 0 0 70.6 44) out of the page's inline header SVG: its two #F26F26 paths (the frame and the pixel quote marks) unchanged; dropped the full lockup and the root's HTML class (work/agents/b36/lift_nested.py, structure only)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "DECISION: Yodeck's favicon/app icon puts this mark in white on an orange disc, but that version exists only as PNG (yodeck.com cropped-Favicon-*.png, app.yodeck.com favicon.ico / yodeck_logo_without_text.png). The quote-only header logo (1.6:1, orange outline) is the only vector of the mark. The previous file was the docs lockup with 'Yodeck API Documentation' text.",
+  "license": "Yodeck brand mark, used nominatively to identify the connected service; trademark rights remain with Yodeck.",
+  "sha256": "290b3eccb24406ca8a06a45e8d0de6e442d3224f0a676b3adaff1deefdbc92d1"
 }

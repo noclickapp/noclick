@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/wild-apricot.svg",
+  "source": "https://www.wildapricot.com/wp-content/themes/wildapricot/assets/images/wildapricot-logo.svg",
+  "found_at": "https://www.wildapricot.com/ (header logo, <img data-src=\".../assets/images/wildapricot-logo.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the rounded-square app tile (elements 0,1: white rounded rect + orange square with the apricot outline knocked out, clipped to rx=22); dropped the 'Wild Apricot' wordmark and 'by Personify' line (elements 2 onward)",
+    "cropped the viewBox to the tile with no padding (it is the app icon)",
+    "cleaned"
+  ],
+  "notes": "The orange rounded tile is kept because it is Wild Apricot's own app/favicon tile and the header logo draws it the same way; the white apricot is the white rect showing through the orange tile's cutout.",
+  "license": "Wild Apricot brand mark, used nominatively to identify the connected service; trademark rights remain with Wild Apricot.",
+  "sha256": "6ecf19bbaaf4e16fdf4e870eebe60a9b9b3a56f59b09216d23df0ee4864dcfbe"
+}

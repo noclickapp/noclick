@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/virtuous-crm.svg",
+  "source": "https://cdn.virtuoussoftware.com/images/v2/virtuous-logo-full.svg",
+  "found_at": "https://app.virtuoussoftware.com/ (the CRM's sign-in page logo <img src=\"\u2026/images/v2/virtuous-logo-full.svg\">)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the blue (#00A3E3) two-wing symbol (element 1), dropped the #253C47 'virtuous' wordmark (element 0)",
+    "cropped the viewBox to the wings",
+    "cleaned"
+  ],
+  "notes": "DECISION: the app's own icon is the wings in white on a blue square, but that tile exists only as PNG/ICO (the app's safari-pinned-tab.svg is a black potrace mask), so I shipped the bare blue wings, which is how Virtuous draws the mark in every logo lockup. virtuous.org's 2020 header file has a slightly different cut of the same wings (slanted inner edges); I used the CRM app's v2 file since the node is the CRM.",
+  "license": "Virtuous brand mark, used nominatively to identify the connected service; trademark rights remain with Virtuous.",
+  "sha256": "4084e558cfcff903eadbc22853cbbfb9516b54bf072a6c8d12a4d2c1538c06c3"
+}

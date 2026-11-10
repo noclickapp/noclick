@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/webcrm.svg",
   "source": "https://webcrm.com/themes/custom/efficy/logo.svg",
+  "found_at": "https://webcrm.com/ (header <img src=\"/themes/custom/efficy/logo.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the green person mark (elements 0,1: body and head); dropped the 'WebCRM' wordmark and the small 'by efficy' line (elements 2-16)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "Byte-identical to the current file's recorded source; only the wordmark was removed.",
   "license": "webCRM brand mark, used nominatively to identify the connected service; trademark rights remain with webCRM.",
-  "sha256": "8d1ab0b3decc4556571d4780f3ca43856d73cd0b4caa97338d84d0fcb8100a97"
+  "sha256": "ce271224993c1bdf6c4f36c8b3bdbee36a72d6971d699e3c6e52f5a648d10a2f"
 }

@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/userback.svg",
+  "source": "https://userback.io/userback-logo.svg",
+  "found_at": "https://userback.io/ (header and footer logo <img src=\"/userback-logo.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the purple shield-with-arrow symbol (element 8), dropped the 'userback' wordmark (elements 0-7)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "The arrow is a cut-out, so the tile shows through on both themes, as in the favicon; one file serves both.",
+  "license": "Userback brand mark, used nominatively to identify the connected service; trademark rights remain with Userback.",
+  "sha256": "5cdb182477371c53c914ac9d358b1aafe7eea7801da4c72611b2fe0f6df400d9"
+}

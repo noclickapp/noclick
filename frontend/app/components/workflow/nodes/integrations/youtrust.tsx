@@ -12,7 +12,7 @@ const YoutrustIcon = ({
     style?: CSSProperties;
 }) => (
     <img
-        src="/icons/youtrust.png"
+        src="/icons/youtrust.svg"
         alt=""
         aria-hidden="true"
         className={className}

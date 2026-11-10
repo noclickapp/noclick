@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/vocal-video.svg",
+  "source": "https://vocalvideo.com/",
+  "found_at": "https://vocalvideo.com/ (Framer page: the header logo <use href=\"#svg-594243070_3671\"> points at an inline <svg> in the page's #svg-templates block; saved page at downloads/vocal-video/src1/page.html)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "copied the template <svg id=\"svg-594243070_3671\"> out of the page and gave its root xmlns and a viewBox equal to its own width/height (0 0 487 85), nothing else",
+    "kept the play mark: the #FF4C6C outer shape and the #FF869B inner triangle (elements 3, 4); dropped 'VOCAL VIDEO' and the \u00ae (elements 0-2, 5, 6)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "Reads on both themes, so one file.",
+  "license": "Vocal Video brand mark, used nominatively to identify the connected service; trademark rights remain with Vocal Video.",
+  "sha256": "caec7a6a603396cbb3e2ed78ed67fddaf217ec905e1a73d24dacab530a000449"
+}

@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/whop.svg",
+  "source": "https://pub-c4bf1c78d8904530b5075c8a938b6fa1.r2.dev/Whop_Logos.zip (03_Logos/Brandmark/SVG/whop_brandmark_orange.svg)",
+  "found_at": "https://brand.whop.com/ (Whop's brand guidelines, linked from the whop.com footer; 'Logos' download; the same file is served at https://brand.whop.com/images/logos/whop_brandmark_orange.svg)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "file is the brandmark alone (three orange #FA4616 strokes); cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: Whop's social avatars (Whop_Avatars.zip) and favicon put the white brandmark on an orange square, but the kit ships that tile only as PNG; the kit's vector brandmark in brand orange on a transparent background was used instead.",
+  "license": "Whop brand mark, used nominatively to identify the connected service; trademark rights remain with Whop.",
+  "sha256": "f959dee83fc6ec28af5784d2077e078fa372a5b709f1ac788e7eefc42723ea77"
+}

@@ -1,6 +1,0 @@
-{
-  "path": "frontend/public/icons/zulip.png",
-  "source": "https://raw.githubusercontent.com/zulip/zulip/main/static/images/logo/zulip-icon-128x128.png",
-  "license": "Zulip official brand mark, used nominatively to identify the connected service. Trademark rights remain with Zulip. Source repository: https://github.com/zulip/zulip (Apache-2.0).",
-  "sha256": "7665f10ff6b677e46d3a7e12ffd627ca9767dee313b52593912888588bf906f3"
-}

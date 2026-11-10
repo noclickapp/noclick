@@ -1,0 +1,18 @@
+{
+  "path": "frontend/public/icons/vast-ai-dark.svg",
+  "source": "https://vast.ai/logo-footer.svg",
+  "found_at": "https://vast.ai/ (footer logo <img src=\"/logo-footer.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the file is Vast's app icon alone (black rounded tile, element 0, with the white double-stroke V, element 1)",
+    "viewBox kept tight to the tile (no padding: the tile is the app icon)",
+    "cleaned",
+    "dropped the black tile (element 0), keeping the white V (element 1) alone, as Vast shows it on its own dark site header (vast_logo.svg)",
+    "cropped the viewBox to the V with 2% padding"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: in dark mode the black tile disappears into the dark surface, so the dark file is the white V alone (from the same file). The V then fills the icon box and looks larger than it does inside the tile; if the reviewer prefers one file, the tile (vast-ai.svg) also reads on dark because the V is white.",
+  "license": "Vast.ai brand mark, used nominatively to identify the connected service; trademark rights remain with Vast.ai.",
+  "sha256": "7f3de0efbb8335338273d9a16a5190271925810b7be1494a75ea5b1eeef41df4"
+}

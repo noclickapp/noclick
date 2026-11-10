@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/volunteerhub.svg",
-  "source": "https://volunteerhub.com/hubfs/assets-volunteer-hub/logos/logo-full-color.svg",
+  "source": "https://volunteerhub.com/hubfs/assets-volunteer-hub/logos/symbol-full-color.svg",
+  "found_at": "https://volunteerhub.com/ (<img src=\"\u2026/logos/symbol-full-color.svg\">, beside the header's logo-full-color.svg)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the file is the symbol alone (six rounded diamonds in a V, #C7D2EA / #6A91C8 / #0066AF)",
+    "cropped the viewBox to the diamonds with 2% padding",
+    "cleaned"
+  ],
+  "notes": "The mark is wide (1.6:1), so it sits low and wide in the square tile; the pale #C7D2EA diamonds read on white (lost_light 0) and on dark, so one file.",
   "license": "VolunteerHub brand mark, used nominatively to identify the connected service; trademark rights remain with VolunteerHub.",
-  "sha256": "4331cee3a850354fd8e14a3927b8aef9fa2fa7f738f5e70e3a36554ad3de468e"
+  "sha256": "556702f7d3c8a704151220fa8c7f4b7259bbf84872ebb09c798ce3b3f4ef6763"
 }

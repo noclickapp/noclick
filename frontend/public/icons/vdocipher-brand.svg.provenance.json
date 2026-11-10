@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/vdocipher-brand.svg",
+  "source": "https://www.vdocipher.com/dashboard/assets/vdocipher-logo-CmJbizDw.svg",
+  "found_at": "https://www.vdocipher.com/dashboard/ (the customer dashboard's bundle /dashboard/assets/main-B13Oq-GJ.js references it beside vdocipher-full-logo-hIVQFebO.svg)",
+  "source_kind": "company app/login page",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the file is the mark alone (the compound of five interlocking triangles, 91 flat-colour Illustrator paths)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: the dashboard's SVG (an Adobe Illustrator 26 export, a real vector) is brighter than the website's raster icon: it uses yellow, orange, green, mid-blue and maroon where the website PNG uses yellow, orange, red, dark green and navy. Same geometry, so it is the same mark; I found no vector of the darker website version (the site header is a base64 PNG; /brand, /press, /media-kit, /logo.svg, /favicon.svg are 404; docs and blog use PNGs; GitHub org VdoCipher has no logo SVG). The mark reads on both themes.",
+  "license": "VdoCipher brand mark, used nominatively to identify the connected service; trademark rights remain with VdoCipher.",
+  "sha256": "156fd58f75c3e7d6b8e8de847e8f505d55279968ebf27e710201b91d3f3bdd23"
+}

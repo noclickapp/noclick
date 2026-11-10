@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/yelp-leads.svg",
+  "source": "https://s3-media0.fl.yelpcdn.com/assets/srv0/yelp_large_assets/3946379ffa69/assets/img/cookbook/yelp_logos.zip",
+  "found_at": "https://www.yelp.com/brand (Yelp brand guidelines: logo download)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "used yelp_logos/Burst/yelp_burst.svg from Yelp's brand-page logo zip",
+    "dropped the black registered-trademark sign (element 5)",
+    "cropped the viewBox to the burst (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "Yelp's favicon/app icon is the white burst on a red gradient disc (kit's Burst/yelp_favicon.svg, with gradients and filters); the plain red burst is the brand page's primary mark and reads on both wells, so it was kept as before. The (R) was removed as it is unreadable at 22-48px.",
+  "license": "Yelp brand mark, used nominatively to identify the connected service; trademark rights remain with Yelp.",
+  "sha256": "e521c7c4349781ec3fe0eb09ee2acc70d446e41d34d15f0ad18347c3fbbd68e4"
+}

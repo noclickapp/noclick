@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/wati-dark.svg",
+  "source": "https://www.wati.io/_astro/images/Wati-footer.svg",
+  "found_at": "https://www.wati.io/ (<link rel=\"icon\" type=\"image/svg+xml\" href=\"/_astro/images/wati-icon.svg\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "the favicon is already the bubble mark alone (green bubble, #1D1D1B outline bubble); cropped the viewBox to the mark",
+    "cleaned",
+    "dark file is Wati's own white-outline version: kept the bubble (elements 4,5: green bubble + white outline) from the site's footer logo, dropped the 'wati' wordmark (elements 0-3), cropped"
+  ],
+  "variant": "dark mode",
+  "notes": "The footer logo (src3) and the branding page's wati-white.svg (src4) draw the identical bubble in green + white; the current site's footer file was used.",
+  "license": "Wati brand mark, used nominatively to identify the connected service; trademark rights remain with Wati.",
+  "sha256": "edee9f81d7d2473a3e67a131d03f3dc090a08727bdf7116b2cbba2725225affd"
+}

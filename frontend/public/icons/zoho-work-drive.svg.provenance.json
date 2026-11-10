@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/zoho-work-drive.svg",
-  "source": "https://www.zohowebstatic.com/sites/zweb/images/productlogos/workdrive.svg",
-  "license": "Zoho WorkDrive trademark, used nominatively to identify the integration; no trademark rights granted.",
-  "sha256": "d3cba7721fe5d5b7d90b3cd4b68897514e59133dfcf70a2968257d1eff419473"
+  "source": "https://www.zohowebstatic.com/sites/zweb/images/producticon/workdrive.svg",
+  "found_at": "https://www.zoho.com/workplace/ (product icon /sites/zweb/images/producticon/workdrive.svg)",
+  "source_kind": "parent company site",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "used Zoho's WorkDrive product icon unchanged (the #226DB4 folder with three rising nodes, 7 paths)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned (the Illustrator generator comment before the root survives svgtool clean; harmless)"
+  ],
+  "notes": "The batch's reference icon (api-console.zoho.com/favicon.ico, a four-colour rounded square) is Zoho's API Console favicon, not WorkDrive's mark. Replaces the 'Zoho WorkDrive' lockup with the icon alone.",
+  "license": "Zoho WorkDrive (Zoho Corporation) brand mark, used nominatively to identify the connected service; trademark rights remain with Zoho WorkDrive (Zoho Corporation).",
+  "sha256": "cadb7e49a830de8725fb102ec3c6fff6a83fb9e8feea596ee1f8e17d5597d96f"
 }

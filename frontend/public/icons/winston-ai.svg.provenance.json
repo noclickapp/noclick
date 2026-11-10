@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/winston-ai.svg",
-  "source": "https://mintcdn.com/winstonai/beTS5nQ014LXzWZn/favicon.svg (official docs.gowinston.ai favicon)",
-  "license": "Winston AI brand mark, used nominatively to identify the service. Trademark rights remain with Winston AI.",
-  "sha256": "713174569bc1600c6d60853234bb0d9935c0f6186161653570435b37fd6a68f1"
+  "source": "https://mintcdn.com/winstonai/beTS5nQ014LXzWZn/favicon.svg",
+  "found_at": "https://docs.gowinston.ai/ (Mintlify docs config \"favicon\"; same file as the current icon's recorded source)",
+  "source_kind": "company docs",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "light file is the docs favicon unchanged in drawing (black disc, white W); cropped the viewBox to the disc (512x504) with no padding",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: Winston uses two colourways of the same W disc: blue W on white (homepage favicon, web app icon: the main one) and white W on black (docs favicon, the only one published as SVG). Light mode keeps the docs SVG as is; dark mode uses the main white/blue colourway, recoloured from the same file. The reviewer may prefer the white/blue colourway in both modes (on a white tile its white disc then disappears and only the blue W shows, as on the homepage); that file would be the dark file as is. The site header and docs logos are 'winston ai' wordmarks with no separate mark.",
+  "license": "Winston AI brand mark, used nominatively to identify the connected service; trademark rights remain with Winston AI.",
+  "sha256": "0b0a5e681997601e194f39c3848b152357cc38d601470bb5ad85f3dc09c7348a"
 }

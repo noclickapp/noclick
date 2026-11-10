@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/ynab.svg",
-  "source": "https://api.ynab.com/assets/safari-pinned-tab-0f6609450211c5050f3e0e002911754bd2adc442d0e562a8c49df516fc0f81bc.svg (official mask icon linked from https://api.ynab.com/)",
-  "license": "YNAB brand mark used nominatively to identify the service; trademark rights remain with YNAB.",
-  "sha256": "ffb7d6bf5960f485497f17aa1fd7300ca60d79ba15221ce6a74cd8178ba07223"
+  "source": "https://cdn.prod.website-files.com/640f69143ec11b21d42015c6/6758a5396561162bbe65ae5c_524ab88af6960dd452642470297f8130_Tree%20Logo%20Blurple%20(2).svg",
+  "found_at": "https://www.ynab.com/ and https://www.ynab.com/press (<img> 'Tree Logo Blurple')",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "used the site's 'Tree Logo Blurple' SVG (all 18 parts of the tree)",
+    "recoloured #3B5EDA -> #545BFE, YNAB's blurple (the site CSS token --design-system---blurple--blurple and the favicon 'Tree Logo Blurple 8.png' are #545BFE)",
+    "cropped the viewBox to the tree (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "Drop the CSS invert/filter on this icon in the frontend: the new file is blurple and reads on both wells (icon_check lost_dark 0). The press page's logo kit is a Brandfolder share that requires identification (brandfolder.com/s/kvq74s532z6g56wkbpsqpq), so the site SVG was used. Wikimedia Commons also has 'YNAB blurple logo.svg' (not needed).",
+  "license": "YNAB brand mark, used nominatively to identify the connected service; trademark rights remain with YNAB.",
+  "sha256": "aa83d775a412bd5f9ae5b49814a093c0c90f7aed6479c0a26ce4079f214c3fea"
 }

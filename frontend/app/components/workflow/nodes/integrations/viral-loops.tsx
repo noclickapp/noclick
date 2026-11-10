@@ -4,7 +4,7 @@ import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/types';
 
 const ViralLoopsIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
-    ({ className, style, ...props }, ref) => <img ref={ref} src="/icons/viral-loops.png" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />,
+    ({ className, style, ...props }, ref) => <img ref={ref} src="/icons/viral-loops.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />,
 );
 ViralLoopsIcon.displayName = 'ViralLoopsIcon';
 

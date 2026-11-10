@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/writer-dark.svg",
+  "source": "https://writer.com/downloads/Writer_icon_light.x_svg",
+  "found_at": "https://writer.com/newsroom/#brand-assets (Brand assets: Writer icon, dark)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "used the brand kit's dark icon unchanged (black disc, white 'W' in three parts)",
+    "cropped the viewBox to the disc (no pad: it is the brand's own icon disc)",
+    "cleaned",
+    "taken from the brand kit's light icon (white disc, black 'W'), same edits"
+  ],
+  "variant": "dark mode",
+  "notes": "DECISION: Writer's brand kit 'icon' is the 'W' in a disc (kept); its homepage favicon is the bare black 'W'. If the reviewer prefers no disc, drop element 0 (the rect) from each kit file and recolour the light icon's 'W' to white for dark mode.",
+  "license": "WRITER brand mark, used nominatively to identify the connected service; trademark rights remain with WRITER.",
+  "sha256": "c0643ad793025f961731897d8054a3e4b6c2b65d7907d1c46cb7f81b8ab55c08"
+}

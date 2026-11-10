@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/viral-loops.svg",
+  "source": "https://cdn.prod.website-files.com/5ecfee3d3c78d12514ee78db/5ed63acc2fa3db292bb8dbfc_5e78c57b7cdb82506b10a5c5_viral-loops-logo(full)-black-1-1.svg",
+  "found_at": "https://viral-loops.com/ (the only SVG logo on the site, <img src=\"\u2026viral-loops-logo(full)-black-1-1.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the circle and the white network glyph (elements 0, 9); dropped the 'viral loops' wordmark (element 10) and eight invisible fill:none guide paths (elements 1-8)",
+    "recoloured the circle #000000 \u2192 #0E40F3 (element 0)",
+    "cropped the viewBox to the circle",
+    "cleaned"
+  ],
+  "notes": "DECISION: Viral Loops publishes the mark as a vector only in its black version (circle #000000 + white glyph); its blue app mark exists only as PNG. I recoloured the file's own circle to #0E40F3, the exact colour of the site favicon and the docs' blue-circle logo (no other change). The current icon (from the Intercom help centre) is an older, darker indigo; the website's blue is the current one. If the recolour is not acceptable, the alternative is the black circle as-is, which would need a dark-mode answer (it vanishes on the dark tile).",
+  "license": "Viral Loops brand mark, used nominatively to identify the connected service; trademark rights remain with Viral Loops.",
+  "sha256": "1e412b1f2aa91c869b24f79d14e3cd0f056ec0af9764221efb83984a74fb220e"
+}

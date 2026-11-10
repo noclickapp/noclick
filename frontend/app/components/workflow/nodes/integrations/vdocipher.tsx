@@ -6,7 +6,7 @@ import type { NodeDefinition } from '~/components/workflow/nodes/types';
 
 // Unmodified brand asset from https://www.vdocipher.com/.
 const VdoCipherIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
-    <img src="/icons/vdocipher-brand.png" alt="" aria-hidden="true" className={className}
+    <img src="/icons/vdocipher-brand.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
 );
 

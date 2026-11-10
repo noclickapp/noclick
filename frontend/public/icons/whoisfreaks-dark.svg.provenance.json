@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/whoisfreaks-dark.svg",
+  "source": "https://whoisfreaks.com/images/logo.svg",
+  "found_at": "https://whoisfreaks.com/ (footer <img src=\"/images/footer/website-logo.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the orange fingerprint (elements 0-4) and the #272727 magnifier with its question mark (elements 5-7); dropped the 'WhoisFreaks' wordmark (elements 8-18)",
+    "cropped the viewBox to the mark",
+    "cleaned",
+    "dark file is WhoisFreaks' own dark-background logo (/images/logo.svg: orange fingerprint, white magnifier); kept the same elements 0-7, dropped the wordmark (8-18), cropped"
+  ],
+  "variant": "dark mode",
+  "notes": "The lens interior is open (shows the tile), as in the source; on the PNG it sat on a white background. The site also serves /images/logo-light.svg (magnifier #252525), equivalent to the footer file.",
+  "license": "WhoisFreaks brand mark, used nominatively to identify the connected service; trademark rights remain with WhoisFreaks.",
+  "sha256": "4f3424c76c037bc365732034facaa4ef79261a783bf047969adcb6a5096ff94e"
+}

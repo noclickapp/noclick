@@ -1,6 +1,16 @@
 {
   "path": "frontend/public/icons/veryfi.svg",
-  "source": "https://www.veryfi.com/brand/",
-  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-  "sha256": "12a23b888facbe620af9fed17b4f30fb9d018439545d32bac370d8a020539abe"
+  "source": "https://cdn.veryfi.com/wp-content/themes/veryfi_2.0/assets/Veryfi-Logos-Media-Pack.zip (Veryfi Logos Zip/LogoMark/V_LogoMark__Navy.svg)",
+  "found_at": "https://www.veryfi.com/brand/ (media pack download)",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "none to the drawing: the kit's LogoMark file is the navy (#171C3A) V alone",
+    "cropped the viewBox to the V with 2% padding",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "DECISION: the same media pack (dated 2025-12) also has a green V for light mode (#00AA00, V_LogoMark__Lightmode_Green.svg) and dark mode (#00FA6C, V_LogoMark__Darkmode_Green.svg). I used navy/white because the site icon, the header logo and the brand page's lead logo are navy; the green pair is a drop-in swap if the reviewer prefers it.",
+  "license": "Veryfi brand mark, used nominatively to identify the connected service; trademark rights remain with Veryfi.",
+  "sha256": "44d95508293673ae04fab36461006089b71a42d864fc079e91caec95ee1d075d"
 }

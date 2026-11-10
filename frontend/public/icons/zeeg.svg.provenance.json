@@ -1,6 +1,17 @@
 {
   "path": "frontend/public/icons/zeeg.svg",
-  "source": "https://mintcdn.com/zeeg/9voKLLkajreclhp4/images/Zeeglogo(Original).svg (official developer.zeeg.me navigation logo)",
-  "license": "Zeeg brand mark, used nominatively to identify the connected service; trademark rights remain with Zeeg.",
-  "sha256": "a01fce72e4287535b7f0976ac6e210dbd466c5278a39eb703a270a6741bd3064"
+  "source": "https://assets.zeeg.me/icons/favicon.svg",
+  "found_at": "https://zeeg.me/en (<link rel=\"icon\" type=\"image/svg+xml\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "dropped the favicon's white rounded backdrop (element 0); zeeg's own PNG icons are named 'white background', i.e. the white is a backdrop, not the brand's tile",
+    "kept the calendar mark: three #292929 parts and the two #EE7807 rings",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "variant": "light mode",
+  "notes": "The previous file was the 'zeeg' wordmark lockup. No brand/press page on zeeg.me (404).",
+  "license": "zeeg brand mark, used nominatively to identify the connected service; trademark rights remain with zeeg.",
+  "sha256": "403a13f490ac468378b5f154f83053eef12f54cfc9f6fe6f22aede804ffb2d6b"
 }

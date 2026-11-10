@@ -1,0 +1,16 @@
+{
+  "path": "frontend/public/icons/vibe.svg",
+  "source": "https://www.vibe.co/",
+  "found_at": "https://www.vibe.co/ (inline <svg> logo with the 'primary' indigo gradient, class 'shrink-0 h-10'; saved page at downloads/vibe/src1/page.html)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "removed the HTML class attribute from the root <svg> before cropping",
+    "none to the drawing: the svg is the mark alone (one path, indigo #3730A3 \u2192 #4F46E5 gradient)",
+    "cropped the viewBox to the mark",
+    "cleaned"
+  ],
+  "notes": "DECISION: one file; the indigo gradient reads on the dark tile (lost_dark 0). Vibe's own dark-header version of the same mark (white gradient #CBD5E1 \u2192 #FFFFFF, e.g. downloads/vibe/src1/inline/inline-04.svg) could be used as a dark variant if the reviewer finds the indigo too dim on #111.",
+  "license": "Vibe brand mark, used nominatively to identify the connected service; trademark rights remain with Vibe.",
+  "sha256": "d1d4989470e15215f581e462742da08975d13f5a5dd0ee502b25d77cfe78b416"
+}

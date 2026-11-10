@@ -1,0 +1,17 @@
+{
+  "path": "frontend/public/icons/workvivo-dark.svg",
+  "source": "https://www.workvivo.com/uploads/WV_logo_white_navbar_a34beb2f85.svg",
+  "found_at": "https://www.workvivo.com/ (header <img alt=\"Workvivo Logo\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept only the tile mark (element 8: the navy #00031F rounded square with the 'W' strokes cut out); dropped the 'workvivo' letters (0-7) and 'by zoom' (9-10)",
+    "cropped the viewBox to the tile (pad 0.02)",
+    "cleaned",
+    "taken from Workvivo's own white navbar logo (same edits): the tile in white with the strokes cut out"
+  ],
+  "variant": "dark mode",
+  "notes": "The strokes are cut-outs of the tile, so in the dark file they show the dark well through a white tile: that is how Workvivo's own white logo draws it.",
+  "license": "Workvivo brand mark, used nominatively to identify the connected service; trademark rights remain with Workvivo.",
+  "sha256": "322c39c01854ab033a06606c351dfeb764347ef4ff22371a509c8166eefdc4f2"
+}

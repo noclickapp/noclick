@@ -1,6 +1,15 @@
 {
   "path": "frontend/public/icons/yousearch.svg",
-  "source": "https://you.com/docs/_fern-files/ydc.docs.buildwithfern.com/a406a92c0395adb6b1460503cbb816117211eae986155ac598c6f9e54d050f29/assets/DocsLogoGradientLight.svg",
-  "license": "You.com brand mark from its official documentation; used nominatively to identify the service. Trademark rights remain with You.com.",
-  "sha256": "a406a92c0395adb6b1460503cbb816117211eae986155ac598c6f9e54d050f29"
+  "source": "https://you.com/icon.svg?icon.1r1kw8cf43bjt.svg",
+  "found_at": "https://you.com/ (<link rel=\"icon\" type=\"image/svg+xml\" sizes=\"any\">)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "used You.com's SVG favicon unchanged (one #5368EE path: the hexagon with the four-point spark cut out)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "Replaces the docs lockup ('Docs' wordmark beside a gradient version of the mark). you.com/brand needs sign-in; /press redirects to /resources (no logo kit).",
+  "license": "You.com brand mark, used nominatively to identify the connected service; trademark rights remain with You.com.",
+  "sha256": "9665c2fd75d0e8e5e017004c0af7b8fcfd4ae319d364ac56d0439ca865e8c286"
 }

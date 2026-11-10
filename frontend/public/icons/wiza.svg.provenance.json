@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/wiza.svg",
+  "source": "https://wiza.co/favicon.svg",
+  "found_at": "https://wiza.co/favicon.svg (served by Wiza's site; the same app icon is the header's 'App Icon.avif' and the docs favicon; Wiza's own n8n node ships the same drawing as nodes/Wiza/wiza.svg in github.com/WizaCo/n8n-nodes-wiza)",
+  "source_kind": "company site (SVG favicon)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "no drawing changes: the file is Wiza's app icon (white wizard hat and sparkles on the purple glowing rounded tile); viewBox already tight (0 0 396 396)",
+    "cleaned (dropped width/height)"
+  ],
+  "notes": "The purple tile is kept: it is Wiza's own app icon (rx 89.7 rounded square). The glow is drawn with SVG filters and blend modes, which browsers render; the sheet renderer shows the glow a little flatter. The tile's dark-purple rim is low contrast on the dark well, but it is the brand's tile and the white hat stays clear, so no dark variant.",
+  "license": "Wiza brand mark, used nominatively to identify the connected service; trademark rights remain with Wiza.",
+  "sha256": "4a5990b6e3aed36e61f311cbe05d6589042ee7ee0a92a50539a72c8ab9fa9675"
+}

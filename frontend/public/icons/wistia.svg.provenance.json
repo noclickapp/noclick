@@ -1,6 +1,14 @@
 {
   "path": "frontend/public/icons/wistia.svg",
-  "source": "https://wistia.com/static/favicon.svg",
-  "license": "Wistia trademark; used to identify the Wistia integration",
-  "sha256": "9e82713c5b9317cc86d62dda09e4cde6d1325309960c5d9b637d478763dceda7"
+  "source": "https://wistia.com/assets/wistia-svgs-175f1c44909ed74b (Wistia_SVGs.zip, 'Wistia Logo SVG/Optical Sizes/Wistia Flags Optical Blue.svg')",
+  "found_at": "https://wistia.com/about/assets (Wistia Brand Assets, 'Download SVG')",
+  "source_kind": "brand kit",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "file is the blue flags mark alone (#2949E5); cropped the viewBox to the mark",
+    "cleaned (also gives the root the xmlns it needs)"
+  ],
+  "notes": "The staging file never rendered because its root <svg> had no xmlns (an <img> needs it); the drawing was fine. The kit's 'Optical Sizes' flags (made for small sizes, the same drawing as the favicon) were used; the standard 'Wistia Flags Blue.svg' is in the same zip (downloads/wistia/src1/Wistia_Flags_Blue.svg) if the reviewer prefers it. The colour is set by a class in a <style> block, as in Wistia's file.",
+  "license": "Wistia brand mark, used nominatively to identify the connected service; trademark rights remain with Wistia.",
+  "sha256": "92790f7c13dc47b06230e8f409f30b7ba8e31eb7198d3d98c5d5d8275f3aec61"
 }

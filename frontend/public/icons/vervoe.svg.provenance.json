@@ -1,7 +1,15 @@
 {
   "path": "frontend/public/icons/vervoe.svg",
-  "source": "https://vervoe.com",
-  "license": "Brand mark of its owner, shown nominatively to identify the service; no trademark rights are claimed or granted.",
-  "sha256": "a02872a4afb395182121817ad45a505dab6b5a18c8fa27224fee439a863ab06a",
-  "modifications": "Removed non-rendering C2PA metadata; visible SVG geometry unchanged."
+  "source": "https://vervoe.com/images/logo/vervoe-primary.svg",
+  "found_at": "https://vervoe.com/ (header logo <img src=\"/images/logo/vervoe-primary.svg\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the V's two shapes, the triangle and the slanted stroke (elements 0, 1), dropped the 'vervoe' letters (elements 2-7)",
+    "cropped the viewBox to the V",
+    "cleaned (also strips the file's C2PA metadata)"
+  ],
+  "notes": "The #0C58B6 blue reads on the dark tile (lost_dark 0), so one file. Vervoe's site logos carry a C2PA manifest saying Claude provided or modified the file for a Vervoe user; the shapes are two straight-edged polygons that match the raster favicon exactly, and the file is what Vervoe itself serves, so I used it.",
+  "license": "Vervoe brand mark, used nominatively to identify the connected service; trademark rights remain with Vervoe.",
+  "sha256": "bdbebb2ccafe8dc9de717f6377e49a20cd811ea156708d940341316323f7ce5d"
 }

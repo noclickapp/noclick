@@ -5,7 +5,7 @@ import { NodeDefinition, SvgIconComponent } from '~/components/workflow/nodes/ty
 
 const VismaEAccountingIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
     ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/visma-eaccounting.png" alt="" className={className} style={{ ...style, objectFit: 'contain', backgroundColor: '#48237d', borderRadius: 4, padding: 4 }} {...props} />
+        <img ref={ref} src="/icons/visma-eaccounting.svg" alt="" className={className} style={{ ...style, objectFit: 'contain' }} {...props} />
     ),
 );
 VismaEAccountingIcon.displayName = 'VismaEAccountingIcon';

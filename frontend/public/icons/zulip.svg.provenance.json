@@ -1,0 +1,14 @@
+{
+  "path": "frontend/public/icons/zulip.svg",
+  "source": "https://raw.githubusercontent.com/zulip/zulip/main/static/images/logo/zulip-icon-circle.svg",
+  "found_at": "https://github.com/zulip/zulip/tree/main/static/images/logo",
+  "source_kind": "company GitHub/npm",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "no element edits: the file is already the mark alone on its gradient circle with a tight viewBox",
+    "cleaned"
+  ],
+  "notes": "DECISION: Zulip ships three official forms of the mark: this gradient circle with a white Z (zulip-icon-circle.svg, the one the current PNG is, and the desktop/web app icon), a full-bleed gradient square with a white Z (zulip-icon-square.svg, the mobile app's icon in zulip-flutter, downloaded to src2), and the bare gradient Z with no tile (zulip.com's favicon.svg and the org logo's mark, src4). I shipped the circle to keep the current look; the bare gradient Z (downloads/zulip/src4/favicon.svg) also reads on both themes if the reviewer prefers no tile.",
+  "license": "Zulip brand mark, used nominatively to identify the connected service; trademark rights remain with Zulip.",
+  "sha256": "b8e4a67c00ac4983f29930d7ad4c4d41d61f248f030547b6486af6a93851d4f1"
+}

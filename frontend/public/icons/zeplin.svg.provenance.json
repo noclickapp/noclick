@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/zeplin.svg",
+  "source": "https://cdn.sanity.io/images/wd3e2pma/production/7b336dc26fd85ae98b414761d58238d225876a88-60x48.svg",
+  "found_at": "https://zeplin.io/ (header home link <img alt=\"Zeplin\">)",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "used the header logo unchanged: the yellow/orange zeppelin with its fins and two orange orbit rings (8 parts)",
+    "cropped the viewBox to the mark (pad 0.02)",
+    "cleaned"
+  ],
+  "notes": "DECISION: zeplin.io's favicon/apple-touch-icon (and the current PNG) is a simplified version for tiny sizes: just the striped ball, no fins or rings, and only as PNG (the mask-icon safari-pinned-tab.svg is single-colour). The header's full zeppelin is the only colour vector; it is 1.26:1 and its thin orbit rings get fine at 22px.",
+  "license": "Zeplin brand mark, used nominatively to identify the connected service; trademark rights remain with Zeplin.",
+  "sha256": "5f035ba66b5d12d313a72a4ebe9b9aacc054afaa8cec4ab2d36396d394c4010e"
+}

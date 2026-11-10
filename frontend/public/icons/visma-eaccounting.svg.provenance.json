@@ -1,0 +1,15 @@
+{
+  "path": "frontend/public/icons/visma-eaccounting.svg",
+  "source": "https://eaccounting.nl/hubfs/eaccounting/branding%20eaccounting/eAccoutnting-logo-byVISMA-positive.svg",
+  "found_at": "https://eaccounting.nl/ (www.vismaeaccounting.nl redirects there; header logo 'eAccounting by VISMA')",
+  "source_kind": "company site (header logo)",
+  "retrieved": "2026-11-10",
+  "edits": [
+    "kept the red gradient leaf (elements 2-6), dropped the 'eAccounting' and 'by VISMA' words (elements 0, 1)",
+    "cropped the viewBox to the leaf",
+    "cleaned"
+  ],
+  "notes": "DECISION: the same API now has two brands. In Sweden the product was renamed Spiris (its API docs are 'Spiris/eAccounting API Documentation', and the current PNG is that docs header's white 'Spiris | VISMA' wordmark); elsewhere (e.g. the Netherlands) it is 'eAccounting by Visma' with this red leaf. I shipped the leaf because the integration is named Visma eAccounting. If the reviewer prefers Spiris, its app icon exists as a real SVG: https://assets.spiris.se/favicons/safari-pinned-tab.svg (kept at downloads/visma-eaccounting/src5/safari-pinned-tab.svg; coral #FF5E57 rounded tile with a black S, two paths, not a trace, identical to spiris.se's apple-touch-icon), usable as-is (tile, no padding). The leaf's palest pink tip is faint on white (lost_light 0.04), which is how the brand draws it.",
+  "license": "Visma (eAccounting; Spiris in Sweden) brand mark, used nominatively to identify the connected service; trademark rights remain with Visma (eAccounting; Spiris in Sweden).",
+  "sha256": "930908996d71b31c794cd6ba185fd1e89b6f1a0c2950b41567d13dc6b1f59c23"
+}
