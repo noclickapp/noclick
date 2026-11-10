@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/airbyte.svg",
+  "source": "https://raw.githubusercontent.com/airbytehq/airbyte/efe60f76503d3a052c9797b9d1a0dbdfce185a25/airbyte-config-oss/init-oss/src/main/resources/icons/airbyte.svg",
+  "license": "Airbyte trademark; publisher asset used to identify the Airbyte integration",
+  "sha256": "b64d86e8662132417590680efb29e3f205490962b5a2dd7243a9e48eb25c6550"
+}
