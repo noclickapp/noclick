@@ -13,48 +13,21 @@ from typing import Union, get_args, get_origin
 from nodes.core.registry import NODE_REGISTRY, is_listed
 from ..operation_catalog import get_native_agent_tools_for_node_type
 from ..structural_tools import STRUCTURAL_AGENT_TOOL_PROVIDERS, STRUCTURAL_AGENT_TOOL_TYPES
+from utils.node_search import by_popularity, knows_demand
 
 
 def _has_trigger_operation(node_type: str) -> bool:
-    """True if `node_type`'s config model has any operation flagged `x-is-trigger`.
+    """True if any of ``node_type``'s operations is flagged ``x-is-trigger``, as the operation catalog reads them.
 
-    Walks the node's config-model discriminated union and reads
-    `json_schema_extra` on each variant's `operation` discriminator field.
-    Lightweight introspection — kept inline rather than reusing
-    operation_catalog.get_operations_for_node_type so this helper stays
-    decoupled from the heavier extension runtime (litellm, GraphState, etc).
-    """
-    node_class = NODE_REGISTRY.get(node_type)
-    if not node_class:
-        return False
+    Reading the config union by hand took only its first member for a plain ``Union``, so 77 of the 97 integrations
+    with triggers (Gmail, Stripe, Telegram, ...) were never named trigger-capable."""
+    return any(op.is_trigger for op in get_operations_for_node_type(node_type))
 
-    config_model = getattr(node_class, 'get_config_model', lambda: None)()
-    if not config_model:
-        return False
 
-    config_field = config_model.model_fields.get('config')
-    if not config_field:
-        return False
-
-    config_type = config_field.annotation
-    # Unwrap Annotated[Union[...], Discriminator] → Union[...]
-    if get_origin(config_type) is not None:
-        args = get_args(config_type)
-        if args:
-            config_type = args[0]
-
-    union_members = get_args(config_type) if get_origin(config_type) is Union else [config_type]
-
-    for member in union_members:
-        if not hasattr(member, 'model_fields'):
-            continue
-        op_field = member.model_fields.get('operation')
-        if not op_field:
-            continue
-        extra = op_field.json_schema_extra or {}
-        if isinstance(extra, dict) and extra.get('x-is-trigger'):
-            return True
-    return False
+# Integrations the prompt names, the most used first, where the deployment knows which those are (``NODE_DEMAND``):
+# the brain finds every other one with <find_nodes>. Naming all ~1,240 took 6,000 tokens of every turn and still named
+# nothing by what it does.
+PROMPT_INTEGRATIONS = 60
 
 
 def _get_available_node_types() -> str:
@@ -100,10 +73,18 @@ def _get_available_node_types() -> str:
             "(automatically exposed when wired to an agent; not config operations)"
         )
 
-    lines = [
-        f"TRIGGERS: {', '.join(sorted(triggers))}",
-        f"TRIGGER-CAPABLE INTEGRATIONS (can be used as a workflow entry node): {', '.join(sorted(trigger_capable))}",
-        f"INTEGRATIONS: {', '.join(sorted(integrations))}",
+    lines = [f"TRIGGERS: {', '.join(sorted(triggers))}"]
+    if knows_demand():
+        named = by_popularity(integrations)[:PROMPT_INTEGRATIONS]
+        lines += [
+            f"INTEGRATIONS: {len(integrations)} apps, each `automation-<app>`; the {len(named)} most used: "
+            f"{', '.join(named)}",
+            "TRIGGER-CAPABLE among those (can be used as a workflow entry node): "
+            f"{', '.join(t for t in named if t in set(trigger_capable))}",
+        ]
+    else:  # nothing says which are used most, and naming any 60 would be arbitrary
+        lines.append(f"INTEGRATIONS: {len(integrations)} apps, each `automation-<app>`")
+    lines += [
         f"PROCESSING: {', '.join(sorted(processing))}",
         f"INTERFACE: {', '.join(sorted(interface))}",
     ]

@@ -55,6 +55,8 @@ def build_system_prompt_parts(
 
 {_get_available_node_types()}
 
+The list names only the most used integrations. Find any other app, or one you aren't sure of, with <find_nodes query="its name, or what the step does" /> before adding it; never guess a type. If the person names an app and no result is it, there's no integration for it: say so, and use automation-http-request rather than another app in its place.
+
 ## Multi-output nodes
 
 An edge from one of these nodes names its output handle:
@@ -80,6 +82,7 @@ Credentials, only for nodes marked [credentials needed: ...]:
 <set_credentials node="alias" id="CREDENTIAL_ID" />
 
 Look things up:
+<find_nodes query="app name or what the step does" />
 <query_operations type="node-type" />
 <query_schema type="node-type" operation="operation" />
 <read_config node="alias" field="field" />

@@ -137,6 +137,13 @@ const SAID: Record<string, Said> = {
     set_credentials: { doing: 'Attaching an account', done: 'Attached an account', failed: 'Couldn’t attach an account' },
     update_settings: { doing: 'Updating settings', done: 'Updated settings', failed: 'Couldn’t update settings' },
     add_sticky_note: { doing: 'Adding a note', done: 'Added a note', failed: 'Couldn’t add a note' },
+    find_nodes: {
+        doing: 'Finding apps',
+        done: 'Found apps',
+        failed: 'Couldn’t find apps',
+        lead: ['Finding apps for', 'Found apps for'],
+        quote: true,
+    },
     query_operations: { doing: 'Looking up a step', done: 'Looked up a step', failed: 'Couldn’t look up a step', lead: ['Looking up', 'Looked up'] },
     query_schema: { doing: 'Looking up a step', done: 'Looked up a step', failed: 'Couldn’t look up a step', lead: ['Looking up', 'Looked up'] },
     search_credentials: {

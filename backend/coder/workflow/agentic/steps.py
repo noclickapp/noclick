@@ -16,6 +16,7 @@ _ON_A_STEP = frozenset({
 # Ops whose target is words they were given: what they searched for, or what they named.
 _SAID = {
     'list_workflows': ('query', 'search'),
+    'find_nodes': ('query',),
     'search_credentials': ('query',),
     'create_workflow': ('name',),
     'create_folder': ('name',),

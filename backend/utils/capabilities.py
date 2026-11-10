@@ -59,6 +59,11 @@ MCP_TOOL_CALLED = "mcp.tool_called"
 # node catalog says about itself: load(node_type, section) -> str | None.
 NODE_GUIDANCE = "builder.node_guidance"
 
+# How much people look for the app a node type runs: (node_type) -> monthly searches, or None where unknown. The
+# node-type search (utils/node_search.py) puts the most used of the apps a query fits about as well first; without
+# it, it ranks by fit alone.
+NODE_DEMAND = "catalog.node_demand"
+
 # Where a workflow's published interfaces are: async (pool, workflow_id) ->
 # {node_id: url}. Publishing needs a host serving them; without one there are none.
 PUBLISHED_APP_URLS = "publish_app.urls"

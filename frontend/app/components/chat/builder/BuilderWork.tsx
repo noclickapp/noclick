@@ -16,7 +16,7 @@ import { cn } from '~/lib/utils';
 import { navigateToNode } from '~/utils/workflowNavigation';
 import type { BuilderProgressNode } from '../builderProgress/model';
 
-const LOOKS = new Set(['query_operations', 'query_schema', 'search_credentials', 'list_workflows', 'read', 'read_config', 'get_output', 'list_outputs', 'list_folders']);
+const LOOKS = new Set(['find_nodes', 'query_operations', 'query_schema', 'search_credentials', 'list_workflows', 'read', 'read_config', 'get_output', 'list_outputs', 'list_folders']);
 const RUNS = new Set(['run_node', 'run_test', 'bash']);
 
 /** The working orb for what an op does: looking something up, running something, or shaping the canvas. */
