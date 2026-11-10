@@ -11,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 """Postman API action catalog from the official Postman API reference.
 
 Source: https://learning.postman.com/api-docs/api-reference/
@@ -198,7 +199,7 @@ OPERATIONS: dict[str, Operation] = {
     'workspaces_get_workspace_updates': Operation('Get all workspace updates', 'Workspaces', 'GET', '/workspaces/{workspaceId}/updates', 'none', 'https://learning.postman.com/api-docs/api-reference/workspaces/get-workspace-updates'),
     'workspaces_get_workspaces': Operation('Get all workspaces', 'Workspaces', 'GET', '/workspaces', 'none', 'https://learning.postman.com/api-docs/api-reference/workspaces/get-workspaces'),
     'workspaces_manage_partner_workspace_invites': Operation('Manage Partner Workspace invites', 'Workspaces', 'POST', '/invitations', 'application/json', 'https://learning.postman.com/api-docs/api-reference/workspaces/manage-partner-workspace-invites'),
-    'workspaces_patch_workspace_update': Operation('Update a workspace update', 'Workspaces', 'PATCH', '/workspaces/{workspaceId}/updates/{updateId}', 'application/json', 'https://learning.postman.com/api-docs/api-reference/workspaces/patch-workspace-update'),
+    'workspaces_patch_workspace_update': Operation('Update a workspace update', 'Workspaces', 'PATCH', '/workspaces/{workspaceId}/updates/{updateId}', 'application/merge-patch+json', 'https://learning.postman.com/api-docs/api-reference/workspaces/patch-workspace-update'),
     'workspaces_transfer_workspace_element': Operation('Transfer element to a workspace', 'Workspaces', 'POST', '/workspaces/{workspaceId}/element-transfers', 'application/json', 'https://learning.postman.com/api-docs/api-reference/workspaces/transfer-workspace-element'),
     'workspaces_transfer_workspace_to_team': Operation('Transfer workspace to a team', 'Workspaces', 'PATCH', '/workspaces/{workspaceId}/transfers', 'application/json', 'https://learning.postman.com/api-docs/api-reference/workspaces/transfer-workspace-to-team'),
     'workspaces_update_workspace': Operation('Update a workspace', 'Workspaces', 'PUT', '/workspaces/{workspaceId}', 'application/json', 'https://learning.postman.com/api-docs/api-reference/workspaces/update-workspace'),
@@ -286,14 +287,34 @@ def _make_config(name: str, op: Operation) -> type[BaseModel]:
 
 CONFIG_MODELS = {name: _make_config(name, op) for name, op in OPERATIONS.items()}
 globals().update({model.__name__: model for model in CONFIG_MODELS.values()})
-PostmanConfig = Annotated[Union[tuple(CONFIG_MODELS.values())], Discriminator("operation")]
+class PostmanOnNewMockCallConfig(PollTriggerConfigBase):
+    operation: Literal["on_new_mock_call"] = Field("on_new_mock_call", title="On New Mock Call", json_schema_extra={
+        "const": "on_new_mock_call", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On New Mock Call",
+    })
+    mock_id: str = Field(..., min_length=1, title="Mock Server ID",
+                         description="Watch requests received by this Postman mock server.")
+
+
+class PostmanOnNewCollectionForkConfig(PollTriggerConfigBase):
+    operation: Literal["on_new_collection_fork"] = Field("on_new_collection_fork", title="On New Collection Fork", json_schema_extra={
+        "const": "on_new_collection_fork", "ui:hidden": True, "x-category": "Triggers",
+        "x-is-trigger": True, "x-display-name": "On New Collection Fork",
+    })
+    collection_id: str = Field(..., min_length=1, title="Collection ID",
+                               description="Watch new forks of this Postman collection.")
+
+
+PostmanConfig = Annotated[Union[tuple(CONFIG_MODELS.values()) + (
+    PostmanOnNewMockCallConfig, PostmanOnNewCollectionForkConfig,
+)], Discriminator("operation")]
 
 
 class PostmanNodeConfig(NodeConfig[PostmanConfig, PostmanApiKeyCredential]):
     model_config = ConfigDict(json_schema_extra={"x-agent-tool-provider": True})
 
 
-class PostmanNode(WorkflowNode):
+class PostmanNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-postman"
     connection_evidence = ConnectionEvidence(operation="get_authenticated_user", noun="user")
     edit_examples = [
@@ -307,6 +328,73 @@ class PostmanNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return PostmanNodeConfig
+
+    @classmethod
+    def should_propagate_output(cls, output: dict[str, Any], config: dict[str, Any]) -> bool:
+        if config.get("operation") in {"on_new_mock_call", "on_new_collection_fork"}:
+            return bool(output.get("new_item_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output: dict[str, Any]) -> Optional[dict[str, Any]]:
+        operation = output.get("operation")
+        if operation not in {"on_new_mock_call", "on_new_collection_fork"}:
+            return super().resolve_agent_event(output)
+        items = output.get("items", [])
+        if not items:
+            return None
+        lines = []
+        for item in items[:10]:
+            if operation == "on_new_mock_call":
+                request, response = item.get("request") or {}, item.get("response") or {}
+                lines.append(f"- {request.get('method', 'Request')} {request.get('path', '')} "
+                             f"→ {response.get('statusCode', 'unknown status')} at {item.get('servedAt', '')}; "
+                             f"{item.get('responseName', '')} (call id {item.get('id')})")
+            else:
+                lines.append(f"- {item.get('createdBy', 'Someone')} forked {item.get('forkName', 'a collection')} "
+                             f"at {item.get('createdAt', '')} (fork id {item.get('forkId')})")
+        if len(items) > 10:
+            lines.append(f"- … and {len(items) - 10} more")
+        resource = "mock server" if operation == "on_new_mock_call" else "collection"
+        return {"text": f"Postman: {len(items)} new {'call(s)' if resource == 'mock server' else 'fork(s)'} "
+                        f"for {resource} {output.get('resource_id')}:\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_items(self, config, credentials: PostmanApiKeyCredential) -> dict[str, Any]:
+        if isinstance(config, PostmanOnNewMockCallConfig):
+            name, field, id_field = "mocks_get_mock_call_logs", "call-logs", "id"
+            resource_id = config.mock_id
+            path = f"/mocks/{quote(resource_id, safe='')}/call-logs"
+            params = {"limit": 100, "sort": "servedAt", "direction": "desc"}
+        else:
+            name, field, id_field = "collections_get_collection_forks", "data", "forkId"
+            resource_id = config.collection_id
+            path = f"/collections/{quote(resource_id, safe='')}/forks"
+            params = {"limit": 100, "direction": "desc"}
+        items: list[dict[str, Any]] = []
+        cursors: set[str] = set()
+        for _ in range(100):
+            data = await self._request(OPERATIONS[name], path, credentials, params.copy(), None)
+            if not isinstance(data, dict) or not isinstance(data.get(field), list):
+                raise ValueError("Postman returned an invalid trigger list response")
+            page = data[field]
+            if any(not isinstance(item, dict) or not item.get(id_field) for item in page):
+                raise ValueError("Postman trigger item is missing its identifier")
+            items.extend(page)
+            if len(items) > 10000:
+                raise ValueError("Postman trigger exceeded 10,000 items; choose a smaller resource")
+            cursor = (data.get("meta") or {}).get("nextCursor")
+            if not cursor:
+                break
+            if cursor in cursors:
+                raise ValueError("Postman repeated a pagination cursor")
+            cursors.add(cursor)
+            params["cursor"] = cursor
+        else:
+            raise ValueError("Postman trigger exceeded 100 pages; choose a smaller resource")
+        fresh = await self._filter_unseen(items, lambda item: str(item[id_field]))
+        return {"status": "success", "operation": config.operation, "resource_id": resource_id,
+                "items": fresh, "new_item_count": len(fresh)}
 
     @staticmethod
     def _parse_object(raw: Optional[str], label: str) -> dict[str, Any]:
@@ -404,6 +492,8 @@ class PostmanNode(WorkflowNode):
         if credentials is None:
             raise ValueError("Connect a Postman API key")
         config = self.config.config
+        if isinstance(config, (PostmanOnNewMockCallConfig, PostmanOnNewCollectionForkConfig)):
+            return await self._poll_items(config, credentials)
         op = OPERATIONS[config.operation]
         values = config.model_dump(exclude_none=True, exclude={"operation"})
         path = op.path

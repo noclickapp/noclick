@@ -1,0 +1,20 @@
+{
+  "data": [
+    {
+      "forkName": "Collection Fork",
+      "forkId": "12345678-667df1ad-2ee3-7890-b678-7742d82e2e1f",
+      "createdBy": "Taylor Lee",
+      "createdAt": "2023-11-16T09:18:17.000Z"
+    },
+    {
+      "forkName": "Test Fork",
+      "forkId": "87654321-38j9f1ad-2ee3-7890-dv5h-7742d82e2e1f",
+      "createdBy": "Alex Cruz",
+      "createdAt": "2023-11-16T09:16:15.000Z"
+    }
+  ],
+  "meta": {
+    "total": 2,
+    "nextCursor": null
+  }
+}

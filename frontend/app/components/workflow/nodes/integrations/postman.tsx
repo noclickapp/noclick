@@ -14,7 +14,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 export const PostmanNode: NodeDefinition = {
     type: 'automation-postman',
     label: 'Postman',
-    description: 'Collections, workspaces, APIs, specifications, mocks, and monitors',
+    description: 'Collections, workspaces, APIs, mocks, and monitors; trigger on mock calls and collection forks',
     category: 'developer-tools',
     Icon: OfficialBrandIcon,
     iconColor: 'text-orange-500',

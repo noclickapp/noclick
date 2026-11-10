@@ -1,0 +1,72 @@
+{
+  "call-logs": [
+    {
+      "id": "c4505a1e-7261-497c-91ff-db4bd51351a6-9545",
+      "responseName": "Double check your method and the request path and try again.",
+      "servedAt": "2022-01-17T06:19:30.000Z",
+      "request": {
+        "method": "POST",
+        "path": "/animals"
+      },
+      "response": {
+        "type": "error",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "0f63f54d-665e-436a-95b4-c1302d7685a9-3925",
+      "responseName": "Bad request",
+      "servedAt": "2022-01-17T06:19:22.000Z",
+      "request": {
+        "method": "POST",
+        "path": "/animals"
+      },
+      "response": {
+        "type": "success",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "adab0d30-5c38-43bf-af90-4119925138e2-3795",
+      "responseName": "Successful addition of animals to the store",
+      "servedAt": "2022-01-17T06:19:16.000Z",
+      "request": {
+        "method": "POST",
+        "path": "/animals"
+      },
+      "response": {
+        "type": "success",
+        "statusCode": 200
+      }
+    },
+    {
+      "id": "dae50669-f4c1-460a-b3a4-3a2445f4f39d-2468",
+      "responseName": "Get filtered list of Animals",
+      "servedAt": "2022-01-17T06:18:26.000Z",
+      "request": {
+        "method": "GET",
+        "path": "/animals?type=dog"
+      },
+      "response": {
+        "type": "success",
+        "statusCode": 200
+      }
+    },
+    {
+      "id": "a5330463-26e1-4812-a962-e44b569a2054-9894",
+      "responseName": "Get Animals",
+      "servedAt": "2022-01-17T06:18:06.000Z",
+      "request": {
+        "method": "GET",
+        "path": "/animals"
+      },
+      "response": {
+        "type": "success",
+        "statusCode": 200
+      }
+    }
+  ],
+  "meta": {
+    "nextCursor": null
+  }
+}

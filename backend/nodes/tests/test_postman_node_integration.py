@@ -1,12 +1,15 @@
 """Postman API catalog, credential, URL, and response contracts."""
 
 import re
+import json
+from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
 import httpx
 import pytest
 
 from nodes.core.binary_output import BinaryOutput, resolve_binary_outputs
+from nodes.core.poll_trigger import poll_scope
 from nodes.postman_node import (
     CONFIG_MODELS,
     PostmanApiKeyCredential,
@@ -15,6 +18,95 @@ from nodes.postman_node import (
 )
 from nodes.postman_node import OPERATIONS
 from tests.utils.sweep import check_each
+
+
+def documented_response(name):
+    # Copied from Postman's OpenAPI 1.45.0 examples, published in its SDK repository:
+    # https://github.com/postmanlabs/postman-api-sdk-ts/blob/main/tests/integration/openapi.yaml
+    return json.loads((Path(__file__).parent / "fixtures" / "postman" / f"{name}.json").read_text())
+
+
+@pytest.mark.parametrize("operation,fields,example,id_field,expected", [
+    ("on_new_mock_call", {"mock_id": "a/b"}, "getMockCallLogs", "id", "POST /animals"),
+    ("on_new_collection_fork", {"collection_id": "a/b"}, "getCollectionForks", "forkId", "Taylor Lee"),
+])
+@pytest.mark.asyncio
+async def test_poll_documented_payload_baseline_dedup_and_agent_event(operation, fields, example, id_field, expected):
+    node = node_for(operation, **fields)
+    node.node_id = "postman-test"
+    state = {}
+
+    async def update(mutator, **kwargs):
+        nonlocal state
+        changed, result = mutator(state)
+        if changed is not None:
+            state = changed
+        return result
+
+    payload = documented_response(example)
+    with patch.object(node, "_update_node_state", side_effect=update), patch.object(
+        node, "_request", new_callable=AsyncMock, return_value=payload,
+    ) as request:
+        baseline = await node.execute({})
+        assert baseline["new_item_count"] == 0
+        assert not node.should_propagate_output(baseline, {"operation": operation})
+        assert node.resolve_agent_event(baseline) is None
+        # Simulate a persisted poll that saw nothing, then receive the provider's exact examples.
+        state["seen_ids"] = []
+        output = await node.execute({})
+        assert output["new_item_count"] == len(output["items"]) > 0
+        assert node.should_propagate_output(output, {"operation": operation})
+        event = node.resolve_agent_event(output)
+        assert expected in event["text"]
+        assert output["items"][0][id_field] in event["text"]
+        assert "a/b" in event["text"]
+        assert (await node.execute({}))["new_item_count"] == 0
+        args = request.await_args.args
+        assert "a%2Fb" in args[1]
+        assert args[3]["direction"] == "desc"
+        if operation == "on_new_mock_call":
+            assert args[3]["sort"] == "servedAt"
+        # Changing the watched resource re-baselines; cosmetic fields don't.
+        resource = next(iter(fields))
+        original = {"operation": operation, **fields}
+        assert poll_scope(PostmanNode, original) == poll_scope(PostmanNode, {**original, "label": "Renamed"})
+        assert poll_scope(PostmanNode, original) != poll_scope(PostmanNode, {**original, resource: "different"})
+        setattr(node._config.config, resource, "different")
+        assert (await node.execute({}))["new_item_count"] == 0
+
+
+@pytest.mark.asyncio
+async def test_poll_paginates_before_recording_seen_items_and_refuses_cursor_loops():
+    node = node_for("on_new_collection_fork", collection_id="source")
+    page = documented_response("getCollectionForks")
+    first = {"data": page["data"][:1], "meta": {"nextCursor": "next"}}
+    last = {"data": page["data"][1:], "meta": {"nextCursor": None}}
+    with patch.object(node, "_filter_unseen", new_callable=AsyncMock) as unseen, patch.object(
+        node, "_request", new_callable=AsyncMock, side_effect=[first, last],
+    ) as request:
+        unseen.return_value = page["data"]
+        result = await node.execute({})
+        assert result["new_item_count"] == 2
+        assert request.await_args.args[3]["cursor"] == "next"
+        assert unseen.await_args.args[0] == page["data"]
+    with patch.object(node, "_filter_unseen", new_callable=AsyncMock) as unseen, patch.object(
+        node, "_request", new_callable=AsyncMock, return_value=first,
+    ):
+        with pytest.raises(ValueError, match="repeated a pagination cursor"):
+            await node.execute({})
+        unseen.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_poll_rejects_invalid_payload_without_consuming_events():
+    node = node_for("on_new_mock_call", mock_id="mock")
+    for payload in ({"unexpected": []}, {"call-logs": [{}]}):
+        with patch.object(node, "_filter_unseen", new_callable=AsyncMock) as unseen, patch.object(
+            node, "_request", new_callable=AsyncMock, return_value=payload,
+        ):
+            with pytest.raises(ValueError, match="invalid trigger list|missing its identifier"):
+                await node.execute({})
+            unseen.assert_not_awaited()
 
 
 def node_for(operation: str, **fields) -> PostmanNode:
@@ -86,6 +178,24 @@ async def test_api_key_region_and_json_request():
     assert seen[0].headers["Content-Type"] == "application/json"
     assert seen[0].method == "POST"
     assert data["collection"]["id"] == "col-1"
+
+
+@pytest.mark.asyncio
+async def test_workspace_update_uses_documented_merge_patch_content_type():
+    # https://learning.postman.com/api-docs/api-reference/workspaces/patch-workspace-update
+    original_client = httpx.AsyncClient
+    seen = []
+
+    def respond(request):
+        seen.append(request)
+        return httpx.Response(200, json={"id": 25})
+
+    with patch("nodes.postman_node.httpx.AsyncClient", side_effect=lambda **kw: original_client(
+        transport=httpx.MockTransport(respond), **kw,
+    )):
+        await node_for("workspaces_patch_workspace_update", workspaceId="workspace", updateId="25",
+                       body_json='{"topic":"Update","description":"Details","category":"improvement"}').execute({})
+    assert seen[0].headers["content-type"] == "application/merge-patch+json"
 
 
 @pytest.mark.asyncio
