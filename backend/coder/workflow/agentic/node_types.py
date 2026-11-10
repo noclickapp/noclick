@@ -26,8 +26,8 @@ def _has_trigger_operation(node_type: str) -> bool:
 
 # Integrations the prompt names, the most used first, where the deployment knows which those are (``NODE_DEMAND``):
 # the brain finds every other one with <find_nodes>. Naming all ~1,240 took 6,000 tokens of every turn and still named
-# nothing by what it does.
-PROMPT_INTEGRATIONS = 60
+# nothing by what it does; 100 reach past Google Sheets and Calendar, which rank 64th and 84th by search demand.
+PROMPT_INTEGRATIONS = 100
 
 
 def _get_available_node_types() -> str:

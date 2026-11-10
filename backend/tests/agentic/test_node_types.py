@@ -59,7 +59,7 @@ def test_the_prompt_names_the_most_used_integrations_not_all_of_them():
         return
     named = _line(catalog, "INTEGRATIONS: ").split(": ", 2)[2].split(", ")
     assert len(named) == node_types.PROMPT_INTEGRATIONS
-    assert {"automation-gmail", "automation-slack", "automation-google-sheets"} <= set(named)
+    assert {"automation-gmail", "automation-slack", "automation-google-sheets", "automation-hubspot"} <= set(named)
     assert "automation-hetrixtools" not in named
     assert len(catalog) < 5_000
 
