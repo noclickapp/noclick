@@ -1,0 +1,675 @@
+{
+ "format": "noclick-live-proof/1",
+ "slug": "jobber",
+ "node_type": "automation-jobber",
+ "account": "90-day developer testing account",
+ "recorded_at": "2026-11-10T18:21:11Z",
+ "git_head": "34ff82676e12fa2780ffad70cecea9c416ef6119",
+ "code": [
+  {
+   "path": "backend/nodes/jobber_node.py",
+   "sha256": "0fa18e1461d68b78ec0135943483559ca3e6d9e106f2d745df22a687bd17b0a2"
+  },
+  {
+   "path": "backend/nodes/jobber_operations.py",
+   "sha256": "89d7b57f029c556f61d54ab41a269ca0115381798313b27b85dd913f72be5df4"
+  },
+  {
+   "path": "backend/nodes/scopes/jobber.py",
+   "sha256": "9a6dd1e624aac6d5400d008ba543fc018804ff740c5078384d3af0977e5e577e"
+  },
+  {
+   "path": "backend/nodes/oauth/jobber_oauth.py",
+   "sha256": "363108e375e8b2f00611b8db100ad0d49b9b89adf063729d463e6187d5ff3f06"
+  }
+ ],
+ "hosts": [
+  "api.getjobber.com"
+ ],
+ "operations": {
+  "callable": [
+   "create_client",
+   "create_link_configuration",
+   "edit_client_custom_fields",
+   "get_account",
+   "get_job",
+   "get_quote",
+   "list_clients",
+   "list_custom_field_configurations",
+   "list_jobs",
+   "list_quotes"
+  ],
+  "triggers": []
+ },
+ "not_called": {
+  "get_job": "The test account has no jobs. The pinned contract exposes no job creation operation, so no job fixture can be created through this integration.",
+  "get_quote": "The test account has no quotes. The pinned contract exposes no quote creation operation, so no quote fixture can be created through this integration.",
+  "edit_client_custom_fields": "The test account has no numeric client custom-field configuration. The pinned contract creates only link configurations; no existing client or configuration was changed.",
+  "create_link_configuration": "The test OAuth app lacks Custom Field Configurations write access. The live API rejected the trial with an object-hidden-due-to-permissions error. Official docs also require Connect, Grow or Plus for custom fields; no app permissions or subscription were changed."
+ },
+ "summary": {
+  "callable": 10,
+  "passed": 6,
+  "writes_passed": 1,
+  "failed_calls": 0
+ },
+ "calls": [
+  {
+   "operation": "get_account",
+   "label": "account",
+   "write": false,
+   "ok": true,
+   "error": null,
+   "config": {
+    "operation": "get_account"
+   },
+   "output": {
+    "status": "success",
+    "operation": "get_account",
+    "data": {
+     "account": {
+      "id": "[test-account-id]",
+      "name": "[developer test account]"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "transport": "httpx",
+     "method": "POST",
+     "url": "https://api.getjobber.com/api/graphql",
+     "request_headers": {
+      "user-agent": "python-httpx/0.28.1",
+      "authorization": "[redacted]",
+      "x-jobber-graphql-version": "2026-09-25",
+      "content-type": "application/json",
+      "accept": "application/json",
+      "content-length": "71"
+     },
+     "request_body": {
+      "size": 71,
+      "sha256": "487612f7ff98cc497b9553a875b8657c4cfc0f58c8072d8a4e2c93706a41af04",
+      "json": {
+       "query": "query GetAccount {\n  account {\n    id\n    name\n  }\n}\n"
+      }
+     },
+     "status": 200,
+     "response_headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-request-id": "[request-id]",
+      "set-cookie": "[redacted]"
+     },
+     "response_body": {
+      "size": 286,
+      "sha256": "c3c19b6710dcf0aa4be57990e192706cffd32e01de0ed0e139f31814291c5e3a",
+      "json": {
+       "data": {
+        "account": {
+         "id": "[test-account-id]",
+         "name": "[developer test account]"
+        }
+       },
+       "extensions": {
+        "cost": {
+         "requestedQueryCost": 3,
+         "actualQueryCost": 3,
+         "throttleStatus": {
+          "maximumAvailable": 10000,
+          "currentlyAvailable": 9997,
+          "restoreRate": 500
+         }
+        },
+        "versioning": {
+         "version": "2026-09-25"
+        }
+       }
+      }
+     },
+     "ms": 1944
+    }
+   ]
+  },
+  {
+   "operation": "list_clients",
+   "label": "before",
+   "write": false,
+   "ok": true,
+   "error": null,
+   "config": {
+    "operation": "list_clients"
+   },
+   "output": {
+    "status": "success",
+    "operation": "list_clients",
+    "data": {
+     "clients": {
+      "nodes": [
+       {
+        "id": "[test-client-id-1]",
+        "firstName": "[test data]",
+        "lastName": "[test data]",
+        "billingAddress": null
+       },
+       {
+        "id": "[test-client-id-2]",
+        "firstName": "[test data]",
+        "lastName": "[test data]",
+        "billingAddress": null
+       }
+      ],
+      "pageInfo": {
+       "hasNextPage": false,
+       "endCursor": "Mg"
+      },
+      "totalCount": 2
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "transport": "httpx",
+     "method": "POST",
+     "url": "https://api.getjobber.com/api/graphql",
+     "request_headers": {
+      "user-agent": "python-httpx/0.28.1",
+      "authorization": "[redacted]",
+      "x-jobber-graphql-version": "2026-09-25",
+      "content-type": "application/json",
+      "accept": "application/json",
+      "content-length": "250"
+     },
+     "request_body": {
+      "size": 250,
+      "sha256": "b319e80d6dd037934f1d8a4a56b27822a408aa8761765d3dc38707a6bc8f952a",
+      "json": {
+       "query": "query SampleQuery {\n  clients(first: 25) {\n    nodes {\n      id\n      firstName\n      lastName\n      billingAddress {\n        city\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n    totalCount\n  }\n}\n"
+      }
+     },
+     "status": 200,
+     "response_headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-request-id": "[request-id]",
+      "set-cookie": "[redacted]"
+     },
+     "response_body": {
+      "size": 536,
+      "sha256": "394601300ff0ad6f8d3798859da7d82cb1b373d23aad11dced0b1d5ca1758f4d",
+      "json": {
+       "data": {
+        "clients": {
+         "nodes": [
+          {
+           "id": "[test-client-id-1]",
+           "firstName": "[test data]",
+           "lastName": "[test data]",
+           "billingAddress": null
+          },
+          {
+           "id": "[test-client-id-2]",
+           "firstName": "[test data]",
+           "lastName": "[test data]",
+           "billingAddress": null
+          }
+         ],
+         "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": "Mg"
+         },
+         "totalCount": 2
+        }
+       },
+       "extensions": {
+        "cost": {
+         "requestedQueryCost": 131,
+         "actualQueryCost": 14,
+         "throttleStatus": {
+          "maximumAvailable": 10000,
+          "currentlyAvailable": 9986,
+          "restoreRate": 500
+         }
+        },
+        "versioning": {
+         "version": "2026-09-25"
+        }
+       }
+      }
+     },
+     "ms": 666
+    }
+   ]
+  },
+  {
+   "operation": "list_jobs",
+   "label": "jobs",
+   "write": false,
+   "ok": true,
+   "error": null,
+   "config": {
+    "operation": "list_jobs"
+   },
+   "output": {
+    "status": "success",
+    "operation": "list_jobs",
+    "data": {
+     "jobs": {
+      "nodes": [],
+      "pageInfo": {
+       "hasNextPage": false,
+       "endCursor": null
+      }
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "transport": "httpx",
+     "method": "POST",
+     "url": "https://api.getjobber.com/api/graphql",
+     "request_headers": {
+      "user-agent": "python-httpx/0.28.1",
+      "authorization": "[redacted]",
+      "x-jobber-graphql-version": "2026-09-25",
+      "content-type": "application/json",
+      "accept": "application/json",
+      "content-length": "177"
+     },
+     "request_body": {
+      "size": 177,
+      "sha256": "940b6bae1e9f7c694beeb8ec16de9bab5d9dabd04cde111e56db93648d9e0622",
+      "json": {
+       "query": "query GetJobs {\n  jobs(first: 10) {\n    nodes {\n      id\n      jobNumber\n      title\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
+      }
+     },
+     "status": 200,
+     "response_headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-request-id": "[request-id]",
+      "set-cookie": "[redacted]"
+     },
+     "response_body": {
+      "size": 274,
+      "sha256": "2d001fe2c576e82d837a6d9770edc01025d66143970461e1d1b2b52e2870ef64",
+      "json": {
+       "data": {
+        "jobs": {
+         "nodes": [],
+         "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": null
+         }
+        }
+       },
+       "extensions": {
+        "cost": {
+         "requestedQueryCost": 35,
+         "actualQueryCost": 5,
+         "throttleStatus": {
+          "maximumAvailable": 10000,
+          "currentlyAvailable": 9981,
+          "restoreRate": 500
+         }
+        },
+        "versioning": {
+         "version": "2026-09-25"
+        }
+       }
+      }
+     },
+     "ms": 447
+    }
+   ]
+  },
+  {
+   "operation": "list_quotes",
+   "label": "quotes",
+   "write": false,
+   "ok": true,
+   "error": null,
+   "config": {
+    "operation": "list_quotes"
+   },
+   "output": {
+    "status": "success",
+    "operation": "list_quotes",
+    "data": {
+     "quotes": {
+      "edges": []
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "transport": "httpx",
+     "method": "POST",
+     "url": "https://api.getjobber.com/api/graphql",
+     "request_headers": {
+      "user-agent": "python-httpx/0.28.1",
+      "authorization": "[redacted]",
+      "x-jobber-graphql-version": "2026-09-25",
+      "content-type": "application/json",
+      "accept": "application/json",
+      "content-length": "178"
+     },
+     "request_body": {
+      "size": 178,
+      "sha256": "44046727ef53230d1f0ec730a086ad01111e14dcc933ae42e35caf1d42263d3a",
+      "json": {
+       "query": "query {\n  quotes(first: 10) {\n    edges {\n      node {\n        id\n        cost\n        quoteNumber\n        quoteStatus\n        title\n      }\n    }\n  }\n}\n"
+      }
+     },
+     "status": 200,
+     "response_headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-request-id": "[request-id]",
+      "set-cookie": "[redacted]"
+     },
+     "response_body": {
+      "size": 226,
+      "sha256": "c7fe167395230c3222e77450a5223a4655728a7ab60de16351cd465da6552ed5",
+      "json": {
+       "data": {
+        "quotes": {
+         "edges": []
+        }
+       },
+       "extensions": {
+        "cost": {
+         "requestedQueryCost": 62,
+         "actualQueryCost": 2,
+         "throttleStatus": {
+          "maximumAvailable": 10000,
+          "currentlyAvailable": 9998,
+          "restoreRate": 500
+         }
+        },
+        "versioning": {
+         "version": "2026-09-25"
+        }
+       }
+      }
+     },
+     "ms": 471
+    }
+   ]
+  },
+  {
+   "operation": "list_custom_field_configurations",
+   "label": "configurations",
+   "write": false,
+   "ok": true,
+   "error": null,
+   "config": {
+    "operation": "list_custom_field_configurations"
+   },
+   "output": {
+    "status": "success",
+    "operation": "list_custom_field_configurations",
+    "data": {
+     "customFieldConfigurations": {
+      "nodes": []
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "transport": "httpx",
+     "method": "POST",
+     "url": "https://api.getjobber.com/api/graphql",
+     "request_headers": {
+      "user-agent": "python-httpx/0.28.1",
+      "authorization": "[redacted]",
+      "x-jobber-graphql-version": "2026-09-25",
+      "content-type": "application/json",
+      "accept": "application/json",
+      "content-length": "947"
+     },
+     "request_body": {
+      "size": 947,
+      "sha256": "0c9c7e270f4ee4d3ccb24971ec9934a3ec338294660880a32b0521d35aa238e5",
+      "json": {
+       "query": "query GetAllConfigurationsExample {\n  customFieldConfigurations(first: 50) {\n    nodes {\n      ... on CustomFieldConfigurationArea {\n        id\n        name\n        valueType\n        appliesTo\n        readOnly\n      }\n      ... on CustomFieldConfigurationDropdown {\n        id\n        name\n        valueType\n        appliesTo\n        readOnly\n      }\n      ... on CustomFieldConfigurationLink {\n        id\n        name\n        valueType\n        appliesTo\n        readOnly\n      }\n      ... on CustomFieldConfigurationNumeric {\n        id\n        name\n        valueType\n        appliesTo\n        readOnly\n      }\n      ... on CustomFieldConfigurationText {\n        id\n        name\n        valueType\n        appliesTo\n        readOnly\n      }\n      ... on CustomFieldConfigurationTrueFalse {\n        id\n        name\n        valueType\n        appliesTo\n        readOnly\n      }\n    }\n  }\n}\n"
+      }
+     },
+     "status": 200,
+     "response_headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-request-id": "[request-id]",
+      "set-cookie": "[redacted]"
+     },
+     "response_body": {
+      "size": 246,
+      "sha256": "2980ef00c2379c6f18e88e539bcd0424c1c357ba2ff681d794852717ebb349d2",
+      "json": {
+       "data": {
+        "customFieldConfigurations": {
+         "nodes": []
+        }
+       },
+       "extensions": {
+        "cost": {
+         "requestedQueryCost": 252,
+         "actualQueryCost": 2,
+         "throttleStatus": {
+          "maximumAvailable": 10000,
+          "currentlyAvailable": 9996,
+          "restoreRate": 500
+         }
+        },
+        "versioning": {
+         "version": "2026-09-25"
+        }
+       }
+      }
+     },
+     "ms": 471
+    }
+   ]
+  },
+  {
+   "operation": "create_client",
+   "label": "created",
+   "write": true,
+   "ok": true,
+   "error": null,
+   "config": {
+    "first_name": "NoClick",
+    "last_name": "Jobber live proof",
+    "operation": "create_client"
+   },
+   "output": {
+    "status": "success",
+    "operation": "create_client",
+    "data": {
+     "clientCreate": {
+      "client": {
+       "id": "[created-client-id]",
+       "firstName": "[test data]",
+       "lastName": "[test data]"
+      },
+      "userErrors": []
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "transport": "httpx",
+     "method": "POST",
+     "url": "https://api.getjobber.com/api/graphql",
+     "request_headers": {
+      "user-agent": "python-httpx/0.28.1",
+      "authorization": "[redacted]",
+      "x-jobber-graphql-version": "2026-09-25",
+      "content-type": "application/json",
+      "accept": "application/json",
+      "content-length": "168"
+     },
+     "request_body": {
+      "size": 168,
+      "sha256": "240d2c881952245052a6e65b18ae6b54615b22225ee0cbb0634dbf0d2b43d1f5",
+      "json": {
+       "query": "mutation { clientCreate(input: {firstName: \"NoClick\", lastName: \"Jobber live proof\"}) { client { id firstName lastName } userErrors { message path } } }"
+      }
+     },
+     "status": 200,
+     "response_headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-request-id": "[request-id]",
+      "set-cookie": "[redacted]"
+     },
+     "response_body": {
+      "size": 348,
+      "sha256": "df762af471ba1de45b9f7faf23038429037cc9df004f1a729ee6e93d17045cc4",
+      "json": {
+       "data": {
+        "clientCreate": {
+         "client": {
+          "id": "[created-client-id]",
+          "firstName": "[test data]",
+          "lastName": "[test data]"
+         },
+         "userErrors": []
+        }
+       },
+       "extensions": {
+        "cost": {
+         "requestedQueryCost": 8,
+         "actualQueryCost": 6,
+         "throttleStatus": {
+          "maximumAvailable": 10000,
+          "currentlyAvailable": 9994,
+          "restoreRate": 500
+         }
+        },
+        "versioning": {
+         "version": "2026-09-25"
+        }
+       }
+      }
+     },
+     "ms": 542
+    }
+   ]
+  },
+  {
+   "operation": "list_clients",
+   "label": "readback",
+   "write": false,
+   "ok": true,
+   "error": null,
+   "config": {
+    "operation": "list_clients"
+   },
+   "output": {
+    "status": "success",
+    "operation": "list_clients",
+    "data": {
+     "clients": {
+      "nodes": [
+       {
+        "id": "[test-client-id-1]",
+        "firstName": "[test data]",
+        "lastName": "[test data]",
+        "billingAddress": null
+       },
+       {
+        "id": "[test-client-id-2]",
+        "firstName": "[test data]",
+        "lastName": "[test data]",
+        "billingAddress": null
+       },
+       {
+        "id": "[created-client-id]",
+        "firstName": "[test data]",
+        "lastName": "[test data]",
+        "billingAddress": null
+       }
+      ],
+      "pageInfo": {
+       "hasNextPage": false,
+       "endCursor": "Mw"
+      },
+      "totalCount": 3
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "transport": "httpx",
+     "method": "POST",
+     "url": "https://api.getjobber.com/api/graphql",
+     "request_headers": {
+      "user-agent": "python-httpx/0.28.1",
+      "authorization": "[redacted]",
+      "x-jobber-graphql-version": "2026-09-25",
+      "content-type": "application/json",
+      "accept": "application/json",
+      "content-length": "250"
+     },
+     "request_body": {
+      "size": 250,
+      "sha256": "b319e80d6dd037934f1d8a4a56b27822a408aa8761765d3dc38707a6bc8f952a",
+      "json": {
+       "query": "query SampleQuery {\n  clients(first: 25) {\n    nodes {\n      id\n      firstName\n      lastName\n      billingAddress {\n        city\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n    totalCount\n  }\n}\n"
+      }
+     },
+     "status": 200,
+     "response_headers": {
+      "content-type": "application/json; charset=utf-8",
+      "x-request-id": "[request-id]",
+      "set-cookie": "[redacted]"
+     },
+     "response_body": {
+      "size": 661,
+      "sha256": "49a74244aed3a75d64359a9dad372c82df96d3e59ad45b49d1fa3fc389bc483d",
+      "json": {
+       "data": {
+        "clients": {
+         "nodes": [
+          {
+           "id": "[test-client-id-1]",
+           "firstName": "[test data]",
+           "lastName": "[test data]",
+           "billingAddress": null
+          },
+          {
+           "id": "[test-client-id-2]",
+           "firstName": "[test data]",
+           "lastName": "[test data]",
+           "billingAddress": null
+          },
+          {
+           "id": "[created-client-id]",
+           "firstName": "[test data]",
+           "lastName": "[test data]",
+           "billingAddress": null
+          }
+         ],
+         "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": "Mw"
+         },
+         "totalCount": 3
+        }
+       },
+       "extensions": {
+        "cost": {
+         "requestedQueryCost": 131,
+         "actualQueryCost": 18,
+         "throttleStatus": {
+          "maximumAvailable": 10000,
+          "currentlyAvailable": 9976,
+          "restoreRate": 500
+         }
+        },
+        "versioning": {
+         "version": "2026-09-25"
+        }
+       }
+      }
+     },
+     "ms": 498
+    }
+   ]
+  }
+ ]
+}
