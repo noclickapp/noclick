@@ -1,0 +1,10 @@
+{
+  "recently_played.json": {
+    "source": "https://developer.spotify.com/documentation/web-api/reference/get-recently-played",
+    "description": "Unchanged JSON response example from the official reference page."
+  },
+  "profile.json": {
+    "source": "https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile",
+    "description": "Unchanged JSON response example from the official reference page."
+  }
+}

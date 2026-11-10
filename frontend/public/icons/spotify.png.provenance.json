@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/spotify.png",
+  "source": "https://open.spotifycdn.com/cdn/images/favicon32.b64ecc03.png",
+  "license": "Spotify trademark; used to identify the Spotify integration in accordance with https://developer.spotify.com/documentation/design",
+  "sha256": "b64ecc030dcc47688f94d6c4b14d747f2b8dbcdc7012e5c69574f8354eac7257"
+}
