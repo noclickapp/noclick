@@ -12,6 +12,8 @@ export interface MovedTo {
 }
 
 export interface MovedFrom {
+    /** The move that carried it (`GET /v1/agents/moves/{id}` while the move is kept). */
+    moveId: string | null;
     /** The computer it came from, by host name. */
     host: string | null;
     /** The folder its session ran in there. */
@@ -28,6 +30,7 @@ export function movedFrom(raw: unknown): MovedFrom | null {
     const m = raw as Record<string, unknown>;
     const to = m.to && typeof m.to === 'object' ? (m.to as Record<string, unknown>) : null;
     return {
+        moveId: text(m.move_id),
         host: text(m.host),
         folder: text(m.folder),
         at: text(m.at),
