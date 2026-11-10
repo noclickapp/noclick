@@ -340,3 +340,27 @@ async def test_poll_bounded_window_and_failure_never_consume_state(transport, mo
     with pytest.raises(native.ApiError):
         await instance.execute({})
     filter_mock.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("ram", [1024, "1024"])
+async def test_instance_poll_schema_number_and_documented_text_ram_emit_agent_event(transport, monkeypatch, ram):
+    # The contract declares a number; Contabo's published example uses text.
+    # Both representations must reach detection and agent delivery unchanged in identity.
+    instance = node("on_new_instance")
+    observed = []
+
+    async def unseen(items, event_id):
+        observed.extend(event_id(item) for item in items)
+        return items
+
+    monkeypatch.setattr(instance, "_filter_unseen", unseen)
+    transport[1].append(page([{**INSTANCE, "ramMb": ram}], size=100))
+    output = await instance.execute({})
+    assert observed == [str(IID)]
+    assert output["data"]["new_item_count"] == 1
+    item = output["data"]["items"][0]
+    assert item["ramMb"] == 1024 and item["instanceId"] == IID
+    event = native.ContaboNode.resolve_agent_event(output)
+    assert str(IID) in event["text"] and "state running" in event["text"]
+    assert "omit" not in repr(output) and "omit" not in event["text"]
