@@ -146,10 +146,12 @@ def _translate_openrouter(api_model: Dict[str, Any]) -> Model:
     raw_created = api_model.get("created")
     created: Optional[int] = int(raw_created) if isinstance(raw_created, (int, float)) else None
 
+    # An alias ("~openai/gpt-luna-latest") is named for the model it serves today, so a picker shows its number.
+    target = (api_model.get("alias_target") or {}).get("name")
     return Model(
         id=f"openrouter/{or_id}",
         provider="openrouter",
-        name=api_model.get("name"),
+        name=f"{target} (latest)" if target else api_model.get("name"),
         description=api_model.get("description"),
         input_modalities=list(input_modalities),
         output_modalities=list(output_modalities),
