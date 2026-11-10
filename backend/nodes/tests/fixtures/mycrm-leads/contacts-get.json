@@ -1,0 +1,31 @@
+{
+  "source": "https://api-docs.mycrm.io/reference/contacts-get/",
+  "body": {
+    "data": [
+      {
+        "type": "contacts",
+        "id": "1001",
+        "attributes": {
+          "mobile": "+61400000000",
+          "title": "string",
+          "firstName": "Alex",
+          "middleName": "string",
+          "lastName": "Morgan",
+          "preferredName": "Alex",
+          "homePhone": "+61400000000",
+          "businessPhone": "+61400000000",
+          "email": "alex@example.com",
+          "secondaryEmail": "alex@example.com",
+          "maritalStatus": "Single",
+          "gender": "Male",
+          "updated": "2026-01-15T09:00:00Z",
+          "hasMarketingConsent": false,
+          "dateOfBirth": "1990-01-15",
+          "isPrimary": false,
+          "role": "Adult",
+          "created": "2026-01-15T09:00:00Z"
+        }
+      }
+    ]
+  }
+}

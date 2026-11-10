@@ -1,0 +1,16 @@
+{
+  "source": "https://api-docs.mycrm.io/reference/task-get/",
+  "body": {
+    "data": {
+      "type": "tasks",
+      "id": "1001",
+      "attributes": {
+        "title": "string",
+        "detail": "string",
+        "progress": "Completed",
+        "priority": "Critical",
+        "dueDate": "2026-01-15T09:00:00Z"
+      }
+    }
+  }
+}

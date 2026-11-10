@@ -1,0 +1,34 @@
+{
+  "source": "https://api-docs.mycrm.io/reference/contact-post/",
+  "body": {
+    "data": {
+      "type": "contacts",
+      "attributes": {
+        "mobile": "+61400000000",
+        "title": "string",
+        "firstName": "Alex",
+        "middleName": "string",
+        "lastName": "Morgan",
+        "preferredName": "Alex",
+        "homePhone": "+61400000000",
+        "businessPhone": "+61400000000",
+        "email": "alex@example.com",
+        "secondaryEmail": "alex@example.com",
+        "maritalStatus": "Single",
+        "gender": "Male",
+        "hasMarketingConsent": false,
+        "dateOfBirth": "1990-01-15",
+        "isPrimary": false,
+        "role": "Adult"
+      },
+      "relationships": {
+        "contactGroup": {
+          "data": {
+            "type": "RESOURCE_TYPE",
+            "id": "1001"
+          }
+        }
+      }
+    }
+  }
+}

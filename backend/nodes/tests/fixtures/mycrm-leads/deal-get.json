@@ -1,0 +1,56 @@
+{
+  "source": "https://api-docs.mycrm.io/reference/deal-get/",
+  "body": {
+    "data": {
+      "type": "deals",
+      "id": "1001",
+      "attributes": {
+        "updated": "2026-01-15T09:00:00Z",
+        "created": "2026-01-15T09:00:00Z",
+        "dates": {
+          "settled": "2026-01-15",
+          "lodged": "2026-01-15",
+          "financeClause": "2026-01-15",
+          "notProceeding": "2026-01-15",
+          "approved": "2026-01-15",
+          "preApproved": "2026-01-15",
+          "conditionallyApproved": "2026-01-15",
+          "preApprovedExpiry": "2026-01-15",
+          "estimatedSettled": "2026-01-15"
+        },
+        "totalLoanAmount": 1,
+        "customStatusName": "string",
+        "name": "string",
+        "dealStatus": "NewLeads",
+        "opportunity": {
+          "proposedLoanAmount": 1,
+          "securityAmount": 1,
+          "summaryNotes": "string",
+          "loanPurpose": "string"
+        },
+        "splits": [
+          {
+            "loanTermYears": 1,
+            "rateType": "string",
+            "loanStructureType": "PrincipalInterest",
+            "amount": 1,
+            "capitaliseLmi": false,
+            "lmiPremium": 1,
+            "amountInclLmi": 1,
+            "interestRate": 1,
+            "rateTypePeriodMonths": 1,
+            "paymentAmount": 1,
+            "fixedRateStartDate": "2026-01-15",
+            "fixedRateEndDate": "2026-01-15",
+            "interestOnlyStartDate": "2026-01-15",
+            "interestOnlyEndDate": "2026-01-15",
+            "repaymentHolidayStartDate": "2026-01-15",
+            "repaymentHolidayEndDate": "2026-01-15"
+          }
+        ],
+        "lenderName": "string",
+        "dealType": "Residential"
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "source": "https://api-docs.mycrm.io/reference/contact-group-get/",
+  "body": {
+    "data": {
+      "type": "contact-groups",
+      "id": "1001",
+      "attributes": {
+        "enquirySourceCategoryId": 1,
+        "created": "2026-01-15T09:00:00Z",
+        "reviewMonth": 1,
+        "utmSource": "string",
+        "utmMedium": "string",
+        "utmTerm": "string",
+        "utmContent": "string",
+        "utmCampaign": "string",
+        "categories": [
+          "string"
+        ],
+        "sourceAdditionalDetails": "string",
+        "enquirySourceSystemUrl": "string",
+        "enquirySourceReferrerName": "string",
+        "enquirySourceReferrerOrganisationName": "string",
+        "contactType": "Lead",
+        "notes": "string",
+        "updated": "2026-01-15T09:00:00Z",
+        "enquirySourceId": 1,
+        "enquirySourceCategory": "string",
+        "enquirySource": "string",
+        "enquirySourceReferrerId": "string"
+      }
+    }
+  }
+}

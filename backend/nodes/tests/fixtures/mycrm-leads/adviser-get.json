@@ -1,0 +1,39 @@
+{
+  "source": "https://api-docs.mycrm.io/reference/adviser-get/",
+  "body": {
+    "data": {
+      "type": "advisers",
+      "id": "1001",
+      "attributes": {
+        "googlePlaces": "string",
+        "created": "2026-01-15T09:00:00Z",
+        "isBrokerWebPublic": false,
+        "myLeadGenActivationDate": "2026-01-15T09:00:00Z",
+        "isMyLeadGenActive": false,
+        "bio": "string",
+        "jobTitle": "string",
+        "website": "string",
+        "status": "string",
+        "email": "alex@example.com",
+        "skype": "string",
+        "facebook": "string",
+        "linkedIn": "string",
+        "twitter": "string",
+        "youtubeFeatured": "string",
+        "instagram": "string",
+        "calendly": "string",
+        "myLeadGenerator": "string",
+        "profilePhotoHeadShot": "https://example.com/",
+        "profilePhotoHalfBody": "https://example.com/",
+        "profilePhotoFullBody": "https://example.com/",
+        "countryCode": "NZ",
+        "brokerStartDate": "2026-01-15",
+        "contactType": "string",
+        "contactTypeRoles": [
+          "string"
+        ],
+        "youtubeChannel": "string"
+      }
+    }
+  }
+}

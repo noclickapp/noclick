@@ -1,0 +1,1389 @@
+{
+  "$defs": {
+    "ContactFields": {
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "preferredName": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferredname"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "homePhone": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Homephone"
+        },
+        "businessPhone": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Businessphone"
+        },
+        "hasMarketingConsent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hasmarketingconsent"
+        }
+      },
+      "title": "ContactFields",
+      "type": "object"
+    },
+    "DealFields": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "DealFields",
+      "type": "object"
+    },
+    "LeadContact": {
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName",
+        "email"
+      ],
+      "title": "LeadContact",
+      "type": "object"
+    },
+    "LeadFields": {
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "dealName": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dealname"
+        },
+        "noteTitle": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notetitle"
+        },
+        "noteDetails": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notedetails"
+        },
+        "utmSource": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utmsource"
+        },
+        "utmMedium": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utmmedium"
+        },
+        "utmCampaign": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utmcampaign"
+        },
+        "externalReference": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externalreference"
+        },
+        "externalIntegration": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externalintegration"
+        },
+        "sendNotification": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sendnotification"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName",
+        "email"
+      ],
+      "title": "LeadFields",
+      "type": "object"
+    },
+    "MyCRMCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Contact_Post",
+          "x-display-name": "Create Contact"
+        },
+        "attributes": {
+          "$ref": "#/$defs/ContactFields",
+          "title": "Fields to write"
+        },
+        "contact_group_id": {
+          "maxLength": 20,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Contact group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attributes",
+        "contact_group_id"
+      ],
+      "title": "MyCRMCreateContactConfig",
+      "type": "object"
+    },
+    "MyCRMCreateDealNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_deal_note",
+          "default": "create_deal_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "DealNote_Post",
+          "x-display-name": "Create Deal Note"
+        },
+        "attributes": {
+          "$ref": "#/$defs/NoteFields",
+          "title": "Fields to write"
+        },
+        "deal_id": {
+          "maxLength": 20,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Deal ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attributes",
+        "deal_id"
+      ],
+      "title": "MyCRMCreateDealNoteConfig",
+      "type": "object"
+    },
+    "MyCRMCreateLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Lead_Post",
+          "x-display-name": "Create Lead"
+        },
+        "attributes": {
+          "$ref": "#/$defs/LeadFields",
+          "title": "Fields to write"
+        }
+      },
+      "required": [
+        "attributes"
+      ],
+      "title": "MyCRMCreateLeadConfig",
+      "type": "object"
+    },
+    "MyCRMCreateStructuredLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_structured_lead",
+          "default": "create_structured_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "StructuredLead_Post",
+          "x-display-name": "Create Structured Lead"
+        },
+        "attributes": {
+          "$ref": "#/$defs/StructuredLeadFields",
+          "title": "Fields to write"
+        }
+      },
+      "required": [
+        "attributes"
+      ],
+      "title": "MyCRMCreateStructuredLeadConfig",
+      "type": "object"
+    },
+    "MyCRMCreateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Task_Post",
+          "x-display-name": "Create Task"
+        },
+        "attributes": {
+          "$ref": "#/$defs/TaskFields",
+          "title": "Fields to write"
+        },
+        "assignee_id": {
+          "maxLength": 20,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Assignee adviser ID",
+          "type": "string"
+        },
+        "deal_id": {
+          "maxLength": 20,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Residential deal ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attributes",
+        "assignee_id",
+        "deal_id"
+      ],
+      "title": "MyCRMCreateTaskConfig",
+      "type": "object"
+    },
+    "MyCRMGetAdviserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_adviser",
+          "default": "get_adviser",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Adviser_Get",
+          "x-display-name": "Get Adviser"
+        },
+        "resource_id": {
+          "maxLength": 10,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "MyCRMGetAdviserConfig",
+      "type": "object"
+    },
+    "MyCRMGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Contact_Get",
+          "x-display-name": "Get Contact"
+        },
+        "resource_id": {
+          "maxLength": 10,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "MyCRMGetContactConfig",
+      "type": "object"
+    },
+    "MyCRMGetContactGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact_group",
+          "default": "get_contact_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "ContactGroup_Get",
+          "x-display-name": "Get Contact Group"
+        },
+        "resource_id": {
+          "maxLength": 10,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "MyCRMGetContactGroupConfig",
+      "type": "object"
+    },
+    "MyCRMGetDealConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_deal",
+          "default": "get_deal",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Deal_Get",
+          "x-display-name": "Get Deal"
+        },
+        "resource_id": {
+          "maxLength": 10,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "MyCRMGetDealConfig",
+      "type": "object"
+    },
+    "MyCRMGetDealNoteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_deal_note",
+          "default": "get_deal_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "DealNote_Get",
+          "x-display-name": "Get Deal Note"
+        },
+        "resource_id": {
+          "maxLength": 10,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "MyCRMGetDealNoteConfig",
+      "type": "object"
+    },
+    "MyCRMGetLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Lead_Get",
+          "x-display-name": "Get Lead"
+        },
+        "resource_id": {
+          "maxLength": 10,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "MyCRMGetLeadConfig",
+      "type": "object"
+    },
+    "MyCRMGetStructuredLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_structured_lead",
+          "default": "get_structured_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "StructuredLead_Get",
+          "x-display-name": "Get Structured Lead"
+        },
+        "resource_id": {
+          "maxLength": 10,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "MyCRMGetStructuredLeadConfig",
+      "type": "object"
+    },
+    "MyCRMGetTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Task_Get",
+          "x-display-name": "Get Task"
+        },
+        "resource_id": {
+          "maxLength": 10,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Resource ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "MyCRMGetTaskConfig",
+      "type": "object"
+    },
+    "MyCRMLeadsAccessToken": {
+      "properties": {
+        "credential_type": {
+          "const": "mycrm_leads_access_token",
+          "default": "mycrm_leads_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_base_url": {
+          "description": "Issued HTTPS origin, without /jsonapi; service URLs differ by environment.",
+          "title": "API base URL",
+          "type": "string"
+        },
+        "access_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "adviser_contact_id": {
+          "description": "The UserId context supplied with your API access, not a client contact ID.",
+          "maxLength": 20,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Adviser contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_base_url",
+        "access_token",
+        "adviser_contact_id"
+      ],
+      "title": "MyCRM Leads Access Token",
+      "type": "object",
+      "x-credential-instructions": "Use the API base URL and adviser contact ID issued by LMG. Paste an existing access_token obtained with your issued client ID, client secret and approved scopes using MyCRM's client_credentials flow. Leads-only credentials are available in MyCRM Profile Management \u2192 API Access Management; other operations require additional access from LMG. Tokens expire: replace the token here when it expires. NoClick does not exchange or refresh tokens. The API base URL must be the issued HTTPS origin before /jsonapi. Listing contacts proves contact-search access; leads-only credentials may save as unverified or be rejected if they lack that access.",
+      "x-credential-url": "https://api-docs.mycrm.io/guides/integrate/oauth/"
+    },
+    "MyCRMListAdvisersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_advisers",
+          "default": "list_advisers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Advisers_Get",
+          "x-display-name": "List Advisers"
+        },
+        "page_number": {
+          "default": 1,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "MyCRMListAdvisersConfig",
+      "type": "object"
+    },
+    "MyCRMListContactGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contact_groups",
+          "default": "list_contact_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "ContactGroups_Get",
+          "x-display-name": "List Contact Groups"
+        },
+        "page_number": {
+          "default": 1,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "MyCRMListContactGroupsConfig",
+      "type": "object"
+    },
+    "MyCRMListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Contacts_Get",
+          "x-display-name": "List Contacts"
+        },
+        "page_number": {
+          "default": 1,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "MyCRMListContactsConfig",
+      "type": "object"
+    },
+    "MyCRMListDealsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_deals",
+          "default": "list_deals",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Deals_Get",
+          "x-display-name": "List Deals"
+        },
+        "page_number": {
+          "default": 1,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "MyCRMListDealsConfig",
+      "type": "object"
+    },
+    "MyCRMUpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Contact_Patch",
+          "x-display-name": "Update Contact"
+        },
+        "resource_id": {
+          "maxLength": 10,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/ContactFields",
+          "title": "Fields to write"
+        }
+      },
+      "required": [
+        "resource_id",
+        "attributes"
+      ],
+      "title": "MyCRMUpdateContactConfig",
+      "type": "object"
+    },
+    "MyCRMUpdateDealConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_deal",
+          "default": "update_deal",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Deal_Patch",
+          "x-display-name": "Update Deal"
+        },
+        "resource_id": {
+          "maxLength": 10,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/DealFields",
+          "title": "Fields to write"
+        }
+      },
+      "required": [
+        "resource_id",
+        "attributes"
+      ],
+      "title": "MyCRMUpdateDealConfig",
+      "type": "object"
+    },
+    "MyCRMUpdateTaskConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-contract-operation": "Task_Patch",
+          "x-display-name": "Update Task"
+        },
+        "resource_id": {
+          "maxLength": 10,
+          "pattern": "^[1-9]\\d*$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "attributes": {
+          "$ref": "#/$defs/TaskUpdateFields",
+          "title": "Fields to write"
+        }
+      },
+      "required": [
+        "resource_id",
+        "attributes"
+      ],
+      "title": "MyCRMUpdateTaskConfig",
+      "type": "object"
+    },
+    "NoteFields": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "detail": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Detail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "detail"
+      ],
+      "title": "NoteFields",
+      "type": "object"
+    },
+    "StructuredLeadFields": {
+      "additionalProperties": false,
+      "properties": {
+        "contacts": {
+          "items": {
+            "$ref": "#/$defs/LeadContact"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Contacts",
+          "type": "array"
+        },
+        "dealName": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dealname"
+        },
+        "noteTitle": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notetitle"
+        },
+        "noteDetails": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notedetails"
+        },
+        "utmSource": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utmsource"
+        },
+        "utmCampaign": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Utmcampaign"
+        },
+        "externalReference": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externalreference"
+        },
+        "externalIntegration": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Externalintegration"
+        },
+        "sendNotification": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sendnotification"
+        }
+      },
+      "required": [
+        "contacts"
+      ],
+      "title": "StructuredLeadFields",
+      "type": "object"
+    },
+    "TaskFields": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        },
+        "progress": {
+          "anyOf": [
+            {
+              "enum": [
+                "Completed",
+                "InProgress",
+                "NotRequired",
+                "NotStarted",
+                "OnHold"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Progress",
+          "enum": [
+            "Completed",
+            "InProgress",
+            "NotRequired",
+            "NotStarted",
+            "OnHold"
+          ],
+          "x-enum-searchable": true
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "Critical",
+                "High",
+                "Medium",
+                "Normal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "Critical",
+            "High",
+            "Medium",
+            "Normal"
+          ],
+          "x-enum-searchable": true
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duedate"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "TaskFields",
+      "type": "object"
+    },
+    "TaskUpdateFields": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        },
+        "progress": {
+          "anyOf": [
+            {
+              "enum": [
+                "Completed",
+                "InProgress",
+                "NotRequired",
+                "NotStarted",
+                "OnHold"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Progress",
+          "enum": [
+            "Completed",
+            "InProgress",
+            "NotRequired",
+            "NotStarted",
+            "OnHold"
+          ],
+          "x-enum-searchable": true
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "Critical",
+                "High",
+                "Medium",
+                "Normal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "Critical",
+            "High",
+            "Medium",
+            "Normal"
+          ],
+          "x-enum-searchable": true
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duedate"
+        }
+      },
+      "title": "TaskUpdateFields",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/MyCRMCreateContactConfig",
+          "create_deal_note": "#/$defs/MyCRMCreateDealNoteConfig",
+          "create_lead": "#/$defs/MyCRMCreateLeadConfig",
+          "create_structured_lead": "#/$defs/MyCRMCreateStructuredLeadConfig",
+          "create_task": "#/$defs/MyCRMCreateTaskConfig",
+          "get_adviser": "#/$defs/MyCRMGetAdviserConfig",
+          "get_contact": "#/$defs/MyCRMGetContactConfig",
+          "get_contact_group": "#/$defs/MyCRMGetContactGroupConfig",
+          "get_deal": "#/$defs/MyCRMGetDealConfig",
+          "get_deal_note": "#/$defs/MyCRMGetDealNoteConfig",
+          "get_lead": "#/$defs/MyCRMGetLeadConfig",
+          "get_structured_lead": "#/$defs/MyCRMGetStructuredLeadConfig",
+          "get_task": "#/$defs/MyCRMGetTaskConfig",
+          "list_advisers": "#/$defs/MyCRMListAdvisersConfig",
+          "list_contact_groups": "#/$defs/MyCRMListContactGroupsConfig",
+          "list_contacts": "#/$defs/MyCRMListContactsConfig",
+          "list_deals": "#/$defs/MyCRMListDealsConfig",
+          "update_contact": "#/$defs/MyCRMUpdateContactConfig",
+          "update_deal": "#/$defs/MyCRMUpdateDealConfig",
+          "update_task": "#/$defs/MyCRMUpdateTaskConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MyCRMCreateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMGetLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMCreateStructuredLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMGetStructuredLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMListContactGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMGetContactGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMListAdvisersConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMGetAdviserConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMListDealsConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMGetDealConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMUpdateDealConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMGetDealNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/MyCRMCreateDealNoteConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MyCRMLeadsAccessToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mycrm-leads Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,190 @@
+{
+  "source": "https://api-docs.mycrm.io/reference/structured-lead-post/",
+  "body": {
+    "data": {
+      "type": "structured-leads",
+      "attributes": {
+        "categoriesAllowCreate": false,
+        "categories": [
+          "string"
+        ],
+        "contacts": [
+          {
+            "lid": "string",
+            "title": "Mr",
+            "firstName": "Alex",
+            "preferredName": "Alex",
+            "lastName": "Morgan",
+            "email": "alex@example.com",
+            "mobile": "+61400000000",
+            "homePhone": "+61400000000",
+            "businessPhone": "+61400000000",
+            "dateOfBirthAsString": "1990-01-15",
+            "dateOfBirth": "1990-01-15T00:00:00Z",
+            "gender": "Male",
+            "maritalStatus": "Single",
+            "hasMarketingConsent": false,
+            "isGuarantor": false,
+            "isDependant": false,
+            "isPrimary": false,
+            "addresses": [
+              {
+                "lid": "string"
+              }
+            ],
+            "employments": [
+              {
+                "lid": "string"
+              }
+            ]
+          }
+        ],
+        "addresses": [
+          {
+            "lid": "string",
+            "formattedAddress": "string",
+            "streetAddress": "string",
+            "suburb": "string",
+            "state": "string",
+            "postCode": "stri",
+            "country": "string",
+            "addressType": "Current"
+          }
+        ],
+        "assets": [
+          {
+            "lid": "string",
+            "assetTypeId": 1,
+            "assetSubTypeId": 1,
+            "description": "string",
+            "value": 1,
+            "institution": "string",
+            "accountName": "string",
+            "bsb": "string",
+            "accountNumber": "string",
+            "vehicleMake": "string",
+            "vehicleYear": 1,
+            "propertyZoningId": 1,
+            "propertyTypeId": 1,
+            "propertyPrimaryPurpose": "PurchaseOwnerOccupied",
+            "valueBasis": "ApplicantEstimate",
+            "address": {
+              "lid": "string"
+            },
+            "ownership": [
+              {
+                "lid": "string"
+              }
+            ]
+          }
+        ],
+        "expenses": [
+          {
+            "lid": "string",
+            "expenseTypeId": 1,
+            "description": "string",
+            "value": 1,
+            "frequency": "Yearly",
+            "ownership": [
+              {
+                "lid": "string"
+              }
+            ]
+          }
+        ],
+        "incomes": [
+          {
+            "lid": "string",
+            "incomeTypeId": 1,
+            "description": "string",
+            "value": 1,
+            "frequency": "Yearly",
+            "incomeVerification": "CurrentPayslips",
+            "ownership": [
+              {
+                "lid": "string"
+              }
+            ],
+            "asset": {
+              "lid": "string"
+            },
+            "employment": {
+              "lid": "string"
+            }
+          }
+        ],
+        "liabilities": [
+          {
+            "lid": "string",
+            "liabilityTypeId": 1,
+            "liabilitySubTypeId": 1,
+            "description": "string",
+            "accountName": "string",
+            "bsb": "string",
+            "accountNumber": "string",
+            "value": 1,
+            "limit": 1,
+            "repayments": 1,
+            "repaymentFrequency": "Yearly",
+            "interestRate": 1,
+            "interestTaxDeductible": false,
+            "creditorName": "string",
+            "loanTerm": 1,
+            "loanRepaymentType": "InterestOnly",
+            "mortgagePriority": "First",
+            "asset": {
+              "lid": "string"
+            },
+            "ownership": [
+              {
+                "lid": "string"
+              }
+            ]
+          }
+        ],
+        "employments": [
+          {
+            "lid": "string",
+            "employmentStatus": "PrimaryEmployment",
+            "employmentType": "PAYG",
+            "dateStartedAsString": "2026-01-15",
+            "dateStarted": "2026-01-15T09:00:00Z",
+            "dateEndedAsString": "2026-01-15",
+            "dateEnded": "2026-01-15T09:00:00Z",
+            "employmentRoleName": "string",
+            "employmentBasis": "FullTime",
+            "isProbation": false,
+            "businessNumber": "string",
+            "companyNumber": "string",
+            "employerName": "string",
+            "employerContactTitle": "Mr",
+            "employerContactFirstName": "string",
+            "employerContactLastName": "string",
+            "employerType": "Private",
+            "employerPhone": "string",
+            "address": {
+              "lid": "string"
+            }
+          }
+        ],
+        "utmSource": "string",
+        "utmMedium": "string",
+        "utmCampaign": "string",
+        "utmTerm": "string",
+        "utmContent": "string",
+        "sourceId": 1,
+        "sourceCategoryId": 1,
+        "sourceReferrerId": "string",
+        "sourceAdditionalDetails": "string",
+        "sourceSystemUrl": "string",
+        "dealName": "string",
+        "noteTitle": "string",
+        "noteDetails": "string",
+        "externalReference": "string",
+        "externalIntegration": "string",
+        "externalIntegrationAllowCreate": false,
+        "sendNotification": false
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "source": "https://api-docs.mycrm.io/reference/lead-post/",
+  "body": {
+    "data": {
+      "type": "leads",
+      "attributes": {
+        "firstName": "Alex",
+        "lastName": "Morgan",
+        "email": "alex@example.com",
+        "mobile": "+61400000000"
+      }
+    }
+  }
+}
