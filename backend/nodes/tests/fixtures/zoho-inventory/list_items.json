@@ -1,0 +1,50 @@
+{
+  "code": 0,
+  "message": "success",
+  "items": [
+    {
+      "group_id": 4815000000044220,
+      "group_name": "Bags",
+      "item_id": 4815000000044208,
+      "name": "Bags-small",
+      "status": "active",
+      "source": "string",
+      "is_linked_with_zohocrm": false,
+      "item_type": "inventory",
+      "description": "description",
+      "rate": 6,
+      "is_taxable": true,
+      "tax_id": 4815000000044043,
+      "tax_name": "Sales",
+      "tax_percentage": 12,
+      "purchase_description": "Purchase description",
+      "purchase_rate": 6,
+      "is_combo_product": false,
+      "product_type": "goods",
+      "attribute_id1": 4815000000044112,
+      "attribute_name1": "Small",
+      "reorder_level": 5,
+      "sku": "SK123",
+      "upc": 111111111111,
+      "ean": 111111111112,
+      "isbn": 111111111113,
+      "part_number": 111111111114,
+      "attribute_option_id1": 4815000000044214,
+      "attribute_option_name1": "Small",
+      "image_name": "bag_s.jpg",
+      "image_type": "jpg",
+      "created_time": "2013-01-24",
+      "last_modified_time": "2013-01-24",
+      "hsn_or_sac": 85423100,
+      "sat_item_key_code": "string",
+      "unitkey_code": "string",
+      "custom_fields": [
+        {
+          "customfield_id": "string",
+          "label": "string",
+          "value": "Normal"
+        }
+      ]
+    }
+  ]
+}

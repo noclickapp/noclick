@@ -1,0 +1,37 @@
+{
+  "code": 0,
+  "message": "success",
+  "salesorders": [
+    {
+      "salesorder_id": 4815000000044895,
+      "customer_name": "Molly",
+      "customer_id": 4815000000044080,
+      "status": "fulfilled",
+      "salesorder_number": "SO-00003",
+      "reference_number": "REF-S-00003",
+      "date": "2015-05-28",
+      "shipment_date": "2015-06-02",
+      "shipment_days": 2,
+      "quantity": 2,
+      "quantity_invoiced": 2,
+      "quantity_packed": 2,
+      "quantity_shipped": 2,
+      "currency_code": "USD",
+      "total": 350,
+      "bcy_total": 33,
+      "created_time": "2015-05-28T00:00:00.000Z",
+      "last_modified_time": "2015-05-28T00:00:00.000Z",
+      "is_emailed": true,
+      "is_drop_shipment": false,
+      "is_backorder": false,
+      "sales_channel": "direct_sales",
+      "custom_fields": [
+        {
+          "customfield_id": "string",
+          "label": "string",
+          "value": "string"
+        }
+      ]
+    }
+  ]
+}
