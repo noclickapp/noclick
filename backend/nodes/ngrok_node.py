@@ -11,13 +11,14 @@ import json
 import logging
 import re
 from typing import Annotated, Any, Dict, List, Literal, Optional, Union
-from urllib.parse import quote
+from urllib.parse import parse_qs, quote, urlsplit
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 
 
 logger = logging.getLogger(__name__)
@@ -7481,6 +7482,8 @@ def _operation_model(operation: str, spec: Dict[str, Any]) -> type[BaseModel]:
     for prop in spec["body_fields"]:
         key = f"body_{prop['name']}"
         kind = _TYPES.get(prop["type"], Any)
+        if prop["name"] in {"sources", "resolves_to"} and prop["type"] == "array":
+            kind = List[Dict[str, Any]]
         required = prop["required"]
         sensitive = (bool(re.search(r"secret|token|password|private_key|api_key", prop["name"], re.I))
                      or (spec["category"] in {"Secrets", "AI Gateway Provider Keys"} and prop["name"] == "value"))
@@ -7513,7 +7516,35 @@ def _operation_model(operation: str, spec: Dict[str, Any]) -> type[BaseModel]:
 _OPERATION_MODELS = [_operation_model(key, spec) for key, spec in OPERATIONS.items()]
 for _model in _OPERATION_MODELS:
     globals()[_model.__name__] = _model
-NgrokConfig = Annotated[Union[tuple(_OPERATION_MODELS)], Discriminator("operation")]
+# EventTarget supports log/stream sinks, not HTTP callbacks. These creation-time
+# filterable resources use scheduled polling instead.
+POLL_TRIGGERS = {
+    "on_new_endpoint": ("/endpoints", "endpoints", "New Endpoint"),
+    "on_new_tunnel_session": ("/tunnel_sessions", "tunnel_sessions", "New Tunnel Session"),
+    "on_new_reserved_domain": ("/reserved_domains", "reserved_domains", "New Reserved Domain"),
+}
+
+
+def _poll_model(operation: str, title: str) -> type[BaseModel]:
+    return create_model(
+        "Ngrok" + "".join(part.title() for part in operation.split("_")) + "Config",
+        __module__=__name__, __base__=PollTriggerConfigBase,
+        operation=(Literal[operation], Field(operation, title=title, json_schema_extra={
+            "const": operation, "ui:hidden": True, "x-category": "Triggers",
+            "x-is-trigger": True, "x-display-name": title,
+        })),
+        filter=(Optional[str], Field(None, title="Filter", description=(
+            "Optional ngrok CEL expression evaluated against obj, including created_at "
+            "(started_at for tunnel sessions). Changing the filter establishes a new baseline. "
+            "See https://ngrok.com/docs/api/api-filtering."
+        ))),
+    )
+
+
+_POLL_MODELS = [_poll_model(operation, spec[2]) for operation, spec in POLL_TRIGGERS.items()]
+for _model in _POLL_MODELS:
+    globals()[_model.__name__] = _model
+NgrokConfig = Annotated[Union[tuple(_OPERATION_MODELS + _POLL_MODELS)], Discriminator("operation")]
 
 
 class NgrokNodeConfig(NodeConfig[NgrokConfig, NgrokAPIKeyCredential]):
@@ -7570,7 +7601,7 @@ async def _ngrok_request(
     return {"status": "success", "data": data, "status_code": response.status_code}
 
 
-class NgrokNode(WorkflowNode):
+class NgrokNode(ScheduledPollTriggerMixin, WorkflowNode):
     """Provision and inspect ngrok endpoints, domains, tunnels and account resources."""
 
     integration_type = "automation-ngrok"
@@ -7594,6 +7625,76 @@ class NgrokNode(WorkflowNode):
     def get_config_model(cls):
         return NgrokNodeConfig
 
+    @classmethod
+    def should_propagate_output(cls, output: Dict[str, Any], config: Dict[str, Any]) -> bool:
+        if config.get("operation") in POLL_TRIGGERS:
+            return bool(output.get("new_item_count"))
+        return super().should_propagate_output(output, config)
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        operation = output.get("operation")
+        if operation not in POLL_TRIGGERS:
+            return super().resolve_agent_event(output)
+        _, key, title = POLL_TRIGGERS[operation]
+        items = output.get(key, [])
+        if not items:
+            return None
+        lines = []
+        for item in items[:10]:
+            if operation == "on_new_endpoint":
+                principal = item.get("principal") or {}
+                detail = (f"{item.get('url', '')} — {item.get('name', '')} "
+                          f"{item.get('description', '')}; type {item.get('type', '')}; "
+                          f"owner {principal.get('id', '')}; created {item.get('created_at', '')}")
+            elif operation == "on_new_tunnel_session":
+                credential = item.get("credential") or {}
+                detail = (f"agent {item.get('agent_version', '')} on {item.get('os', '')} "
+                          f"from {item.get('ip', '')}; credential {credential.get('id', '')}; "
+                          f"started {item.get('started_at', '')}")
+            else:
+                detail = (f"{item.get('domain', '')} — {item.get('description', '')}; "
+                          f"created {item.get('created_at', '')}")
+            lines.append(f"- {detail[:800]}; region {item.get('region', '')}; id {item['id']}")
+        if len(items) > 10:
+            lines.append(f"- … and {len(items) - 10} more")
+        return {"text": f"ngrok: {len(items)} {title.lower()}(s):\n" + "\n".join(lines),
+                "title": f"ngrok: {title.lower()}", "conversation_key": None}
+
+    async def _poll_new_resources(self, config: PollTriggerConfigBase) -> Dict[str, Any]:
+        path, key, _ = POLL_TRIGGERS[config.operation]
+        params: Dict[str, Any] = {"limit": "100"}
+        if config.filter:
+            params["filter"] = config.filter
+        items: List[Dict[str, Any]] = []
+        cursors: set[str] = set()
+        for _ in range(100):
+            result = await _ngrok_request(self.config.credentials.api_key, "GET", path, params=params)
+            if result["status"] != "success":
+                return {"operation": config.operation, **result}
+            data = result["data"]
+            if not isinstance(data, dict) or not isinstance(data.get(key), list):
+                raise ValueError(f"ngrok response did not contain {key}")
+            page = data[key]
+            if any(not isinstance(item, dict) or not item.get("id") for item in page):
+                raise ValueError("ngrok list item has no resource id")
+            items.extend(page)
+            next_uri = data.get("next_page_uri")
+            if not next_uri:
+                break
+            next_page = urlsplit(next_uri)
+            cursor = parse_qs(next_page.query).get("before_id", [None])[0]
+            if (next_page.scheme != "https" or next_page.netloc != "api.ngrok.com"
+                    or next_page.path != path or not cursor or cursor in cursors):
+                raise ValueError("ngrok returned an invalid or repeated pagination cursor")
+            cursors.add(cursor)
+            params["before_id"] = cursor
+        else:
+            raise ValueError("ngrok poll exceeded 10,000 resources; narrow the filter")
+        fresh = await self._filter_unseen(items, lambda item: str(item["id"]))
+        return {"operation": config.operation, "status": "success", key: fresh,
+                "new_item_count": len(fresh)}
+
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         del inputs
         if not isinstance(self.config, NgrokNodeConfig):
@@ -7602,6 +7703,8 @@ class NgrokNode(WorkflowNode):
             raise ValueError("A ngrok API key credential is required")
         config = self.config.config
         operation = config.operation
+        if operation in POLL_TRIGGERS:
+            return await self._poll_new_resources(config)
         spec = OPERATIONS[operation]
         values = config.model_dump()
         path = spec["path"]

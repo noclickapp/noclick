@@ -39,7 +39,7 @@ export const NgrokNode: NodeDefinition = {
     category: 'developer-tools',
     label: 'ngrok',
     description:
-        'Manage ngrok endpoints, tunnels, domains, vaults and account resources',
+        'Manage ngrok resources and trigger workflows when endpoints, tunnel sessions or domains are created',
     Icon: NgrokIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

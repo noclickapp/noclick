@@ -7,6 +7,8 @@ ngrok credential connection or a successful FlowCanvas run.
 from __future__ import annotations
 
 import json
+from copy import deepcopy
+from pathlib import Path
 from unittest.mock import Mock
 
 import httpx
@@ -14,7 +16,7 @@ import pytest
 from pydantic import ValidationError
 
 from nodes import ngrok_node
-from nodes.ngrok_node import NgrokNode, NgrokNodeConfig, OPERATIONS
+from nodes.ngrok_node import NgrokNode, NgrokNodeConfig, OPERATIONS, POLL_TRIGGERS
 
 
 def _node(operation: str, **fields: object) -> NgrokNode:
@@ -49,7 +51,7 @@ def test_catalog_and_schema_cover_all_official_operations():
         if isinstance(value, dict)
         and "operation" in value.get("properties", {})
     }
-    assert operation_ids == set(OPERATIONS)
+    assert operation_ids == set(OPERATIONS) | set(POLL_TRIGGERS)
     assert schema["$defs"]["NgrokAPIKeyCredential"]["properties"]["api_key"]["ui:widget"] == "password"
     assert schema["$defs"]["NgrokSecretsCreateConfig"]["properties"]["body_value"]["ui:widget"] == "password"
 
@@ -244,3 +246,119 @@ def test_ai_gateway_requires_current_fields_and_rejects_obsolete_fields():
         _node("create_ai_gateway_api_keys", extra_body={"obsolete_field": True})
     schema = NgrokNode.get_config_schema()
     assert schema["$defs"]["NgrokAiGatewayProviderKeysCreateConfig"]["properties"]["body_value"]["ui:widget"] == "password"
+
+
+# Resource rows are copied from ngrok's docs and its official Python SDK tests.
+# Pagination scenarios use the terminal null described at https://ngrok.com/docs/api#pagination.
+def _documented_page(key):
+    fixture = json.loads((Path(__file__).parent / "fixtures" / "ngrok" / f"{key}.json").read_text())
+    page = deepcopy(fixture["body"])
+    page["next_page_uri"] = None
+    return page
+
+
+def _persist_poll_state(node):
+    state = {}
+
+    async def update(mutator, **kwargs):
+        nonlocal state
+        replacement, result = mutator(deepcopy(state))
+        if replacement is not None:
+            state = replacement
+        return result
+
+    node._update_node_state = update
+    return lambda: deepcopy(state)
+
+
+@pytest.mark.parametrize("operation", POLL_TRIGGERS)
+@pytest.mark.asyncio
+async def test_poll_baseline_new_items_dedup_and_agent_event(monkeypatch, operation):
+    path, key, _ = POLL_TRIGGERS[operation]
+    documented = _documented_page(key)
+    page = {key: [], "next_page_uri": None}
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json=page)
+
+    _transport(monkeypatch, handler)
+    node = _node(operation)
+    state = _persist_poll_state(node)
+    baseline = await node.execute({})
+    assert baseline["new_item_count"] == 0
+    assert not NgrokNode.should_propagate_output(baseline, {"operation": operation})
+    assert NgrokNode.resolve_agent_event(baseline) is None
+    page = documented
+    fresh = await node.execute({})
+    assert fresh[key] == documented[key]
+    assert fresh["new_item_count"] == len(documented[key])
+    assert NgrokNode.should_propagate_output(fresh, {"operation": operation})
+    event = NgrokNode.resolve_agent_event(fresh)
+    assert "ngrok" in event["text"]
+    assert all(item["id"] in event["text"] for item in documented[key])
+    assert (await node.execute({}))["new_item_count"] == 0
+    assert state()["seen_ids"] == [item["id"] for item in documented[key]]
+    assert all(request.url.path == path for request in seen)
+    assert all(request.url.params["limit"] == "100" for request in seen)
+
+
+@pytest.mark.asyncio
+async def test_poll_pagination_preserves_filter_and_rebaselines_changed_scope(monkeypatch):
+    page = _documented_page("reserved_domains")
+    first, second, third = page["reserved_domains"]
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        if "before_id" not in request.url.params:
+            return httpx.Response(200, json={"reserved_domains": [first], "next_page_uri":
+                f"https://api.ngrok.com/reserved_domains?limit=100&before_id={first['id']}"})
+        assert request.url.params["before_id"] == first["id"]
+        return httpx.Response(200, json={"reserved_domains": [second, third], "next_page_uri": None})
+
+    _transport(monkeypatch, handler)
+    node = _node("on_new_reserved_domain", filter='obj.domain.startsWith("myapi.ngrok")')
+    state = _persist_poll_state(node)
+    assert (await node.execute({}))["new_item_count"] == 0
+    assert len(state()["seen_ids"]) == 3
+    assert all(request.url.params["filter"] == 'obj.domain.startsWith("myapi.ngrok")' for request in seen)
+    node.config.config.filter = None
+    assert (await node.execute({}))["new_item_count"] == 0
+
+
+@pytest.mark.parametrize("uri", ["https://attacker.example/endpoints?before_id=ep_1",
+                                 "https://api.ngrok.com/api_keys?before_id=ep_1",
+                                 "https://api.ngrok.com/endpoints?before_id=ep_1"])
+@pytest.mark.asyncio
+async def test_poll_refuses_invalid_or_repeated_pagination_before_writing_state(monkeypatch, uri):
+    page = _documented_page("endpoints")
+    page["next_page_uri"] = uri
+    _transport(monkeypatch, lambda request: httpx.Response(200, json=page))
+    node = _node("on_new_endpoint")
+    state = _persist_poll_state(node)
+    with pytest.raises(ValueError, match="invalid or repeated"):
+        await node.execute({})
+    assert state() == {}
+
+
+@pytest.mark.asyncio
+async def test_poll_failure_does_not_establish_baseline(monkeypatch):
+    _transport(monkeypatch, lambda request: httpx.Response(401, json={"msg": "invalid key"}))
+    node = _node("on_new_endpoint")
+    state = _persist_poll_state(node)
+    result = await node.execute({})
+    assert result["status"] == "error"
+    assert state() == {}
+
+
+@pytest.mark.parametrize("operation,fields", [
+    ("create_event_subscriptions", {"body_sources": ["not-an-object"]}),
+    ("update_event_subscriptions", {"id": "<string>", "body_sources": ["not-an-object"]}),
+    ("create_reserved_domains", {"body_resolves_to": ["not-an-object"]}),
+    ("update_reserved_domains", {"id": "<string>", "body_resolves_to": ["not-an-object"]}),
+])
+def test_nested_resource_arrays_require_objects(operation, fields):
+    with pytest.raises(ValidationError):
+        _node(operation, **fields)
