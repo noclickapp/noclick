@@ -20,6 +20,24 @@ interface CodexDeviceCodeAuthProps {
     renderStart?: AgentOAuthComponentProps['renderStart'];
 }
 
+// OpenAI turns device code login off on an account until its owner turns it on, and then refuses the approval after
+// the account is picked; its poll answers that as it answers waiting, so the line stands under the code from the start.
+const DEVICE_CODE_LOGIN_DOCS = 'https://learn.chatgpt.com/docs/auth';
+const DEVICE_CODE_HINT = (
+    <>
+        If OpenAI shows an error after you choose your account, turn on{' '}
+        <a
+            href={DEVICE_CODE_LOGIN_DOCS}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-foreground/30 underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground"
+        >
+            device code login
+        </a>{' '}
+        in ChatGPT → Settings → Security (a workspace’s admin turns it on for the workspace), then try again.
+    </>
+);
+
 interface DeviceCodeState {
     status: 'idle' | 'loading' | 'awaiting_approval' | 'polling' | 'completed' | 'error';
     verificationUrl?: string;
@@ -138,9 +156,9 @@ export function CodexDeviceCodeAuth({
             <>
                 Requires{' '}
                 <a href="https://chatgpt.com/settings/security" target="_blank" rel="noopener noreferrer" className="text-muted-foreground dark:text-zinc-500 hover:text-foreground/80 underline">
-                    device code auth
+                    device code login
                 </a>
-                {' '}enabled in ChatGPT security settings
+                {' '}turned on in ChatGPT’s security settings
             </>
         );
         if (renderStart) return <>{renderStart(startFlow, note)}</>;
@@ -173,6 +191,7 @@ export function CodexDeviceCodeAuth({
                 polling={state.status === 'polling'}
                 onCancel={cancel}
                 onApproved={poll}
+                hint={DEVICE_CODE_HINT}
             />
         );
     }

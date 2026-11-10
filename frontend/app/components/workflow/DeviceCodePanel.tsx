@@ -2,6 +2,7 @@
 // code to enter, where to enter it, and a way to say it's been approved. One
 // panel for every provider that signs in this way, and the line every sign-in
 // shows while it starts.
+import type { ReactNode } from 'react';
 import { Loader2 } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 
@@ -12,6 +13,7 @@ export function DeviceCodePanel({
     polling,
     onCancel,
     onApproved,
+    hint,
 }: {
     provider: string;
     userCode?: string;
@@ -19,6 +21,8 @@ export function DeviceCodePanel({
     polling: boolean;
     onCancel: () => void;
     onApproved: () => void;
+    /** A provider's own line under the code: what to do when its page refuses the approval. */
+    hint?: ReactNode;
 }) {
     return (
         <div className="space-y-3" data-testid="device-code-panel">
@@ -42,6 +46,11 @@ export function DeviceCodePanel({
                 </p>
             </div>
             <div className="select-all rounded-xl bg-foreground/[0.05] py-3 text-center font-mono text-2xl font-semibold tracking-[0.2em] text-foreground">{userCode}</div>
+            {hint && (
+                <p className="text-[12.5px] leading-snug text-muted-foreground" data-testid="device-code-hint">
+                    {hint}
+                </p>
+            )}
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <span className="inline-flex items-center gap-2 text-[12.5px] text-muted-foreground">
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
