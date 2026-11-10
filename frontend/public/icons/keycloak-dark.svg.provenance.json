@@ -1,0 +1,13 @@
+{
+  "path": "frontend/public/icons/keycloak-dark.svg",
+  "source": "https://www.keycloak.org/resources/images/icon.svg",
+  "source_page": "https://www.keycloak.org/",
+  "retrieved_at": "2026-11-11",
+  "license": "Apache-2.0; Keycloak trademark remains with its owner",
+  "sha256": "8bf943dbb4229154e40ccea526b46df412b097c0eb8d65c4415a7a3c16efb011",
+  "edits": [
+    "Recolour only the dark grey outer backing (#4d4d4d) white for contrast on dark tiles."
+  ],
+  "notes": "Official standalone app mark linked as the Keycloak hero image on its own homepage; original paths and colours retained except the documented dark variant backing.",
+  "license_source": "https://github.com/keycloak/keycloak-web/blob/main/LICENSE.txt"
+}
