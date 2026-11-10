@@ -137,3 +137,123 @@ def test_plaud_foreign_credential_tag_is_refused():
     assert native.PlaudNode.validate_config(data)['valid'] is False
     with pytest.raises(ValueError, match='Attach a Plaud credential'):
         native.PlaudNode.parse_config(data)
+
+
+def poll_node(monkeypatch, *, config=None):
+    instance = node({'operation': 'on_new_or_updated_recording', **(config or {})}, credential())
+    state = {}
+
+    async def update(mutator, **kwargs):
+        new_state, result = mutator(dict(state))
+        if new_state is not None:
+            state.clear()
+            state.update(new_state)
+        return result
+
+    monkeypatch.setattr(instance, '_update_node_state', update)
+    return instance, state
+
+
+@pytest.mark.asyncio
+async def test_plaud_poll_baseline_updates_and_agent_context(monkeypatch):
+    from copy import deepcopy
+    response = deepcopy(CASES['list_file_changes']['response'])
+    calls = transport(monkeypatch, lambda _: httpx.Response(200, json=response))
+    instance, state = poll_node(monkeypatch)
+    first = await instance.execute({})
+    assert first['recordings'] == []
+    assert state['seen_ids']
+    assert instance.trigger_produced_no_event(first)
+    assert native.PlaudNode.resolve_agent_event(first) is None
+    recording = response['data']['files'][0]
+    recording['version'] += 1
+    updated = await instance.execute({})
+    assert updated['recordings'] == [recording]
+    assert instance.trigger_emitted_event(updated)
+    event = native.PlaudNode.resolve_agent_event(updated)
+    for value in [recording['id'], recording['title'], recording['workspace_id'], recording['created_by_member_id']]:
+        assert value in event['text']
+    assert str(recording['version']) in event['text']
+    assert native.PlaudNode.should_propagate_output(updated, {'operation': 'on_new_or_updated_recording'})
+    assert (await instance.execute({}))['recording_count'] == 0
+    new = {**recording, 'id': '<new_file_id>'}
+    response['data']['files'].extend([new, new])
+    assert (await instance.execute({}))['recordings'] == [new]
+    assert all(dict(call.url.params) == {'limit': '1000'} for call in calls)
+
+
+@pytest.mark.asyncio
+async def test_plaud_poll_paginates_before_dedup_and_scopes_checkpoint(monkeypatch):
+    from copy import deepcopy
+    response = deepcopy(CASES['list_file_changes']['response'])
+    second = {**response['data']['files'][0], 'id': '<second_file_id>'}
+
+    def reply(request):
+        page = deepcopy(response)
+        if request.url.params.get('cursor'):
+            page['data']['files'].append(second)
+        else:
+            page['data'].update(has_more=True, next_cursor='next+/=')
+        return httpx.Response(200, json=page)
+
+    calls = transport(monkeypatch, reply)
+    instance, state = poll_node(monkeypatch, config={'checkpoint': '<checkpoint>'})
+    state['seen_ids'] = []
+    output = await instance.execute({})
+    assert output['recordings'] == [response['data']['files'][0], second]
+    assert [dict(call.url.params) for call in calls] == [
+        {'limit': '1000', 'checkpoint': '<checkpoint>'},
+        {'limit': '1000', 'cursor': 'next+/=', 'checkpoint': '<checkpoint>'}]
+    from nodes.core.poll_trigger import poll_scope
+    base = {'operation': 'on_new_or_updated_recording', 'checkpoint': '<checkpoint>'}
+    scope = poll_scope(native.PlaudNode, base)
+    assert scope == poll_scope(native.PlaudNode, {**base, 'goal': 'cosmetic edit', 'label': 'My recordings'})
+    assert scope != poll_scope(native.PlaudNode, {**base, 'checkpoint': '<other_checkpoint>'})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('failure', ['http', 'cursor', 'missing_version', 'too_many'])
+async def test_plaud_poll_incomplete_feed_never_marks_seen(monkeypatch, failure):
+    from copy import deepcopy
+    response = deepcopy(CASES['list_file_changes']['response'])
+    if failure == 'cursor':
+        response['data'].update(has_more=True, next_cursor=None)
+    elif failure == 'missing_version':
+        del response['data']['files'][0]['version']
+    elif failure == 'too_many':
+        row = response['data']['files'][0]
+        response['data']['files'] = [{**row, 'id': str(index)} for index in range(10001)]
+    transport(monkeypatch, (lambda _: httpx.Response(401, json={'msg': 'expired'})) if failure == 'http' else response)
+    instance, state = poll_node(monkeypatch)
+    if failure == 'http':
+        assert (await instance.execute({}))['status'] == 'error'
+    else:
+        with pytest.raises(ValueError):
+            await instance.execute({})
+    assert state == {}
+
+
+@pytest.mark.asyncio
+async def test_plaud_poll_wrong_token_and_lost_state_write(monkeypatch):
+    calls = transport(monkeypatch, CASES['list_file_changes']['response'])
+    with pytest.raises(ValueError, match='requires a Plaud workspace token'):
+        await node({'operation': 'on_new_or_updated_recording'}, credential(native.EMBEDDED)).execute({})
+    assert not calls
+    instance, _ = poll_node(monkeypatch)
+
+    async def unavailable(mutator, *, skip_result):
+        return skip_result
+
+    monkeypatch.setattr(instance, '_update_node_state', unavailable)
+    output = await instance.execute({})
+    assert output['recordings'] == []
+    assert instance.trigger_produced_no_event(output)
+
+
+def test_plaud_trigger_schema_uses_poll_family():
+    from nodes.core.poll_trigger import PollTriggerConfigBase
+    config = native.OnNewOrUpdatedRecording()
+    assert isinstance(config, PollTriggerConfigBase)
+    operation = config.model_json_schema()['properties']['operation']
+    assert operation['x-is-trigger'] is True
+    assert operation['x-category'] == 'Triggers'

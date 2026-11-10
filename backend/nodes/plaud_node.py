@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
+from nodes.core.poll_trigger import PollTriggerConfigBase, ScheduledPollTriggerMixin
 from utils.ssrf import guarded_async_client
 
 WORKSPACE = "plaud_workspace_token"
@@ -75,6 +76,17 @@ class ListFileChanges(ListMembers):
     """Read one page of changed recordings; retain next_checkpoint to resume."""
     operation: Literal["list_file_changes"] = "list_file_changes"
     checkpoint: str | None = Field(None, max_length=4096)
+
+
+class OnNewOrUpdatedRecording(PollTriggerConfigBase):
+    """Watch the workspace change feed; existing recordings are baselined when armed."""
+    operation: Literal["on_new_or_updated_recording"] = Field(
+        "on_new_or_updated_recording", title="On New or Updated Recording",
+        json_schema_extra={"x-is-trigger": True, "x-category": "Triggers",
+                           "x-display-name": "On New or Updated Recording", "ui:hidden": True})
+    checkpoint: str | None = Field(None, max_length=4096, description=(
+        "Optional starting checkpoint from the file change feed. Watches changes after this checkpoint. "
+        "Each poll scans up to 10,000 changes; use a recent checkpoint for larger workspaces."))
 
 
 class GetFile(_Input):
@@ -146,7 +158,7 @@ class CompleteUpload(_Input):
 
 Config = Annotated[Union[ListWorkspaces, ListMembers, ListFileChanges, GetFile,
     GetFileTranscript, GetFileSummaries, GetFileAudio, GetDeviceBinding,
-    BindDevice, UnbindDevice, GeneratePresignedUrls, CompleteUpload], Field(discriminator="operation")]
+    BindDevice, UnbindDevice, GeneratePresignedUrls, CompleteUpload, OnNewOrUpdatedRecording], Field(discriminator="operation")]
 
 
 class PlaudFullConfig(NodeConfig[Config, Credential]):
@@ -170,7 +182,7 @@ ROUTES = {
 }
 
 
-class PlaudNode(WorkflowNode):
+class PlaudNode(ScheduledPollTriggerMixin, WorkflowNode):
     integration_type = "automation-plaud"
     credential_provider_labels = {"plaud": "Plaud"}
     # Connection-only loader: no config exists at connect time. Workspace tokens
@@ -217,10 +229,78 @@ class PlaudNode(WorkflowNode):
         # Do not claim that another application's bound device is this user's.
         return {"options": [], "next_page_token": None}
 
+    @classmethod
+    def should_propagate_output(cls, output, config):
+        if config.get("operation") == "on_new_or_updated_recording":
+            return bool(output.get("recording_count"))
+        return True
+
+    @classmethod
+    def resolve_agent_event(cls, output):
+        if not isinstance(output, dict) or output.get("operation") != "on_new_or_updated_recording":
+            return super().resolve_agent_event(output)
+        recordings = output.get("recordings", [])
+        if not recordings:
+            return None
+        lines = []
+        for recording in recordings[:10]:
+            lines.append(
+                f"- {recording.get('title') or 'Untitled recording'} "
+                f"(file {recording.get('id')}, version {recording.get('version')}) "
+                f"in workspace {recording.get('workspace_id')}; "
+                f"created by member {recording.get('created_by_member_id')}; "
+                f"status {recording.get('status')}; updated {recording.get('updated_at')}; "
+                f"transcript available: {recording.get('has_transcript')}; "
+                f"summary available: {recording.get('has_summary')}")
+        if len(recordings) > 10:
+            lines.append(f"- … and {len(recordings) - 10} more")
+        return {"text": f"Plaud: {len(recordings)} new or updated recording(s):\n" + "\n".join(lines),
+                "conversation_key": None}
+
+    async def _poll_recordings(self, config, credential):
+        # Plaud documents at-least-once delivery and (id, version) dedup.
+        # Scan the complete configured feed before baselining or marking seen.
+        # Stay within the shared seen-set cap so history never re-fires after eviction.
+        recordings = {}
+        cursor = None
+        cursors = set()
+        for _ in range(100):
+            result = await self._execute_operation(
+                ListFileChanges(limit=1000, checkpoint=config.checkpoint, cursor=cursor), credential)
+            if result.get("status") == "error":
+                return result
+            data = result["data"]
+            rows = data.get("files")
+            if not isinstance(rows, list):
+                raise ValueError("Expected Plaud's file change feed")
+            for row in rows:
+                if not isinstance(row, dict) or not row.get("id") or row.get("version") is None:
+                    raise ValueError("Plaud recording is missing its id or version")
+                recordings[(row["id"], row["version"])] = row
+            if len(recordings) > 10_000:
+                raise ValueError("Plaud feed exceeds 10,000 changes; choose a recent starting checkpoint")
+            if not data.get("has_more"):
+                break
+            cursor = data.get("next_cursor")
+            if not cursor or cursor in cursors:
+                raise ValueError("Plaud returned an incomplete or repeated change-feed cursor")
+            cursors.add(cursor)
+        else:
+            raise ValueError("Plaud feed exceeds 100 pages; choose a recent starting checkpoint")
+        fresh = await self._filter_unseen(list(recordings.values()),
+            lambda row: str((row["id"], row["version"])))
+        return {"status": "success", "operation": config.operation,
+                "recordings": fresh, "recording_count": len(fresh)}
+
     async def execute(self, inputs):
         if not isinstance(self.config, PlaudFullConfig) or self.config.credentials is None:
             raise ValueError("Attach a Plaud token credential")
         config, credential = self.config.config, self.config.credentials
+        if isinstance(config, OnNewOrUpdatedRecording):
+            return await self._poll_recordings(config, credential)
+        return await self._execute_operation(config, credential)
+
+    async def _execute_operation(self, config, credential):
         method, path, family = ROUTES[config.operation]
         if credential.credential_type != family:
             raise ValueError("This operation requires a Plaud workspace token" if family == WORKSPACE else "This operation requires a Plaud Embedded user token")

@@ -15,7 +15,7 @@ const PlaudIcon = ({ className, style }: { className?: string; style?: CSSProper
 
 export const PlaudNode: NodeDefinition = {
     type: 'automation-plaud', category: 'meetings', label: 'Plaud',
-    description: 'Read recordings, transcripts and summaries; manage device bindings and multipart uploads',
+    description: 'Trigger on new or updated recordings; read transcripts and summaries, manage devices and uploads',
     keywords: ['recordings', 'transcription', 'meeting notes', 'PLAUD NOTE', 'NotePin'],
     Icon: PlaudIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
